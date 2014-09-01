@@ -16,6 +16,8 @@ import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
 
+import javax.xml.stream.XMLStreamReader;
+
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
@@ -31,7 +33,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 
 /**
- * This is an experimental
+ * This is an experimental iterator over a {@link NormalizedNode}. This is essentially
+ * the opposite of a {@link XMLStreamReader} -- unlike instantiating an iterator over
+ * the backing data, this encapsulates a {@link NormalizedNodeStreamWriter} and allows
+ * us to write multiple nodes.
  */
 @Beta
 public final class NormalizedNodeWriter implements Closeable, Flushable {
@@ -41,10 +46,24 @@ public final class NormalizedNodeWriter implements Closeable, Flushable {
         this.writer = Preconditions.checkNotNull(writer);
     }
 
+    /**
+     * Create a new writer backed by a {@link NormalizedNodeStreamWriter}.
+     *
+     * @param writer Backend writer
+     * @return A new instance.
+     */
     public static NormalizedNodeWriter forStreamWriter(final NormalizedNodeStreamWriter writer) {
         return new NormalizedNodeWriter(writer);
     }
 
+    /**
+     * Iterate over the provided {@link NormalizedNode} and emit write
+     * events to the encapsulated {@link NormalizedNodeStreamWriter}.
+     *
+     * @param node Node
+     * @return
+     * @throws IOException when thrown from the backing writer.
+     */
     public NormalizedNodeWriter write(final NormalizedNode<?, ?> node) throws IOException {
         if (wasProcessedAsCompositeNode(node)) {
             return this;

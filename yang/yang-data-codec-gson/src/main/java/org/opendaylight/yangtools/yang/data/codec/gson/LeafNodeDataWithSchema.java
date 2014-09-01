@@ -19,8 +19,8 @@ class LeafNodeDataWithSchema extends SimpleNodeDataWithSchema {
     }
 
     @Override
-    protected void writeToStream(final NormalizedNodeStreamWriter nnStreamWriter) throws IOException {
-        nnStreamWriter.leafNode(provideNodeIdentifier(), getValue());
+    public void write(final NormalizedNodeStreamWriter writer) throws IOException {
+        writer.leafNode(provideNodeIdentifier(), getValue());
     }
 
 }

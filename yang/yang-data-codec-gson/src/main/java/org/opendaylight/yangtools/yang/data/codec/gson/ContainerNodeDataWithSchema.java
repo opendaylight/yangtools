@@ -21,10 +21,10 @@ class ContainerNodeDataWithSchema extends CompositeNodeDataWithSchema {
     }
 
     @Override
-    protected void writeToStream(final NormalizedNodeStreamWriter nnStreamWriter) throws IOException {
-        nnStreamWriter.startContainerNode(provideNodeIdentifier(), UNKNOWN_SIZE);
-        super.writeToStream(nnStreamWriter);
-        nnStreamWriter.endNode();
+    public void write(final NormalizedNodeStreamWriter writer) throws IOException {
+        writer.startContainerNode(provideNodeIdentifier(), UNKNOWN_SIZE);
+        super.write(writer);
+        writer.endNode();
     }
 
 }

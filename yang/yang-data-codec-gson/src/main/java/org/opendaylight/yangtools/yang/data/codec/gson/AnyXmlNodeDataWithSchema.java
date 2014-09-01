@@ -19,8 +19,8 @@ class AnyXmlNodeDataWithSchema extends SimpleNodeDataWithSchema {
     }
 
     @Override
-    protected void writeToStream(final NormalizedNodeStreamWriter nnStreamWriter) throws IOException {
-//      FIXME: should be changed according to format of value
-        nnStreamWriter.anyxmlNode(provideNodeIdentifier(), getValue());
+    public void write(final NormalizedNodeStreamWriter writer) throws IOException {
+        // FIXME: should be changed according to format of value
+        writer.anyxmlNode(provideNodeIdentifier(), getValue());
     }
 }

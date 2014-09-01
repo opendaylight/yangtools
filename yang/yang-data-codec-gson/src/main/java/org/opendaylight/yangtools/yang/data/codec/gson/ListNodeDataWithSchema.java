@@ -22,14 +22,14 @@ class ListNodeDataWithSchema extends CompositeNodeDataWithSchema {
     }
 
     @Override
-    protected void writeToStream(final NormalizedNodeStreamWriter nnStreamWriter) throws IOException {
+    public void write(final NormalizedNodeStreamWriter writer) throws IOException {
         if (!((ListSchemaNode) getSchema()).getKeyDefinition().isEmpty()) {
-            nnStreamWriter.startMapNode(provideNodeIdentifier(), UNKNOWN_SIZE);
+            writer.startMapNode(provideNodeIdentifier(), UNKNOWN_SIZE);
         } else {
-            nnStreamWriter.startUnkeyedList(provideNodeIdentifier(), UNKNOWN_SIZE);
+            writer.startUnkeyedList(provideNodeIdentifier(), UNKNOWN_SIZE);
         }
-        super.writeToStream(nnStreamWriter);
-        nnStreamWriter.endNode();
+        super.write(writer);
+        writer.endNode();
     }
 
 }

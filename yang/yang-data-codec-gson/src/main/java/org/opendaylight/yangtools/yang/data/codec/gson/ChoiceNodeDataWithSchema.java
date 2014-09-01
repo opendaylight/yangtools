@@ -42,10 +42,9 @@ class ChoiceNodeDataWithSchema extends CompositeNodeDataWithSchema {
     }
 
     @Override
-    protected void writeToStream(final NormalizedNodeStreamWriter nnStreamWriter) throws IOException {
-        nnStreamWriter.startChoiceNode(provideNodeIdentifier(), UNKNOWN_SIZE);
-        super.writeToStream(nnStreamWriter);
-        nnStreamWriter.endNode();
+    public void write(final NormalizedNodeStreamWriter writer) throws IOException {
+        writer.startChoiceNode(provideNodeIdentifier(), UNKNOWN_SIZE);
+        super.write(writer);
+        writer.endNode();
     }
-
 }

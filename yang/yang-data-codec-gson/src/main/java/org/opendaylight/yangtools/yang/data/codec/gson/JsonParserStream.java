@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Splitter;
-import com.google.common.collect.Iterators;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
@@ -30,11 +28,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Deque;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.codec.gson.helpers.IdentityValuesDTO;
@@ -60,8 +56,6 @@ import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefi
  */
 @Beta
 public final class JsonParserStream implements Closeable, Flushable {
-    private static final Splitter COLON_SPLITTER = Splitter.on(':');
-
     private final Deque<URI> namespaces = new ArrayDeque<>();
     private final NormalizedNodeStreamWriter writer;
     private final SchemaContextUtils utils;
@@ -90,7 +84,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             isEmpty = false;
             CompositeNodeDataWithSchema compositeNodeDataWithSchema = new CompositeNodeDataWithSchema(schema);
             read(reader, compositeNodeDataWithSchema);
-            compositeNodeDataWithSchema.writeToStream(writer);
+            compositeNodeDataWithSchema.write(writer);
 
             return this;
             // return read(reader);
@@ -207,12 +201,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             inputValue = value;
         }
 
-        // FIXME: extract this as a cacheable context?
-        final Codec<Object, Object> codec = codecs.codecFor(typeDefinition);
-        if (codec == null) {
-            return null;
-        }
-        return codec.deserialize(inputValue);
+        return codecs.codecFor(typeDefinition).deserialize(inputValue);
     }
 
     private static TypeDefinition<? extends Object> typeDefinition(final DataSchemaNode node) {
@@ -256,25 +245,24 @@ public final class JsonParserStream implements Closeable, Flushable {
     }
 
     private static URI getNamespaceFor(final String jsonElementName) {
-        final Iterator<String> it = COLON_SPLITTER.split(jsonElementName).iterator();
-
         // The string needs to me in form "moduleName:localName"
-        if (it.hasNext()) {
-            final String maybeURI = it.next();
-            if (Iterators.size(it) == 1) {
-                return URI.create(maybeURI);
-            }
+        final int idx = jsonElementName.indexOf(':');
+        if (idx == -1 || jsonElementName.indexOf(':', idx + 1) != -1) {
+            return null;
         }
 
-        return null;
+        // FIXME: is this correct? This should be looking up module name instead
+        return URI.create(jsonElementName.substring(0, idx));
     }
 
     private static String getLocalNameFor(final String jsonElementName) {
-        final Iterator<String> it = COLON_SPLITTER.split(jsonElementName).iterator();
-
         // The string needs to me in form "moduleName:localName"
-        final String ret = Iterators.get(it, 1, null);
-        return ret != null && !it.hasNext() ? ret : jsonElementName;
+        final int idx = jsonElementName.indexOf(':');
+        if (idx == -1 || jsonElementName.indexOf(':', idx + 1) != -1) {
+            return jsonElementName;
+        }
+
+        return jsonElementName.substring(idx + 1);
     }
 
     private void removeNamespace() {
@@ -294,7 +282,7 @@ public final class JsonParserStream implements Closeable, Flushable {
     }
 
     private NamespaceAndName resolveNamespace(final String childName) {
-        int lastIndexOfColon = childName.lastIndexOf(":");
+        int lastIndexOfColon = childName.lastIndexOf(':');
         String moduleNamePart = null;
         String nodeNamePart = null;
         URI namespace = null;
@@ -315,14 +303,14 @@ public final class JsonParserStream implements Closeable, Flushable {
     }
 
     /**
-     * Returns stack of schema nodes via which it was necessary to prass to get schema node with specified
+     * Returns stack of schema nodes via which it was necessary to pass to get schema node with specified
      * {@code childName} and {@code namespace}
      *
      * @param dataSchemaNode
      * @param childName
      * @param namespace
-     * @return stack of schema nodes via which it was passed through. If found schema node is dirrect child then stack
-     *         contains only one node. If it is found under choice and case then stack should conains 2*n+1 element
+     * @return stack of schema nodes via which it was passed through. If found schema node is direct child then stack
+     *         contains only one node. If it is found under choice and case then stack should contains 2*n+1 element
      *         (where n is number of choices through it was passed)
      */
     private Deque<DataSchemaNode> findSchemaNodeByNameAndNamespace(final DataSchemaNode dataSchemaNode,

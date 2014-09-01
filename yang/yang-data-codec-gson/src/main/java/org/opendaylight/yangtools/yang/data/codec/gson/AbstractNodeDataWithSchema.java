@@ -7,27 +7,43 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
+import com.google.common.annotations.Beta;
+import com.google.common.base.Preconditions;
+
 import java.io.IOException;
 
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
+/**
+ * Utility abstract class for tracking parser state, as needed by StAX-like parser.
+ */
+@Beta
 abstract class AbstractNodeDataWithSchema {
-
     private final DataSchemaNode schema;
 
-    public AbstractNodeDataWithSchema(final DataSchemaNode schema) {
-        this.schema = schema;
+    protected AbstractNodeDataWithSchema(final DataSchemaNode schema) {
+        this.schema = Preconditions.checkNotNull(schema);
     }
 
+    /**
+     * Return the associated schema node.
+     * @return
+     */
     public final DataSchemaNode getSchema() {
         return schema;
     }
 
-    protected abstract void writeToStream(final NormalizedNodeStreamWriter nnStreamWriter) throws IOException;
+    /**
+     * Emit this node's events into the specified writer.
+     *
+     * @param writer Target writer
+     * @throws IOException reported when thrown by the writer.
+     */
+    public abstract void write(final NormalizedNodeStreamWriter writer) throws IOException;
 
-    protected NodeIdentifier provideNodeIdentifier() {
+    protected final NodeIdentifier provideNodeIdentifier() {
         return new NodeIdentifier(schema.getQName());
     }
 
@@ -50,16 +66,8 @@ abstract class AbstractNodeDataWithSchema {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        AbstractNodeDataWithSchema other = (AbstractNodeDataWithSchema) obj;
-        if (schema == null) {
-            if (other.schema != null) {
-                return false;
-            }
-        } else if (!schema.equals(other.schema)) {
-            return false;
-        }
-
-        return true;
+        final AbstractNodeDataWithSchema other = (AbstractNodeDataWithSchema) obj;
+        return schema.equals(other.schema);
     }
 
 }
