@@ -7,17 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
+import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Multimap;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
+
+import javax.annotation.Nonnull;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -33,23 +37,76 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
+/**
+ * A node which is composed of multiple simpler nodes.
+ */
 class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
+    private static final Function<DataSchemaNode, QName> QNAME_FUNCTION = new Function<DataSchemaNode, QName>() {
+        @Override
+        public QName apply(@Nonnull final DataSchemaNode input) {
+            return input.getQName();
+        }
+    };
 
     /**
      * nodes which were added to schema via augmentation and are present in data input
      */
-    protected Map<AugmentationSchema, List<AbstractNodeDataWithSchema>> augmentationsToChild = new HashMap<>();
+    private final Multimap<AugmentationSchema, AbstractNodeDataWithSchema> augmentationsToChild = ArrayListMultimap.create();
 
     /**
-     * remaining data nodes (which aren't added via augment). Every of them should have the same QName
+     * remaining data nodes (which aren't added via augment). Every of one them should have the same QName.
      */
-    protected List<AbstractNodeDataWithSchema> childs = new ArrayList<>();
+    private final List<AbstractNodeDataWithSchema> children = new ArrayList<>();
 
     public CompositeNodeDataWithSchema(final DataSchemaNode schema) {
         super(schema);
     }
 
-    public AbstractNodeDataWithSchema addSimpleChild(final DataSchemaNode schema) {
+    public AbstractNodeDataWithSchema addChild(final Deque<DataSchemaNode> schemas) {
+        Preconditions.checkArgument(!schemas.isEmpty(), "Expecting at least one schema");
+
+        // Pop the first node...
+        final DataSchemaNode schema = schemas.pop();
+        if (schemas.isEmpty()) {
+            // Simple, direct node
+            return addChild(schema);
+        }
+
+        // The choice/case mess, reuse what we already popped
+        final DataSchemaNode choiceCandidate = schema;
+        Preconditions.checkArgument(choiceCandidate instanceof ChoiceNode,
+            "Expected node of type ChoiceNode but was %s", choiceCandidate.getClass().getSimpleName());
+        final ChoiceNode choiceNode = (ChoiceNode) choiceCandidate;
+
+        final DataSchemaNode caseCandidate = schemas.pop();
+        Preconditions.checkArgument(caseCandidate instanceof ChoiceCaseNode,
+            "Expected node of type ChoiceCaseNode but was %s", caseCandidate.getClass().getSimpleName());
+        final ChoiceCaseNode caseNode = (ChoiceCaseNode) caseCandidate;
+
+        AugmentationSchema augSchema = null;
+        if (choiceCandidate.isAugmenting()) {
+            augSchema = findCorrespondingAugment(getSchema(), choiceCandidate);
+        }
+
+        // looking for existing choice
+        final Collection<AbstractNodeDataWithSchema> childNodes;
+        if (augSchema != null) {
+            childNodes = augmentationsToChild.get(augSchema);
+        } else {
+            childNodes = children;
+        }
+
+        CompositeNodeDataWithSchema caseNodeDataWithSchema = findChoice(childNodes, choiceCandidate, caseCandidate);
+        if (caseNodeDataWithSchema == null) {
+            ChoiceNodeDataWithSchema choiceNodeDataWithSchema = new ChoiceNodeDataWithSchema(choiceNode);
+            addChild(choiceNodeDataWithSchema);
+            caseNodeDataWithSchema = choiceNodeDataWithSchema.addCompositeChild(caseNode);
+        }
+
+        return caseNodeDataWithSchema.addChild(schemas);
+    }
+
+    private AbstractNodeDataWithSchema addSimpleChild(final DataSchemaNode schema) {
         SimpleNodeDataWithSchema newChild = null;
         if (schema instanceof LeafSchemaNode) {
             newChild = new LeafNodeDataWithSchema(schema);
@@ -64,7 +121,7 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
                 augSchema = findCorrespondingAugment(getSchema(), schema);
             }
             if (augSchema != null) {
-                addChildToAugmentation(augSchema, newChild);
+                augmentationsToChild.put(augSchema, newChild);
             } else {
                 addChild(newChild);
             }
@@ -73,84 +130,26 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
         return null;
     }
 
-    private void addChildToAugmentation(final AugmentationSchema augSchema, final AbstractNodeDataWithSchema newChild) {
-        List<AbstractNodeDataWithSchema> childsInAugment = augmentationsToChild.get(augSchema);
-        if (childsInAugment == null) {
-            childsInAugment = new ArrayList<>();
-            augmentationsToChild.put(augSchema, childsInAugment);
-        }
-        childsInAugment.add(newChild);
-    }
-
-    public AbstractNodeDataWithSchema addChild(final Deque<DataSchemaNode> schemas) {
-        if (schemas.size() == 1) {
-            final DataSchemaNode childDataSchemaNode = schemas.pop();
-            return addChild(childDataSchemaNode);
-        } else {
-            DataSchemaNode choiceCandidate = schemas.pop();
-            DataSchemaNode caseCandidate = schemas.pop();
-            ChoiceNode choiceNode = null;
-            ChoiceCaseNode caseNode = null;
-            if (choiceCandidate instanceof ChoiceNode) {
-                choiceNode = (ChoiceNode) choiceCandidate;
-            } else {
-                throw new IllegalArgumentException("Awaited node of type ChoiceNode but was "
-                        + choiceCandidate.getClass().getSimpleName());
-            }
-
-            if (caseCandidate instanceof ChoiceCaseNode) {
-                caseNode = (ChoiceCaseNode) caseCandidate;
-            } else {
-                throw new IllegalArgumentException("Awaited node of type ChoiceCaseNode but was "
-                        + caseCandidate.getClass().getSimpleName());
-            }
-
-            AugmentationSchema augSchema = null;
-            if (choiceCandidate.isAugmenting()) {
-                augSchema = findCorrespondingAugment(getSchema(), choiceCandidate);
-            }
-
-            // looking for existing choice
-            List<AbstractNodeDataWithSchema> childNodes = Collections.emptyList();
-            if (augSchema != null) {
-                childNodes = augmentationsToChild.get(augSchema);
-            } else {
-                childNodes = childs;
-            }
-
-            CompositeNodeDataWithSchema caseNodeDataWithSchema = findChoice(childNodes, choiceCandidate, caseCandidate);
-            if (caseNodeDataWithSchema == null) {
-                ChoiceNodeDataWithSchema choiceNodeDataWithSchema = new ChoiceNodeDataWithSchema(choiceNode);
-                addChild(choiceNodeDataWithSchema);
-                caseNodeDataWithSchema = choiceNodeDataWithSchema.addCompositeChild(caseNode);
-            }
-
-            return caseNodeDataWithSchema.addChild(schemas);
-        }
-
-    }
-
-    private CaseNodeDataWithSchema findChoice(final List<AbstractNodeDataWithSchema> childNodes, final DataSchemaNode choiceCandidate,
+    private CaseNodeDataWithSchema findChoice(final Collection<AbstractNodeDataWithSchema> childNodes, final DataSchemaNode choiceCandidate,
             final DataSchemaNode caseCandidate) {
-        if (childNodes == null) {
-            return null;
-        }
-        for (AbstractNodeDataWithSchema nodeDataWithSchema : childNodes) {
-            if (nodeDataWithSchema instanceof ChoiceNodeDataWithSchema
-                    && nodeDataWithSchema.getSchema().getQName().equals(choiceCandidate.getQName())) {
-                CaseNodeDataWithSchema casePrevious = ((ChoiceNodeDataWithSchema) nodeDataWithSchema).getCase();
-                if (casePrevious.getSchema().getQName() != caseCandidate.getQName()) {
-                    throw new IllegalArgumentException("Data from case " + caseCandidate.getQName()
-                            + " are specified but other data from case " + casePrevious.getSchema().getQName()
-                            + " were specified erlier. Data aren't from the same case.");
+        if (childNodes != null) {
+            for (AbstractNodeDataWithSchema nodeDataWithSchema : childNodes) {
+                if (nodeDataWithSchema instanceof ChoiceNodeDataWithSchema
+                        && nodeDataWithSchema.getSchema().getQName().equals(choiceCandidate.getQName())) {
+                    CaseNodeDataWithSchema casePrevious = ((ChoiceNodeDataWithSchema) nodeDataWithSchema).getCase();
+
+                    Preconditions.checkArgument(casePrevious.getSchema().getQName().equals(caseCandidate.getQName()),
+                        "Data from case %s are specified but other data from case %s were specified erlier. Data aren't from the same case.",
+                        caseCandidate.getQName(), casePrevious.getSchema().getQName());
+
+                    return casePrevious;
                 }
-                return casePrevious;
             }
         }
         return null;
     }
 
-    public AbstractNodeDataWithSchema addCompositeChild(final DataSchemaNode schema) {
+    AbstractNodeDataWithSchema addCompositeChild(final DataSchemaNode schema) {
         CompositeNodeDataWithSchema newChild;
         if (schema instanceof ListSchemaNode) {
             newChild = new ListNodeDataWithSchema(schema);
@@ -165,10 +164,10 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
         return newChild;
     }
 
-    public void addCompositeChild(final CompositeNodeDataWithSchema newChild) {
+    void addCompositeChild(final CompositeNodeDataWithSchema newChild) {
         AugmentationSchema augSchema = findCorrespondingAugment(getSchema(), newChild.getSchema());
         if (augSchema != null) {
-            addChildToAugmentation(augSchema, newChild);
+            augmentationsToChild.put(augSchema, newChild);
         } else {
             addChild(newChild);
         }
@@ -180,14 +179,22 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
     }
 
     public void addChild(final AbstractNodeDataWithSchema newChild) {
-        childs.add(newChild);
+        children.add(newChild);
+    }
+
+    /**
+     * Return a hint about how may children we are going to generate.
+     * @return Size of currently-present node list.
+     */
+    protected final int childSizeHint() {
+        return children.size();
     }
 
     /**
      * Tries to find in {@code parent} which is dealed as augmentation target node with QName as {@code child}. If such
      * node is found then it is returned, else null.
      */
-    protected AugmentationSchema findCorrespondingAugment(final DataSchemaNode parent, final DataSchemaNode child) {
+    AugmentationSchema findCorrespondingAugment(final DataSchemaNode parent, final DataSchemaNode child) {
         if (parent instanceof AugmentationTarget) {
             for (AugmentationSchema augmentation : ((AugmentationTarget) parent).getAvailableAugmentations()) {
                 DataSchemaNode childInAugmentation = augmentation.getDataChildByName(child.getQName());
@@ -201,15 +208,13 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
 
     @Override
     public void write(final NormalizedNodeStreamWriter writer) throws IOException {
-        for (AbstractNodeDataWithSchema child : childs) {
+        for (AbstractNodeDataWithSchema child : children) {
             child.write(writer);
         }
-        for (Entry<AugmentationSchema, List<AbstractNodeDataWithSchema>> augmentationToChild : augmentationsToChild.entrySet()) {
-
-            final List<AbstractNodeDataWithSchema> childsFromAgumentation = augmentationToChild.getValue();
-
+        for (Entry<AugmentationSchema, Collection<AbstractNodeDataWithSchema>> augmentationToChild : augmentationsToChild.asMap().entrySet()) {
+            final Collection<AbstractNodeDataWithSchema> childsFromAgumentation = augmentationToChild.getValue();
             if (!childsFromAgumentation.isEmpty()) {
-                writer.startAugmentationNode(toAugmentationIdentifier(augmentationToChild));
+                writer.startAugmentationNode(toAugmentationIdentifier(augmentationToChild.getKey()));
 
                 for (AbstractNodeDataWithSchema nodeDataWithSchema : childsFromAgumentation) {
                     nodeDataWithSchema.write(writer);
@@ -220,15 +225,8 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
         }
     }
 
-    private static AugmentationIdentifier toAugmentationIdentifier(
-            final Entry<AugmentationSchema, List<AbstractNodeDataWithSchema>> augmentationToChild) {
-        Collection<DataSchemaNode> nodes = augmentationToChild.getKey().getChildNodes();
-        Set<QName> nodesQNames = new HashSet<>();
-        for (DataSchemaNode node : nodes) {
-            nodesQNames.add(node.getQName());
-        }
-
-        return new AugmentationIdentifier(nodesQNames);
+    private static AugmentationIdentifier toAugmentationIdentifier(final AugmentationSchema schema) {
+        final Collection<QName> qnames = Collections2.transform(schema.getChildNodes(), QNAME_FUNCTION);
+        return new AugmentationIdentifier(ImmutableSet.copyOf(qnames));
     }
-
 }

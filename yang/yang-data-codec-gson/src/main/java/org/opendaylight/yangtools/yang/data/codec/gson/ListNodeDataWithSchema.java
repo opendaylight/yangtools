@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.UNKNOWN_SIZE;
-
 import java.io.IOException;
 
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -23,10 +21,10 @@ class ListNodeDataWithSchema extends CompositeNodeDataWithSchema {
 
     @Override
     public void write(final NormalizedNodeStreamWriter writer) throws IOException {
-        if (!((ListSchemaNode) getSchema()).getKeyDefinition().isEmpty()) {
-            writer.startMapNode(provideNodeIdentifier(), UNKNOWN_SIZE);
+        if (((ListSchemaNode) getSchema()).getKeyDefinition().isEmpty()) {
+            writer.startUnkeyedList(provideNodeIdentifier(), childSizeHint());
         } else {
-            writer.startUnkeyedList(provideNodeIdentifier(), UNKNOWN_SIZE);
+            writer.startMapNode(provideNodeIdentifier(), childSizeHint());
         }
         super.write(writer);
         writer.endNode();
