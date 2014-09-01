@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.Augmentat
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -91,9 +92,22 @@ public final class SchemaTracker {
     private SchemaNode getSchema(final PathArgument name) {
         final Object parent = getParent();
         Preconditions.checkState(parent instanceof DataNodeContainer);
-
+        SchemaNode schema = null;
         final QName qname = name.getNodeType();
-        final SchemaNode schema = ((DataNodeContainer)parent).getDataChildByName(qname);
+        if(parent instanceof DataNodeContainer) {
+            schema = ((DataNodeContainer)parent).getDataChildByName(qname);
+
+        } else if(parent instanceof ChoiceNode) {
+            for(ChoiceCaseNode caze : ((ChoiceNode) parent).getCases()) {
+                DataSchemaNode potential = caze.getDataChildByName(qname);
+                if(potential != null) {
+                    schema = potential;
+                    break;
+                }
+            }
+        } else {
+            throw new IllegalStateException("Unsupported schema type "+ parent.getClass() +" on stack.");
+        }
         Preconditions.checkArgument(schema != null, "Could not find schema for node %s in %s", qname, parent);
         return schema;
     }
