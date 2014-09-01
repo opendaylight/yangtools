@@ -1,7 +1,19 @@
 module ext-use {
+    ext:id "http://opendaylight.org";
     yang-version 1;
+    ext:id "http://opendaylight.org";
+
+    ext:id2 "73354";
+    ext:name "test-name";
+
     namespace "urn:simple.extension.use";
+    ext:id "http://opendaylight.org";
+
+    ext:name "test-name";
+
     prefix "ext-use";
+    ext:id "http://opendaylight.org";
+    ext:name "test-name";
 
     import ext-typedef { prefix "ext"; }
 
