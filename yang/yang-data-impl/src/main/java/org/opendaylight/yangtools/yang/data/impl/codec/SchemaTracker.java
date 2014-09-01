@@ -9,19 +9,18 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
-
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
-
+import java.util.HashSet;
 import javax.xml.stream.XMLStreamWriter;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.AugmentationSchemaProxy;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
@@ -156,9 +155,15 @@ public final class SchemaTracker {
         final Object parent = getParent();
 
         Preconditions.checkArgument(parent instanceof AugmentationTarget, "Augmentation not allowed under %s", parent);
+        Preconditions.checkArgument(parent instanceof DataNodeContainer, "Augmentation allowed only in DataNodeContainer",parent);
         final AugmentationSchema schema = SchemaUtils.findSchemaForAugment((AugmentationTarget) parent, identifier.getPossibleChildNames());
-        schemaStack.push(schema);
-        return schema;
+        HashSet<DataSchemaNode> realChildSchemas = new HashSet<>();
+        for(DataSchemaNode child : schema.getChildNodes()) {
+            realChildSchemas.add(((DataNodeContainer) parent).getDataChildByName(child.getQName()));
+        }
+        AugmentationSchema resolvedSchema = new AugmentationSchemaProxy(schema, realChildSchemas);
+        schemaStack.push(resolvedSchema);
+        return resolvedSchema;
     }
 
     public AnyXmlSchemaNode anyxmlNode(final NodeIdentifier name) {
