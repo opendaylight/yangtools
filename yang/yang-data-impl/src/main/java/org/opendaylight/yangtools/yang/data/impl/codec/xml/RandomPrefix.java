@@ -8,11 +8,12 @@
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+
 import java.net.URI;
 import java.util.Map;
+
 import org.opendaylight.yangtools.yang.common.QName;
 
 final class RandomPrefix {
@@ -34,41 +35,33 @@ final class RandomPrefix {
     }
 
     String encodeQName(final QName qname) {
-        return encodePrefix(qname) + ':' + qname.getLocalName();
+        return encodePrefix(qname.getNamespace()) + ':' + qname.getLocalName();
     }
 
-    String encodePrefix(final QName qname) {
-        String prefix = prefixes.get(qname.getNamespace());
+    String encodePrefix(final URI namespace) {
+        String prefix = prefixes.get(namespace);
         if (prefix != null) {
             return prefix;
         }
 
-        // Reuse prefix from QName if possible
-        final String qNamePrefix = qname.getPrefix();
-
-        if (!Strings.isNullOrEmpty(qNamePrefix) && !qNamePrefix.startsWith("xml") && !alreadyUsedPrefix(qNamePrefix)) {
-            prefix = qNamePrefix;
-        } else {
-
-            do {
-                // Skip values starting with xml (Expecting only 4 chars max since division is calculated only once)
-                while (counter == STARTING_WITH_XML
-                        || counter / CHARACTER_RANGE == STARTING_WITH_XML) {
-                    counter++;
-                }
-
-                // Reset in case of max prefix generated
-                if (counter >= MAX_COUNTER_VALUE) {
-                    counter = 0;
-                    prefixes.clear();
-                }
-
-                prefix = encode(counter);
+        do {
+            // Skip values starting with xml (Expecting only 4 chars max since division is calculated only once)
+            while (counter == STARTING_WITH_XML
+                    || counter / CHARACTER_RANGE == STARTING_WITH_XML) {
                 counter++;
-            } while (alreadyUsedPrefix(prefix));
-        }
+            }
 
-        prefixes.put(qname.getNamespace(), prefix);
+            // Reset in case of max prefix generated
+            if (counter >= MAX_COUNTER_VALUE) {
+                counter = 0;
+                prefixes.clear();
+            }
+
+            prefix = encode(counter);
+            counter++;
+        } while (alreadyUsedPrefix(prefix));
+
+        prefixes.put(namespace, prefix);
         return prefix;
     }
 

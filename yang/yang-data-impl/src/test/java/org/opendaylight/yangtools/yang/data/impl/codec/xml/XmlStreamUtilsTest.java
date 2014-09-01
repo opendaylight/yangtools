@@ -59,7 +59,7 @@ public class XmlStreamUtilsTest {
         assertEquals(2, mappedPrefixes.size());
         final String randomPrefixValue = mappedPrefixes.get("namespace2");
 
-        final String expectedXmlAsString = "<element xmlns:prefix=\"namespace\" prefix:attr=\"value\" xmlns:" + randomPrefixValue + "=\"namespace2\" " + randomPrefixValue + ":attr=\"value\"></element>";
+        final String expectedXmlAsString = "<element xmlns:a=\"namespace\" a:attr=\"value\" xmlns:" + randomPrefixValue + "=\"namespace2\" " + randomPrefixValue + ":attr=\"value\"></element>";
 
         XMLUnit.setIgnoreAttributeOrder(true);
         final Document control = XMLUnit.buildControlDocument(expectedXmlAsString);
