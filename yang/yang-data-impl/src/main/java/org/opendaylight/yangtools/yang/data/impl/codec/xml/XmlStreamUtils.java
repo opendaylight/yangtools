@@ -204,7 +204,7 @@ public class XmlStreamUtils {
     static void writeAttribute(final XMLStreamWriter writer, final Entry<QName, String> attribute, final RandomPrefix randomPrefix)
             throws XMLStreamException {
         final QName key = attribute.getKey();
-        final String prefix = randomPrefix.encodePrefix(key);
+        final String prefix = randomPrefix.encodePrefix(key.getNamespace());
         writer.writeAttribute("xmlns:" + prefix, key.getNamespace().toString());
         writer.writeAttribute(prefix, key.getNamespace().toString(), key.getLocalName(), attribute.getValue());
     }
