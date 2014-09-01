@@ -22,8 +22,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.Augmentat
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.codec.gson.helpers.RestCodecFactory;
-import org.opendaylight.yangtools.yang.data.codec.gson.helpers.SchemaContextUtils;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -75,8 +73,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
 
     private final Deque<TypeInfo> stack = new ArrayDeque<>();
     private final SchemaContext schemaContext;
-    private final SchemaContextUtils utils;
-    private final RestCodecFactory codecs;
+    private final CodecFactory codecs;
     private final SchemaTracker tracker;
     private final Writer writer;
     private final String indent;
@@ -96,8 +93,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
             indent = null;
         }
 
-        this.utils = SchemaContextUtils.create(schemaContext);
-        this.codecs = RestCodecFactory.create(utils);
+        this.codecs = CodecFactory.create(schemaContext);
         this.tracker = SchemaTracker.create(schemaContext);
     }
 

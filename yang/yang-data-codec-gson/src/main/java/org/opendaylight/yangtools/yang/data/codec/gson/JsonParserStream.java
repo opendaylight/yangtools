@@ -21,7 +21,6 @@ import java.io.EOFException;
 import java.io.Flushable;
 import java.io.IOException;
 import java.net.URI;
-import java.security.InvalidParameterException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,11 +31,6 @@ import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.codec.gson.helpers.IdentityValuesDTO;
-import org.opendaylight.yangtools.yang.data.codec.gson.helpers.RestCodecFactory;
-import org.opendaylight.yangtools.yang.data.codec.gson.helpers.RestUtil;
-import org.opendaylight.yangtools.yang.data.codec.gson.helpers.RestUtil.PrefixMapingFromJson;
-import org.opendaylight.yangtools.yang.data.codec.gson.helpers.SchemaContextUtils;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
@@ -44,10 +38,9 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 
 /**
  * This class parses JSON elements from a GSON JsonReader. It disallows multiple elements of the same name unlike the
@@ -57,15 +50,13 @@ import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefi
 public final class JsonParserStream implements Closeable, Flushable {
     private final Deque<URI> namespaces = new ArrayDeque<>();
     private final NormalizedNodeStreamWriter writer;
-    private final SchemaContextUtils utils;
-    private final RestCodecFactory codecs;
+    private final CodecFactory codecs;
     private final SchemaContext schema;
 
     private JsonParserStream(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext) {
         this.schema = Preconditions.checkNotNull(schemaContext);
-        this.utils = SchemaContextUtils.create(schemaContext);
         this.writer = Preconditions.checkNotNull(writer);
-        this.codecs = RestCodecFactory.create(utils);
+        this.codecs = CodecFactory.create(schemaContext);
     }
 
     public static JsonParserStream create(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext) {
@@ -187,16 +178,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             return value;
         }
 
-        final Object inputValue;
-        if (typeDefinition instanceof IdentityrefTypeDefinition) {
-            inputValue = valueAsIdentityRef(value);
-        } else if (typeDefinition instanceof InstanceIdentifierTypeDefinition) {
-            inputValue = valueAsInstanceIdentifier(value);
-        } else {
-            inputValue = value;
-        }
-
-        return codecs.codecFor(typeDefinition).deserialize(inputValue);
+        return codecs.codecFor(typeDefinition).deserialize(value);
     }
 
     private static TypeDefinition<? extends Object> typeDefinition(final DataSchemaNode node) {
@@ -217,47 +199,6 @@ public final class JsonParserStream implements Closeable, Flushable {
             }
         }
         return baseType;
-    }
-
-    private static Object valueAsInstanceIdentifier(final String value) {
-        // it could be instance-identifier Built-In Type
-        if (!value.isEmpty() && value.charAt(0) == '/') {
-            IdentityValuesDTO resolvedValue = RestUtil.asInstanceIdentifier(value, new PrefixMapingFromJson());
-            if (resolvedValue != null) {
-                return resolvedValue;
-            }
-        }
-        throw new InvalidParameterException("Value for instance-identifier doesn't have correct format");
-    }
-
-    private static IdentityValuesDTO valueAsIdentityRef(final String value) {
-        // it could be identityref Built-In Type
-        URI namespace = getNamespaceFor(value);
-        if (namespace != null) {
-            return new IdentityValuesDTO(namespace.toString(), getLocalNameFor(value), null, value);
-        }
-        throw new InvalidParameterException("Value for identityref has to be in format moduleName:localName.");
-    }
-
-    private static URI getNamespaceFor(final String jsonElementName) {
-        // The string needs to me in form "moduleName:localName"
-        final int idx = jsonElementName.indexOf(':');
-        if (idx == -1 || jsonElementName.indexOf(':', idx + 1) != -1) {
-            return null;
-        }
-
-        // FIXME: is this correct? This should be looking up module name instead
-        return URI.create(jsonElementName.substring(0, idx));
-    }
-
-    private static String getLocalNameFor(final String jsonElementName) {
-        // The string needs to me in form "moduleName:localName"
-        final int idx = jsonElementName.indexOf(':');
-        if (idx == -1 || jsonElementName.indexOf(':', idx + 1) != -1) {
-            return jsonElementName;
-        }
-
-        return jsonElementName.substring(idx + 1);
     }
 
     private void removeNamespace() {
@@ -284,7 +225,9 @@ public final class JsonParserStream implements Closeable, Flushable {
         if (lastIndexOfColon != -1) {
             moduleNamePart = childName.substring(0, lastIndexOfColon);
             nodeNamePart = childName.substring(lastIndexOfColon + 1);
-            namespace = utils.findNamespaceByModuleName(moduleNamePart);
+
+            final Module m = schema.findModuleByName(moduleNamePart, null);
+            namespace = m == null ? null : m.getNamespace();
         } else {
             nodeNamePart = childName;
         }
