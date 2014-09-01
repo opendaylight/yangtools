@@ -2,26 +2,26 @@ module complexjson {
     namespace "ns:complex:json";
     prefix cj;
 
-    revision "2014-08-11" {        
+    revision "2014-08-11" {
     }
-    
-    
+
+
     identity ident;
-    
+
     container cont1 {
-    
+
         anyxml lf12-any;
         anyxml lf13-any;
         anyxml lf14-any;
-        
+
         leaf lf11 {
             type int32;
         }
-        
+
         leaf-list lflst11 {
             type string;
         }
-        
+
         list lst11 {
             key "key111 lf111";
             leaf key111 {
@@ -37,7 +37,7 @@ module complexjson {
                 type string;
             }
         }
-        
+
         list lst12 {
             leaf lf121 {
                 type string;
@@ -46,8 +46,8 @@ module complexjson {
                 type string;
             }
         }
-        
-    
+
+
         choice choc11 {
             case c11A {
                 leaf lf13 {
@@ -64,77 +64,74 @@ module complexjson {
             }
         }
     }
-    
-    
+
     augment "/cont1/choc12" {
         case c12B {
             leaf lf17 {
                 type string;
             }
         }
-    }    
-    
-    
+    }
+
     augment "/cont1" {
         container cont11 {
             leaf lf111 {
                 type string;
             }
-        }        
+        }
     }
-    
+
     augment "/cont1" {
         leaf lf12_1 {
-                    type string;
-                }
+            type string;
+        }
         leaf lf12_2 {
             type string;
         }
     }
-    
+
     augment "/cont1" {
         leaf lf12_3 {
-                    type string;
-                }
+            type string;
+        }
     }
-    
-    
+
     augment "/cont1/choc11" {
         case c11B {
             leaf lf14_1  {
-                    type string;
-                }
+                type string;
+            }
         }
     }
-    
+
     augment "/cont1/choc11" {
         case c11C {
             leaf lf14_2  {
-                    type string;
-                }
+                type string;
+            }
         }
     }
-    
+
     augment "/cont1/choc11/c11A" {
         leaf lf15_11  {
-                    type bits {
-                        bit one;
-                        bit two;
-                        bit three;                        
-                    }
-                }
+            type bits {
+                bit one;
+                bit two;
+                bit three;
+            }
+        }
         leaf lf15_12  {
-                    type identityref {
-                        base ident;
-                    }
-                }
-                
+            type identityref {
+                base ident;
+            }
+        }
+
     }
-    
+
     augment "/cont1/choc11/c11A" {
         leaf lf15_21 {
-                    type string;
-                }
+            type string;
+        }
     }
 
 }
