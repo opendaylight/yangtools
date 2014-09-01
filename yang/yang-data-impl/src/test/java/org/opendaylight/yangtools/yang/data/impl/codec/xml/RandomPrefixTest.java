@@ -13,9 +13,11 @@ import static org.junit.Assert.assertThat;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
+
 import org.hamcrest.CoreMatchers;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -48,7 +50,7 @@ public class RandomPrefixTest {
             final String prefix = RandomPrefix.encode(i);
             final URI uri = new URI("localhost:" + prefix);
             final QName qName = QName.create(QNameModule.create(uri, new Date()), prefix, "local-name");
-            allGenerated.add(a.encodePrefix(qName));
+            allGenerated.add(a.encodePrefix(qName.getNamespace()));
         }
 
         assertEquals(RandomPrefix.MAX_COUNTER_VALUE, allGenerated.size());
@@ -70,7 +72,7 @@ public class RandomPrefixTest {
         final QName qName = QName.create(QNameModule.create(uri, new Date()), "p1", "local-name");
         final QName qName2 = QName.create(QNameModule.create(uri, new Date()), "p2", "local-name");
 
-        assertEquals(a.encodePrefix(qName), a.encodePrefix(qName2));
+        assertEquals(a.encodePrefix(qName.getNamespace()), a.encodePrefix(qName2.getNamespace()));
     }
 
     @Test
@@ -79,11 +81,11 @@ public class RandomPrefixTest {
 
         final URI uri = URI.create("localhost");
         QName qName = QName.create(uri, new Date(), "local-name");
-        assertEquals("a", a.encodePrefix(qName));
+        assertEquals("a", a.encodePrefix(qName.getNamespace()));
         qName = QName.create(QNameModule.create(uri, new Date()), "", "local-name");
-        assertEquals("a", a.encodePrefix(qName));
+        assertEquals("a", a.encodePrefix(qName.getNamespace()));
         qName = QName.create(QNameModule.create(URI.create("second"), new Date()), "", "local-name");
-        assertEquals("b", a.encodePrefix(qName));
+        assertEquals("b", a.encodePrefix(qName.getNamespace()));
 
     }
 }
