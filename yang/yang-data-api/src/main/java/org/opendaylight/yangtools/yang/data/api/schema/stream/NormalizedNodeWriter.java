@@ -11,17 +11,26 @@ import static org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedN
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import javax.xml.stream.XMLStreamReader;
 
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
@@ -31,6 +40,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is an experimental iterator over a {@link NormalizedNode}. This is essentially
@@ -40,6 +51,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
  */
 @Beta
 public final class NormalizedNodeWriter implements Closeable, Flushable {
+    private static final Logger LOG = LoggerFactory.getLogger(NormalizedNodeWriter.class);
     private final NormalizedNodeStreamWriter writer;
 
     private NormalizedNodeWriter(final NormalizedNodeStreamWriter writer) {
@@ -114,10 +126,42 @@ public final class NormalizedNodeWriter implements Closeable, Flushable {
             final MapEntryNode n = (MapEntryNode) node;
             writer.startMapEntryNode(n.getIdentifier(), UNKNOWN_SIZE);
 
-            // FIXME: BUG-1668: we need to emit keyed items first and then suppress
-            //        them from iteration.
+            // Reconstruct the QName -> Node mapping
+            final Map<QName, NormalizedNode<?, ?>> keys = new HashMap<>();
+            final Set<QName> qnames = n.getIdentifier().getKeyValues().keySet();
+            for (DataContainerChild<? extends PathArgument, ?> child : n.getValue()) {
+                // Break as soon as we have all children
+                if (qnames.size() == keys.size()) {
+                    break;
+                }
 
-            return writeChildren(n.getValue());
+                // Augmentations do not have a QName
+                final PathArgument pa = child.getIdentifier();
+                if (!(pa instanceof AugmentationIdentifier)) {
+                    final QName qname = pa.getNodeType();
+                    if (qnames.contains(qname)) {
+                        keys.put(qname, child);
+                    }
+                }
+            }
+
+            // Write out all the key children
+            for (QName qname : qnames) {
+                final NormalizedNode<?, ?> child = keys.get(qname);
+                if (child != null) {
+                    write(child);
+                } else {
+                    LOG.debug("No child for key element {} found", qname);
+                }
+            }
+
+            // Write all the rest
+            return writeChildren(Iterables.filter(n.getValue(), new Predicate<NormalizedNode<?, ?>>() {
+                @Override
+                public boolean apply(final NormalizedNode<?, ?> input) {
+                    return input instanceof AugmentationNode || !qnames.contains(input.getNodeType());
+                }
+            }));
         }
         if (node instanceof UnkeyedListEntryNode) {
             final UnkeyedListEntryNode n = (UnkeyedListEntryNode) node;
