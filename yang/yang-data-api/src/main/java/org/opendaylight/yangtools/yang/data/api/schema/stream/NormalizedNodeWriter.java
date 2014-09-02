@@ -94,48 +94,69 @@ public final class NormalizedNodeWriter implements Closeable, Flushable {
         return false;
     }
 
+
+    private boolean writeChildren(final Iterable<? extends NormalizedNode<?, ?>> children) throws IOException {
+        for (NormalizedNode<?, ?> child : children) {
+            write(child);
+        }
+
+        writer.endNode();
+        return true;
+    }
+
     private boolean wasProcessedAsCompositeNode(final NormalizedNode<?, ?> node) throws IOException {
-        boolean hasDataContainerChild = false;
         if (node instanceof ContainerNode) {
-            writer.startContainerNode(((ContainerNode) node).getIdentifier(), UNKNOWN_SIZE);
-            hasDataContainerChild = true;
-        } else if (node instanceof MapEntryNode) {
-            writer.startMapEntryNode(((MapEntryNode) node).getIdentifier(), UNKNOWN_SIZE);
-            hasDataContainerChild = true;
-        } else if (node instanceof UnkeyedListEntryNode) {
-            writer.startUnkeyedListItem(((UnkeyedListEntryNode) node).getIdentifier(), UNKNOWN_SIZE);
-            hasDataContainerChild = true;
-        } else if (node instanceof ChoiceNode) {
-            writer.startChoiceNode(((ChoiceNode) node).getIdentifier(), UNKNOWN_SIZE);
-            hasDataContainerChild = true;
-        } else if (node instanceof AugmentationNode) {
-            writer.startAugmentationNode(((AugmentationNode) node).getIdentifier());
-            hasDataContainerChild = true;
-        } else if (node instanceof UnkeyedListNode) {
-            writer.startUnkeyedList(((UnkeyedListNode) node).getIdentifier(), UNKNOWN_SIZE);
-            hasDataContainerChild = true;
-        } else if (node instanceof OrderedMapNode) {
-            writer.startOrderedMapNode(((OrderedMapNode) node).getIdentifier(), UNKNOWN_SIZE);
-            hasDataContainerChild = true;
-        } else if (node instanceof MapNode) {
-            writer.startMapNode(((MapNode) node).getIdentifier(), UNKNOWN_SIZE);
-            hasDataContainerChild = true;
-          //covers also OrderedLeafSetNode for which doesn't exist start* method
-        } else if (node instanceof LeafSetNode) {
-            writer.startLeafSet(((LeafSetNode<?>) node).getIdentifier(), UNKNOWN_SIZE);
-            hasDataContainerChild = true;
+            final ContainerNode n = (ContainerNode) node;
+            writer.startContainerNode(n.getIdentifier(), UNKNOWN_SIZE);
+            return writeChildren(n.getValue());
+        }
+        if (node instanceof MapEntryNode) {
+            final MapEntryNode n = (MapEntryNode) node;
+            writer.startMapEntryNode(n.getIdentifier(), UNKNOWN_SIZE);
+
+            // FIXME: BUG-1668: we need to emit keyed items first and then suppress
+            //        them from iteration.
+
+            return writeChildren(n.getValue());
+        }
+        if (node instanceof UnkeyedListEntryNode) {
+            final UnkeyedListEntryNode n = (UnkeyedListEntryNode) node;
+            writer.startUnkeyedListItem(n.getIdentifier(), UNKNOWN_SIZE);
+            return writeChildren(n.getValue());
+        }
+        if (node instanceof ChoiceNode) {
+            final ChoiceNode n = (ChoiceNode) node;
+            writer.startChoiceNode(n.getIdentifier(), UNKNOWN_SIZE);
+            return writeChildren(n.getValue());
+        }
+        if (node instanceof AugmentationNode) {
+            final AugmentationNode n = (AugmentationNode) node;
+            writer.startAugmentationNode(n.getIdentifier());
+            return writeChildren(n.getValue());
+        }
+        if (node instanceof UnkeyedListNode) {
+            final UnkeyedListNode n = (UnkeyedListNode) node;
+            writer.startUnkeyedList(n.getIdentifier(), UNKNOWN_SIZE);
+            return writeChildren(n.getValue());
+        }
+        if (node instanceof OrderedMapNode) {
+            final OrderedMapNode n = (OrderedMapNode) node;
+            writer.startOrderedMapNode(n.getIdentifier(), UNKNOWN_SIZE);
+            return writeChildren(n.getValue());
+        }
+        if (node instanceof MapNode) {
+            final MapNode n = (MapNode) node;
+            writer.startMapNode(n.getIdentifier(), UNKNOWN_SIZE);
+            return writeChildren(n.getValue());
+        }
+        if (node instanceof LeafSetNode) {
+            //covers also OrderedLeafSetNode for which doesn't exist start* method
+            final LeafSetNode<?> n = (LeafSetNode<?>) node;
+            writer.startLeafSet(n.getIdentifier(), UNKNOWN_SIZE);
+            return writeChildren(n.getValue());
         }
 
-        if (hasDataContainerChild) {
-            for (NormalizedNode<?, ?> childNode : ((NormalizedNode<?, Iterable<NormalizedNode<?, ?>>>) node).getValue()) {
-                write(childNode);
-            }
-
-            writer.endNode();
-            return true;
-        }
         return false;
-
     }
 
     @Override
