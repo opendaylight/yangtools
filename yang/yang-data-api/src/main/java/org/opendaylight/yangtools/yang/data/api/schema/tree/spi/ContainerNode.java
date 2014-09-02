@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,81 +19,34 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedNodeContainer;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-
 /**
  * A TreeNode capable of holding child nodes. The fact that any of the children
  * changed is tracked by the subtree version.
  */
-final class ContainerNode extends AbstractTreeNode {
-    private final Map<PathArgument, TreeNode> children;
+abstract class ContainerNode extends AbstractTreeNode {
     private final Version subtreeVersion;
 
-    protected ContainerNode(final NormalizedNode<?, ?> data, final Version version,
-            final Map<PathArgument, TreeNode> children, final Version subtreeVersion) {
+    protected ContainerNode(final NormalizedNode<?, ?> data, final Version version, final Version subtreeVersion) {
         super(data, version);
-        this.children = Preconditions.checkNotNull(children);
         this.subtreeVersion = Preconditions.checkNotNull(subtreeVersion);
     }
 
     @Override
-    public Version getSubtreeVersion() {
+    public final Version getSubtreeVersion() {
         return subtreeVersion;
     }
 
-    @Override
-    public Optional<TreeNode> getChild(final PathArgument key) {
-        Optional<TreeNode> explicitNode = Optional.fromNullable(children.get(key));
-        if (explicitNode.isPresent()) {
-            return explicitNode;
-        }
-        final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> castedData = (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>) getData();
-        Optional<NormalizedNode<?, ?>> value = castedData.getChild(key);
-        if (value.isPresent()) {
-            //FIXME: consider caching created Tree Nodes.
-            //We are safe to not to cache them, since written Tree Nodes are in read only snapshot.
-            return Optional.of(TreeNodeFactory.createTreeNode(value.get(), getVersion()));
-        }
-        return Optional.absent();
-    }
-
-    @Override
-    public MutableTreeNode mutable() {
-        return new Mutable(this);
-    }
-
-    private static final class Mutable implements MutableTreeNode {
+    protected static final class Mutable implements MutableTreeNode {
         private final Version version;
         private Map<PathArgument, TreeNode> children;
         private NormalizedNode<?, ?> data;
         private Version subtreeVersion;
 
-        private Mutable(final ContainerNode parent) {
+        Mutable(final ContainerNode parent, final Map<PathArgument, TreeNode> children) {
             this.data = parent.getData();
-            this.children = MapAdaptor.getDefaultInstance().takeSnapshot(parent.children);
-            this.subtreeVersion = parent.getSubtreeVersion();
             this.version = parent.getVersion();
-            materializeChildVersion();
-        }
-
-        /**
-         * Traverse whole data tree and instantiate children for each data node. Set version of each MutableTreeNode
-         * accordingly to version in data node.
-         *
-         * Use this method if TreeNode is lazy initialized.
-         */
-        private void materializeChildVersion() {
-            Preconditions.checkState(data instanceof NormalizedNodeContainer);
-            NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> castedData = (NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>>) data;
-
-            for(NormalizedNode<?, ?> childData : castedData.getValue()) {
-                PathArgument id = childData.getIdentifier();
-
-                if (!children.containsKey(id)) {
-                    children.put(id, TreeNodeFactory.createTreeNode(childData, version));
-                }
-            }
+            this.subtreeVersion = parent.getSubtreeVersion();
+            this.children = Preconditions.checkNotNull(children);
         }
 
         @Override
@@ -115,7 +71,7 @@ final class ContainerNode extends AbstractTreeNode {
 
         @Override
         public TreeNode seal() {
-            final TreeNode ret = new ContainerNode(data, version, MapAdaptor.getDefaultInstance().optimize(children), subtreeVersion);
+            final TreeNode ret = new MaterializedContainerNode(data, version, MapAdaptor.getDefaultInstance().optimize(children), subtreeVersion);
 
             // This forces a NPE if this class is accessed again. Better than corruption.
             children = null;
@@ -151,7 +107,7 @@ final class ContainerNode extends AbstractTreeNode {
             map.put(child.getIdentifier(), TreeNodeFactory.createTreeNodeRecursively(child, version));
         }
 
-        return new ContainerNode(data, version, map, version);
+        return new MaterializedContainerNode(data, version, map, version);
     }
 
     /**
@@ -197,7 +153,7 @@ final class ContainerNode extends AbstractTreeNode {
      */
     public static ContainerNode createNormalizedNode(final Version version,
         final NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container) {
-        return createNode(version, container);
+        return new LazyContainerNode(container, version);
     }
 
     /**
@@ -209,18 +165,6 @@ final class ContainerNode extends AbstractTreeNode {
      */
     public static ContainerNode createOrderedNode(final Version version,
         final OrderedNodeContainer<NormalizedNode<?, ?>> container) {
-        return createNode(version, container);
-    }
-
-    /**
-     * Creates and returns single instance of {@link ContainerNode} with provided version and data reference stored in NormalizedNode.
-     *
-     * @param version version of indexed data
-     * @param data NormalizedNode data container
-     * @return single instance of {@link ContainerNode} with provided version and data reference stored in NormalizedNode.
-     */
-    private static ContainerNode createNode(final Version version, final NormalizedNode<?, ?> data) {
-        final Map<PathArgument, TreeNode> map = new HashMap<>();
-        return new ContainerNode(data, version, map, version);
+        return new LazyContainerNode(container, version);
     }
 }
