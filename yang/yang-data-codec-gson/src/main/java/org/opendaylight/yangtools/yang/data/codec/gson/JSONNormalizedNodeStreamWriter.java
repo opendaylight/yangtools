@@ -97,7 +97,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
     }
 
     private JSONNormalizedNodeStreamWriter(final SchemaContext schemaContext, final SchemaPath path,
-            final Writer writer, final int indentSize) {
+            final Writer writer, final URI initialNs,final int indentSize) {
         this.schemaContext = Preconditions.checkNotNull(schemaContext);
         this.writer = Preconditions.checkNotNull(writer);
 
@@ -107,7 +107,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         } else {
             indent = null;
         }
-
+        this.currentNamespace = initialNs;
         this.codecs = CodecFactory.create(schemaContext);
         this.tracker = SchemaTracker.create(schemaContext,path);
     }
@@ -131,7 +131,19 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * @return A stream writer instance
      */
     public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, SchemaPath path,final Writer writer) {
-        return new JSONNormalizedNodeStreamWriter(schemaContext, path, writer, 0);
+        return new JSONNormalizedNodeStreamWriter(schemaContext, path, writer, null, 0);
+    }
+
+    /**
+     * Create a new stream writer, which writes to the specified {@link Writer}.
+     *
+     * @param schemaContext Schema context
+     * @param writer Output writer
+     * @param initialNs Initial namespace
+     * @return A stream writer instance
+     */
+    public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, SchemaPath path,URI initialNs, final Writer writer) {
+        return new JSONNormalizedNodeStreamWriter(schemaContext, path, writer, initialNs, 0);
     }
 
     /**
