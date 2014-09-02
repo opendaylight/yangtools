@@ -10,14 +10,20 @@ package org.opendaylight.yangtools.yang.data.api.schema.stream;
 import static org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.UNKNOWN_SIZE;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
+import java.util.Set;
 
 import javax.xml.stream.XMLStreamReader;
 
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
@@ -31,6 +37,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is an experimental iterator over a {@link NormalizedNode}. This is essentially
@@ -39,21 +47,47 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
  * us to write multiple nodes.
  */
 @Beta
-public final class NormalizedNodeWriter implements Closeable, Flushable {
+public class NormalizedNodeWriter implements Closeable, Flushable {
     private final NormalizedNodeStreamWriter writer;
 
     private NormalizedNodeWriter(final NormalizedNodeStreamWriter writer) {
         this.writer = Preconditions.checkNotNull(writer);
     }
 
+    protected final NormalizedNodeStreamWriter getWriter() {
+        return writer;
+    }
+
     /**
      * Create a new writer backed by a {@link NormalizedNodeStreamWriter}.
      *
-     * @param writer Backend writer
+     * @param writer Back-end writer
      * @return A new instance.
      */
     public static NormalizedNodeWriter forStreamWriter(final NormalizedNodeStreamWriter writer) {
-        return new NormalizedNodeWriter(writer);
+        return forStreamWriter(writer, true);
+    }
+
+    /**
+     * Create a new writer backed by a {@link NormalizedNodeStreamWriter}. Unlike the simple {@link #forStreamWriter(NormalizedNodeStreamWriter)}
+     * method, this allows the caller to switch off RFC6020 XML compliance, providing better
+     * throughput. The reason is that the XML mapping rules in RFC6020 require the encoding
+     * to emit leaf nodes which participate in a list's key first and in the order in which
+     * they are defined in the key. For JSON, this requirement is completely relaxed and leaves
+     * can be ordered in any way we see fit. The former requires a bit of work: first a lookup
+     * for each key and then for each emitted node we need to check whether it was already
+     * emitted.
+     *
+     * @param writer Back-end writer
+     * @param orderKeyLeaves whether the returned instance should be RFC6020 XML compliant.
+     * @return A new instance.
+     */
+    public static NormalizedNodeWriter forStreamWriter(final NormalizedNodeStreamWriter writer, final boolean orderKeyLeaves) {
+        if (orderKeyLeaves) {
+            return new OrderedNormalizedNodeWriter(writer);
+        } else {
+            return new NormalizedNodeWriter(writer);
+        }
     }
 
     /**
@@ -94,14 +128,25 @@ public final class NormalizedNodeWriter implements Closeable, Flushable {
         return false;
     }
 
-
-    private boolean writeChildren(final Iterable<? extends NormalizedNode<?, ?>> children) throws IOException {
+    /**
+     * Emit events for all children and then emit an endNode() event.
+     *
+     * @param children Child iterable
+     * @return True
+     * @throws IOException when the writer reports it
+     */
+    protected boolean writeChildren(final Iterable<? extends NormalizedNode<?, ?>> children) throws IOException {
         for (NormalizedNode<?, ?> child : children) {
             write(child);
         }
 
         writer.endNode();
         return true;
+    }
+
+    protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
+        writer.startMapEntryNode(node.getIdentifier(), UNKNOWN_SIZE);
+        return writeChildren(node.getValue());
     }
 
     private boolean wasProcessedAsCompositeNode(final NormalizedNode<?, ?> node) throws IOException {
@@ -111,13 +156,7 @@ public final class NormalizedNodeWriter implements Closeable, Flushable {
             return writeChildren(n.getValue());
         }
         if (node instanceof MapEntryNode) {
-            final MapEntryNode n = (MapEntryNode) node;
-            writer.startMapEntryNode(n.getIdentifier(), UNKNOWN_SIZE);
-
-            // FIXME: BUG-1668: we need to emit keyed items first and then suppress
-            //        them from iteration.
-
-            return writeChildren(n.getValue());
+            return writeMapEntryNode((MapEntryNode) node);
         }
         if (node instanceof UnkeyedListEntryNode) {
             final UnkeyedListEntryNode n = (UnkeyedListEntryNode) node;
@@ -167,5 +206,45 @@ public final class NormalizedNodeWriter implements Closeable, Flushable {
     @Override
     public void close() throws IOException {
         writer.close();
+    }
+
+    private static final class OrderedNormalizedNodeWriter extends NormalizedNodeWriter {
+        private static final Logger LOG = LoggerFactory.getLogger(OrderedNormalizedNodeWriter.class);
+
+        OrderedNormalizedNodeWriter(final NormalizedNodeStreamWriter writer) {
+            super(writer);
+        }
+
+        @Override
+        protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
+            getWriter().startMapEntryNode(node.getIdentifier(), UNKNOWN_SIZE);
+
+            final Set<QName> qnames = node.getIdentifier().getKeyValues().keySet();
+            // Write out all the key children
+            for (QName qname : qnames) {
+                final Optional<? extends NormalizedNode<?, ?>> child = node.getChild(new NodeIdentifier(qname));
+                if (child.isPresent()) {
+                    write(child.get());
+                } else {
+                    LOG.info("No child for key element {} found", qname);
+                }
+            }
+
+            // Write all the rest
+            return writeChildren(Iterables.filter(node.getValue(), new Predicate<NormalizedNode<?, ?>>() {
+                @Override
+                public boolean apply(final NormalizedNode<?, ?> input) {
+                    if (input instanceof AugmentationNode) {
+                        return true;
+                    }
+                    if (!qnames.contains(input.getNodeType())) {
+                        return true;
+                    }
+
+                    LOG.debug("Skipping key child {}", input);
+                    return false;
+                }
+            }));
+        }
     }
 }
