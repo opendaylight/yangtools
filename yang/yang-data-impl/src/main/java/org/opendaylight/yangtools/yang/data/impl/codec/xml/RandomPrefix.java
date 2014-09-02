@@ -8,34 +8,37 @@
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
 import java.net.URI;
 import java.util.Map;
 
-import org.opendaylight.yangtools.yang.common.QName;
+import javax.xml.namespace.NamespaceContext;
 
-final class RandomPrefix {
-
-    public static final char STARTING_CHAR = 'a';
-    public static final int CHARACTER_RANGE = 26;
-    public static final int PREFIX_MAX_LENGTH = 4;
-
-    public static final int MAX_COUNTER_VALUE = (int) Math.pow(CHARACTER_RANGE, PREFIX_MAX_LENGTH);
-    private static final int STARTING_WITH_XML = decode("xml");
+class RandomPrefix {
+    // 32 characters, carefully chosen
+    private static final String LOOKUP = "abcdefghiknoprstABCDEFGHIKNOPRST";
+    private static final int MASK = 0x1f;
+    private static final int SHIFT = 5;
 
     private int counter = 0;
 
     // BiMap to make values lookup faster
     private final BiMap<URI, String> prefixes = HashBiMap.create();
+    private final NamespaceContext context;
+
+    RandomPrefix() {
+        this.context = null;
+    }
+
+    RandomPrefix(final NamespaceContext context) {
+        this.context = Preconditions.checkNotNull(context);
+    }
 
     Iterable<Map.Entry<URI, String>> getPrefixes() {
         return prefixes.entrySet();
-    }
-
-    String encodeQName(final QName qname) {
-        return encodePrefix(qname.getNamespace()) + ':' + qname.getLocalName();
     }
 
     String encodePrefix(final URI namespace) {
@@ -45,18 +48,6 @@ final class RandomPrefix {
         }
 
         do {
-            // Skip values starting with xml (Expecting only 4 chars max since division is calculated only once)
-            while (counter == STARTING_WITH_XML
-                    || counter / CHARACTER_RANGE == STARTING_WITH_XML) {
-                counter++;
-            }
-
-            // Reset in case of max prefix generated
-            if (counter >= MAX_COUNTER_VALUE) {
-                counter = 0;
-                prefixes.clear();
-            }
-
             prefix = encode(counter);
             counter++;
         } while (alreadyUsedPrefix(prefix));
@@ -66,30 +57,29 @@ final class RandomPrefix {
     }
 
     private boolean alreadyUsedPrefix(final String prefix) {
-        return prefixes.values().contains(prefix);
+        return context != null && context.getNamespaceURI(prefix) != null;
     }
 
     @VisibleForTesting
-    static int decode(final String s) {
-        int num = 0;
-        for (final char ch : s.toCharArray()) {
-            num *= CHARACTER_RANGE;
-            num += (ch - STARTING_CHAR);
+    static int decode(final String str) {
+        int ret = 0;
+        for (char c : str.toCharArray()) {
+            int idx = LOOKUP.indexOf(c);
+            Preconditions.checkArgument(idx != -1, "Invalid string %s", str);
+            ret = (ret << SHIFT) + idx;
         }
-        return num;
+
+        return ret;
     }
 
     @VisibleForTesting
     static String encode(int num) {
-        if (num == 0) {
-            return "a";
-        }
-
         final StringBuilder sb = new StringBuilder();
-        while (num != 0) {
-            sb.append(((char) (num % CHARACTER_RANGE + STARTING_CHAR)));
-            num /= CHARACTER_RANGE;
-        }
+
+        do {
+            sb.append(LOOKUP.charAt(num & MASK));
+            num >>>= SHIFT;
+        } while (num != 0);
 
         return sb.reverse().toString();
     }

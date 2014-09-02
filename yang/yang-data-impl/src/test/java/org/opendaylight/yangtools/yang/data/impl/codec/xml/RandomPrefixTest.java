@@ -24,20 +24,21 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
 public class RandomPrefixTest {
+    static final int MAX_COUNTER = 4000;
 
     @Test
     public void testEncodeDecode() throws Exception {
+
         final List<String> allGenerated = Lists.newArrayList();
-        for (int i = 0; i < RandomPrefix.MAX_COUNTER_VALUE; i++) {
+        for (int i = 0; i < MAX_COUNTER; i++) {
             final String encoded = RandomPrefix.encode(i);
             assertEquals(RandomPrefix.decode(encoded), i);
             allGenerated.add(encoded);
         }
 
-        assertEquals(allGenerated.size(), RandomPrefix.MAX_COUNTER_VALUE);
-        assertEquals("zzzz", allGenerated.get(RandomPrefix.MAX_COUNTER_VALUE - 1));
+        assertEquals(allGenerated.size(), MAX_COUNTER);
+        assertEquals("dPT", allGenerated.get(MAX_COUNTER - 1));
         assertEquals("a", allGenerated.get(0));
-        assertEquals("xml", allGenerated.get(RandomPrefix.decode("xml")));
         assertEquals(allGenerated.size(), Sets.newHashSet(allGenerated).size());
     }
 
@@ -46,22 +47,22 @@ public class RandomPrefixTest {
         final RandomPrefix a = new RandomPrefix();
 
         final List<String> allGenerated = Lists.newArrayList();
-        for (int i = 0; i < RandomPrefix.MAX_COUNTER_VALUE; i++) {
+        for (int i = 0; i < MAX_COUNTER; i++) {
             final String prefix = RandomPrefix.encode(i);
             final URI uri = new URI("localhost:" + prefix);
-            final QName qName = QName.create(QNameModule.create(uri, new Date()), prefix, "local-name");
+            final QName qName = QName.create(QNameModule.create(uri, new Date()), "local-name");
             allGenerated.add(a.encodePrefix(qName.getNamespace()));
         }
 
-        assertEquals(RandomPrefix.MAX_COUNTER_VALUE, allGenerated.size());
+        assertEquals(MAX_COUNTER, allGenerated.size());
         // We are generating MAX_COUNTER_VALUE + 27 prefixes total, so we should encounter a reset in prefix a start from 0 at some point
         // At the end, there should be only 27 values in RandomPrefix cache
-        assertEquals(27, Iterables.size(a.getPrefixes()));
+        assertEquals(MAX_COUNTER, Iterables.size(a.getPrefixes()));
         assertThat(allGenerated, CoreMatchers.not(CoreMatchers.hasItem("xml")));
         assertThat(allGenerated, CoreMatchers.not(CoreMatchers.hasItem("xmla")));
         assertThat(allGenerated, CoreMatchers.not(CoreMatchers.hasItem("xmlz")));
 
-        assertEquals(2, Iterables.frequency(allGenerated, "a"));
+        assertEquals(1, Iterables.frequency(allGenerated, "a"));
     }
 
     @Test
