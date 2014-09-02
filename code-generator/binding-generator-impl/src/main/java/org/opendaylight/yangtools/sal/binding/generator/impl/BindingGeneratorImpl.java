@@ -318,8 +318,9 @@ public class BindingGeneratorImpl implements BindingGenerator {
             genCtx.get(module).addChildNodeType(node, genType);
             groupingsToGenTypes(module, ((DataNodeContainer) node).getGroupings());
             processUsesAugments((DataNodeContainer) node, module);
-            if (node.isAddedByUses() || node.isAugmenting())
+            if (node.isAddedByUses() || node.isAugmenting()) {
                 genType.setSuitableForBoxing(false);
+            }
         }
         return genType;
     }
@@ -333,8 +334,9 @@ public class BindingGeneratorImpl implements BindingGenerator {
             hasWhenCondition = contNode.getConstraints().getWhenCondition() != null;
             hasMustConstraints = !isNullOrEmpty(contNode.getConstraints().getMustConstraints());
 
-            if (hasWhenCondition || hasMustConstraints)
+            if (hasWhenCondition || hasMustConstraints) {
                 return true;
+            }
         }
         return false;
     }
@@ -348,14 +350,16 @@ public class BindingGeneratorImpl implements BindingGenerator {
             resolveDataSchemaNodes(module, basePackageName, genType, genType, node.getChildNodes());
 
             final String parentName = parent.getName();
-            final String childOfName = childOf.getName();
+            final String childOfName = childOf != null ? childOf.getName() : "";
 
-            if (parent != null && !parent.getName().contains("Data"))
+            if (parent != null && !parent.getName().contains("Data")) {
                 genType.setParentType(parent);
+            }
             genType.setSuitableForBoxing(hasOnlyOneChild(node) && !hasWhenOrMustConstraints(node));
 
-            if (parentName.equals(childOfName))
+            if (parentName.equals(childOfName)) {
                 genType.setSuitableForBoxing(false);
+            }
         }
     }
 
@@ -370,7 +374,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         final GeneratedTypeBuilder genType = processDataSchemaNode(module, basePackageName, childOf, node);
 
         if (genType != null) {
-            if (!parent.getName().equals(childOf) && !parent.getName().contains("Data")) {
+            if ((childOf != null) && !parent.getName().equals(childOf) && !parent.getName().contains("Data")) {
                 genType.setParentType(parent);
             }
             constructGetter(parent, node.getQName().getLocalName(), node.getDescription(), Types.listTypeFor(genType));
