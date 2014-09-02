@@ -8,7 +8,9 @@
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import java.util.Map;
+
 import javax.annotation.Nonnull;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -44,16 +46,23 @@ public final class XmlUtils {
         StringBuilder textContent = new StringBuilder();
         for (PathArgument pathArgument : id.getPathArguments()) {
             textContent.append('/');
-            textContent.append(prefixes.encodeQName(pathArgument.getNodeType()));
+
+            final QName nt = pathArgument.getNodeType();
+            textContent.append(prefixes.encodePrefix(nt.getNamespace()));
+            textContent.append(':');
+            textContent.append(nt.getLocalName());
+
             if (pathArgument instanceof NodeIdentifierWithPredicates) {
                 Map<QName, Object> predicates = ((NodeIdentifierWithPredicates) pathArgument).getKeyValues();
 
                 for (Map.Entry<QName, Object> entry : predicates.entrySet()) {
-                    String predicateValue = String.valueOf(entry.getValue());
+                    final QName key = entry.getKey();
                     textContent.append('[');
-                    textContent.append(prefixes.encodeQName(entry.getKey()));
+                    textContent.append(prefixes.encodePrefix(key.getNamespace()));
+                    textContent.append(':');
+                    textContent.append(key.getLocalName());
                     textContent.append("='");
-                    textContent.append(predicateValue);
+                    textContent.append(String.valueOf(entry.getValue()));
                     textContent.append("']");
                 }
             } else if (pathArgument instanceof NodeWithValue) {
