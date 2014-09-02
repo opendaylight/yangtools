@@ -14,7 +14,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
-
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,9 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
 import javax.annotation.concurrent.Immutable;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
@@ -202,7 +199,7 @@ final class SchemaContextImpl implements SchemaContext {
 
     @Override
     public SchemaPath getPath() {
-        return null;
+        return SchemaPath.ROOT;
     }
 
     @Override
