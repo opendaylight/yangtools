@@ -18,6 +18,7 @@ import com.google.common.collect.Iterables;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Set;
 
 import javax.xml.stream.XMLStreamReader;
@@ -98,7 +99,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
      * @return
      * @throws IOException when thrown from the backing writer.
      */
-    public NormalizedNodeWriter write(final NormalizedNode<?, ?> node) throws IOException {
+    public final NormalizedNodeWriter write(final NormalizedNode<?, ?> node) throws IOException {
         if (wasProcessedAsCompositeNode(node)) {
             return this;
         }
@@ -108,6 +109,18 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         }
 
         throw new IllegalStateException("It wasn't possible to serialize node " + node);
+    }
+
+    /**
+     * Emit a best guess of a hint for a particular set of children. It evaluates the
+     * iterable to see if the size can be easily gotten to. If it is, we hint at the
+     * real number of child nodes. Otherwise we emit UNKNOWN_SIZE.
+     *
+     * @param children Child nodes
+     * @return Best estimate of the collection size required to hold all the children.
+     */
+    static final int childSizeHint(final Iterable<?> children) {
+        return (children instanceof Collection) ? ((Collection<?>) children).size() : UNKNOWN_SIZE;
     }
 
     private boolean wasProcessAsSimpleNode(final NormalizedNode<?, ?> node) throws IOException {
@@ -135,7 +148,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
      * @return True
      * @throws IOException when the writer reports it
      */
-    protected boolean writeChildren(final Iterable<? extends NormalizedNode<?, ?>> children) throws IOException {
+    protected final boolean writeChildren(final Iterable<? extends NormalizedNode<?, ?>> children) throws IOException {
         for (NormalizedNode<?, ?> child : children) {
             write(child);
         }
@@ -145,14 +158,14 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
     }
 
     protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
-        writer.startMapEntryNode(node.getIdentifier(), UNKNOWN_SIZE);
+        writer.startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()));
         return writeChildren(node.getValue());
     }
 
     private boolean wasProcessedAsCompositeNode(final NormalizedNode<?, ?> node) throws IOException {
         if (node instanceof ContainerNode) {
             final ContainerNode n = (ContainerNode) node;
-            writer.startContainerNode(n.getIdentifier(), UNKNOWN_SIZE);
+            writer.startContainerNode(n.getIdentifier(), childSizeHint(n.getValue()));
             return writeChildren(n.getValue());
         }
         if (node instanceof MapEntryNode) {
@@ -160,12 +173,12 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         }
         if (node instanceof UnkeyedListEntryNode) {
             final UnkeyedListEntryNode n = (UnkeyedListEntryNode) node;
-            writer.startUnkeyedListItem(n.getIdentifier(), UNKNOWN_SIZE);
+            writer.startUnkeyedListItem(n.getIdentifier(), childSizeHint(n.getValue()));
             return writeChildren(n.getValue());
         }
         if (node instanceof ChoiceNode) {
             final ChoiceNode n = (ChoiceNode) node;
-            writer.startChoiceNode(n.getIdentifier(), UNKNOWN_SIZE);
+            writer.startChoiceNode(n.getIdentifier(), childSizeHint(n.getValue()));
             return writeChildren(n.getValue());
         }
         if (node instanceof AugmentationNode) {
@@ -175,23 +188,23 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         }
         if (node instanceof UnkeyedListNode) {
             final UnkeyedListNode n = (UnkeyedListNode) node;
-            writer.startUnkeyedList(n.getIdentifier(), UNKNOWN_SIZE);
+            writer.startUnkeyedList(n.getIdentifier(), childSizeHint(n.getValue()));
             return writeChildren(n.getValue());
         }
         if (node instanceof OrderedMapNode) {
             final OrderedMapNode n = (OrderedMapNode) node;
-            writer.startOrderedMapNode(n.getIdentifier(), UNKNOWN_SIZE);
+            writer.startOrderedMapNode(n.getIdentifier(), childSizeHint(n.getValue()));
             return writeChildren(n.getValue());
         }
         if (node instanceof MapNode) {
             final MapNode n = (MapNode) node;
-            writer.startMapNode(n.getIdentifier(), UNKNOWN_SIZE);
+            writer.startMapNode(n.getIdentifier(), childSizeHint(n.getValue()));
             return writeChildren(n.getValue());
         }
         if (node instanceof LeafSetNode) {
             //covers also OrderedLeafSetNode for which doesn't exist start* method
             final LeafSetNode<?> n = (LeafSetNode<?>) node;
-            writer.startLeafSet(n.getIdentifier(), UNKNOWN_SIZE);
+            writer.startLeafSet(n.getIdentifier(), childSizeHint(n.getValue()));
             return writeChildren(n.getValue());
         }
 
@@ -217,7 +230,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
 
         @Override
         protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
-            getWriter().startMapEntryNode(node.getIdentifier(), UNKNOWN_SIZE);
+            getWriter().startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()));
 
             final Set<QName> qnames = node.getIdentifier().getKeyValues().keySet();
             // Write out all the key children
