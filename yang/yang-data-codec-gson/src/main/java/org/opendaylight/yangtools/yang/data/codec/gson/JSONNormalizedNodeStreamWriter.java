@@ -226,9 +226,10 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
     public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint)
             throws IOException {
         tracker.startListItem(identifier);
-
-        stack.push(new TypeInfo(NodeType.OBJECT, identifier.getNodeType().getNamespace()));
         separateElementFromPreviousElement();
+        stack.push(new TypeInfo(NodeType.OBJECT, identifier.getNodeType().getNamespace()));
+
+
         writeStartObject();
         indentRight();
     }
