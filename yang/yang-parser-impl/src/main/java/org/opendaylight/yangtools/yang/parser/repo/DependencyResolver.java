@@ -7,17 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
-
+import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -25,6 +22,12 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
 
 /**
  * Inter-module dependency resolved. Given a set of schema source identifiers and their
@@ -88,7 +91,17 @@ final class DependencyResolver {
                 final YangModelDependencyInfo dep = depInfo.get(id);
 
                 boolean okay = true;
-                for (ModuleImport mi : dep.getDependencies()) {
+
+                Set<ModuleImport> dependencies = dep.getDependencies();
+
+                // in case of submodule, make its parent also a dependency
+                if(dep instanceof YangModelDependencyInfo.SubmoduleDependencyInfo) {
+                    final String parent = ((YangModelDependencyInfo.SubmoduleDependencyInfo) dep).getParentModule();
+                    dependencies = Sets.newHashSet(dependencies);
+                    dependencies.add(new BelongsToDependency(parent));
+                }
+
+                for (ModuleImport mi : dependencies) {
                     if (!isKnown(resolved, mi)) {
                         LOG.debug("Source {} is missing import {}", id, mi);
                         okay = false;
@@ -160,5 +173,28 @@ final class DependencyResolver {
      */
     Multimap<SourceIdentifier, ModuleImport> getUnsatisfiedImports() {
         return unsatisfiedImports;
+    }
+
+    private static class BelongsToDependency implements ModuleImport {
+        private final String parent;
+
+        public BelongsToDependency(final String parent) {
+            this.parent = parent;
+        }
+
+        @Override
+        public String getModuleName() {
+            return parent;
+        }
+
+        @Override
+        public Date getRevision() {
+            return null;
+        }
+
+        @Override
+        public String getPrefix() {
+            return null;
+        }
     }
 }
