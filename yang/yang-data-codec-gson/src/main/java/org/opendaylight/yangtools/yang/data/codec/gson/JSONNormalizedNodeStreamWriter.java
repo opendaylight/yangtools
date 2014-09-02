@@ -108,8 +108,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
             indent = null;
         }
 
-        this.utils = SchemaContextUtils.create(schemaContext);
-        this.codecs = RestCodecFactory.create(utils);
+        this.codecs = CodecFactory.create(schemaContext);
         this.tracker = SchemaTracker.create(schemaContext,path);
     }
 
