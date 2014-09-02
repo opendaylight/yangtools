@@ -8,10 +8,11 @@
 
 package org.opendaylight.yangtools.yang.parser.repo;
 
+import static org.junit.Assert.assertEquals;
+
 import com.google.common.base.Optional;
 import java.util.HashMap;
 import java.util.Map;
-import junit.framework.Assert;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
@@ -28,8 +29,23 @@ public class DependencyResolverTest {
 
         final DependencyResolver resolved = DependencyResolver.create(map);
 
-        Assert.assertEquals(0, resolved.getUnresolvedSources().size());
-        Assert.assertEquals(0, resolved.getUnsatisfiedImports().size());
+        assertEquals(0, resolved.getUnresolvedSources().size());
+        assertEquals(0, resolved.getUnsatisfiedImports().size());
+    }
+
+    @Test
+    public void testSubmoduleNoModule() throws Exception {
+        final Map<SourceIdentifier, YangModelDependencyInfo> map = new HashMap<>();
+
+        // Subfoo does not have parent in reactor
+        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.fromInputStream(getClass().getResourceAsStream("/model/subfoo.yang")));
+        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.fromInputStream(getClass().getResourceAsStream("/model/bar.yang")));
+        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.fromInputStream(getClass().getResourceAsStream("/model/baz.yang")));
+
+        final DependencyResolver resolved = DependencyResolver.create(map);
+
+        assertEquals(1, resolved.getUnresolvedSources().size());
+        assertEquals(0, resolved.getUnsatisfiedImports().size());
     }
 
     private void addToMap(final Map<SourceIdentifier, YangModelDependencyInfo> map, final YangModelDependencyInfo yangModelDependencyInfo) {
