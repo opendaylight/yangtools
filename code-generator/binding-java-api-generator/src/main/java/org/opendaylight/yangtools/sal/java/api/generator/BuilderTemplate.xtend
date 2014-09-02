@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature
 import org.opendaylight.yangtools.sal.binding.model.api.Type
 import org.opendaylight.yangtools.yang.binding.Augmentable
-import org.opendaylight.yangtools.yang.binding.ChildOf
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.Identifiable
 
@@ -226,9 +225,9 @@ class BuilderTemplate extends BaseTemplate {
 
             «generateSetters»
 
-            «generateBuildMethod»
-
-            «generateBuildBoxedMethod»
+            public «type.name» build() {
+                return new «type.name»«IMPL»(this);
+            }
 
             private static final class «type.name»«IMPL» implements «type.name» {
 
@@ -251,53 +250,6 @@ class BuilderTemplate extends BaseTemplate {
 
         }
     '''
-
-    def private generateBuildMethod() '''
-        public «type.name» build() {
-            return new «type.name»«IMPL»(this);
-        }
-    '''
-
-    def private generateBuildBoxedMethod() {
-        if(type.suitableForBoxing && type.parentType != null && isContainerAndIsNotList(type)) {
-            val parentTypeBuilder = createParentTypeBuilder()
-            if (countMatches(parentTypeBuilder, "org") < 2) {
-                return '''
-                    public «type.parentType.importedName» buildBoxed() {
-                        return new «parentTypeBuilder»().set«type.name»(build()).build();
-                    }
-                '''
-            }
-        }
-        return ''
-    }
-
-    def private int countMatches(String string, String subString) {
-        if (string.nullOrEmpty || subString.nullOrEmpty) {
-            return 0
-        }
-        var int count = 0;
-        var int idx = 0;
-        while ((idx = string.indexOf(subString, idx)) != -1) {
-            count = count + 1;
-            idx = idx + subString.length();
-        }
-        return count;
-    }
-
-    def private createParentTypeBuilder() {
-        return type.parentType.packageName + "." + type.parentType.importedName + "Builder"
-    }
-
-    def private boolean isContainerAndIsNotList(GeneratedType type) {
-        val isList = implementsIfc(type, Types.parameterizedTypeFor(Types.typeForClass(Identifiable), type))
-        val implementsChildOf = implementsIfc(type, Types.parameterizedTypeFor(Types.typeForClass(ChildOf), type))
-
-        if (implementsChildOf && !isList) {
-            return true
-        }
-        return false;
-    }
 
     /**
      * Generate default constructor and constructor for every implemented interface from uses statements.

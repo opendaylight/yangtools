@@ -343,11 +343,6 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
         }
 
         @Override
-        public boolean isSuitableForBoxing() {
-            return false;
-        }
-
-        @Override
         public List<AnnotationType> getAnnotations() {
             return annotations;
         }
@@ -523,6 +518,5 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
         public String getModuleName() {
             return moduleName;
         }
-
     }
 }

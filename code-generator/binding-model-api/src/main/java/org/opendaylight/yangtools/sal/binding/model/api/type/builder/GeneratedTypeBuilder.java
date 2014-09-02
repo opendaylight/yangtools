@@ -12,29 +12,16 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 /**
  * Generated Type Builder interface is helper interface for building and
  * defining the GeneratedType.
- *
+ * 
  * @see GeneratedType
  */
 public interface GeneratedTypeBuilder extends GeneratedTypeBuilderBase<GeneratedTypeBuilder> {
 
     /**
      * Returns the <code>new</code> <i>immutable</i> instance of Generated Type.
-     *
+     * 
      * @return the <code>new</code> <i>immutable</i> instance of Generated Type.
      */
     GeneratedType toInstance();
 
-    /**
-     * Set true if generated type is suitable for boxing, false otherwise.
-     *
-     * @param value
-     */
-    public void setSuitableForBoxing(boolean value);
-
-    /**
-     * Set parent for current generated type.
-     *
-     * @param parent
-     */
-    public void setParentType(GeneratedTypeBuilder parent);
 }
