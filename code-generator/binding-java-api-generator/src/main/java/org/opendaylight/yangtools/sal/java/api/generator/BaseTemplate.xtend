@@ -157,9 +157,7 @@ abstract class BaseTemplate {
     def protected CharSequence asJavadoc(String comment) {
         if(comment == null) return ''
         var txt = comment
-        if (txt.contains("*/")) {
-            txt = txt.replace("*/", "&#42;&#47;")
-        }
+
         txt = comment.trim
         txt = formatToParagraph(txt)
 
@@ -189,13 +187,20 @@ abstract class BaseTemplate {
     }
 
     def protected String formatDataForJavaDoc(GeneratedType type) {
-        val typeDescription = type.getDescription();
+        val typeDescription = type.getDescription().encodeJavadocSymbols;
 
         return '''
             «IF !typeDescription.nullOrEmpty»
             «typeDescription»
             «ENDIF»
         '''.toString
+    }
+
+    def encodeJavadocSymbols(String description) {
+        if (!description.nullOrEmpty) {
+            return description.replace("*/", "&#42;&#47;")
+        }
+        return description;
     }
 
     def asLink(String text) {
@@ -230,7 +235,7 @@ abstract class BaseTemplate {
         var StringBuilder lineBuilder = new StringBuilder();
         var boolean isFirstElementOnNewLineEmptyChar = false;
 
-        formattedText = formattedText.replace("*/", "&#42;&#47;")
+        formattedText = formattedText.encodeJavadocSymbols
         formattedText = formattedText.replace(NEW_LINE, "")
         formattedText = formattedText.replace("\t", "")
         formattedText = formattedText.replaceAll(" +", " ");
@@ -254,8 +259,9 @@ abstract class BaseTemplate {
                 lineBuilder.setLength(0)
                 sb.append(NEW_LINE)
 
-                if(nextElement.toString == ' ')
+                if(nextElement.toString == ' ') {
                     isFirstElementOnNewLineEmptyChar = !isFirstElementOnNewLineEmptyChar;
+                }
             }
 
             if(isFirstElementOnNewLineEmptyChar) {
