@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import com.google.common.base.Preconditions;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.Map;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -18,9 +19,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataNodeContainerValidator;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
 
 public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapEntryNodeBuilder{
 
@@ -55,15 +53,15 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
     private YangInstanceIdentifier.NodeIdentifierWithPredicates constructNodeIdentifier() {
         Collection<QName> keys = schema.getKeyDefinition();
 
-        if(keys.isEmpty()) {
+        if (keys.isEmpty()) {
             keys = childrenQNamesToPaths.keySet();
         }
 
-        final Map<QName, Object> keysToValues = Maps.newHashMap();
+        final Map<QName, Object> keysToValues = new LinkedHashMap<>();
         for (QName key : keys) {
-        final DataContainerChild<?, ?> valueForKey = getChild(childrenQNamesToPaths.get(key));
+            final DataContainerChild<?, ?> valueForKey = getChild(childrenQNamesToPaths.get(key));
             DataValidationException.checkListKey(valueForKey, key, new YangInstanceIdentifier.NodeIdentifierWithPredicates(
-                    schema.getQName(), keysToValues));
+                schema.getQName(), keysToValues));
             keysToValues.put(key, valueForKey.getValue());
         }
 

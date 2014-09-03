@@ -11,8 +11,8 @@ import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -189,7 +189,6 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
     }
 
     private PathArgument serializeIdentifiableItem(final IdentifiableItem<?,?> argument, final QName previousQname) {
-        Map<QName, Object> predicates = new HashMap<>();
         @SuppressWarnings("rawtypes")
         Class type = argument.getType();
         @SuppressWarnings("unchecked")
@@ -202,6 +201,8 @@ public class InstanceIdentifierCodecImpl implements InstanceIdentifierCodec {
         ValueWithQName combinedInput = new ValueWithQName(previousQname, argument.getKey());
         @SuppressWarnings("unchecked")
         CompositeNode compositeOutput = keyCodec.serialize(combinedInput);
+
+        final Map<QName, Object> predicates = new LinkedHashMap<>();
         for (Node<?> outputValue : compositeOutput.getValue()) {
             predicates.put(outputValue.getNodeType(), outputValue.getValue());
         }

@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSortedMap;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -20,6 +19,7 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -359,7 +359,7 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
 
     private static class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> {
 
-        private final ImmutableSortedMap<QName, ValueContext> keyValueContexts;
+        private final Map<QName, ValueContext> keyValueContexts;
         private final ListSchemaNode schema;
         private final Constructor<? extends Identifier<?>> constructor;
         private final Class<?> identifiable;
@@ -368,39 +368,50 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
                 final Class<?> identifiable, final Map<QName, ValueContext> keyValueContexts) {
             this.schema = schema;
             this.identifiable = identifiable;
-            this.keyValueContexts = ImmutableSortedMap.copyOf(keyValueContexts);
             this.constructor = getConstructor(keyClass);
+
+            /*
+             * We need to re-index to make sure we instantiate nodes in the order in which
+             * they are defined.
+             */
+            final Map<QName, ValueContext> keys = new LinkedHashMap<>();
+            for (QName qname : schema.getKeyDefinition()) {
+                keys.put(qname, keyValueContexts.get(qname));
+            }
+            this.keyValueContexts = ImmutableMap.copyOf(keys);
         }
 
         @Override
         public IdentifiableItem<?, ?> deserialize(final NodeIdentifierWithPredicates input) {
-            ArrayList<Object> bindingValues = new ArrayList<>();
-
-            for(QName key: schema.getKeyDefinition()) {
+            final Collection<QName> keys = schema.getKeyDefinition();
+            final ArrayList<Object> bindingValues = new ArrayList<>(keys.size());
+            for (QName key : keys) {
                 Object yangValue = input.getKeyValues().get(key);
                 bindingValues.add(keyValueContexts.get(key).deserialize(yangValue));
             }
+
+            final Identifier<?> identifier;
             try {
-                final Identifier<?> identifier = constructor.newInstance(bindingValues.toArray());
-                @SuppressWarnings({ "rawtypes", "unchecked" })
-                final IdentifiableItem identifiableItem = new IdentifiableItem(identifiable, identifier);
-                return identifiableItem;
+                identifier = constructor.newInstance(bindingValues.toArray());
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                throw new IllegalStateException(e);
+                throw new IllegalStateException(String.format("Failed to instantiate key class %s", constructor.getDeclaringClass()), e);
             }
+
+            @SuppressWarnings({ "rawtypes", "unchecked" })
+            final IdentifiableItem identifiableItem = new IdentifiableItem(identifiable, identifier);
+            return identifiableItem;
         }
 
         @Override
         public NodeIdentifierWithPredicates serialize(final IdentifiableItem<?, ?> input) {
             Object value = input.getKey();
 
-            Map<QName, Object> values = new HashMap<>();
+            Map<QName, Object> values = new LinkedHashMap<>();
             for (Entry<QName, ValueContext> valueCtx : keyValueContexts.entrySet()) {
                 values.put(valueCtx.getKey(), valueCtx.getValue().getAndSerialize(value));
             }
             return new NodeIdentifierWithPredicates(schema.getQName(), values);
         }
-
     }
 
     @SuppressWarnings("unchecked")

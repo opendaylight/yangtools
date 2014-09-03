@@ -60,9 +60,9 @@ public final class ImmutableNodes {
         return leafNode(new NodeIdentifier(name), value);
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(final QName nodeName,final QName keyName,final Object keyValue) {
+    public static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(final QName nodeName, final QName keyName, final Object keyValue) {
         return ImmutableMapEntryNodeBuilder.create()
-                .withNodeIdentifier(new NodeIdentifierWithPredicates(nodeName, keyName,keyValue))
+                .withNodeIdentifier(new NodeIdentifierWithPredicates(nodeName, keyName, keyValue))
                 .withChild(leafNode(keyName, keyValue));
     }
 
