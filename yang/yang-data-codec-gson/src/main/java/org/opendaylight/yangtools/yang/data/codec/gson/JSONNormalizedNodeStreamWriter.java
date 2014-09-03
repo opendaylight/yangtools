@@ -85,27 +85,16 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
     private final Writer writer;
     private final String indent;
 
-    private URI currentNamespace = null;
     private int currentDepth = 0;
+    private URI currentNamespace;
 
     private JSONNormalizedNodeStreamWriter(final SchemaContext schemaContext,
             final Writer writer, final int indentSize) {
-        this.schemaContext = Preconditions.checkNotNull(schemaContext);
-        this.writer = Preconditions.checkNotNull(writer);
-
-        Preconditions.checkArgument(indentSize >= 0, "Indent size must be non-negative");
-        if (indentSize != 0) {
-            indent = Strings.repeat(" ", indentSize);
-        } else {
-            indent = null;
-        }
-
-        this.codecs = CodecFactory.create(schemaContext);
-        this.tracker = SchemaTracker.create(schemaContext);
+        this(schemaContext, SchemaPath.ROOT, writer, null, indentSize);
     }
 
     private JSONNormalizedNodeStreamWriter(final SchemaContext schemaContext, final SchemaPath path,
-            final Writer writer, final URI initialNs,final int indentSize) {
+            final Writer writer, final URI initialNs, final int indentSize) {
         this.schemaContext = Preconditions.checkNotNull(schemaContext);
         this.writer = Preconditions.checkNotNull(writer);
 
@@ -115,9 +104,10 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         } else {
             indent = null;
         }
-        this.currentNamespace = initialNs;
         this.codecs = CodecFactory.create(schemaContext);
-        this.tracker = SchemaTracker.create(schemaContext,path);
+        this.tracker = SchemaTracker.create(schemaContext, path);
+
+        this.currentNamespace = initialNs;
     }
 
     /**
