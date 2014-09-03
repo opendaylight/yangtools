@@ -141,14 +141,10 @@ public class InMemoryDataTreeBenchmark {
     @Benchmark
     @Warmup(iterations = 10, timeUnit = TimeUnit.MILLISECONDS)
     @Measurement(iterations = 20, timeUnit = TimeUnit.MILLISECONDS)
-    public void singleNodes100KWriteBenchmark() throws Exception {
-        applyWriteSingleNode(OUTER_LIST_100K);
-    }
-
-    private void applyWriteSingleNode(final int reps) throws DataValidationFailedException {
+    public void write100KSingleNodeWithOneInnerItemInOneCommitBenchmark() throws Exception {
         final DataTreeSnapshot snapshot = datastore.takeSnapshot();
         final DataTreeModification modification = snapshot.newModification();
-        for (int outerListKey = 0; outerListKey < reps; ++outerListKey) {
+        for (int outerListKey = 0; outerListKey < OUTER_LIST_100K; ++outerListKey) {
             modification.write(OUTER_LIST_100K_PATHS[outerListKey], OUTER_LIST_ONE_ITEM_INNER_LIST[outerListKey]);
         }
         datastore.validate(modification);
@@ -159,14 +155,24 @@ public class InMemoryDataTreeBenchmark {
     @Benchmark
     @Warmup(iterations = 10, timeUnit = TimeUnit.MILLISECONDS)
     @Measurement(iterations = 20, timeUnit = TimeUnit.MILLISECONDS)
-    public void twoNodes50KWriteBenchmark() throws Exception {
-        applyWriteTwoNodes(OUTER_LIST_50K);
+    public void write100KSingleNodeWithOneInnerItemInCommitPerWriteBenchmark() throws Exception {
+        final DataTreeSnapshot snapshot = datastore.takeSnapshot();
+        for (int outerListKey = 0; outerListKey < OUTER_LIST_100K; ++outerListKey) {
+            final DataTreeModification modification = snapshot.newModification();
+            modification.write(OUTER_LIST_100K_PATHS[outerListKey], OUTER_LIST_ONE_ITEM_INNER_LIST[outerListKey]);
+            datastore.validate(modification);
+            final DataTreeCandidate candidate = datastore.prepare(modification);
+            datastore.commit(candidate);
+        }
     }
 
-    private void applyWriteTwoNodes(final int reps) throws DataValidationFailedException {
+    @Benchmark
+    @Warmup(iterations = 10, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = 20, timeUnit = TimeUnit.MILLISECONDS)
+    public void write50KSingleNodeWithTwoInnerItemsInOneCommitBenchmark() throws Exception {
         final DataTreeSnapshot snapshot = datastore.takeSnapshot();
         final DataTreeModification modification = snapshot.newModification();
-        for (int outerListKey = 0; outerListKey < reps; ++outerListKey) {
+        for (int outerListKey = 0; outerListKey < OUTER_LIST_50K; ++outerListKey) {
             modification.write(OUTER_LIST_50K_PATHS[outerListKey], OUTER_LIST_TWO_ITEM_INNER_LIST[outerListKey]);
         }
         datastore.validate(modification);
@@ -177,18 +183,42 @@ public class InMemoryDataTreeBenchmark {
     @Benchmark
     @Warmup(iterations = 10, timeUnit = TimeUnit.MILLISECONDS)
     @Measurement(iterations = 20, timeUnit = TimeUnit.MILLISECONDS)
-    public void tenNodes10KWriteBenchmark() throws Exception {
-        applyWriteTenNodes(OUTER_LIST_10K);
+    public void write50KSingleNodeWithTwoInnerItemsInCommitPerWriteBenchmark() throws Exception {
+        final DataTreeSnapshot snapshot = datastore.takeSnapshot();
+        for (int outerListKey = 0; outerListKey < OUTER_LIST_50K; ++outerListKey) {
+            final DataTreeModification modification = snapshot.newModification();
+            modification.write(OUTER_LIST_50K_PATHS[outerListKey], OUTER_LIST_TWO_ITEM_INNER_LIST[outerListKey]);
+            datastore.validate(modification);
+            final DataTreeCandidate candidate = datastore.prepare(modification);
+            datastore.commit(candidate);
+        }
     }
 
-    private void applyWriteTenNodes(final int reps) throws DataValidationFailedException {
+    @Benchmark
+    @Warmup(iterations = 10, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = 20, timeUnit = TimeUnit.MILLISECONDS)
+    public void write10KSingleNodeWithTenInnerItemsInOneCommitBenchmark() throws Exception {
         final DataTreeSnapshot snapshot = datastore.takeSnapshot();
         final DataTreeModification modification = snapshot.newModification();
-        for (int outerListKey = 0; outerListKey < reps; ++outerListKey) {
+        for (int outerListKey = 0; outerListKey < OUTER_LIST_10K; ++outerListKey) {
             modification.write(OUTER_LIST_10K_PATHS[outerListKey], OUTER_LIST_TEN_ITEM_INNER_LIST[outerListKey]);
         }
         datastore.validate(modification);
         final DataTreeCandidate candidate = datastore.prepare(modification);
         datastore.commit(candidate);
+    }
+
+    @Benchmark
+    @Warmup(iterations = 10, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = 20, timeUnit = TimeUnit.MILLISECONDS)
+    public void write10KSingleNodeWithTenInnerItemsInCommitPerWriteBenchmark() throws Exception {
+        final DataTreeSnapshot snapshot = datastore.takeSnapshot();
+        for (int outerListKey = 0; outerListKey < OUTER_LIST_10K; ++outerListKey) {
+            final DataTreeModification modification = snapshot.newModification();
+            modification.write(OUTER_LIST_10K_PATHS[outerListKey], OUTER_LIST_TEN_ITEM_INNER_LIST[outerListKey]);
+            datastore.validate(modification);
+            final DataTreeCandidate candidate = datastore.prepare(modification);
+            datastore.commit(candidate);
+        }
     }
 }
