@@ -9,13 +9,10 @@ package org.opendaylight.yangtools.yang.data.util;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
-
 import java.net.URI;
 import java.util.Iterator;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import org.opendaylight.yangtools.yang.common.QName;
 
 abstract class AbstractNamespaceCodec {
@@ -62,17 +59,22 @@ abstract class AbstractNamespaceCodec {
             return null;
         }
 
-        final String prefix = it.next().trim();
-        if (prefix.isEmpty()) {
+
+        final String first = it.next().trim();
+        if (first.isEmpty()) {
             return null;
         }
 
-        // it is not "prefix:value"
-        if (!it.hasNext()) {
-            return null;
+        final String identifier;
+        final String prefix;
+        if (it.hasNext()) {
+            // It is "prefix:value"
+            prefix = first;
+            identifier = it.next().trim();
+        } else {
+            prefix = "";
+            identifier = first;
         }
-
-        final String identifier = it.next().trim();
         if (identifier.isEmpty()) {
             return null;
         }
