@@ -432,14 +432,15 @@ public class XmlDocumentUtils {
         if (rpcDefinition.isPresent()) {
             RpcDefinition rpc = rpcDefinition.get();
 
-            final Collection<DataSchemaNode> outputNode = rpc.getOutput().getChildNodes();
+            final Collection<DataSchemaNode> outputNode = rpc.getOutput() != null ? rpc.getOutput().getChildNodes() : null;
             final Element rpcReplyElement = document.getDocumentElement();
             final QName partialQName = qNameFromElement(rpcReplyElement);
 
             if (RPC_REPLY_QNAME.equals(partialQName)) {
                 final List<Node<?>> domNodes = toDomNodes(rpcReplyElement, Optional.fromNullable(outputNode), context);
+                QName qName = rpc.getOutput() != null ? rpc.getOutput().getQName() : QName.cachedReference(QName.create(rpcName, "output"));
                 List<Node<?>> rpcOutNodes = Collections.<Node<?>>singletonList(ImmutableCompositeNode.create(
-                        rpc.getOutput().getQName(), domNodes));
+                        qName, domNodes));
                 return ImmutableCompositeNode.create(rpcName, rpcOutNodes);
             }
         }
