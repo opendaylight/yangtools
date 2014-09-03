@@ -157,8 +157,11 @@ abstract class BaseTemplate {
     def protected CharSequence asJavadoc(String comment) {
         if(comment == null) return ''
         var txt = comment
-        if (txt.contains("*/")) {
-            txt = txt.replace("*/", "&#42;&#47;")
+        if (txt.contains("*")) {
+            txt = txt.replace("*", "&#42;")
+        }
+        if (txt.contains("/")) {
+            txt = txt.replace("/", "&#47;");
         }
         txt = comment.trim
         txt = formatToParagraph(txt)
@@ -189,8 +192,16 @@ abstract class BaseTemplate {
     }
 
     def protected String formatDataForJavaDoc(GeneratedType type) {
-        val typeDescription = type.getDescription();
+        var typeDescription = type.getDescription();
 
+        if(typeDescription != null) {
+            if(typeDescription.contains("*")) {
+                typeDescription = typeDescription.replace("*", "&#42;");
+            }
+            if(typeDescription.contains("/")) {
+                typeDescription = typeDescription.replace("/", "&#47;");
+            }
+        }
         return '''
             «IF !typeDescription.nullOrEmpty»
             «typeDescription»
@@ -254,8 +265,9 @@ abstract class BaseTemplate {
                 lineBuilder.setLength(0)
                 sb.append(NEW_LINE)
 
-                if(nextElement.toString == ' ')
+                if(nextElement.toString == ' ') {
                     isFirstElementOnNewLineEmptyChar = !isFirstElementOnNewLineEmptyChar;
+                }
             }
 
             if(isFirstElementOnNewLineEmptyChar) {
