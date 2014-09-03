@@ -9,12 +9,18 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.stream.JsonWriter;
+
 import java.io.IOException;
 import java.io.Writer;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.URI;
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Deque;
+
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -70,6 +76,8 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         }
     }
 
+    private static final Collection<Class<?>> NUMERIC_CLASSES =
+            ImmutableSet.<Class<?>>of(Byte.class, Short.class, Integer.class, Long.class, BigInteger.class, BigDecimal.class);
     private final Deque<TypeInfo> stack = new ArrayDeque<>();
     private final SchemaContext schemaContext;
     private final CodecFactory codecs;
@@ -130,7 +138,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * @param writer Output writer
      * @return A stream writer instance
      */
-    public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, SchemaPath path,final Writer writer) {
+    public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final SchemaPath path,final Writer writer) {
         return new JSONNormalizedNodeStreamWriter(schemaContext, path, writer, null, 0);
     }
 
@@ -142,7 +150,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * @param initialNs Initial namespace
      * @return A stream writer instance
      */
-    public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, SchemaPath path,URI initialNs, final Writer writer) {
+    public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final SchemaPath path,final URI initialNs, final Writer writer) {
         return new JSONNormalizedNodeStreamWriter(schemaContext, path, writer, initialNs, 0);
     }
 
@@ -166,7 +174,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         separateElementFromPreviousElement();
         writeJsonIdentifier(name);
         currentNamespace = stack.peek().getNamespace();
-        writeValue(String.valueOf(codec.serialize(value)));
+        writeValue(codec.serialize(value));
         separateNextSiblingsWithComma();
     }
 
@@ -187,7 +195,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         final Codec<Object, Object> codec = codecs.codecFor(schema.getType());
 
         separateElementFromPreviousElement();
-        writeValue(String.valueOf(codec.serialize(value)));
+        writeValue(codec.serialize(value));
         separateNextSiblingsWithComma();
     }
 
@@ -277,7 +285,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         separateElementFromPreviousElement();
         writeJsonIdentifier(name);
         currentNamespace = stack.peek().getNamespace();
-        writeValue(value.toString());
+        writeValue(value);
         separateNextSiblingsWithComma();
     }
 
@@ -355,10 +363,16 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         }
     }
 
-    private void writeValue(final String value) throws IOException {
-        writer.append('"');
-        writer.append(value);
-        writer.append('"');
+    private void writeValue(final Object value) throws IOException {
+        final String str = String.valueOf(value);
+
+        if (!NUMERIC_CLASSES.contains(value.getClass())) {
+            writer.append('"');
+            writer.append(str);
+            writer.append('"');
+        } else {
+            writer.append(str);
+        }
     }
 
     private void writeJsonIdentifier(final NodeIdentifier name) throws IOException {
