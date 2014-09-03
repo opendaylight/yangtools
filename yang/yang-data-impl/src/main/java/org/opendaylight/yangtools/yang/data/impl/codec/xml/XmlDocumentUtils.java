@@ -432,7 +432,7 @@ public class XmlDocumentUtils {
         if (rpcDefinition.isPresent()) {
             RpcDefinition rpc = rpcDefinition.get();
 
-            final Collection<DataSchemaNode> outputNode = rpc.getOutput().getChildNodes();
+            final Collection<DataSchemaNode> outputNode = rpc.getOutput() != null ? rpc.getOutput().getChildNodes() : null;
             final Element rpcReplyElement = document.getDocumentElement();
             final QName partialQName = qNameFromElement(rpcReplyElement);
 
