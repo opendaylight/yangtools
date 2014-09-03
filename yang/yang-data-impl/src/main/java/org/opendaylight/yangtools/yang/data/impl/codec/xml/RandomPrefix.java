@@ -15,6 +15,7 @@ import com.google.common.collect.HashBiMap;
 import java.net.URI;
 import java.util.Map;
 
+import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 
 class RandomPrefix {
@@ -57,7 +58,12 @@ class RandomPrefix {
     }
 
     private boolean alreadyUsedPrefix(final String prefix) {
-        return context != null && context.getNamespaceURI(prefix) != null;
+        if (context == null) {
+            return false;
+        }
+
+        final String str = context.getNamespaceURI(prefix);
+        return !XMLConstants.NULL_NS_URI.equals(str);
     }
 
     @VisibleForTesting
