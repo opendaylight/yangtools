@@ -49,14 +49,20 @@ public final class SchemaTracker {
     private final DataNodeContainer root;
 
     private SchemaTracker(final SchemaContext context, final SchemaPath path) {
-        DataNodeContainer current = Preconditions.checkNotNull(context);
+        DataSchemaNode current = Preconditions.checkNotNull(context);
         for (QName qname : path.getPathFromRoot()) {
-            final DataSchemaNode child = current.getDataChildByName(qname);
-            Preconditions.checkArgument(child instanceof DataNodeContainer);
-            current = (DataNodeContainer) child;
+            final DataSchemaNode child;
+            if(current instanceof DataNodeContainer) {
+                child = ((DataNodeContainer) current).getDataChildByName(qname);
+            } else if (current instanceof ChoiceNode) {
+                child = ((ChoiceNode) current).getCaseNodeByName(qname);
+            } else {
+                throw new IllegalArgumentException(String.format("Schema node %s does not allow children.",current));
+            }
+            current = child;
         }
-
-        this.root = current;
+        Preconditions.checkArgument(current instanceof DataNodeContainer,"Schema path must point to container or list. Supplied path %s pointed to: %s",path,current);
+        this.root = (DataNodeContainer) current;
     }
 
     /**
