@@ -9,25 +9,25 @@
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
 import javax.activation.UnsupportedDataTypeException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
+import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -57,6 +57,10 @@ public class XmlDocumentUtilsTest {
             "<ref xmlns:ltha=\"urn:opendaylight:controller:rpc:test\">/ltha:cont/ltha:l[ltha:id='id']</ref>\n" +
             "</input>";
 
+    public static final String RPC_REPLY = "<rpc-reply xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\" message-id=\"m-1\">\n" +
+            " <ok/>\n" +
+            "</rpc-reply>";
+
     private SchemaContext schema;
     private RpcDefinition testRpc;
 
@@ -85,6 +89,18 @@ public class XmlDocumentUtilsTest {
         final Document serializedDocument = inputCompositeNodeToXml(node);
 
         XMLUnit.compareXML(inputDocument, serializedDocument);
+    }
+
+    @Test
+    public void testRpcReplyToDom() throws Exception {
+        final Document reply = readXmlToDocument(RPC_REPLY);
+        final CompositeNode domNodes = XmlDocumentUtils.rpcReplyToDomNodes(reply, QName.create("urn:opendaylight:controller:rpc:test", "2014-07-28", "test"), schema);
+        assertEquals(1, domNodes.getValue().size());
+        final Node<?> outputNode = domNodes.getValue().get(0);
+        assertTrue(outputNode instanceof CompositeNode);
+        assertEquals(1, ((CompositeNode) outputNode).getValue().size());
+        final Node<?> okNode = ((CompositeNode) outputNode).getValue().get(0);
+        assertEquals("ok", okNode.getNodeType().getLocalName());
     }
 
     public static Document readXmlToDocument(final String xmlContent) throws SAXException, IOException {
