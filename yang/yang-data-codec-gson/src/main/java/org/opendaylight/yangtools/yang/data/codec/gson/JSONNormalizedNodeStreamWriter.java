@@ -217,8 +217,8 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
     public void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) throws IOException {
         tracker.startListItem(name);
 
-        stack.push(new TypeInfo(NodeType.OBJECT, name.getNodeType().getNamespace()));
         separateElementFromPreviousElement();
+        stack.push(new TypeInfo(NodeType.OBJECT, name.getNodeType().getNamespace()));
         writeStartObject();
         indentRight();
     }
