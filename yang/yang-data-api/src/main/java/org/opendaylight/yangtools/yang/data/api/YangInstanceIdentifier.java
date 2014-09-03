@@ -356,6 +356,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
     private static abstract class AbstractPathArgument implements PathArgument {
         private static final long serialVersionUID = -4546547994250849340L;
         private final QName nodeType;
+        private volatile transient Integer hash = null;
 
         protected AbstractPathArgument(final QName nodeType) {
             this.nodeType = Preconditions.checkNotNull(nodeType);
@@ -371,9 +372,24 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
             return nodeType.compareTo(o.getNodeType());
         }
 
-        @Override
-        public int hashCode() {
+        protected int hashCodeImpl() {
             return 31 + getNodeType().hashCode();
+        }
+
+        @Override
+        public final int hashCode() {
+            Integer ret = hash;
+            if (ret == null) {
+                synchronized (this) {
+                    ret = hash;
+                    if (ret == null) {
+                        ret = hashCodeImpl();
+                        hash = ret;
+                    }
+                }
+            }
+
+            return ret;
         }
 
         @Override
@@ -485,9 +501,9 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
         }
 
         @Override
-        public int hashCode() {
+        protected int hashCodeImpl() {
             final int prime = 31;
-            int result = super.hashCode();
+            int result = super.hashCodeImpl();
             result = prime * result;
 
             for (Entry<QName, Object> entry : keyValues.entrySet()) {
@@ -548,9 +564,9 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
         }
 
         @Override
-        public int hashCode() {
+        protected int hashCodeImpl() {
             final int prime = 31;
-            int result = super.hashCode();
+            int result = super.hashCodeImpl();
             result = prime * result + ((value == null) ? 0 : YangInstanceIdentifier.hashCode(value));
             return result;
         }
