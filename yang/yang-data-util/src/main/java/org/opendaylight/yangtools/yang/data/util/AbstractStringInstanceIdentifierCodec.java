@@ -12,8 +12,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -88,7 +88,7 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
 
         // predicates
         final Matcher matcher = PREDICATE_PATTERN.matcher(xPathArgument);
-        final Map<QName, Object> predicates = new HashMap<>();
+        final Map<QName, Object> predicates = new LinkedHashMap<>();
         QName currentQName = mainQName;
 
         while (matcher.find()) {

@@ -91,9 +91,7 @@ public final class ListSchemaNodeBuilder extends AbstractDocumentedDataNodeConta
         instance.userOrdered = userOrdered;
 
         // KEY
-        if (keys == null) {
-            instance.keyDefinition = ImmutableList.of();
-        } else {
+        if (keys != null) {
             keyDefinition = new ArrayList<>();
             for (String key : keys) {
                 DataSchemaNode keyPart = instance.getDataChildByName(key);
@@ -101,9 +99,15 @@ public final class ListSchemaNodeBuilder extends AbstractDocumentedDataNodeConta
                     throw new YangParseException(getModuleName(), getLine(), "Failed to resolve list key for name "
                             + key);
                 }
-                keyDefinition.add(keyPart.getQName());
+
+                final QName qname = keyPart.getQName();
+                if (!keyDefinition.contains(qname)) {
+                    keyDefinition.add(qname);
+                }
             }
             instance.keyDefinition = ImmutableList.copyOf(keyDefinition);
+        } else {
+            instance.keyDefinition = ImmutableList.of();
         }
 
         // ORIGINAL NODE

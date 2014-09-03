@@ -7,16 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Nonnull;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -26,12 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 class ListEntryNodeDataWithSchema extends CompositeNodeDataWithSchema {
-    private static final Function<SimpleNodeDataWithSchema, Object> VALUE_FUNCTION = new Function<SimpleNodeDataWithSchema, Object>() {
-        @Override
-        public Object apply(@Nonnull final SimpleNodeDataWithSchema input) {
-            return input.getValue();
-        }
-    };
 
     private final Map<QName, SimpleNodeDataWithSchema> qNameToKeys = new HashMap<>();
 
@@ -60,17 +52,24 @@ class ListEntryNodeDataWithSchema extends CompositeNodeDataWithSchema {
 
     @Override
     public void write(final NormalizedNodeStreamWriter writer) throws IOException {
-        final int keyCount = ((ListSchemaNode) getSchema()).getKeyDefinition().size();
-        if (keyCount == 0) {
+        final Collection<QName> keyDef = ((ListSchemaNode) getSchema()).getKeyDefinition();
+        if (keyDef.isEmpty()) {
             writer.startUnkeyedListItem(provideNodeIdentifier(), childSizeHint());
             super.write(writer);
             writer.endNode();
             return;
         }
 
-        Preconditions.checkState(keyCount == qNameToKeys.size(), "Input is missing some of the keys of %s", getSchema().getQName());
+        Preconditions.checkState(keyDef.size() == qNameToKeys.size(), "Input is missing some of the keys of %s", getSchema().getQName());
+
+        // Need to restore schema order...
+        final Map<QName, Object> predicates = new LinkedHashMap<>();
+        for (QName qname : keyDef) {
+            predicates.put(qname, qNameToKeys.get(qname).getValue());
+        }
+
         writer.startMapEntryNode(
-            new NodeIdentifierWithPredicates(getSchema().getQName(), Maps.transformValues(qNameToKeys, VALUE_FUNCTION)),
+            new NodeIdentifierWithPredicates(getSchema().getQName(), predicates),
             childSizeHint());
         super.write(writer);
         writer.endNode();
