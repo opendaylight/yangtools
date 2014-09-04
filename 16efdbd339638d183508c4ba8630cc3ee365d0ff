@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_58085a28",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/BaseTemplate.xtend",
+        "patchSetId": 3
+      },
+      "lineNbr": 190,
+      "author": {
+        "id": 612
+      },
+      "writtenOn": "2014-09-04T11:28:15Z",
+      "side": 1,
+      "message": "Probably you get compilation error when description in yang will start with /\nThe best solution would be to create Extension method encodeSlash where you just encode all /",
+      "revId": "16efdbd339638d183508c4ba8630cc3ee365d0ff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_f8184e77",
+        "filename": "code-generator/binding-java-api-generator/src/test/resources/compilation/encoding-javadoc/encoding-javadoc.yang",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 612
+      },
+      "writtenOn": "2014-09-04T11:28:15Z",
+      "side": 1,
+      "message": "replace tabs with spaces\n\ntry case when first char in description is /",
+      "revId": "16efdbd339638d183508c4ba8630cc3ee365d0ff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
