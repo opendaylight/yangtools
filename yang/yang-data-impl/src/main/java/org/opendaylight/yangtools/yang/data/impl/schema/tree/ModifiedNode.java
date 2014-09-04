@@ -8,8 +8,10 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import java.util.HashMap;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -34,7 +36,8 @@ final class ModifiedNode implements StoreTreeNode<ModifiedNode>, Identifiable<Pa
 
     public static final Predicate<ModifiedNode> IS_TERMINAL_PREDICATE = new Predicate<ModifiedNode>() {
         @Override
-        public boolean apply(final ModifiedNode input) {
+        public boolean apply(final @Nonnull ModifiedNode input) {
+            Preconditions.checkNotNull(input);
             switch (input.getType()) {
             case DELETE:
             case MERGE:

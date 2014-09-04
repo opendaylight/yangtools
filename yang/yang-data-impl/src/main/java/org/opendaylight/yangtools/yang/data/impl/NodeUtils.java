@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nonnull;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -56,7 +58,8 @@ public abstract class NodeUtils {
     private static final Logger LOG = LoggerFactory.getLogger(NodeUtils.class);
     private static final Function<QName, String> LOCALNAME_FUNCTION = new Function<QName, String>() {
         @Override
-        public String apply(final QName input) {
+        public String apply(final @Nonnull QName input) {
+            Preconditions.checkNotNull(input);
             return input.getLocalName();
         }
     };

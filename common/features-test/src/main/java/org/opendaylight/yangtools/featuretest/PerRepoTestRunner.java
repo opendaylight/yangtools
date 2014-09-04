@@ -76,10 +76,9 @@ public class PerRepoTestRunner extends ParentRunner<PerFeatureRunner> {
     }
 
     protected List<PerFeatureRunner> runnersFromFeatures(final URL repoURL, final Features features,final Class<?> testClass) throws InitializationError {
-        List<PerFeatureRunner> runners = new ArrayList<PerFeatureRunner>();
-        List<Feature> featureList = new ArrayList<Feature>();
-        featureList = features.getFeature();
-        for(Feature f : featureList) {
+        final List<PerFeatureRunner> runners = new ArrayList<>();
+        final List<Feature> featureList = features.getFeature();
+        for(final Feature f : featureList) {
             runners.add(new PerFeatureRunner(repoURL, f.getName(), f.getVersion(),testClass));
         }
         return runners;
