@@ -7,7 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
-import com.google.common.collect.Sets;
+import com.google.common.base.Objects;
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -15,19 +21,12 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 
 /**
  * Inter-module dependency resolved. Given a set of schema source identifiers and their
@@ -53,7 +52,7 @@ final class DependencyResolver {
     }
 
     private static SourceIdentifier findWildcard(final Iterable<SourceIdentifier> haystack, final String needle) {
-        for (SourceIdentifier r : haystack) {
+        for (final SourceIdentifier r : haystack) {
             if (r.getName().equals(needle)) {
                 return r;
             }
@@ -77,9 +76,10 @@ final class DependencyResolver {
 
 
 
-    public static final DependencyResolver create(final Map<SourceIdentifier, YangModelDependencyInfo> depInfo) {
+    public static DependencyResolver create(final Map<SourceIdentifier, YangModelDependencyInfo> depInfo) {
         final Collection<SourceIdentifier> resolved = new ArrayList<>(depInfo.size());
         final Collection<SourceIdentifier> pending = new ArrayList<>(depInfo.keySet());
+        final Map<SourceIdentifier, BelongsToDependency> submodules = Maps.newHashMap();
 
         boolean progress;
         do {
@@ -92,16 +92,15 @@ final class DependencyResolver {
 
                 boolean okay = true;
 
-                Set<ModuleImport> dependencies = dep.getDependencies();
+                final Set<ModuleImport> dependencies = dep.getDependencies();
 
-                // in case of submodule, make its parent also a dependency
+                // in case of submodule, remember belongs to
                 if(dep instanceof YangModelDependencyInfo.SubmoduleDependencyInfo) {
                     final String parent = ((YangModelDependencyInfo.SubmoduleDependencyInfo) dep).getParentModule();
-                    dependencies = Sets.newHashSet(dependencies);
-                    dependencies.add(new BelongsToDependency(parent));
+                    submodules.put(id, new BelongsToDependency(parent));
                 }
 
-                for (ModuleImport mi : dependencies) {
+                for (final ModuleImport mi : dependencies) {
                     if (!isKnown(resolved, mi)) {
                         LOG.debug("Source {} is missing import {}", id, mi);
                         okay = false;
@@ -118,11 +117,21 @@ final class DependencyResolver {
             }
         } while (progress);
 
+        /// Additional check only for belongs-to statement
+        for (final SourceIdentifier sourceIdentifier : submodules.keySet()) {
+            final BelongsToDependency belongs = submodules.get(sourceIdentifier);
+            if (!isKnown(resolved, belongs)) {
+                LOG.debug("Source {} is missing parent {}", sourceIdentifier, belongs);
+                pending.add(sourceIdentifier);
+                resolved.remove(sourceIdentifier);
+            }
+        }
+
         if (!pending.isEmpty()) {
             final Multimap<SourceIdentifier, ModuleImport> imports = ArrayListMultimap.create();
-            for (SourceIdentifier id : pending) {
+            for (final SourceIdentifier id : pending) {
                 final YangModelDependencyInfo dep = depInfo.get(id);
-                for (ModuleImport mi : dep.getDependencies()) {
+                for (final ModuleImport mi : dep.getDependencies()) {
                     if (!isKnown(pending, mi) && !isKnown(resolved, mi)) {
                         imports.put(id, mi);
                     }
@@ -195,6 +204,13 @@ final class DependencyResolver {
         @Override
         public String getPrefix() {
             return null;
+        }
+
+        @Override
+        public String toString() {
+            return Objects.toStringHelper(this)
+                    .add("parent", parent)
+                    .toString();
         }
     }
 }
