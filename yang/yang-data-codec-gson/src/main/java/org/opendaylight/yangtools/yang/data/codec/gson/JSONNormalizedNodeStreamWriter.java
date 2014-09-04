@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
@@ -33,6 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.w3c.dom.TypeInfo;
 
 /**
  * This implementation will create JSON output as output stream.
@@ -43,42 +45,60 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
  */
 public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
 
-    private static enum NodeType {
-        OBJECT,
-        LIST,
-        OTHER,
-    }
+    private static abstract class AbstractContext {
+        private final URI namespace;
 
-    private static class TypeInfo {
-        private boolean hasAtLeastOneChild = false;
-        private final NodeType type;
-        private final URI uri;
-
-        public TypeInfo(final NodeType type, final URI uri) {
-            this.type = type;
-            this.uri = uri;
+        protected AbstractContext(final URI namespace) {
+            this.namespace = Preconditions.checkNotNull(namespace);
         }
 
-        public void setHasAtLeastOneChild(final boolean hasChildren) {
-            this.hasAtLeastOneChild = hasChildren;
-        }
-
-        public NodeType getType() {
-            return type;
-        }
-
-        public URI getNamespace() {
-            return uri;
-        }
-
-        public boolean hasAtLeastOneChild() {
-            return hasAtLeastOneChild;
+        final URI getNamespace() {
+            return namespace;
         }
     }
+
+    private static final class ListContext extends AbstractContext {
+        protected ListContext(final PathArgument arg) {
+            super(arg.getNodeType().getNamespace());
+        }
+    }
+
+    private static final class ObjectContext extends AbstractContext{
+        protected ObjectContext(final PathArgument arg) {
+            super(arg.getNodeType().getNamespace());
+        }
+    }
+
+//    private static class TypeInfo {
+//        private boolean hasAtLeastOneChild = false;
+//        private final NodeType type;
+//        private final URI uri;
+//
+//        public TypeInfo(final NodeType type, final URI uri) {
+//            this.type = type;
+//            this.uri = uri;
+//        }
+//
+//        public void setHasAtLeastOneChild(final boolean hasChildren) {
+//            this.hasAtLeastOneChild = hasChildren;
+//        }
+//
+//        public NodeType getType() {
+//            return type;
+//        }
+//
+//        public URI getNamespace() {
+//            return uri;
+//        }
+//
+//        public boolean hasAtLeastOneChild() {
+//            return hasAtLeastOneChild;
+//        }
+//    }
 
     private static final Collection<Class<?>> NUMERIC_CLASSES =
             ImmutableSet.<Class<?>>of(Byte.class, Short.class, Integer.class, Long.class, BigInteger.class, BigDecimal.class);
-    private final Deque<TypeInfo> stack = new ArrayDeque<>();
+    private final Deque<AbstractContext> stack = new ArrayDeque<>();
     private final SchemaContext schemaContext;
     private final CodecFactory codecs;
     private final SchemaTracker tracker;
@@ -173,7 +193,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         tracker.startLeafSet(name);
 
         separateElementFromPreviousElement();
-        stack.push(new TypeInfo(NodeType.LIST, name.getNodeType().getNamespace()));
+        stack.push(new ListContext(name));
         writeJsonIdentifier(name);
         writeStartList();
         indentRight();
@@ -194,7 +214,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         tracker.startContainerNode(name);
 
         separateElementFromPreviousElement();
-        stack.push(new TypeInfo(NodeType.OBJECT, name.getNodeType().getNamespace()));
+        stack.push(new ObjectContext(name));
         writeJsonIdentifier(name);
         writeStartObject();
         indentRight();
@@ -205,7 +225,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         tracker.startList(name);
 
         separateElementFromPreviousElement();
-        stack.push(new TypeInfo(NodeType.LIST, name.getNodeType().getNamespace()));
+        stack.push(new ListContext(name));
         writeJsonIdentifier(name);
         writeStartList();
         indentRight();
@@ -216,7 +236,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         tracker.startListItem(name);
 
         separateElementFromPreviousElement();
-        stack.push(new TypeInfo(NodeType.OBJECT, name.getNodeType().getNamespace()));
+        stack.push(new ObjectContext(name));
         writeStartObject();
         indentRight();
     }
@@ -226,7 +246,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         tracker.startList(name);
 
         separateElementFromPreviousElement();
-        stack.push(new TypeInfo(NodeType.LIST, name.getNodeType().getNamespace()));
+        stack.push(new ListContext(name));
         writeJsonIdentifier(name);
         writeStartList();
         indentRight();
@@ -237,7 +257,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
             throws IOException {
         tracker.startListItem(identifier);
         separateElementFromPreviousElement();
-        stack.push(new TypeInfo(NodeType.OBJECT, identifier.getNodeType().getNamespace()));
+        stack.push(new ObjectContext(identifier));
 
 
         writeStartObject();
@@ -249,7 +269,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         tracker.startList(name);
 
         separateElementFromPreviousElement();
-        stack.push(new TypeInfo(NodeType.LIST, name.getNodeType().getNamespace()));
+        stack.push(new ListContext(name));
         writeJsonIdentifier(name);
         writeStartList();
         indentRight();
