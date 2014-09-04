@@ -30,19 +30,22 @@ import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
 public final class ASTSchemaSource implements SchemaSourceRepresentation {
     public static final Function<ASTSchemaSource, SourceIdentifier> GET_IDENTIFIER = new Function<ASTSchemaSource, SourceIdentifier>() {
         @Override
-        public SourceIdentifier apply(final ASTSchemaSource input) {
+        public SourceIdentifier apply(@Nonnull final ASTSchemaSource input) {
+            Preconditions.checkNotNull(input);
             return input.getIdentifier();
         }
     };
     public static final Function<ASTSchemaSource, YangModelDependencyInfo> GET_DEPINFO = new Function<ASTSchemaSource, YangModelDependencyInfo>() {
         @Override
-        public YangModelDependencyInfo apply(final ASTSchemaSource input) {
+        public YangModelDependencyInfo apply(@Nonnull final ASTSchemaSource input) {
+            Preconditions.checkNotNull(input);
             return input.getDependencyInformation();
         }
     };
     public static final Function<ASTSchemaSource, ParserRuleContext> GET_AST = new Function<ASTSchemaSource, ParserRuleContext>() {
         @Override
-        public ParserRuleContext apply(final ASTSchemaSource input) {
+        public ParserRuleContext apply(@Nonnull final ASTSchemaSource input) {
+            Preconditions.checkNotNull(input);
             return input.getAST();
         }
     };
@@ -52,11 +55,11 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
     private final SourceIdentifier id;
     private final String text;
 
-    private ASTSchemaSource(final @Nonnull SourceIdentifier id, @Nonnull final ParserRuleContext tree, final @Nonnull YangModelDependencyInfo depInfo, final @Nonnull String text) {
+    private ASTSchemaSource(final @Nonnull SourceIdentifier id, @Nonnull final ParserRuleContext tree, final @Nonnull YangModelDependencyInfo depInfo, final String text) {
         this.depInfo = Preconditions.checkNotNull(depInfo);
         this.tree = Preconditions.checkNotNull(tree);
         this.id = Preconditions.checkNotNull(id);
-        this.text = Preconditions.checkNotNull(text);
+        this.text = text;
     }
 
     /**
