@@ -117,12 +117,11 @@ public class XmlStreamUtils {
     }
 
     /**
-     * Short-hand for {@link #writeDataDocument(XMLStreamWriter, CompositeNode, SchemaNode, XmlCodecProvider)} with
+     * Short-hand for {@link #writeDocument(XMLStreamWriter, CompositeNode, SchemaNode)})} with
      * null SchemaNode.
      *
      * @param writer XML Stream writer
      * @param data data node
-     * @param schema corresponding schema node, may be null
      * @throws XMLStreamException if an encoding problem occurs
      */
     public void writeDocument(final XMLStreamWriter writer, final CompositeNode data) throws XMLStreamException {
@@ -188,13 +187,9 @@ public class XmlStreamUtils {
                 DataSchemaNode childSchema = null;
                 if (schema instanceof DataNodeContainer) {
                     childSchema = SchemaUtils.findFirstSchema(child.getNodeType(), ((DataNodeContainer) schema).getChildNodes()).orNull();
-                    if (LOG.isDebugEnabled()) {
-                        if (childSchema == null) {
-                            LOG.debug("Probably the data node \"{}\" does not conform to schema", child == null ? "" : child.getNodeType().getLocalName());
-                        }
-                    }
+                } else if ((childSchema == null) && LOG.isDebugEnabled()) {
+                    LOG.debug("Probably the data node \"{}\" does not conform to schema", child == null ? "" : child.getNodeType().getLocalName());
                 }
-
                 writeElement(writer, child, childSchema);
             }
         }
