@@ -44,7 +44,24 @@ public class DependencyResolverTest {
 
         final DependencyResolver resolved = DependencyResolver.create(map);
 
+        assertEquals(2, resolved.getResolvedSources().size());
         assertEquals(1, resolved.getUnresolvedSources().size());
+        assertEquals(0, resolved.getUnsatisfiedImports().size());
+    }
+
+    @Test
+    public void testSubmodule() throws Exception {
+        final Map<SourceIdentifier, YangModelDependencyInfo> map = new HashMap<>();
+
+        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.fromInputStream(getClass().getResourceAsStream("/model/subfoo.yang")));
+        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.fromInputStream(getClass().getResourceAsStream("/model/foo.yang")));
+        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.fromInputStream(getClass().getResourceAsStream("/model/bar.yang")));
+        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.fromInputStream(getClass().getResourceAsStream("/model/baz.yang")));
+
+        final DependencyResolver resolved = DependencyResolver.create(map);
+
+        assertEquals(4, resolved.getResolvedSources().size());
+        assertEquals(0, resolved.getUnresolvedSources().size());
         assertEquals(0, resolved.getUnsatisfiedImports().size());
     }
 
