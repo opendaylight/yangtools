@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid;
 
+import com.google.common.base.Preconditions;
 import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -53,8 +54,13 @@ public class DataValidationException extends RuntimeException {
             final YangInstanceIdentifier.NodeIdentifierWithPredicates nodeId) {
         checkListKey(childNode, keyQName, nodeId);
 
-        Object expectedValue = nodeId.getKeyValues().get(keyQName);
-        Object actualValue = childNode.getValue();
+        //FIXME: parameter keyValues is never used in checkListKey maybe change of method signature?
+        final Object expectedValue = nodeId.getKeyValues().get(keyQName);
+        final Object actualValue = childNode.getValue();
+
+        Preconditions.checkNotNull(expectedValue);
+        Preconditions.checkNotNull(actualValue);
+        Preconditions.checkState(actualValue.equals(expectedValue));
     }
 
     public static void checkListKey(final DataContainerChild<?, ?> childNode, final QName keyQName, final YangInstanceIdentifier.NodeIdentifierWithPredicates nodeId) {
