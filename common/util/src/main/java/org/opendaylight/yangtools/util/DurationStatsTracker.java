@@ -46,7 +46,7 @@ public class DurationStatsTracker {
         long newTotal = currentTotal + 1;
 
         // Calculate moving cumulative average.
-        double newAve = currentAve * currentTotal / newTotal + duration / newTotal;
+        double newAve = currentAve * (double)currentTotal / (double)newTotal + (double)duration / (double)newTotal;
 
         averageDuration.compareAndSet(currentAve, newAve);
         totalDurations.compareAndSet(currentTotal, newTotal);
