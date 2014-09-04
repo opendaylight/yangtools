@@ -26,6 +26,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.activation.UnsupportedDataTypeException;
+import javax.annotation.Nonnull;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -335,11 +336,12 @@ public class XmlDocumentUtils {
     }
 
     public static List<Node<?>> toDomNodes(final Element element, final Optional<? extends Iterable<DataSchemaNode>> context, final SchemaContext schemaCtx) {
-        return forEachChild(element.getChildNodes(),schemaCtx, new Function<ElementWithSchemaContext, Optional<Node<?>>>() {
+        return forEachChild(element.getChildNodes(), schemaCtx, new Function<ElementWithSchemaContext, Optional<Node<?>>>() {
 
             @Override
-            public Optional<Node<?>> apply(final ElementWithSchemaContext input) {
+            public Optional<Node<?>> apply(final @Nonnull ElementWithSchemaContext input) {
                 if (context.isPresent()) {
+                    Preconditions.checkNotNull(input);
                     QName partialQName = qNameFromElement(input.getElement());
                     Optional<DataSchemaNode> schemaNode = findFirstSchema(partialQName, context.get());
                     if (schemaNode.isPresent()) {
@@ -351,7 +353,6 @@ public class XmlDocumentUtils {
             }
 
         });
-
     }
 
     public static List<Node<?>> toDomNodes(final Element element, final Optional<? extends Iterable<DataSchemaNode>> context) {

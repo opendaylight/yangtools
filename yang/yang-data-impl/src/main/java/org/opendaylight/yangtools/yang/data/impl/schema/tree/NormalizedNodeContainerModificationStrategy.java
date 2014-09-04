@@ -51,9 +51,6 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
 
     @Override
     public void verifyStructure(final ModifiedNode modification) throws IllegalArgumentException {
-        if (modification.getType() == ModificationType.WRITE) {
-
-        }
         for (ModifiedNode childModification : modification.getChildren()) {
             resolveChildOperation(childModification.getIdentifier()).verifyStructure(childModification);
         }

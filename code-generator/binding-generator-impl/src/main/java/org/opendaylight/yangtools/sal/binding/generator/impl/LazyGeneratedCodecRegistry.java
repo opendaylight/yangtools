@@ -679,8 +679,7 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
             if (implementation == null) {
                 implementation = tryToLoadImplementationImpl(inputType);
             }
-
-            return null;
+            return implementation;
         }
 
         private T tryToLoadImplementationImpl(final Class<? extends DataContainer> inputType) {
