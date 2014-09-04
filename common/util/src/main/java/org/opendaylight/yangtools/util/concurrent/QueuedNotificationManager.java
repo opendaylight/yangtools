@@ -121,7 +121,7 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
 
         if( LOG.isTraceEnabled() ) {
             LOG.trace( "{}: submitNotifications for listener {}: {}",
-                       name, listener.getClass(), notifications );
+                       name, listener.toString(), notifications );
         }
 
         ListenerKey<L> key = new ListenerKey<>( listener );
@@ -157,7 +157,7 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
                         // to the caller.
 
                         LOG.debug( "{}: Submitting NotificationTask for listener {}",
-                                   name, listener.getClass() );
+                                   name, listener.toString() );
 
                         executor.execute( newNotificationTask );
                         break;
@@ -175,12 +175,12 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
             // telling us to quit.
 
             LOG.debug( "{}: Interrupted trying to add to {} listener's queue",
-                       name, listener.getClass() );
+                       name, listener.toString() );
         }
 
         if( LOG.isTraceEnabled() ) {
             LOG.trace( "{}: submitNotifications dine for listener {}",
-                       name, listener.getClass() );
+                       name, listener.toString() );
         }
     }
 
@@ -192,8 +192,7 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
         List<ListenerNotificationQueueStats> statsList = new ArrayList<>( listenerCache.size() );
         for( NotificationTask task: listenerCache.values() ) {
             statsList.add( new ListenerNotificationQueueStats(
-                    task.listenerKey.getListener().getClass().getName(),
-                    task.notificationQueue.size() ) );
+                    task.listenerKey.toString(), task.notificationQueue.size() ) );
         }
 
         return statsList ;
@@ -248,6 +247,11 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
 
             ListenerKey<?> other = (ListenerKey<?>) obj;
             return listener == other.listener;
+        }
+
+        @Override
+        public String toString() {
+            return listener.toString();
         }
     }
 
@@ -305,7 +309,7 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
 
                         if( LOG.isDebugEnabled() ) {
                             LOG.debug( "{}: Offering notification to the queue for listener {}: {}",
-                                       name, listenerKey.getListener().getClass(), notification );
+                                       name, listenerKey.toString(), notification );
                         }
 
                         if( notificationQueue.offer( notification, 1, TimeUnit.MINUTES ) ) {
@@ -315,7 +319,7 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
                         LOG.warn(
                             "{}: Timed out trying to offer a notification to the queue for listener {}." +
                             "The queue has reached its capacity of {}",
-                            name, listenerKey.getListener().getClass(), maxQueueCapacity );
+                            name, listenerKey.toString(), maxQueueCapacity );
                     }
                 }
 
@@ -381,7 +385,7 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
 
                 // The executor is probably shutting down so log as debug.
                 LOG.debug( "{}: Interrupted trying to remove from {} listener's queue",
-                           name, listenerKey.getListener().getClass() );
+                           name, listenerKey.toString() );
             } finally {
 
                 // We're exiting, gracefully or not - either way make sure we always remove
@@ -401,7 +405,7 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
 
                 if( LOG.isDebugEnabled() ) {
                     LOG.debug( "{}: Invoking listener {} with notification: {}",
-                               name, listenerKey.getListener().getClass(), notification );
+                               name, listenerKey.toString(), notification );
                 }
 
                 listenerInvoker.invokeListener( listenerKey.getListener(), notification );
@@ -412,7 +416,7 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
                 // remaining notifications.
 
                 LOG.error( String.format( "%1$s: Error notifying listener %2$s", name,
-                           listenerKey.getListener().getClass() ), e );
+                           listenerKey.toString() ), e );
 
             } catch( Error e ) {
 
