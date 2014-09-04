@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_d8754afb",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/BaseTemplate.xtend",
+        "patchSetId": 4
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 612
+      },
+      "writtenOn": "2014-09-04T13:48:45Z",
+      "side": 1,
+      "message": "it is not used - remove?",
+      "revId": "b382c5975f34e2e8c092d25aa68c35b405cbd833",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
