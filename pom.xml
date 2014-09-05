@@ -38,9 +38,20 @@
         <module>restconf</module>
         <module>websocket</module>
         <module>yang</module>
-        <module>benchmarks</module>
       <!-- module>third-party</module -->
     </modules>
+
+    <profiles>
+      <profile>
+        <id>benchmarks</id>
+        <activation>
+          <activeByDefault>false</activeByDefault>
+        </activation>
+        <modules>
+          <module>benchmarks</module>
+        </modules>
+      </profile>
+    </profiles>
 
     <build>
         <pluginManagement>        

@@ -38,7 +38,11 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 @State(Scope.Thread)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
+@Fork(1)
 public class InMemoryDataTreeBenchmark {
+
+    private static final int WARMUP_ITERATIONS = 20;
+    private static final int MEASUREMENT_ITERATIONS = 20;
 
     private static final int OUTER_LIST_100K = 100000;
     private static final int OUTER_LIST_50K = 50000;
@@ -139,8 +143,8 @@ public class InMemoryDataTreeBenchmark {
     }
 
     @Benchmark
-    @Warmup(iterations = 10, timeUnit = TimeUnit.MILLISECONDS)
-    @Measurement(iterations = 20, timeUnit = TimeUnit.MILLISECONDS)
+    @Warmup(iterations = WARMUP_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = MEASUREMENT_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
     public void write100KSingleNodeWithOneInnerItemInOneCommitBenchmark() throws Exception {
         final DataTreeSnapshot snapshot = datastore.takeSnapshot();
         final DataTreeModification modification = snapshot.newModification();
@@ -153,8 +157,8 @@ public class InMemoryDataTreeBenchmark {
     }
 
     @Benchmark
-    @Warmup(iterations = 10, timeUnit = TimeUnit.MILLISECONDS)
-    @Measurement(iterations = 20, timeUnit = TimeUnit.MILLISECONDS)
+    @Warmup(iterations = WARMUP_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = MEASUREMENT_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
     public void write100KSingleNodeWithOneInnerItemInCommitPerWriteBenchmark() throws Exception {
         final DataTreeSnapshot snapshot = datastore.takeSnapshot();
         for (int outerListKey = 0; outerListKey < OUTER_LIST_100K; ++outerListKey) {
@@ -167,8 +171,8 @@ public class InMemoryDataTreeBenchmark {
     }
 
     @Benchmark
-    @Warmup(iterations = 10, timeUnit = TimeUnit.MILLISECONDS)
-    @Measurement(iterations = 20, timeUnit = TimeUnit.MILLISECONDS)
+    @Warmup(iterations = WARMUP_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = MEASUREMENT_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
     public void write50KSingleNodeWithTwoInnerItemsInOneCommitBenchmark() throws Exception {
         final DataTreeSnapshot snapshot = datastore.takeSnapshot();
         final DataTreeModification modification = snapshot.newModification();
@@ -181,8 +185,8 @@ public class InMemoryDataTreeBenchmark {
     }
 
     @Benchmark
-    @Warmup(iterations = 10, timeUnit = TimeUnit.MILLISECONDS)
-    @Measurement(iterations = 20, timeUnit = TimeUnit.MILLISECONDS)
+    @Warmup(iterations = WARMUP_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = MEASUREMENT_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
     public void write50KSingleNodeWithTwoInnerItemsInCommitPerWriteBenchmark() throws Exception {
         final DataTreeSnapshot snapshot = datastore.takeSnapshot();
         for (int outerListKey = 0; outerListKey < OUTER_LIST_50K; ++outerListKey) {
@@ -195,8 +199,8 @@ public class InMemoryDataTreeBenchmark {
     }
 
     @Benchmark
-    @Warmup(iterations = 10, timeUnit = TimeUnit.MILLISECONDS)
-    @Measurement(iterations = 20, timeUnit = TimeUnit.MILLISECONDS)
+    @Warmup(iterations = WARMUP_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = MEASUREMENT_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
     public void write10KSingleNodeWithTenInnerItemsInOneCommitBenchmark() throws Exception {
         final DataTreeSnapshot snapshot = datastore.takeSnapshot();
         final DataTreeModification modification = snapshot.newModification();
@@ -209,8 +213,8 @@ public class InMemoryDataTreeBenchmark {
     }
 
     @Benchmark
-    @Warmup(iterations = 10, timeUnit = TimeUnit.MILLISECONDS)
-    @Measurement(iterations = 20, timeUnit = TimeUnit.MILLISECONDS)
+    @Warmup(iterations = WARMUP_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
+    @Measurement(iterations = MEASUREMENT_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
     public void write10KSingleNodeWithTenInnerItemsInCommitPerWriteBenchmark() throws Exception {
         final DataTreeSnapshot snapshot = datastore.takeSnapshot();
         for (int outerListKey = 0; outerListKey < OUTER_LIST_10K; ++outerListKey) {
