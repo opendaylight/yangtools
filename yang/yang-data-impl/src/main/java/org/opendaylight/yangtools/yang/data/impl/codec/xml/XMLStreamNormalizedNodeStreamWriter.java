@@ -11,7 +11,6 @@ import com.google.common.base.Preconditions;
 
 import java.io.IOException;
 
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
@@ -68,8 +67,6 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
      * @return A new {@link NormalizedNodeStreamWriter}
      */
     public static NormalizedNodeStreamWriter create(final XMLStreamWriter writer, final SchemaContext context, final SchemaPath path) {
-        final Boolean repairing = (Boolean) writer.getProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES);
-        Preconditions.checkArgument(repairing == true, "XML Stream Writer has to be repairing namespaces");
         return new XMLStreamNormalizedNodeStreamWriter(writer, context, path);
     }
 

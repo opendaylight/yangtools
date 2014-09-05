@@ -269,7 +269,7 @@ public class XmlStreamUtils {
         if (value instanceof YangInstanceIdentifier) {
             write(writer, (YangInstanceIdentifier)value);
         } else {
-            LOG.debug("Value of {}:{} is not an InstanceIdentifier but {}", type.getQName().getNamespace(), type.getQName().getLocalName(), value.getClass());
+            LOG.warn("Value of {}:{} is not an InstanceIdentifier but {}", type.getQName().getNamespace(), type.getQName().getLocalName(), value.getClass());
             writer.writeCharacters(String.valueOf(value));
         }
     }
