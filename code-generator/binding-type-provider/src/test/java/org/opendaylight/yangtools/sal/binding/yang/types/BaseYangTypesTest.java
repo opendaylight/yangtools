@@ -71,7 +71,7 @@ public class BaseYangTypesTest {
 
     private static void initTypeDefinitionsFromSchemaContext() {
         Set<TypeDefinition<?>> typedefs = schemaContext.getTypeDefinitions();
-        assertEquals(16, typedefs.size());
+        assertEquals(17, typedefs.size());
 
         for (final TypeDefinition<?> typedef : typedefs) {
             assertNotNull(typedef);

@@ -1,0 +1,46 @@
+module test-type-provider-b {
+    yang-version 1;
+    namespace "urn:opendaylight:org:test:type:provider:b:model";
+    prefix "tp";
+
+    import test-type-provider { prefix prov; }
+
+    organization "OPEN DAYLIGHT";
+    contact "http://www.opendaylight.org/";
+
+    description "This module contains model for providing test data for Type Provider Test implementation.";
+
+    revision "2014-09-15" {
+        reference "Initial Revision.";
+    }
+
+    leaf id {
+        type leafref {
+            path "/prov:foo/prov:bars/prov:bar-item/prov:id";
+        }
+    }
+
+    leaf enum {
+        type leafref {
+            path "/prov:foo/prov:resolve-direct-use-of-enum";
+        }
+    }
+
+    leaf-list enums {
+        type leafref {
+            path "/prov:foo/prov:list-of-enums";
+        }
+    }
+
+    leaf conditional-leafref {
+        type leafref {
+            path "/prov:foo/prov:bars/prov:bar-item/[prov:id=10]";
+        }
+    }
+
+    leaf unreslovable-leafref {
+        type leafref {
+            path "/somewhere/i/bellong";
+        }
+    }
+}

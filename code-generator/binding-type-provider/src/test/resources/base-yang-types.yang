@@ -8,7 +8,11 @@ module base-yang-types {
 
     description "This module contains definitions of all Yang base types.";
 
-    revision "2014-07-23"{
+    revision "2014-09-14" {
+        reference "Added yang-int8-restricted type.";
+     }
+
+    revision "2014-07-23" {
         reference "Initial Revision.";
     }
 
@@ -29,6 +33,12 @@ module base-yang-types {
 
     typedef yang-int8 {
         type int8;
+    }
+
+    typedef yang-int8-restricted {
+        type int8 {
+            range 1..100;
+        }
     }
 
     typedef yang-int16 {
@@ -78,6 +88,21 @@ module base-yang-types {
 
     typedef yang-binary {
         type binary;
+    }
+
+    typedef yang-bits {
+        type bits {
+            bit disable-nagle {
+                position 0;
+            }
+            bit auto-sense-speed {
+                position 1;
+            }
+            bit 10-Mb-only {
+                position 2;
+            }
+        }
+        default "auto-sense-speed";
     }
 
     typedef yang-instance-identifier {
