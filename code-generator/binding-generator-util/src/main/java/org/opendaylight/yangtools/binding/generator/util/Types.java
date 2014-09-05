@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.generator.util;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -251,7 +252,7 @@ public final class Types {
         public ParametrizedTypeImpl(Type rawType, Type[] actTypes) {
             super(rawType.getPackageName(), rawType.getName());
             this.rawType = rawType;
-            this.actualTypes = actTypes;
+            this.actualTypes = Arrays.copyOf(actTypes, actTypes.length);
         }
 
     }
