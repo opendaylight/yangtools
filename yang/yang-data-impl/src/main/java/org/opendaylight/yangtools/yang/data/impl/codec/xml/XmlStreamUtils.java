@@ -5,6 +5,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.annotation.Nonnull;
@@ -144,7 +145,14 @@ public class XmlStreamUtils {
         final String ns = qname.getNamespace() != null ? qname.getNamespace().toString() : "";
 
         if (isEmptyElement(data)) {
-            writer.writeEmptyElement(pfx, qname.getLocalName(), ns);
+            if (hasAttributes(data)) {
+                writer.writeStartElement(pfx, qname.getLocalName(), ns);
+                RandomPrefix randomPrefix = new RandomPrefix();
+                writeAttributes(writer, (AttributesContainer) data, randomPrefix);
+                writer.writeEndElement();
+            } else {
+                writer.writeEmptyElement(pfx, qname.getLocalName(), ns);
+            }
             return;
         }
 
@@ -163,11 +171,9 @@ public class XmlStreamUtils {
      * @throws XMLStreamException if an encoding problem occurs
      */
     public void writeValue(final XMLStreamWriter writer, final @Nonnull Node<?> data, final SchemaNode schema) throws XMLStreamException {
-        if (data instanceof AttributesContainer && ((AttributesContainer) data).getAttributes() != null) {
+        if (hasAttributes(data)) {
             RandomPrefix randomPrefix = new RandomPrefix();
-            for (Entry<QName, String> attribute : ((AttributesContainer) data).getAttributes().entrySet()) {
-                writeAttribute(writer, attribute, randomPrefix);
-            }
+            writeAttributes(writer, (AttributesContainer) data, randomPrefix);
         }
 
         if (data instanceof SimpleNode<?>) {
@@ -197,6 +203,21 @@ public class XmlStreamUtils {
 
                 writeElement(writer, child, childSchema);
             }
+        }
+    }
+
+    private static void writeAttributes(final XMLStreamWriter writer, final AttributesContainer data, final RandomPrefix randomPrefix) throws XMLStreamException {
+        for (Entry<QName, String> attribute : data.getAttributes().entrySet()) {
+            writeAttribute(writer, attribute, randomPrefix);
+        }
+    }
+
+    private static boolean hasAttributes(final Node<?> data) {
+        if (data instanceof AttributesContainer) {
+            final Map<QName, String> c = ((AttributesContainer) data).getAttributes();
+            return c == null || c.isEmpty();
+        } else {
+            return false;
         }
     }
 
