@@ -12,13 +12,14 @@ import static com.google.common.base.Preconditions.checkState;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -303,15 +304,15 @@ public final class ParserListenerUtils {
     }
 
     /**
-     * Create java.util.List of key node names.
+     * Create java.util.LinkedHashSet of key node names.
      *
      * @param ctx
      *            Key_stmtContext context
-     * @return YANG list key as java.util.List of key node names
+     * @return YANG list key as java.util.LinkedHashSet of key node names
      */
-    public static List<String> createListKey(final Key_stmtContext ctx) {
-        String keyDefinition = stringFromNode(ctx);
-        return Lists.newArrayList(KEYDEF_SPLITTER.split(keyDefinition));
+    public static Set<String> createListKey(final Key_stmtContext ctx) {
+        final String keyDefinition = stringFromNode(ctx);
+        return Sets.newLinkedHashSet(KEYDEF_SPLITTER.split(keyDefinition));
     }
 
     /**
