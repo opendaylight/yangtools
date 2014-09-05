@@ -54,6 +54,29 @@
           <target>${java.source.version}</target>
         </configuration>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <configuration>
+          <classpathScope>test</classpathScope>
+          <executable>java</executable>
+          <arguments>
+            <argument>-classpath</argument>
+            <classpath/>
+            <argument>org.openjdk.jmh.Main</argument>
+            <argument>.*</argument>
+          </arguments>
+        </configuration>
+        <executions>
+          <execution>
+            <id>run-benchmarks</id>
+            <phase>integration-test</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 </project>
