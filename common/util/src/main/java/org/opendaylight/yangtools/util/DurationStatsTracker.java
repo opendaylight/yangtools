@@ -13,11 +13,12 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
+import com.google.common.util.concurrent.AtomicDouble;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-
-import com.google.common.util.concurrent.AtomicDouble;
 
 /**
  * Class that calculates and tracks time duration statistics.
@@ -46,7 +47,7 @@ public class DurationStatsTracker {
         long newTotal = currentTotal + 1;
 
         // Calculate moving cumulative average.
-        double newAve = currentAve * (double)currentTotal / (double)newTotal + (double)duration / (double)newTotal;
+        double newAve = currentAve * currentTotal / newTotal + (double)duration / (double)newTotal;
 
         averageDuration.compareAndSet(currentAve, newAve);
         totalDurations.compareAndSet(currentTotal, newTotal);
@@ -144,12 +145,24 @@ public class DurationStatsTracker {
         return formatDuration(getLongestDuration(), getTimeOfLongestDuration());
     }
 
+    /**
+     * Returns formatted value of number, e.g. "12.34". Always is used dot as decimal separator.
+     */
+    private String formatDecimalValue(double value) {
+        DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance();
+        symbols.setDecimalSeparator('.');
+        DecimalFormat decimalFormat = new DecimalFormat("0.00", symbols);
+
+        return decimalFormat.format(value);
+    }
+
     private String formatDuration(double duration, long timeStamp) {
         TimeUnit unit = chooseUnit((long)duration);
         double value = duration / NANOSECONDS.convert(1, unit);
+
         return timeStamp > 0 ?
-                String.format("%.4g %s at %3$tD %3$tT", value, abbreviate(unit), new Date(timeStamp)) :
-                String.format("%.4g %s", value, abbreviate(unit));
+                String.format("%s %s at %3$tD %3$tT", formatDecimalValue(value), abbreviate(unit), new Date(timeStamp)) :
+                String.format("%s %s", formatDecimalValue(value), abbreviate(unit));
     }
 
     private static TimeUnit chooseUnit(long nanos) {

@@ -36,6 +36,12 @@ public class DurationStatsTrackerTest {
         assertEquals("getLongestDuration", 30000, tracker.getLongestDuration());
         assertEquals("getShortestDuration", 10000, tracker.getShortestDuration());
 
+        String averageDuration = tracker.getDisplayableAverageDuration();
+        String longestDuration = tracker.getDisplayableLongestDuration();
+        String shortestDuration = tracker.getDisplayableShortestDuration();
+
+
+
         verifyDisplayableString("getDisplayableAverageDuration",
                 tracker.getDisplayableAverageDuration(), "20.0");
         verifyDisplayableString("getDisplayableLongestDuration",
