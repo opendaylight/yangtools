@@ -1,0 +1,88 @@
+module test-type-provider {
+    yang-version 1;
+    namespace "urn:opendaylight:org:test:type:provider:model";
+    prefix "tp";
+
+    import base-yang-types { prefix types; }
+
+    organization "OPEN DAYLIGHT";
+    contact "http://www.opendaylight.org/";
+
+    description "This module contains model for providing test data for Type Provider Test implementation.";
+
+    revision "2014-09-12" {
+        reference "Initial Revision.";
+    }
+
+    identity crypto-alg {
+        description
+            "Base identity from which all crypto algorithms
+            are derived.";
+    }
+
+    identity aes {
+        base "crypto-alg";
+    }
+
+    container foo {
+        container bars {
+            list bar-item {
+                key "id";
+
+                leaf id {
+                    type types:yang-int16;
+                }
+            }
+        }
+
+        leaf yang-int8-type {
+            type types:yang-int8;
+        }
+
+        leaf bug-1862-restricted-typedef {
+            type types:yang-int8 {
+                range "1..100";
+            }
+        }
+
+        leaf restricted-int8-type {
+            type types:yang-int8-restricted;
+        }
+
+        leaf restricted-int {
+            type int16 {
+                range "1..100";
+            }
+        }
+
+        leaf resolve-enum-leaf {
+            type types:yang-enumeration;
+        }
+
+        leaf resolve-direct-use-of-enum {
+            type enumeration {
+                enum x;
+                enum y;
+                enum z;
+            }
+        }
+
+        leaf resolve-union-type {
+            type types:yang-union;
+        }
+
+        leaf crypto {
+            type identityref {
+                base "crypto-alg";
+            }
+        }
+    }
+
+    container bar {
+        leaf leafref-value {
+            type leafref {
+                path "../../foo/yang-int8-type";
+            }
+        }
+    }
+}

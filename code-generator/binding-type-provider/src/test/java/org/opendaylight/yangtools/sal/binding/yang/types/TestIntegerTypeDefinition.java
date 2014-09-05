@@ -1,0 +1,55 @@
+package org.opendaylight.yangtools.sal.binding.yang.types;
+
+import java.util.List;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+
+/**
+ * Created by lukas on 9/12/14.
+ */
+final class TestIntegerTypeDefinition implements IntegerTypeDefinition {
+
+    @Override public List<RangeConstraint> getRangeConstraints() {
+        return null;
+    }
+
+    @Override public IntegerTypeDefinition getBaseType() {
+        return null;
+    }
+
+    @Override public String getUnits() {
+        return null;
+    }
+
+    @Override public Object getDefaultValue() {
+        return null;
+    }
+
+    @Override public QName getQName() {
+        return null;
+    }
+
+    @Override public SchemaPath getPath() {
+        return null;
+    }
+
+    @Override public List<UnknownSchemaNode> getUnknownSchemaNodes() {
+        return null;
+    }
+
+    @Override public String getDescription() {
+        return null;
+    }
+
+    @Override public String getReference() {
+        return null;
+    }
+
+    @Override public Status getStatus() {
+        return null;
+    }
+}
