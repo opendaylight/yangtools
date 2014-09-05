@@ -1,0 +1,172 @@
+module test-type-provider {
+    yang-version 1;
+    namespace "urn:opendaylight:org:test:type:provider:model";
+    prefix "tp";
+
+    import base-yang-types { prefix types; }
+
+    organization "OPEN DAYLIGHT";
+    contact "http://www.opendaylight.org/";
+
+    description "This module contains model for providing test data for Type Provider Test implementation.";
+
+    revision "2014-09-12" {
+        reference "Initial Revision.";
+    }
+
+    identity crypto-alg {
+        description
+            "Base identity from which all crypto algorithms
+            are derived.";
+    }
+
+    identity aes {
+        base "crypto-alg";
+    }
+
+    typedef extended-yang-int8 {
+        type types:yang-int8 {
+            range 1..100;
+        }
+        default 10;
+    }
+
+    typedef inner-union {
+        type union {
+            type int32;
+            type int16;
+        }
+    }
+
+    typedef restricted-string {
+        type string {
+            length "0..4";
+            pattern "[0-9a-fA-F]*";
+        }
+    }
+
+    typedef empty-pattern-string {
+        type string {
+            pattern "";
+        }
+    }
+
+    typedef complex-union {
+        type union {
+            type restricted-string;
+            type inner-union;
+            type union {
+                type enumeration {
+                    enum a;
+                    enum b;
+                    enum c;
+                }
+            }
+        }
+    }
+
+    typedef complex-string-int-union {
+        type union {
+            type inner-union;
+            type string;
+        }
+    }
+
+    typedef aes-identityref-type {
+        type identityref {
+            base "aes";
+        }
+    }
+
+    typedef bar-item-leafref-id {
+        type leafref {
+            path "/foo/bars/bar-item/id";
+        }
+    }
+
+    container foo {
+        container bars {
+            list bar-item {
+                key "id";
+
+                leaf id {
+                    type types:yang-int16;
+                }
+            }
+        }
+
+        leaf yang-int8-type {
+            type types:yang-int8;
+        }
+
+        leaf bug-1862-restricted-typedef {
+            type types:yang-int8 {
+                range "1..100";
+            }
+        }
+
+        leaf restricted-int8-type {
+            type types:yang-int8-restricted;
+        }
+
+        leaf restricted-int {
+            type int16 {
+                range "1..100";
+            }
+        }
+
+        leaf resolve-enum-leaf {
+            type types:yang-enumeration;
+        }
+
+        leaf resolve-direct-use-of-enum {
+            type enumeration {
+                enum x;
+                enum y;
+                enum z;
+            }
+        }
+
+        leaf-list list-of-enums {
+            type enumeration {
+                enum x;
+                enum y;
+                enum z;
+            }
+        }
+
+        leaf crypto {
+            type identityref {
+                base "crypto-alg";
+            }
+        }
+    }
+
+    container bar {
+        leaf leafref-value {
+            type leafref {
+                path "../../foo/yang-int8-type";
+            }
+        }
+    }
+
+    container use-of-unions {
+        leaf complex-union {
+            type complex-union;
+        }
+
+        leaf complex-string-int-union {
+            type complex-string-int-union;
+        }
+
+        leaf simple-int-types-union {
+            type types:yang-union;
+        }
+    }
+
+    container construction-type-test {
+        leaf yang-boolean {
+            type types:yang-boolean;
+        }
+    }
+}
