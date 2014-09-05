@@ -190,7 +190,7 @@ public final class TypeProviderImpl implements TypeProvider {
     @Override
     public Type javaTypeForSchemaDefinitionType(final TypeDefinition<?> typeDefinition, final SchemaNode parentNode,
             final Restrictions r) {
-        Type returnType = null;
+        Type returnType;
         Preconditions.checkArgument(typeDefinition != null, "Type Definition cannot be NULL!");
         Preconditions.checkArgument(typeDefinition.getQName() != null,
                 "Type Definition cannot have non specified QName (QName cannot be NULL!)");
@@ -217,12 +217,6 @@ public final class TypeProviderImpl implements TypeProvider {
                         .getLocalName());
             }
         }
-        // TODO: add throw exception when we will be able to resolve ALL yang
-        // types!
-        // if (returnType == null) {
-        // throw new IllegalArgumentException("Type Provider can't resolve " +
-        // "type for specified Type Definition " + typedefName);
-        // }
         return returnType;
     }
 
@@ -277,8 +271,7 @@ public final class TypeProviderImpl implements TypeProvider {
     private Type javaTypeForExtendedType(final TypeDefinition<?> typeDefinition) {
         final String typedefName = typeDefinition.getQName().getLocalName();
         final TypeDefinition<?> baseTypeDef = baseTypeDefForExtendedType(typeDefinition);
-        Type returnType = null;
-        returnType = javaTypeForLeafrefOrIdentityRef(baseTypeDef, typeDefinition);
+        Type returnType = javaTypeForLeafrefOrIdentityRef(baseTypeDef, typeDefinition);
         if (returnType == null) {
             if (baseTypeDef instanceof EnumTypeDefinition) {
                 final EnumTypeDefinition enumTypeDef = (EnumTypeDefinition) baseTypeDef;
@@ -300,12 +293,6 @@ public final class TypeProviderImpl implements TypeProvider {
             }
         }
         return returnType;
-        // TODO: add throw exception when we will be able to resolve ALL yang
-        // types!
-        // if (returnType == null) {
-        // throw new IllegalArgumentException("Type Provider can't resolve " +
-        // "type for specified Type Definition " + typedefName);
-        // }
     }
 
     /**
@@ -676,7 +663,7 @@ public final class TypeProviderImpl implements TypeProvider {
      *
      * @param basePackageName
      *            string with name of package to which the module belongs
-     * @param moduleName
+     * @param module
      *            string with the name of the module for to which the
      *            <code>typedef</code> belongs
      * @param typedef
@@ -904,7 +891,8 @@ public final class TypeProviderImpl implements TypeProvider {
      *
      * In this case the new generated TO is created for union subtype (recursive
      * call of method
-     * {@link #provideGeneratedTOBuildersForUnionTypeDef(String, TypeDefinition, String)
+     * {@link #provideGeneratedTOBuildersForUnionTypeDef(String, UnionTypeDefinition,
+     * String, SchemaNode)}
      * provideGeneratedTOBuilderForUnionTypeDef} and in parent TO builder
      * <code>parentUnionGenTOBuilder</code> is created property which type is
      * equal to new generated TO.
@@ -949,10 +937,11 @@ public final class TypeProviderImpl implements TypeProvider {
      * @param unionSubtype
      *            type definition of the <code>ExtendedType</code> type which
      *            represents union subtype
-     * @param unionTypeName
-     *            string with the name for <code>unionSubtype</code>
      * @param regularExpressions
      *            list of strings with the regular expressions
+     * @param parentNode
+     *            parent Schema Node for Extended Subtype
+     *
      */
     private void resolveExtendedSubtypeAsUnion(final GeneratedTOBuilder parentUnionGenTOBuilder,
             final ExtendedType unionSubtype, final List<String> regularExpressions, final SchemaNode parentNode) {
@@ -1200,12 +1189,14 @@ public final class TypeProviderImpl implements TypeProvider {
      * {@link TypeProviderImpl#genTypeDefsContextMap genTypeDefsContextMap} to
      * be possible set it as extended type for the returning generated TO.
      *
+     * @param typedef
+     *            Type Definition
      * @param innerExtendedType
      *            extended type which is part of some other extended type
      * @param basePackageName
      *            string with the package name of the module
-     * @param typedefName
-     *            string with the name for the generated TO
+     * @param moduleName
+     *            Module Name
      * @return generated TO which extends generated TO for
      *         <code>innerExtendedType</code>
      * @throws IllegalArgumentException
@@ -1393,13 +1384,13 @@ public final class TypeProviderImpl implements TypeProvider {
             Iterator<QName> path = node.getPath().getPathFromRoot().iterator();
             path.next();
             if (!(path.hasNext())) {
-                parentName = BindingMapping.getClassName((parent).getName()) + "Data";
+                parentName = BindingMapping.getClassName(parent.getName()) + "Data";
                 String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(parent);
                 className = basePackageName + "." + parentName + "." + BindingMapping.getClassName(node.getQName());
             } else {
                 String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(parent);
                 String packageName = packageNameForGeneratedType(basePackageName, type.getPath());
-                parentName = BindingMapping.getClassName(((SchemaNode) parent).getQName());
+                parentName = BindingMapping.getClassName(parent.getName());
                 className = packageName + "." + parentName + "." + BindingMapping.getClassName(node.getQName());
             }
             result = bitsToDef((BitsTypeDefinition) base, className, defaultValue, type instanceof ExtendedType);
@@ -1440,7 +1431,7 @@ public final class TypeProviderImpl implements TypeProvider {
         } else if (base instanceof Int64) {
             result = typeToDef(Long.class, defaultValue);
         } else if (base instanceof LeafrefTypeDefinition) {
-            result = leafrefToDef(node, (LeafrefTypeDefinition) base);
+            result = leafrefToDef(node, (LeafrefTypeDefinition) base, defaultValue);
         } else if (base instanceof StringTypeDefinition) {
             result = "\"" + defaultValue + "\"";
         } else if (base instanceof Uint8) {
@@ -1528,7 +1519,7 @@ public final class TypeProviderImpl implements TypeProvider {
         return schemaContext.findModuleByNamespaceAndRevision(namespace, revision);
     }
 
-    private String leafrefToDef(final LeafSchemaNode parentNode, final LeafrefTypeDefinition leafrefType) {
+    private String leafrefToDef(final LeafSchemaNode parentNode, final LeafrefTypeDefinition leafrefType, final String defaultValue) {
         Preconditions.checkArgument(leafrefType != null, "Leafref Type Definition reference cannot be NULL!");
         Preconditions.checkArgument(leafrefType.getPathStatement() != null,
                 "The Path Statement for Leafref Type Definition cannot be NULL!");
@@ -1546,7 +1537,7 @@ public final class TypeProviderImpl implements TypeProvider {
                     } else {
                         dataNode = findDataSchemaNodeForRelativeXPath(schemaContext, module, parentNode, xpath);
                     }
-                    String result = getTypeDefaultConstruction((LeafSchemaNode) dataNode, parentNode.getDefault());
+                    String result = getTypeDefaultConstruction((LeafSchemaNode) dataNode, defaultValue);
                     return result;
                 }
             } else {
