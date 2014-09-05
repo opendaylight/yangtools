@@ -8,12 +8,11 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.base.Optional;
-import javax.annotation.concurrent.Immutable;
-import org.opendaylight.yangtools.yang.common.QName;
-
 import java.net.URI;
 import java.util.Date;
 import java.util.Set;
+import javax.annotation.concurrent.Immutable;
+import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  * The interface represents static view of compiled yang files,
@@ -25,7 +24,9 @@ import java.util.Set;
  */
 @Immutable
 public interface SchemaContext extends ContainerSchemaNode {
-
+    /**
+     * QName of NETCONF top-level data node.
+     */
     public static final QName NAME = QName.create(URI.create("urn:ietf:params:xml:ns:netconf:base:1.0"), null, "data");
 
     /**

@@ -57,6 +57,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
@@ -65,10 +66,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 public class XmlDocumentUtils {
-    private final static String RPC_REPLY_LOCAL_NAME = "rpc-reply";
-    private final static String RPC_REPLY_NAMESPACE = "urn:ietf:params:xml:ns:netconf:base:1.0";
-    private final static QName RPC_REPLY_QNAME = QName.create(URI.create(RPC_REPLY_NAMESPACE), null, RPC_REPLY_LOCAL_NAME);
-
     private static class ElementWithSchemaContext {
         Element element;
         SchemaContext schemaContext;
@@ -87,8 +84,9 @@ public class XmlDocumentUtils {
         }
     }
 
-    public static final QName OPERATION_ATTRIBUTE_QNAME = QName.create(URI.create("urn:ietf:params:xml:ns:netconf:base:1.0"), null, "operation");
-    private static final Logger logger = LoggerFactory.getLogger(XmlDocumentUtils.class);
+    public static final QName OPERATION_ATTRIBUTE_QNAME = QName.create(SchemaContext.NAME, "operation");
+    private static final QName RPC_REPLY_QNAME = QName.create(SchemaContext.NAME, "rpc-reply");
+    private static final Logger LOG = LoggerFactory.getLogger(XmlDocumentUtils.class);
     private static final XMLOutputFactory FACTORY = XMLOutputFactory.newFactory();
 
     /**
@@ -119,7 +117,7 @@ public class XmlDocumentUtils {
             writer.close();
             return (Document)result.getNode();
         } catch (XMLStreamException e) {
-            logger.error("Failed to serialize data {}", data, e);
+            LOG.error("Failed to serialize data {}", data, e);
             return null;
         }
     }
@@ -154,7 +152,7 @@ public class XmlDocumentUtils {
             writer.close();
             return (Document)result.getNode();
         } catch (XMLStreamException e) {
-            logger.error("Failed to serialize data {}", data, e);
+            LOG.error("Failed to serialize data {}", data, e);
             return null;
         }
     }
@@ -230,22 +228,22 @@ public class XmlDocumentUtils {
 
     protected static Node<?> toSimpleNodeWithType(final Element xmlElement, final LeafSchemaNode schema,
             final XmlCodecProvider codecProvider,final SchemaContext schemaCtx) {
-        TypeDefinitionAwareCodec<? extends Object, ? extends TypeDefinition<?>> codec = codecProvider.codecFor(schema.getType());
-        String text = xmlElement.getTextContent();
-        Object value = null;
-        if (codec != null) {
-            value = codec.deserialize(text);
-        }
         final TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(schema.getType());
+        final String text = xmlElement.getTextContent();
+        final Object value;
 
-        if (baseType instanceof org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType) {
-            value = InstanceIdentifierForXmlCodec.deserialize(xmlElement,schemaCtx);
-        } else if(baseType instanceof IdentityrefTypeDefinition){
-            value = InstanceIdentifierForXmlCodec.toIdentity(xmlElement.getTextContent(), xmlElement, schemaCtx);
-        }
-
-        if (value == null) {
-            value = xmlElement.getTextContent();
+        if (baseType instanceof InstanceIdentifierType) {
+            value = InstanceIdentifierForXmlCodec.deserialize(xmlElement, schemaCtx);
+        } else if (baseType instanceof IdentityrefTypeDefinition) {
+            value = InstanceIdentifierForXmlCodec.toIdentity(text, xmlElement, schemaCtx);
+        } else {
+            final TypeDefinitionAwareCodec<?, ?> codec = codecProvider.codecFor(schema.getType());
+            if (codec == null) {
+                LOG.info("No codec for schema {}, falling back to text", schema);
+                value = text;
+            } else {
+                value = codec.deserialize(text);
+            }
         }
 
         Optional<ModifyAction> modifyAction = getModifyOperationFromAttributes(xmlElement);
@@ -254,17 +252,20 @@ public class XmlDocumentUtils {
 
     private static Node<?> toSimpleNodeWithType(final Element xmlElement, final LeafListSchemaNode schema,
             final XmlCodecProvider codecProvider,final SchemaContext schemaCtx) {
-        TypeDefinitionAwareCodec<? extends Object, ? extends TypeDefinition<?>> codec = codecProvider.codecFor(schema.getType());
-        String text = xmlElement.getTextContent();
-        Object value = null;
-        if (codec != null) {
-            value = codec.deserialize(text);
-        }
-        if (schema.getType() instanceof org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType) {
-            value = InstanceIdentifierForXmlCodec.deserialize(xmlElement,schemaCtx);
-        }
-        if (value == null) {
-            value = xmlElement.getTextContent();
+        final Object value;
+
+        if (schema.getType() instanceof InstanceIdentifierType) {
+            value = InstanceIdentifierForXmlCodec.deserialize(xmlElement, schemaCtx);
+        } else {
+            final TypeDefinitionAwareCodec<?, ?> codec = codecProvider.codecFor(schema.getType());
+            final String text = xmlElement.getTextContent();
+
+            if (codec == null) {
+                LOG.info("No codec for schema {}, falling back to text", schema);
+                value = text;
+            } else {
+                value = codec.deserialize(text);
+            }
         }
 
         Optional<ModifyAction> modifyAction = getModifyOperationFromAttributes(xmlElement);
