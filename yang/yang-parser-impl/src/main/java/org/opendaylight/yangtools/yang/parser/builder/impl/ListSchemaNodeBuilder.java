@@ -12,6 +12,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -36,7 +37,7 @@ public final class ListSchemaNodeBuilder extends AbstractDocumentedDataNodeConta
         DataSchemaNodeBuilder, AugmentationTargetBuilder {
     private ListSchemaNodeImpl instance;
     private boolean userOrdered;
-    private List<String> keys;
+    private LinkedHashSet<String> keys;
     private List<QName> keyDefinition;
     // SchemaNode args
     private SchemaPath schemaPath;
@@ -155,11 +156,11 @@ public final class ListSchemaNodeBuilder extends AbstractDocumentedDataNodeConta
         return augmentationBuilders;
     }
 
-    public List<String> getKeys() {
+    public LinkedHashSet<String> getKeys() {
         return keys;
     }
 
-    public void setKeys(final List<String> keys) {
+    public void setKeys(final LinkedHashSet<String> keys) {
         this.keys = keys;
     }
 

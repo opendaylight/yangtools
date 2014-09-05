@@ -32,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -215,7 +216,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     public void enterBelongs_to_stmt(final YangParser.Belongs_to_stmtContext ctx) {
         final String belongsTo = stringFromNode(ctx);
         TreeMap<Date, URI> context = namespaceContext.get(belongsTo);
-        Map.Entry<Date, URI> entry = context.firstEntry();
+        final Map.Entry<Date, URI> entry = context.firstEntry();
         // TODO
         // Submodule will contain namespace and revision from module to which it
         // belongs. If there are multiple modules with same name and different
@@ -271,7 +272,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     public void enterMeta_stmts(final YangParser.Meta_stmtsContext ctx) {
         enterLog("meta_stmt", "", ctx.getStart().getLine());
         for (int i = 0; i < ctx.getChildCount(); i++) {
-            ParseTree child = ctx.getChild(i);
+            final ParseTree child = ctx.getChild(i);
             if (child instanceof Organization_stmtContext) {
                 final String organization = stringFromNode(child);
                 moduleBuilder.setOrganization(organization);
@@ -372,9 +373,9 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         Date includeRevision = null;
         for (int i = 0; i < ctx.getChildCount(); i++) {
-            ParseTree treeNode = ctx.getChild(i);
+            final ParseTree treeNode = ctx.getChild(i);
             if (treeNode instanceof Revision_date_stmtContext) {
-                String importRevisionStr = stringFromNode(treeNode);
+                final String importRevisionStr = stringFromNode(treeNode);
                 try {
                     includeRevision = SIMPLE_DATE_FORMAT.parse(importRevisionStr);
                 } catch (ParseException e) {
@@ -396,8 +397,8 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         enterLog(AUGMENT_STR, augmentPath, line);
         stack.push();
 
-        SchemaPath targetPath = parseXPathString(augmentPath, line);
-        AugmentationSchemaBuilder builder = moduleBuilder.addAugment(line, augmentPath, targetPath, augmentOrder++);
+        final SchemaPath targetPath = parseXPathString(augmentPath, line);
+        final AugmentationSchemaBuilder builder = moduleBuilder.addAugment(line, augmentPath, targetPath, augmentOrder++);
 
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree child = ctx.getChild(i);
@@ -427,16 +428,16 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final int line = ctx.getStart().getLine();
         final String extName = stringFromNode(ctx);
         enterLog("extension", extName, line);
-        QName qname = QName.create(moduleQName, extName);
-        SchemaPath path = stack.addNodeToPath(qname);
+        final QName qname = QName.create(moduleQName, extName);
+        final SchemaPath path = stack.addNodeToPath(qname);
 
-        ExtensionBuilder builder = moduleBuilder.addExtension(qname, line, path);
+        final ExtensionBuilder builder = moduleBuilder.addExtension(qname, line, path);
         parseSchemaNodeArgs(ctx, builder);
 
         String argument = null;
         boolean yin = false;
         for (int i = 0; i < ctx.getChildCount(); i++) {
-            ParseTree child = ctx.getChild(i);
+            final ParseTree child = ctx.getChild(i);
             if (child instanceof Argument_stmtContext) {
                 argument = stringFromNode(child);
                 yin = parseYinValue((Argument_stmtContext) child);
@@ -460,10 +461,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final int line = ctx.getStart().getLine();
         final String typedefName = stringFromNode(ctx);
         enterLog("typedef", typedefName, line);
-        QName typedefQName = QName.create(moduleQName, typedefName);
-        SchemaPath path = stack.addNodeToPath(typedefQName);
+        final QName typedefQName = QName.create(moduleQName, typedefName);
+        final SchemaPath path = stack.addNodeToPath(typedefQName);
 
-        TypeDefinitionBuilder builder = moduleBuilder.addTypedef(line, typedefQName, path);
+        final TypeDefinitionBuilder builder = moduleBuilder.addTypedef(line, typedefQName, path);
         parseSchemaNodeArgs(ctx, builder);
         builder.setUnits(parseUnits(ctx));
         builder.setDefaultValue(parseDefault(ctx));
@@ -509,14 +510,14 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                 case "union":
                     qname = BaseTypes.UNION_QNAME;
                     stack.addNodeToPath(qname);
-                    UnionTypeBuilder unionBuilder = moduleBuilder.addUnionType(line, moduleQName.getModule());
-                    Builder parent = moduleBuilder.getActualNode();
+                    final UnionTypeBuilder unionBuilder = moduleBuilder.addUnionType(line, moduleQName.getModule());
+                    final Builder parent = moduleBuilder.getActualNode();
                     unionBuilder.setParent(parent);
                     moduleBuilder.enterNode(unionBuilder);
                     break;
                 case "identityref":
                     qname = BaseTypes.IDENTITYREF_QNAME;
-                    SchemaPath path = stack.addNodeToPath(qname);
+                    final SchemaPath path = stack.addNodeToPath(qname);
                     moduleBuilder.addIdentityrefType(line, path, getIdentityrefBase(typeBody));
                     break;
                 default:
@@ -527,7 +528,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                 }
             }
         } else {
-            TypeAwareBuilder parent = (TypeAwareBuilder) moduleBuilder.getActualNode();
+            final TypeAwareBuilder parent = (TypeAwareBuilder) moduleBuilder.getActualNode();
             if (typeBody == null) {
                 parent.setTypeQName(typeQName);
                 moduleBuilder.markActualNodeDirty();
@@ -564,7 +565,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
             if (prefix.equals(moduleBuilder.getPrefix())) {
                 qname = QName.create(moduleQName.getNamespace(), moduleQName.getRevision(), name);
             } else {
-                ModuleImport imp = moduleBuilder.getImport(prefix);
+                final ModuleImport imp = moduleBuilder.getImport(prefix);
                 if (imp == null) {
                     LOG.debug("Error in module {} at line {}: No import found with prefix {}", moduleName, line, prefix);
                     throw new YangParseException(moduleName, line, "Error in module " + moduleName
@@ -603,10 +604,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final int line = ctx.getStart().getLine();
         final String groupName = stringFromNode(ctx);
         enterLog("grouping", groupName, line);
-        QName groupQName = QName.create(moduleQName, groupName);
-        SchemaPath path = stack.addNodeToPath(groupQName);
+        final QName groupQName = QName.create(moduleQName, groupName);
+        final SchemaPath path = stack.addNodeToPath(groupQName);
 
-        GroupingBuilder builder = moduleBuilder.addGrouping(ctx.getStart().getLine(), groupQName, path);
+        final GroupingBuilder builder = moduleBuilder.addGrouping(ctx.getStart().getLine(), groupQName, path);
         parseSchemaNodeArgs(ctx, builder);
 
         moduleBuilder.enterNode(builder);
@@ -624,10 +625,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final String containerName = stringFromNode(ctx);
         enterLog("container", containerName, line);
 
-        QName containerQName = QName.create(moduleQName, containerName);
-        SchemaPath path = stack.addNodeToPath(containerQName);
+        final QName containerQName = QName.create(moduleQName, containerName);
+        final SchemaPath path = stack.addNodeToPath(containerQName);
 
-        ContainerSchemaNodeBuilder builder = moduleBuilder.addContainerNode(line, containerQName, path);
+        final ContainerSchemaNodeBuilder builder = moduleBuilder.addContainerNode(line, containerQName, path);
         parseSchemaNodeArgs(ctx, builder);
         parseConstraints(ctx, builder.getConstraints());
         builder.setConfiguration(getConfig(ctx, builder, moduleName, line));
@@ -655,10 +656,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final String leafName = stringFromNode(ctx);
         enterLog("leaf", leafName, line);
 
-        QName leafQName = QName.create(moduleQName, leafName);
-        SchemaPath path = stack.addNodeToPath(leafQName);
+        final QName leafQName = QName.create(moduleQName, leafName);
+        final SchemaPath path = stack.addNodeToPath(leafQName);
 
-        LeafSchemaNodeBuilder builder = moduleBuilder.addLeafNode(line, leafQName, path);
+        final LeafSchemaNodeBuilder builder = moduleBuilder.addLeafNode(line, leafQName, path);
         parseSchemaNodeArgs(ctx, builder);
         parseConstraints(ctx, builder.getConstraints());
         builder.setConfiguration(getConfig(ctx, builder, moduleName, line));
@@ -666,7 +667,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         String defaultStr = null;
         String unitsStr = null;
         for (int i = 0; i < ctx.getChildCount(); i++) {
-            ParseTree child = ctx.getChild(i);
+            final ParseTree child = ctx.getChild(i);
             if (child instanceof Default_stmtContext) {
                 defaultStr = stringFromNode(child);
             } else if (child instanceof Units_stmtContext) {
@@ -692,7 +693,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final SchemaPath groupingPath = parseXPathString(groupingPathStr, line);
         enterLog("uses", groupingPathStr, line);
 
-        UsesNodeBuilder builder = moduleBuilder.addUsesNode(line, groupingPath);
+        final UsesNodeBuilder builder = moduleBuilder.addUsesNode(line, groupingPath);
 
         moduleBuilder.enterNode(builder);
     }
@@ -710,11 +711,11 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         enterLog(AUGMENT_STR, augmentPath, line);
         stack.push();
 
-        SchemaPath targetPath = parseXPathString(augmentPath, line);
-        AugmentationSchemaBuilder builder = moduleBuilder.addAugment(line, augmentPath, targetPath, augmentOrder++);
+        final SchemaPath targetPath = parseXPathString(augmentPath, line);
+        final AugmentationSchemaBuilder builder = moduleBuilder.addAugment(line, augmentPath, targetPath, augmentOrder++);
 
         for (int i = 0; i < ctx.getChildCount(); i++) {
-            ParseTree child = ctx.getChild(i);
+            final ParseTree child = ctx.getChild(i);
             if (child instanceof Description_stmtContext) {
                 builder.setDescription(stringFromNode(child));
             } else if (child instanceof Reference_stmtContext) {
@@ -741,7 +742,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final String refineString = stringFromNode(ctx);
         enterLog("refine", refineString, ctx.getStart().getLine());
 
-        RefineHolderImpl refine = parseRefine(ctx, moduleName);
+        final RefineHolderImpl refine = parseRefine(ctx, moduleName);
         moduleBuilder.addRefine(refine);
         moduleBuilder.enterNode(refine);
     }
@@ -757,10 +758,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final int line = ctx.getStart().getLine();
         final String leafListName = stringFromNode(ctx);
         enterLog("leaf-list", leafListName, line);
-        QName leafListQName = QName.create(moduleQName, leafListName);
-        SchemaPath path = stack.addNodeToPath(leafListQName);
+        final QName leafListQName = QName.create(moduleQName, leafListName);
+        final SchemaPath path = stack.addNodeToPath(leafListQName);
 
-        LeafListSchemaNodeBuilder builder = moduleBuilder.addLeafListNode(line, leafListQName, path);
+        final LeafListSchemaNodeBuilder builder = moduleBuilder.addLeafListNode(line, leafListQName, path);
         moduleBuilder.enterNode(builder);
 
         parseSchemaNodeArgs(ctx, builder);
@@ -790,10 +791,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final String listName = stringFromNode(ctx);
         enterLog("list", listName, line);
 
-        QName listQName = QName.create(moduleQName, listName);
-        SchemaPath path = stack.addNodeToPath(listQName);
+        final QName listQName = QName.create(moduleQName, listName);
+        final SchemaPath path = stack.addNodeToPath(listQName);
 
-        ListSchemaNodeBuilder builder = moduleBuilder.addListNode(line, listQName, path);
+        final ListSchemaNodeBuilder builder = moduleBuilder.addListNode(line, listQName, path);
         moduleBuilder.enterNode(builder);
 
         parseSchemaNodeArgs(ctx, builder);
@@ -801,13 +802,13 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         builder.setConfiguration(getConfig(ctx, builder, moduleName, line));
 
         for (int i = 0; i < ctx.getChildCount(); ++i) {
-            ParseTree childNode = ctx.getChild(i);
+            final ParseTree childNode = ctx.getChild(i);
             if (childNode instanceof Ordered_by_stmtContext) {
                 final Ordered_by_stmtContext orderedBy = (Ordered_by_stmtContext) childNode;
                 final boolean userOrdered = parseUserOrdered(orderedBy);
                 builder.setUserOrdered(userOrdered);
             } else if (childNode instanceof Key_stmtContext) {
-                List<String> key = createListKey((Key_stmtContext) childNode);
+                final LinkedHashSet<String> key = createListKey((Key_stmtContext) childNode);
                 builder.setKeys(key);
             }
         }
@@ -825,10 +826,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final String anyXmlName = stringFromNode(ctx);
         enterLog("anyxml", anyXmlName, line);
 
-        QName anyXmlQName = QName.create(moduleQName, anyXmlName);
-        SchemaPath path = stack.addNodeToPath(anyXmlQName);
+        final QName anyXmlQName = QName.create(moduleQName, anyXmlName);
+        final SchemaPath path = stack.addNodeToPath(anyXmlQName);
 
-        AnyXmlBuilder builder = moduleBuilder.addAnyXml(line, anyXmlQName, path);
+        final AnyXmlBuilder builder = moduleBuilder.addAnyXml(line, anyXmlQName, path);
         moduleBuilder.enterNode(builder);
 
         parseSchemaNodeArgs(ctx, builder);
@@ -848,10 +849,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final String choiceName = stringFromNode(ctx);
         enterLog("choice", choiceName, line);
 
-        QName choiceQName = QName.create(moduleQName, choiceName);
-        SchemaPath path = stack.addNodeToPath(choiceQName);
+        final QName choiceQName = QName.create(moduleQName, choiceName);
+        final SchemaPath path = stack.addNodeToPath(choiceQName);
 
-        ChoiceBuilder builder = moduleBuilder.addChoice(line, choiceQName, path);
+        final ChoiceBuilder builder = moduleBuilder.addChoice(line, choiceQName, path);
         moduleBuilder.enterNode(builder);
 
         parseSchemaNodeArgs(ctx, builder);
@@ -860,9 +861,9 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         // set 'default' case
         for (int i = 0; i < ctx.getChildCount(); i++) {
-            ParseTree child = ctx.getChild(i);
+            final ParseTree child = ctx.getChild(i);
             if (child instanceof Default_stmtContext) {
-                String defaultCase = stringFromNode(child);
+                final String defaultCase = stringFromNode(child);
                 builder.setDefaultCase(defaultCase);
                 break;
             }
@@ -881,10 +882,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final String caseName = stringFromNode(ctx);
         enterLog("case", caseName, line);
 
-        QName caseQName = QName.create(moduleQName, caseName);
-        SchemaPath path = stack.addNodeToPath(caseQName);
+        final QName caseQName = QName.create(moduleQName, caseName);
+        final SchemaPath path = stack.addNodeToPath(caseQName);
 
-        ChoiceCaseBuilder builder = moduleBuilder.addCase(line, caseQName, path);
+        final ChoiceCaseBuilder builder = moduleBuilder.addCase(line, caseQName, path);
         moduleBuilder.enterNode(builder);
 
         parseSchemaNodeArgs(ctx, builder);
@@ -903,10 +904,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final String notificationName = stringFromNode(ctx);
         enterLog("notification", notificationName, line);
 
-        QName notificationQName = QName.create(moduleQName, notificationName);
-        SchemaPath path = stack.addNodeToPath(notificationQName);
+        final QName notificationQName = QName.create(moduleQName, notificationName);
+        final SchemaPath path = stack.addNodeToPath(notificationQName);
 
-        NotificationBuilder builder = moduleBuilder.addNotification(line, notificationQName, path);
+        final NotificationBuilder builder = moduleBuilder.addNotification(line, notificationQName, path);
         moduleBuilder.enterNode(builder);
 
         parseSchemaNodeArgs(ctx, builder);
@@ -945,12 +946,11 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final String rpcName = stringFromNode(ctx);
         enterLog("rpc", rpcName, line);
 
-        QName rpcQName = QName.create(moduleQName, rpcName);
-        SchemaPath path = stack.addNodeToPath(rpcQName);
+        final QName rpcQName = QName.create(moduleQName, rpcName);
+        final SchemaPath path = stack.addNodeToPath(rpcQName);
 
-        RpcDefinitionBuilder rpcBuilder = moduleBuilder.addRpc(line, rpcQName, path);
+        final RpcDefinitionBuilder rpcBuilder = moduleBuilder.addRpc(line, rpcQName, path);
         moduleBuilder.enterNode(rpcBuilder);
-
 
         parseSchemaNodeArgs(ctx, rpcBuilder);
     }
@@ -967,10 +967,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final String input = "input";
         enterLog(input, input, line);
 
-        QName rpcQName = QName.create(moduleQName, input);
-        SchemaPath path = stack.addNodeToPath(rpcQName);
+        final QName rpcQName = QName.create(moduleQName, input);
+        final SchemaPath path = stack.addNodeToPath(rpcQName);
 
-        ContainerSchemaNodeBuilder builder = moduleBuilder.addRpcInput(line, rpcQName, path);
+        final ContainerSchemaNodeBuilder builder = moduleBuilder.addRpcInput(line, rpcQName, path);
         moduleBuilder.enterNode(builder);
         builder.setConfiguration(true);
 
@@ -990,10 +990,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final String output = "output";
         enterLog(output, output, line);
 
-        QName rpcQName = QName.create(moduleQName, output);
-        SchemaPath path = stack.addNodeToPath(rpcQName);
+        final QName rpcQName = QName.create(moduleQName, output);
+        final SchemaPath path = stack.addNodeToPath(rpcQName);
 
-        ContainerSchemaNodeBuilder builder = moduleBuilder.addRpcOutput(path, rpcQName, line);
+        final ContainerSchemaNodeBuilder builder = moduleBuilder.addRpcOutput(path, rpcQName, line);
         moduleBuilder.enterNode(builder);
         builder.setConfiguration(true);
 
@@ -1013,10 +1013,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final String featureName = stringFromNode(ctx);
         enterLog("feature", featureName, line);
 
-        QName featureQName = QName.create(moduleQName, featureName);
-        SchemaPath path = stack.addNodeToPath(featureQName);
+        final QName featureQName = QName.create(moduleQName, featureName);
+        final SchemaPath path = stack.addNodeToPath(featureQName);
 
-        FeatureBuilder featureBuilder = moduleBuilder.addFeature(line, featureQName, path);
+        final FeatureBuilder featureBuilder = moduleBuilder.addFeature(line, featureQName, path);
         moduleBuilder.enterNode(featureBuilder);
 
         parseSchemaNodeArgs(ctx, featureBuilder);
@@ -1041,8 +1041,8 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         String reference = null;
         String deviate = null;
 
-        SchemaPath targetPath = parseXPathString(targetPathStr, line);
-        DeviationBuilder builder = moduleBuilder.addDeviation(line, targetPath);
+        final SchemaPath targetPath = parseXPathString(targetPathStr, line);
+        final DeviationBuilder builder = moduleBuilder.addDeviation(line, targetPath);
         moduleBuilder.enterNode(builder);
 
         for (int i = 0; i < ctx.getChildCount(); i++) {
@@ -1092,15 +1092,15 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         enterLog("identity", identityName, line);
 
         final QName identityQName = QName.create(moduleQName, identityName);
-        SchemaPath path = stack.addNodeToPath(identityQName);
+        final SchemaPath path = stack.addNodeToPath(identityQName);
 
-        IdentitySchemaNodeBuilder builder = moduleBuilder.addIdentity(identityQName, line, path);
+        final IdentitySchemaNodeBuilder builder = moduleBuilder.addIdentity(identityQName, line, path);
         moduleBuilder.enterNode(builder);
 
         parseSchemaNodeArgs(ctx, builder);
 
         for (int i = 0; i < ctx.getChildCount(); i++) {
-            ParseTree child = ctx.getChild(i);
+            final ParseTree child = ctx.getChild(i);
             if (child instanceof Base_stmtContext) {
                 String baseIdentityName = stringFromNode(child);
                 builder.setBaseIdentityName(baseIdentityName);
@@ -1139,7 +1139,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         enterLog("unknown-node", nodeParameter, line);
 
         final String nodeTypeStr = ctx.getChild(0).getText();
-        QName nodeType = parseQName(nodeTypeStr, line);
+        final QName nodeType = parseQName(nodeTypeStr, line);
 
         QName qname = null;
         try {
@@ -1162,9 +1162,9 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
             qname = nodeType;
         }
 
-        SchemaPath path = stack.addNodeToPath(qname);
+        final SchemaPath path = stack.addNodeToPath(qname);
 
-        UnknownSchemaNodeBuilderImpl builder = moduleBuilder.addUnknownSchemaNode(line, qname, path);
+        final UnknownSchemaNodeBuilderImpl builder = moduleBuilder.addUnknownSchemaNode(line, qname, path);
         builder.setNodeType(nodeType);
         builder.setNodeParameter(nodeParameter);
 
