@@ -250,15 +250,8 @@ public class XmlStreamUtils {
     private static void write(final @Nonnull XMLStreamWriter writer, final @Nonnull IdentityrefTypeDefinition type, final @Nonnull Object value) throws XMLStreamException {
         if (value instanceof QName) {
             final QName qname = (QName) value;
-            final String prefix;
-            if (qname.getPrefix() != null && !qname.getPrefix().isEmpty()) {
-                prefix = qname.getPrefix();
-            } else {
-                prefix = "x";
-            }
-
-            writer.writeNamespace(prefix, qname.getNamespace().toString());
-            writer.writeCharacters(prefix + ':' + qname.getLocalName());
+            writer.writeNamespace("x", qname.getNamespace().toString());
+            writer.writeCharacters("x:" + qname.getLocalName());
         } else {
             LOG.debug("Value of {}:{} is not a QName but {}", type.getQName().getNamespace(), type.getQName().getLocalName(), value.getClass());
             writer.writeCharacters(String.valueOf(value));
