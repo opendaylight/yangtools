@@ -147,7 +147,7 @@ public class XmlStreamUtils {
         if (isEmptyElement(data)) {
             if (hasAttributes(data)) {
                 writer.writeStartElement(pfx, qname.getLocalName(), ns);
-                RandomPrefix randomPrefix = new RandomPrefix();
+                final RandomPrefix randomPrefix = new RandomPrefix();
                 writeAttributes(writer, (AttributesContainer) data, randomPrefix);
                 writer.writeEndElement();
             } else {
@@ -215,7 +215,7 @@ public class XmlStreamUtils {
     private static boolean hasAttributes(final Node<?> data) {
         if (data instanceof AttributesContainer) {
             final Map<QName, String> c = ((AttributesContainer) data).getAttributes();
-            return c == null || c.isEmpty();
+            return c != null && !c.isEmpty();
         } else {
             return false;
         }
