@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
@@ -21,9 +22,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.tree.RootModificationApp
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 
 /**
  * Read-only snapshot of the data tree.
@@ -130,7 +128,7 @@ final class InMemoryDataTree implements DataTree {
         rwLock.writeLock().lock();
         try {
             Preconditions.checkState(c.getBeforeRoot() == rootNode,
-                    String.format("Store tree %s and candidate base %s differ.", rootNode, c.getBeforeRoot()));
+                    "Store tree %s and candidate base %s differ.", rootNode, c.getBeforeRoot());
             this.rootNode = c.getAfterRoot();
         } finally {
             rwLock.writeLock().unlock();
