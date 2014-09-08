@@ -228,7 +228,21 @@ public class XmlDocumentUtils {
 
     protected static Node<?> toSimpleNodeWithType(final Element xmlElement, final LeafSchemaNode schema,
             final XmlCodecProvider codecProvider,final SchemaContext schemaCtx) {
-        final TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(schema.getType());
+        final Object value = resolveValueFromSchemaType(xmlElement, schema, schema.getType(), codecProvider, schemaCtx);
+        Optional<ModifyAction> modifyAction = getModifyOperationFromAttributes(xmlElement);
+        return new SimpleNodeTOImpl<>(schema.getQName(), null, value, modifyAction.orNull());
+    }
+
+    private static Node<?> toSimpleNodeWithType(final Element xmlElement, final LeafListSchemaNode schema,
+            final XmlCodecProvider codecProvider,final SchemaContext schemaCtx) {
+        final Object value = resolveValueFromSchemaType(xmlElement, schema, schema.getType(), codecProvider, schemaCtx);
+        Optional<ModifyAction> modifyAction = getModifyOperationFromAttributes(xmlElement);
+        return new SimpleNodeTOImpl<>(schema.getQName(), null, value, modifyAction.orNull());
+    }
+
+    private static Object resolveValueFromSchemaType(final Element xmlElement, final DataSchemaNode schema, final TypeDefinition<?> type,
+        final XmlCodecProvider codecProvider,final SchemaContext schemaCtx) {
+        final TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(type);
         final String text = xmlElement.getTextContent();
         final Object value;
 
@@ -237,7 +251,7 @@ public class XmlDocumentUtils {
         } else if (baseType instanceof IdentityrefTypeDefinition) {
             value = InstanceIdentifierForXmlCodec.toIdentity(text, xmlElement, schemaCtx);
         } else {
-            final TypeDefinitionAwareCodec<?, ?> codec = codecProvider.codecFor(schema.getType());
+            final TypeDefinitionAwareCodec<?, ?> codec = codecProvider.codecFor(type);
             if (codec == null) {
                 LOG.info("No codec for schema {}, falling back to text", schema);
                 value = text;
@@ -245,31 +259,7 @@ public class XmlDocumentUtils {
                 value = codec.deserialize(text);
             }
         }
-
-        Optional<ModifyAction> modifyAction = getModifyOperationFromAttributes(xmlElement);
-        return new SimpleNodeTOImpl<>(schema.getQName(), null, value, modifyAction.orNull());
-    }
-
-    private static Node<?> toSimpleNodeWithType(final Element xmlElement, final LeafListSchemaNode schema,
-            final XmlCodecProvider codecProvider,final SchemaContext schemaCtx) {
-        final Object value;
-
-        if (schema.getType() instanceof InstanceIdentifierType) {
-            value = InstanceIdentifierForXmlCodec.deserialize(xmlElement, schemaCtx);
-        } else {
-            final TypeDefinitionAwareCodec<?, ?> codec = codecProvider.codecFor(schema.getType());
-            final String text = xmlElement.getTextContent();
-
-            if (codec == null) {
-                LOG.info("No codec for schema {}, falling back to text", schema);
-                value = text;
-            } else {
-                value = codec.deserialize(text);
-            }
-        }
-
-        Optional<ModifyAction> modifyAction = getModifyOperationFromAttributes(xmlElement);
-        return new SimpleNodeTOImpl<>(schema.getQName(), null, value, modifyAction.orNull());
+        return value;
     }
 
     private static Node<?> toCompositeNodeWithSchema(final Element xmlElement, final QName qName, final DataNodeContainer schema,
