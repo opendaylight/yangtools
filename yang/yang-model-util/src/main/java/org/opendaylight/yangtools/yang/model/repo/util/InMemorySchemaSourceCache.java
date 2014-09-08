@@ -7,14 +7,15 @@
 package org.opendaylight.yangtools.yang.model.repo.util;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
+import com.google.common.base.FinalizablePhantomReference;
+import com.google.common.base.FinalizableReferenceQueue;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.RemovalListener;
-import com.google.common.cache.RemovalNotification;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
@@ -24,29 +25,14 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 
 @Beta
-public class InMemorySchemaSourceCache<T extends SchemaSourceRepresentation> extends AbstractSchemaSourceCache<T> {
-    private static final class CacheEntry<T extends SchemaSourceRepresentation> {
-        private final SchemaSourceRegistration<T> reg;
-        private final T source;
-
-        public CacheEntry(final T source, final SchemaSourceRegistration<T> reg) {
-            this.source = Preconditions.checkNotNull(source);
-            this.reg = Preconditions.checkNotNull(reg);
-        }
-    }
-
-    private static final RemovalListener<SourceIdentifier, CacheEntry<?>> LISTENER = new RemovalListener<SourceIdentifier, CacheEntry<?>>() {
-        @Override
-        public void onRemoval(final RemovalNotification<SourceIdentifier, CacheEntry<?>> notification) {
-            notification.getValue().reg.close();
-        }
-    };
-
-    private final Cache<SourceIdentifier, CacheEntry<T>> cache;
+public class InMemorySchemaSourceCache<T extends SchemaSourceRepresentation> extends AbstractSchemaSourceCache<T> implements AutoCloseable {
+    private final List<FinalizablePhantomReference<T>> regs = Collections.synchronizedList(new ArrayList<FinalizablePhantomReference<T>>());
+    private final FinalizableReferenceQueue queue = new FinalizableReferenceQueue();
+    private final Cache<SourceIdentifier, T> cache;
 
     protected InMemorySchemaSourceCache(final SchemaSourceRegistry consumer, final Class<T> representation, final CacheBuilder<Object, Object> builder) {
         super(consumer, representation, Costs.IMMEDIATE);
-        cache = builder.removalListener(LISTENER).build();
+        cache = builder.build();
     }
 
     public static <R extends SchemaSourceRepresentation> InMemorySchemaSourceCache<R> createSoftCache(final SchemaSourceRegistry consumer, final Class<R> representation) {
@@ -55,9 +41,9 @@ public class InMemorySchemaSourceCache<T extends SchemaSourceRepresentation> ext
 
     @Override
     public CheckedFuture<? extends T, SchemaSourceException> getSource(final SourceIdentifier sourceIdentifier) {
-        final CacheEntry<T> present = cache.getIfPresent(sourceIdentifier);
+        final T present = cache.getIfPresent(sourceIdentifier);
         if (present != null) {
-            return Futures.immediateCheckedFuture(present.source);
+            return Futures.immediateCheckedFuture(present);
         }
 
         return Futures.<T, SchemaSourceException>immediateFailedCheckedFuture(new MissingSchemaSourceException("Source not found", sourceIdentifier));
@@ -65,10 +51,31 @@ public class InMemorySchemaSourceCache<T extends SchemaSourceRepresentation> ext
 
     @Override
     protected void offer(final T source) {
-        final CacheEntry<T> present = cache.getIfPresent(source.getIdentifier());
+        final T present = cache.getIfPresent(source.getIdentifier());
         if (present == null) {
+            cache.put(source.getIdentifier(), source);
+
             final SchemaSourceRegistration<T> reg = register(source.getIdentifier());
-            cache.put(source.getIdentifier(), new CacheEntry<T>(source, reg));
+            final FinalizablePhantomReference<T> ref = new FinalizablePhantomReference<T>(source, queue) {
+                @Override
+                public void finalizeReferent() {
+                    reg.close();
+                    regs.remove(this);
+                }
+            };
+
+            regs.add(ref);
         }
+    }
+
+    @Override
+    public void close() {
+        while (!regs.isEmpty()) {
+            final FinalizablePhantomReference<?> ref = regs.get(0);
+            ref.finalizeReferent();
+        }
+
+        cache.invalidateAll();
+        queue.close();
     }
 }
