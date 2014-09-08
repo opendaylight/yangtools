@@ -139,12 +139,12 @@ public final class SchemaTracker {
         return (LeafSchemaNode) schema;
     }
 
-    public SchemaNode startLeafSet(final NodeIdentifier name) {
+    public LeafListSchemaNode startLeafSet(final NodeIdentifier name) {
         final SchemaNode schema = getSchema(name);
 
         Preconditions.checkArgument(schema instanceof LeafListSchemaNode, "Node %s is not a leaf-list", schema.getPath());
         schemaStack.push(schema);
-        return schema;
+        return (LeafListSchemaNode)schema;
     }
 
     public LeafListSchemaNode leafSetEntryNode() {
@@ -154,22 +154,22 @@ public final class SchemaTracker {
         return (LeafListSchemaNode) parent;
     }
 
-    public SchemaNode startChoiceNode(final NodeIdentifier name) {
+    public ChoiceNode startChoiceNode(final NodeIdentifier name) {
         LOG.debug("Enter choice {}", name);
         final SchemaNode schema = getSchema(name);
 
         Preconditions.checkArgument(schema instanceof ChoiceNode, "Node %s is not a choice", schema.getPath());
         schemaStack.push(schema);
-        return schema;
+        return (ChoiceNode)schema;
     }
 
-    public SchemaNode startContainerNode(final NodeIdentifier name) {
+    public ContainerSchemaNode startContainerNode(final NodeIdentifier name) {
         LOG.debug("Enter container {}", name);
         final SchemaNode schema = getSchema(name);
 
         Preconditions.checkArgument(schema instanceof ContainerSchemaNode, "Node %s is not a container", schema.getPath());
         schemaStack.push(schema);
-        return schema;
+        return (ContainerSchemaNode)schema;
     }
 
     public AugmentationSchema startAugmentationNode(final AugmentationIdentifier identifier) {
