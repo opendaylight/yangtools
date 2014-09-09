@@ -984,8 +984,21 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
 
         @Override
         protected void adaptForPathImpl(final InstanceIdentifier<?> augTarget, final DataNodeContainer ctxNode) {
-            Optional<ChoiceNode> newChoice = BindingSchemaContextUtils.findInstantiatedChoice(ctxNode, choiceType);
             tryToLoadImplementations();
+            Optional<ChoiceNode> newChoice = BindingSchemaContextUtils.findInstantiatedChoice(ctxNode, choiceType);
+            if(!newChoice.isPresent()) {
+                // Choice is nested inside other choice, so we need to look two levels deep.
+                in_choices: for(DataSchemaNode child : ctxNode.getChildNodes()) {
+                    if(child instanceof ChoiceNode) {
+                        Optional<ChoiceNode> potential = findChoiceInChoiceCases((ChoiceNode) child, choiceType);
+                        if(potential.isPresent()) {
+                            newChoice = potential;
+                            break in_choices;
+                        }
+                    }
+                }
+            }
+
             Preconditions.checkState(newChoice.isPresent(), "BUG: Unable to find instantiated choice node in schema.");
             for (@SuppressWarnings("rawtypes")
             Entry<Class, ChoiceCaseCodecImpl<?>> codec : getImplementations().entrySet()) {
@@ -996,6 +1009,16 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
                     caseCodec.adaptForPath(augTarget, instantiatedSchema.get());
                 }
             }
+        }
+
+        private Optional<ChoiceNode> findChoiceInChoiceCases(ChoiceNode choice, Class<?> choiceType) {
+            for(ChoiceCaseNode caze : choice.getCases()) {
+                Optional<ChoiceNode> potential = BindingSchemaContextUtils.findInstantiatedChoice(caze, choiceType);
+                if(potential.isPresent()) {
+                    return potential;
+                }
+            }
+            return Optional.absent();
         }
 
         @Override
