@@ -1,0 +1,9 @@
+{
+    "complexjson:cont1": {
+        "complexjson-augmentation:lf15_11" : "lf15_11 value from augmentation",
+        "lf15_11" : "one two",        
+        "lf13" : "lf13 value",        
+        "complexjson-augmentation:lf15_12" : "lf15_12 value from augmentation",
+        "lf15_12" : "complexjson:lf11"
+    }
+}
