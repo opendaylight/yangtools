@@ -3,16 +3,13 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
-
 import java.net.URI;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
@@ -94,7 +91,10 @@ public class XmlStreamUtils {
         final String str = XmlUtils.encodeIdentifier(prefixes, id);
 
         for (Entry<URI, String> e: prefixes.getPrefixes()) {
-            writer.writeNamespace(e.getValue(), e.getKey().toString());
+            final String ns = e.getKey().toString();
+            final String p = e.getValue();
+
+            writer.writeNamespace(p, ns);
         }
         writer.writeCharacters(str);
     }
@@ -268,6 +268,7 @@ public class XmlStreamUtils {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private static void write(final @Nonnull XMLStreamWriter writer, final @Nonnull IdentityrefTypeDefinition type, final @Nonnull Object value) throws XMLStreamException {
         if (value instanceof QName) {
             final QName qname = (QName) value;
@@ -278,7 +279,8 @@ public class XmlStreamUtils {
                 prefix = "x";
             }
 
-            writer.writeNamespace(prefix, qname.getNamespace().toString());
+            final String ns = qname.getNamespace().toString();
+            writer.writeNamespace(prefix, ns);
             writer.writeCharacters(prefix + ':' + qname.getLocalName());
         } else {
             LOG.debug("Value of {}:{} is not a QName but {}", type.getQName().getNamespace(), type.getQName().getLocalName(), value.getClass());
