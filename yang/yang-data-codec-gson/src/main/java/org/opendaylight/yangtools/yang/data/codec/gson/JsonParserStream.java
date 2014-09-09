@@ -50,13 +50,13 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 public final class JsonParserStream implements Closeable, Flushable {
     private final Deque<URI> namespaces = new ArrayDeque<>();
     private final NormalizedNodeStreamWriter writer;
-    private final CodecFactory codecs;
+    private final JSONCodecFactory codecs;
     private final SchemaContext schema;
 
     private JsonParserStream(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext) {
         this.schema = Preconditions.checkNotNull(schemaContext);
         this.writer = Preconditions.checkNotNull(writer);
-        this.codecs = CodecFactory.create(schemaContext);
+        this.codecs = JSONCodecFactory.create(schemaContext);
     }
 
     public static JsonParserStream create(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext) {

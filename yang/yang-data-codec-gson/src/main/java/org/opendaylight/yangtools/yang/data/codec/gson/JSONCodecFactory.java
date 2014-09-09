@@ -8,12 +8,11 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
-import org.opendaylight.yangtools.concepts.Codec;
-import org.opendaylight.yangtools.yang.data.api.codec.LeafrefCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -24,34 +23,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is implementation-internal and subject to change. Please do not use it.
+ * Factory for creating JSON equivalents of codecs. Each instance of this object is bound to
+ * a particular {@link SchemaContext}, but can be reused by multiple {@link JSONNormalizedNodeStreamWriter}s.
  */
 @Beta
-final class CodecFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(CodecFactory.class);
-    private static final Codec<?, ?> LEAFREF_DEFAULT_CODEC = new LeafrefCodec<String>() {
+public final class JSONCodecFactory {
+    private static final Logger LOG = LoggerFactory.getLogger(JSONCodecFactory.class);
+    private static final JSONCodec<Object> LEAFREF_DEFAULT_CODEC = new JSONLeafrefCodec();
+    private static final JSONCodec<Object> NULL_CODEC = new JSONCodec<Object>() {
         @Override
-        public String serialize(final Object data) {
-            return String.valueOf(data);
-        }
-
-        @Override
-        public Object deserialize(final String data) {
-            return data;
-        }
-    };
-    private static final Codec<?, ?> NULL_CODEC = new Codec<Object, Object>() {
-        @Override
-        public Object deserialize(final Object input) {
+        public Object deserialize(final String input) {
             return null;
         }
 
         @Override
-        public Object serialize(final Object input) {
+        public String serialize(final Object input) {
             return null;
         }
-    };
 
+        @Override
+        public boolean needQuotes() {
+            return false;
+        }
+    };
 
     private static TypeDefinition<?> resolveBaseTypeFrom(final TypeDefinition<?> type) {
         TypeDefinition<?> superType = type;
@@ -61,17 +55,18 @@ final class CodecFactory {
         return superType;
     }
 
-    private final LoadingCache<TypeDefinition<?>, Codec<?, ?>> codecs =
-            CacheBuilder.newBuilder().softValues().build(new CacheLoader<TypeDefinition<?>, Codec<?, ?>>() {
+    private final LoadingCache<TypeDefinition<?>, JSONCodec<Object>> codecs =
+            CacheBuilder.newBuilder().softValues().build(new CacheLoader<TypeDefinition<?>, JSONCodec<Object>>() {
+        @SuppressWarnings("unchecked")
         @Override
-        public Codec<?, ?> load(final TypeDefinition<?> key) throws Exception {
+        public JSONCodec<Object> load(final TypeDefinition<?> key) throws Exception {
             final TypeDefinition<?> type = resolveBaseTypeFrom(key);
 
             if (type instanceof InstanceIdentifierType) {
-                return iidCodec;
+                return (JSONCodec<Object>) iidCodec;
             }
             if (type instanceof IdentityrefType) {
-                return idrefCodec;
+                return (JSONCodec<Object>) idrefCodec;
             }
             if (type instanceof LeafrefTypeDefinition) {
                 return LEAFREF_DEFAULT_CODEC;
@@ -83,24 +78,35 @@ final class CodecFactory {
                 return NULL_CODEC;
             }
 
-            return codec;
+            return AbstractJSONCodec.create(codec);
         }
     });
 
-    private final Codec<?, ?> iidCodec;
-    private final Codec<?, ?> idrefCodec;
+    private final SchemaContext schemaContext;
+    private final JSONCodec<?> iidCodec;
+    private final JSONCodec<?> idrefCodec;
 
-    private CodecFactory(final SchemaContext context) {
+    private JSONCodecFactory(final SchemaContext context) {
+        this.schemaContext = Preconditions.checkNotNull(context);
         iidCodec = new JSONStringInstanceIdentifierCodec(context);
         idrefCodec = new JSONStringIdentityrefCodec(context);
     }
 
-    public static CodecFactory create(final SchemaContext context) {
-        return new CodecFactory(context);
+    /**
+     * Instantiate a new codec factory attached to a particular context.
+     *
+     * @param context SchemaContext to which the factory should be bound
+     * @return A codec factory instance.
+     */
+    public static JSONCodecFactory create(final SchemaContext context) {
+        return new JSONCodecFactory(context);
     }
 
-    @SuppressWarnings("unchecked")
-    public final Codec<Object, Object> codecFor(final TypeDefinition<?> typeDefinition) {
-        return (Codec<Object, Object>) codecs.getUnchecked(typeDefinition);
+    SchemaContext getSchemaContext() {
+        return schemaContext;
+    }
+
+    JSONCodec<Object> codecFor(final TypeDefinition<?> typeDefinition) {
+        return codecs.getUnchecked(typeDefinition);
     }
 }

@@ -11,11 +11,12 @@ import com.google.common.base.Preconditions;
 
 import java.net.URI;
 
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-final class JSONStringInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec {
+final class JSONStringInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec implements JSONCodec<YangInstanceIdentifier> {
     private final SchemaContext context;
 
     JSONStringInstanceIdentifierCodec(final SchemaContext context) {
@@ -31,5 +32,10 @@ final class JSONStringInstanceIdentifierCodec extends AbstractModuleStringInstan
     protected String prefixForNamespace(final URI namespace) {
         final Module module = context.findModuleByNamespaceAndRevision(namespace, null);
         return module == null ? null : module.getName();
+    }
+
+    @Override
+    public boolean needQuotes() {
+        return true;
     }
 }
