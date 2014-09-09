@@ -9,17 +9,12 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
 import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.net.URI;
-import java.util.Collection;
 
-import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -45,8 +40,6 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * are marked as 'presence'.
      */
     private static final boolean DEFAULT_EMIT_EMPTY_CONTAINERS = true;
-    private static final Collection<Class<?>> NUMERIC_CLASSES =
-            ImmutableSet.<Class<?>>of(Byte.class, Short.class, Integer.class, Long.class, BigInteger.class, BigDecimal.class);
 
     private final SchemaContext schemaContext;
     private final SchemaTracker tracker;
@@ -128,11 +121,11 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
     @Override
     public void leafNode(final NodeIdentifier name, final Object value) throws IOException {
         final LeafSchemaNode schema = tracker.leafNode(name);
-        final Codec<Object, Object> codec = codecs.codecFor(schema.getType());
+        final JSONCodec<Object> codec = codecs.codecFor(schema.getType());
 
         context.emittingChild(schemaContext, writer, indent);
         context.writeJsonIdentifier(schemaContext, writer, name.getNodeType());
-        writeValue(codec.serialize(value));
+        writeValue(codec.serialize(value), codec.needQuotes());
     }
 
     @Override
@@ -144,16 +137,21 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
     @Override
     public void leafSetEntryNode(final Object value) throws IOException {
         final LeafListSchemaNode schema = tracker.leafSetEntryNode();
-        final Codec<Object, Object> codec = codecs.codecFor(schema.getType());
+        final JSONCodec<Object> codec = codecs.codecFor(schema.getType());
 
         context.emittingChild(schemaContext, writer, indent);
-        writeValue(codec.serialize(value));
+        writeValue(codec.serialize(value), codec.needQuotes());
     }
 
+    /*
+     * Warning suppressed due to static final constant which triggers a warning
+     * for the call to schema.isPresenceContainer().
+     */
+    @SuppressWarnings("unused")
     @Override
     public void startContainerNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
         final ContainerSchemaNode schema = tracker.startContainerNode(name);
-        context = new JSONStreamWriterNamedObjectContext(context, name, schema.isPresenceContainer() || DEFAULT_EMIT_EMPTY_CONTAINERS);
+        context = new JSONStreamWriterNamedObjectContext(context, name, DEFAULT_EMIT_EMPTY_CONTAINERS || schema.isPresenceContainer());
     }
 
     @Override
@@ -206,7 +204,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
 
         context.emittingChild(schemaContext, writer, indent);
         context.writeJsonIdentifier(schemaContext, writer, name.getNodeType());
-        writeValue(value);
+        writeValue(String.valueOf(value), true);
     }
 
     @Override
@@ -215,10 +213,8 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         context = context.endNode(schemaContext, writer, indent);
     }
 
-    private void writeValue(final Object value) throws IOException {
-        final String str = String.valueOf(value);
-
-        if (!NUMERIC_CLASSES.contains(value.getClass())) {
+    private void writeValue(final String str, final boolean needQuotes) throws IOException {
+        if (needQuotes) {
             writer.append('"');
             writer.append(str);
             writer.append('"');
