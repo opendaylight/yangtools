@@ -11,11 +11,12 @@ import com.google.common.base.Preconditions;
 
 import java.net.URI;
 
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringIdentityrefCodec;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-final class JSONStringIdentityrefCodec extends AbstractModuleStringIdentityrefCodec {
+final class JSONStringIdentityrefCodec extends AbstractModuleStringIdentityrefCodec implements JSONCodec<QName> {
     private final SchemaContext context;
 
     JSONStringIdentityrefCodec(final SchemaContext context) {
@@ -33,4 +34,8 @@ final class JSONStringIdentityrefCodec extends AbstractModuleStringIdentityrefCo
         return module == null ? null : module.getName();
     }
 
+    @Override
+    public boolean needQuotes() {
+        return true;
+    }
 }
