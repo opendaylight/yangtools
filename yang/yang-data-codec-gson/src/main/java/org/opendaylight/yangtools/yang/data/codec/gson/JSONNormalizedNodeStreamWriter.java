@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.gson.stream.JsonWriter;
@@ -40,6 +41,11 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * are marked as 'presence'.
      */
     private static final boolean DEFAULT_EMIT_EMPTY_CONTAINERS = true;
+
+    /**
+     * Matcher used to check if a string needs to be escaped.
+     */
+    private static final CharMatcher QUOTES_OR_BACKSLASH = CharMatcher.anyOf("\\\"");
 
     private final SchemaTracker tracker;
     private final JSONCodecFactory codecs;
@@ -222,7 +228,23 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
     private void writeValue(final String str, final boolean needQuotes) throws IOException {
         if (needQuotes) {
             writer.append('"');
-            writer.append(str);
+
+            final int needEscape = QUOTES_OR_BACKSLASH.countIn(str);
+            if (needEscape != 0) {
+                final char[] escaped = new char[str.length() + needEscape];
+                int offset = 0;
+
+                for (char c : str.toCharArray()) {
+                    if (QUOTES_OR_BACKSLASH.matches(c)) {
+                        escaped[offset++] = '\\';
+                    }
+                    escaped[offset++] = c;
+                }
+                writer.write(escaped);
+            } else {
+                writer.append(str);
+            }
+
             writer.append('"');
         } else {
             writer.append(str);
