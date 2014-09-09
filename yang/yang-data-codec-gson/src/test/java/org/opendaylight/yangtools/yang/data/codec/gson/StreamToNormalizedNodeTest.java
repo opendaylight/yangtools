@@ -7,25 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import com.google.gson.stream.JsonReader;
+import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadModules;
+import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 
-import java.io.BufferedReader;
+import com.google.gson.stream.JsonReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.LoggingNormalizedNodeStreamWriter;
@@ -34,8 +28,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWrit
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,33 +113,4 @@ public class StreamToNormalizedNodeTest {
         LOG.debug("Serialized JSON: {}", writer.toString());
     }
 
-    private static SchemaContext loadModules(final String resourceDirectory) throws IOException, URISyntaxException {
-        YangContextParser parser = new YangParserImpl();
-        URI path = StreamToNormalizedNodeTest.class.getResource(resourceDirectory).toURI();
-        final File testDir = new File(path);
-        final String[] fileList = testDir.list();
-        final List<File> testFiles = new ArrayList<File>();
-        if (fileList == null) {
-            throw new FileNotFoundException(resourceDirectory);
-        }
-        for (String fileName : fileList) {
-            if (new File(testDir, fileName).isDirectory() == false) {
-                testFiles.add(new File(testDir, fileName));
-            }
-        }
-        return parser.parseFiles(testFiles);
-    }
-
-    private static String loadTextFile(final File file) throws IOException {
-        FileReader fileReader = new FileReader(file);
-        BufferedReader bufReader = new BufferedReader(fileReader);
-
-        String line = null;
-        StringBuilder result = new StringBuilder();
-        while ((line = bufReader.readLine()) != null) {
-            result.append(line);
-        }
-        bufReader.close();
-        return result.toString();
-    }
 }
