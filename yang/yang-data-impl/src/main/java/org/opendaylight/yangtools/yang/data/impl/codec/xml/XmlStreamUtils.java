@@ -94,7 +94,11 @@ public class XmlStreamUtils {
         final String str = XmlUtils.encodeIdentifier(prefixes, id);
 
         for (Entry<URI, String> e: prefixes.getPrefixes()) {
-            writer.writeNamespace(e.getValue(), e.getKey().toString());
+            final String ns = e.getKey().toString();
+            final String p = e.getValue();
+
+            writer.setPrefix(p, ns);
+            writer.writeNamespace(p, ns);
         }
         writer.writeCharacters(str);
     }
@@ -278,7 +282,9 @@ public class XmlStreamUtils {
                 prefix = "x";
             }
 
-            writer.writeNamespace(prefix, qname.getNamespace().toString());
+            final String ns = qname.getNamespace().toString();
+            writer.setPrefix(prefix, ns);
+            writer.writeNamespace(prefix, ns);
             writer.writeCharacters(prefix + ':' + qname.getLocalName());
         } else {
             LOG.debug("Value of {}:{} is not a QName but {}", type.getQName().getNamespace(), type.getQName().getLocalName(), value.getClass());

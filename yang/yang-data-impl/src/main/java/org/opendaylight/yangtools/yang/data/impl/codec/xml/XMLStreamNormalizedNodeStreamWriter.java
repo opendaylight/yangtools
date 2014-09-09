@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
+import static javax.xml.XMLConstants.DEFAULT_NS_PREFIX;
+
 import com.google.common.base.Preconditions;
 
 import java.io.IOException;
@@ -75,11 +77,11 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
 
         try {
             if (value != null) {
-                writer.writeStartElement(ns, qname.getLocalName());
+                writer.writeStartElement(DEFAULT_NS_PREFIX, qname.getLocalName(), ns);
                 UTILS.writeValue(writer, type, value);
                 writer.writeEndElement();
             } else {
-                writer.writeEmptyElement(ns, qname.getLocalName());
+                writer.writeEmptyElement(DEFAULT_NS_PREFIX, qname.getLocalName(), ns);
             }
         } catch (XMLStreamException e) {
             throw new IOException("Failed to emit element", e);
@@ -88,7 +90,7 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
 
     private void startElement(final QName qname) throws IOException {
         try {
-            writer.writeStartElement(qname.getNamespace().toString(), qname.getLocalName());
+            writer.writeStartElement(DEFAULT_NS_PREFIX, qname.getLocalName(), qname.getNamespace().toString());
         } catch (XMLStreamException e) {
             throw new IOException("Failed to start element", e);
         }
