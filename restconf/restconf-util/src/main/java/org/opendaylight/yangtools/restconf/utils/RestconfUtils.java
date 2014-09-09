@@ -31,10 +31,10 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
+import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.BindingIndependentMappingService;
 import org.opendaylight.yangtools.yang.data.impl.codec.DeserializationException;
@@ -293,7 +293,7 @@ public class RestconfUtils {
             Document doc = builder.parse(inputStream);
             Element rootElement = doc.getDocumentElement();
             Node<?> domNode = XmlDocumentUtils.toDomNode(rootElement, Optional.of(dataSchema),
-                    Optional.<XmlCodecProvider> absent());
+                    Optional.<XmlCodecProvider> absent(), Optional.of(schemaContext));
             DataObject dataObject = mappingService.dataObjectFromDataDom(path, (CompositeNode) domNode); // getDataFromResponse
             return dataObject;
         } catch (DeserializationException e) {
