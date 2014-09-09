@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -22,11 +23,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is implementation-internal and subject to change. Please do not use it.
+ * Factory for creating JSON equivalents of codecs. Each instance of this object is bound to
+ * a particular {@link SchemaContext}, but can be reused by multiple {@link JSONNormalizedNodeStreamWriter}s.
  */
 @Beta
-final class CodecFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(CodecFactory.class);
+public final class JSONCodecFactory {
+    private static final Logger LOG = LoggerFactory.getLogger(JSONCodecFactory.class);
     private static final JSONCodec<Object> LEAFREF_DEFAULT_CODEC = new JSONLeafrefCodec();
     private static final JSONCodec<Object> NULL_CODEC = new JSONCodec<Object>() {
         @Override
@@ -80,19 +82,31 @@ final class CodecFactory {
         }
     });
 
+    private final SchemaContext schemaContext;
     private final JSONCodec<?> iidCodec;
     private final JSONCodec<?> idrefCodec;
 
-    private CodecFactory(final SchemaContext context) {
+    private JSONCodecFactory(final SchemaContext context) {
+        this.schemaContext = Preconditions.checkNotNull(context);
         iidCodec = new JSONStringInstanceIdentifierCodec(context);
         idrefCodec = new JSONStringIdentityrefCodec(context);
     }
 
-    public static CodecFactory create(final SchemaContext context) {
-        return new CodecFactory(context);
+    /**
+     * Instantiate a new codec factory attached to a particular context.
+     *
+     * @param context SchemaContext to which the factory should be bound
+     * @return A codec factory instance.
+     */
+    public static JSONCodecFactory create(final SchemaContext context) {
+        return new JSONCodecFactory(context);
     }
 
-    public final JSONCodec<Object> codecFor(final TypeDefinition<?> typeDefinition) {
+    SchemaContext getSchemaContext() {
+        return schemaContext;
+    }
+
+    JSONCodec<Object> codecFor(final TypeDefinition<?> typeDefinition) {
         return codecs.getUnchecked(typeDefinition);
     }
 }
