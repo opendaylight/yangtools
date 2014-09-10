@@ -70,6 +70,7 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.When_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Yang_version_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParserBaseListener;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -556,13 +557,13 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     private QName parseQName(final String qnameString, final int line) {
         final QName qname;
         if (qnameString.indexOf(':') == -1) {
-            qname = QName.create(moduleQName.getNamespace(), moduleQName.getRevision(), qnameString);
+            qname = QName.create(moduleQName, qnameString);
         } else {
             final Iterator<String> split = COLON_SPLITTER.split(qnameString).iterator();
             final String prefix = split.next();
             final String name = split.next();
             if (prefix.equals(moduleBuilder.getPrefix())) {
-                qname = QName.create(moduleQName.getNamespace(), moduleQName.getRevision(), name);
+                qname = QName.create(moduleQName, name);
             } else {
                 ModuleImport imp = moduleBuilder.getImport(prefix);
                 if (imp == null) {
@@ -581,9 +582,14 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                     revision = namespaces.lastEntry().getKey();
                     namespace = namespaces.lastEntry().getValue();
                 } else {
+                    // FIXME: this lookup does not look right, as we will end up with
+                    //        a qname which does not have a namespace. At any rate we
+                    //        should arrive at a QNameModule!
                     namespace = namespaces.get(revision);
                 }
-                qname = QName.create(namespace, revision, name);
+
+                final QNameModule mod = QNameModule.cachedReference(QNameModule.create(namespace, revision));
+                qname = QName.create(mod, name);
             }
         }
         return qname;
