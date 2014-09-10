@@ -16,18 +16,41 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public abstract class AbstractImmutableDataContainerNode<K extends PathArgument> extends AbstractImmutableNormalizedNode<K, Iterable<DataContainerChild<? extends PathArgument, ?>>>
-implements Immutable, DataContainerNode<K> {
-
-    protected final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children;
-    private final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> publicChildren;
+public abstract class AbstractImmutableDataContainerNode<K extends PathArgument> extends AbstractImmutableNormalizedNode<K, Iterable<DataContainerChild<? extends PathArgument, ?>>> implements Immutable, DataContainerNode<K> {
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractImmutableDataContainerNode.class);
+    private final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children;
 
     public AbstractImmutableDataContainerNode(
             final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children, final K nodeIdentifier) {
         super(nodeIdentifier);
-        this.children = children;
-        this.publicChildren = Collections.unmodifiableMap(children);
+
+        /*
+         * There is a code path where AbstractImmutableDataContainerNodeBuilder can reflect
+         * the collection acquired via getChildren() back to us. This is typically the case
+         * in the datastore where transactions cancel each other out, leaving an unmodified
+         * node. In that case we want to skip wrapping the map again (and again and again).
+         *
+         * In a perfect world, Collection.unmodifiableMap() would be doing the instanceof
+         * check which would stop the proliferation. Unfortunately this not the case and the
+         * 'unmodifiable' trait is not exposed by anything we can query. Furthermore the API
+         * contract there is sufficiently vague so an implementation may actually return a
+         * different implementation based on input map -- for example
+         * Collections.unmodifiableMap(Collections.emptyMap()) returning the same thing as
+         * Collections.emptyMap().
+         *
+         * This means that we have to perform the instantiation here (as opposed to once at
+         * class load time) and then compare the classes.
+         */
+        final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> pub = Collections.unmodifiableMap(children);
+        if (children.getClass().equals(pub.getClass())) {
+            LOG.trace("Reusing already-unmodifiable children {}", children);
+            this.children = children;
+        } else {
+            this.children = pub;
+        }
     }
 
     @Override
@@ -37,7 +60,7 @@ implements Immutable, DataContainerNode<K> {
 
     @Override
     public final Iterable<DataContainerChild<? extends PathArgument, ?>> getValue() {
-        return publicChildren.values();
+        return children.values();
     }
 
     @Override
@@ -46,7 +69,7 @@ implements Immutable, DataContainerNode<K> {
     }
 
     public final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> getChildren() {
-        return publicChildren;
+        return children;
     }
 
     @Override
