@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_ad7118e2",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/DurationStatsTracker.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-09-10T20:44:51Z",
+      "side": 1,
+      "message": "this field is not needed, you can declare a localvariable in the static field below",
+      "revId": "b05eb57922c0800e3b5d5be46a6b5d26ecc462c4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_2d7d08b2",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/DurationStatsTracker.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-09-10T20:44:51Z",
+      "side": 1,
+      "message": "this needs to be static and synchronized, as decimalFormat is not thread-safe (alternative is to go for thread-local, but that\u0027s an overkill).",
+      "revId": "b05eb57922c0800e3b5d5be46a6b5d26ecc462c4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
