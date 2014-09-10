@@ -13,16 +13,13 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map.Entry;
-
 import javax.annotation.Nonnull;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -193,7 +190,7 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
      * node is found then it is returned, else null.
      */
     AugmentationSchema findCorrespondingAugment(final DataSchemaNode parent, final DataSchemaNode child) {
-        if (parent instanceof AugmentationTarget) {
+        if (parent instanceof AugmentationTarget && !((parent instanceof ChoiceCaseNode) || (parent instanceof ChoiceNode))) {
             for (AugmentationSchema augmentation : ((AugmentationTarget) parent).getAvailableAugmentations()) {
                 DataSchemaNode childInAugmentation = augmentation.getDataChildByName(child.getQName());
                 if (childInAugmentation != null) {
