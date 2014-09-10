@@ -8,13 +8,13 @@
 
 package org.opendaylight.yangtools.util.concurrent;
 
+import com.google.common.base.Preconditions;
+
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 
 import org.opendaylight.yangtools.util.ExecutorServiceUtil;
-
-import com.google.common.base.Preconditions;
 
 /**
  * A RejectedExecutionHandler that delegates to a backing RejectedExecutionHandler and counts the
@@ -23,30 +23,31 @@ import com.google.common.base.Preconditions;
  * @author Thomas Pantelis
  */
 public class CountingRejectedExecutionHandler implements RejectedExecutionHandler {
-
+    private static final AtomicLongFieldUpdater<CountingRejectedExecutionHandler> COUNTER_UPDATER =
+            AtomicLongFieldUpdater.newUpdater(CountingRejectedExecutionHandler.class, "rejectedTaskCounter");
     private final RejectedExecutionHandler delegate;
-    private final AtomicLong rejectedTaskCounter = new AtomicLong();
+    private volatile long rejectedTaskCounter;
 
     /**
      * Constructor.
      *
      * @param delegate the backing RejectedExecutionHandler.
      */
-    public CountingRejectedExecutionHandler( RejectedExecutionHandler delegate ) {
+    public CountingRejectedExecutionHandler( final RejectedExecutionHandler delegate ) {
         this.delegate = Preconditions.checkNotNull( delegate );
     }
 
     @Override
-    public void rejectedExecution( Runnable task, ThreadPoolExecutor executor ) {
-        rejectedTaskCounter.incrementAndGet();
+    public void rejectedExecution( final Runnable task, final ThreadPoolExecutor executor ) {
+        COUNTER_UPDATER.incrementAndGet(this);
         delegate.rejectedExecution( task, executor );
     }
 
     /**
      * Returns the rejected task count.
      */
-    public long getRejectedTaskCount(){
-        return rejectedTaskCounter.get();
+    public long getRejectedTaskCount() {
+        return rejectedTaskCounter;
     }
 
     /**
