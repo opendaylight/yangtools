@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.fail;
 
 import com.google.common.io.ByteSource;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +24,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty;
@@ -51,8 +53,8 @@ public class GeneratedTypesLeafrefTest {
         final YangContextParser parser = new YangParserImpl();
 
         final List<File> inputFiles = new ArrayList<File>();
-        for (int i = 0; i < yangFiles.length; ++i) {
-            inputFiles.add(new File(yangFiles[i]));
+        for (URI yangFile : yangFiles) {
+            inputFiles.add(new File(yangFile));
         }
 
         return parser.parseFiles(inputFiles);
@@ -71,7 +73,7 @@ public class GeneratedTypesLeafrefTest {
         assertNotNull(context);
         assertEquals(4, context.getModules().size());
 
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         assertEquals(54, genTypes.size());
@@ -252,7 +254,7 @@ public class GeneratedTypesLeafrefTest {
         assertNotNull(context);
         assertEquals(1, context.getModules().size());
 
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         try {
             bindingGen.generateTypes(context);
             fail("Expected IllegalArgumentException caused by invalid leafref path");

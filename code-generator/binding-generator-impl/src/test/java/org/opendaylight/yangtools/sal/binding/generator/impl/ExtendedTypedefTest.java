@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty;
@@ -34,7 +35,7 @@ public class ExtendedTypedefTest {
         final SchemaContext context = new YangParserImpl().parseFiles(Arrays.asList(abstractTopology, ietfInetTypes));
         assertNotNull("Schema Context is null", context);
 
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         GeneratedTransferObject simpleTypedef4 = null;

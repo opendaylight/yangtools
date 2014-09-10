@@ -16,6 +16,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
@@ -45,7 +46,7 @@ public class BinaryTypeTest {
         final SchemaContext context = parser.parseFiles(yangModels);
 
         assertNotNull("context is null", context);
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         assertNotNull("genTypes is null", genTypes);

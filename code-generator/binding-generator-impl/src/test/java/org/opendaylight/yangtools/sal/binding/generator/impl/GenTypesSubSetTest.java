@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
@@ -48,7 +49,7 @@ public class GenTypesSubSetTest {
 
         assertEquals("Set of to Generate Modules must contain 2 modules", 2, toGenModules.size());
         assertNotNull("Schema Context is null", context);
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context, toGenModules);
         assertNotNull("genTypes is null", genTypes);
         assertFalse("genTypes is empty", genTypes.isEmpty());
@@ -82,7 +83,7 @@ public class GenTypesSubSetTest {
         }
         assertEquals("Set of to Generate Modules must contain 3 modules", 3, toGenModules.size());
 
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context, toGenModules);
         assertNotNull("genTypes is null", genTypes);
         assertFalse("genTypes is empty", genTypes.isEmpty());

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
@@ -43,7 +44,7 @@ public class GeneratedTypesStringTest {
         final SchemaContext context = parser.parseFiles(testModels);
 
         assertNotNull(context);
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         boolean typedefStringFound = false;
@@ -64,35 +65,41 @@ public class GeneratedTypesStringTest {
                     for (Constant con : constants) {
                         if (con.getName().equals("PATTERN_CONSTANTS")) {
                             constantRegExListFound = true;
-                        } else
+                        } else {
                             break;
+                        }
                         ParameterizedType pType;
                         if (con.getType() instanceof ParameterizedType) {
                             pType = (ParameterizedType) con.getType();
-                        } else
+                        } else {
                             break;
+                        }
 
                         Type[] types;
                         if (pType.getName().equals("List")) {
                             constantRegExListTypeContainer = true;
                             types = pType.getActualTypeArguments();
-                        } else
+                        } else {
                             break;
+                        }
 
                         if (types.length == 1) {
                             constantRegExListTypeOneGeneric = true;
-                        } else
+                        } else {
                             break;
+                        }
 
                         if (types[0].getName().equals("String")) {
                             constantRegExListTypeGeneric = true;
-                        } else
+                        } else {
                             break;
+                        }
 
                         if (con.getValue() instanceof List) {
                             constantRegExListValueOK = true;
-                        } else
+                        } else {
                             break;
+                        }
 
                         for (Object obj : (List<?>) con.getValue()) {
                             if (!(obj instanceof String)) {

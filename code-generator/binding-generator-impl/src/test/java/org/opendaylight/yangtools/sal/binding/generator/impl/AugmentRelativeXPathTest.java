@@ -13,6 +13,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty;
@@ -36,7 +37,7 @@ public class AugmentRelativeXPathTest extends AbstractTypesTest {
         final SchemaContext context = parser.parseFiles(testModels);
 
         assertNotNull("context is null", context);
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         assertNotNull("genTypes is null", genTypes);
