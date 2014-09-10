@@ -8,11 +8,12 @@
 
 package org.opendaylight.yangtools.util.concurrent;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.google.common.base.Function;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Supplier;
 import com.google.common.util.concurrent.ForwardingListenableFuture;
 import com.google.common.util.concurrent.ListenableFuture;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
@@ -20,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
@@ -42,11 +44,35 @@ import javax.annotation.Nullable;
  * from this class override the <code>get</code> methods to check if the ThreadLocal is set. If it is,
  * an ExecutionException is thrown with a custom cause.
  *
+ * Note that the ThreadLocal is not removed automatically, so some state may be left hanging off of
+ * threads which have encountered this class. If you need to clean that state up, use
+ * {@link #cleanStateForCurrentThread()}.
+ *
  * @author Thomas Pantelis
+ * @author Robert Varga
  */
 public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingListeningExecutorService {
-    private final ThreadLocal<Boolean> deadlockDetector = new ThreadLocal<>();
-    private final Function<Void, Exception> deadlockExceptionFunction;
+    /*
+     * We cannot use a static field simply because our API contract allows nesting, which means some
+     * tasks may be submitted to underlay and some to overlay service -- and the two cases need to
+     * be discerned reliably.
+     */
+    private final ThreadLocal<SettableBoolean> deadlockDetector = new ThreadLocal<>();
+    private final Supplier<Exception> deadlockExceptionFunction;
+
+    // Compatibility wrapper, needs to be removed once the deprecated constructors are gone.
+    private static final class CompatExceptionSupplier implements Supplier<Exception> {
+        private final Function<Void, Exception> function;
+
+        private CompatExceptionSupplier(final Function<Void, Exception> function) {
+            this.function = Preconditions.checkNotNull(function);
+        }
+
+        @Override
+        public Exception get() {
+            return function.apply(null);
+        }
+    }
 
     /**
      * Constructor.
@@ -54,9 +80,11 @@ public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingLis
      * @param delegate the backing ExecutorService.
      * @param deadlockExceptionFunction Function that returns an Exception instance to set as the
      *             cause of the ExecutionException when a deadlock is detected.
+     * @deprecated Use {@link #DeadlockDetectingListeningExecutorService(ExecutorService, Supplier)} instead.
      */
-    public DeadlockDetectingListeningExecutorService( ExecutorService delegate,
-                                          Function<Void,Exception> deadlockExceptionFunction ) {
+    @Deprecated
+    public DeadlockDetectingListeningExecutorService(final ExecutorService delegate,
+            final Function<Void, Exception> deadlockExceptionFunction) {
         this(delegate, deadlockExceptionFunction, null);
     }
 
@@ -68,43 +96,98 @@ public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingLis
      *             cause of the ExecutionException when a deadlock is detected.
      * @param listenableFutureExecutor the executor used to run listener callbacks asynchronously.
      *             If null, no executor is used.
+     * @deprecated Use {@link #DeadlockDetectingListeningExecutorService(ExecutorService, Supplier, Executor)} instead.
      */
-    public DeadlockDetectingListeningExecutorService( ExecutorService delegate,
-                                          Function<Void,Exception> deadlockExceptionFunction,
-                                          @Nullable Executor listenableFutureExecutor ) {
+    @Deprecated
+    public DeadlockDetectingListeningExecutorService(final ExecutorService delegate,
+            final Function<Void, Exception> deadlockExceptionFunction,
+            @Nullable final Executor listenableFutureExecutor) {
         super(delegate, listenableFutureExecutor);
-        this.deadlockExceptionFunction = checkNotNull(deadlockExceptionFunction);
+        this.deadlockExceptionFunction = new CompatExceptionSupplier(deadlockExceptionFunction);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param delegate the backing ExecutorService.
+     * @param deadlockExceptionSupplier Supplier that returns an Exception instance to set as the
+     *             cause of the ExecutionException when a deadlock is detected.
+     */
+    public DeadlockDetectingListeningExecutorService(final ExecutorService delegate,
+            @Nonnull final Supplier<Exception> deadlockExceptionSupplier) {
+        this(delegate, deadlockExceptionSupplier, null);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param delegate the backing ExecutorService.
+     * @param deadlockExceptionSupplier Supplier that returns an Exception instance to set as the
+     *             cause of the ExecutionException when a deadlock is detected.
+     * @param listenableFutureExecutor the executor used to run listener callbacks asynchronously.
+     *             If null, no executor is used.
+     */
+    public DeadlockDetectingListeningExecutorService(final ExecutorService delegate,
+            @Nonnull final Supplier<Exception> deadlockExceptionSupplier,
+            @Nullable final Executor listenableFutureExecutor ) {
+        super(delegate, listenableFutureExecutor);
+        this.deadlockExceptionFunction = Preconditions.checkNotNull(deadlockExceptionSupplier);
     }
 
     @Override
-    public void execute( Runnable command ){
+    public void execute(final Runnable command) {
         getDelegate().execute(wrapRunnable(command));
     }
 
     @Override
-    public <T> ListenableFuture<T> submit( Callable<T> task ){
+    public <T> ListenableFuture<T> submit(final Callable<T> task) {
         return wrapListenableFuture(super.submit(wrapCallable(task)));
     }
 
     @Override
-    public ListenableFuture<?> submit( Runnable task ){
+    public ListenableFuture<?> submit(final Runnable task) {
         return wrapListenableFuture(super.submit(wrapRunnable(task)));
     }
 
     @Override
-    public <T> ListenableFuture<T> submit( Runnable task, T result ){
+    public <T> ListenableFuture<T> submit(final Runnable task, final T result) {
         return wrapListenableFuture(super.submit(wrapRunnable(task), result));
+    }
+
+    /**
+     * Remove the state this instance may have attached to the calling thread. If no state
+     * was attached this method does nothing.
+     */
+    public void cleanStateForCurrentThread() {
+        deadlockDetector.remove();
+    }
+
+    private void primeDetector() {
+        SettableBoolean b = deadlockDetector.get();
+        if (b == null) {
+            b = new SettableBoolean();
+            deadlockDetector.set(b);
+        }
+        Preconditions.checkState(!b.isSet(), "Detector for {} has already been primed", this);
+        b.set();
+    }
+
+    private void clearDetector() {
+        final SettableBoolean b = deadlockDetector.get();
+        Preconditions.checkState(b != null, "Detector for {} has been removed", this);
+        Preconditions.checkState(b.isSet(), "Detector for {} has already been cleared", this);
+        b.reset();
     }
 
     private Runnable wrapRunnable(final Runnable task) {
         return new Runnable() {
             @Override
             public void run() {
-                deadlockDetector.set(Boolean.TRUE);
+                primeDetector();
                 try {
                     task.run();
                 } finally {
-                    deadlockDetector.remove();
+                    clearDetector();
                 }
             }
         };
@@ -114,17 +197,17 @@ public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingLis
         return new Callable<T>() {
             @Override
             public T call() throws Exception {
-                deadlockDetector.set(Boolean.TRUE);
+                primeDetector();
                 try {
                     return delagate.call();
                 } finally {
-                    deadlockDetector.remove();
+                    clearDetector();
                 }
             }
         };
     }
 
-    private <T> ListenableFuture<T> wrapListenableFuture(final ListenableFuture<T> delegate ) {
+    private <T> ListenableFuture<T> wrapListenableFuture(final ListenableFuture<T> delegate) {
         /*
          * This creates a forwarding Future that overrides calls to get(...) to check, via the
          * ThreadLocal, if the caller is doing a blocking call on a thread from this executor. If
@@ -148,9 +231,10 @@ public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingLis
             }
 
             void checkDeadLockDetectorTL() throws ExecutionException {
-                if (deadlockDetector.get() != null) {
+                final SettableBoolean b = deadlockDetector.get();
+                if (b != null && b.isSet()) {
                     throw new ExecutionException("A potential deadlock was detected.",
-                            deadlockExceptionFunction.apply(null));
+                            deadlockExceptionFunction.get());
                 }
             }
         };
