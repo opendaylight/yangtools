@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.model.repo.spi;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 
+import org.opendaylight.yangtools.objcache.ObjectCache;
+import org.opendaylight.yangtools.objcache.ObjectCacheFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
@@ -62,6 +64,7 @@ public final class PotentialSchemaSource<T extends SchemaSourceRepresentation> {
         }
     }
 
+    private static final ObjectCache CACHE = ObjectCacheFactory.getObjectCache(PotentialSchemaSource.class);
     private final Class<? extends T> representation;
     private final SourceIdentifier sourceIdentifier;
     private final int cost;
@@ -75,6 +78,15 @@ public final class PotentialSchemaSource<T extends SchemaSourceRepresentation> {
 
     public static final <T extends SchemaSourceRepresentation> PotentialSchemaSource<T> create(final SourceIdentifier sourceIdentifier, final Class<? extends T> representation, final int cost) {
         return new PotentialSchemaSource<>(sourceIdentifier, representation, cost);
+    }
+
+    /**
+     * Return a cached reference to an object equal to this object.
+     *
+     * @return A potentially shared reference, not guaranteed to be unique.
+     */
+    public PotentialSchemaSource<T> cachedReference() {
+        return CACHE.getReference(this);
     }
 
     public SourceIdentifier getSourceIdentifier() {

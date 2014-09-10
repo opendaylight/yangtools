@@ -13,6 +13,8 @@ import com.google.common.base.Preconditions;
 
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.objcache.ObjectCache;
+import org.opendaylight.yangtools.objcache.ObjectCacheFactory;
 
 /**
  * YANG Schema source identifier
@@ -37,26 +39,24 @@ import org.opendaylight.yangtools.concepts.Immutable;
  */
 @Beta
 public final class SourceIdentifier implements Identifier, Immutable {
-
     /**
      * Default revision for sources without specified revision.
      * Marks the source as oldest.
      */
     public static final String NOT_PRESENT_FORMATTED_REVISION = "0000-00-00";
 
+    private static final ObjectCache CACHE = ObjectCacheFactory.getObjectCache(SourceIdentifier.class);
     private static final long serialVersionUID = 1L;
     private final String revision;
     private final String name;
 
     /**
-     *
      * Creates new YANG Schema source identifier.
      *
      * @param name Name of schema
      * @param formattedRevision Revision of source in format YYYY-mm-dd
      */
     public SourceIdentifier(final String name, final String formattedRevision) {
-        super();
         this.name = Preconditions.checkNotNull(name);
         this.revision = Preconditions.checkNotNull(formattedRevision);
     }
@@ -73,6 +73,15 @@ public final class SourceIdentifier implements Identifier, Immutable {
     }
 
     /**
+     * Return a cached reference to an object equal to this object.
+     *
+     * @return A potentially shared reference, not guaranteed to be unique.
+     */
+    public SourceIdentifier cachedReference() {
+        return CACHE.getReference(this);
+    }
+
+    /**
      *
      * Creates new YANG Schema source identifier for sources without revision.
      * {@link SourceIdentifier#NOT_PRESENT_FORMATTED_REVISION} as default revision.
@@ -82,7 +91,6 @@ public final class SourceIdentifier implements Identifier, Immutable {
     public SourceIdentifier(final String name) {
         this(name, NOT_PRESENT_FORMATTED_REVISION);
     }
-
 
     /**
      * Returns model name
