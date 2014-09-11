@@ -1435,7 +1435,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
     private def staticQNameField(CtClass it, QName node, SourceCodeGenerator sourceGenerator) {
         val field = new CtField(ctQName, "QNAME", it);
         field.modifiers = PUBLIC + FINAL + STATIC;
-        val code = '''«QName.asCtClass.name».create("«node.namespace»","«node.formattedRevision»","«node.localName»")'''
+        val code = '''«QName.asCtClass.name».cachedReference(«QName.asCtClass.name».create("«node.namespace»","«node.formattedRevision»","«node.localName»"))'''
         addField(field, code )
 
         sourceGenerator.appendField( field, code );
