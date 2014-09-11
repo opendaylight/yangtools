@@ -131,7 +131,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         final Codec<Object, Object> codec = codecs.codecFor(schema.getType());
 
         context.emittingChild(schemaContext, writer, indent);
-        context.writeJsonIdentifier(schemaContext, writer, name.getNodeType());
+        context.writeChildJsonIdentifier(schemaContext, writer, name.getNodeType());
         writeValue(codec.serialize(value));
     }
 
@@ -205,7 +205,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         // FIXME: should have a codec based on this :)
 
         context.emittingChild(schemaContext, writer, indent);
-        context.writeJsonIdentifier(schemaContext, writer, name.getNodeType());
+        context.writeChildJsonIdentifier(schemaContext, writer, name.getNodeType());
         writeValue(value);
     }
 
