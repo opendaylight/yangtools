@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_e6d73d22",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/DurationStatsTracker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-09-11T20:01:22Z",
+      "side": 1,
+      "message": "The reason I didn\u0027t use this approach is b/c I was concerned about sum rollover. I know a max long is a huge number but durations in ns can add up to large numbers over time. A couple floating point calculations with running ave is negligible - computers perform those fast. I\u0027d be curious if the overhead of LongAdder out-performs floating point calculations.",
+      "revId": "80ab37aba6b7ceec3443736bff030e0d90124979",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_060261b4",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/DurationStatsTracker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-09-11T20:01:22Z",
+      "side": 1,
+      "message": "This incurs an object creation. How about use long and init to -1?",
+      "revId": "80ab37aba6b7ceec3443736bff030e0d90124979",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_46cdc985",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/DurationStatsTracker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-09-11T20:01:22Z",
+      "side": 1,
+      "message": "The problem with not sync\u0027ing this method with #addDuration is that a thread executing #addDuration could\u0027ve updated the sum but not the count yet. Meanwhile another thread executing this method reads the updated sum and the old count, thus the ave calculation would be off. To really have accuracy a synchronized block is needed.",
+      "revId": "80ab37aba6b7ceec3443736bff030e0d90124979",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_461f090a",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/DurationStatsTracker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2014-09-11T20:01:22Z",
+      "side": 1,
+      "message": "If #abbreviate can convert to minutes/hours/days then this method should as well.",
+      "revId": "80ab37aba6b7ceec3443736bff030e0d90124979",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
