@@ -13,33 +13,41 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
-import com.google.common.util.concurrent.AtomicDouble;
+import com.twitter.jsr166e.LongAdder;
+
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class that calculates and tracks time duration statistics.
  *
  * @author Thomas Pantelis
+ * @author Robert Varga
  */
 public class DurationStatsTracker {
+    private static final AtomicReferenceFieldUpdater<DurationStatsTracker, DurationWithTime> LONGEST_UPDATER =
+            AtomicReferenceFieldUpdater.newUpdater(DurationStatsTracker.class, DurationWithTime.class, "longest");
+    private static final AtomicReferenceFieldUpdater<DurationStatsTracker, DurationWithTime> SHORTEST_UPDATER =
+            AtomicReferenceFieldUpdater.newUpdater(DurationStatsTracker.class, DurationWithTime.class, "shortest");
+    private static final Logger LOG = LoggerFactory.getLogger(DurationStatsTracker.class);
+    private static final DecimalFormat DECIMAL_FORMAT;
 
-    private static final DecimalFormat decimalFormat;
+    private final LongAdder durationsSum = new LongAdder();
+    private final LongAdder durationsCount = new LongAdder();
 
-    private final AtomicLong totalDurations = new AtomicLong();
-    private final AtomicLong longestDuration = new AtomicLong();
-    private volatile long timeOfLongestDuration;
-    private final AtomicLong shortestDuration = new AtomicLong(Long.MAX_VALUE);
-    private volatile long timeOfShortestDuration;
-    private final AtomicDouble averageDuration = new AtomicDouble();
+    private volatile DurationWithTime longest = null;
+    private volatile DurationWithTime shortest = null;
 
     static {
         final DecimalFormatSymbols symbols = DecimalFormatSymbols.getInstance();
         symbols.setDecimalSeparator('.');
-        decimalFormat = new DecimalFormat("0.00", symbols);
+        DECIMAL_FORMAT = new DecimalFormat("0.00", symbols);
     }
 
     /**
@@ -48,30 +56,39 @@ public class DurationStatsTracker {
      * @param duration
      *            the duration in nanoseconds.
      */
-    public void addDuration(long duration) {
+    public void addDuration(final long duration) {
+        // First update the quick stats
+        durationsSum.add(duration);
+        durationsCount.increment();
 
-        double currentAve = averageDuration.get();
-        long currentTotal = totalDurations.get();
-
-        long newTotal = currentTotal + 1;
-
-        // Calculate moving cumulative average.
-        double newAve = currentAve * currentTotal / newTotal + (double) duration / (double) newTotal;
-
-        averageDuration.compareAndSet(currentAve, newAve);
-        totalDurations.compareAndSet(currentTotal, newTotal);
-
-        long longest = longestDuration.get();
-        if (duration > longest) {
-            if (longestDuration.compareAndSet(longest, duration)) {
-                timeOfLongestDuration = System.currentTimeMillis();
+        /*
+         * Now the hairy 'min/max' things. The notion of "now" we cache,
+         * so the first time we use it, we do not call it twice. We populate
+         * it lazily, though.
+         *
+         * The longest/shortest stats both are encapsulated in an object,
+         * so we update them atomically and we minimize the number of volatile
+         * operations.
+         */
+        DurationWithTime current = shortest;
+        if (current == null || current.getDuration() > duration) {
+            final DurationWithTime newObj = new DurationWithTime(duration, System.currentTimeMillis());
+            while (!SHORTEST_UPDATER.compareAndSet(this, current, newObj)) {
+                current = shortest;
+                if (current != null && current.getDuration() <= duration) {
+                    break;
+                }
             }
         }
 
-        long shortest = shortestDuration.get();
-        if (duration < shortest) {
-            if (shortestDuration.compareAndSet(shortest, duration)) {
-                timeOfShortestDuration = System.currentTimeMillis();
+        current = longest;
+        if (current == null || current.getDuration() < duration) {
+            final DurationWithTime newObj = new DurationWithTime(duration, System.currentTimeMillis());
+            while (!LONGEST_UPDATER.compareAndSet(this, current, newObj)) {
+                current = longest;
+                if (current != null && current.getDuration() >= duration) {
+                    break;
+                }
             }
         }
     }
@@ -80,55 +97,63 @@ public class DurationStatsTracker {
      * Returns the total number of tracked durations.
      */
     public long getTotalDurations() {
-        return totalDurations.get();
+        return durationsCount.sum();
+    }
+
+    private static long getDuration(final DurationWithTime current) {
+        return current == null ? 0L : current.getDuration();
+    }
+
+    private static long getTimeMillis(final DurationWithTime current) {
+        return current == null ? 0L : current.getTimeMillis();
     }
 
     /**
      * Returns the longest duration in nanoseconds.
      */
     public long getLongestDuration() {
-        return longestDuration.get();
+        return getDuration(longest);
     }
 
     /**
      * Returns the shortest duration in nanoseconds.
      */
     public long getShortestDuration() {
-        long shortest = shortestDuration.get();
-        return shortest < Long.MAX_VALUE ? shortest : 0;
+        return getDuration(shortest);
     }
 
     /**
      * Returns the average duration in nanoseconds.
      */
     public double getAverageDuration() {
-        return averageDuration.get();
+        final long sum = durationsSum.sum();
+        final long count = durationsCount.sum();
+
+        return count == 0 ? 0 : ((double) sum) / count;
     }
 
     /**
      * Returns the time stamp of the longest duration.
      */
     public long getTimeOfLongestDuration() {
-        return timeOfLongestDuration;
+        return getTimeMillis(longest);
     }
 
     /**
      * Returns the time stamp of the shortest duration.
      */
     public long getTimeOfShortestDuration() {
-        return timeOfShortestDuration;
+        return getTimeMillis(shortest);
     }
 
     /**
      * Resets all statistics back to their defaults.
      */
-    public void reset() {
-        totalDurations.set(0);
-        longestDuration.set(0);
-        timeOfLongestDuration = 0;
-        shortestDuration.set(Long.MAX_VALUE);
-        timeOfShortestDuration = 0;
-        averageDuration.set(0.0);
+    public synchronized void reset() {
+        longest = null;
+        shortest = null;
+        durationsCount.reset();
+        durationsSum.reset();
     }
 
     /**
@@ -136,7 +161,7 @@ public class DurationStatsTracker {
      * "12.34 ms".
      */
     public String getDisplayableAverageDuration() {
-        return formatDuration(getAverageDuration(), 0);
+        return formatDuration(getAverageDuration(), null);
     }
 
     /**
@@ -144,7 +169,7 @@ public class DurationStatsTracker {
      * date/time at which it occurred, e.g. "12.34 ms at 08/02/2014 12:30:24".
      */
     public String getDisplayableShortestDuration() {
-        return formatDuration(getShortestDuration(), getTimeOfShortestDuration());
+        return formatDuration(shortest);
     }
 
     /**
@@ -152,42 +177,56 @@ public class DurationStatsTracker {
      * date/time at which it occurred, e.g. "12.34 ms at 08/02/2014 12:30:24".
      */
     public String getDisplayableLongestDuration() {
-        return formatDuration(getLongestDuration(), getTimeOfLongestDuration());
+        return formatDuration(longest);
     }
 
     /**
      * Returns formatted value of number, e.g. "12.34". Always is used dot as
      * decimal separator.
      */
-    private static synchronized String formatDecimalValue(double value) {
-        return decimalFormat.format(value);
+    private static synchronized String formatDecimalValue(final double value) {
+        return DECIMAL_FORMAT.format(value);
     }
 
-    private String formatDuration(double duration, long timeStamp) {
-        TimeUnit unit = chooseUnit((long) duration);
-        double value = duration / NANOSECONDS.convert(1, unit);
-
-        return timeStamp > 0 ? String.format("%s %s at %3$tD %3$tT", formatDecimalValue(value), abbreviate(unit),
-                new Date(timeStamp)) : String.format("%s %s", formatDecimalValue(value), abbreviate(unit));
+    private static String formatDuration(final DurationWithTime current) {
+        if (current != null) {
+            return formatDuration(current.getDuration(), current.getTimeMillis());
+        } else {
+            return formatDuration(0, null);
+        }
     }
 
-    private static TimeUnit chooseUnit(long nanos) {
-        if (SECONDS.convert(nanos, NANOSECONDS) > 0) {
+    private static String formatDuration(final double duration, final Long timeStamp) {
+        final TimeUnit unit = chooseUnit((long) duration);
+        final double value = duration / NANOSECONDS.convert(1, unit);
+
+        final StringBuilder sb = new StringBuilder();
+        sb.append(formatDecimalValue(value));
+        sb.append(' ');
+        sb.append(abbreviate(unit));
+
+        if (timeStamp != null) {
+            sb.append(String.format(" at %1$tD %1$tT", new Date(timeStamp)));
+        }
+
+        return sb.toString();
+    }
+
+    private static TimeUnit chooseUnit(final long nanos) {
+        // TODO: this could be inlined, as we are doing needless divisions
+        if (NANOSECONDS.toSeconds(nanos) > 0) {
             return SECONDS;
         }
-
-        if (MILLISECONDS.convert(nanos, NANOSECONDS) > 0) {
+        if (NANOSECONDS.toMillis(nanos) > 0) {
             return MILLISECONDS;
         }
-
-        if (MICROSECONDS.convert(nanos, NANOSECONDS) > 0) {
+        if (NANOSECONDS.toMicros(nanos) > 0) {
             return MICROSECONDS;
         }
-
         return NANOSECONDS;
     }
 
-    private static String abbreviate(TimeUnit unit) {
+    private static String abbreviate(final TimeUnit unit) {
         switch (unit) {
         case NANOSECONDS:
             return "ns";
@@ -197,8 +236,15 @@ public class DurationStatsTracker {
             return "ms";
         case SECONDS:
             return "s";
-        default:
-            return "";
+        case MINUTES:
+            return "m";
+        case HOURS:
+            return "h";
+        case DAYS:
+            return "d";
         }
+
+        LOG.warn("Unhandled time unit {}", unit);
+        return "";
     }
 }
