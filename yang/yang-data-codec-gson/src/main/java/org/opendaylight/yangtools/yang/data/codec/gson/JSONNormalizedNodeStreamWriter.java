@@ -11,11 +11,9 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.gson.stream.JsonWriter;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URI;
-
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -136,7 +134,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         final JSONCodec<Object> codec = codecs.codecFor(schema.getType());
 
         context.emittingChild(codecs.getSchemaContext(), writer, indent);
-        context.writeJsonIdentifier(codecs.getSchemaContext(), writer, name.getNodeType());
+        context.writeChildJsonIdentifier(codecs.getSchemaContext(), writer, name.getNodeType());
         writeValue(codec.serialize(value), codec.needQuotes());
     }
 
@@ -211,11 +209,12 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
 
     @Override
     public void anyxmlNode(final NodeIdentifier name, final Object value) throws IOException {
+        @SuppressWarnings("unused")
         final AnyXmlSchemaNode schema = tracker.anyxmlNode(name);
         // FIXME: should have a codec based on this :)
 
         context.emittingChild(codecs.getSchemaContext(), writer, indent);
-        context.writeJsonIdentifier(codecs.getSchemaContext(), writer, name.getNodeType());
+        context.writeChildJsonIdentifier(codecs.getSchemaContext(), writer, name.getNodeType());
         writeValue(String.valueOf(value), true);
     }
 
@@ -243,7 +242,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
                 }
                 writer.write(escaped);
             } else {
-                writer.append(str);
+            writer.append(str);
             }
 
             writer.append('"');
