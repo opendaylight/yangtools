@@ -1,0 +1,7 @@
+Verified+1: jenkins-yangtools <jenkins-lispflowmapping@opendaylight.org>
+Code-Review+2: Robert Varga <rovarga@cisco.com>
+Submitted-by: Robert Varga <rovarga@cisco.com>
+Submitted-at: Thu, 11 Sep 2014 09:02:58 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/10997
+Project: yangtools
+Branch: refs/heads/master
