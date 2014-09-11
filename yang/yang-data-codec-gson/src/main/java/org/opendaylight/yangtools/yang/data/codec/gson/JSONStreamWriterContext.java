@@ -8,13 +8,10 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.base.Preconditions;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URI;
-
 import javax.annotation.Nonnull;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -50,7 +47,7 @@ abstract class JSONStreamWriterContext {
     }
 
     /**
-     * Write a JSON node identifier, optionally prefixing it with the module name
+     * Write a child JSON node identifier, optionally prefixing it with the module name
      * corresponding to its namespace.
      *
      * @param schema Schema context
@@ -58,7 +55,7 @@ abstract class JSONStreamWriterContext {
      * @param qname Namespace/name tuple
      * @throws IOException when the writer reports it
      */
-    protected final void writeJsonIdentifier(final SchemaContext schema, final Writer writer, final QName qname) throws IOException {
+    final void writeChildJsonIdentifier(final SchemaContext schema, final Writer writer, final QName qname) throws IOException {
         writer.append('"');
 
         // Prepend module name if namespaces do not match
@@ -73,6 +70,19 @@ abstract class JSONStreamWriterContext {
 
         writer.append(qname.getLocalName());
         writer.append("\":");
+    }
+
+    /**
+     * Write our JSON node identifier, optionally prefixing it with the module name
+     * corresponding to its namespace.
+     *
+     * @param schema Schema context
+     * @param writer Output writer
+     * @param qname Namespace/name tuple
+     * @throws IOException when the writer reports it
+     */
+    protected final void writeMyJsonIdentifier(final SchemaContext schema, final Writer writer, final QName qname) throws IOException {
+        parent.writeChildJsonIdentifier(schema, writer, qname);
     }
 
     /**
@@ -158,4 +168,5 @@ abstract class JSONStreamWriterContext {
         }
         return parent;
     }
+
 }
