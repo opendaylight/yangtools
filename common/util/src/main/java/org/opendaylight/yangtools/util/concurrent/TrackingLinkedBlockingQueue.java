@@ -112,6 +112,6 @@ public class TrackingLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
         int largest;
         do {
             largest = largestQueueSize;
-        } while (size > largest && !LARGEST_QUEUE_SIZE_UPDATER.compareAndSet(this, largest, size));
+        } while (size > largest && !LARGEST_QUEUE_SIZE_UPDATER.weakCompareAndSet(this, largest, size));
     }
 }
