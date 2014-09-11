@@ -134,7 +134,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
 
             @Override
             public void onFailure(final Throwable t) {
-                LOG.info("Failed to assemble sources", t);
+                LOG.debug("Failed to assemble sources", t);
             }
         });
 
