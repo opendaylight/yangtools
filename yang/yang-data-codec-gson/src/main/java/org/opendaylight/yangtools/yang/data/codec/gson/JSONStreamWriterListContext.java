@@ -24,7 +24,7 @@ final class JSONStreamWriterListContext extends JSONStreamWriterQNameContext {
 
     @Override
     protected void emitStart(final SchemaContext schema, final Writer writer) throws IOException {
-        writeJsonIdentifier(schema, writer, getQName());
+        getParent().writeJsonIdentifier(schema, writer, getQName());
         writer.append('[');
     }
 

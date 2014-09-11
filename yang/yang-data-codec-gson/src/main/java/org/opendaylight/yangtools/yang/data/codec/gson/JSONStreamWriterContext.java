@@ -8,13 +8,10 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.base.Preconditions;
-
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URI;
-
 import javax.annotation.Nonnull;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -156,6 +153,10 @@ abstract class JSONStreamWriterContext {
         if (emittedMyself) {
             emitEnd(writer);
         }
+        return parent;
+    }
+
+    protected final JSONStreamWriterContext getParent() {
         return parent;
     }
 }
