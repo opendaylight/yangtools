@@ -153,14 +153,16 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
 
     @Override
     public <T extends SchemaSourceRepresentation> SchemaSourceRegistration<T> registerSchemaSource(final SchemaSourceProvider<? super T> provider, final PotentialSchemaSource<T> source) {
-        final AbstractSchemaSourceRegistration<T> ret = new AbstractSchemaSourceRegistration<T>(provider, source) {
+        final PotentialSchemaSource<T> src = source.cachedReference();
+
+        final AbstractSchemaSourceRegistration<T> ret = new AbstractSchemaSourceRegistration<T>(provider, src) {
             @Override
             protected void removeRegistration() {
-                removeSource(source, this);
+                removeSource(src, this);
             }
         };
 
-        addSource(source, ret);
+        addSource(src, ret);
         return ret;
     }
 
