@@ -40,6 +40,10 @@
             <groupId>com.github.romix</groupId>
             <artifactId>java-concurrent-hash-trie-map</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.twitter</groupId>
+            <artifactId>jsr166e</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>
@@ -61,7 +65,10 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Embed-Dependency>java-concurrent-hash-trie-map;inline=true</Embed-Dependency>
+                        <Embed-Dependency>
+                            java-concurrent-hash-trie-map;inline=true,
+                            jsr166e;inline=true
+                        </Embed-Dependency>
                     </instructions>
                 </configuration>
             </plugin>

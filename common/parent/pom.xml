@@ -43,6 +43,7 @@
         <yang.ext.version>2013.09.07.4-SNAPSHOT</yang.ext.version>
         <maven.javadoc.version>2.9.1</maven.javadoc.version>
         <jsr305.version>2.0.1</jsr305.version>
+        <jsr166e.version>1.1.0</jsr166e.version>
 
         <!-- Sonar config -->
         <sonar-jacoco-listeners.version>2.4</sonar-jacoco-listeners.version>
@@ -92,6 +93,12 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>com.twitter</groupId>
+                <artifactId>jsr166e</artifactId>
+                <version>${jsr166e.version}</version>
+            </dependency>
+
             <!-- Testing Dependencies -->
             <dependency>
                 <groupId>org.apache.maven.shared</groupId>
