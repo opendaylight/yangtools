@@ -80,7 +80,18 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @return Cached instance, according to {@link ObjectCache} policy.
      */
     public static QName cachedReference(final QName qname) {
-        return CACHE.getReference(qname);
+        // We also want to make sure we keep the QNameModule cached
+        final QNameModule myMod = qname.getModule();
+        final QNameModule cacheMod = QNameModule.cachedReference(myMod);
+
+        final QName what;
+        if (cacheMod == myMod) {
+            what = qname;
+        } else {
+            what = QName.create(cacheMod, qname.localName);
+        }
+
+        return CACHE.getReference(what);
     }
 
     /**
