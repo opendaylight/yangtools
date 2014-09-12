@@ -10,12 +10,9 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 import static javax.xml.XMLConstants.DEFAULT_NS_PREFIX;
 
 import com.google.common.base.Preconditions;
-
 import java.io.IOException;
-
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -72,17 +69,22 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
         return new XMLStreamNormalizedNodeStreamWriter(writer, context, path);
     }
 
-    private void writeElement(final QName qname, final TypeDefinition<?> type, final Object value) throws IOException {
-        final String ns = qname.getNamespace().toString();
+    private void writeStartElement( QName qname) throws XMLStreamException {
+        String ns = qname.getNamespace().toString();
+        String parentNs = writer.getNamespaceContext().getNamespaceURI(DEFAULT_NS_PREFIX);
+        writer.writeStartElement(DEFAULT_NS_PREFIX, qname.getLocalName(), ns);
+        if(!ns.equals(parentNs)) {
+            writer.writeDefaultNamespace(ns);
+        }
+    }
 
+    private void writeElement(final QName qname, final TypeDefinition<?> type, final Object value) throws IOException {
         try {
+            writeStartElement(qname);
             if (value != null) {
-                writer.writeStartElement(DEFAULT_NS_PREFIX, qname.getLocalName(), ns);
                 UTILS.writeValue(writer, type, value);
-                writer.writeEndElement();
-            } else {
-                writer.writeEmptyElement(DEFAULT_NS_PREFIX, qname.getLocalName(), ns);
             }
+            writer.writeEndElement();
         } catch (XMLStreamException e) {
             throw new IOException("Failed to emit element", e);
         }
@@ -90,7 +92,7 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
 
     private void startElement(final QName qname) throws IOException {
         try {
-            writer.writeStartElement(DEFAULT_NS_PREFIX, qname.getLocalName(), qname.getNamespace().toString());
+            writeStartElement(qname);
         } catch (XMLStreamException e) {
             throw new IOException("Failed to start element", e);
         }
@@ -168,16 +170,12 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
     public void anyxmlNode(final NodeIdentifier name, final Object value) throws IOException {
         final AnyXmlSchemaNode schema = tracker.anyxmlNode(name);
         final QName qname = schema.getQName();
-        final String ns = qname.getNamespace().toString();
-
         try {
+            writeStartElement(qname);
             if (value != null) {
-                writer.writeStartElement(ns, qname.getLocalName());
                 UTILS.writeValue(writer, (Node<?>)value, schema);
-                writer.writeEndElement();
-            } else {
-                writer.writeEmptyElement(ns, qname.getLocalName());
             }
+            writer.writeEndElement();
         } catch (XMLStreamException e) {
             throw new IOException("Failed to emit element", e);
         }
