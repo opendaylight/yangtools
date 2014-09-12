@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
@@ -39,7 +40,7 @@ public class BitAndUnionTOEnclosingTest {
         final SchemaContext context = parser.parseFiles(testModels);
 
         assertNotNull(context);
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         genTypes = bindingGen.generateTypes(context);
 
         for (Type type : genTypes) {

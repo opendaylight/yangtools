@@ -16,6 +16,7 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty;
@@ -36,7 +37,7 @@ public class GeneratedTypesTest {
         final SchemaContext context = new YangParserImpl().parseFiles(Arrays.asList(abstractTopology, ietfInetTypes));
         assertNotNull(context);
 
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         assertNotNull(genTypes);
@@ -49,7 +50,7 @@ public class GeneratedTypesTest {
         final SchemaContext context = new YangParserImpl().parseFiles(Collections.singleton(testFile));
         assertNotNull(context);
 
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         assertNotNull(genTypes);
@@ -134,7 +135,7 @@ public class GeneratedTypesTest {
         final SchemaContext context = new YangParserImpl().parseFiles(Collections.singleton(testFile));
         assertNotNull(context);
 
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         assertNotNull(genTypes);
@@ -218,7 +219,7 @@ public class GeneratedTypesTest {
         final SchemaContext context = new YangParserImpl().parseFiles(Collections.singleton(testFile));
         assertNotNull(context);
 
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         assertNotNull(genTypes);
@@ -341,7 +342,7 @@ public class GeneratedTypesTest {
         final SchemaContext context = new YangParserImpl().parseFiles(Collections.singleton(testFile));
         assertNotNull(context);
 
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         assertNotNull(genTypes);
@@ -393,7 +394,7 @@ public class GeneratedTypesTest {
         final SchemaContext context = new YangParserImpl().parseFiles(Collections.singleton(testFile));
         assertNotNull(context);
 
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         assertNotNull(genTypes);

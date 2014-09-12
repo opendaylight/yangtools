@@ -15,6 +15,7 @@ import static org.opendaylight.yangtools.sal.binding.generator.impl.SupportTestU
 
 import java.io.IOException;
 import java.util.List;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
@@ -30,7 +31,7 @@ public class ChoiceCaseGenTypesTest extends AbstractTypesTest {
         super(ChoiceCaseGenTypesTest.class.getResource("/choice-case-type-test-models"));
     }
 
-    private GeneratedType checkGeneratedType(List<Type> genTypes, String genTypeName, String packageName, int occurences) {
+    private GeneratedType checkGeneratedType(final List<Type> genTypes, final String genTypeName, final String packageName, final int occurences) {
         GeneratedType searchedGenType = null;
         int searchedGenTypeCounter = 0;
         for (Type type : genTypes) {
@@ -49,7 +50,7 @@ public class ChoiceCaseGenTypesTest extends AbstractTypesTest {
 
     }
 
-    private GeneratedType checkGeneratedType(List<Type> genTypes, String genTypeName, String packageName) {
+    private GeneratedType checkGeneratedType(final List<Type> genTypes, final String genTypeName, final String packageName) {
         return checkGeneratedType(genTypes, genTypeName, packageName, 1);
     }
 
@@ -59,7 +60,7 @@ public class ChoiceCaseGenTypesTest extends AbstractTypesTest {
         final SchemaContext context = parser.parseFiles(testModels);
 
         assertNotNull("context is null", context);
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         assertNotNull("genTypes is null", genTypes);

@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
@@ -29,7 +30,7 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public class UsesTest {
 
-    private static List<File> loadTestResources(String testFile) {
+    private static List<File> loadTestResources(final String testFile) {
         try {
         final List<File> testModels = new ArrayList<File>();
         final File listModelFile = new File(UsesTest.class.getResource(testFile).toURI());
@@ -47,7 +48,7 @@ public class UsesTest {
         final SchemaContext context = parser.parseFiles(testModels);
 
         assertNotNull(context);
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
         GeneratedType groupingU = null;
         GeneratedType groupingX = null;
@@ -102,7 +103,7 @@ public class UsesTest {
         final SchemaContext context = parser.parseFiles(testModels);
 
         assertNotNull(context);
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         GeneratedType groupingCaseTest = null;
@@ -150,7 +151,7 @@ public class UsesTest {
         final SchemaContext context = parser.parseFiles(testModels);
 
         assertNotNull(context);
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         int containerTestCount = 0;
@@ -203,7 +204,7 @@ public class UsesTest {
         final SchemaContext context = parser.parseFiles(testModels);
 
         assertNotNull(context);
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         int groupingTestCount = 0;
@@ -254,7 +255,7 @@ public class UsesTest {
         final SchemaContext context = parser.parseFiles(testModels);
 
         assertNotNull(context);
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         int listTestCounter = 0;
@@ -336,7 +337,7 @@ public class UsesTest {
         final SchemaContext context = parser.parseFiles(testModels);
 
         assertNotNull(context);
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         int groupingModulTestCounter = 0;
@@ -387,7 +388,7 @@ public class UsesTest {
         final SchemaContext context = parser.parseFiles(testModels);
 
         assertNotNull(context);
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         int rpcTestInputCounter = 0;
@@ -480,7 +481,7 @@ public class UsesTest {
         final SchemaContext context = parser.parseFiles(testModels);
 
         assertNotNull(context);
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         GeneratedType containerAugment1 = null;
@@ -533,7 +534,7 @@ public class UsesTest {
         final SchemaContext context = parser.parseFiles(testModels);
 
         assertNotNull(context);
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         GeneratedType notificationTest = null;

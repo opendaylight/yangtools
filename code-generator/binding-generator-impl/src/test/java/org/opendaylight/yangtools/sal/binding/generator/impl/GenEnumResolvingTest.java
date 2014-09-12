@@ -17,6 +17,7 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration;
@@ -37,7 +38,7 @@ public class GenEnumResolvingTest {
         final SchemaContext context = new YangParserImpl().parseFiles(Arrays.asList(ietfInterfaces, ianaIfTypeModel));
         assertTrue(context != null);
 
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
         assertTrue(genTypes != null);
 
@@ -98,7 +99,7 @@ public class GenEnumResolvingTest {
         File ianaIfType = new File(getClass().getResource("/ietf/iana-if-type.yang").toURI());
         final SchemaContext context = new YangParserImpl().parseFiles(Collections.singleton(ianaIfType));
         assertTrue(context != null);
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
         assertTrue(genTypes != null);
         assertEquals(1, genTypes.size());
@@ -121,7 +122,7 @@ public class GenEnumResolvingTest {
         final SchemaContext context = new YangParserImpl().parseFiles(Arrays.asList(abstractTopology, ietfInterfaces,
                 ianaIfType));
         assertNotNull(context);
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
         assertNotNull(genTypes);
         assertTrue(!genTypes.isEmpty());

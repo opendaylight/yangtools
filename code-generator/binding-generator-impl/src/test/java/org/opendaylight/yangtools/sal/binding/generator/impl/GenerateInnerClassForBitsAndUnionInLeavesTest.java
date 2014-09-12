@@ -13,9 +13,9 @@ import java.io.File;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
-import org.opendaylight.yangtools.sal.binding.generator.impl.BindingGeneratorImpl;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
@@ -30,8 +30,8 @@ public class GenerateInnerClassForBitsAndUnionInLeavesTest {
         final YangContextParser parser = new YangParserImpl();
 
         final List<File> inputFiles = new ArrayList<File>();
-        for (int i = 0; i < yangFiles.length; ++i) {
-            inputFiles.add(new File(yangFiles[i]));
+        for (URI yangFile : yangFiles) {
+            inputFiles.add(new File(yangFile));
         }
 
         return parser.parseFiles(inputFiles);
@@ -44,7 +44,7 @@ public class GenerateInnerClassForBitsAndUnionInLeavesTest {
         final SchemaContext context = resolveSchemaContextFromFiles(yangTypesPath);
         assertTrue(context != null);
 
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
         assertTrue(genTypes != null);
 
