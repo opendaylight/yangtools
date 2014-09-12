@@ -24,6 +24,7 @@
         <bundle>mvn:org.opendaylight.yangtools.model/ietf-inet-types/${ietf.inet.types.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools.model/ietf-yang-types/${ietf.yang.types.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools.model/ietf-yang-types-20130715/${ietf.yang.types.20130715.version}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools.model/ietf-restconf/${ietf.restconf.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools.model/yang-ext/${yang.ext.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools.model/opendaylight-l2-types/${opendaylight.l2.types.version}</bundle>
         <bundle>mvn:org.opendaylight.yangtools.model/ietf-topology/${ietf.topology.version}</bundle>
