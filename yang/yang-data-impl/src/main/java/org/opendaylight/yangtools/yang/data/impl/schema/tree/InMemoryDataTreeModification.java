@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import java.util.Map.Entry;
-
-import javax.annotation.concurrent.GuardedBy;
-
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -23,32 +23,31 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-
 final class InMemoryDataTreeModification implements DataTreeModification {
+    private static final AtomicIntegerFieldUpdater<InMemoryDataTreeModification> UPDATER =
+            AtomicIntegerFieldUpdater.newUpdater(InMemoryDataTreeModification.class, "sealed");
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTreeModification.class);
+
     private final RootModificationApplyOperation strategyTree;
     private final InMemoryDataTreeSnapshot snapshot;
     private final ModifiedNode rootNode;
     private final Version version;
 
-    @GuardedBy("this")
-    private boolean sealed = false;
+    private volatile int sealed = 0;
 
     InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot, final RootModificationApplyOperation resolver) {
         this.snapshot = Preconditions.checkNotNull(snapshot);
         this.strategyTree = Preconditions.checkNotNull(resolver).snapshot();
         this.rootNode = ModifiedNode.createUnmodified(snapshot.getRootNode(), false);
+
         /*
          * We could allocate version beforehand, since Version contract
-         * states two allocated version must be allways different.
-         * 
+         * states two allocated version must be always different.
+         *
          * Preallocating version simplifies scenarios such as
          * chaining of modifications, since version for particular
          * node in modification and in data tree (if successfully
-         * commited) will be same and will not change.
-         * 
+         * committed) will be same and will not change.
          */
         this.version = snapshot.getRootNode().getSubtreeVersion().next();
     }
@@ -62,20 +61,21 @@ final class InMemoryDataTreeModification implements DataTreeModification {
     }
 
     @Override
-    public synchronized void write(final YangInstanceIdentifier path, final NormalizedNode<?, ?> value) {
+    public void write(final YangInstanceIdentifier path, final NormalizedNode<?, ?> value) {
         checkSealed();
+
         resolveModificationFor(path).write(value);
     }
 
     @Override
-    public synchronized void merge(final YangInstanceIdentifier path, final NormalizedNode<?, ?> data) {
+    public void merge(final YangInstanceIdentifier path, final NormalizedNode<?, ?> data) {
         checkSealed();
+
         mergeImpl(resolveModificationFor(path),data);
     }
 
     private void mergeImpl(final OperationWithModification op,final NormalizedNode<?,?> data) {
-
-        if(data instanceof NormalizedNodeContainer<?,?,?>) {
+        if (data instanceof NormalizedNodeContainer<?,?,?>) {
             @SuppressWarnings({ "rawtypes", "unchecked" })
             NormalizedNodeContainer<?,?,NormalizedNode<PathArgument, ?>> dataContainer = (NormalizedNodeContainer) data;
             for(NormalizedNode<PathArgument, ?> child : dataContainer.getValue()) {
@@ -87,13 +87,14 @@ final class InMemoryDataTreeModification implements DataTreeModification {
     }
 
     @Override
-    public synchronized void delete(final YangInstanceIdentifier path) {
+    public void delete(final YangInstanceIdentifier path) {
         checkSealed();
+
         resolveModificationFor(path).delete();
     }
 
     @Override
-    public synchronized Optional<NormalizedNode<?, ?>> readNode(final YangInstanceIdentifier path) {
+    public Optional<NormalizedNode<?, ?>> readNode(final YangInstanceIdentifier path) {
         /*
          * Walk the tree from the top, looking for the first node between root and
          * the requested path which has been modified. If no such node exists,
@@ -115,7 +116,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
     private Optional<TreeNode> resolveSnapshot(final YangInstanceIdentifier path,
             final ModifiedNode modification) {
         final Optional<Optional<TreeNode>> potentialSnapshot = modification.getSnapshotCache();
-        if(potentialSnapshot.isPresent()) {
+        if (potentialSnapshot.isPresent()) {
             return potentialSnapshot.get();
         }
 
@@ -123,14 +124,14 @@ final class InMemoryDataTreeModification implements DataTreeModification {
             return resolveModificationStrategy(path).apply(modification, modification.getOriginal(),
                     version);
         } catch (Exception e) {
-            LOG.error("Could not create snapshot for {}:{}", path,modification,e);
+            LOG.error("Could not create snapshot for {}:{}", path, modification, e);
             throw e;
         }
     }
 
     private ModificationApplyOperation resolveModificationStrategy(final YangInstanceIdentifier path) {
         LOG.trace("Resolving modification apply strategy for {}", path);
-        if(rootNode.getType() == ModificationType.UNMODIFIED) {
+        if (rootNode.getType() == ModificationType.UNMODIFIED) {
             strategyTree.upgradeIfPossible();
         }
 
@@ -138,14 +139,17 @@ final class InMemoryDataTreeModification implements DataTreeModification {
     }
 
     private OperationWithModification resolveModificationFor(final YangInstanceIdentifier path) {
-        ModifiedNode modification = rootNode;
         // We ensure strategy is present.
-        ModificationApplyOperation operation = resolveModificationStrategy(path);
-        boolean isOrdered = true;
+        final ModificationApplyOperation operation = resolveModificationStrategy(path);
+
+        final boolean isOrdered;
         if (operation instanceof SchemaAwareApplyOperation) {
             isOrdered = ((SchemaAwareApplyOperation) operation).isOrdered();
+        } else {
+            isOrdered = true;
         }
 
+        ModifiedNode modification = rootNode;
         for (PathArgument pathArg : path.getPathArguments()) {
             modification = modification.modifyChild(pathArg, isOrdered);
         }
@@ -153,15 +157,15 @@ final class InMemoryDataTreeModification implements DataTreeModification {
     }
 
     @Override
-    public synchronized void ready() {
-        Preconditions.checkState(!sealed, "Attempted to seal an already-sealed Data Tree.");
-        sealed = true;
+    public void ready() {
+        final boolean wasRunning = UPDATER.compareAndSet(this, 0, 1);
+        Preconditions.checkState(wasRunning, "Attempted to seal an already-sealed Data Tree.");
+
         rootNode.seal();
     }
 
-    @GuardedBy("this")
     private void checkSealed() {
-        Preconditions.checkState(!sealed, "Data Tree is sealed. No further modifications allowed.");
+        Preconditions.checkState(sealed == 0, "Data Tree is sealed. No further modifications allowed.");
     }
 
     @Override
@@ -170,16 +174,17 @@ final class InMemoryDataTreeModification implements DataTreeModification {
     }
 
     @Override
-    public synchronized DataTreeModification newModification() {
-        Preconditions.checkState(sealed, "Attempted to chain on an unsealed modification");
+    public DataTreeModification newModification() {
+        Preconditions.checkState(sealed == 1, "Attempted to chain on an unsealed modification");
 
-        if(rootNode.getType() == ModificationType.UNMODIFIED) {
+        if (rootNode.getType() == ModificationType.UNMODIFIED) {
+            // Simple fast case: just use the underlying modification
             return snapshot.newModification();
         }
 
         /*
-         *  We will use preallocated version, this means returned snapshot will 
-         *  have same version each time this method is called.
+         * We will use preallocated version, this means returned snapshot will
+         * have same version each time this method is called.
          */
         TreeNode originalSnapshotRoot = snapshot.getRootNode();
         Optional<TreeNode> tempRoot = strategyTree.apply(rootNode, Optional.of(originalSnapshotRoot), version);
