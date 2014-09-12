@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -25,7 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
-
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
@@ -67,6 +66,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  * @see http://tools.ietf.org/html/rfc6020#section-9.13
  */
 public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier>, Immutable, Serializable {
+    @SuppressWarnings("rawtypes")
+    private static final AtomicReferenceFieldUpdater<YangInstanceIdentifier, ImmutableList> LEGACYPATH_UPDATER =
+            AtomicReferenceFieldUpdater.newUpdater(YangInstanceIdentifier.class, ImmutableList.class, "legacyPath");
+    private static final AtomicReferenceFieldUpdater<YangInstanceIdentifier, String> TOSTRINGCACHE_UPDATER =
+            AtomicReferenceFieldUpdater.newUpdater(YangInstanceIdentifier.class, String.class, "toStringCache");
     private static final YangInstanceIdentifier EMPTY = trustedCreate(Collections.<PathArgument>emptyList());
 
     private static final long serialVersionUID = 2L;
@@ -80,11 +84,10 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
         // Temporary variable saves a volatile read
         ImmutableList<PathArgument> ret = legacyPath;
         if (ret == null) {
-            synchronized (this) {
-                // We could have used a synchronized block, but let's just not bother
-                ret = ImmutableList.copyOf(pathArguments);
-                legacyPath = ret;
-            }
+            // We could have used a synchronized block, but the window is quite
+            // small and worst that can happen is duplicate object construction.
+            ret = ImmutableList.copyOf(pathArguments);
+            LEGACYPATH_UPDATER.lazySet(this, ret);
         }
 
         return ret;
@@ -354,6 +357,8 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
     }
 
     private static abstract class AbstractPathArgument implements PathArgument {
+        private static final AtomicReferenceFieldUpdater<AbstractPathArgument, Integer> HASH_UPDATER =
+                AtomicReferenceFieldUpdater.newUpdater(AbstractPathArgument.class, Integer.class, "hash");
         private static final long serialVersionUID = -4546547994250849340L;
         private final QName nodeType;
         private volatile transient Integer hash = null;
@@ -380,13 +385,8 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
         public final int hashCode() {
             Integer ret = hash;
             if (ret == null) {
-                synchronized (this) {
-                    ret = hash;
-                    if (ret == null) {
-                        ret = hashCodeImpl();
-                        hash = ret;
-                    }
-                }
+                ret = hashCodeImpl();
+                HASH_UPDATER.lazySet(this, ret);
             }
 
             return ret;
@@ -787,23 +787,18 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
          */
         String ret = toStringCache;
         if (ret == null) {
-            synchronized (this) {
-                ret = toStringCache;
-                if (ret == null) {
-                    final StringBuilder builder = new StringBuilder("/");
-                    PathArgument prev = null;
-                    for (PathArgument argument : getPathArguments()) {
-                        if (prev != null) {
-                            builder.append('/');
-                        }
-                        builder.append(argument.toRelativeString(prev));
-                        prev = argument;
-                    }
-
-                    ret = builder.toString();
-                    toStringCache = ret;
+            final StringBuilder builder = new StringBuilder("/");
+            PathArgument prev = null;
+            for (PathArgument argument : getPathArguments()) {
+                if (prev != null) {
+                    builder.append('/');
                 }
+                builder.append(argument.toRelativeString(prev));
+                prev = argument;
             }
+
+            ret = builder.toString();
+            TOSTRINGCACHE_UPDATER.lazySet(this, ret);
         }
         return ret;
     }
