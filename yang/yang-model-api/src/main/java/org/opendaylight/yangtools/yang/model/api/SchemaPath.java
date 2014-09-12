@@ -12,12 +12,11 @@ import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
-
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
@@ -63,6 +62,10 @@ public abstract class SchemaPath implements Immutable {
         }
     }
 
+    @SuppressWarnings("rawtypes")
+    private static final AtomicReferenceFieldUpdater<SchemaPath, ImmutableList> LEGACYPATH_UPDATER =
+            AtomicReferenceFieldUpdater.newUpdater(SchemaPath.class, ImmutableList.class, "legacyPath");
+
     /**
      * Shared instance of the conceptual root schema node.
      */
@@ -97,13 +100,8 @@ public abstract class SchemaPath implements Immutable {
     private ImmutableList<QName> getLegacyPath() {
         ImmutableList<QName> ret = legacyPath;
         if (ret == null) {
-            synchronized (this) {
-                ret = legacyPath;
-                if (ret == null) {
-                    ret = ImmutableList.copyOf(getPathTowardsRoot()).reverse();
-                    legacyPath = ret;
-                }
-            }
+            ret = ImmutableList.copyOf(getPathTowardsRoot()).reverse();
+            LEGACYPATH_UPDATER.lazySet(this, ret);
         }
 
         return ret;
