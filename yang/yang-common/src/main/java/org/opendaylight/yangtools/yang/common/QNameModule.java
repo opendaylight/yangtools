@@ -11,7 +11,6 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
-
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.objcache.ObjectCache;
 import org.opendaylight.yangtools.objcache.ObjectCacheFactory;
@@ -31,7 +30,7 @@ public final class QNameModule implements Immutable, Serializable {
     private final Date revision;
 
     //Nullable
-    private String formattedRevision;
+    private volatile String formattedRevision;
 
     private QNameModule(final URI namespace, final Date revision) {
         this.namespace = namespace;
@@ -68,15 +67,13 @@ public final class QNameModule implements Immutable, Serializable {
             return null;
         }
 
-        if (formattedRevision == null) {
-            synchronized (this) {
-                if (formattedRevision == null) {
-                    formattedRevision = SimpleDateFormatUtil.getRevisionFormat().format(revision);
-                }
-            }
+        String ret = formattedRevision;
+        if (ret == null) {
+            ret = SimpleDateFormatUtil.getRevisionFormat().format(revision);
+            formattedRevision = ret;
         }
 
-        return formattedRevision;
+        return ret;
     }
 
     /**
