@@ -13,9 +13,12 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,7 +28,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
-
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
@@ -68,13 +70,26 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  */
 public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier>, Immutable, Serializable {
     private static final YangInstanceIdentifier EMPTY = trustedCreate(Collections.<PathArgument>emptyList());
+    private static final Field PATHARGUMENTS_FIELD;
 
-    private static final long serialVersionUID = 2L;
-    private final Iterable<PathArgument> pathArguments;
+    private static final long serialVersionUID = 3L;
+    private transient final Iterable<PathArgument> pathArguments;
     private final int hash;
 
-    private transient volatile ImmutableList<PathArgument> legacyPath = null;
+    private volatile ImmutableList<PathArgument> legacyPath = null;
     private transient volatile String toStringCache = null;
+
+    static {
+        final Field f;
+        try {
+            f = YangInstanceIdentifier.class.getDeclaredField("pathArguments");
+        } catch (NoSuchFieldException | SecurityException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+        f.setAccessible(true);
+
+        PATHARGUMENTS_FIELD = f;
+    }
 
     private final ImmutableList<PathArgument> getLegacyPath() {
         // Temporary variable saves a volatile read
@@ -806,5 +821,27 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
             }
         }
         return ret;
+    }
+
+    private void readObject(final ObjectInputStream inputStream) throws IOException, ClassNotFoundException {
+        inputStream.defaultReadObject();
+
+        try {
+            PATHARGUMENTS_FIELD.set(this, legacyPath);
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            throw new IOException(e);
+        }
+    }
+
+    private void writeObject(final ObjectOutputStream outputStream) throws IOException {
+        /*
+         * This may look strange, but what we are doing here is side-stepping the fact
+         * that pathArguments is not generally serializable. We are forcing instantiation
+         * of the legacy path, which is an ImmutableList (thus Serializable) and write
+         * it out. The read path does the opposite -- it reads the legacyPath and then
+         * uses invocation API to set the field.
+         */
+        getLegacyPath();
+        outputStream.defaultWriteObject();
     }
 }
