@@ -10,17 +10,19 @@ package org.opendaylight.yangtools.yang.data.api;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map.Entry;
-
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -300,5 +302,25 @@ public class InstanceIdentifierTest {
         assertEquals( "equals", false, node1.equals( new Object() ) );
 
         assertNotNull( node1.toString() ); // for code coverage
+    }
+
+    @Test
+    public void serializationTest() throws IOException, ClassNotFoundException {
+        final YangInstanceIdentifier expected = YangInstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
+
+        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        final ObjectOutputStream oos = new ObjectOutputStream(bos);
+        oos.writeObject(expected);
+        oos.close();
+
+        final byte[] bytes = bos.toByteArray();
+        final ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+        final ObjectInputStream ois = new ObjectInputStream(bis);
+
+        final YangInstanceIdentifier read = (YangInstanceIdentifier) ois.readObject();
+        assertEquals(0, ois.available());
+        ois.close();
+
+        assertEquals(expected, read);
     }
 }
