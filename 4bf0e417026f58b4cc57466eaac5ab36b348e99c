@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_41e4d0ab",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/DurationStatisticsTracker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-09-14T11:27:55Z",
+      "side": 1,
+      "message": "I don\u0027t think so. Reasons:\n\n1) DurationStatsTracker is going away anyway\n2) Having an interface/implementation is good\n3) Having a complete interface specification as an interface hurts a bit (if Netty folk are to believed, I don\u0027t have the reference handy)\n\nSo DurationStatisticsTracker is an interface specification which happens to also be an abstract base class -- users do not need to be aware of that. See InstanceIdentifier for a similar pattern.",
+      "parentUuid": "fa82b9bf_c6a0f9a7",
+      "revId": "4bf0e417026f58b4cc57466eaac5ab36b348e99c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_c6879911",
         "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/DurationStatsTracker.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2014-09-11T20:24:48Z",
       "side": 1,
       "message": "I think this should extend from the Synchronized one. This class is currently only being used by the single commit thread so updates will be uncontended. Reads will be infrequent.",
+      "revId": "4bf0e417026f58b4cc57466eaac5ab36b348e99c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_c1e780ab",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/DurationStatsTracker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-09-14T11:27:55Z",
+      "side": 1,
+      "message": "That change would actually introduce a change in performance characteristics, which has not been quantified -- synchronized blocks have a nasty effect on the compiler. At any rate, this patch allows callsites to make the explicit choice, so that\u0027s what really should be happening.",
+      "parentUuid": "fa82b9bf_c6879911",
       "revId": "4bf0e417026f58b4cc57466eaac5ab36b348e99c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
