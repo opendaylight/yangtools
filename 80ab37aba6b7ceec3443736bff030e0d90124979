@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_a1503c5f",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/DurationStatsTracker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-09-14T11:19:03Z",
+      "side": 1,
+      "message": "I do not agree here. The roll-over limit is 292 years (give or take), which can easily be doubled (I just forgot to do that). I am not sure what uptime are we engineering for, but it is going to take 10 threads 29.2 years to accumulate that duration.\n\nWhile it may be true that an individual computation may be quick, it needlessly steals resources available at the callsite and it leaves a bigger footprint (by touching the FP).\n\nIf the roll-over becomes a real concern, a high-performance slower path which protects against it can be engineered.",
+      "parentUuid": "fa82b9bf_e6d73d22",
+      "revId": "80ab37aba6b7ceec3443736bff030e0d90124979",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_060261b4",
         "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/DurationStatsTracker.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2014-09-11T20:01:22Z",
       "side": 1,
       "message": "This incurs an object creation. How about use long and init to -1?",
+      "revId": "80ab37aba6b7ceec3443736bff030e0d90124979",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_414db0c3",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/DurationStatsTracker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 77,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-09-14T11:19:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fa82b9bf_060261b4",
       "revId": "80ab37aba6b7ceec3443736bff030e0d90124979",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "fa82b9bf_01c7a813",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/DurationStatsTracker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-09-14T11:19:03Z",
+      "side": 1,
+      "message": "Or performing a reset, it is all trade-offs. Subsequent patch introduces a synchronized version, which has these concerns ironed out.",
+      "parentUuid": "fa82b9bf_46cdc985",
+      "revId": "80ab37aba6b7ceec3443736bff030e0d90124979",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fa82b9bf_461f090a",
         "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/DurationStatsTracker.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2014-09-11T20:01:22Z",
       "side": 1,
       "message": "If #abbreviate can convert to minutes/hours/days then this method should as well.",
+      "revId": "80ab37aba6b7ceec3443736bff030e0d90124979",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_21cc2c35",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/DurationStatsTracker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 225,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-09-14T11:19:03Z",
+      "side": 1,
+      "message": "The change in abbreviate was for completeness\u0027 sake, changing this method output consitutes a change in APIs, that\u0027s why I did not do it. Can be done trivially in a follow-up patch which addresses the TODO, though.",
+      "parentUuid": "fa82b9bf_461f090a",
       "revId": "80ab37aba6b7ceec3443736bff030e0d90124979",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
