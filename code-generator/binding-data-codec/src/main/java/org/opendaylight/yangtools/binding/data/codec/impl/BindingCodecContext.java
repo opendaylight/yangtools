@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -25,10 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import org.opendaylight.yangtools.binding.data.codec.impl.NodeCodecContext.CodecContextFactory;
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -53,6 +50,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
@@ -207,7 +205,7 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
         while (typeDef.getBaseType() != null) {
             typeDef = typeDef.getBaseType();
         }
-        if (typeDef instanceof BooleanTypeDefinition) {
+        if (typeDef instanceof BooleanTypeDefinition || typeDef instanceof EmptyTypeDefinition) {
             return "is" + suffix;
         }
         return GETTER_PREFIX + suffix;
@@ -246,6 +244,14 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
 
 
     private Codec<Object, Object> getCodec(final Class<?> valueType, final DataSchemaNode schema) {
+        final TypeDefinition<?> instantiatedType;
+        if (schema instanceof LeafSchemaNode) {
+            instantiatedType = ((LeafSchemaNode) schema).getType();
+        } else if (schema instanceof LeafListSchemaNode) {
+            instantiatedType = ((LeafListSchemaNode) schema).getType();
+        } else {
+            throw new IllegalArgumentException("Unsupported leaf node type " + schema.getClass());
+        }
         if (Class.class.equals(valueType)) {
             @SuppressWarnings({ "unchecked", "rawtypes" })
             final Codec<Object, Object> casted = (Codec) identityCodec;
@@ -254,18 +260,12 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
             @SuppressWarnings({ "unchecked", "rawtypes" })
             final Codec<Object, Object> casted = (Codec) instanceIdentifierCodec;
             return casted;
+        } else if (Boolean.class.equals(valueType)) {
+            if(instantiatedType instanceof EmptyTypeDefinition) {
+                return ValueTypeCodec.EMPTY_CODEC;
+            }
         } else if (BindingReflections.isBindingClass(valueType)) {
-            final TypeDefinition<?> instantiatedType;
-            if (schema instanceof LeafSchemaNode) {
-                instantiatedType = ((LeafSchemaNode) schema).getType();
-            } else if (schema instanceof LeafListSchemaNode) {
-                instantiatedType = ((LeafListSchemaNode) schema).getType();
-            } else {
-                instantiatedType = null;
-            }
-            if (instantiatedType != null) {
-                return getCodec(valueType, instantiatedType);
-            }
+                            return getCodec(valueType, instantiatedType);
         }
         return ValueTypeCodec.NOOP_CODEC;
     }

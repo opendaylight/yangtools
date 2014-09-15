@@ -20,7 +20,11 @@ public abstract class AbstractImmutableNormalizedValueNode<K extends YangInstanc
     protected AbstractImmutableNormalizedValueNode(final K nodeIdentifier, final V value) {
         super(nodeIdentifier);
         if (value == null) {
-            LOGGER.warn("The value of node " + nodeIdentifier.getNodeType() + " is null");
+            /*
+             * Null value is allowed for empty type definition so it should be debug,
+             * but still we are logging it in case we need to debug missing values.
+             */
+            LOGGER.debug("The value of node {} is null",nodeIdentifier.getNodeType());
         }
         this.value = value;
     }

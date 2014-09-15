@@ -7,10 +7,8 @@
  */package org.opendaylight.yangtools.binding.data.codec.gen.impl;
 
 import com.google.common.base.Preconditions;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import org.opendaylight.yangtools.binding.data.codec.util.ChoiceDispatchSerializer;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature;
@@ -31,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 
 abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSource {
 
@@ -106,7 +105,7 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
             while (rootType.getBaseType() != null) {
                 rootType = rootType.getBaseType();
             }
-            if(rootType instanceof BooleanTypeDefinition) {
+            if(rootType instanceof BooleanTypeDefinition || rootType instanceof EmptyTypeDefinition) {
                 prefix = "is";
             }
         }
