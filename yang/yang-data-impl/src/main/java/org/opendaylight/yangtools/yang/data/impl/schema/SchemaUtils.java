@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
@@ -90,7 +91,8 @@ public final class SchemaUtils {
 
             HashSet<QName> qNamesFromAugment = Sets.newHashSet(Collections2.transform(augment.getChildNodes(), new Function<DataSchemaNode, QName>() {
                 @Override
-                public QName apply(final DataSchemaNode input) {
+                public QName apply(final @Nonnull DataSchemaNode input) {
+                    Preconditions.checkNotNull(input);
                     return input.getQName();
                 }
             }));

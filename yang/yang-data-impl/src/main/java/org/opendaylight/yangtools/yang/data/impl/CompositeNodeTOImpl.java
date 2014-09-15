@@ -155,7 +155,7 @@ public class CompositeNodeTOImpl extends AbstractNodeTO<List<Node<?>>> implement
 
     @Override
     public String toString() {
-        return super.toString() + ", children.size = " + (getChildren() != null ? getChildren().size() : "n/a");
+        return super.toString() + ", children.size = " + (!getChildren().isEmpty() ? getChildren().size() : "n/a");
     }
 
     @Override

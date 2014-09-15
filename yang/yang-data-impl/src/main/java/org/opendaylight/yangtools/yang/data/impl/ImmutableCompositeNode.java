@@ -180,7 +180,7 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
 
     @Override
     public String toString() {
-        return super.toString() + ", children.size = " + (getChildren() != null ? getChildren().size() : "n/a");
+        return super.toString() + ", children.size = " + (!getChildren().isEmpty() ? getChildren().size() : "n/a");
     }
 
     @Override
