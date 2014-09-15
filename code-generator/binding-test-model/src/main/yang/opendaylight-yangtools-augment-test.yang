@@ -97,6 +97,11 @@ module opendaylight-yangtools-augment-test {
         case complex-via-uses {
             uses complex-from-grouping;
         }
+        case empty-leaf {
+            leaf empty-type {
+                type empty;
+            }
+        }
     }
 
     augment "/test:put-top/test:input/test:top-level-list/test:choice-in-list" {
