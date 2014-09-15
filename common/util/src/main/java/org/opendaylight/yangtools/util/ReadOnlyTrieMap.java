@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.util;
 
-import java.util.Map;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ForwardingMap;
 import com.romix.scala.collection.concurrent.TrieMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A read-only facade in front of a TrieMap. This is what we give out from
@@ -24,6 +23,9 @@ import com.romix.scala.collection.concurrent.TrieMap;
  * changes, we can cache it for future reference.
  */
 final class ReadOnlyTrieMap<K, V> extends ForwardingMap<K, V> {
+    @SuppressWarnings("rawtypes")
+    private static final AtomicReferenceFieldUpdater<ReadOnlyTrieMap, TrieMap> UPDATER =
+            AtomicReferenceFieldUpdater.newUpdater(ReadOnlyTrieMap.class, TrieMap.class, "readOnly");
     private static final Logger LOG = LoggerFactory.getLogger(ReadOnlyTrieMap.class);
     private final TrieMap<K, V> readWrite;
     private final int size;
@@ -45,15 +47,11 @@ final class ReadOnlyTrieMap<K, V> extends ForwardingMap<K, V> {
     protected Map<K, V> delegate() {
         TrieMap<K, V> ret = readOnly;
         if (ret == null) {
-            synchronized (this) {
+            ret = readWrite.readOnlySnapshot();
+            if (!UPDATER.compareAndSet(this, null, ret)) {
                 ret = readOnly;
-                if (ret == null) {
-                    ret = readWrite.readOnlySnapshot();
-                    readOnly = ret;
-                }
             }
         }
-
         return ret;
     }
 
