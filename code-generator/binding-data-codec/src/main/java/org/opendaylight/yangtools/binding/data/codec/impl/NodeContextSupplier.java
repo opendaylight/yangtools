@@ -8,11 +8,12 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Supplier;
+import javax.annotation.Nonnull;
 
 /**
  * Type capture of an entity producing NodeCodecContexts.
  */
 interface NodeContextSupplier extends Supplier<NodeCodecContext> {
     @Override
-    NodeCodecContext get();
+    @Nonnull NodeCodecContext get();
 }
