@@ -239,7 +239,7 @@ class YangTemplate {
 
         '''
             input {
-                «IF input instanceof DataSchemaNode && !input.childNodes.nullOrEmpty»
+                «IF !input.childNodes.nullOrEmpty»
                 «writeDataSchemaNodes(input.childNodes)»
                 «ENDIF»
             }
@@ -253,7 +253,7 @@ class YangTemplate {
 
         '''
             output {
-                «IF output instanceof DataSchemaNode && !output.childNodes.nullOrEmpty»
+                «IF !output.childNodes.nullOrEmpty»
                 «writeDataSchemaNodes(output.childNodes)»
                 «ENDIF»
             }
