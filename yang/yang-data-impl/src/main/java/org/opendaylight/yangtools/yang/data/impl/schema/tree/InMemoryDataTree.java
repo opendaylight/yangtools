@@ -44,7 +44,7 @@ final class InMemoryDataTree implements DataTree {
     }
 
     @Override
-    public synchronized void setSchemaContext(final SchemaContext newSchemaContext) {
+    public void setSchemaContext(final SchemaContext newSchemaContext) {
         Preconditions.checkNotNull(newSchemaContext);
 
         LOG.info("Attempting to install schema contexts");
@@ -81,13 +81,18 @@ final class InMemoryDataTree implements DataTree {
     @Override
     public void validate(final DataTreeModification modification) throws DataValidationFailedException {
         Preconditions.checkArgument(modification instanceof InMemoryDataTreeModification, "Invalid modification class %s", modification.getClass());
-
         final InMemoryDataTreeModification m = (InMemoryDataTreeModification)modification;
-        m.getStrategy().checkApplicable(PUBLIC_ROOT_PATH, m.getRootModification(), Optional.<TreeNode>of(rootNode));
+
+        rwLock.readLock().lock();
+        try {
+            m.getStrategy().checkApplicable(PUBLIC_ROOT_PATH, m.getRootModification(), Optional.<TreeNode>of(rootNode));
+        } finally {
+            rwLock.readLock().unlock();
+        }
     }
 
     @Override
-    public synchronized DataTreeCandidate prepare(final DataTreeModification modification) {
+    public DataTreeCandidate prepare(final DataTreeModification modification) {
         Preconditions.checkArgument(modification instanceof InMemoryDataTreeModification, "Invalid modification class %s", modification.getClass());
 
         final InMemoryDataTreeModification m = (InMemoryDataTreeModification)modification;
@@ -100,7 +105,7 @@ final class InMemoryDataTree implements DataTree {
         rwLock.writeLock().lock();
         try {
             final Optional<TreeNode> newRoot = m.getStrategy().apply(m.getRootModification(),
-                    Optional.<TreeNode>of(rootNode), m.getVersion());
+                Optional.<TreeNode>of(rootNode), m.getVersion());
             Preconditions.checkState(newRoot.isPresent(), "Apply strategy failed to produce root node");
             return new InMemoryDataTreeCandidate(PUBLIC_ROOT_PATH, root, rootNode, newRoot.get());
         } finally {
@@ -109,7 +114,7 @@ final class InMemoryDataTree implements DataTree {
     }
 
     @Override
-    public synchronized void commit(final DataTreeCandidate candidate) {
+    public void commit(final DataTreeCandidate candidate) {
         if (candidate instanceof NoopDataTreeCandidate) {
             return;
         }
