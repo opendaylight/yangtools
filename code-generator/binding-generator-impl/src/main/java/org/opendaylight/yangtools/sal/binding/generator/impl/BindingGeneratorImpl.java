@@ -1928,7 +1928,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             }
 
             final GeneratedPropertyBuilder genPropBuilder = resultTOBuilder.addProperty("value");
-            genPropBuilder.setReturnType(Types.primitiveType("char[]", null));
+            genPropBuilder.setReturnType(Types.CHAR_ARRAY);
             resultTOBuilder.addEqualsIdentity(genPropBuilder);
             resultTOBuilder.addHashIdentity(genPropBuilder);
             resultTOBuilder.addToStringProperty(genPropBuilder);
