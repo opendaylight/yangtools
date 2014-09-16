@@ -10,10 +10,13 @@ package org.opendaylight.yangtools.yang.parser.repo;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.FutureCallback;
@@ -21,12 +24,15 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
+import javax.annotation.Nullable;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.opendaylight.yangtools.util.concurrent.ExceptionMapper;
@@ -106,6 +112,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
     // FIXME: ignored right now
     private final SchemaSourceFilter filter;
 
+    // FIXME SchemaRepository should be the type for repository parameter instead of SharedSchemaRepository (final implementation)
     public SharedSchemaContextFactory(final SharedSchemaRepository repository, final SchemaSourceFilter filter) {
         this.repository = Preconditions.checkNotNull(repository);
         this.filter = Preconditions.checkNotNull(filter);
@@ -113,14 +120,18 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
 
     @Override
     public CheckedFuture<SchemaContext, SchemaResolutionException> createSchemaContext(final Collection<SourceIdentifier> requiredSources) {
-        final SchemaContext existing = cache.getIfPresent(requiredSources);
+        // Make sources unique
+        // TODO maybe a Set as parameter would be a better solution
+        final Set<SourceIdentifier> uniqueSourceIdentifiers = deDuplicateSources(requiredSources);
+
+        final SchemaContext existing = cache.getIfPresent(uniqueSourceIdentifiers);
         if (existing != null) {
             LOG.debug("Returning cached context {}", existing);
             return Futures.immediateCheckedFuture(existing);
         }
 
         // Request all sources be loaded
-        final ListenableFuture<List<ASTSchemaSource>> sf = Futures.allAsList(Collections2.transform(requiredSources, requestSources));
+        final ListenableFuture<List<ASTSchemaSource>> sf = Futures.allAsList(Collections2.transform(uniqueSourceIdentifiers, requestSources));
 
         // Assemble sources into a schema context
         final ListenableFuture<SchemaContext> cf = Futures.transform(sf, assembleSources);
@@ -129,7 +140,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         Futures.addCallback(cf, new FutureCallback<SchemaContext>() {
             @Override
             public void onSuccess(final SchemaContext result) {
-                cache.put(requiredSources, result);
+                cache.put(uniqueSourceIdentifiers, result);
             }
 
             @Override
@@ -139,5 +150,18 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         });
 
         return Futures.makeChecked(cf, MAPPER);
+    }
+
+    private Set<SourceIdentifier> deDuplicateSources(final Collection<SourceIdentifier> requiredSources) {
+        final Set<SourceIdentifier> uniqueSourceIdentifiers = Collections.unmodifiableSet(Sets.newHashSet(requiredSources));
+        if(uniqueSourceIdentifiers.size() != requiredSources.size()) {
+            LOG.warn("Duplicate sources requested for schema context, removed duplicate sources: {}", Collections2.filter(uniqueSourceIdentifiers, new Predicate<SourceIdentifier>() {
+                @Override
+                public boolean apply(@Nullable final SourceIdentifier input) {
+                    return Iterables.frequency(requiredSources, input) > 1;
+                }
+            }));
+        }
+        return uniqueSourceIdentifiers;
     }
 }
