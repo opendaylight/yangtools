@@ -4,6 +4,8 @@ import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import java.net.URI;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.annotation.Nonnull;
@@ -22,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
@@ -189,16 +192,47 @@ public class XmlStreamUtils {
             }
         } else {
             // CompositeNode
-            for (Node<?> child : ((CompositeNode) data).getValue()) {
-                DataSchemaNode childSchema = null;
-                if (schema instanceof DataNodeContainer) {
-                    childSchema = SchemaUtils.findFirstSchema(child.getNodeType(), ((DataNodeContainer) schema).getChildNodes()).orNull();
-                } else if ((childSchema == null) && LOG.isDebugEnabled()) {
-                    LOG.debug("Probably the data node \"{}\" does not conform to schema", child == null ? "" : child.getNodeType().getLocalName());
+            final CompositeNode castedData = ((CompositeNode) data);
+            final DataNodeContainer castedSchema;
+            if (schema instanceof DataNodeContainer) {
+                castedSchema = (DataNodeContainer) schema;
+            } else {
+                castedSchema = null;
+            }
+            final Collection<QName> keyLeaves;
+            if (schema instanceof ListSchemaNode) {
+                keyLeaves = ((ListSchemaNode) schema).getKeyDefinition();
+
+            } else {
+                keyLeaves = Collections.emptyList();
+
+            }
+            for (QName key : keyLeaves) {
+                SimpleNode<?> keyLeaf = castedData.getFirstSimpleByName(key);
+                if(keyLeaf != null) {
+                    writeChildElement(writer,keyLeaf,castedSchema);
                 }
-                writeElement(writer, child, childSchema);
+            }
+
+            for (Node<?> child : castedData.getValue()) {
+                if(keyLeaves.contains(child.getNodeType())) {
+                    // Skip key leaf which was written by previous for loop.
+                    continue;
+                }
+                writeChildElement(writer,child,castedSchema);
             }
         }
+    }
+
+    private void writeChildElement(XMLStreamWriter writer, Node<?> child, DataNodeContainer parentSchema) throws XMLStreamException {
+        DataSchemaNode childSchema = null;
+        if (parentSchema != null) {
+            childSchema = SchemaUtils.findFirstSchema(child.getNodeType(), parentSchema.getChildNodes()).orNull();
+            if ((childSchema == null) && LOG.isDebugEnabled()) {
+                LOG.debug("Probably the data node \"{}\" does not conform to schema", child == null ? "" : child.getNodeType().getLocalName());
+            }
+        }
+        writeElement(writer, child, childSchema);
     }
 
     private static void writeAttributes(final XMLStreamWriter writer, final AttributesContainer data, final RandomPrefix randomPrefix) throws XMLStreamException {
