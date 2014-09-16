@@ -4,7 +4,7 @@ module imported {
     namespace "urn:simple.demo.test1";
     prefix "imp";
 
-    organization "opendaylight";
-    contact "WILL-BE-DEFINED-LATER";
+    //organization "opendaylight";
+    //contact "WILL-BE-DEFINED-LATER";
 
 }
