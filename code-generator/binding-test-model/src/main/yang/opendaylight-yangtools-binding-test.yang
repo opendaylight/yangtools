@@ -13,6 +13,29 @@ module opendaylight-yangtools-binding-test {
         "Test model for testing data broker with nested lists.";
     }
 
+    typedef int32-string-union {
+        type union {
+            type int32;
+            type string;
+        }
+    }
+
+    identity test-root;
+
+    identity test-one {
+        base test-root;
+    }
+
+    identity test-two {
+        base test-root;
+    }
+
+    typedef test-identityref {
+        type identityref {
+            base test-root;
+        }
+    }
+
     grouping two-level-list {
         list top-level-list {
             description
