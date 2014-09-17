@@ -296,6 +296,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                         typedef);
                 if (type != null) {
                     genCtx.get(module).addTypedefType(typedef.getPath(), type);
+                    genCtx.get(module).addTypeToSchema(type,typedef);
                 }
             }
         }

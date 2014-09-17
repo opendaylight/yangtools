@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.binding.data.codec.impl.NodeCodecContext.Codec
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.sal.binding.generator.util.BindingRuntimeContext;
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
@@ -53,6 +54,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -287,6 +289,11 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
             } catch (Exception e) {
                 throw new IllegalStateException("Unable to load codec for " + valueType, e);
             }
+        } else if(rootType instanceof LeafrefTypeDefinition) {
+            Entry<GeneratedType, Object> typeWithSchema = context.getTypeWithSchema(valueType);
+            Object schema = typeWithSchema.getValue();
+            Preconditions.checkState(schema instanceof TypeDefinition<?>);
+            return getCodec(valueType, (TypeDefinition<?>) schema);
         }
         return ValueTypeCodec.getCodecFor(valueType, instantiatedType);
     }
