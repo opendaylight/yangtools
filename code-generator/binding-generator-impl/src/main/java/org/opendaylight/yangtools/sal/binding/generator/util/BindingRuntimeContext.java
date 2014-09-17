@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.opendaylight.yangtools.sal.binding.generator.util;
 
 import com.google.common.base.Optional;
@@ -8,7 +15,6 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
-
 import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Collection;
@@ -17,7 +23,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.sal.binding.generator.api.ClassLoadingStrategy;
@@ -42,6 +47,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -84,6 +90,8 @@ public class BindingRuntimeContext implements Immutable {
         for (ModuleContext ctx : modules.values()) {
             augmentationToSchema.putAll(ctx.getTypeToAugmentation());
             typeToDefiningSchema.putAll(ctx.getTypeToSchema());
+
+            ctx.getTypedefs();
             augmentableToAugmentations.putAll(ctx.getAugmentableToAugmentations());
             choiceToCases.putAll(ctx.getChoiceToCases());
             identities.putAll(ctx.getIdentities());
@@ -223,13 +231,28 @@ public class BindingRuntimeContext implements Immutable {
         return new ReferencedTypeImpl(type.getPackage().getName(), type.getSimpleName());
     }
 
+    /**
+     * Returns schema ({@link DataSchemaNode}, {@link AugmentationSchema} or {@link TypeDefinition})
+     * from which supplied class was generated. Returned schema may be augmented with
+     * additional information, which was not available at compile type
+     * (e.g. third party augmentations).
+     *
+     * @param type Binding Class for which schema should be retrieved.
+     * @return Instance of generated type (definition of Java API), along with
+     *     {@link DataSchemaNode}, {@link AugmentationSchema} or {@link TypeDefinition}
+     *     which was used to generate supplied class.
+     */
     public Entry<GeneratedType, Object> getTypeWithSchema(final Class<?> type) {
         Object schema = typeToDefiningSchema.get(referencedType(type));
         Type definedType = typeToDefiningSchema.inverse().get(schema);
         Preconditions.checkNotNull(schema);
         Preconditions.checkNotNull(definedType);
+        if(definedType instanceof GeneratedTypeBuilder) {
+            return new SimpleEntry<>(((GeneratedTypeBuilder) definedType).toInstance(), schema);
+        }
+        Preconditions.checkArgument(definedType instanceof GeneratedType,"Type {} is not GeneratedType",type);
+        return new SimpleEntry<>((GeneratedType) definedType,schema);
 
-        return new SimpleEntry<>(((GeneratedTypeBuilder) definedType).toInstance(), schema);
     }
 
     public ImmutableMap<Type, Entry<Type, Type>> getChoiceCaseChildren(final DataNodeContainer schema) {

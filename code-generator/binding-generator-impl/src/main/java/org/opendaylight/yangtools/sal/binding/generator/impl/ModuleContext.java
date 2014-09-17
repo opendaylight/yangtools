@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 public final class ModuleContext {
     private GeneratedTypeBuilder moduleNode;
@@ -208,6 +209,10 @@ public final class ModuleContext {
      */
     public Map<Type, Object> getTypeToSchema() {
         return Collections.unmodifiableMap(typeToSchema);
+    }
+
+    protected void addTypeToSchema(Type type, TypeDefinition<?> typedef) {
+        typeToSchema.put(type, typedef);
     }
 
 }
