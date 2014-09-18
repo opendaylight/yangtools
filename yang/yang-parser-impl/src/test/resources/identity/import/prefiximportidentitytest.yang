@@ -1,0 +1,18 @@
+module prefiximportidentitytest {
+    yang-version 1;
+    namespace "urn:test.prefiximportidentitytest";
+    prefix "prefiximportidentitytest";
+
+    import dummy { prefix dummy; revision-date 2014-09-24; }
+
+    organization "opendaylight";
+    contact "http://www.opendaylight.org";
+
+    revision "2014-09-24" {
+        description "Initial import";
+    }
+
+    identity prefiximportidentitytest {
+        base dummy:prefiximportidentitytest;
+    }
+}
