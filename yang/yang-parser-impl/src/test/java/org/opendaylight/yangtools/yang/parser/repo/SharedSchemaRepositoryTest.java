@@ -58,6 +58,27 @@ import org.opendaylight.yangtools.yang.parser.util.TextToASTTransformer;
 public class SharedSchemaRepositoryTest {
 
     @Test
+    public void testSourceWithAndWithoutRevision() throws Exception {
+        final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
+
+        final SourceIdentifier idNoRevision = loadAndRegisterSource(sharedSchemaRepository, "/no-revision/imported.yang");
+        final SourceIdentifier id2 = loadAndRegisterSource(sharedSchemaRepository, "/no-revision/imported@2012-12-12.yang");
+
+        CheckedFuture<ASTSchemaSource, SchemaSourceException> source = sharedSchemaRepository.getSchemaSource(idNoRevision, ASTSchemaSource.class);
+        assertEquals(idNoRevision, source.checkedGet().getIdentifier());
+        source = sharedSchemaRepository.getSchemaSource(id2, ASTSchemaSource.class);
+        assertEquals(id2, source.checkedGet().getIdentifier());
+    }
+
+    private SourceIdentifier loadAndRegisterSource(final SharedSchemaRepository sharedSchemaRepository, final String resourceName) throws Exception {
+        final SettableSchemaProvider<ASTSchemaSource> sourceProvider = getImmediateYangSourceProviderFromResource(resourceName);
+        sourceProvider.setResult();
+        final SourceIdentifier idNoRevision = sourceProvider.getId();
+        sourceProvider.register(sharedSchemaRepository);
+        return idNoRevision;
+    }
+
+    @Test
     public void testSimpleSchemaContext() throws Exception {
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository("netconf-mounts");
 
@@ -298,13 +319,13 @@ public class SharedSchemaRepositoryTest {
         assertEquals(moduleSize, schemaContext.getModules().size());
     }
 
-    private SettableSchemaProvider<ASTSchemaSource> getRemoteYangSourceProviderFromResource(final String resourceName) throws Exception {
+    static SettableSchemaProvider<ASTSchemaSource> getRemoteYangSourceProviderFromResource(final String resourceName) throws Exception {
         final ResourceYangSource yangSource = new ResourceYangSource(resourceName);
         final CheckedFuture<ASTSchemaSource, SchemaSourceException> aSTSchemaSource = TextToASTTransformer.TRANSFORMATION.apply(yangSource);
         return SettableSchemaProvider.createRemote(aSTSchemaSource.get(), ASTSchemaSource.class);
     }
 
-    private SettableSchemaProvider<ASTSchemaSource> getImmediateYangSourceProviderFromResource(final String resourceName) throws Exception {
+    static SettableSchemaProvider<ASTSchemaSource> getImmediateYangSourceProviderFromResource(final String resourceName) throws Exception {
         final ResourceYangSource yangSource = new ResourceYangSource(resourceName);
         final CheckedFuture<ASTSchemaSource, SchemaSourceException> aSTSchemaSource = TextToASTTransformer.TRANSFORMATION.apply(yangSource);
         return SettableSchemaProvider.createImmediate(aSTSchemaSource.get(), ASTSchemaSource.class);
