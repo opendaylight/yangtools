@@ -11,6 +11,7 @@ import static org.opendaylight.yangtools.featuretest.Constants.ORG_OPENDAYLIGHT_
 import static org.opendaylight.yangtools.featuretest.Constants.ORG_OPENDAYLIGHT_FEATURETEST_FEATUREVERSION_PROP;
 import static org.opendaylight.yangtools.featuretest.Constants.ORG_OPENDAYLIGHT_FEATURETEST_URI_PROP;
 import static org.ops4j.pax.exam.CoreOptions.maven;
+import static org.ops4j.pax.exam.CoreOptions.vmOptions;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
 //import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.debugConfiguration;
@@ -77,6 +78,7 @@ public class SingleFeatureTest {
     public Option[] config() throws IOException {
        return new Option[] {
              getKarafDistroOption(),
+             vmOptions("-Xmx2048m","-XX:MaxPermSize=512m"),
              keepRuntimeFolder(),
              configureConsole().ignoreLocalConsole(),
              logLevel(LogLevel.WARN),
