@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
+import com.google.common.base.Preconditions
 
 /**
  * Template for generating JAVA class.
@@ -52,12 +53,12 @@ class ClassTemplate extends BaseTemplate {
      * List of generated types which are enclosed inside <code>genType</code>
      */
     protected val List<GeneratedType> enclosedGeneratedTypes;
-    
+
     protected val GeneratedTransferObject genTO;
 
     /**
      * Creates instance of this class with concrete <code>genType</code>.
-     * 
+     *
      * @param genType generated transfer object which will be transformed to JAVA class source code
      */
     new(GeneratedTransferObject genType) {
@@ -83,7 +84,7 @@ class ClassTemplate extends BaseTemplate {
 
     /**
      * Generates JAVA class source code (class body only).
-     * 
+     *
      * @return string with JAVA class body source code
      */
     def CharSequence generateAsInnerClass() {
@@ -96,7 +97,7 @@ class ClassTemplate extends BaseTemplate {
 
     /**
      * Template method which generates class body.
-     * 
+     *
      * @param isInnerClass boolean value which specify if generated class is|isn't inner
      * @return string with class source code in JAVA format
      */
@@ -108,11 +109,11 @@ class ClassTemplate extends BaseTemplate {
             «enumDeclarations»
             «constantsDeclarations»
             «generateFields»
-            
-            «IF restrictions != null && (!restrictions.rangeConstraints.nullOrEmpty || 
+
+            «IF restrictions != null && (!restrictions.rangeConstraints.nullOrEmpty ||
                 !restrictions.lengthConstraints.nullOrEmpty)»
             «generateConstraints»
-            
+
             «ENDIF»
             «constructors»
 
@@ -158,7 +159,7 @@ class ClassTemplate extends BaseTemplate {
 
     /**
      * Template method which generates inner classes inside this interface.
-     * 
+     *
      * @return string with the source code for inner classes in JAVA format
      */
     def protected innerClassesDeclarations() '''
@@ -244,14 +245,38 @@ class ClassTemplate extends BaseTemplate {
         «IF false == parentProperties.empty»
             super(«parentProperties.asArguments»);
         «ENDIF»
-        «FOR p : allProperties» 
+        «FOR p : allProperties»
             «generateRestrictions(type, p.fieldName.toString, p.returnType)»
         «ENDFOR»
-        «FOR p : properties» 
+
+        «/*
+         * If we have patterns, we need to apply them to the value field. This is a sad
+         * consequence of how this code is structured.
+         */
+        IF genTO.typedef && !allProperties.empty && allProperties.size == 1 && allProperties.get(0).name.equals("value")»
+
+        «Preconditions.importedName».checkNotNull(_value, "Supplied value may not be null");
+
+            «FOR c : consts»
+                «IF c.name == TypeConstants.PATTERN_CONSTANT_NAME && c.value instanceof List<?>»
+            boolean valid = false;
+            for (Pattern p : patterns) {
+                if (p.matcher(_value).matches()) {
+                    valid = true;
+                    break;
+                }
+            }
+
+            «Preconditions.importedName».checkArgument(valid, "Supplied value \"%s\" does not match any of the permitted patterns %s", _value, «TypeConstants.PATTERN_CONSTANT_NAME»);
+                «ENDIF»
+            «ENDFOR»
+        «ENDIF»
+
+        «FOR p : properties»
             this.«p.fieldName» = «p.fieldName»;
         «ENDFOR»
     }
-    
+
     '''
 
     def protected genUnionConstructor() '''
@@ -269,11 +294,13 @@ class ClassTemplate extends BaseTemplate {
         «IF false == parentProperties.empty»
             super(«parentProperties.asArguments»);
         «ENDIF»
-            «generateRestrictions(type, property.fieldName.toString, property.returnType)»
-            this.«property.fieldName» = «property.name»;
-            «FOR p : other»
+
+        «generateRestrictions(type, property.fieldName.toString, property.returnType)»
+
+        this.«property.fieldName» = «property.name»;
+        «FOR p : other»
             this.«p.fieldName» = null;
-            «ENDFOR»
+        «ENDFOR»
     }
     '''
 
@@ -287,7 +314,7 @@ class ClassTemplate extends BaseTemplate {
         «IF false == parentProperties.empty»
             super(source);
         «ENDIF»
-        «FOR p : properties» 
+        «FOR p : properties»
             this.«p.fieldName» = source.«p.fieldName»;
         «ENDFOR»
     }
@@ -310,7 +337,7 @@ class ClassTemplate extends BaseTemplate {
             «IF !("org.opendaylight.yangtools.yang.binding.InstanceIdentifier".equals(prop.returnType.fullyQualifiedName))»
             public static «genTO.name» getDefaultInstance(String defaultValue) {
                 «IF "byte[]".equals(prop.returnType.name)»
-                    «BaseEncoding.importedName» baseEncoding = «BaseEncoding.importedName».base64(); 
+                    «BaseEncoding.importedName» baseEncoding = «BaseEncoding.importedName».base64();
                     return new «genTO.name»(baseEncoding.decode(defaultValue));
                 «ELSEIF "java.lang.String".equals(prop.returnType.fullyQualifiedName)»
                     return new «genTO.name»(defaultValue);
@@ -355,7 +382,7 @@ class ClassTemplate extends BaseTemplate {
 
     /**
      * Template method which generates JAVA class declaration.
-     * 
+     *
      * @param isInnerClass boolean value which specify if generated class is|isn't inner
      * @return string with class declaration in JAVA format
      */
@@ -381,7 +408,7 @@ class ClassTemplate extends BaseTemplate {
 
     /**
      * Template method which generates JAVA enum type.
-     * 
+     *
      * @return string with inner enum source code in JAVA format
      */
     def protected enumDeclarations() '''
@@ -395,14 +422,14 @@ class ClassTemplate extends BaseTemplate {
 
     def protected suidDeclaration() '''
         «IF genTO.SUID != null»
-            private static final long serialVersionUID = «genTO.SUID.value»L; 
+            private static final long serialVersionUID = «genTO.SUID.value»L;
         «ENDIF»
     '''
 
     /**
-     * Template method wich generates JAVA constants.
-     * 
-     * @return string with constants in JAVA format 
+     * Template method which generates JAVA constants.
+     *
+     * @return string with constants in JAVA format
      */
     def protected constantsDeclarations() '''
         «IF !consts.empty»
@@ -411,8 +438,8 @@ class ClassTemplate extends BaseTemplate {
                     «val cValue = c.value»
                     «IF cValue instanceof List<?>»
                         «val cValues = cValue as List<?>»
-                        private static final «List.importedName»<«Pattern.importedName»> «Constants.MEMBER_PATTERN_LIST» = new «ArrayList.importedName»<«Pattern.importedName»>();
-                        public static final «List.importedName»<String> «TypeConstants.PATTERN_CONSTANT_NAME» = «Arrays.importedName».asList(«
+                        private static final «List.importedName»<«Pattern.importedName»> «Constants.MEMBER_PATTERN_LIST»;
+                        public static final «List.importedName»<String> «TypeConstants.PATTERN_CONSTANT_NAME» = «ImmutableList.importedName».of(«
                         FOR v : cValues SEPARATOR ", "»«
                             IF v instanceof String»"«
                                 v as String»"«
@@ -435,9 +462,12 @@ class ClassTemplate extends BaseTemplate {
      */
     def protected generateStaticInicializationBlock() '''
         static {
+            final «List.importedName»<«Pattern.importedName»> l = new «ArrayList.importedName»<«Pattern.importedName»>();
             for (String regEx : «TypeConstants.PATTERN_CONSTANT_NAME») {
-                «Constants.MEMBER_PATTERN_LIST».add(Pattern.compile(regEx));
+                l.add(Pattern.compile(regEx));
             }
+
+            «Constants.MEMBER_PATTERN_LIST» = «ImmutableList.importedName».copyOf(l);
         }
     '''
 
