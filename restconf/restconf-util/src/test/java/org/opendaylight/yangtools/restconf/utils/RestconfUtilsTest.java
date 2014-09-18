@@ -76,7 +76,7 @@ public class RestconfUtilsTest {
                 .getAugmentation(IgpNodeAttributes1.class);
         assertNotNull(igpAttributes1);
         assertNotNull(igpAttributes1.getIsisNodeAttributes());
-        assertEquals("66", igpAttributes1.getIsisNodeAttributes().getIso().getIsoSystemId().getValue());
+        assertEquals("0000.1111.2222", igpAttributes1.getIsisNodeAttributes().getIso().getIsoSystemId().getValue());
     }
 
 }
