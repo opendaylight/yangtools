@@ -26,7 +26,6 @@ import static org.opendaylight.yangtools.sal.java.api.generator.test.Compilation
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.cleanUp;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.getSourceFiles;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.testCompilation;
-
 import com.google.common.collect.Range;
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -205,8 +204,9 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         arg = "abcd";
         expectedMsg = String.format("Invalid length: %s, expected: %s.", arg, lengthConstraints);
         assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
-        obj = expectedConstructor.newInstance("hello world");
-        assertEquals(obj, defInst.invoke(null, "hello world"));
+
+        obj = expectedConstructor.newInstance("abcde");
+        assertEquals(obj, defInst.invoke(null, "abcde"));
 
         // typedef string-ext2
         assertFalse(stringExt2Class.isInterface());
@@ -226,8 +226,8 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         arg = "abcde";
         expectedMsg = String.format("Invalid length: %s, expected: %s.", arg, lengthConstraints);
         assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
-        obj = expectedConstructor.newInstance("helloWorld");
-        assertEquals(obj, defInst.invoke(null, "helloWorld"));
+        obj = expectedConstructor.newInstance("abcdef");
+        assertEquals(obj, defInst.invoke(null, "abcdef"));
 
         // typedef string-ext3
         assertFalse(stringExt3Class.isInterface());
@@ -241,8 +241,8 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         defInst = assertContainsMethod(stringExt3Class, stringExt3Class, "getDefaultInstance", String.class);
         // assertEquals(1, stringExt3Class.getDeclaredMethods().length);
 
-        obj = expectedConstructor.newInstance("helloWorld");
-        assertEquals(obj, defInst.invoke(null, "helloWorld"));
+        obj = expectedConstructor.newInstance("bbbbbb");
+        assertEquals(obj, defInst.invoke(null, "bbbbbb"));
 
         // typedef my-decimal-type
         assertFalse(myDecimalTypeClass.isInterface());
