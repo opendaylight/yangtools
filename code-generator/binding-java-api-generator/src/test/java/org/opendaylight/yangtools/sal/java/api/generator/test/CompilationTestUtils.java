@@ -11,13 +11,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.net.URI;
 import java.util.ArrayList;
@@ -53,7 +53,7 @@ public class CompilationTestUtils {
      * instead of marking it with @After annotation to prevent removing
      * generated code if test fails.
      */
-    static void cleanUp(File... resourceDirs) {
+    static void cleanUp(final File... resourceDirs) {
         for (File resourceDir : resourceDirs) {
             if (resourceDir.exists()) {
                 deleteTestDir(resourceDir);
@@ -72,7 +72,7 @@ public class CompilationTestUtils {
      *            field type
      * @return field with given name if present in class
      */
-    static Field assertContainsField(Class<?> clazz, String name, Class<?> type) {
+    static Field assertContainsField(final Class<?> clazz, final String name, final Class<?> type) {
         try {
             Field f = clazz.getDeclaredField(name);
             assertEquals(type, f.getType());
@@ -99,8 +99,8 @@ public class CompilationTestUtils {
      * @param constructorArgs
      *            constructor arguments of class to test
      */
-    static void assertContainsFieldWithValue(Class<?> clazz, String name, Class<?> returnType, Object expectedValue,
-            Class<?>... constructorArgs) {
+    static void assertContainsFieldWithValue(final Class<?> clazz, final String name, final Class<?> returnType, final Object expectedValue,
+            final Class<?>... constructorArgs) {
         Object[] initargs = null;
         if (constructorArgs != null && constructorArgs.length > 0) {
             initargs = new Object[constructorArgs.length];
@@ -127,16 +127,27 @@ public class CompilationTestUtils {
      * @param initargs
      *            array of constructor values
      */
-    static void assertContainsFieldWithValue(Class<?> clazz, String name, Class<?> returnType, Object expectedValue,
-            Class<?>[] constructorArgs, Object... initargs) {
+    static void assertContainsFieldWithValue(final Class<?> clazz, final String name, final Class<?> returnType, final Object expectedValue,
+            final Class<?>[] constructorArgs, final Object... initargs) {
         Field f = assertContainsField(clazz, name, returnType);
         f.setAccessible(true);
+
+        final Object obj;
+        if ((f.getModifiers() & Modifier.STATIC) == 0) {
+            try {
+                Constructor<?> c = clazz.getDeclaredConstructor(constructorArgs);
+                obj = c.newInstance(initargs);
+            } catch (Exception e) {
+                throw new AssertionError("Failed to instantiate object for " + clazz, e);
+            }
+        } else {
+            obj = null;
+        }
+
         try {
-            Constructor<?> c = clazz.getDeclaredConstructor(constructorArgs);
-            Object o = c.newInstance(initargs);
-            assertEquals(expectedValue, f.get(o));
-        } catch (Exception e) {
-            throw new AssertionError("Failed to perform " + name + " field test", e);
+            assertEquals(expectedValue, f.get(obj));
+        } catch (IllegalArgumentException | IllegalAccessException e) {
+            throw new AssertionError("Failed to get field " + name + " of class " + clazz, e);
         }
     }
 
@@ -148,7 +159,7 @@ public class CompilationTestUtils {
      * @param args
      *            array of argument classes
      */
-    static Constructor<?> assertContainsConstructor(Class<?> clazz, Class<?>... args) {
+    static Constructor<?> assertContainsConstructor(final Class<?> clazz, final Class<?>... args) {
         try {
             return clazz.getDeclaredConstructor(args);
         } catch (NoSuchMethodException e) {
@@ -171,7 +182,7 @@ public class CompilationTestUtils {
      *            array of parameter type classes
      * @return method with given name, return type and parameter types
      */
-    static Method assertContainsMethod(Class<?> clazz, Class<?> returnType, String name, Class<?>... args) {
+    static Method assertContainsMethod(final Class<?> clazz, final Class<?> returnType, final String name, final Class<?>... args) {
         try {
             Method m = clazz.getDeclaredMethod(name, args);
             assertEquals(returnType, m.getReturnType());
@@ -194,7 +205,7 @@ public class CompilationTestUtils {
      * @param loader
      *            current class loader
      */
-    static void assertContainsMethod(Class<?> clazz, String returnTypeStr, String name, ClassLoader loader) {
+    static void assertContainsMethod(final Class<?> clazz, final String returnTypeStr, final String name, final ClassLoader loader) {
         Class<?> returnType;
         try {
             returnType = Class.forName(returnTypeStr, true, loader);
@@ -213,7 +224,7 @@ public class CompilationTestUtils {
      * @param clazz
      *            class to test
      */
-    static void assertContainsDefaultMethods(Class<?> clazz) {
+    static void assertContainsDefaultMethods(final Class<?> clazz) {
         assertContainsMethod(clazz, Integer.TYPE, "hashCode");
         assertContainsMethod(clazz, Boolean.TYPE, "equals", Object.class);
         assertContainsMethod(clazz, String.class, "toString");
@@ -230,7 +241,7 @@ public class CompilationTestUtils {
      *            constructor arguments
      * @throws Exception
      */
-    static void assertContainsRestrictionCheck(Constructor<?> constructor, String errorMsg, Object... args)
+    static void assertContainsRestrictionCheck(final Constructor<?> constructor, final String errorMsg, final Object... args)
             throws Exception {
         try {
             constructor.newInstance(args);
@@ -255,7 +266,7 @@ public class CompilationTestUtils {
      *            constructor arguments
      * @throws Exception
      */
-    static void assertContainsRestrictionCheck(Object obj, Method method, String errorMsg, Object... args)
+    static void assertContainsRestrictionCheck(final Object obj, final Method method, final String errorMsg, final Object... args)
             throws Exception {
         try {
             method.invoke(obj, args);
@@ -275,7 +286,7 @@ public class CompilationTestUtils {
      * @param clazz
      *            class to test
      */
-    static void assertContainsGetLengthOrRange(Class<?> clazz, boolean isLength) {
+    static void assertContainsGetLengthOrRange(final Class<?> clazz, final boolean isLength) {
         try {
             Method m = clazz.getDeclaredMethod(isLength ? "length" : "range");
             java.lang.reflect.Type returnType = m.getGenericReturnType();
@@ -306,7 +317,7 @@ public class CompilationTestUtils {
      * @param ifc
      *            expected interface
      */
-    static void assertImplementsIfc(Class<?> clazz, Class<?> ifc) {
+    static void assertImplementsIfc(final Class<?> clazz, final Class<?> ifc) {
         Class<?>[] interfaces = clazz.getInterfaces();
         List<Class<?>> ifcsList = Arrays.asList(interfaces);
         if (!ifcsList.contains(ifc)) {
@@ -323,7 +334,7 @@ public class CompilationTestUtils {
      * @param genericTypeName
      *            fully qualified name of expected parameter type
      */
-    static void testAugmentation(Class<?> clazz, String genericTypeName) {
+    static void testAugmentation(final Class<?> clazz, final String genericTypeName) {
         assertImplementsParameterizedIfc(clazz, AUGMENTATION, genericTypeName);
     }
 
@@ -338,7 +349,7 @@ public class CompilationTestUtils {
      * @param genericTypeName
      *            name of generic type
      */
-    static void assertImplementsParameterizedIfc(Class<?> clazz, String ifcName, String genericTypeName) {
+    static void assertImplementsParameterizedIfc(final Class<?> clazz, final String ifcName, final String genericTypeName) {
         ParameterizedType ifcType = null;
         for (java.lang.reflect.Type ifc : clazz.getGenericInterfaces()) {
             if (ifc instanceof ParameterizedType) {
@@ -363,7 +374,7 @@ public class CompilationTestUtils {
      * @param compiledOutputDir
      *            compiler output directory
      */
-    static void testCompilation(File sourcesOutputDir, File compiledOutputDir) {
+    static void testCompilation(final File sourcesOutputDir, final File compiledOutputDir) {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
         List<File> filesList = getJavaFiles(sourcesOutputDir);
@@ -381,7 +392,7 @@ public class CompilationTestUtils {
      * @param count
      *            expected count of files in directory
      */
-    static void assertFilesCount(File dir, int count) {
+    static void assertFilesCount(final File dir, final int count) {
         File[] dirContent = dir.listFiles();
         if (dirContent == null) {
             throw new AssertionError("File " + dir + " doesn't exists or it's not a directory");
@@ -397,7 +408,7 @@ public class CompilationTestUtils {
      *            directory to search
      * @return List of java files found
      */
-    private static List<File> getJavaFiles(File directory) {
+    private static List<File> getJavaFiles(final File directory) {
         List<File> result = new ArrayList<>();
         File[] filesToRead = directory.listFiles();
         if (filesToRead != null) {
@@ -415,7 +426,7 @@ public class CompilationTestUtils {
         return result;
     }
 
-    static List<File> getSourceFiles(String path) throws Exception {
+    static List<File> getSourceFiles(final String path) throws Exception {
         final URI resPath = BaseCompilationTest.class.getResource(path).toURI();
         final File sourcesDir = new File(resPath);
         if (sourcesDir.exists()) {
@@ -431,7 +442,7 @@ public class CompilationTestUtils {
         }
     }
 
-    static void deleteTestDir(File file) {
+    static void deleteTestDir(final File file) {
         if (file.isDirectory()) {
             File[] filesToDelete = file.listFiles();
             if (filesToDelete != null) {
