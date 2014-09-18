@@ -1,0 +1,16 @@
+module prefixidentitytest {
+    yang-version 1;
+    namespace "urn:test.prefixidentitytest";
+    prefix prefixtest;
+
+    organization "opendaylight";
+    contact "http://www.opendaylight.org";
+
+    revision "2014-09-24" {
+        description "Initial import";
+    }
+
+    identity prefixtest {
+        base prefixtest:prefixtest;
+    }
+}

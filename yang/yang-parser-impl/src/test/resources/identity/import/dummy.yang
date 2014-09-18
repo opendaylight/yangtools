@@ -1,0 +1,15 @@
+module dummy {
+    yang-version 1;
+    namespace "urn:test.dummy";
+    prefix "dummy";
+
+    organization "opendaylight";
+    contact "http://www.opendaylight.org";
+
+    revision "2014-09-24" {
+        description "Initial import";
+    }
+
+    identity prefiximportidentitytest {
+    }
+}

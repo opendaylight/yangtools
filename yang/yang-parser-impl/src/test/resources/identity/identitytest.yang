@@ -1,0 +1,16 @@
+module identitytest {
+    yang-version 1;
+    namespace "urn:test.identitytest";
+    prefix "idtest";
+
+    organization "opendaylight";
+    contact "http://www.opendaylight.org";
+
+    revision "2014-09-17" {
+        description "Initial import";
+    }
+
+    identity test {
+        base test;
+    }
+}
