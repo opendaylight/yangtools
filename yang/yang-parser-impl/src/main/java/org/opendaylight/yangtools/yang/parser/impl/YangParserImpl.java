@@ -1025,20 +1025,30 @@ public final class YangParserImpl implements YangContextParser {
     private void resolveIdentity(final ModuleBuilder module, final IdentitySchemaNodeBuilder identity) {
         final String baseIdentityName = identity.getBaseIdentityName();
         if (baseIdentityName != null) {
+            if (baseIdentityName.equals(identity.getQName().getLocalName())) {
+                throw new YangParseException(module.getName(),
+                        identity.getLine(),
+                        "Failed to parse base, identity name equals base identity name: "
+                                + baseIdentityName);
+            }
             IdentitySchemaNodeBuilder result = null;
             if (baseIdentityName.contains(":")) {
                 final int line = identity.getLine();
                 String[] splittedBase = baseIdentityName.split(":");
                 if (splittedBase.length > 2) {
-                    throw new YangParseException(module.getName(), line, "Failed to parse identityref base: "
-                            + baseIdentityName);
+                    throw new YangParseException(module.getName(), line,
+                            "Failed to parse identityref base: "
+                                    + baseIdentityName);
                 }
                 String prefix = splittedBase[0];
                 String name = splittedBase[1];
-                ModuleBuilder dependentModule = BuilderUtils.getModuleByPrefix(module, prefix);
-                result = BuilderUtils.findIdentity(dependentModule.getAddedIdentities(), name);
+                ModuleBuilder dependentModule = BuilderUtils.getModuleByPrefix(
+                        module, prefix);
+                result = BuilderUtils.findIdentity(
+                        dependentModule.getAddedIdentities(), name);
             } else {
-                result = BuilderUtils.findIdentity(module.getAddedIdentities(), baseIdentityName);
+                result = BuilderUtils.findIdentity(module.getAddedIdentities(),
+                        baseIdentityName);
             }
             identity.setBaseIdentity(result);
         }
