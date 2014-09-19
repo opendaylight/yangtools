@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -39,21 +40,24 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
     public final String serialize(final YangInstanceIdentifier data) {
         StringBuilder sb = new StringBuilder();
         for (PathArgument arg : data.getPathArguments()) {
-            sb.append('/');
-            appendQName(sb, arg.getNodeType());
+            if (!(arg instanceof AugmentationIdentifier)) {
+                sb.append('/');
+                appendQName(sb, arg.getNodeType());
 
-            if (arg instanceof NodeIdentifierWithPredicates) {
-                for (Map.Entry<QName, Object> entry : ((NodeIdentifierWithPredicates) arg).getKeyValues().entrySet()) {
-                    sb.append('[');
-                    appendQName(sb, entry.getKey());
-                    sb.append("='");
-                    sb.append(String.valueOf(entry.getValue()));
+                if (arg instanceof NodeIdentifierWithPredicates) {
+                    for (Map.Entry<QName, Object> entry : ((NodeIdentifierWithPredicates) arg)
+                            .getKeyValues().entrySet()) {
+                        sb.append('[');
+                        appendQName(sb, entry.getKey());
+                        sb.append("='");
+                        sb.append(String.valueOf(entry.getValue()));
+                        sb.append("']");
+                    }
+                } else if (arg instanceof NodeWithValue) {
+                    sb.append("[.='");
+                    sb.append(((NodeWithValue) arg).getValue());
                     sb.append("']");
                 }
-            } else if (arg instanceof NodeWithValue) {
-                sb.append("[.='");
-                sb.append(((NodeWithValue) arg).getValue());
-                sb.append("']");
             }
         }
 
