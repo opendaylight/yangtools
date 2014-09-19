@@ -170,7 +170,7 @@ public final class MapAdaptor {
          * which will maintain the size for us.
          */
         LOG.trace("Copying input {} to a TrieMap ({} entries)", input, size);
-        final TrieMap<K, V> map = TrieMap.empty();
+        final TrieMap<K, V> map = new TrieMap<>();
         map.putAll(input);
         final Map<K, V> ret = new ReadOnlyTrieMap<>(map, size);
         LOG.trace("Read-only TrieMap is {}", ret);
