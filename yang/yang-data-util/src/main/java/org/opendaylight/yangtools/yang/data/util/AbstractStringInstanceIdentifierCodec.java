@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.util;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -18,9 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -39,6 +38,18 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
     public final String serialize(final YangInstanceIdentifier data) {
         StringBuilder sb = new StringBuilder();
         for (PathArgument arg : data.getPathArguments()) {
+            if(arg instanceof AugmentationIdentifier) {
+                /*
+                 * XML/YANG instance identifier does not have concept
+                 * of augmentation identifier, which identifies
+                 * mixin (same as paretn element), so we can safely
+                 * ignore it if it is part of path (since child node)
+                 * is identified in same fashion.
+                 *
+                 */
+                continue;
+            }
+
             sb.append('/');
             appendQName(sb, arg.getNodeType());
 
