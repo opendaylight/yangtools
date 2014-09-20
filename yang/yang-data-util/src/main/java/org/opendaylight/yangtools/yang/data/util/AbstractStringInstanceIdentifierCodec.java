@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -39,6 +40,11 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
     public final String serialize(final YangInstanceIdentifier data) {
         StringBuilder sb = new StringBuilder();
         for (PathArgument arg : data.getPathArguments()) {
+            // AugmentationIdentifier is an internal construct and should not be encoded
+            if (arg instanceof AugmentationIdentifier) {
+                continue;
+            }
+
             sb.append('/');
             appendQName(sb, arg.getNodeType());
 
