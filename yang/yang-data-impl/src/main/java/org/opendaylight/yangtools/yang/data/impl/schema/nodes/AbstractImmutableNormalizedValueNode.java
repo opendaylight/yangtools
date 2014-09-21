@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ public abstract class AbstractImmutableNormalizedValueNode<K extends YangInstanc
         AbstractImmutableNormalizedNode<K, V> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractImmutableNormalizedValueNode.class);
+    @Nullable
     private final V value;
 
     protected AbstractImmutableNormalizedValueNode(final K nodeIdentifier, final V value) {
