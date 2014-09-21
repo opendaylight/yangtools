@@ -1,0 +1,81 @@
+module union-definitions {
+    yang-version 1;
+    namespace "urn:opendaylight:org:test:base:yang:types";
+    prefix "tp";
+
+    organization "OPEN DAYLIGHT";
+    contact "http://www.opendaylight.org/";
+
+    description "This module contains definitions of union typedefs used in testing of UnionDependencySort.";
+
+    revision "2014-07-23"{
+        reference "Initial Revision.";
+    }
+
+    typedef string-a {
+        type string {
+            length "0..4";
+            pattern "[0-9a-fA-F]*";
+        }
+    }
+
+    typedef string-b {
+        type string;
+    }
+
+    typedef simple-union {
+        type union {
+            type int16;
+            type int32;
+        }
+    }
+
+    typedef string-union {
+        type union {
+            type string-a;
+            type string-b;
+        }
+    }
+
+    typedef inner-union {
+        type union {
+            type uint32;
+            type uint64;
+        }
+    }
+
+    typedef nested-union {
+        type union {
+            type simple-union;
+            type inner-union;
+        }
+    }
+
+    typedef enum-union {
+        type union {
+            type enumeration {
+                enum a;
+                enum b;
+                enum c;
+            }
+
+            type enumeration {
+                enum x;
+                enum y;
+                enum z;
+            }
+        }
+    }
+
+    typedef complex-union {
+        type union {
+            type simple-union;
+            type inner-union;
+            type union {
+                type uint8;
+                type uint16;
+            }
+            type enum-union;
+        }
+    }
+}
