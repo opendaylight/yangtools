@@ -1,0 +1,91 @@
+module grouping-definitions {
+    yang-version 1;
+    namespace "urn:opendaylight:org:test:grouping:definitions:module";
+    prefix "groups";
+
+    organization "OPEN DAYLIGHT";
+    contact "http://www.opendaylight.org/";
+
+    description "This module contains definitions of groupings used in testing of
+        GroupingDefinitionDependencySort.";
+
+    revision "2014-09-21"{
+        reference "Initial Revision.";
+    }
+
+    grouping simple-group {
+        leaf a {
+            type string;
+        }
+
+        leaf b {
+            type string;
+        }
+    }
+
+    grouping complex-grouping {
+        container foo {
+            choice switch {
+                case one-node {
+                    leaf a {
+                        type string;
+                    }
+                }
+
+                case second-node {
+                    leaf b {
+                        type int8;
+                    }
+                }
+
+                case group-use {
+                    container group-use {
+                        uses simple-group;
+                    }
+                }
+            }
+        }
+    }
+
+    grouping inner-group {
+        container bars {
+            list bar-item {
+                key "id";
+
+                leaf id {
+                    type uint32;
+                }
+            }
+        }
+    }
+
+    grouping parent-with-inner {
+        leaf a {
+            type int16;
+        }
+
+        leaf b {
+            type int32;
+        }
+
+        uses inner-group;
+    }
+
+    grouping parent-of-nested-groups {
+        uses simple-group;
+
+        container my-way {
+            grouping ad-hoc-group {
+                leaf a {
+                    type int16;
+                }
+            }
+
+            container private {
+                uses ad-hoc-group;
+            }
+
+            uses parent-with-inner;
+        }
+    }
+}
