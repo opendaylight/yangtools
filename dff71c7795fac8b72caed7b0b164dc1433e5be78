@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_7412e959",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/parser/impl/YangParserIdentityTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 74
+      },
+      "writtenOn": "2014-09-22T12:47:15Z",
+      "side": 1,
+      "message": "Do NOT use tabs in source code. To ensure of correct setup of IDE please do import controller/opendaylight/commons/parent/sun_coding_style.xml",
+      "revId": "dff71c7795fac8b72caed7b0b164dc1433e5be78",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
