@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -717,7 +719,7 @@ public final class ParserListenerUtils {
      *            type body
      * @return list of pattern constraints
      */
-    private static List<PatternConstraint> getPatternConstraint(final Type_body_stmtsContext ctx) {
+    private static List<PatternConstraint> getPatternConstraint(final Type_body_stmtsContext ctx, final String moduleName) {
         List<PatternConstraint> patterns = new ArrayList<>();
 
         for (int i = 0; i < ctx.getChildCount(); i++) {
@@ -726,7 +728,11 @@ public final class ParserListenerUtils {
                 for (int j = 0; j < stringRestrChild.getChildCount(); j++) {
                     ParseTree lengthChild = stringRestrChild.getChild(j);
                     if (lengthChild instanceof Pattern_stmtContext) {
-                        patterns.add(parsePatternConstraint((Pattern_stmtContext) lengthChild));
+                        final PatternConstraint constraint = parsePatternConstraint((Pattern_stmtContext) lengthChild,
+                            moduleName);
+                        if (constraint != null) {
+                            patterns.add(constraint);
+                        }
                     }
                 }
             }
@@ -741,7 +747,7 @@ public final class ParserListenerUtils {
      *            pattern context
      * @return PatternConstraint object
      */
-    private static PatternConstraint parsePatternConstraint(final Pattern_stmtContext ctx) {
+    private static PatternConstraint parsePatternConstraint(final Pattern_stmtContext ctx, final String moduleName) {
         Optional<String> description = Optional.absent();
         Optional<String> reference = Optional.absent();
         for (int i = 0; i < ctx.getChildCount(); i++) {
@@ -752,8 +758,32 @@ public final class ParserListenerUtils {
                 reference = Optional.of(stringFromNode(child));
             }
         }
-        String pattern = parsePatternString(ctx);
-        return BaseConstraints.newPatternConstraint(pattern, description, reference);
+        final String rawPattern = parsePatternString(ctx);
+        final String pattern = wrapPattern(rawPattern);
+        if (isValidPattern(pattern, ctx, moduleName)) {
+            return BaseConstraints.newPatternConstraint(pattern, description, reference);
+        }
+        return null;
+    }
+
+    private static String wrapPattern(String rawPattern) {
+        final StringBuilder wrapPatternBuilder = new StringBuilder();
+        wrapPatternBuilder.append("^");
+        wrapPatternBuilder.append(rawPattern);
+        wrapPatternBuilder.append("$");
+        return wrapPatternBuilder.toString();
+    }
+
+    private static boolean isValidPattern(final String pattern, final Pattern_stmtContext ctx, final String moduleName) {
+        final int line = ctx.getStart().getLine();
+        try {
+            Pattern.compile(pattern);
+            return true;
+        } catch (PatternSyntaxException ex) {
+            LOG.warn("Unable to compile pattern defined in module {} at line {}. Error message: {}",
+                moduleName, line, ex.getMessage());
+        }
+        return false;
     }
 
     /**
@@ -1057,7 +1087,7 @@ public final class ParserListenerUtils {
 
         List<RangeConstraint> rangeStatements = getRangeConstraints(typeBody, moduleBuilder.getName());
         List<LengthConstraint> lengthStatements = getLengthConstraints(typeBody, moduleBuilder.getName());
-        List<PatternConstraint> patternStatements = getPatternConstraint(typeBody);
+        List<PatternConstraint> patternStatements = getPatternConstraint(typeBody, moduleBuilder.getName());
         Integer fractionDigits = getFractionDigits(typeBody, moduleBuilder.getName());
 
         if (parent instanceof TypeDefinitionBuilder && !(parent instanceof UnionTypeBuilder)) {
@@ -1107,7 +1137,7 @@ public final class ParserListenerUtils {
 
         Integer fractionDigits = getFractionDigits(typeBody, moduleName);
         List<LengthConstraint> lengthStatements = getLengthConstraints(typeBody, moduleName);
-        List<PatternConstraint> patternStatements = getPatternConstraint(typeBody);
+        List<PatternConstraint> patternStatements = getPatternConstraint(typeBody, moduleName);
         List<RangeConstraint> rangeStatements = getRangeConstraints(typeBody, moduleName);
 
         TypeConstraints constraints = new TypeConstraints(moduleName, line);

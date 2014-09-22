@@ -36,6 +36,28 @@ module foo {
         type br:string-ext4;
     }
 
+    leaf invalid-pattern-string-leaf {
+        type br:invalid-string-pattern;
+    }
+
+    leaf invalid-direct-string-pattern-def-leaf {
+        type string {
+            pattern "[[A-1*-%22!^^}";
+        }
+    }
+
+    leaf multiple-pattern-string-leaf {
+        type br:multiple-pattern-string;
+    }
+
+    leaf multiple-pattern-direct-string-def-leaf {
+        type string {
+            pattern "[e-z]*";
+            pattern "[[A-1*-%22!^^}";
+            pattern "[a-d]*";
+        }
+    }
+
     leaf length-leaf {
         type br:string-ext2 {
             length "7..max";

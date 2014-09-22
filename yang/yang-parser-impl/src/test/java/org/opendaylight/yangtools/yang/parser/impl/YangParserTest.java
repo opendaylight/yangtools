@@ -239,7 +239,7 @@ public class YangParserTest {
         List<PatternConstraint> patterns = type.getPatternConstraints();
         assertEquals(1, patterns.size());
         PatternConstraint pattern = patterns.iterator().next();
-        assertEquals("[e-z]*", pattern.getRegularExpression());
+        assertEquals("^[e-z]*$", pattern.getRegularExpression());
         assertTrue(type.getLengthConstraints().isEmpty());
         assertTrue(type.getRangeConstraints().isEmpty());
 
@@ -253,7 +253,7 @@ public class YangParserTest {
         patterns = baseType1.getPatternConstraints();
         assertEquals(1, patterns.size());
         pattern = patterns.iterator().next();
-        assertEquals("[b-u]*", pattern.getRegularExpression());
+        assertEquals("^[b-u]*$", pattern.getRegularExpression());
         assertTrue(baseType1.getLengthConstraints().isEmpty());
         assertTrue(baseType1.getRangeConstraints().isEmpty());
 
@@ -282,7 +282,7 @@ public class YangParserTest {
         patterns = baseType3.getPatternConstraints();
         assertEquals(1, patterns.size());
         pattern = patterns.iterator().next();
-        assertEquals("[a-k]*", pattern.getRegularExpression());
+        assertEquals("^[a-k]*$", pattern.getRegularExpression());
         List<LengthConstraint> baseType3Lengths = baseType3.getLengthConstraints();
         assertEquals(1, baseType3Lengths.size());
         length = baseType3Lengths.get(0);
@@ -291,6 +291,64 @@ public class YangParserTest {
         assertTrue(baseType3.getRangeConstraints().isEmpty());
 
         assertTrue(baseType3.getBaseType() instanceof StringType);
+    }
+
+    @Test
+    public void testTypedefInvalidPatternsResolving() {
+        Module foo = TestUtils.findModule(modules, "foo");
+        final LeafSchemaNode invalidPatternStringLeaf = (LeafSchemaNode) foo.getDataChildByName("invalid-pattern-string-leaf");
+        ExtendedType type = (ExtendedType) invalidPatternStringLeaf.getType();
+        QName typeQName = type.getQName();
+        assertEquals("invalid-string-pattern", typeQName.getLocalName());
+        assertEquals(barNS, typeQName.getNamespace());
+        assertEquals(barRev, typeQName.getRevision());
+        assertNull(type.getUnits());
+        assertNull(type.getDefaultValue());
+        List<PatternConstraint> patterns = type.getPatternConstraints();
+        assertTrue(patterns.isEmpty());
+
+        final LeafSchemaNode invalidDirectStringPatternDefLeaf = (LeafSchemaNode) foo.getDataChildByName("invalid-direct-string-pattern-def-leaf");
+        type = (ExtendedType) invalidDirectStringPatternDefLeaf.getType();
+        typeQName = type.getQName();
+        assertEquals("string", typeQName.getLocalName());
+        assertEquals(fooNS, typeQName.getNamespace());
+        assertEquals(fooRev, typeQName.getRevision());
+        assertNull(type.getUnits());
+        assertNull(type.getDefaultValue());
+        patterns = type.getPatternConstraints();
+        assertTrue(patterns.isEmpty());
+
+        final LeafSchemaNode multiplePatternStringLeaf = (LeafSchemaNode) foo.getDataChildByName("multiple-pattern-string-leaf");
+        type = (ExtendedType) multiplePatternStringLeaf.getType();
+        typeQName = type.getQName();
+        assertEquals("multiple-pattern-string", typeQName.getLocalName());
+        assertEquals(barNS, typeQName.getNamespace());
+        assertEquals(barRev, typeQName.getRevision());
+        assertNull(type.getUnits());
+        assertNull(type.getDefaultValue());
+        patterns = type.getPatternConstraints();
+        assertTrue(!patterns.isEmpty());
+        assertEquals(1, patterns.size());
+        PatternConstraint pattern = patterns.iterator().next();
+        assertEquals("^[e-z]*$", pattern.getRegularExpression());
+        assertTrue(type.getLengthConstraints().isEmpty());
+        assertTrue(type.getRangeConstraints().isEmpty());
+
+        final LeafSchemaNode multiplePatternDirectStringDefLeaf = (LeafSchemaNode) foo.getDataChildByName("multiple-pattern-direct-string-def-leaf");
+        type = (ExtendedType) multiplePatternDirectStringDefLeaf.getType();
+        typeQName = type.getQName();
+        assertEquals("string", typeQName.getLocalName());
+        assertEquals(fooNS, typeQName.getNamespace());
+        assertEquals(fooRev, typeQName.getRevision());
+        assertNull(type.getUnits());
+        assertNull(type.getDefaultValue());
+        patterns = type.getPatternConstraints();
+        assertTrue(!patterns.isEmpty());
+        assertEquals(2, patterns.size());
+        pattern = patterns.get(0);
+        assertEquals("^[e-z]*$", pattern.getRegularExpression());
+        pattern = patterns.get(1);
+        assertEquals("^[a-d]*$", pattern.getRegularExpression());
     }
 
     @Test
@@ -339,7 +397,7 @@ public class YangParserTest {
         List<PatternConstraint> patterns = baseType2.getPatternConstraints();
         assertEquals(1, patterns.size());
         PatternConstraint pattern = patterns.iterator().next();
-        assertEquals("[a-k]*", pattern.getRegularExpression());
+        assertEquals("^[a-k]*$", pattern.getRegularExpression());
         List<LengthConstraint> baseType3Lengths = baseType2.getLengthConstraints();
         assertEquals(1, baseType3Lengths.size());
         length = baseType3Lengths.get(0);
