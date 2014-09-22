@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_af7b3a7a",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/ParserListenerUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 770,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-09-22T14:05:36Z",
+      "side": 1,
+      "message": "rawPattern.length() + 2",
+      "revId": "0b47693d91d247fdca9058a3ebf77844055c7f57",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_cf80fe48",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/ParserListenerUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 773,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-09-22T14:05:36Z",
+      "side": 1,
+      "message": "\u0027$\u0027",
+      "revId": "0b47693d91d247fdca9058a3ebf77844055c7f57",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_0f87c662",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/ParserListenerUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 778,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-09-22T14:05:36Z",
+      "side": 1,
+      "message": "Move this into the catch block",
+      "revId": "0b47693d91d247fdca9058a3ebf77844055c7f57",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
