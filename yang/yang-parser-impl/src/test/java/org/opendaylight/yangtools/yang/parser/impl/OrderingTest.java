@@ -30,8 +30,9 @@ public class OrderingTest {
         Set<Module> modules = TestUtils.loadModules(getClass().getResource("/model").toURI());
         Module bar = TestUtils.findModule(modules, "bar");
         Set<TypeDefinition<?>> typedefs = bar.getTypeDefinitions();
-        String[] expectedOrder = new String[] { "int32-ext1", "int32-ext2", "my-decimal-type", "my-union",
-                "my-union-ext", "nested-union2", "string-ext1", "string-ext2", "string-ext3", "string-ext4" };
+        String[] expectedOrder = new String[] { "int32-ext1", "int32-ext2", "invalid-string-pattern",
+            "multiple-pattern-string", "my-decimal-type", "my-union", "my-union-ext", "nested-union2",
+            "string-ext1", "string-ext2", "string-ext3", "string-ext4" };
         String[] actualOrder = new String[typedefs.size()];
 
         int i = 0;
@@ -73,9 +74,11 @@ public class OrderingTest {
         Module foo = TestUtils.findModule(modules, "foo");
 
         Collection<DataSchemaNode> childNodes = foo.getChildNodes();
-        String[] expectedOrder = new String[] { "int32-leaf", "string-leaf", "length-leaf", "decimal-leaf",
-                "decimal-leaf2", "ext", "union-leaf", "custom-union-leaf", "transfer", "datas", "mycont", "data",
-                "how", "address", "port", "addresses", "peer", "id", "foo-id","sub-ext", "sub-transfer", "sub-datas" };
+        String[] expectedOrder = new String[] { "int32-leaf", "string-leaf", "invalid-pattern-string-leaf",
+                "invalid-direct-string-pattern-def-leaf", "multiple-pattern-string-leaf",
+                "multiple-pattern-direct-string-def-leaf", "length-leaf", "decimal-leaf", "decimal-leaf2", "ext",
+                "union-leaf", "custom-union-leaf", "transfer", "datas", "mycont", "data", "how", "address", "port",
+                "addresses", "peer", "id", "foo-id","sub-ext", "sub-transfer", "sub-datas" };
         String[] actualOrder = new String[childNodes.size()];
 
         int i = 0;
