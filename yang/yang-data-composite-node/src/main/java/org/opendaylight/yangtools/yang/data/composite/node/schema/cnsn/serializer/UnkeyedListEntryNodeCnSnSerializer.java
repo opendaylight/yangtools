@@ -8,12 +8,13 @@
 package org.opendaylight.yangtools.yang.data.composite.node.schema.cnsn.serializer;
 
 import org.opendaylight.yangtools.yang.data.api.Node;
-import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer.NodeSerializerDispatcher;
 
-public class MapEntryNodeCnSnSerializer extends ListEntryNodeCnSnSerializer<MapEntryNode> {
+final class UnkeyedListEntryNodeCnSnSerializer extends ListEntryNodeCnSnSerializer<UnkeyedListEntryNode> {
 
-    MapEntryNodeCnSnSerializer(final NodeSerializerDispatcher<Node<?>> dispatcher) {
+    UnkeyedListEntryNodeCnSnSerializer(final NodeSerializerDispatcher<Node<?>> dispatcher) {
         super(dispatcher);
     }
+
 }

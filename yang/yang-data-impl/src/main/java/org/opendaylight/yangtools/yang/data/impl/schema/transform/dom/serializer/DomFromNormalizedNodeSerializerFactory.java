@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.FromNormalizedNodeSerializer;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.FromNormalizedNodeSerializerFactory;
@@ -36,8 +37,10 @@ public final class DomFromNormalizedNodeSerializerFactory implements FromNormali
     private final LeafNodeDomSerializer leafNodeSerializer;
     private final LeafSetNodeDomSerializer leafSetSerializer;
     private final MapNodeDomSerializer mapNodeSerializer;
+    private final UnkeyedListNodeDomSerializer unkeyedListNodeSerializer;
     private final LeafSetEntryNodeDomSerializer leafSetEntryNodeSerializer;
-	private final MapEntryNodeDomSerializer mapEntryNodeSerializer;
+    private final MapEntryNodeDomSerializer mapEntryNodeSerializer;
+    private final UnkeyedListEntryNodeDomSerializer unkeyedListEntryNodeSerializer;
 
 	private DomFromNormalizedNodeSerializerFactory(final Document doc, final XmlCodecProvider codecProvider) {
 		final NodeSerializerDispatcher.BaseNodeSerializerDispatcher<Element> dispatcher = new NodeSerializerDispatcher.BaseNodeSerializerDispatcher<Element>(this) {
@@ -54,6 +57,9 @@ public final class DomFromNormalizedNodeSerializerFactory implements FromNormali
 
         mapEntryNodeSerializer = new MapEntryNodeDomSerializer(doc, dispatcher);
         mapNodeSerializer = new MapNodeDomSerializer(mapEntryNodeSerializer);
+
+        unkeyedListEntryNodeSerializer = new UnkeyedListEntryNodeDomSerializer(doc, dispatcher);
+        unkeyedListNodeSerializer = new UnkeyedListNodeDomSerializer(unkeyedListEntryNodeSerializer);
 	}
 
 	public static DomFromNormalizedNodeSerializerFactory getInstance(final Document doc, final XmlCodecProvider codecProvider) {
@@ -98,6 +104,11 @@ public final class DomFromNormalizedNodeSerializerFactory implements FromNormali
 	@Override
 	public FromNormalizedNodeSerializer<Element, MapNode, ListSchemaNode> getMapNodeSerializer() {
 		return mapNodeSerializer;
+	}
+
+	@Override
+	public FromNormalizedNodeSerializer<Element, UnkeyedListNode, ListSchemaNode> getUnkeyedListNodeSerializer() {
+	    return unkeyedListNodeSerializer;
 	}
 
         @Override
