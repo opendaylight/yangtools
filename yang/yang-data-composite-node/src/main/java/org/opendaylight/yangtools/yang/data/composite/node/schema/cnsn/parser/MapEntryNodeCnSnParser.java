@@ -7,40 +7,24 @@
  */
 package org.opendaylight.yangtools.yang.data.composite.node.schema.cnsn.parser;
 
-import org.opendaylight.yangtools.yang.data.composite.node.schema.json.CnSnToNormalizedNodesUtils;
-
-import java.util.Collections;
-import java.util.Map;
-
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.Node;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.MapEntryNodeBaseParser;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.NodeParserDispatcher;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.LinkedListMultimap;
-
-public final class MapEntryNodeCnSnParser extends MapEntryNodeBaseParser<Node<?>> {
-
-    private final NodeParserDispatcher<Node<?>> dispatcher;
+public final class MapEntryNodeCnSnParser extends ListEntryNodeCnSnParser<MapEntryNode> {
 
     public MapEntryNodeCnSnParser(final NodeParserDispatcher<Node<?>> dispatcher) {
-        this.dispatcher = Preconditions.checkNotNull(dispatcher);
-    }
-
-
-    @Override
-    protected LinkedListMultimap<QName, Node<?>> mapChildElements(Iterable<Node<?>> elements) {
-        return CnSnToNormalizedNodesUtils.mapChildElementsForSingletonNode(elements.iterator().next());
+        super(dispatcher);
     }
 
     @Override
-    protected NodeParserDispatcher<Node<?>> getDispatcher() {
-        return dispatcher;
+    protected final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> getBuilder(
+            ListSchemaNode schema) {
+        return Builders.mapEntryBuilder(schema);
     }
 
-    @Override
-    protected Map<QName, String> getAttributes(Node<?> e) {
-        return Collections.emptyMap();
-    }
 }

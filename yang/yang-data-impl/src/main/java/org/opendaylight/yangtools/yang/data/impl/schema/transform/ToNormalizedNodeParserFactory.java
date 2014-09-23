@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -30,13 +31,14 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  *            type of element to be parsed into NormalizedNode
  */
 public interface ToNormalizedNodeParserFactory<E> {
-	ToNormalizedNodeParser<E, AugmentationNode, AugmentationSchema> getAugmentationNodeParser();
-	ToNormalizedNodeParser<E, ChoiceNode, org.opendaylight.yangtools.yang.model.api.ChoiceNode> getChoiceNodeParser();
-	ToNormalizedNodeParser<E, ContainerNode, ContainerSchemaNode> getContainerNodeParser();
-	ToNormalizedNodeParser<E, LeafNode<?>, LeafSchemaNode> getLeafNodeParser();
-	ToNormalizedNodeParser<E, LeafSetEntryNode<?>, LeafListSchemaNode> getLeafSetEntryNodeParser();
-	ToNormalizedNodeParser<E, LeafSetNode<?>, LeafListSchemaNode> getLeafSetNodeParser();
-	ToNormalizedNodeParser<E, MapEntryNode, ListSchemaNode> getMapEntryNodeParser();
-	ToNormalizedNodeParser<E, MapNode, ListSchemaNode> getMapNodeParser();
-        ToNormalizedNodeParser<E, AnyXmlNode, AnyXmlSchemaNode> getAnyXmlNodeParser();
+    ToNormalizedNodeParser<E, AugmentationNode, AugmentationSchema> getAugmentationNodeParser();
+    ToNormalizedNodeParser<E, ChoiceNode, org.opendaylight.yangtools.yang.model.api.ChoiceNode> getChoiceNodeParser();
+    ToNormalizedNodeParser<E, ContainerNode, ContainerSchemaNode> getContainerNodeParser();
+    ToNormalizedNodeParser<E, LeafNode<?>, LeafSchemaNode> getLeafNodeParser();
+    ToNormalizedNodeParser<E, LeafSetEntryNode<?>, LeafListSchemaNode> getLeafSetEntryNodeParser();
+    ToNormalizedNodeParser<E, LeafSetNode<?>, LeafListSchemaNode> getLeafSetNodeParser();
+    ToNormalizedNodeParser<E, MapEntryNode, ListSchemaNode> getMapEntryNodeParser();
+    ToNormalizedNodeParser<E, MapNode, ListSchemaNode> getMapNodeParser();
+    ToNormalizedNodeParser<E, UnkeyedListNode, ListSchemaNode> getUnkeyedListNodeParser();
+    ToNormalizedNodeParser<E, AnyXmlNode, AnyXmlSchemaNode> getAnyXmlNodeParser();
 }
