@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -174,6 +175,7 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
         private static final LeafSetNodeModification LEAF_SET_NODE_MODIFICATION = new LeafSetNodeModification();
         private static final AugmentationNodeModification AUGMENTATION_NODE_MODIFICATION = new AugmentationNodeModification();
         private static final MapNodeModification MAP_NODE_MODIFICATION = new MapNodeModification();
+        private static final UnkeyedListNodeModification UNKEYED_LIST_NODE_MODIFICATION = new UnkeyedListNodeModification();
         private static final ContainerNodeModification CONTAINER_NODE_MODIFICATION = new ContainerNodeModification();
         private static final ChoiceNodeModification CHOICE_NODE_MODIFICATION = new ChoiceNodeModification();
 
@@ -190,7 +192,11 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
             } else if (schemaChild instanceof AugmentationSchema) {
                 return onAugmentationNode((AugmentationSchema) schemaChild, actual, modification, operations);
             } else if (schemaChild instanceof ListSchemaNode) {
-                return onMapNode((ListSchemaNode) schemaChild, actual, modification, operations);
+                if (((ListSchemaNode)schemaChild).getKeyDefinition().isEmpty()) {
+                    return onUnkeyedNode((ListSchemaNode) schemaChild, actual, modification, operations);
+                } else {
+                    return onMapNode((ListSchemaNode) schemaChild, actual, modification, operations);
+                }
             } else if (schemaChild instanceof org.opendaylight.yangtools.yang.model.api.ChoiceNode) {
                 return onChoiceNode((org.opendaylight.yangtools.yang.model.api.ChoiceNode) schemaChild, actual,
                         modification, operations);
@@ -218,6 +224,16 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
             checkType(modification, MapNode.class);
             return MAP_NODE_MODIFICATION.modify(schemaChild, (Optional<MapNode>) actual,
                     (Optional<MapNode>) modification, operations);
+        }
+
+        private static Optional<? extends DataContainerChild<?, ?>> onUnkeyedNode(ListSchemaNode schemaChild,
+                Optional<? extends DataContainerChild<?, ?>> actual,
+                        Optional<? extends DataContainerChild<?, ?>> modification, OperationStack operations)
+                                throws DataModificationException {
+            checkType(actual, UnkeyedListNode.class);
+            checkType(modification, UnkeyedListNode.class);
+            return UNKEYED_LIST_NODE_MODIFICATION.modify(schemaChild, (Optional<UnkeyedListNode>) actual,
+                    (Optional<UnkeyedListNode>) modification, operations);
         }
 
         private static Optional<? extends DataContainerChild<?, ?>> onAugmentationNode(AugmentationSchema schemaChild,
