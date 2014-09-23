@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_ec3dcdbc",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1028,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-09-23T13:24:41Z",
+      "side": 1,
+      "message": "actually this is not a complete fix. The problem is that the base identity can be prefixed, pointing to the same module.\n\nmodule foo {\nprefix foo;\n\nidentity foo {\n    base foo:foo;\n}\n\nwould trigger this as well. Furthermore this can create a false positive for:\n\nmodule foo;\n\nimport bar { prefix bar };\n\nidentity foo {\n    base bar:foo;\n}\n\nwhich effectively means you have to perform this comparison after you have resolved whether it is prefixed and you have looked up the target module",
+      "revId": "836ef4b3870e958a43cf2662c0b8c8af89582039",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
