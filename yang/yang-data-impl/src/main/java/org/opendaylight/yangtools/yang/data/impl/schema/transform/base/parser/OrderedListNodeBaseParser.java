@@ -8,21 +8,21 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 /**
- * Abstract(base) parser for MapNodes, parses elements of type E.
+ * Abstract(base) parser for OrderedListNodes, parses elements of type E.
  *
  * @param <E>
  *            type of elements to be parsed
  */
-public abstract class MapNodeBaseParser<E> extends ListNodeBaseParser<E, MapEntryNode, MapNode, ListSchemaNode> {
-
-    protected CollectionNodeBuilder<MapEntryNode, MapNode> provideBuilder(ListSchemaNode schema) {
-        return Builders.mapBuilder(schema);
+public abstract class OrderedListNodeBaseParser<E> extends
+        ListNodeBaseParser<E, MapEntryNode, OrderedMapNode, ListSchemaNode> {
+    @Override
+    protected CollectionNodeBuilder<MapEntryNode, OrderedMapNode> provideBuilder(ListSchemaNode schema) {
+        return Builders.orderedMapBuilder(schema);
     }
-
 }
