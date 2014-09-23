@@ -16,6 +16,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParserFactory;
@@ -37,6 +40,9 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
     private final LeafSetNodeDomParser leafSetNodeParser;
     private final MapNodeDomParser mapNodeParser;
     private final MapEntryNodeDomParser mapEntryNodeParser;
+    private final UnkeyedListEntryNodeDomParser unkeyedListEntryNodeParser;
+    private final UnkeyedListNodeDomParser unkeyedListNodeParser;
+    private final OrderedListNodeDomParser orderedListNodeParser;
 
     private DomToNormalizedNodeParserFactory(final XmlCodecProvider codecProvider) {
         leafNodeParser = new LeafNodeDomParser(codecProvider);
@@ -50,6 +56,9 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
         containerNodeParser = new ContainerNodeDomParser(dispatcher);
         mapEntryNodeParser = new MapEntryNodeDomParser(dispatcher);
         mapNodeParser = new MapNodeDomParser(mapEntryNodeParser);
+        orderedListNodeParser = new OrderedListNodeDomParser(mapEntryNodeParser);
+        unkeyedListEntryNodeParser = new UnkeyedListEntryNodeDomParser(dispatcher);
+        unkeyedListNodeParser = new UnkeyedListNodeDomParser(unkeyedListEntryNodeParser);
         choiceNodeParser = new ChoiceNodeDomParser(dispatcher);
         augmentationNodeParser = new AugmentationNodeDomParser(dispatcher);
     }
@@ -96,6 +105,21 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
     @Override
     public ToNormalizedNodeParser<Element, MapNode, ListSchemaNode> getMapNodeParser() {
         return mapNodeParser;
+    }
+
+    @Override
+    public ToNormalizedNodeParser<Element, UnkeyedListNode, ListSchemaNode> getUnkeyedListNodeParser() {
+        return unkeyedListNodeParser;
+    }
+
+    @Override
+    public ToNormalizedNodeParser<Element, UnkeyedListEntryNode, ListSchemaNode> getUnkeyedListEntryNodeParser() {
+        return unkeyedListEntryNodeParser;
+    }
+
+    @Override
+    public ToNormalizedNodeParser<Element, OrderedMapNode, ListSchemaNode> getOrderedListNodeParser() {
+        return orderedListNodeParser;
     }
 
     @Override
