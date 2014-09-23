@@ -10,14 +10,14 @@ package org.opendaylight.yangtools.yang.data.composite.node.schema.cnsn.parser;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.MapNodeBaseParser;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.OrderedListNodeBaseParser;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-public final class MapNodeCnSnParser extends MapNodeBaseParser<Node<?>> {
+public final class OrderedListNodeCnSnParser extends OrderedListNodeBaseParser<Node<?>> {
 
     private final MapEntryNodeCnSnParser mapEntryNodeCnSnParser;
 
-    public MapNodeCnSnParser(MapEntryNodeCnSnParser mapEntryNodeCnSnParser) {
+    public OrderedListNodeCnSnParser(MapEntryNodeCnSnParser mapEntryNodeCnSnParser) {
         this.mapEntryNodeCnSnParser = mapEntryNodeCnSnParser;
     }
 
