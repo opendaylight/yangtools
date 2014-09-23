@@ -8,22 +8,23 @@
 package org.opendaylight.yangtools.yang.data.composite.node.schema.cnsn.serializer;
 
 import org.opendaylight.yangtools.yang.data.api.Node;
-import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.FromNormalizedNodeSerializer;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer.ListNodeBaseSerializer;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-public class MapNodeCnSnSerializer extends ListNodeBaseSerializer<Node<?>, MapNode, MapEntryNode> {
+final class UnkeyedListNodeCnSnSerializer extends
+        ListNodeBaseSerializer<Node<?>, UnkeyedListNode, UnkeyedListEntryNode> {
 
-    private final FromNormalizedNodeSerializer<Node<?>, MapEntryNode, ListSchemaNode> mapEntrySerializer;
+    private final FromNormalizedNodeSerializer<Node<?>, UnkeyedListEntryNode, ListSchemaNode> unkeyedListEntrySerializer;
 
-    public MapNodeCnSnSerializer(final MapEntryNodeCnSnSerializer mapEntrySerializer) {
-        this.mapEntrySerializer = mapEntrySerializer;
+    UnkeyedListNodeCnSnSerializer(UnkeyedListEntryNodeCnSnSerializer unkeyedListEntrySerializer) {
+        this.unkeyedListEntrySerializer = unkeyedListEntrySerializer;
     }
 
     @Override
-    protected FromNormalizedNodeSerializer<Node<?>, MapEntryNode, ListSchemaNode> getListEntryNodeSerializer() {
-        return mapEntrySerializer;
+    protected FromNormalizedNodeSerializer<Node<?>, UnkeyedListEntryNode, ListSchemaNode> getListEntryNodeSerializer() {
+        return unkeyedListEntrySerializer;
     }
 }

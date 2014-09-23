@@ -7,38 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
-import java.util.Collections;
-
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 /**
  * Abstract(base) parser for MapNodes, parses elements of type E.
  *
- * @param <E> type of elements to be parsed
+ * @param <E>
+ *            type of elements to be parsed
  */
-public abstract class MapNodeBaseParser<E> implements ToNormalizedNodeParser<E, MapNode, ListSchemaNode> {
+public abstract class MapNodeBaseParser<E> extends ListNodeBaseParser<E, MapEntryNode, MapNode, ListSchemaNode> {
 
-    @Override
-    public final MapNode parse(Iterable<E> childNodes, ListSchemaNode schema) {
-        CollectionNodeBuilder<MapEntryNode, MapNode> listBuilder = Builders.mapBuilder(schema);
-
-        for (E childNode : childNodes) {
-            MapEntryNode listChild = getMapEntryNodeParser().parse(Collections.singletonList(childNode), schema);
-            listBuilder.withChild(listChild);
-        }
-
-        return listBuilder.build();
+    protected CollectionNodeBuilder<MapEntryNode, MapNode> provideBuilder(ListSchemaNode schema) {
+        return Builders.mapBuilder(schema);
     }
-
-    /**
-     *
-     * @return parser for inner MapEntryNodes used to parse every entry of MapNode, might be the same instance in case its immutable
-     */
-    protected abstract ToNormalizedNodeParser<E, MapEntryNode, ListSchemaNode> getMapEntryNodeParser();
 
 }
