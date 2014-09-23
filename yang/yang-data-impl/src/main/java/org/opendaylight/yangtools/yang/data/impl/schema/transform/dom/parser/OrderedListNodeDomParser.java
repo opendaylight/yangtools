@@ -9,20 +9,20 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.MapNodeBaseParser;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.OrderedListNodeBaseParser;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.w3c.dom.Element;
 
-final class MapNodeDomParser extends MapNodeBaseParser<Element> {
+final class OrderedListNodeDomParser extends OrderedListNodeBaseParser<Element> {
 
-    private final MapEntryNodeDomParser mapEntryParser;
+    private final MapEntryNodeDomParser mapEntryNodeParser;
 
-    MapNodeDomParser(MapEntryNodeDomParser mapEntryParser) {
-        this.mapEntryParser = mapEntryParser;
+    OrderedListNodeDomParser(MapEntryNodeDomParser mapEntryNodeParser) {
+        this.mapEntryNodeParser = mapEntryNodeParser;
     }
 
     @Override
     protected ToNormalizedNodeParser<Element, MapEntryNode, ListSchemaNode> getListEntryNodeParser() {
-        return mapEntryParser;
+        return mapEntryNodeParser;
     }
 }

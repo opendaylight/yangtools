@@ -7,13 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.serializer;
 
-import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer.NodeSerializerDispatcher;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-final class MapEntryNodeDomSerializer extends ListEntryNodeDomSerializer<MapEntryNode> {
-    MapEntryNodeDomSerializer(final Document doc, final NodeSerializerDispatcher<Element> dispatcher) {
+final class UnkeyedListEntryNodeDomSerializer extends ListEntryNodeDomSerializer<UnkeyedListEntryNode> {
+
+    UnkeyedListEntryNodeDomSerializer(final Document doc, final NodeSerializerDispatcher<Element> dispatcher) {
         super(doc, dispatcher);
     }
+
 }
