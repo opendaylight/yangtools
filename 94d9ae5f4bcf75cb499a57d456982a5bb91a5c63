@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_2a1f18b9",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1030,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-09-23T07:46:49Z",
+      "side": 1,
+      "message": "the else and block is not needed so just do:\n\nif (...) {\n   throw ..\n}\n\nIdentity...",
+      "revId": "94d9ae5f4bcf75cb499a57d456982a5bb91a5c63",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_8a22e4ff",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 1048,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-09-23T07:46:49Z",
+      "side": 1,
+      "message": "trailing whitespace",
+      "revId": "94d9ae5f4bcf75cb499a57d456982a5bb91a5c63",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
