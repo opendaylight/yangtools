@@ -22,7 +22,7 @@ final class MapNodeDomParser extends MapNodeBaseParser<Element> {
     }
 
     @Override
-    protected ToNormalizedNodeParser<Element, MapEntryNode, ListSchemaNode> getMapEntryNodeParser() {
+    protected ToNormalizedNodeParser<Element, MapEntryNode, ListSchemaNode> getListEntryNodeParser() {
         return mapEntryParser;
     }
 }
