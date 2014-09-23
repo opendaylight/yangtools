@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.generator.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType;
@@ -21,36 +22,42 @@ public class TypesTest {
     public void testVoidType() {
         final ConcreteType voidType = Types.voidType();
         assertEquals("Void", voidType.getName());
+        assertNotNull(voidType);
     }
 
     @Test
     public void testPrimitiveType() {
         final Type primitiveType = Types.primitiveType("newType", null);
         assertEquals("newType", primitiveType.getName());
+        assertNotNull(primitiveType);
     }
 
     @Test
     public void testMapTypeFor() {
         final ParameterizedType mapType = Types.mapTypeFor(null, null);
         assertEquals("Map", mapType.getName());
+        assertNotNull(mapType);
     }
 
     @Test
     public void testSetTypeFor() {
         final ParameterizedType setType = Types.setTypeFor(null);
         assertEquals("Set", setType.getName());
+        assertNotNull(setType);
     }
 
     @Test
     public void testListTypeFor() {
         final ParameterizedType listType = Types.listTypeFor(null);
         assertEquals("List", listType.getName());
+        assertNotNull(listType);
     }
 
     @Test
     public void testWildcardTypeFor() {
         final WildcardType wildcardType = Types.wildcardTypeFor("org.opendaylight.yangtools.test", "WildcardTypeTest");
         assertEquals("WildcardTypeTest", wildcardType.getName());
+        assertNotNull(wildcardType);
     }
 
     @Test

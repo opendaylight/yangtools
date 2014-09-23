@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.generator.util.generated.type.builder
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -16,7 +17,7 @@ import org.junit.Test;
 public class ConstantImplTest {
 
     @Test
-    public void testAllMethods() {
+    public void testMethodsOfConstantImpl() {
         final GeneratedTypeBuilderImpl definingType = new GeneratedTypeBuilderImpl("org.opendaylight.yangtools.test",
                 "DefiningType");
         final GeneratedTypeBuilderImpl type = new GeneratedTypeBuilderImpl("org.opendaylight.yangtools.test.v1",
@@ -35,6 +36,13 @@ public class ConstantImplTest {
         assertTrue(constImpl.toFormattedString().contains("GeneratedTransferObject"));
         assertTrue(constImpl.toString().contains("GeneratedTransferObject"));
         assertEquals(constImpl.hashCode(), constImpl2.hashCode());
+        assertNotNull(constImpl.getDefiningType());
+        assertNotNull(constImpl.getType());
+        assertNotNull(constImpl.getName());
+        assertNotNull(constImpl.getValue());
+        assertNotNull(constImpl.toFormattedString());
+        assertNotNull(constImpl.toString());
+        assertNotNull(constImpl.hashCode());
         assertFalse(constImpl.equals(null));
         assertFalse(constImpl.equals("test"));
 
