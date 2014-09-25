@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.sal.binding.yang.types;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -23,12 +24,25 @@ import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.sal.binding.generator.spi.TypeProvider;
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
+import org.opendaylight.yangtools.sal.binding.yang.types.BaseYangTypes.UnionType;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.*;
+import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.util.StringType;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 /**
@@ -271,5 +285,58 @@ public class BaseYangTypesTest {
         javaType = typeProvider.javaTypeForSchemaDefinitionType(bool, bool, BindingGeneratorUtil.getRestrictions(bool));
         assertNotNull(javaType);
         assertEquals(Boolean.class.getCanonicalName(), javaType.getFullyQualifiedName());
+    }
+
+    @Test
+    public void testBaseYangTypesProvider() {
+        final TypeProvider baseYangTypesProvider = BaseYangTypes.BASE_YANG_TYPES_PROVIDER;
+        assertNull(baseYangTypesProvider.javaTypeForYangType("Cont1"));
+
+        StringType stringType = StringType.getInstance();
+        assertNotNull(baseYangTypesProvider.javaTypeForSchemaDefinitionType(stringType, null, createEmptyRestrictions()));
+
+        assertNotNull(baseYangTypesProvider.javaTypeForSchemaDefinitionType(stringType, null));
+        assertNull(baseYangTypesProvider.javaTypeForSchemaDefinitionType(null, null));
+
+        assertNull(baseYangTypesProvider.getTypeDefaultConstruction(null));
+
+        assertNull(baseYangTypesProvider.getConstructorPropertyName(null));
+
+        assertEquals("_string", baseYangTypesProvider.getParamNameFromType(stringType));
+
+    }
+
+    @Test
+    public void testUnionType() {
+        UnionType unionType = new UnionType();
+
+        assertNull(unionType.getPackageName());
+        assertEquals("Union", unionType.getName());
+        assertEquals("Union", unionType.getFullyQualifiedName());
+    }
+
+    private Restrictions createEmptyRestrictions() {
+        return new Restrictions() {
+
+            @Override
+            public boolean isEmpty() {
+                return false;
+            }
+
+            @Override
+            public List<RangeConstraint> getRangeConstraints() {
+                return null;
+            }
+
+            @Override
+            public List<PatternConstraint> getPatternConstraints() {
+                return null;
+            }
+
+            @Override
+            public List<LengthConstraint> getLengthConstraints() {
+                return null;
+            }
+        };
     }
 }
