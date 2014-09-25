@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fa82b9bf_80e400ad",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserImpl.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1029,
+      "author": {
+        "id": 74
+      },
+      "writtenOn": "2014-09-25T14:39:47Z",
+      "side": 1,
+      "message": "This whole check should go into else branch after if (baseIdentityName.contains(\":\")) { ...",
+      "revId": "c864ac631a6cf050b59887cd8ddf7d915d00e006",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_a04a64aa",
+        "filename": "yang/yang-parser-impl/src/test/resources/identity/import/dummy.yang",
+        "patchSetId": 7
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 74
+      },
+      "writtenOn": "2014-09-25T14:39:47Z",
+      "side": 1,
+      "message": "missing definition of identity here",
+      "revId": "c864ac631a6cf050b59887cd8ddf7d915d00e006",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_e0d70cbe",
+        "filename": "yang/yang-parser-impl/src/test/resources/identity/import/prefiximportidentitytest.yang",
+        "patchSetId": 7
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 74
+      },
+      "writtenOn": "2014-09-25T14:39:47Z",
+      "side": 1,
+      "message": "Why so many yang models? Is there anything in rfc 6020 that prevents us from defining more than one identity in model?",
+      "revId": "c864ac631a6cf050b59887cd8ddf7d915d00e006",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fa82b9bf_40c7d812",
+        "filename": "yang/yang-parser-impl/src/test/resources/identity/import/prefiximportidentitytest.yang",
+        "patchSetId": 7
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 74
+      },
+      "writtenOn": "2014-09-25T14:39:47Z",
+      "side": 1,
+      "message": "import of non existing identity",
+      "revId": "c864ac631a6cf050b59887cd8ddf7d915d00e006",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
