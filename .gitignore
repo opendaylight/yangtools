@@ -14,3 +14,4 @@ target
 bin
 xtend-gen
 target
+.DS_Store
