@@ -7,26 +7,25 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Collections;
+import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 
 public class BinaryTypeTest {
 
     @Test
     public void canCreateBinaryType() {
-        BinaryType binType = BinaryType.getInstance();
-        BinaryType binType1 = BinaryType.getInstance();
-        String stringBinType = binType.toString();
+        final BinaryType binType = BinaryType.getInstance();
+        final BinaryType binType1 = BinaryType.getInstance();
+        final String stringBinType = binType.toString();
+        final List<LengthConstraint> lengthConstraints = binType.getLengthConstraints();
 
-
-        List<LengthConstraint> lengthConstraints = binType.getLengthConstraints();
         assertTrue(lengthConstraints.toString().contains("max=9223372036854775807"));
         assertTrue(lengthConstraints.toString().contains("min=0"));
 
@@ -43,11 +42,14 @@ public class BinaryTypeTest {
 
         assertTrue("binType1 should equal to binType",
                 binType.equals(binType1) && binType1.equals(binType));
+        assertFalse("binType shouldn't equal to object of different type.", binType.equals("test"));
+        assertFalse("binType shouldn't equal to object of different type.", binType.equals(null));
         assertTrue("Hash code of binType and binType1 should be equal",
                 binType.hashCode() == binType1.hashCode());
         assertEquals("binType should equals to itself", binType, binType);
         assertFalse("binType shouldn't equal to null", binType.equals(null));
         assertFalse("binType shouldn't equal to object of other type", binType.equals("str"));
+        assertTrue("binType shouldn't has any unknown schema nodes.", binType.getUnknownSchemaNodes().isEmpty());
     }
 
 }

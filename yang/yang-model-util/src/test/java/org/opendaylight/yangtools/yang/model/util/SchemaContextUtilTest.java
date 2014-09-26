@@ -7,19 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
+import java.util.Collections;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-
-import java.util.Collections;
-
-import static org.junit.Assert.assertEquals;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public class SchemaContextUtilTest {
     @Mock private SchemaContext mockSchemaContext;
@@ -29,17 +29,17 @@ public class SchemaContextUtilTest {
     public void testFindDummyData() {
         MockitoAnnotations.initMocks(this);
 
-        QName qName = QName.create("TestQName");
-        SchemaPath schemaPath = SchemaPath.create(Collections.singletonList(qName), true);
+        final QName qName = QName.create("TestQName");
+        final SchemaPath schemaPath = SchemaPath.create(Collections.singletonList(qName), true);
         assertEquals("Should be null. Module TestQName not found", null,
                 SchemaContextUtil.findDataSchemaNode(mockSchemaContext, schemaPath));
 
-        RevisionAwareXPath xPath = new RevisionAwareXPathImpl("/bookstore/book/title", true);
+        final RevisionAwareXPath xPath = new RevisionAwareXPathImpl("/bookstore/book/title", true);
         assertEquals("Should be null. Module bookstore not found", null,
                 SchemaContextUtil.findDataSchemaNode(mockSchemaContext, mockModule, xPath));
 
-        SchemaNode schemaNode = Int32.getInstance();
-        RevisionAwareXPath xPathRelative = new RevisionAwareXPathImpl("../prefix", false);
+        final SchemaNode schemaNode = Int32.getInstance();
+        final RevisionAwareXPath xPathRelative = new RevisionAwareXPathImpl("../prefix", false);
         assertEquals("Should be null, Module prefix not found", null,
                 SchemaContextUtil.findDataSchemaNodeForRelativeXPath(
                         mockSchemaContext, mockModule, schemaNode, xPathRelative));
@@ -48,5 +48,12 @@ public class SchemaContextUtilTest {
                 SchemaContextUtil.findNodeInSchemaContext(mockSchemaContext, Collections.singleton(qName)));
 
         assertEquals("Should be null.", null, SchemaContextUtil.findParentModule(mockSchemaContext, schemaNode));
+
+        assertNotEquals("Hash codes values of objects type of RevisionAwareXPath shouldn't be equals.",
+                xPath.hashCode(), xPathRelative.hashCode());
+
+        assertNotEquals("Objects of type should be different.", xPathRelative.equals(xPath));
+        assertNotEquals("Objects of type should be different.", "test");
+        assertNotEquals("Objects of type should be different.", null);
     }
 }
