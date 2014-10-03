@@ -14,7 +14,7 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>third-party-parent</artifactId>
-        <version>0.6.2-SNAPSHOT</version>
+        <version>0.6.2-Helium</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
