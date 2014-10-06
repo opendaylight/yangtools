@@ -1270,20 +1270,6 @@ public final class YangParserImpl implements YangContextParser {
                             String.format("Choice has two nodes case with same qnames - %s", nameOfSchemaNode));
                 }
             }
-
-            for (UnknownSchemaNode unknownNode : choiceCaseNode.getUnknownSchemaNodes()) {
-                if (!duplicityTestSet.add(unknownNode.getQName())) {
-                    final Optional<SchemaNodeBuilder> schemaNodeBuilder = BuilderUtils.findSchemaNodeInModule(unknownNode.getPath(), moduleBuilder);
-                    final String nameOfUnknownNode = unknownNode.getQName().getLocalName();
-                    int lineOfUnknownNode = 0;
-
-                    if (schemaNodeBuilder.isPresent()) {
-                        lineOfUnknownNode = schemaNodeBuilder.get().getLine();
-                    }
-                    throw new YangParseException(module.getName(), lineOfUnknownNode,
-                            String.format("Choice has two nodes case with same qnames - %s", nameOfUnknownNode));
-                }
-            }
         }
     }
 
