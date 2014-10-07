@@ -1,0 +1,39 @@
+module augment-module {
+    yang-version 1;
+    namespace "uri:augment-module";
+    prefix aug;
+
+    import extension-module { prefix ext; }
+
+    revision 2014-10-07 {
+        description
+                "Yang model with augment into extension";
+    }
+
+    grouping my-grouping {
+        ext:my-extension my-extension-name {
+            description
+                        "Extension.";
+            input {
+                leaf my-leaf {
+                    type string;
+                    description
+                                        "my-leaf in extension body.";
+                }
+            }
+        }
+        container my-container-in-gruping {
+        }
+    }
+
+    container my-container {
+        uses my-grouping {
+            augment "my-extension-name/input" {
+                leaf-list my-leaf-list {
+                    type string;
+                }
+            }
+        }
+    }
+}
+

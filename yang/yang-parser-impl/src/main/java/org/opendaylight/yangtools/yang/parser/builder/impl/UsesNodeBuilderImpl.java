@@ -65,7 +65,8 @@ public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNo
         // AUGMENTATIONS
         final Set<AugmentationSchema> augments = new HashSet<>();
         for (AugmentationSchemaBuilder builder : augmentationBuilders) {
-            augments.add(builder.build());
+            if (!builder.isUnsupportedTarget())
+                augments.add(builder.build());
         }
         instance.augmentations = ImmutableSet.copyOf(augments);
 

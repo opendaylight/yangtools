@@ -1,0 +1,15 @@
+module extension-module {
+    yang-version 1;
+    namespace "uri:extension-module";
+    prefix ext;
+
+    revision 2014-10-07 {
+        description
+                "Yang model with extension definition";
+    }
+
+    extension my-extension {
+        argument name {
+        }
+    }
+}
