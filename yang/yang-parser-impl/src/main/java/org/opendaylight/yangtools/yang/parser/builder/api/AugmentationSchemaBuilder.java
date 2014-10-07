@@ -85,4 +85,16 @@ public interface AugmentationSchemaBuilder extends DataNodeContainerBuilder,Docu
      */
     int getOrder();
 
+    /**
+     *  Set true if target of augment is unsupported (e.g. node in body of extension).
+     *  In such case, augmentation is skipped and AugmentationSchema is not built.
+     */
+    public void setUnsupportedTarget(boolean unsupportedTarget);
+
+    /**
+     *  Return true if target of augment is unsupported (e.g. node in body of extension).
+     *  In such case, augmentation is skipped and AugmentationSchema is not built.
+     */
+    public boolean isUnsupportedTarget();
+
 }
