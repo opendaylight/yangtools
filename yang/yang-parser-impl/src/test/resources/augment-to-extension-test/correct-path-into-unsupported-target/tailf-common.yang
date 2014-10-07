@@ -1,0 +1,24 @@
+module tailf-common {
+  namespace "uri:tailf:common";
+  prefix tailf;
+
+  
+
+  revision 2014-10-07 {
+    description
+    "Common yang model";
+  }
+
+
+  /*
+   * Data modeling extensions
+   */
+
+  extension action {
+    argument name {
+      tailf:arg-type {
+        type tailf:identifier;
+      }
+    }
+  }
+}

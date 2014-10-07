@@ -1,0 +1,55 @@
+module tailf-ncs-devices {
+  
+  namespace "uri:tailf:dev";
+  prefix dev;
+
+  import tailf-common {
+    prefix tailf;
+  }
+
+
+  revision 2014-10-07 {
+    description
+         "Yang model with augment into extension";
+  }
+
+
+
+  grouping connect-grouping {
+    tailf:action connect {
+      description
+        "Set up sessions to all unlocked devices.";
+      tailf:info "Set up sessions to all unlocked devices";
+      tailf:actionpoint ncsinternal {
+        tailf:internal;
+      }
+      input {
+        leaf supress-positive-result {
+          type empty;
+          description
+            "Use this additional parameter to only return
+             devices that failed to sync.";
+        }
+
+      }
+
+    }
+    container grupContainer{
+	   
+    }
+  }
+
+ 
+  container devices {
+    
+    uses connect-grouping {
+      augment "connect/input/a" {
+        leaf-list device {
+           type string;
+        }
+      }  
+    }
+  }
+  
+}
+
