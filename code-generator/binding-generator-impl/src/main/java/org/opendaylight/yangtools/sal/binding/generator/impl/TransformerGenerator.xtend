@@ -1178,7 +1178,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                 ]
                 method(Object, "fromDomValue", Object) [
                     modifiers = PUBLIC + FINAL + STATIC
-                    val sortedBits = typeDef.bits.sort[o1, o2|o1.propertyName.compareTo(o2.propertyName)]
+                    val sortedBits = IterableExtensions.sort(typeDef.bits, [o1, o2|o1.propertyName.compareTo(o2.propertyName)])
                     val body = '''
                         {
                             //System.out.println("«inputType.simpleName»#fromDomValue: "+$1);
