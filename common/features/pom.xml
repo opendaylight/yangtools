@@ -184,10 +184,6 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>util</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>object-cache-api</artifactId>
         </dependency>
         <dependency>
@@ -221,18 +217,6 @@
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>binding-type-provider</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-model-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-model-util</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-parser-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
