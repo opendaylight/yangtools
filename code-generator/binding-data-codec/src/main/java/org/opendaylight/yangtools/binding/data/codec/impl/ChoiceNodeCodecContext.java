@@ -43,7 +43,7 @@ final class ChoiceNodeCodecContext extends DataContainerCodecContext<ChoiceNode>
         Map<Class<?>, DataContainerCodecPrototype<?>> byCaseChildClassBuilder = new HashMap<>();
         Set<Class<?>> potentialSubstitutions = new HashSet<>();
         // Walks all cases for supplied choice in current runtime context
-        for (Class<?> caze : factory().getRuntimeContext().getCases(bindingClass())) {
+        for (Class caze : factory().getRuntimeContext().getCases(bindingClass())) {
             // We try to load case using exact match thus name
             // and original schema must equals
             DataContainerCodecPrototype<ChoiceCaseNode> cazeDef = loadCase(caze);
@@ -52,7 +52,7 @@ final class ChoiceNodeCodecContext extends DataContainerCodecContext<ChoiceNode>
             if (cazeDef != null) {
                 byClassBuilder.put(cazeDef.getBindingClass(), cazeDef);
                 // Updates collection of case children
-                for (Class<? extends DataObject> cazeChild : BindingReflections.getChildrenClasses((Class) caze)) {
+                for (Class<? extends DataObject> cazeChild : BindingReflections.getChildrenClasses((Class<? extends DataObject>) caze)) {
                     byCaseChildClassBuilder.put(cazeChild, cazeDef);
                 }
                 // Updates collection of YANG instance identifier to case
