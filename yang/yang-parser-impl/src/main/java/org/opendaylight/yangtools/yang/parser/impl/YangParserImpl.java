@@ -973,6 +973,7 @@ public final class YangParserImpl implements YangContextParser {
                         "Error in module {} at line {}: Unsupported augment target: {}. Augmentation process skipped.",
                         module.getName(), augment.getLine(), potentialTargetNode);
                 augment.setResolved(true);
+                augment.setUnsupportedTarget(true);
                 return true;
             }
         } else {
