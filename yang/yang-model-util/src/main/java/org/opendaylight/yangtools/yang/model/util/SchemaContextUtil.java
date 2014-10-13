@@ -49,6 +49,9 @@ public final class SchemaContextUtil {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaContextUtil.class);
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
     private static final Splitter SLASH_SPLITTER = Splitter.on('/');
+    private static final String NULL_SCHEMA_CONTEXT_INFO = "Schema Context reference cannot be NULL";
+    private static final String NULL_MODULE_REFERENCE_INFO = "Module reference cannot be NULL";
+    private static final String NULL_PARENT_MODULE_REFERENCE_INFO = "Parent Module reference cannot be NULL";
 
     private SchemaContextUtil() {
     }
@@ -72,7 +75,7 @@ public final class SchemaContextUtil {
      *         if the Node is not present.
      */
     public static SchemaNode findDataSchemaNode(final SchemaContext context, final SchemaPath schemaPath) {
-        Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
+        Preconditions.checkArgument(context != null, NULL_SCHEMA_CONTEXT_INFO);
         Preconditions.checkArgument(schemaPath != null, "Schema Path reference cannot be NULL");
 
         final Iterable<QName> prefixedPath = schemaPath.getPathFromRoot();
@@ -116,8 +119,8 @@ public final class SchemaContextUtil {
      *         DataSchemaNode is not present in Schema Context.
      */
     public static SchemaNode findDataSchemaNode(final SchemaContext context, final Module module, final RevisionAwareXPath nonCondXPath) {
-        Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
-        Preconditions.checkArgument(module != null, "Module reference cannot be NULL");
+        Preconditions.checkArgument(context != null, NULL_SCHEMA_CONTEXT_INFO);
+        Preconditions.checkArgument(module != null, NULL_MODULE_REFERENCE_INFO);
         Preconditions.checkArgument(nonCondXPath != null, "Non Conditional Revision Aware XPath cannot be NULL");
 
         String strXPath = nonCondXPath.toString();
@@ -174,8 +177,8 @@ public final class SchemaContextUtil {
      */
     public static SchemaNode findDataSchemaNodeForRelativeXPath(final SchemaContext context, final Module module,
             final SchemaNode actualSchemaNode, final RevisionAwareXPath relativeXPath) {
-        Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
-        Preconditions.checkArgument(module != null, "Module reference cannot be NULL");
+        Preconditions.checkArgument(context != null, NULL_SCHEMA_CONTEXT_INFO);
+        Preconditions.checkArgument(module != null, NULL_MODULE_REFERENCE_INFO);
         Preconditions.checkArgument(actualSchemaNode != null, "Actual Schema Node reference cannot be NULL");
         Preconditions.checkArgument(relativeXPath != null, "Non Conditional Revision Aware XPath cannot be NULL");
         Preconditions.checkState(!relativeXPath.isAbsolute(),
@@ -211,7 +214,7 @@ public final class SchemaContextUtil {
      *         <code>null</code>
      */
     public static Module findParentModule(final SchemaContext context, final SchemaNode schemaNode) {
-        Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL!");
+        Preconditions.checkArgument(context != null, NULL_SCHEMA_CONTEXT_INFO);
         Preconditions.checkArgument(schemaNode != null, "Schema Node cannot be NULL!");
         Preconditions.checkState(schemaNode.getPath() != null, "Schema Path for Schema Node is not "
                 + "set properly (Schema Path is NULL)");
@@ -466,8 +469,8 @@ public final class SchemaContextUtil {
      * @return return a list of QName
      */
     private static List<QName> xpathToQNamePath(final SchemaContext context, final Module parentModule, final String xpath) {
-        Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
-        Preconditions.checkArgument(parentModule != null, "Parent Module reference cannot be NULL");
+        Preconditions.checkArgument(context != null, NULL_SCHEMA_CONTEXT_INFO);
+        Preconditions.checkArgument(parentModule != null, NULL_PARENT_MODULE_REFERENCE_INFO);
         Preconditions.checkArgument(xpath != null, "XPath string reference cannot be NULL");
 
         List<QName> path = new LinkedList<QName>();
@@ -501,8 +504,8 @@ public final class SchemaContextUtil {
      * @return QName from prefixed Path Part String.
      */
     private static QName stringPathPartToQName(final SchemaContext context, final Module parentModule, final String prefixedPathPart) {
-        Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
-        Preconditions.checkArgument(parentModule != null, "Parent Module reference cannot be NULL");
+        Preconditions.checkArgument(context != null, NULL_SCHEMA_CONTEXT_INFO);
+        Preconditions.checkArgument(parentModule != null, NULL_PARENT_MODULE_REFERENCE_INFO);
         Preconditions.checkArgument(prefixedPathPart != null, "Prefixed Path Part cannot be NULL!");
 
         if (prefixedPathPart.indexOf(':') != -1) {
@@ -544,8 +547,8 @@ public final class SchemaContextUtil {
      *         present, otherwise returns <code>null</code>
      */
     private static Module resolveModuleForPrefix(final SchemaContext context, final Module module, final String prefix) {
-        Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
-        Preconditions.checkArgument(module != null, "Module reference cannot be NULL");
+        Preconditions.checkArgument(context != null, NULL_SCHEMA_CONTEXT_INFO);
+        Preconditions.checkArgument(module != null, NULL_MODULE_REFERENCE_INFO);
         Preconditions.checkArgument(prefix != null, "Prefix string cannot be NULL");
 
         if (prefix.equals(module.getPrefix())) {
@@ -570,19 +573,19 @@ public final class SchemaContextUtil {
      *            Yang Module
      * @param relativeXPath
      *            Non conditional Revision Aware Relative XPath
-     * @param actualSchemaNode
-     *            actual schema node
+     * @param leafrefParentNode
+     *            parent schema node
      * @return list of QName
      */
     private static Iterable<QName> resolveRelativeXPath(final SchemaContext context, final Module module,
-            final RevisionAwareXPath relativeXPath, final SchemaNode actualSchemaNode) {
-        Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
-        Preconditions.checkArgument(module != null, "Module reference cannot be NULL");
+            final RevisionAwareXPath relativeXPath, final SchemaNode leafrefParentNode) {
+        Preconditions.checkArgument(context != null, NULL_SCHEMA_CONTEXT_INFO);
+        Preconditions.checkArgument(module != null, NULL_MODULE_REFERENCE_INFO);
         Preconditions.checkArgument(relativeXPath != null, "Non Conditional Revision Aware XPath cannot be NULL");
         Preconditions.checkState(!relativeXPath.isAbsolute(),
                 "Revision Aware XPath MUST be relative i.e. MUST contains ../, "
                         + "for non relative Revision Aware XPath use findDataSchemaNode method");
-        Preconditions.checkState(actualSchemaNode.getPath() != null,
+        Preconditions.checkState(leafrefParentNode.getPath() != null,
                 "Schema Path reference for Leafref cannot be NULL");
 
         final Iterable<String> xpaths = SLASH_SPLITTER.split(relativeXPath.toString());
@@ -595,7 +598,7 @@ public final class SchemaContextUtil {
             ++colCount;
         }
 
-        final Iterable<QName> schemaNodePath = actualSchemaNode.getPath().getPathFromRoot();
+        final Iterable<QName> schemaNodePath = leafrefParentNode.getPath().getPathFromRoot();
 
         if (Iterables.size(schemaNodePath) - colCount >= 0) {
             return Iterables.concat(Iterables.limit(schemaNodePath, Iterables.size(schemaNodePath) - colCount),
