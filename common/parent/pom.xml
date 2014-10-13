@@ -472,14 +472,13 @@
         </pluginManagement>
 
         <plugins>
-            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>1.0</version>
+                <!--
                 <executions>
                     <execution>
-                        <id>enforce</id>
+                        <id>enforce-dependencies</id>
                         <configuration>
                             <rules>
                                 <DependencyConvergence />
@@ -490,8 +489,9 @@
                         </goals>
                     </execution>
                 </executions>
+                -->
             </plugin>
-            -->
+
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>2.5</version>
