@@ -10,14 +10,20 @@ package org.opendaylight.yangtools.yang.common;
 
 import java.text.SimpleDateFormat;
 
-public class SimpleDateFormatUtil {
+public final class SimpleDateFormatUtil {
+
+    private SimpleDateFormatUtil() {
+        throw new UnsupportedOperationException("Utility class should not be instantiated");
+    }
 
     private static final ThreadLocal<SimpleDateFormat> REVISION_FORMAT = new ThreadLocal<SimpleDateFormat>() {
 
+        @Override
         protected SimpleDateFormat initialValue() {
             return new SimpleDateFormat("yyyy-MM-dd");
         };
 
+        @Override
         public void set(SimpleDateFormat value) {
             throw new UnsupportedOperationException();
         };

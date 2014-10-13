@@ -9,6 +9,12 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import com.google.common.base.Function;
+import com.google.common.base.Objects;
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -60,14 +66,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.google.common.base.Function;
-import com.google.common.base.Objects;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
+public final class XmlDocumentUtils {
 
-public class XmlDocumentUtils {
+    private XmlDocumentUtils() {
+        throw new UnsupportedOperationException("Utility class should not be instantiated");
+    }
+
     private static class ElementWithSchemaContext {
         Element element;
         SchemaContext schemaContext;
@@ -106,6 +110,7 @@ public class XmlDocumentUtils {
      * @deprecated Use {@link #toDocument(org.opendaylight.yangtools.yang.data.api.CompositeNode, com.google.common.base.Optional, org.opendaylight.yangtools.yang.model.api.DataNodeContainer, XmlCodecProvider)} instead.
      * The whole schema context allows for proper serialization of leafrefs.
      */
+    @Deprecated
     public static Document toDocument(final CompositeNode data, final DataNodeContainer schemaNode, final XmlCodecProvider codecProvider)
             throws UnsupportedDataTypeException {
         return toDocument(data, Optional.<SchemaContext>absent(), schemaNode, codecProvider);

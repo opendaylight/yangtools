@@ -11,7 +11,11 @@ import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
 
-public class CodecTypeUtils {
+public final class CodecTypeUtils {
+
+    private CodecTypeUtils() {
+        throw new UnsupportedOperationException("Utility class should not be instantiated");
+    }
 
     @SuppressWarnings({"unchecked","rawtypes"})
     public static IdentifiableItem<?, ?> newIdentifiableItem(Class<?> type, Object key) {
