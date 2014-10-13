@@ -21,7 +21,7 @@ final class JSONStreamWriterInvisibleContext extends JSONStreamWriterURIContext 
     }
 
     @Override
-    protected void emitEnd(final Writer writer) {
+    protected void emitEnd(final Writer writer, final String indent) {
         // No-op
     }
 }
