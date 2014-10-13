@@ -7,26 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import com.google.common.collect.Sets;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.URISyntaxException;
-import java.util.HashSet;
-import java.util.Iterator;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -36,6 +16,26 @@ import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.childPri
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadModules;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.resolveCont1;
 
+import com.google.common.collect.Sets;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.net.URISyntaxException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.regex.Pattern;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+
 /**
  * Each test tests whether json output obtained after transformation contains is corect. The transformation takes
  * normalized node data structure and transform it to json output. To make it easier validate json output it is loaded
@@ -44,6 +44,7 @@ import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.resolveC
  */
 public class NormalizedNodeToJsonStreamTest {
 
+    private static final boolean CHECK_INDENTATION = true;
     private static SchemaContext schemaContext;
 
     public interface JsonValidator {
@@ -79,11 +80,16 @@ public class NormalizedNodeToJsonStreamTest {
     public void leafNodeInContainer() throws IOException, URISyntaxException {
         Writer writer = new StringWriter();
         NormalizedNode<?, ?> leafNodeInContainer = TestingNormalizedNodeStructuresCreator.leafNodeInContainer();
-        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, leafNodeInContainer);
+        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, leafNodeInContainer, CHECK_INDENTATION);
         new JsonValidator() {
 
             @Override
             public void validate(String jsonOutput) {
+                if (CHECK_INDENTATION) {
+                    checkOutput(jsonOutput);
+                    assertTrue(isRegexInJsonOutput(".*\n    \".*lf11\".*",jsonOutput));
+                    assertTrue(isRegexInJsonOutput(".*\n  }\n}$",jsonOutput));
+                }
                 JsonObject cont1 = resolveCont1(jsonOutput);
                 assertNotNull(cont1);
 
@@ -100,11 +106,16 @@ public class NormalizedNodeToJsonStreamTest {
     public void leafListNodeInContainerMultiline() throws IOException, URISyntaxException {
         Writer writer = new StringWriter();
         NormalizedNode<?, ?> leafListNodeInContainer = TestingNormalizedNodeStructuresCreator.leafListNodeInContainerMultiline();
-        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, leafListNodeInContainer);
+        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, leafListNodeInContainer, CHECK_INDENTATION);
         new JsonValidator() {
 
             @Override
             public void validate(String jsonOutput) {
+                if (CHECK_INDENTATION) {
+                    checkOutput(jsonOutput);
+                    assertTrue(isRegexInJsonOutput(".*\n      \".*lflst11.*",jsonOutput));
+                    assertTrue(isRegexInJsonOutput(".*\n    ]\n  }\n}$",jsonOutput));
+                }
                 JsonObject cont1 = resolveCont1(jsonOutput);
                 assertNotNull(cont1);
                 JsonArray lflst11 = childArray(cont1, "complexjson:lflst11", "lflst11");
@@ -127,11 +138,16 @@ public class NormalizedNodeToJsonStreamTest {
         Writer writer = new StringWriter();
         NormalizedNode<?, ?> leafNodeViaAugmentationInContainer = TestingNormalizedNodeStructuresCreator
                 .leafNodeViaAugmentationInContainer();
-        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, leafNodeViaAugmentationInContainer);
+        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, leafNodeViaAugmentationInContainer, CHECK_INDENTATION);
         new JsonValidator() {
 
             @Override
             public void validate(String jsonOutput) {
+                if (CHECK_INDENTATION) {
+                    checkOutput(jsonOutput);
+                    assertTrue(isRegexInJsonOutput(".*\n    \".*lf12_1\".*",jsonOutput));
+                    assertTrue(isRegexInJsonOutput(".*\n  }\n}$",jsonOutput));
+                }
                 JsonObject cont1 = resolveCont1(jsonOutput);
                 assertNotNull(cont1);
 
@@ -148,11 +164,18 @@ public class NormalizedNodeToJsonStreamTest {
     public void leafListNodeInContainer() throws IOException, URISyntaxException {
         Writer writer = new StringWriter();
         NormalizedNode<?, ?> leafListNodeInContainer = TestingNormalizedNodeStructuresCreator.leafListNodeInContainer();
-        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, leafListNodeInContainer);
+        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, leafListNodeInContainer, CHECK_INDENTATION);
         new JsonValidator() {
 
             @Override
             public void validate(String jsonOutput) {
+                if (CHECK_INDENTATION) {
+                    checkOutput(jsonOutput);
+                    assertTrue(isRegexInJsonOutput(".*\n    \".*lflst11\".*",jsonOutput));
+                    assertTrue(isRegexInJsonOutput(".*\n      \".*lflst11 .*,\n.*",jsonOutput));
+                    assertTrue(isRegexInJsonOutput(".*\n      \".*lflst11 .*",jsonOutput));
+                    assertTrue(isRegexInJsonOutput(".*\n    ]\n  }\n}$",jsonOutput));
+                }
                 JsonObject cont1 = resolveCont1(jsonOutput);
                 assertNotNull(cont1);
                 JsonArray lflst11 = childArray(cont1, "complexjson:lflst11", "lflst11");
@@ -174,11 +197,18 @@ public class NormalizedNodeToJsonStreamTest {
         Writer writer = new StringWriter();
         NormalizedNode<?, ?> keyedListNodeInContainer = TestingNormalizedNodeStructuresCreator
                 .keyedListNodeInContainer();
-        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, keyedListNodeInContainer);
+        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, keyedListNodeInContainer, CHECK_INDENTATION);
         new JsonValidator() {
 
             @Override
             public void validate(String jsonOutput) {
+                if (CHECK_INDENTATION) {
+                    checkOutput(jsonOutput);
+                    assertTrue(isRegexInJsonOutput(".*\n    \".*lst11\":\\[.*",jsonOutput));
+                    assertTrue(isRegexInJsonOutput(".*\n      \\{\n.*",jsonOutput));
+                    assertTrue(isRegexInJsonOutput(".*\n        \".*\",\n        \".*\",\n        \".*\",\n        \".*\"\n.*", jsonOutput));
+                    assertTrue(isRegexInJsonOutput(".*\n      }\n    ]\n  }\n}$",jsonOutput));
+                }
                 JsonObject cont1 = resolveCont1(jsonOutput);
                 assertNotNull(cont1);
                 JsonArray lst11 = childArray(cont1, "complexjson:lst11", "lst11");
@@ -212,11 +242,17 @@ public class NormalizedNodeToJsonStreamTest {
     public void choiceNodeInContainer() throws IOException, URISyntaxException {
         Writer writer = new StringWriter();
         NormalizedNode<?, ?> choiceNodeInContainer = TestingNormalizedNodeStructuresCreator.choiceNodeInContainer();
-        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, choiceNodeInContainer);
+        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, choiceNodeInContainer, CHECK_INDENTATION);
         new JsonValidator() {
 
             @Override
             public void validate(String jsonOutput) {
+                if (CHECK_INDENTATION) {
+                    checkOutput(jsonOutput);
+                    assertTrue(isRegexInJsonOutput(".*\n    \".*lf13\":.*",jsonOutput));
+                    assertTrue(isRegexInJsonOutput(".*\n  }\n}$",jsonOutput));
+                }
+
                 JsonObject cont1 = resolveCont1(jsonOutput);
                 assertNotNull(cont1);
                 JsonPrimitive lf13 = childPrimitive(cont1, "complexjson:lf13", "lf13");
@@ -237,17 +273,21 @@ public class NormalizedNodeToJsonStreamTest {
      * [ChoiceNodeImpl[qname=(ns:complex:json?revision=2014-08-11)choc11]]
      *
      */
-//    @Ignore
     @Test
     public void caseNodeAugmentationInChoiceInContainer() throws IOException, URISyntaxException {
         Writer writer = new StringWriter();
         NormalizedNode<?, ?> caseNodeAugmentationInChoiceInContainer = TestingNormalizedNodeStructuresCreator
                 .caseNodeAugmentationInChoiceInContainer();
-        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, caseNodeAugmentationInChoiceInContainer);
+        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, caseNodeAugmentationInChoiceInContainer, CHECK_INDENTATION);
         new JsonValidator() {
 
             @Override
             public void validate(String jsonOutput) {
+                if (CHECK_INDENTATION) {
+                    checkOutput(jsonOutput);
+                    assertTrue(isRegexInJsonOutput(".*\n    \"lf13\":.*",jsonOutput));
+                    assertTrue(isRegexInJsonOutput(".*\n  }\n}$",jsonOutput));
+                }
                 JsonObject cont1 = resolveCont1(jsonOutput);
                 assertNotNull(cont1);
 
@@ -266,6 +306,7 @@ public class NormalizedNodeToJsonStreamTest {
                 assertEquals("complexjson:lf11", lf15_12.getAsString());
 
             }
+
         }.validate(jsonOutput);
     }
 
@@ -286,11 +327,16 @@ public class NormalizedNodeToJsonStreamTest {
         NormalizedNode<?, ?> caseNodeExternalAugmentationInChoiceInContainer = TestingNormalizedNodeStructuresCreator
                 .caseNodeExternalAugmentationInChoiceInContainer();
         String jsonOutput = normalizedNodeToJsonStreamTransformation(writer,
-                caseNodeExternalAugmentationInChoiceInContainer);
+                caseNodeExternalAugmentationInChoiceInContainer, CHECK_INDENTATION);
         new JsonValidator() {
 
             @Override
             public void validate(String jsonOutput) {
+                if (CHECK_INDENTATION) {
+                    checkOutput(jsonOutput);
+                    assertTrue(isRegexInJsonOutput(".*\n    \".*\",\n    \".*\",\n    \".*\",\n    \".*\",\n    \".*\"\n.*",jsonOutput));
+                    assertTrue(isRegexInJsonOutput(".*\n  }\n}$",jsonOutput));
+                }
                 JsonObject cont1 = resolveCont1(jsonOutput);
                 assertNotNull(cont1);
 
@@ -331,11 +377,16 @@ public class NormalizedNodeToJsonStreamTest {
         NormalizedNode<?, ?> choiceNodeAugmentationInContainer = TestingNormalizedNodeStructuresCreator
                 .choiceNodeAugmentationInContainer();
         String jsonOutput = normalizedNodeToJsonStreamTransformation(writer,
-                choiceNodeAugmentationInContainer);
+                choiceNodeAugmentationInContainer, CHECK_INDENTATION);
         new JsonValidator() {
 
             @Override
             public void validate(String jsonOutput) {
+                if (CHECK_INDENTATION) {
+                    checkOutput(jsonOutput);
+                    assertTrue(isRegexInJsonOutput(".*\n    \"lf17.*\"\n.*",jsonOutput));
+                    assertTrue(isRegexInJsonOutput(".*\n  }\n}$",jsonOutput));
+                }
                 JsonObject cont1 = resolveCont1(jsonOutput);
                 assertNotNull(cont1);
 
@@ -352,11 +403,18 @@ public class NormalizedNodeToJsonStreamTest {
         NormalizedNode<?, ?> unkeyedNodeInContainer = TestingNormalizedNodeStructuresCreator
                 .unkeyedNodeInContainer();
         String jsonOutput = normalizedNodeToJsonStreamTransformation(writer,
-                unkeyedNodeInContainer);
+                unkeyedNodeInContainer, CHECK_INDENTATION);
         new JsonValidator() {
 
             @Override
             public void validate(String jsonOutput) {
+                if (CHECK_INDENTATION) {
+                    checkOutput(jsonOutput);
+                    assertTrue(isRegexInJsonOutput(".*\n    \"lst12\":\\[\n.*",jsonOutput));
+                    assertTrue(isRegexInJsonOutput(".*\n        \"lf121.*",jsonOutput));
+                    assertTrue(isRegexInJsonOutput(".*\n      \\{.*",jsonOutput));
+                    assertTrue(isRegexInJsonOutput(".*\n      }\n    ]\n..}\n}$",jsonOutput));
+                }
                 JsonObject cont1 = resolveCont1(jsonOutput);
                 assertNotNull(cont1);
 
@@ -381,14 +439,24 @@ public class NormalizedNodeToJsonStreamTest {
     }
 
     private String normalizedNodeToJsonStreamTransformation(final Writer writer,
-            final NormalizedNode<?, ?> inputStructure) throws IOException {
-        writer.write("{\n");
-        final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.create(schemaContext, writer, 2);
+            final NormalizedNode<?, ?> inputStructure, boolean indent) throws IOException {
+        writer.write("{");
+        final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.create(schemaContext, writer, indent ? 2 : -1);
         final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
         nodeWriter.write(inputStructure);
         writer.write("\n}");
         nodeWriter.close();
         return writer.toString();
+    }
+
+    private boolean isRegexInJsonOutput(final String regex, final String txt) {
+        Pattern ptrn = Pattern.compile(regex,Pattern.DOTALL);
+        return ptrn.matcher(txt).matches();
+    }
+
+    private void checkOutput(final String jsonOutput) {
+        assertFalse(isRegexInJsonOutput(".*\n[\\s]*\n.*",jsonOutput));
+        assertTrue(isRegexInJsonOutput(".*\n  \".*cont1\".*",jsonOutput));
     }
 
 }

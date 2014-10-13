@@ -20,7 +20,7 @@ final class JSONStreamWriterRootContext extends JSONStreamWriterURIContext {
     }
 
     @Override
-    protected void emitEnd(final Writer writer) {
+    protected void emitEnd(final Writer writer, final String indent) {
         throw new IllegalArgumentException("Top-level node reached");
     }
 }

@@ -25,6 +25,11 @@ abstract class JSONStreamWriterURIContext extends JSONStreamWriterContext {
         this.namespace = namespace;
     }
 
+    protected JSONStreamWriterURIContext(final JSONStreamWriterContext parent, final URI namespace, final int indentLevel) {
+        super(parent, false, indentLevel);
+        this.namespace = namespace;
+    }
+
     @Override
     protected final URI getNamespace() {
         return namespace;
