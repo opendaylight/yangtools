@@ -54,7 +54,7 @@ public final class SchemaSourceProviders {
      * Noop schema provider returns {@link Optional#absent()} for each call to
      * query schema source.
      *
-     * @return
+     * @return A reusable no-operation provider.
      */
     @SuppressWarnings("unchecked")
     public static <T> SchemaSourceProvider<T> noopProvider() {
@@ -67,7 +67,7 @@ public final class SchemaSourceProviders {
      * supplied String based schema source provider.
      *
      * @param delegate
-     * @return
+     * @return InputStream-based source provider.
      */
     public static SchemaSourceProvider<InputStream> inputStreamProviderfromStringProvider(
             final AdvancedSchemaSourceProvider<String> delegate) {
@@ -83,7 +83,7 @@ public final class SchemaSourceProviders {
      *
      * This implementation is really simple <code>return input;</code>.
      *
-     * @return
+     * @return Identity transformation.
      */
     @SuppressWarnings("unchecked")
     public static <I> SchemaSourceTransformation<I, I> identityTransformation() {
