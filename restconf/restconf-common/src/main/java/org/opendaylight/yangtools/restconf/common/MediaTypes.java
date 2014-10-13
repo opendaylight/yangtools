@@ -7,7 +7,12 @@
  */
 package org.opendaylight.yangtools.restconf.common;
 
-public class MediaTypes {
+public final class MediaTypes {
+
+    private MediaTypes() {
+        throw new UnsupportedOperationException("Utility class should not be instantiated");
+    }
+
     public static final String API = "application/vnd.yang.api";
     public static final String DATASTORE = "application/vnd.yang.datastore";
     public static final String DATA = "application/vnd.yang.data";

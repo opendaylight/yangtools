@@ -7,13 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.composite.node.schema.json;
 
+import com.google.common.collect.LinkedListMultimap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.Node;
 
-import com.google.common.collect.LinkedListMultimap;
+public final class CnSnToNormalizedNodesUtils {
 
-public class CnSnToNormalizedNodesUtils {
+
+    private CnSnToNormalizedNodesUtils() {
+        throw new UnsupportedOperationException("Utility class should not be instantiated");
+    }
 
     public static LinkedListMultimap<QName, Node<?>> mapChildElementsForSingletonNode(Node<?> node) {
         return mapChildElements( ((CompositeNode)node).getValue());

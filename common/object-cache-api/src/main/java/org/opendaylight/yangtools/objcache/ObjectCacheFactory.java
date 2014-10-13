@@ -8,10 +8,8 @@
 package org.opendaylight.yangtools.objcache;
 
 import com.google.common.base.Preconditions;
-
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.GuardedBy;
-
 import org.opendaylight.yangtools.objcache.impl.StaticObjectCacheBinder;
 import org.opendaylight.yangtools.objcache.spi.IObjectCacheFactory;
 import org.opendaylight.yangtools.objcache.spi.NoopObjectCacheBinder;
@@ -21,6 +19,10 @@ import org.opendaylight.yangtools.objcache.spi.NoopObjectCacheBinder;
  */
 public final class ObjectCacheFactory {
     private static volatile IObjectCacheFactory factory;
+
+    private ObjectCacheFactory() {
+        throw new UnsupportedOperationException("Utility class should not be instantiated");
+    }
 
     @GuardedBy("this")
     private static synchronized IObjectCacheFactory initialize() {
