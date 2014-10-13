@@ -160,14 +160,15 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
     private void emitList(final StringBuilder b, final String getterName, final Type valueType,
             final ListSchemaNode child) {
         final CharSequence startEvent;
+        final String COUNT_VAR_NAME = "_count";
 
-        b.append(statement(assign("int", "_count", invoke(getterName, "size"))));
+        b.append(statement(assign("int", COUNT_VAR_NAME, invoke(getterName, "size"))));
         if (child.getKeyDefinition().isEmpty()) {
-            startEvent = startUnkeyedList(classReference(valueType), "_count");
+            startEvent = startUnkeyedList(classReference(valueType), COUNT_VAR_NAME);
         } else if (child.isUserOrdered()) {
-            startEvent = startOrderedMapNode(classReference(valueType), "_count");
+            startEvent = startOrderedMapNode(classReference(valueType), COUNT_VAR_NAME);
         } else {
-            startEvent = startMapNode(classReference(valueType), "_count");
+            startEvent = startMapNode(classReference(valueType), COUNT_VAR_NAME);
         }
         b.append(statement(startEvent));
         b.append(forEach(getterName, valueType, statement(staticInvokeEmitter(valueType, CURRENT))));
