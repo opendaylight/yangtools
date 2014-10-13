@@ -14,24 +14,27 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
  * perform anything meaningful.
  */
 final class AlwaysFailOperation implements ModificationApplyOperation {
+
+    private static final String UNAVAILABLE_SCHEMA_CONTEXT_INFO = "Schema Context is not available.";
+
     @Override
     public Optional<TreeNode> apply(final ModifiedNode modification,
             final Optional<TreeNode> storeMeta, final Version version) {
-        throw new IllegalStateException("Schema Context is not available.");
+        throw new IllegalStateException(UNAVAILABLE_SCHEMA_CONTEXT_INFO);
     }
 
     @Override
     public void checkApplicable(final YangInstanceIdentifier path,final NodeModification modification, final Optional<TreeNode> storeMetadata) {
-        throw new IllegalStateException("Schema Context is not available.");
+        throw new IllegalStateException(UNAVAILABLE_SCHEMA_CONTEXT_INFO);
     }
 
     @Override
     public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
-        throw new IllegalStateException("Schema Context is not available.");
+        throw new IllegalStateException(UNAVAILABLE_SCHEMA_CONTEXT_INFO);
     }
 
     @Override
     public void verifyStructure(final ModifiedNode modification) {
-        throw new IllegalStateException("Schema Context is not available.");
+        throw new IllegalStateException(UNAVAILABLE_SCHEMA_CONTEXT_INFO);
     }
 }
