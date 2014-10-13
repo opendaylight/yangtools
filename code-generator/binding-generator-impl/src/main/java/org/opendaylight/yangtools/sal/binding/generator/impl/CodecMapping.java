@@ -28,6 +28,10 @@ public class CodecMapping {
     public static final String AUGMENTATION_CODEC = "AUGMENTATION_CODEC";
     public static final String DISPATCH_CODEC = "DISPATCH_CODEC";
 
+    private CodecMapping() {
+        throw new UnsupportedOperationException("Utility class should not be instantiated");
+    }
+
     public static void setIdentifierCodec(Class<?> obj,InstanceIdentifierCodec codec) {
         Field instanceIdField;
         try {
