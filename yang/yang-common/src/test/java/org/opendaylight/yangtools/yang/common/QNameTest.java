@@ -8,11 +8,11 @@
 package org.opendaylight.yangtools.yang.common;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
-
 import org.junit.Test;
 
 public class QNameTest {
@@ -108,6 +108,26 @@ public class QNameTest {
         b = QName.create(URI.create(A), null, A);
         assertTrue(a.compareTo(b) == 0);
         assertTrue(b.compareTo(a) == 0);
+    }
+
+    @Test
+    public void testEqualsMethod() {
+        QName testQname = QName.create("Cont1");
+        QName testQname2 = testQname;
+        QName testQname3 = QName.create("Cont2");
+        QName testQname4 = QName.create(testQname, "Cont1");
+
+        assertFalse(testQname.equals(""));
+        assertFalse(testQname.equals(null));
+        assertTrue(testQname.equals(testQname2));
+        assertFalse(testQname.equals(testQname3));
+        assertTrue(testQname.equals(testQname4));
+    }
+
+    @Test
+    public void testCachedReference() {
+        final QName cachedReference = QName.cachedReference(QName.create("Cont1"));
+        assertEquals("Cached reference should be 'Cont1'.", "Cont1", cachedReference.getLocalName());
     }
 
     private void assertLocalNameFails(final String localName) {

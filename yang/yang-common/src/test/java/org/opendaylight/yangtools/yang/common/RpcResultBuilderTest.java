@@ -8,11 +8,13 @@
 
 package org.opendaylight.yangtools.yang.common;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.RpcError.ErrorSeverity;
 import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
@@ -105,6 +107,63 @@ public class RpcResultBuilderTest {
                         "message", "my-app-tag", "my-info", cause );
         verifyRpcError( result2, 1, ErrorSeverity.ERROR, ErrorType.PROTOCOL, "operation-failed",
                         "error message", null, null, null );
+    }
+
+    @Test
+    public void testToString() {
+        final RpcError testError = RpcResultBuilder.newError(ErrorType.APPLICATION, "test error", "test error");
+        assertNotNull("String representation of rpcError shouldn't be null.", testError.toString());
+    }
+
+    @Test
+    public void testStatusMethod() {
+        final RpcResultBuilder<String> testStatusBuilder = RpcResultBuilder.<String>status(false);
+        final RpcResult<String> testStatus = testStatusBuilder.build();
+        assertFalse("Status should be false.", testStatus.isSuccessful());
+    }
+
+    @Test
+    public void testRpcResultToString() {
+        final RpcResultBuilder<String> testStatusBuilder = RpcResultBuilder.<String>status(false);
+        final RpcResult<String> testStatus = testStatusBuilder.build();
+        assertNotNull("String representation of rpcResult shouldn't be null.", testStatus.toString());
+    }
+
+    @Test
+    public void testNewErrorMethod() {
+        final RpcError testRpcError = RpcResultBuilder.newError(ErrorType.APPLICATION, "test error", "test error");
+        final RpcError testRpcError2 = RpcResultBuilder.newError(ErrorType.APPLICATION, null, "test error");
+        final RpcError testRpcError3 = RpcResultBuilder.newError(ErrorType.PROTOCOL, "HTTP", "Bad request", "test app tag", "test info", new Throwable("Test new error method"));
+        final RpcError testRpcError4 = RpcResultBuilder.newError(ErrorType.PROTOCOL, null, "Bad request", "test app tag", "test info", new Throwable("Test new error method"));
+
+        assertNotNull("testRpcError shouldn't be null.", testRpcError);
+        assertEquals("Tag of testRpcError2 should be 'operation-failed'.", "operation-failed", testRpcError2.getTag());
+        assertNotNull("testRpcError3 shouldn't be null.", testRpcError3);
+        assertEquals("Tag of testRpcError4 should be 'operation-failed'.", "operation-failed", testRpcError4.getTag());
+    }
+
+    @Test
+    public void testNewWarningMethod() {
+        final RpcError testRpcError = RpcResultBuilder.newWarning(ErrorType.APPLICATION, "test rpc", "rpc message failed");
+        final RpcError testRpcError2 = RpcResultBuilder.newWarning(ErrorType.PROTOCOL, "test rpc2", "rpc message failed", "test app tag", "test app info", new Throwable("test rpc warning"));
+
+        assertNotNull("testRpcError shouldn't be null.", testRpcError);
+        assertNotNull("testRpcError2 shouldn't be null.", testRpcError2);
+    }
+
+    @Test
+    public void testWithRpcErrorMethod() {
+        final RpcError testRpcError = RpcResultBuilder.newWarning(ErrorType.APPLICATION, "test rpc error", "rpc message failed");
+        final RpcResultBuilder<String> testRpcResultBuilder = RpcResultBuilder.<String>status(false)
+                .withRpcError(testRpcError)
+                .withRpcErrors(null)
+                .withError(ErrorType.APPLICATION, "app error")
+                .withError(ErrorType.APPLICATION, "operation-failed", "test with rpc")
+                .withError(ErrorType.APPLICATION, "test with rpc", new Throwable("Test error"))
+                .withError(ErrorType.APPLICATION, "app error", "test with rpc", "operation-failed", "test info", new Throwable("Test error"));
+
+       final RpcResult<String> rpcResult = testRpcResultBuilder.build();
+       assertEquals("Count of rpc errors should be '5'.", 5, rpcResult.getErrors().size());
     }
 
     void verifyRpcError( RpcResult<?> result, int errorIndex, ErrorSeverity expSeverity,
