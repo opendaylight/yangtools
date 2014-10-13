@@ -40,9 +40,14 @@ abstract class JSONStreamWriterContext {
         this.parent = parent;
 
         if (parent != null) {
-            depth = parent.depth + 1;
+            //indentation level
+            if (this instanceof JSONStreamWriterInvisibleContext) {
+                depth = parent.depth;
+            } else {
+                depth = parent.depth + 1;
+            }
         } else {
-            depth = 0;
+            depth = 1;
         }
     }
 
@@ -108,7 +113,14 @@ abstract class JSONStreamWriterContext {
      * @param writer Output writer
      * @throws IOException
      */
-    protected abstract void emitEnd(final Writer writer) throws IOException;
+    protected void emitEnd(final Writer writer, final String indent) throws IOException {
+        if (indent != null) {
+            writer.append('\n');
+            for (int i=0; i<depth-1; i++) {
+                writer.append(indent);
+            }
+        }
+    }
 
     private final void emitMyself(final SchemaContext schema, final Writer writer, final String indent) throws IOException {
         if (!emittedMyself) {
@@ -144,6 +156,7 @@ abstract class JSONStreamWriterContext {
                 writer.append(indent);
             }
         }
+
         haveChild = true;
     }
 
@@ -164,7 +177,7 @@ abstract class JSONStreamWriterContext {
         }
 
         if (emittedMyself) {
-            emitEnd(writer);
+            emitEnd(writer, indent);
         }
         return parent;
     }
