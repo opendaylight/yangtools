@@ -105,6 +105,21 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
     }
 
     /**
+     * Create a new stream writer, which writes to the specified {@link Writer} with specific indent size.
+     *
+     * @param schemaContext Schema context
+     * @param path Root schemapath
+     * @param writer Output writer
+     * @param initialNs Initial namespace
+     * @param indent indent size in number of empty spaces
+     * @return A stream writer instance
+     */
+    public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final SchemaPath path,
+            final URI initialNs, final Writer writer, final int indent) {
+        return new JSONNormalizedNodeStreamWriter(JSONCodecFactory.create(schemaContext), path, writer, initialNs, indent);
+    }
+
+    /**
      * Create a new stream writer, which writes to the specified output stream.
      *
      * @param schemaContext Schema context
