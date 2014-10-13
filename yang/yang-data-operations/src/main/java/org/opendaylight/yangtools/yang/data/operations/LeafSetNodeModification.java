@@ -66,8 +66,9 @@ final class LeafSetNodeModification implements Modification<LeafListSchemaNode, 
     }
 
     private Optional<LeafSetNode<?>> build(LeafListSchemaNode schemaNode, List<LeafSetEntryNode<?>> resultNodes) {
-        if(resultNodes.isEmpty())
+        if(resultNodes.isEmpty()) {
             return Optional.absent();
+        }
 
         ListNodeBuilder<Object, LeafSetEntryNode<Object>> b = Builders.leafSetBuilder(schemaNode);
         for (LeafSetEntryNode<?> resultNode : resultNodes) {

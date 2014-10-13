@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import java.util.Map.Entry;
-
 import org.opendaylight.yangtools.yang.common.QName;
 
 public class ValueWithQName<V> implements Entry<QName, V>{
@@ -26,6 +25,7 @@ public class ValueWithQName<V> implements Entry<QName, V>{
         return qname;
     }
 
+    @Override
     public V getValue() {
         return value;
     }
@@ -63,10 +63,12 @@ public class ValueWithQName<V> implements Entry<QName, V>{
         @SuppressWarnings("rawtypes")
         ValueWithQName other = (ValueWithQName) obj;
         if (qname == null) {
-            if (other.qname != null)
+            if (other.qname != null) {
                 return false;
-        } else if (!qname.equals(other.qname))
+            }
+        } else if (!qname.equals(other.qname)) {
             return false;
+        }
         if (value == null) {
             if (other.value != null) {
                 return false;
