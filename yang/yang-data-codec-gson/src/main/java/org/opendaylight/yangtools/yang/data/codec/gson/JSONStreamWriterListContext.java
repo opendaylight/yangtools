@@ -29,7 +29,8 @@ final class JSONStreamWriterListContext extends JSONStreamWriterQNameContext {
     }
 
     @Override
-    protected void emitEnd(final Writer writer) throws IOException {
+    protected void emitEnd(final Writer writer, final String indent) throws IOException {
+        super.emitEnd(writer, indent);
         writer.append(']');
     }
 }

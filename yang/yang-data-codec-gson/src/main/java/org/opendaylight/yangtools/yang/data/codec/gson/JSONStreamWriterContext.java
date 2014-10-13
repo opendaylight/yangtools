@@ -23,8 +23,9 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  */
 abstract class JSONStreamWriterContext {
     private final JSONStreamWriterContext parent;
+    private JSONStreamWriterContext child = null;
     private final boolean mandatory;
-    private final int depth;
+    private final int indentLevel;
     private boolean emittedMyself = false;
     private boolean haveChild = false;
 
@@ -40,10 +41,24 @@ abstract class JSONStreamWriterContext {
         this.parent = parent;
 
         if (parent != null) {
-            depth = parent.depth + 1;
+            indentLevel = parent.indentLevel + 1;
+            parent.setChild(this);
         } else {
-            depth = 0;
+            indentLevel = 0;
         }
+    }
+
+    /**
+     * Construct a new context with indentLevel specified
+     * @param parent Parent context, usually non-null.
+     * @param mandatory Mandatory flag. If set to true, the corresponding node
+     *                  will be emitted even if it has no children.
+     * @param indentLevel indentation level
+     */
+    protected JSONStreamWriterContext(final JSONStreamWriterContext parent, final boolean mandatory, final int indentLevel) {
+        this.mandatory = mandatory;
+        this.parent = parent;
+        this.indentLevel = indentLevel;
     }
 
     /**
@@ -108,7 +123,14 @@ abstract class JSONStreamWriterContext {
      * @param writer Output writer
      * @throws IOException
      */
-    protected abstract void emitEnd(final Writer writer) throws IOException;
+    protected void emitEnd(final Writer writer, final String indent) throws IOException {
+        if (indent != null) {
+            writer.append('\n');
+            for (int i=0; i<indentLevel; i++) {
+                writer.append(indent);
+            }
+        }
+    }
 
     private final void emitMyself(final SchemaContext schema, final Writer writer, final String indent) throws IOException {
         if (!emittedMyself) {
@@ -137,14 +159,18 @@ abstract class JSONStreamWriterContext {
             writer.append(',');
         }
 
+        writeWhiteSpaces(writer, indent);
+
+        haveChild = true;
+    }
+
+    protected void writeWhiteSpaces(final Writer writer, final String indent/*, final boolean forSimpleNode*/) throws IOException {
         if (indent != null) {
             writer.append('\n');
-
-            for (int i = 0; i < depth; i++) {
+            for (int i = 0; i <= indentLevel; i++) {
                 writer.append(indent);
             }
         }
-        haveChild = true;
     }
 
     /**
@@ -164,9 +190,20 @@ abstract class JSONStreamWriterContext {
         }
 
         if (emittedMyself) {
-            emitEnd(writer);
+            emitEnd(writer, indent);
         }
         return parent;
     }
 
+    protected int getIndentLevel() {
+        return indentLevel;
+    }
+
+    private void setChild(final JSONStreamWriterContext jsonStreamWriterContext) {
+        this.child = jsonStreamWriterContext;
+    }
+
+    protected boolean hasChildContext() {
+        return child != null;
+    }
 }
