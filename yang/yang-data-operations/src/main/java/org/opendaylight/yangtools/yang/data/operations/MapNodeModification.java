@@ -7,17 +7,15 @@
 */
 package org.opendaylight.yangtools.yang.data.operations;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
 import java.util.Map;
-
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.Maps;
 
 public class MapNodeModification implements Modification<ListSchemaNode, MapNode> {
 
@@ -28,12 +26,14 @@ public class MapNodeModification implements Modification<ListSchemaNode, MapNode
                                     Optional<MapNode> modification, OperationStack operationStack) throws DataModificationException {
 
         // Merge or None operation on parent, leaving actual if modification not present
-        if (modification.isPresent() == false)
+        if (modification.isPresent() == false) {
             return actual;
+        }
 
         Map<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> resultNodes = Maps.newLinkedHashMap();
-        if(actual.isPresent())
+        if(actual.isPresent()) {
             resultNodes.putAll(mapEntries(actual.get()));
+        }
 
         // TODO implement ordering for modification nodes
 
@@ -84,8 +84,9 @@ public class MapNodeModification implements Modification<ListSchemaNode, MapNode
     }
 
     private Optional<MapNode> build(ListSchemaNode schema, Map<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> resultNodes) {
-        if(resultNodes.isEmpty())
+        if(resultNodes.isEmpty()) {
             return Optional.absent();
+        }
 
         CollectionNodeBuilder<MapEntryNode, MapNode> b = Builders.mapBuilder(schema);
 

@@ -7,19 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.operations;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.Sets;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.Sets;
 
 final class ChoiceNodeModification extends
         AbstractContainerNodeModification<ChoiceNode, org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode> {
@@ -63,8 +61,9 @@ final class ChoiceNodeModification extends
             detectedCase = detectedCaseForChild.get();
         }
 
-        if (detectedCase == null)
+        if (detectedCase == null) {
             return childrenToProcess;
+        }
 
         // Filter out child nodes that do not belong to detected case =
         // Nodes from other cases present in actual
