@@ -18,7 +18,7 @@ package org.opendaylight.yangtools.util;
 @Deprecated
 public class DurationStatsTracker extends ConcurrentDurationStatisticsTracker {
     /**
-     * @deprecated Use {@link DurationStatisticsTracker#createConcurrent() instead.
+     * @deprecated Use {@link DurationStatisticsTracker#createConcurrent()} instead.
      */
     @Deprecated
     public DurationStatsTracker() {
