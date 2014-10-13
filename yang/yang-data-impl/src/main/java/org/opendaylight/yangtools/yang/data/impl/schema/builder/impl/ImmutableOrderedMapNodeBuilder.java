@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
@@ -25,7 +26,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 
 public class ImmutableOrderedMapNodeBuilder
-        implements CollectionNodeBuilder<MapEntryNode, OrderedMapNode> {
+        implements CollectionNodeBuilder<MapEntryNode, MapNode> {
 
     private Map<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> value;
     private YangInstanceIdentifier.NodeIdentifier nodeIdentifier;
@@ -42,11 +43,11 @@ public class ImmutableOrderedMapNodeBuilder
         this.dirty = true;
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create() {
+    public static CollectionNodeBuilder<MapEntryNode, MapNode> create() {
         return new ImmutableOrderedMapNodeBuilder();
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create(final OrderedMapNode node) {
+    public static CollectionNodeBuilder<MapEntryNode, MapNode> create(final MapNode node) {
         if (!(node instanceof ImmutableOrderedMapNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }
@@ -62,21 +63,21 @@ public class ImmutableOrderedMapNodeBuilder
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, OrderedMapNode> withChild(final MapEntryNode child) {
+    public CollectionNodeBuilder<MapEntryNode, MapNode> withChild(final MapEntryNode child) {
         checkDirty();
         this.value.put(child.getIdentifier(), child);
         return this;
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, OrderedMapNode> withoutChild(final YangInstanceIdentifier.PathArgument key) {
+    public CollectionNodeBuilder<MapEntryNode, MapNode> withoutChild(final YangInstanceIdentifier.PathArgument key) {
         checkDirty();
         this.value.remove(key);
         return this;
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, OrderedMapNode> withValue(final List<MapEntryNode> value) {
+    public CollectionNodeBuilder<MapEntryNode, MapNode> withValue(final List<MapEntryNode> value) {
         // TODO replace or putAll ?
         for (final MapEntryNode mapEntryNode : value) {
             withChild(mapEntryNode);
@@ -86,7 +87,7 @@ public class ImmutableOrderedMapNodeBuilder
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, OrderedMapNode> withNodeIdentifier(final YangInstanceIdentifier.NodeIdentifier nodeIdentifier) {
+    public CollectionNodeBuilder<MapEntryNode, MapNode> withNodeIdentifier(final YangInstanceIdentifier.NodeIdentifier nodeIdentifier) {
         this.nodeIdentifier = nodeIdentifier;
         return this;
     }
@@ -98,14 +99,14 @@ public class ImmutableOrderedMapNodeBuilder
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, OrderedMapNode> addChild(
+    public CollectionNodeBuilder<MapEntryNode, MapNode> addChild(
             final MapEntryNode child) {
         return withChild(child);
     }
 
 
     @Override
-    public NormalizedNodeContainerBuilder<NodeIdentifier, PathArgument, MapEntryNode, OrderedMapNode> removeChild(
+    public NormalizedNodeContainerBuilder<NodeIdentifier, PathArgument, MapEntryNode, MapNode> removeChild(
             final PathArgument key) {
         return withoutChild(key);
     }

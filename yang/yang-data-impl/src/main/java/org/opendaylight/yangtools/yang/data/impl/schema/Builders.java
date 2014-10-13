@@ -45,7 +45,9 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMa
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
@@ -96,6 +98,10 @@ public final class Builders {
         return ImmutableOrderedLeafSetNodeBuilder.create();
     }
 
+    public static <T> ListNodeBuilder<T,LeafSetEntryNode<T>> orderedLeafSetBuilder(final LeafListSchemaNode schema) {
+        return ImmutableOrderedLeafSetNodeSchemaAwareBuilder.<T>create(schema);
+    }
+
     public static <T> ListNodeBuilder<T,LeafSetEntryNode<T>> leafSetBuilder(final LeafSetNode<T> node) {
         return ImmutableLeafSetNodeBuilder.create(node);
     }
@@ -139,8 +145,12 @@ public final class Builders {
         return ImmutableMapNodeBuilder.create();
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, OrderedMapNode> orderedMapBuilder() {
+    public static CollectionNodeBuilder<MapEntryNode, MapNode> orderedMapBuilder() {
         return ImmutableOrderedMapNodeBuilder.create();
+    }
+
+    public static CollectionNodeBuilder<MapEntryNode, MapNode> orderedMapBuilder(final ListSchemaNode schema) {
+        return ImmutableOrderedMapNodeSchemaAwareBuilder.create(schema);
     }
 
     public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> unkeyedListBuilder() {

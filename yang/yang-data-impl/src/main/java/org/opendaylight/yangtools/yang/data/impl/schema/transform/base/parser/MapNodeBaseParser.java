@@ -25,7 +25,8 @@ public abstract class MapNodeBaseParser<E> implements ToNormalizedNodeParser<E, 
 
     @Override
     public final MapNode parse(Iterable<E> childNodes, ListSchemaNode schema) {
-        CollectionNodeBuilder<MapEntryNode, MapNode> listBuilder = Builders.mapBuilder(schema);
+        CollectionNodeBuilder<MapEntryNode, MapNode> listBuilder =
+          (schema.isUserOrdered() ? Builders.orderedMapBuilder(schema) : Builders.mapBuilder(schema));
 
         for (E childNode : childNodes) {
             MapEntryNode listChild = getMapEntryNodeParser().parse(Collections.singletonList(childNode), schema);
