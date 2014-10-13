@@ -113,7 +113,7 @@ public final class BaseTypes {
      *            Revision Date
      * @return Schema Path
      *
-     * @deprecated Use {@link SchemaPath#create(boolean, Iterable)} with QNames
+     * @deprecated Use {@link SchemaPath#create(Iterable, boolean)} with QNames
      *             manually constructed.
      */
     @Deprecated

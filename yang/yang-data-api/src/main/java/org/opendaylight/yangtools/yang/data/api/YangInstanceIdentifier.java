@@ -67,7 +67,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  * </ul>
  *
  *
- * @see http://tools.ietf.org/html/rfc6020#section-9.13
+ * @see <a href="http://tools.ietf.org/html/rfc6020#section-9.13">RFC6020</a>
  */
 public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier>, Immutable, Serializable {
     @SuppressWarnings("rawtypes")
@@ -620,7 +620,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
      * / module to the target node.
      *
      *
-     * @see http://tools.ietf.org/html/rfc6020#section-7.15
+     * @see <a href="http://tools.ietf.org/html/rfc6020#section-7.15">RFC6020</a>
      */
     public static final class AugmentationIdentifier implements PathArgument {
         private static final long serialVersionUID = -8122335594681936939L;
@@ -647,9 +647,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
         /**
          * Augmentation node has no QName
          *
-         * @deprecated Use
-         *             {@link AugmentationIdentifier#AugmentationIdentifier(Set)}
-         *             instead.
+         * @deprecated Use {@link #AugmentationIdentifier(Set)} instead.
          */
         @Deprecated
         public AugmentationIdentifier(final QName nodeType, final Set<QName> childNames) {
