@@ -1,9 +1,10 @@
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.ChildOf;
@@ -25,10 +26,11 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
+public final class BindingSchemaContextUtils {
 
-public class BindingSchemaContextUtils {
+    private BindingSchemaContextUtils() {
+        throw new UnsupportedOperationException("Utility class should not be instantiated");
+    }
 
     // FIXME: THis method does not search in case augmentations.
     public static Optional<DataNodeContainer> findDataNodeContainer(final SchemaContext ctx,
@@ -196,7 +198,7 @@ public class BindingSchemaContextUtils {
         // This solves case, if choice was inside grouping
         // which was used in different module and thus namespaces are
         // different, but local names are still same.
-        // 
+        //
         // Still we need to check equality of definition, because local name is not
         // sufficient to uniquelly determine equality of cases
         //

@@ -18,6 +18,10 @@ import java.util.List;
  */
 public final class LazyCollections {
 
+    private LazyCollections() {
+        throw new UnsupportedOperationException("Utility class should not be instantiated");
+    }
+
     /**
      * Add an element to a list, potentially transforming the list.
      *
