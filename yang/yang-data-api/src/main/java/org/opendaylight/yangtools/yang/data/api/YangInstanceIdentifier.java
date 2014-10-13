@@ -317,19 +317,6 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
     }
 
     /**
-     * Returns new builder for InstanceIdentifier with first path argument set to {@link NodeIdentifier}.
-     *
-     * @param node QName of first {@link NodeIdentifier} path argument.
-     * @return  new builder for InstanceIdentifier with first path argument set to {@link NodeIdentifier}.
-     *
-     * @deprecated Either use {@link #node(QName)} or instantiate an intermediate builder.
-     */
-    @Deprecated
-    public static InstanceIdentifierBuilder builder(final QName node) {
-        return builder().node(node);
-    }
-
-    /**
      * Path argument / component of InstanceIdentifier
      *
      * Path argument uniquely identifies node in data tree on particular
@@ -642,16 +629,6 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
          */
         public AugmentationIdentifier(final Set<QName> childNames) {
             this.childNames = ImmutableSet.copyOf(childNames);
-        }
-
-        /**
-         * Augmentation node has no QName
-         *
-         * @deprecated Use {@link #AugmentationIdentifier(Set)} instead.
-         */
-        @Deprecated
-        public AugmentationIdentifier(final QName nodeType, final Set<QName> childNames) {
-            this(childNames);
         }
 
         /**
