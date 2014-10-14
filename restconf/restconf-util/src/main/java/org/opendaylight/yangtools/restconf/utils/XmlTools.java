@@ -7,15 +7,14 @@
  */
 package org.opendaylight.yangtools.restconf.utils;
 
+import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
@@ -24,7 +23,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.stream.StreamSource;
-
 import org.opendaylight.yangtools.restconf.client.api.dto.RestEventStreamInfo;
 import org.opendaylight.yangtools.restconf.client.api.dto.RestModule;
 import org.opendaylight.yangtools.restconf.client.api.dto.RestRpcService;
@@ -36,8 +34,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import com.google.common.base.Preconditions;
 
 public final class XmlTools {
     private static final String JAXP_SCHEMA_LOCATION =
@@ -54,8 +50,7 @@ public final class XmlTools {
 
         Unmarshaller unmarshaller = jc.createUnmarshaller();
         StreamSource xmlInputSource = new StreamSource(xmlStream);
-        JAXBElement<?> obj = unmarshaller.unmarshal(xmlInputSource, clazz);
-        return obj;
+        return unmarshaller.unmarshal(xmlInputSource, clazz);
     }
 
     public static Document fromXml(final InputStream is) throws IOException, ParserConfigurationException, SAXException {

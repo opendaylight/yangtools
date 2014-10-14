@@ -77,8 +77,7 @@ class SchemaRootCodecContext extends DataContainerCodecContext<SchemaContext> {
         Preconditions.checkArgument(childSchema != null, "Argument %s is not valid child of %s", arg, schema());
         if (childSchema instanceof DataNodeContainer || childSchema instanceof ChoiceNode) {
             Class<?> childCls = factory().getRuntimeContext().getClassForSchema(childSchema);
-            DataContainerCodecContext<?> childNode = getStreamChild(childCls);
-            return childNode;
+            return getStreamChild(childCls);
         } else {
             throw new UnsupportedOperationException();
         }

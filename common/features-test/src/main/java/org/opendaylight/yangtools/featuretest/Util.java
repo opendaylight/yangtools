@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.featuretest;
 import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.util.Collection;
-
 import org.junit.runner.Description;
 
 public final class Util {
@@ -31,7 +30,6 @@ public final class Util {
         delegateDisplayName = delegateDisplayName + "[repoUrl: " + repoURL+ ", Feature: " + featureName + " " +featureVersion + "]";
         Collection<Annotation> annotations = description.getAnnotations();
         Annotation[] annotationArray = annotations.toArray(new Annotation[annotations.size()]);
-        Description newDescription = Description.createSuiteDescription(delegateDisplayName,annotationArray);
-        return newDescription;
+        return Description.createSuiteDescription(delegateDisplayName,annotationArray);
     }
 }
