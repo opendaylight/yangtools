@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba8cc1f7_e925ed0a",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingSchemaContextUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-10-14T08:30:13Z",
+      "side": 1,
+      "message": "the class should be final",
+      "revId": "741b4322df88ec0223a9e7bf76fd8f8a64ea74a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_09237106",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/CodecMapping.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-10-14T08:30:13Z",
+      "side": 1,
+      "message": "the class should be final",
+      "revId": "741b4322df88ec0223a9e7bf76fd8f8a64ea74a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_a91fe5b6",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/CodecTypeUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-10-14T08:30:13Z",
+      "side": 1,
+      "message": "the class should be final",
+      "revId": "741b4322df88ec0223a9e7bf76fd8f8a64ea74a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_c91ca9c4",
+        "filename": "restconf/restconf-common/src/main/java/org/opendaylight/yangtools/restconf/common/MediaTypes.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-10-14T08:30:13Z",
+      "side": 1,
+      "message": "the class should be final",
+      "revId": "741b4322df88ec0223a9e7bf76fd8f8a64ea74a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_6979ddfb",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/SimpleDateFormatUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-10-14T08:30:13Z",
+      "side": 1,
+      "message": "the class should be final",
+      "revId": "741b4322df88ec0223a9e7bf76fd8f8a64ea74a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_897ea1e3",
+        "filename": "yang/yang-data-composite-node/src/main/java/org/opendaylight/yangtools/yang/data/composite/node/schema/json/CnSnToNormalizedNodesUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-10-14T08:30:13Z",
+      "side": 1,
+      "message": "the class should be final",
+      "revId": "741b4322df88ec0223a9e7bf76fd8f8a64ea74a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_2983d5cd",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XmlDocumentUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-10-14T08:30:13Z",
+      "side": 1,
+      "message": "the class should be final",
+      "revId": "741b4322df88ec0223a9e7bf76fd8f8a64ea74a9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
