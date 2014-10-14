@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid;
 
-import java.util.Set;
-
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
+import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -19,8 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-
-import com.google.common.base.Preconditions;
 
 /**
  * General validator for container like statements, e.g. container, list-entry, choice, augment
@@ -69,7 +67,7 @@ public class DataNodeContainerValidator {
         for (DataSchemaNode childSchema : nodeContainer.getChildNodes()) {
             if(childSchema instanceof ChoiceCaseNode) {
                 allChildNodes.addAll(getChildNodes((DataNodeContainer) childSchema));
-            } else if (childSchema instanceof AugmentationSchema == false) {
+            } else if (!(childSchema instanceof AugmentationSchema)) {
                 allChildNodes.add(childSchema.getQName());
             }
         }

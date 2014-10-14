@@ -7,19 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.operations;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.Sets;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.Sets;
 
 final class ChoiceNodeModification extends
         AbstractContainerNodeModification<ChoiceNode, org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode> {
@@ -42,7 +40,7 @@ final class ChoiceNodeModification extends
         Set<YangInstanceIdentifier.PathArgument> childrenToProcess = super.getChildrenToProcess(schema, actual,
                 modification);
 
-        if (modification.isPresent() == false) {
+        if (!modification.isPresent()) {
             return childrenToProcess;
         }
 
@@ -51,12 +49,12 @@ final class ChoiceNodeModification extends
         for (DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> child : modification.get().getValue()) {
             Optional<ChoiceCaseNode> detectedCaseForChild = SchemaUtils.detectCase(schema, child);
 
-            if(detectedCaseForChild.isPresent() == false) {
+            if(!detectedCaseForChild.isPresent()) {
                 DataModificationException.IllegalChoiceValuesException.throwUnknownChild(schema.getQName(),
                         child.getNodeType());
             }
 
-            if (detectedCase != null && detectedCase.equals(detectedCaseForChild.get()) == false) {
+            if (detectedCase != null && (!detectedCase.equals(detectedCaseForChild.get()))) {
                 DataModificationException.IllegalChoiceValuesException.throwMultipleCasesReferenced(schema.getQName(),
                         modification.get(), detectedCase.getQName(), detectedCaseForChild.get().getQName());
             }
@@ -72,10 +70,10 @@ final class ChoiceNodeModification extends
         for (YangInstanceIdentifier.PathArgument childToProcess : childrenToProcess) {
             // child from other cases, skip
             if (childToProcess instanceof YangInstanceIdentifier.AugmentationIdentifier
-                    && SchemaUtils.belongsToCaseAugment(detectedCase,
-                            (YangInstanceIdentifier.AugmentationIdentifier) childToProcess) == false) {
+                    && (!SchemaUtils.belongsToCaseAugment(detectedCase,
+                            (YangInstanceIdentifier.AugmentationIdentifier) childToProcess))) {
                 continue;
-            } else if (belongsToCase(detectedCase, childToProcess) == false) {
+            } else if (!belongsToCase(detectedCase, childToProcess)) {
                 continue;
             }
 

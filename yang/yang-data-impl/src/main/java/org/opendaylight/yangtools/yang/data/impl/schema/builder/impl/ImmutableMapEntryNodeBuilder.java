@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -83,7 +82,7 @@ public class ImmutableMapEntryNodeBuilder extends AbstractImmutableDataContainer
     @Override
     public DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> withChild(final DataContainerChild<?, ?> child) {
         // Augmentation nodes cannot be keys, and do not have to be present in childrenQNamesToPaths map
-        if(isAugment(child.getIdentifier()) == false) {
+        if(!isAugment(child.getIdentifier())) {
             childrenQNamesToPaths.put(child.getNodeType(), child.getIdentifier());
         }
 

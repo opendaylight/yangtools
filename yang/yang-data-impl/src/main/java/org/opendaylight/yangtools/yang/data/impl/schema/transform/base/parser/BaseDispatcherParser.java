@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.LinkedListMultimap;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -23,10 +25,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.Augmentat
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.LinkedListMultimap;
 
 /**
  * Abstract(base) Parser for DataContainerNodes e.g. ContainerNode, AugmentationNode.
@@ -166,7 +164,7 @@ public abstract class BaseDispatcherParser<E, N extends DataContainerNode<?>, S>
     }
 
     private void checkAtLeastOneNode(S schema, Iterable<E> childNodes) {
-        Preconditions.checkArgument(Iterables.isEmpty(childNodes) == false,
+        Preconditions.checkArgument(!Iterables.isEmpty(childNodes),
                 "Node detected 0 times, should be at least 1, identified by: %s, found: %s", schema, childNodes);
     }
 }

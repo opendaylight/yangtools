@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.Type;
 
 /**
  * It is used only as ancestor for other <code>Type</code>s
- * 
+ *
  */
 public class AbstractBaseType implements Type {
 
@@ -47,7 +47,7 @@ public class AbstractBaseType implements Type {
     /**
      * Constructs the instance of this class with the concrete package name type
      * name.
-     * 
+     *
      * @param pkName
      *            string with the package name to which this <code>Type</code>
      *            belongs
@@ -82,7 +82,7 @@ public class AbstractBaseType implements Type {
         if (obj == null) {
             return false;
         }
-        if (false ==(obj instanceof Type)) {
+        if (!(obj instanceof Type)) {
             return false;
         }
         Type other = (Type) obj;
