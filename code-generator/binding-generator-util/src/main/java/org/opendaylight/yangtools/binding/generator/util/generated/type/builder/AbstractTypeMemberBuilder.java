@@ -143,7 +143,7 @@ abstract class AbstractTypeMemberBuilder<T extends TypeMemberBuilder<T>> impleme
         if (getClass() != obj.getClass()) {
             return false;
         }
-        MethodSignatureBuilderImpl other = (MethodSignatureBuilderImpl) obj;
+        AbstractTypeMemberBuilder<?> other = (AbstractTypeMemberBuilder<?>) obj;
         if (getName() == null) {
             if (other.getName() != null) {
                 return false;
