@@ -10,7 +10,9 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 import static javax.xml.XMLConstants.DEFAULT_NS_PREFIX;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import java.io.IOException;
+import java.util.Stack;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -40,10 +42,18 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
 
     private final XMLStreamWriter writer;
     private final SchemaTracker tracker;
+    private final String indent;
+    private final Stack<PathArgument> context = new Stack<>();
 
-    private XMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final SchemaContext context, final SchemaPath path) {
+    private XMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final SchemaContext context, final SchemaPath path, final int indentSize) {
         this.writer = Preconditions.checkNotNull(writer);
         this.tracker = SchemaTracker.create(context, path);
+        Preconditions.checkArgument(indentSize >= 0, "Indent size must be non-negative");
+        if (indentSize != 0) {
+            indent = Strings.repeat(" ", indentSize);
+        } else {
+            indent = null;
+        }
     }
 
     /**
@@ -54,7 +64,7 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
      * @return A new {@link NormalizedNodeStreamWriter}
      */
     public static NormalizedNodeStreamWriter create(final XMLStreamWriter writer, final SchemaContext context) {
-        return create( writer, context, SchemaPath.ROOT);
+        return create( writer, context, SchemaPath.ROOT, 0);
     }
 
     /**
@@ -66,12 +76,30 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
      * @return A new {@link NormalizedNodeStreamWriter}
      */
     public static NormalizedNodeStreamWriter create(final XMLStreamWriter writer, final SchemaContext context, final SchemaPath path) {
-        return new XMLStreamNormalizedNodeStreamWriter(writer, context, path);
+        return new XMLStreamNormalizedNodeStreamWriter(writer, context, path, 0);
     }
 
-    private void writeStartElement( QName qname) throws XMLStreamException {
+    /**
+     * Create a new writer with the specified context, rooted in the specified schema path and with concrete indent
+     *
+     * @param writer Output {@link XMLStreamWriter}
+     * @param context Associated {@link SchemaContext}.
+     *
+     * @return A new {@link NormalizedNodeStreamWriter}
+     */
+    public static NormalizedNodeStreamWriter create(final XMLStreamWriter writer, final SchemaContext context, final SchemaPath path, final int indentSize) {
+        return new XMLStreamNormalizedNodeStreamWriter(writer, context, path, indentSize);
+    }
+
+    private void writeStartElement(final QName qname, final boolean isElementWithValue) throws XMLStreamException {
         String ns = qname.getNamespace().toString();
         String parentNs = writer.getNamespaceContext().getNamespaceURI(DEFAULT_NS_PREFIX);
+
+        if (isElementWithValue) {
+            writeIndentation(writer, context.size()+1);
+        } else {
+            writeIndentation(writer, context.size());
+        }
         writer.writeStartElement(DEFAULT_NS_PREFIX, qname.getLocalName(), ns);
         if (!ns.equals(parentNs)) {
             writer.writeDefaultNamespace(ns);
@@ -80,11 +108,12 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
 
     private void writeElement(final QName qname, final TypeDefinition<?> type, final Object value) throws IOException {
         try {
-            writeStartElement(qname);
+            writeStartElement(qname, true);
             if (value != null) {
                 UTILS.writeValue(writer, type, value);
             }
             writer.writeEndElement();
+            writeNewLine();
         } catch (XMLStreamException e) {
             throw new IOException("Failed to emit element", e);
         }
@@ -92,7 +121,8 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
 
     private void startElement(final QName qname) throws IOException {
         try {
-            writeStartElement(qname);
+            writeStartElement(qname, false);
+            writeNewLine();
         } catch (XMLStreamException e) {
             throw new IOException("Failed to start element", e);
         }
@@ -103,6 +133,7 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
     }
 
     private void startListItem(final PathArgument name) throws IOException {
+        context.push(name);
         tracker.startListItem(name);
         startElement(name.getNodeType());
     }
@@ -127,6 +158,7 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
 
     @Override
     public void startContainerNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
+        context.push(name);
         final SchemaNode schema = tracker.startContainerNode(name);
         startElement(schema.getQName());
     }
@@ -171,11 +203,12 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
         final AnyXmlSchemaNode schema = tracker.anyxmlNode(name);
         final QName qname = schema.getQName();
         try {
-            writeStartElement(qname);
+            writeStartElement(qname, false);
             if (value != null) {
                 UTILS.writeValue(writer, (Node<?>)value, schema);
             }
             writer.writeEndElement();
+            writeNewLine();
         } catch (XMLStreamException e) {
             throw new IOException("Failed to emit element", e);
         }
@@ -190,14 +223,35 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
                 // For lists, we only emit end element on the inner frame
                 final Object parent = tracker.getParent();
                 if (parent == schema) {
-                    writer.writeEndElement();
+                    writeEnd();
                 }
             } else if (schema instanceof ContainerSchemaNode) {
                 // Emit container end element
-                writer.writeEndElement();
+                writeEnd();
             }
         } catch (XMLStreamException e) {
             throw new IOException("Failed to end element", e);
+        }
+    }
+
+    private void writeEnd() throws XMLStreamException {
+        writeIndentation(writer, context.size());
+        writer.writeEndElement();
+        writeNewLine();
+        context.pop();
+    }
+
+    private void writeNewLine() throws XMLStreamException {
+        if (indent != null) {
+            writer.writeCharacters("\n");
+        }
+    }
+
+    private void writeIndentation(final XMLStreamWriter writer, final int depth) throws XMLStreamException {
+        if (indent != null) {
+            for (int i = 1; i < depth; i++) {
+                writer.writeCharacters(indent);
+            }
         }
     }
 
