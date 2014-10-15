@@ -304,6 +304,14 @@
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>features-yangtools</artifactId>
+                <classifier>features</classifier>
+                <type>xml</type>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>mockito-configuration</artifactId>
                 <version>${project.version}</version>
                 <scope>test</scope>
