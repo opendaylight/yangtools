@@ -7,24 +7,45 @@
  */
 package org.opendaylight.yangtools.binding.generator.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import com.google.common.base.Optional;
+
 import org.junit.Test;
+import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTypeBuilderImpl;
+import org.opendaylight.yangtools.sal.binding.model.api.AccessModifier;
+import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
+import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 import org.opendaylight.yangtools.yang.model.util.DataNodeIterator;
+import org.opendaylight.yangtools.yang.model.util.Decimal64;
+import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.util.ExtendedType.Builder;
+import org.opendaylight.yangtools.yang.model.util.Int16;
+import org.opendaylight.yangtools.yang.model.util.StringType;
+import org.opendaylight.yangtools.yang.model.util.Uint16;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
@@ -160,6 +181,131 @@ public class BindingGeneratorUtilTest {
                 BindingGeneratorUtil.parseToValidParamName("  some-testing_parameter   name   "));
         assertEquals("Parameter name has incorrect format", "_0someTestingParameterName",
                 BindingGeneratorUtil.parseToValidParamName("  0some-testing_parameter   name   "));
+    }
+
+    @Test
+    public void computeDefaultSUIDTest() {
+        GeneratedTypeBuilderImpl generatedTypeBuilder = new GeneratedTypeBuilderImpl("my.package", "MyName");
+
+        MethodSignatureBuilder method = generatedTypeBuilder.addMethod("myMethodName");
+        method.setAccessModifier(AccessModifier.PUBLIC);
+        generatedTypeBuilder.addProperty("myProperty");
+        generatedTypeBuilder.addImplementsType(Types.typeForClass(Serializable.class));
+
+        assertEquals(6788238694991761868L, BindingGeneratorUtil.computeDefaultSUID(generatedTypeBuilder));
+
+    }
+
+    @Test
+    public void getRestrictionsTest() {
+
+        Optional<String> absent = Optional.absent();
+
+        Builder extTypeBuilder = ExtendedType.builder(new QName(URI.create("namespace"), "localName"),
+                Int16.getInstance(), absent, absent, SchemaPath.create(true, QName.create("/root")));
+
+        ArrayList<LengthConstraint> lenght = new ArrayList<LengthConstraint>();
+        ArrayList<RangeConstraint> range = new ArrayList<RangeConstraint>();
+        ArrayList<PatternConstraint> pattern = new ArrayList<PatternConstraint>();
+
+        lenght.add(BaseConstraints.newLengthConstraint(1, 2, absent, absent));
+        range.add(BaseConstraints.newRangeConstraint(1, 2, absent, absent));
+        pattern.add(BaseConstraints.newPatternConstraint(".*", absent, absent));
+
+        extTypeBuilder.lengths(lenght);
+        extTypeBuilder.ranges(range);
+        extTypeBuilder.patterns(pattern);
+
+        Restrictions restrictions = BindingGeneratorUtil.getRestrictions(extTypeBuilder.build());
+
+        assertNotNull(restrictions);
+
+        assertEquals(1, restrictions.getLengthConstraints().size());
+        assertEquals(1, restrictions.getRangeConstraints().size());
+        assertEquals(1, restrictions.getPatternConstraints().size());
+
+        assertFalse(restrictions.isEmpty());
+        assertTrue(restrictions.getLengthConstraints().contains(
+                BaseConstraints.newLengthConstraint(1, 2, absent, absent)));
+        assertTrue(restrictions.getRangeConstraints()
+                .contains(BaseConstraints.newRangeConstraint(1, 2, absent, absent)));
+        assertTrue(restrictions.getPatternConstraints().contains(
+                BaseConstraints.newPatternConstraint(".*", absent, absent)));
+    }
+
+    @Test
+    public void getEmptyRestrictionsTest() {
+
+        Optional<String> absent = Optional.absent();
+
+        Builder extTypeBuilder = ExtendedType.builder(new QName(URI.create("namespace"), "localName"),
+                StringType.getInstance(), absent, absent, SchemaPath.create(true, QName.create("/root")));
+
+        Restrictions restrictions = BindingGeneratorUtil.getRestrictions(extTypeBuilder.build());
+
+        assertNotNull(restrictions);
+        assertTrue(restrictions.isEmpty());
+
+    }
+
+    @Test
+    public void getDefaultIntegerRestrictionsTest() {
+
+        Optional<String> absent = Optional.absent();
+
+        Builder extTypeBuilder = ExtendedType.builder(new QName(URI.create("namespace"), "localName"),
+                Int16.getInstance(), absent, absent, SchemaPath.create(true, QName.create("/root")));
+
+        ExtendedType extType = extTypeBuilder.build();
+        Restrictions restrictions = BindingGeneratorUtil.getRestrictions(extType);
+
+        assertNotNull(restrictions);
+        assertFalse(restrictions.isEmpty());
+        assertEquals(((IntegerTypeDefinition) extType.getBaseType()).getRangeConstraints(),
+                restrictions.getRangeConstraints());
+        assertTrue(restrictions.getLengthConstraints().isEmpty());
+        assertTrue(restrictions.getPatternConstraints().isEmpty());
+
+    }
+
+    @Test
+    public void getDefaultUnsignedIntegerRestrictionsTest() {
+
+        Optional<String> absent = Optional.absent();
+
+        Builder extTypeBuilder = ExtendedType.builder(new QName(URI.create("namespace"), "localName"),
+                Uint16.getInstance(), absent, absent, SchemaPath.create(true, QName.create("/root")));
+
+        ExtendedType extType = extTypeBuilder.build();
+        Restrictions restrictions = BindingGeneratorUtil.getRestrictions(extType);
+
+        assertNotNull(restrictions);
+        assertFalse(restrictions.isEmpty());
+        assertEquals(((UnsignedIntegerTypeDefinition) extType.getBaseType()).getRangeConstraints(),
+                restrictions.getRangeConstraints());
+        assertTrue(restrictions.getLengthConstraints().isEmpty());
+        assertTrue(restrictions.getPatternConstraints().isEmpty());
+    }
+
+    @Test
+    public void getDefaultDecimalRestrictionsTest() {
+
+        Optional<String> absent = Optional.absent();
+        SchemaPath path = SchemaPath.create(true, QName.create("/root"));
+
+        Builder extTypeBuilder = ExtendedType.builder(new QName(URI.create("namespace"), "localName"),
+                Decimal64.create(path, 10), absent, absent, path);
+
+        ExtendedType extType = extTypeBuilder.build();
+        Restrictions restrictions = BindingGeneratorUtil.getRestrictions(extType);
+
+        assertNotNull(restrictions);
+        assertFalse(restrictions.isEmpty());
+        assertEquals(((DecimalTypeDefinition) extType.getBaseType()).getRangeConstraints(),
+                restrictions.getRangeConstraints());
+        assertTrue(restrictions.getLengthConstraints().isEmpty());
+        assertTrue(restrictions.getPatternConstraints().isEmpty());
+
     }
 
 }
