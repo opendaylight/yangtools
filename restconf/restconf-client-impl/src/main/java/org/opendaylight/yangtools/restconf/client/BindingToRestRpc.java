@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.restconf.client;
 
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.sun.jersey.api.client.ClientResponse;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.opendaylight.yangtools.restconf.client.to.RestRpcError;
 import org.opendaylight.yangtools.restconf.client.to.RestRpcResult;
 import org.opendaylight.yangtools.restconf.common.ResourceUri;
@@ -35,10 +37,6 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
-
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.sun.jersey.api.client.ClientResponse;
 
 public class BindingToRestRpc implements InvocationHandler {
 
@@ -92,6 +90,7 @@ public class BindingToRestRpc implements InvocationHandler {
                         } catch (Exception e) {
                             logger.trace("Error while extracting rpc output in proxy method {}",e);
                             RestRpcError error = new RestRpcError(RpcError.ErrorSeverity.ERROR, RpcError.ErrorType.APPLICATION,"Error while extracting rpc output in proxy method.",e);
+                            errors.add(error);
                         }
                         return new RestRpcResult(false,errors);
                     }
