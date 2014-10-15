@@ -27,7 +27,11 @@
         <bundle>mvn:org.opendaylight.yangtools.model/ietf-restconf/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools.model/yang-ext/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools.model/opendaylight-l2-types/{{VERSION}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools.model/ietf-ted/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools.model/ietf-topology/{{VERSION}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools.model/ietf-topology-isis/{{VERSION}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools.model/ietf-topology-ospf/{{VERSION}}</bundle>
+        <bundle>mvn:org.opendaylight.yangtools.model/ietf-topology-l3-unicast-igp/{{VERSION}}</bundle>
        </feature>
 
     <feature name='odl-yangtools-data-binding' version='${project.version}' description='OpenDaylight :: Yangtools :: Data Binding'>
