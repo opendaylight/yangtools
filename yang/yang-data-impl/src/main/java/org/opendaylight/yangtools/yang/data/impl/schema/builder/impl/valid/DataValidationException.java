@@ -52,9 +52,6 @@ public class DataValidationException extends RuntimeException {
     public static void checkListKey(final DataContainerChild<?, ?> childNode, final Map<QName, Object> keyValues, final QName keyQName,
             final YangInstanceIdentifier.NodeIdentifierWithPredicates nodeId) {
         checkListKey(childNode, keyQName, nodeId);
-
-        Object expectedValue = nodeId.getKeyValues().get(keyQName);
-        Object actualValue = childNode.getValue();
     }
 
     public static void checkListKey(final DataContainerChild<?, ?> childNode, final QName keyQName, final YangInstanceIdentifier.NodeIdentifierWithPredicates nodeId) {
