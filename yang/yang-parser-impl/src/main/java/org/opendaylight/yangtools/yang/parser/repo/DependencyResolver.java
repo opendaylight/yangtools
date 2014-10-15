@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -118,8 +119,9 @@ final class DependencyResolver {
         } while (progress);
 
         /// Additional check only for belongs-to statement
-        for (final SourceIdentifier sourceIdentifier : submodules.keySet()) {
-            final BelongsToDependency belongs = submodules.get(sourceIdentifier);
+        for (final Entry<SourceIdentifier, BelongsToDependency> submodule : submodules.entrySet()) {
+            final BelongsToDependency belongs = submodule.getValue();
+            final SourceIdentifier sourceIdentifier = submodule.getKey();
             if (!isKnown(resolved, belongs)) {
                 LOG.debug("Source {} is missing parent {}", sourceIdentifier, belongs);
                 pending.add(sourceIdentifier);
