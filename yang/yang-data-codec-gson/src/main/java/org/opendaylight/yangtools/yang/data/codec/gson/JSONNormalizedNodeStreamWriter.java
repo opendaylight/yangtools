@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -210,8 +209,6 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
 
     @Override
     public void anyxmlNode(final NodeIdentifier name, final Object value) throws IOException {
-        @SuppressWarnings("unused")
-        final AnyXmlSchemaNode schema = tracker.anyxmlNode(name);
         // FIXME: should have a codec based on this :)
 
         context.emittingChild(codecs.getSchemaContext(), writer, indent);
