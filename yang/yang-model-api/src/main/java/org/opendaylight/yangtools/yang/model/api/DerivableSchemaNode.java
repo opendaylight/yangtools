@@ -14,7 +14,7 @@ public interface DerivableSchemaNode extends DataSchemaNode {
      * grouping where it was defined.
      *
      * @return original node definition from grouping if this node is added by
-     *         uses, null otherwise
+     *         uses, Optional.absent otherwise
      */
     Optional<? extends SchemaNode> getOriginal();
 
