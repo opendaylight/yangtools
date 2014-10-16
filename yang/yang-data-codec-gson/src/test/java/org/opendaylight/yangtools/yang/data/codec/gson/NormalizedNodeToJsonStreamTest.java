@@ -7,6 +7,26 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
+import com.google.common.collect.Sets;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.net.URISyntaxException;
+import java.util.HashSet;
+import java.util.Iterator;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -15,25 +35,6 @@ import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.childArr
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.childPrimitive;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadModules;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.resolveCont1;
-
-import com.google.common.collect.Sets;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.net.URISyntaxException;
-import java.util.HashSet;
-import java.util.Iterator;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
  * Each test tests whether json output obtained after transformation contains is corect. The transformation takes
@@ -90,6 +91,32 @@ public class NormalizedNodeToJsonStreamTest {
                 assertNotNull(lf11);
                 int asInt = lf11.getAsInt();
                 assertEquals(453, asInt);
+            }
+        }.validate(jsonOutput);
+
+    }
+
+    @Test
+    public void leafListNodeInContainerMultiline() throws IOException, URISyntaxException {
+        Writer writer = new StringWriter();
+        NormalizedNode<?, ?> leafListNodeInContainer = TestingNormalizedNodeStructuresCreator.leafListNodeInContainerMultiline();
+        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, leafListNodeInContainer);
+        new JsonValidator() {
+
+            @Override
+            public void validate(String jsonOutput) {
+                JsonObject cont1 = resolveCont1(jsonOutput);
+                assertNotNull(cont1);
+                JsonArray lflst11 = childArray(cont1, "complexjson:lflst11", "lflst11");
+                assertNotNull(lflst11);
+
+                HashSet<Object> lflst11Values = Sets.newHashSet();
+                for (JsonElement jsonElement : lflst11) {
+                    assertTrue(jsonElement instanceof JsonPrimitive);
+                    lflst11Values.add(((JsonPrimitive) jsonElement).getAsString());
+                }
+
+                assertEquals(Sets.newHashSet("lflst11 value2\r\nanother line 2", "lflst11 value1\nanother line 1"), lflst11Values);
             }
         }.validate(jsonOutput);
 
