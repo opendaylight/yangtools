@@ -169,6 +169,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
 
     @Override
     public GeneratedPropertyBuilder addProperty(final String name) {
+        Preconditions.checkArgument(name != null, "Parameter name can't be null");
         final GeneratedPropertyBuilder builder = new GeneratedPropertyBuilderImpl(name);
         builder.setAccessModifier(AccessModifier.PUBLIC);
         properties = LazyCollections.lazyAdd(properties, builder);
