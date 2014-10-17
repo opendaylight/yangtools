@@ -7,10 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.generator.util.generated.type.builder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +15,7 @@ import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.sal.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.sal.binding.model.api.AnnotationType.Parameter;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.AnnotationTypeBuilder;
@@ -30,12 +28,11 @@ public class AnnotationBuilderTest {
 
     @Test
     public void generatedTypeAnnotationTest() {
-        final GeneratedTypeBuilder genTypeBuilder = new GeneratedTypeBuilderImpl(
-                "org.opendaylight.controller", "AnnotInterface");
+        final GeneratedTypeBuilder genTypeBuilder = new GeneratedTypeBuilderImpl("org.opendaylight.controller",
+                "AnnotInterface");
 
         genTypeBuilder.addAnnotation("javax.management", "MXBean");
-        final AnnotationTypeBuilder annotDesc = genTypeBuilder.addAnnotation(
-                "javax.management", "Description");
+        final AnnotationTypeBuilder annotDesc = genTypeBuilder.addAnnotation("javax.management", "Description");
         annotDesc.addParameter("description", "some sort of interface");
 
         final GeneratedType genType = genTypeBuilder.toInstance();
@@ -46,17 +43,14 @@ public class AnnotationBuilderTest {
 
         int annotCount = 0;
         for (final AnnotationType annotation : genType.getAnnotations()) {
-            if (annotation.getPackageName().equals("javax.management")
-                    && annotation.getName().equals("MXBean")) {
+            if (annotation.getPackageName().equals("javax.management") && annotation.getName().equals("MXBean")) {
                 annotCount++;
                 assertEquals(0, annotation.getParameters().size());
             }
-            if (annotation.getPackageName().equals("javax.management")
-                    && annotation.getName().equals("Description")) {
+            if (annotation.getPackageName().equals("javax.management") && annotation.getName().equals("Description")) {
                 annotCount++;
                 assertEquals(1, annotation.getParameters().size());
-                AnnotationType.Parameter param = annotation
-                        .getParameter("description");
+                AnnotationType.Parameter param = annotation.getParameter("description");
                 assertNotNull(param);
                 assertEquals("description", param.getName());
                 assertNotNull(param.getValue());
@@ -70,24 +64,21 @@ public class AnnotationBuilderTest {
 
     @Test
     public void methodSignatureAnnotationTest() {
-        final GeneratedTypeBuilder genTypeBuilder = new GeneratedTypeBuilderImpl(
-                "org.opendaylight.controller", "TransferObject");
+        final GeneratedTypeBuilder genTypeBuilder = new GeneratedTypeBuilderImpl("org.opendaylight.controller",
+                "TransferObject");
 
-        final MethodSignatureBuilder methodBuilder = genTypeBuilder
-                .addMethod("simpleMethod");
+        final MethodSignatureBuilder methodBuilder = genTypeBuilder.addMethod("simpleMethod");
         methodBuilder.setReturnType(Types.typeForClass(Integer.class));
-        final AnnotationTypeBuilder annotManAttr = methodBuilder
-                .addAnnotation("org.springframework.jmx.export.annotation",
-                        "ManagedAttribute");
+        final AnnotationTypeBuilder annotManAttr = methodBuilder.addAnnotation(
+                "org.springframework.jmx.export.annotation", "ManagedAttribute");
 
         annotManAttr.addParameter("description", "\"The Name Attribute\"");
         annotManAttr.addParameter("currencyTimeLimit", "20");
         annotManAttr.addParameter("defaultValue", "\"bar\"");
         annotManAttr.addParameter("persistPolicy", "\"OnUpdate\"");
 
-        final AnnotationTypeBuilder annotManProp = methodBuilder
-                .addAnnotation("org.springframework.jmx.export.annotation",
-                        "ManagedOperation");
+        final AnnotationTypeBuilder annotManProp = methodBuilder.addAnnotation(
+                "org.springframework.jmx.export.annotation", "ManagedOperation");
 
         final List<String> typeValues = new ArrayList<String>();
         typeValues.add("\"val1\"");
@@ -102,8 +93,7 @@ public class AnnotationBuilderTest {
         assertNotNull(genType.getMethodDefinitions());
         assertNotNull(genType.getMethodDefinitions().get(0));
         assertNotNull(genType.getMethodDefinitions().get(0).getAnnotations());
-        final List<AnnotationType> annotations = genType.getMethodDefinitions()
-                .get(0).getAnnotations();
+        final List<AnnotationType> annotations = genType.getMethodDefinitions().get(0).getAnnotations();
         assertEquals(2, annotations.size());
 
         int annotCount = 0;
@@ -136,24 +126,21 @@ public class AnnotationBuilderTest {
 
     @Test
     public void generatedPropertyAnnotationTest() {
-        final GeneratedTOBuilder genTOBuilder = new GeneratedTOBuilderImpl(
-                "org.opendaylight.controller", "AnnotInterface");
+        final GeneratedTOBuilder genTOBuilder = new GeneratedTOBuilderImpl("org.opendaylight.controller",
+                "AnnotInterface");
 
-        final GeneratedPropertyBuilder propertyBuilder = genTOBuilder
-                .addProperty("simpleProperty");
+        final GeneratedPropertyBuilder propertyBuilder = genTOBuilder.addProperty("simpleProperty");
         propertyBuilder.setReturnType(Types.typeForClass(Integer.class));
-        final AnnotationTypeBuilder annotManAttr = propertyBuilder
-                .addAnnotation("org.springframework.jmx.export.annotation",
-                        "ManagedAttribute");
+        final AnnotationTypeBuilder annotManAttr = propertyBuilder.addAnnotation(
+                "org.springframework.jmx.export.annotation", "ManagedAttribute");
 
         annotManAttr.addParameter("description", "\"The Name Attribute\"");
         annotManAttr.addParameter("currencyTimeLimit", "20");
         annotManAttr.addParameter("defaultValue", "\"bar\"");
         annotManAttr.addParameter("persistPolicy", "\"OnUpdate\"");
 
-        final AnnotationTypeBuilder annotManProp = propertyBuilder
-                .addAnnotation("org.springframework.jmx.export.annotation",
-                        "ManagedOperation");
+        final AnnotationTypeBuilder annotManProp = propertyBuilder.addAnnotation(
+                "org.springframework.jmx.export.annotation", "ManagedOperation");
 
         final List<String> typeValues = new ArrayList<String>();
         typeValues.add("\"val1\"");
@@ -168,8 +155,7 @@ public class AnnotationBuilderTest {
         assertNotNull(genTransObj.getProperties());
         assertNotNull(genTransObj.getProperties().get(0));
         assertNotNull(genTransObj.getProperties().get(0).getAnnotations());
-        final List<AnnotationType> annotations = genTransObj.getProperties()
-                .get(0).getAnnotations();
+        final List<AnnotationType> annotations = genTransObj.getProperties().get(0).getAnnotations();
         assertEquals(2, annotations.size());
 
         int annotCount = 0;
@@ -202,18 +188,16 @@ public class AnnotationBuilderTest {
 
     @Test
     public void generatedTransfeObjectAnnotationTest() {
-        final GeneratedTOBuilder genTypeBuilder = new GeneratedTOBuilderImpl(
-                "org.opendaylight.controller", "AnnotClassCache");
+        final GeneratedTOBuilder genTypeBuilder = new GeneratedTOBuilderImpl("org.opendaylight.controller",
+                "AnnotClassCache");
 
         genTypeBuilder.addAnnotation("javax.management", "MBean");
-        final AnnotationTypeBuilder annotNotify = genTypeBuilder.addAnnotation(
-                "javax.management", "NotificationInfo");
+        final AnnotationTypeBuilder annotNotify = genTypeBuilder.addAnnotation("javax.management", "NotificationInfo");
 
         final List<String> notifyList = new ArrayList<String>();
         notifyList.add("\"my.notif.type\"");
         annotNotify.addParameters("types", notifyList);
-        annotNotify.addParameter("description",
-                "@Description(\"my notification\")");
+        annotNotify.addParameter("description", "@Description(\"my notification\")");
 
         GeneratedTransferObject genTO = genTypeBuilder.toInstance();
 
@@ -223,8 +207,7 @@ public class AnnotationBuilderTest {
 
         int annotCount = 0;
         for (final AnnotationType annotation : genTO.getAnnotations()) {
-            if (annotation.getPackageName().equals("javax.management")
-                    && annotation.getName().equals("MBean")) {
+            if (annotation.getPackageName().equals("javax.management") && annotation.getName().equals("MBean")) {
                 annotCount++;
                 assertEquals(0, annotation.getParameters().size());
             }
@@ -232,8 +215,7 @@ public class AnnotationBuilderTest {
                     && annotation.getName().equals("NotificationInfo")) {
                 annotCount++;
                 assertEquals(2, annotation.getParameters().size());
-                AnnotationType.Parameter param = annotation
-                        .getParameter("types");
+                AnnotationType.Parameter param = annotation.getParameter("types");
                 assertNotNull(param);
                 assertEquals("types", param.getName());
                 assertNull(param.getValue());
@@ -245,10 +227,180 @@ public class AnnotationBuilderTest {
                 assertNotNull(param);
                 assertEquals("description", param.getName());
                 assertNotNull(param.getValue());
-                assertEquals("@Description(\"my notification\")",
-                        param.getValue());
+                assertEquals("@Description(\"my notification\")", param.getValue());
             }
         }
         assertEquals(2, annotCount);
     }
+
+    @Test
+    public void annotationTypeBuilderAddAnnotationTest() {
+        AnnotationTypeBuilder annotationTypeBuilder = new AnnotationTypeBuilderImpl("my.package", "MyName");
+
+        assertNull(annotationTypeBuilder.addAnnotation("my.package", null));
+        assertNull(annotationTypeBuilder.addAnnotation(null, "MyName"));
+
+        assertNotNull(annotationTypeBuilder.addAnnotation("", ""));
+
+        assertNotNull(annotationTypeBuilder.addAnnotation("my.package2", "MyName2"));
+        assertNull(annotationTypeBuilder.addAnnotation("my.package2", "MyName2"));
+
+        AnnotationType annotationTypeInstance = annotationTypeBuilder.toInstance();
+
+        assertEquals(2, annotationTypeInstance.getAnnotations().size());
+
+        assertEquals("my.package", annotationTypeInstance.getPackageName());
+        assertEquals("MyName", annotationTypeInstance.getName());
+
+    }
+
+    @Test
+    public void annotationTypeBuilderEqualsTest() {
+        AnnotationTypeBuilder annotationTypeBuilder = new AnnotationTypeBuilderImpl("my.package", "MyName");
+        AnnotationTypeBuilder annotationTypeBuilder2 = new AnnotationTypeBuilderImpl("my.package2", "MyName");
+        AnnotationTypeBuilder annotationTypeBuilder3 = new AnnotationTypeBuilderImpl("my.package", "MyName2");
+        AnnotationTypeBuilder annotationTypeBuilder4 = new AnnotationTypeBuilderImpl("my.package", "MyName");
+
+        assertFalse(annotationTypeBuilder.equals(null));
+        assertFalse(annotationTypeBuilder.equals(new Object()));
+
+        assertTrue(annotationTypeBuilder.equals(annotationTypeBuilder));
+
+        assertTrue(annotationTypeBuilder.equals(annotationTypeBuilder4));
+        assertFalse(annotationTypeBuilder.equals(annotationTypeBuilder2));
+        assertFalse(annotationTypeBuilder.equals(annotationTypeBuilder3));
+
+        AnnotationType instance = annotationTypeBuilder.toInstance();
+        AnnotationType instance2 = annotationTypeBuilder2.toInstance();
+        AnnotationType instance3 = annotationTypeBuilder3.toInstance();
+        AnnotationType instance4 = annotationTypeBuilder4.toInstance();
+
+        assertFalse(instance.equals(null));
+        assertFalse(instance.equals(new Object()));
+        assertTrue(instance.equals(instance));
+
+        assertFalse(instance.equals(instance2));
+        assertFalse(instance.equals(instance3));
+        assertTrue(instance.equals(instance4));
+
+        annotationTypeBuilder.addParameter("myName", "myValue1");
+        annotationTypeBuilder.addParameter("myName2", "myValue2");
+        annotationTypeBuilder2.addParameter("myName", "myValue3");
+
+        instance = annotationTypeBuilder.toInstance();
+        instance2 = annotationTypeBuilder2.toInstance();
+
+        Parameter parameter = instance.getParameter("myName");
+        Parameter parameter2 = instance.getParameter("myName2");
+        Parameter parameter3 = instance2.getParameter("myName");
+
+        assertFalse(parameter.equals(null));
+        assertFalse(parameter.equals(new Object()));
+        assertTrue(parameter.equals(parameter));
+        assertTrue(parameter.equals(parameter3));
+        assertFalse(parameter.equals(parameter2));
+    }
+
+    @Test
+    public void annotationTypeBuilderHashCodeTest() {
+        AnnotationTypeBuilder annotationTypeBuilder = new AnnotationTypeBuilderImpl("my.package", "MyName");
+        AnnotationTypeBuilder annotationTypeBuilder2 = new AnnotationTypeBuilderImpl("my.package2", "MyName");
+        AnnotationTypeBuilder annotationTypeBuilder3 = new AnnotationTypeBuilderImpl("my.package", "MyName2");
+        AnnotationTypeBuilder annotationTypeBuilder4 = new AnnotationTypeBuilderImpl("my.package", "MyName");
+
+        assertFalse(annotationTypeBuilder.hashCode() == annotationTypeBuilder2.hashCode());
+        assertFalse(annotationTypeBuilder.hashCode() == annotationTypeBuilder3.hashCode());
+
+        assertTrue(annotationTypeBuilder.hashCode() == annotationTypeBuilder4.hashCode());
+        assertTrue(annotationTypeBuilder.hashCode() == annotationTypeBuilder.hashCode());
+
+        AnnotationType instance = annotationTypeBuilder.toInstance();
+        AnnotationType instance2 = annotationTypeBuilder2.toInstance();
+        AnnotationType instance3 = annotationTypeBuilder3.toInstance();
+        AnnotationType instance4 = annotationTypeBuilder4.toInstance();
+
+        assertFalse(instance.hashCode() == instance2.hashCode());
+        assertFalse(instance.hashCode() == instance3.hashCode());
+
+        assertTrue(instance.hashCode() == instance4.hashCode());
+        assertTrue(instance.hashCode() == instance.hashCode());
+
+        annotationTypeBuilder.addParameter("myName", "myValue1");
+        annotationTypeBuilder.addParameter("myName2", "myValue2");
+        annotationTypeBuilder2.addParameter("myName", "myValue3");
+
+        instance = annotationTypeBuilder.toInstance();
+        instance2 = annotationTypeBuilder2.toInstance();
+
+        Parameter parameter = instance.getParameter("myName");
+        Parameter parameter2 = instance.getParameter("myName2");
+        Parameter parameter3 = instance2.getParameter("myName");
+
+        assertTrue(parameter.hashCode() == parameter.hashCode());
+        assertTrue(parameter.hashCode() == parameter3.hashCode());
+        assertFalse(parameter.hashCode() == parameter2.hashCode());
+
+    }
+
+    @Test
+    public void annotationTypeBuilderAddParameterTest() {
+        AnnotationTypeBuilder annotationTypeBuilder = new AnnotationTypeBuilderImpl("my.package", "MyName");
+
+        assertFalse(annotationTypeBuilder.addParameter(null, "myValue"));
+        assertFalse(annotationTypeBuilder.addParameter("myName", null));
+
+        assertFalse(annotationTypeBuilder.addParameters(null, new ArrayList<String>()));
+        assertFalse(annotationTypeBuilder.addParameters("myName", null));
+
+        assertTrue(annotationTypeBuilder.addParameter("myName", "myValue"));
+        assertFalse(annotationTypeBuilder.addParameter("myName", "myValue"));
+        assertFalse(annotationTypeBuilder.addParameters("myName", new ArrayList<String>()));
+
+        ArrayList<String> values = new ArrayList<String>();
+        values.add("myValue");
+        assertTrue(annotationTypeBuilder.addParameters("myName2", values));
+
+        AnnotationType annotationTypeInstance = annotationTypeBuilder.toInstance();
+        assertTrue(annotationTypeInstance.containsParameters());
+        assertEquals(2, annotationTypeInstance.getParameters().size());
+        assertEquals(2, annotationTypeInstance.getParameterNames().size());
+        assertTrue(annotationTypeInstance.getParameterNames().contains("myName"));
+        assertTrue(annotationTypeInstance.getParameterNames().contains("myName2"));
+        assertFalse(annotationTypeInstance.getParameterNames().contains("myName3"));
+
+        Parameter parameter = annotationTypeInstance.getParameter("myName");
+        Parameter parameter2 = annotationTypeInstance.getParameter("myName2");
+        Parameter parameter3 = annotationTypeInstance.getParameter("myName3");
+
+        assertNotNull(parameter);
+        assertNotNull(parameter2);
+        assertNull(parameter3);
+
+        assertEquals(parameter.getValue(), "myValue");
+        assertTrue(parameter.getValues().isEmpty());
+
+        assertEquals(1, parameter2.getValues().size());
+        assertTrue(parameter2.getValues().contains("myValue"));
+
+    }
+
+    @Test
+    public void annotationTypeBuilderToStringTest() {
+        AnnotationTypeBuilder annotationTypeBuilder = new AnnotationTypeBuilderImpl("my.package", "MyAnnotationName");
+        annotationTypeBuilder.addAnnotation("my.package", "MySubAnnotationName");
+        annotationTypeBuilder.addParameter("MyParameter", "myValue");
+
+        assertEquals(
+                "AnnotationTypeBuilder [packageName=my.package, name=MyAnnotationName, annotationBuilders=[AnnotationTypeBuilder [packageName=my.package, name=MySubAnnotationName, annotationBuilders=[], parameters=[]]], parameters=[ParameterImpl [name=MyParameter, value=myValue, values=[]]]]",
+                annotationTypeBuilder.toString());
+
+        AnnotationType annotationTypeInstance = annotationTypeBuilder.toInstance();
+
+        assertEquals("my.package.MyAnnotationName", annotationTypeInstance.getFullyQualifiedName());
+        assertEquals(
+                "AnnotationType [packageName=my.package, name=MyAnnotationName, annotations=[AnnotationType [packageName=my.package, name=MySubAnnotationName, annotations=[], parameters=[]]], parameters=[ParameterImpl [name=MyParameter, value=myValue, values=[]]]]",
+                annotationTypeInstance.toString());
+
+    }
+
 }
