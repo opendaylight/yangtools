@@ -37,6 +37,8 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataN
     private final SchemaPath targetPath;
 
     private boolean resolved;
+    private boolean unsupportedTarget = false;
+
     private AugmentationSchemaBuilder copyOf;
 
     public AugmentationSchemaBuilderImpl(final String moduleName, final int line, final String augmentTargetStr,
@@ -108,6 +110,24 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataN
     @Override
     public void setResolved(final boolean resolved) {
         this.resolved = resolved;
+    }
+
+    /**
+     *  Set true if target of augment is unsupported (e.g. node in body of extension).
+     *  In such case, augmentation is skipped and AugmentationSchema is not built.
+     */
+    @Override
+    public void setUnsupportedTarget(boolean unsupportedTarget) {
+        this.unsupportedTarget = unsupportedTarget;
+    }
+
+    /**
+     *  Return true if target of augment is unsupported (e.g. node in body of extension).
+     *  In such case, augmentation is skipped and AugmentationSchema is not built.
+     */
+    @Override
+    public boolean isUnsupportedTarget() {
+        return unsupportedTarget;
     }
 
     @Override
