@@ -7,10 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -22,17 +25,13 @@ import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuil
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
-
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 public final class ChoiceCaseBuilder extends AbstractDocumentedDataNodeContainerBuilder implements DataSchemaNodeBuilder,
 AugmentationTargetBuilder {
@@ -146,6 +145,11 @@ AugmentationTargetBuilder {
     @Override
     public void addTypedef(final TypeDefinitionBuilder typedefBuilder) {
         throw new YangParseException(getModuleName(), typedefBuilder.getLine(), "Can not add type definition to choice case.");
+    }
+
+    @Override
+    public void addGrouping(GroupingBuilder groupingBuilder) {
+        throw new YangParseException(getModuleName(), groupingBuilder.getLine(), "Can not add grouping to choice case.");
     }
 
     @Override
