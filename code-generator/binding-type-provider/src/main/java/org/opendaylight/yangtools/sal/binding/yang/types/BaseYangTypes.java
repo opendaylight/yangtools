@@ -144,7 +144,7 @@ public final class BaseYangTypes {
          * @return java <code>Type</code> representation of <code>type</code>
          */
         @Override
-        public Type javaTypeForYangType(String type) {
+        public Type javaTypeForYangType(final String type) {
             return typeMap.get(type);
         }
 
@@ -159,7 +159,7 @@ public final class BaseYangTypes {
          *         returned.
          */
         @Override
-        public Type javaTypeForSchemaDefinitionType(TypeDefinition<?> type, SchemaNode parentNode) {
+        public Type javaTypeForSchemaDefinitionType(final TypeDefinition<?> type, final SchemaNode parentNode) {
             if (type != null) {
                 return typeMap.get(type.getQName().getLocalName());
             }
@@ -168,12 +168,12 @@ public final class BaseYangTypes {
         }
 
         @Override
-        public Type javaTypeForSchemaDefinitionType(TypeDefinition<?> type, SchemaNode parentNode,
-                Restrictions restrictions) {
+        public Type javaTypeForSchemaDefinitionType(final TypeDefinition<?> type, final SchemaNode parentNode,
+                final Restrictions restrictions) {
             String typeName = type.getQName().getLocalName();
             switch (typeName) {
             case "binary":
-                return Types.primitiveType("byte[]", restrictions);
+                return restrictions == null ? Types.BYTE_ARRAY : Types.primitiveType("byte[]", restrictions);
             case "decimal64":
                 return Types.typeForClass(BigDecimal.class, restrictions);
             case "enumeration":
@@ -204,17 +204,17 @@ public final class BaseYangTypes {
         }
 
         @Override
-        public String getTypeDefaultConstruction(LeafSchemaNode node) {
+        public String getTypeDefaultConstruction(final LeafSchemaNode node) {
             return null;
         }
 
         @Override
-        public String getConstructorPropertyName(SchemaNode node) {
+        public String getConstructorPropertyName(final SchemaNode node) {
             return null;
         }
 
         @Override
-        public String getParamNameFromType(TypeDefinition<?> type) {
+        public String getParamNameFromType(final TypeDefinition<?> type) {
             return "_" + BindingGeneratorUtil.parseToValidParamName(type.getQName().getLocalName());
         }
     };
