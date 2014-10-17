@@ -168,7 +168,7 @@ public class InstanceIdentifierTest {
         assertEquals( "PathArg 3 node type", nodeName3, it.next().getNodeType() );
         assertEquals( "PathArg 4 node type", nodeName4, it.next().getNodeType() );
 
-        newID = YangInstanceIdentifier.builder( nodeName1 ).build();
+        newID = YangInstanceIdentifier.builder().node( nodeName1 ).build();
 
         assertNotNull( "InstanceIdentifier is null", newID );
         assertEquals( "Path size", 1, Iterables.size(newID.getPathArguments()) );
