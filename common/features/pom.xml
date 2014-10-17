@@ -92,7 +92,23 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools.model</groupId>
+            <artifactId>ietf-ted</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools.model</groupId>
             <artifactId>ietf-topology</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools.model</groupId>
+            <artifactId>ietf-topology-isis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools.model</groupId>
+            <artifactId>ietf-topology-ospf</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools.model</groupId>
+            <artifactId>ietf-topology-l3-unicast-igp</artifactId>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools.thirdparty</groupId>
