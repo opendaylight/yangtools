@@ -88,6 +88,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
         Preconditions.checkArgument(name != null, "Name for Enclosing Generated Transfer Object cannot be null!");
         GeneratedTOBuilder builder = new GeneratedTOBuilderImpl(getFullyQualifiedName(), name);
 
+        Preconditions.checkArgument(!enclosedTransferObjects.contains(builder), "This generated type already contains equal enclosing transfer object.");
         enclosedTransferObjects = LazyCollections.lazyAdd(enclosedTransferObjects, builder);
         return builder;
     }
@@ -95,6 +96,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
     @Override
     public T addEnclosingTransferObject(final GeneratedTOBuilder genTOBuilder) {
         Preconditions.checkArgument(genTOBuilder != null, "Parameter genTOBuilder cannot be null!");
+        Preconditions.checkArgument(!enclosedTransferObjects.contains(genTOBuilder), "This generated type already contains equal enclosing transfer object.");
         enclosedTransferObjects = LazyCollections.lazyAdd(enclosedTransferObjects, genTOBuilder);
         return thisInstance();
     }
@@ -111,6 +113,8 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
         Preconditions.checkArgument(name != null, "Name of Annotation Type cannot be null!");
 
         final AnnotationTypeBuilder builder = new AnnotationTypeBuilderImpl(packageName, name);
+
+        Preconditions.checkArgument(!annotationBuilders.contains(builder), "This generated type already contains equal annotation.");
         annotationBuilders = LazyCollections.lazyAdd(annotationBuilders, builder);
         return builder;
     }
@@ -124,6 +128,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
     @Override
     public T addImplementsType(final Type genType) {
         Preconditions.checkArgument(genType != null, "Type cannot be null");
+        Preconditions.checkArgument(!implementsTypes.contains(genType), "This generated type already contains equal implements type.");
         implementsTypes = LazyCollections.lazyAdd(implementsTypes, genType);
         return thisInstance();
     }
@@ -132,16 +137,29 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
     public Constant addConstant(final Type type, final String name, final Object value) {
         Preconditions.checkArgument(type != null, "Returning Type for Constant cannot be null!");
         Preconditions.checkArgument(name != null, "Name of constant cannot be null!");
+        Preconditions.checkArgument(!containsConstant(name), "This generated type already contains constant with the same name.");
 
         final Constant constant = new ConstantImpl(this, type, name, value);
         constants = LazyCollections.lazyAdd(constants, constant);
         return constant;
     }
 
+    public boolean containsConstant(final String name) {
+        Preconditions.checkArgument(name != null, "Parameter name can't be null");
+        for (Constant constant : constants) {
+            if (name.equals(constant.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public EnumBuilder addEnumeration(final String name) {
         Preconditions.checkArgument(name != null, "Name of enumeration cannot be null!");
         final EnumBuilder builder = new EnumerationBuilderImpl(getFullyQualifiedName(), name);
+
+        Preconditions.checkArgument(!enumDefinitions.contains(builder), "This generated type already contains equal enumeration.");
         enumDefinitions = LazyCollections.lazyAdd(enumDefinitions, builder);
         return builder;
     }
@@ -170,6 +188,8 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
     @Override
     public GeneratedPropertyBuilder addProperty(final String name) {
         Preconditions.checkArgument(name != null, "Parameter name can't be null");
+        Preconditions.checkArgument(!containsProperty(name), "This generated type already contains property with the same name.");
+
         final GeneratedPropertyBuilder builder = new GeneratedPropertyBuilderImpl(name);
         builder.setAccessModifier(AccessModifier.PUBLIC);
         properties = LazyCollections.lazyAdd(properties, builder);
