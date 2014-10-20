@@ -154,7 +154,7 @@ public abstract class AbstractDocumentedDataNodeContainerBuilder extends Abstrac
     }
 
     @Override
-    public final void addGrouping(final GroupingBuilder grouping) {
+    public void addGrouping(final GroupingBuilder grouping) {
         checkNotSealed();
         QName groupingName = grouping.getQName();
         for (GroupingBuilder addedGrouping : addedGroupings) {

@@ -129,13 +129,6 @@ public final class CopyUtils {
         for (DataSchemaNodeBuilder childNode : old.getChildNodeBuilders()) {
             copy.addChildNode(copy(childNode, copy, updateQName));
         }
-        copy.getGroupings().addAll(old.getGroupings());
-        for (GroupingBuilder grouping : old.getGroupingBuilders()) {
-            copy.addGrouping(copy(grouping, copy, updateQName));
-        }
-        for (TypeDefinitionBuilder tdb : old.getTypeDefinitionBuilders()) {
-            copy.addTypedef(copy(tdb, copy, updateQName));
-        }
         for (UsesNodeBuilder oldUses : old.getUsesNodeBuilders()) {
             copy.addUsesNode(copyUses(oldUses, copy));
         }
