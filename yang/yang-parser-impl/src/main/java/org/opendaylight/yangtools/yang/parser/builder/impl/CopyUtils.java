@@ -443,10 +443,13 @@ public final class CopyUtils {
 
     private static DataBean getdata(final SchemaNodeBuilder old, final Builder newParent, final boolean updateQName) {
         final SchemaPath newSchemaPath;
+        // this check avoid NPE because if old is IdentityrefTypeBuilder, old.getQNname() return null
+        final boolean identityrefTypeCheck = old instanceof IdentityrefTypeBuilder ? false : updateQName;
+
         QName newQName = null;
         if (newParent instanceof ModuleBuilder) {
             ModuleBuilder parent = (ModuleBuilder) newParent;
-            if (updateQName) {
+            if (identityrefTypeCheck) {
                 newQName = QName.create(parent.getQNameModule(), parent.getPrefix(), old.getQName()
                         .getLocalName());
             } else {
@@ -456,7 +459,7 @@ public final class CopyUtils {
         } else if (newParent instanceof AugmentationSchemaBuilder) {
             AugmentationSchemaBuilder augment = (AugmentationSchemaBuilder) newParent;
             ModuleBuilder parent = BuilderUtils.getParentModule(newParent);
-            if (updateQName) {
+            if (identityrefTypeCheck) {
                 newQName = QName.create(parent.getQNameModule(), parent.getPrefix(), old.getQName()
                         .getLocalName());
             } else {
@@ -466,7 +469,7 @@ public final class CopyUtils {
         } else if (newParent instanceof SchemaNodeBuilder) {
             SchemaNodeBuilder parent = (SchemaNodeBuilder) newParent;
             QName parentQName = parent.getQName();
-            if (updateQName) {
+            if (identityrefTypeCheck) {
                 newQName = QName.create(parentQName, old.getQName().getLocalName());
             } else {
                 newQName = old.getQName();
