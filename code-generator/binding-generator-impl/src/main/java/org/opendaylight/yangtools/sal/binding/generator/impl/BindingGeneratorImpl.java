@@ -1209,9 +1209,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 genCtx.get(module).addChoiceToCaseMapping(refChoiceType, caseTypeBuilder, caseNode);
                 final Iterable<DataSchemaNode> caseChildNodes = caseNode.getChildNodes();
                 if (caseChildNodes != null) {
-                    Object parentNode = null;
                     final SchemaPath nodeSp = choiceNode.getPath();
-                    parentNode = findDataSchemaNode(schemaContext, nodeSp.getParent());
+                    final Object parentNode = findDataSchemaNode(schemaContext, nodeSp.getParent());
 
                     SchemaNode parent;
                     if (parentNode instanceof AugmentationSchema) {
@@ -1234,14 +1233,15 @@ public class BindingGeneratorImpl implements BindingGenerator {
                         final SchemaPath sp = choiceNode.getPath();
                         parent = findDataSchemaNode(schemaContext, sp.getParent());
                     }
-                    GeneratedTypeBuilder childOfType = findChildNodeByPath(parent.getPath());
-                    if (childOfType == null) {
-                        childOfType = findGroupingByPath(parent.getPath());
+                    if (parent != null) {
+                        GeneratedTypeBuilder childOfType = findChildNodeByPath(parent.getPath());
+                        if (childOfType == null) {
+                            childOfType = findGroupingByPath(parent.getPath());
+                        }
+                        resolveDataSchemaNodes(module, basePackageName, caseTypeBuilder, childOfType, caseChildNodes);
                     }
-                    resolveDataSchemaNodes(module, basePackageName, caseTypeBuilder, childOfType, caseChildNodes);
                 }
             }
-
             processUsesAugments(caseNode, module);
         }
     }
