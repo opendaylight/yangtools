@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.base.Optional;
@@ -67,7 +68,7 @@ public class ModuleIdentifierTest {
 
     @Test
     public void testHashCode() {
-        assertFalse(moduleIdentifier.hashCode() == moduleIdentifier2.hashCode());
+        assertNotEquals(moduleIdentifier.hashCode(), moduleIdentifier2.hashCode());
     }
 
     @Test

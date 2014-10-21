@@ -77,7 +77,7 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
 
     @Override
     public void setTypedef(final TypeDefinitionBuilder tdb) {
-        throw new YangParseException(getModuleName(), getLine(), "Can not set type to " + NAME);
+        throw new YangParseException(getModuleName(), getLine(), "Can not set typedef to " + NAME);
     }
 
     @Override
