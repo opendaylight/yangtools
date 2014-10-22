@@ -1,0 +1,16 @@
+module imported-module {
+    yang-version 1;
+    namespace "uri:imported-module";
+    prefix imp;
+
+    revision 2014-10-07 {
+        description
+                "Imported yang model";
+    }
+
+    container my-imported-container {
+        leaf my-imported-leaf {
+            type string;
+        }
+    }
+}
