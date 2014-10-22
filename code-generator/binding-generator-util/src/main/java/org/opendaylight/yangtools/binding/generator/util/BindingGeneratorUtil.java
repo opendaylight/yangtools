@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.generator.util;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.Iterables;
-
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -21,7 +20,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-
 import org.opendaylight.yangtools.sal.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
@@ -245,8 +243,10 @@ public final class BindingGeneratorUtil {
      *            JAVA parameter name
      * @return string which is in accordance with best practices for JAVA
      *         parameter name.
+     *
+     * @deprecated Use {@link BindingMapping#getPropertyName(String)} instead.
      */
-    public static String parseToValidParamName(final String token) {
+    @Deprecated public static String parseToValidParamName(final String token) {
         return resolveJavaReservedWordEquivalency(parseToCamelCase(token, false));
     }
 

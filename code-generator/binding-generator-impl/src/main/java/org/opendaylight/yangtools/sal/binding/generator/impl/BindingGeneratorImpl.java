@@ -12,7 +12,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.computeDefaultSUID;
 import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.packageNameForGeneratedType;
-import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.parseToValidParamName;
 import static org.opendaylight.yangtools.binding.generator.util.BindingTypes.DATA_OBJECT;
 import static org.opendaylight.yangtools.binding.generator.util.BindingTypes.DATA_ROOT;
 import static org.opendaylight.yangtools.binding.generator.util.BindingTypes.IDENTIFIABLE;
@@ -26,6 +25,7 @@ import static org.opendaylight.yangtools.binding.generator.util.Types.typeForCla
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNode;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findNodeInSchemaContext;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
+
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -482,7 +482,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         for (RpcDefinition rpc : rpcDefinitions) {
             if (rpc != null) {
                 final String rpcName = BindingMapping.getClassName(rpc.getQName());
-                final String rpcMethodName = parseToValidParamName(rpcName);
+                final String rpcMethodName = BindingMapping.getPropertyName(rpcName);
                 final String rpcComment = rpc.getDescription();
                 final MethodSignatureBuilder method = interfaceBuilder.addMethod(rpcMethodName);
                 final ContainerSchemaNode input = rpc.getInput();
@@ -1501,7 +1501,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         }
         final String leafName = leaf.getQName().getLocalName();
         final String leafDesc = leaf.getDescription();
-        final GeneratedPropertyBuilder propBuilder = toBuilder.addProperty(parseToValidParamName(leafName));
+        final GeneratedPropertyBuilder propBuilder = toBuilder.addProperty(BindingMapping.getPropertyName(leafName));
         propBuilder.setReadOnly(isReadOnly);
         propBuilder.setReturnType(returnType);
         propBuilder.setComment(leafDesc);
