@@ -174,11 +174,6 @@ public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder im
     }
 
     @Override
-    public List<UnknownSchemaNodeBuilder> getUnknownNodes() {
-        return Collections.emptyList();
-    }
-
-    @Override
     public List<RangeConstraint> getRanges() {
         return ranges;
     }
