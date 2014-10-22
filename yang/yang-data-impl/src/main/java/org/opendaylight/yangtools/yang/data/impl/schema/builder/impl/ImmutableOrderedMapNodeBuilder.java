@@ -7,22 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.base.Optional;
+import com.google.common.collect.Iterables;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.Iterables;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ImmutableOrderedMapNodeBuilder
         implements CollectionNodeBuilder<MapEntryNode, OrderedMapNode> {
@@ -46,7 +46,7 @@ public class ImmutableOrderedMapNodeBuilder
         return new ImmutableOrderedMapNodeBuilder();
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create(final OrderedMapNode node) {
+    public static CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create(final MapNode node) {
         if (!(node instanceof ImmutableOrderedMapNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }
