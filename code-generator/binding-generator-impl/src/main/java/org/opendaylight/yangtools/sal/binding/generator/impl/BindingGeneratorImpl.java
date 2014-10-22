@@ -26,6 +26,7 @@ import static org.opendaylight.yangtools.binding.generator.util.Types.typeForCla
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNode;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findNodeInSchemaContext;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
+
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -1501,7 +1502,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         }
         final String leafName = leaf.getQName().getLocalName();
         final String leafDesc = leaf.getDescription();
-        final GeneratedPropertyBuilder propBuilder = toBuilder.addProperty(parseToValidParamName(leafName));
+        final GeneratedPropertyBuilder propBuilder = toBuilder.addProperty(BindingMapping.getPropertyName(leafName));
         propBuilder.setReadOnly(isReadOnly);
         propBuilder.setReturnType(returnType);
         propBuilder.setComment(leafDesc);
