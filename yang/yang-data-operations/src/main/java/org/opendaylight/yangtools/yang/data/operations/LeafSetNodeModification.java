@@ -7,17 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.operations;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 
 final class LeafSetNodeModification implements Modification<LeafListSchemaNode, LeafSetNode<?>> {
 
@@ -41,7 +39,7 @@ final class LeafSetNodeModification implements Modification<LeafListSchemaNode, 
                     DataModificationException.DataExistsException.check(schema.getQName(), actual, leafListModification);
                 }
                 case REPLACE: {
-                    if (contains(actual, leafListModification) == false) {
+                    if (!contains(actual, leafListModification)) {
                         resultNodes.add(leafListModification);
                     }
                     break;

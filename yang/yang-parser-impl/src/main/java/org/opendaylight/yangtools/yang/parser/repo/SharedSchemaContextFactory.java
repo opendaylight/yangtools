@@ -190,7 +190,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
                 final ASTSchemaSource astSchemaSource = input.get(i);
                 final SourceIdentifier realSId = astSchemaSource.getIdentifier();
 
-                if (expectedSId.equals(realSId) == false) {
+                if (!expectedSId.equals(realSId)) {
                     LOG.warn("Source identifier mismatch for module \"{}\", requested as {} but actually is {}. Using actual id", expectedSId.getName(), expectedSId, realSId);
                 }
 

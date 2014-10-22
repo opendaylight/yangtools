@@ -7,19 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.operations;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import java.net.URI;
 import java.util.Deque;
 import java.util.LinkedList;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 
 /**
  * Tracks netconf operations on nested nodes.
@@ -36,7 +34,7 @@ final class OperationStack {
     }
 
     public void enteringNode(Optional<? extends NormalizedNode<?, ?>> modificationNode) {
-        if (modificationNode.isPresent() == false) {
+        if (!modificationNode.isPresent()) {
             return;
         }
 
@@ -55,7 +53,7 @@ final class OperationStack {
     }
 
     private ModifyAction getOperation(NormalizedNode<?, ?> modificationNode) {
-        if (modificationNode instanceof AttributesContainer == false)
+        if (!(modificationNode instanceof AttributesContainer))
             return null;
 
         String operationString = ((AttributesContainer) modificationNode).getAttributes().get(OPERATION_NAME);
@@ -74,7 +72,7 @@ final class OperationStack {
     }
 
     public void exitingNode(Optional<? extends NormalizedNode<?, ?>> modificationNode) {
-        if (modificationNode.isPresent() == false) {
+        if (!modificationNode.isPresent()) {
             return;
         }
 

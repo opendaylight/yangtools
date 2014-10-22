@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import java.util.Map;
-
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -52,7 +51,7 @@ public class ImmutableAugmentationNodeBuilder extends AbstractImmutableDataConta
     public DataContainerNodeBuilder<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> withChild(
             final DataContainerChild<?, ?> child) {
         // Check nested augments
-        DataValidationException.checkLegalData(child instanceof AugmentationNode == false,
+        DataValidationException.checkLegalData(!(child instanceof AugmentationNode),
                 "Unable to add: %s, as a child for: %s, Nested augmentations are not permitted", child.getNodeType(),
                 getNodeIdentifier() == null ? this : getNodeIdentifier());
 

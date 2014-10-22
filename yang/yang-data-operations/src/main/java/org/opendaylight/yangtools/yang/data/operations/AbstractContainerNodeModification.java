@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.operations;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import java.util.List;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
@@ -26,11 +29,6 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<?>> implements Modification<S, N> {
 
@@ -80,11 +78,11 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
     private Optional<N> modifyContainer(S schema, Optional<N> actual, Optional<N> modification,
             OperationStack operationStack) throws DataModificationException {
 
-        if (actual.isPresent() == false) {
+        if (!actual.isPresent()) {
             return modification;
         }
 
-        if (modification.isPresent() == false) {
+        if (!modification.isPresent()) {
             return actual;
         }
 

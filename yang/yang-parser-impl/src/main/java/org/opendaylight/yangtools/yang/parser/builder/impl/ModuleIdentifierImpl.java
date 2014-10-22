@@ -10,10 +10,8 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Optional;
-
 import java.net.URI;
 import java.util.Date;
-
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 
@@ -65,7 +63,7 @@ public class ModuleIdentifierImpl implements ModuleIdentifier {
         if (this == o) {
             return true;
         }
-        if (o == null || (o instanceof ModuleIdentifier == false)) {
+        if (o == null || (!(o instanceof ModuleIdentifier))) {
             return false;
         }
 

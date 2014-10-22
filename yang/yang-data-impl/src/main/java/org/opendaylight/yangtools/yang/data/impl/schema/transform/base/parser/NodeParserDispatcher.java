@@ -42,7 +42,7 @@ public interface NodeParserDispatcher<E> {
 
         @Override
         public final DataContainerChild<?, ?> dispatchChildElement(Object schema, List<E> childNodes) {
-            Preconditions.checkArgument(childNodes.isEmpty() == false);
+            Preconditions.checkArgument(!childNodes.isEmpty());
 
             if (schema instanceof ContainerSchemaNode) {
                 return factory.getContainerNodeParser().parse(childNodes, (ContainerSchemaNode) schema);
