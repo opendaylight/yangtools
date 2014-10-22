@@ -14,11 +14,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.sal.binding.generator.spi.TypeProvider;
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
+import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -215,7 +215,7 @@ public final class BaseYangTypes {
 
         @Override
         public String getParamNameFromType(final TypeDefinition<?> type) {
-            return "_" + BindingGeneratorUtil.parseToValidParamName(type.getQName().getLocalName());
+            return "_" + BindingMapping.getPropertyName(type.getQName().getLocalName());
         }
     };
 

@@ -1219,12 +1219,12 @@ class TransformerGenerator extends AbstractTransformerGenerator {
     }
 
     def String getPropertyName(Bit bit) {
-        '''_«BindingGeneratorUtil.parseToValidParamName(bit.name)»'''
+        '''_«BindingMapping.getPropertyName(bit.name)»'''
     }
 
     def String getterName(Bit bit) {
 
-        val paramName = BindingGeneratorUtil.parseToValidParamName(bit.name);
+        val paramName = BindingMapping.getPropertyName(bit.name);
         return '''is«paramName.toFirstUpper»''';
     }
 

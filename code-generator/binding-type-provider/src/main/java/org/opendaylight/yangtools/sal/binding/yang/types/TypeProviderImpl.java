@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.sal.binding.yang.types;
 
 import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.moduleNamespaceToPackageName;
 import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.packageNameForGeneratedType;
-import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.parseToValidParamName;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNode;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNodeForRelativeXPath;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import com.google.common.io.BaseEncoding;
@@ -914,8 +914,7 @@ public final class TypeProviderImpl implements TypeProvider {
                 basePackageName, unionSubtype, newTOBuilderName, parentNode);
 
         final GeneratedPropertyBuilder propertyBuilder;
-        propertyBuilder = parentUnionGenTOBuilder.addProperty(BindingGeneratorUtil
-                .parseToValidParamName(newTOBuilderName));
+        propertyBuilder = parentUnionGenTOBuilder.addProperty(BindingMapping.getPropertyName(newTOBuilderName));
         propertyBuilder.setReturnType(subUnionGenTOBUilders.get(0));
         parentUnionGenTOBuilder.addEqualsIdentity(propertyBuilder);
         parentUnionGenTOBuilder.addToStringProperty(propertyBuilder);
@@ -1025,7 +1024,7 @@ public final class TypeProviderImpl implements TypeProvider {
             final String propertyName) {
         if (unionGenTransObject != null && type != null && !unionGenTransObject.containsProperty(propertyName)) {
             final GeneratedPropertyBuilder propBuilder = unionGenTransObject
-                    .addProperty(parseToValidParamName(propertyName));
+                    .addProperty(BindingMapping.getPropertyName(propertyName));
             propBuilder.setReturnType(type);
 
             unionGenTransObject.addEqualsIdentity(propBuilder);
@@ -1105,7 +1104,7 @@ public final class TypeProviderImpl implements TypeProvider {
             GeneratedPropertyBuilder genPropertyBuilder;
             for (final Bit bit : bitList) {
                 String name = bit.getName();
-                genPropertyBuilder = genTOBuilder.addProperty(parseToValidParamName(name));
+                genPropertyBuilder = genTOBuilder.addProperty(BindingMapping.getPropertyName(name));
                 genPropertyBuilder.setReadOnly(true);
                 genPropertyBuilder.setReturnType(BaseYangTypes.BOOLEAN_TYPE);
 
@@ -1622,7 +1621,7 @@ public final class TypeProviderImpl implements TypeProvider {
 
     @Override
     public String getParamNameFromType(final TypeDefinition<?> type) {
-        return BindingGeneratorUtil.parseToValidParamName(type.getQName().getLocalName());
+        return BindingMapping.getPropertyName(type.getQName().getLocalName());
     }
 
 }
