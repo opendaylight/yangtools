@@ -1,0 +1,72 @@
+module my-module {
+    yang-version 1;
+    namespace "uri:my-module";
+    prefix my;
+
+    import imported-module { prefix imp; revision-date 2014-10-07; }
+
+    revision 2014-10-07 {
+        description
+                "My yang model";
+    }
+
+    grouping my-grouping {
+        container my-container-in-grouping {
+            leaf my-leaf-in-grouping {
+                type int16;
+            }
+        }
+        leaf my-leaf-in-gouping2 {
+            type string;
+        }
+    }
+
+    container my-container {
+        leaf my-leaf-in-container {
+            type int32;
+        }
+        uses my-grouping;
+        list my-list {
+            leaf my-leaf-in-list {
+                type string;
+            }
+            leaf-list my-leaf-list-in-list {
+                type int16;
+            }
+        }
+    }
+
+    rpc my-rpc {
+        input {
+            leaf my-input-leaf {
+                type string;
+            }
+        }
+
+        output {
+            leaf my-output-leaf {
+                type int16;
+            }
+        }
+    }
+
+    notification my-notification {
+        leaf my-notification-leaf {
+            type string;
+        }
+    }
+
+    choice my-choice {
+        case one {
+            leaf my-choice-leaf-one {
+                type string;
+            }
+        }
+        case two {
+            leaf my-choice-leaf-two {
+                type int16;
+            }
+        }
+    }
+}
+
