@@ -27,7 +27,8 @@ public abstract class LeafSetNodeBaseParser<E> implements
     @Override
     public final LeafSetNode<?> parse(Iterable<E> childNodes, LeafListSchemaNode schema) {
 
-        ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafListBuilder = Builders.leafSetBuilder(schema);
+        ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafListBuilder =
+          (schema.isUserOrdered() ? Builders.orderedLeafSetBuilder(schema) : Builders.leafSetBuilder(schema));
         for (E childNode : childNodes) {
             LeafSetEntryNode<?> builtChild = getLeafSetEntryNodeParser().parse(
                     Collections.singletonList(childNode), schema);
