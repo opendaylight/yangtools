@@ -11,6 +11,10 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.gson.stream.JsonWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.net.URI;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -20,12 +24,9 @@ import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-
-import java.io.IOException;
-import java.io.Writer;
-import java.net.URI;
 
 /**
  * This implementation will create JSON output as output stream.
@@ -51,9 +52,10 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
     private final Writer writer;
     private final String indent;
     private JSONStreamWriterContext context;
+    private final double maxDepth;
 
     private JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final SchemaPath path,
-            final Writer writer, final URI initialNs, final int indentSize) {
+            final Writer writer, final URI initialNs, final int indentSize, final double maxDepth) {
         this.writer = Preconditions.checkNotNull(writer);
 
         Preconditions.checkArgument(indentSize >= 0, "Indent size must be non-negative");
@@ -65,6 +67,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         this.codecs = Preconditions.checkNotNull(codecFactory);
         this.tracker = SchemaTracker.create(codecFactory.getSchemaContext(), path);
         this.context = new JSONStreamWriterRootContext(initialNs);
+        this.maxDepth = maxDepth;
     }
 
     /**
@@ -75,7 +78,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * @return A stream writer instance
      */
     public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final Writer writer) {
-        return new JSONNormalizedNodeStreamWriter(JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, writer, null, 0);
+        return new JSONNormalizedNodeStreamWriter(JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, writer, null, 0, Double.MAX_VALUE);
     }
 
     /**
@@ -87,7 +90,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * @return A stream writer instance
      */
     public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final SchemaPath path, final Writer writer) {
-        return new JSONNormalizedNodeStreamWriter(JSONCodecFactory.create(schemaContext), path, writer, null, 0);
+        return new JSONNormalizedNodeStreamWriter(JSONCodecFactory.create(schemaContext), path, writer, null, 0, Double.MAX_VALUE);
     }
 
     /**
@@ -100,8 +103,8 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * @return A stream writer instance
      */
     public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final SchemaPath path,
-            final URI initialNs, final Writer writer) {
-        return new JSONNormalizedNodeStreamWriter(JSONCodecFactory.create(schemaContext), path, writer, initialNs, 0);
+            final URI initialNs, final Writer writer, final int indentSize, final double maxDepth) {
+        return new JSONNormalizedNodeStreamWriter(JSONCodecFactory.create(schemaContext), path, writer, initialNs, indentSize, maxDepth);
     }
 
     /**
@@ -112,8 +115,12 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * @param indentSize indentation size
      * @return A stream writer instance
      */
+    public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final Writer writer, final int indentSize, final double maxDepth) {
+        return new JSONNormalizedNodeStreamWriter(JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, writer, null, indentSize, maxDepth);
+    }
+
     public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final Writer writer, final int indentSize) {
-        return new JSONNormalizedNodeStreamWriter(JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, writer, null, indentSize);
+        return new JSONNormalizedNodeStreamWriter(JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, writer, null, indentSize, Double.MAX_VALUE);
     }
 
     /**
@@ -125,8 +132,8 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * @param indentSize indentation size
      * @return A stream writer instance
      */
-    public static NormalizedNodeStreamWriter create(final JSONCodecFactory codecFactory, final Writer writer, final int indentSize) {
-        return new JSONNormalizedNodeStreamWriter(codecFactory, SchemaPath.ROOT, writer, null, indentSize);
+    public static NormalizedNodeStreamWriter create(final JSONCodecFactory codecFactory, final Writer writer, final int indentSize, final double maxDepth) {
+        return new JSONNormalizedNodeStreamWriter(codecFactory, SchemaPath.ROOT, writer, null, indentSize, maxDepth);
     }
 
     @Override
@@ -134,9 +141,29 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         final LeafSchemaNode schema = tracker.leafNode(name);
         final JSONCodec<Object> codec = codecs.codecFor(schema.getType());
 
-        context.emittingChild(codecs.getSchemaContext(), writer, indent);
-        context.writeChildJsonIdentifier(codecs.getSchemaContext(), writer, name.getNodeType());
-        writeValue(codec.serialize(value), codec.needQuotes());
+        //for cutting output to concrete depth. If list entry belong to some depth also its keys are at the same depth
+        final boolean isLeafPartOfKey = isPartOfKey(name.getNodeType());
+        
+        //for cutting output to concrete depth. If leaf is part key in parent list it is also written
+        final boolean printObjectSeparator = isLeafPartOfKey && Double.compare(context.getDepth(),maxDepth) == 0;
+
+        context.emittingChild(codecs.getSchemaContext(), writer, indent, printObjectSeparator ? maxDepth+1 : maxDepth);
+        if (Double.compare(context.getDepth()+1, maxDepth) <= 0 || (Double.compare(context.getDepth(), maxDepth) <= 0 && isLeafPartOfKey)) {
+            context.writeChildJsonIdentifier(codecs.getSchemaContext(), writer, name.getNodeType());
+            writeValue(codec.serialize(value), codec.needQuotes());
+        }
+    }
+
+    private boolean isPartOfKey(QName keyCandidate) {
+        Object parent = tracker.getParent();
+        if (parent instanceof ListSchemaNode) {
+            for(QName key : ((ListSchemaNode)parent).getKeyDefinition()) {
+                if (key.equals(keyCandidate)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -150,8 +177,12 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         final LeafListSchemaNode schema = tracker.leafSetEntryNode();
         final JSONCodec<Object> codec = codecs.codecFor(schema.getType());
 
-        context.emittingChild(codecs.getSchemaContext(), writer, indent);
-        writeValue(codec.serialize(value), codec.needQuotes());
+        //for cutting output to concrete depth. All values of leaf-list with comma separator should be written.
+        final boolean printObjectSeparator = Double.compare(maxDepth - context.getDepth(),0.5) == 0;
+        context.emittingChild(codecs.getSchemaContext(), writer, indent, printObjectSeparator ? maxDepth+1 : maxDepth);
+        if (Double.compare(context.getDepth(), maxDepth) <= 0) {
+            writeValue(codec.serialize(value), codec.needQuotes());
+        }
     }
 
     /*
@@ -214,7 +245,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         final AnyXmlSchemaNode schema = tracker.anyxmlNode(name);
         // FIXME: should have a codec based on this :)
 
-        context.emittingChild(codecs.getSchemaContext(), writer, indent);
+        context.emittingChild(codecs.getSchemaContext(), writer, indent, maxDepth);
         context.writeChildJsonIdentifier(codecs.getSchemaContext(), writer, name.getNodeType());
         writeValue(String.valueOf(value), true);
     }
@@ -222,7 +253,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
     @Override
     public void endNode() throws IOException {
         tracker.endNode();
-        context = context.endNode(codecs.getSchemaContext(), writer, indent);
+        context = context.endNode(codecs.getSchemaContext(), writer, indent, maxDepth);
     }
 
     private void writeValue(final String str, final boolean needQuotes) throws IOException {

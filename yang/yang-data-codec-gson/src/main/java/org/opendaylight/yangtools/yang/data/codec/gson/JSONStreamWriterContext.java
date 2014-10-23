@@ -24,7 +24,13 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 abstract class JSONStreamWriterContext {
     private final JSONStreamWriterContext parent;
     private final boolean mandatory;
-    private final int depth;
+    private final int indentetionLevel;
+
+    //non integer type is used because type as list can consist of 3 levels (list, list entry, list key) 
+    //which are transformed to one level. Therefore list can have depth 1.5 and list entry 2. If elements to
+    //depth 1 should be written then list isn't there. If elements to level 2 then also list and list entry are 
+    //written
+    private final double currentDepth;
     private boolean emittedMyself = false;
     private boolean haveChild = false;
 
@@ -35,15 +41,16 @@ abstract class JSONStreamWriterContext {
      * @param mandatory Mandatory flag. If set to true, the corresponding node
      *                  will be emitted even if it has no children.
      */
-    protected JSONStreamWriterContext(final JSONStreamWriterContext parent, final boolean mandatory) {
+    protected JSONStreamWriterContext(final JSONStreamWriterContext parent, final boolean mandatory, final double depth) {
         this.mandatory = mandatory;
         this.parent = parent;
 
         if (parent != null) {
-            depth = parent.depth + 1;
+            indentetionLevel = parent.indentetionLevel + 1;
         } else {
-            depth = 0;
+            indentetionLevel = 0;
         }
+        this.currentDepth = depth;
     }
 
     /**
@@ -60,7 +67,7 @@ abstract class JSONStreamWriterContext {
 
         // Prepend module name if namespaces do not match
         final URI ns = qname.getNamespace();
-        if (!ns.equals(getNamespace())) {
+        if (!ns.equals(getNamespace()) || this instanceof JSONStreamWriterRootContext) {
             final Module module = schema.findModuleByNamespaceAndRevision(ns, null);
             Preconditions.checkArgument(module != null, "Could not find module for namespace {}", ns);
 
@@ -110,13 +117,14 @@ abstract class JSONStreamWriterContext {
      */
     protected abstract void emitEnd(final Writer writer) throws IOException;
 
-    private final void emitMyself(final SchemaContext schema, final Writer writer, final String indent) throws IOException {
+    private final void emitMyself(final SchemaContext schema, final Writer writer, final String indent, final double maxDepth) throws IOException {
         if (!emittedMyself) {
             if (parent != null) {
-                parent.emittingChild(schema, writer, indent);
+                parent.emittingChild(schema, writer, indent, maxDepth);
             }
-
-            emitStart(schema, writer);
+            if (Double.compare(currentDepth, maxDepth) <= 0) {
+                emitStart(schema, writer);
+            }
             emittedMyself = true;
         }
     }
@@ -131,20 +139,22 @@ abstract class JSONStreamWriterContext {
      * @param indent Indentation string
      * @throws IOException when writer reports it
      */
-    final void emittingChild(final SchemaContext schema, final Writer writer, final String indent) throws IOException {
-        emitMyself(schema, writer, indent);
-        if (haveChild) {
-            writer.append(',');
-        }
-
-        if (indent != null) {
-            writer.append('\n');
-
-            for (int i = 0; i < depth; i++) {
-                writer.append(indent);
+    final void emittingChild(final SchemaContext schema, final Writer writer, final String indent, final double maxDepth) throws IOException {
+        emitMyself(schema, writer, indent, maxDepth);
+        if (Double.compare(currentDepth+1, maxDepth) <= 0) {
+            if (haveChild) {
+                writer.append(',');
             }
+
+            if (indent != null) {
+                writer.append('\n');
+
+                for (int i = 0; i < indentetionLevel; i++) {
+                    writer.append(indent);
+                }
+            }
+            haveChild = true;
         }
-        haveChild = true;
     }
 
     /**
@@ -158,15 +168,29 @@ abstract class JSONStreamWriterContext {
      * @throws IOException when writer reports it
      * @throws IllegalArgumentException if this node cannot be ended (e.g. root)
      */
-    final JSONStreamWriterContext endNode(final SchemaContext schema, final Writer writer, final String indent) throws IOException {
+    final JSONStreamWriterContext endNode(final SchemaContext schema, final Writer writer, final String indent, final double maxDepth) throws IOException {
         if (!emittedMyself && mandatory) {
-            emitMyself(schema, writer, indent);
+            emitMyself(schema, writer, indent, maxDepth);
         }
 
-        if (emittedMyself) {
-            emitEnd(writer);
+        if (Double.compare(currentDepth, maxDepth) <= 0) {
+            if (emittedMyself) {
+                emitEnd(writer);
+            }
         }
         return parent;
+    }
+
+    public double getDepth() {
+        return currentDepth;
+    }
+
+    protected static double addOneDepthLevel(final double currentDepth) {
+        final double ceilInteger = Math.ceil(currentDepth);
+        if (Double.compare(currentDepth, ceilInteger) == 0) {
+            return currentDepth + 1;
+        }
+        return ceilInteger;
     }
 
 }

@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  */
 class JSONStreamWriterObjectContext extends JSONStreamWriterQNameContext {
     protected JSONStreamWriterObjectContext(final JSONStreamWriterContext parent, final PathArgument arg, final boolean mandatory) {
-        super(Preconditions.checkNotNull(parent), arg.getNodeType(), mandatory);
+        super(Preconditions.checkNotNull(parent), arg.getNodeType(), mandatory,  addOneDepthLevel(parent.getDepth()));
     }
 
     @Override

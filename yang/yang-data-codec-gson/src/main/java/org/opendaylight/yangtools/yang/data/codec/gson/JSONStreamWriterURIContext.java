@@ -20,8 +20,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 abstract class JSONStreamWriterURIContext extends JSONStreamWriterContext {
     private final URI namespace;
 
-    protected JSONStreamWriterURIContext(final JSONStreamWriterContext parent, final URI namespace) {
-        super(parent, false);
+    protected JSONStreamWriterURIContext(final JSONStreamWriterContext parent, final URI namespace, final double depth) {
+        super(parent, false, depth);
         this.namespace = namespace;
     }
 

@@ -17,7 +17,7 @@ import java.io.Writer;
  */
 final class JSONStreamWriterInvisibleContext extends JSONStreamWriterURIContext {
     JSONStreamWriterInvisibleContext(final JSONStreamWriterContext parent) {
-        super(Preconditions.checkNotNull(parent), parent.getNamespace());
+        super(Preconditions.checkNotNull(parent), parent.getNamespace(), parent.getDepth() );
     }
 
     @Override
