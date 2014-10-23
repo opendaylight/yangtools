@@ -14,6 +14,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
  * perform anything meaningful.
  */
 final class AlwaysFailOperation implements ModificationApplyOperation {
+    public static final ModificationApplyOperation INSTANCE = new AlwaysFailOperation();
+
+    private AlwaysFailOperation() {
+
+    }
+
     @Override
     public Optional<TreeNode> apply(final ModifiedNode modification,
             final Optional<TreeNode> storeMeta, final Version version) {
