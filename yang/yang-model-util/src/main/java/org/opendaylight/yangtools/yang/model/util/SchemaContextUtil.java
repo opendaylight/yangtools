@@ -274,7 +274,8 @@ public final class SchemaContextUtil {
         return null;
     }
 
-    private static SchemaNode findNodeInGrouping(final GroupingDefinition grouping, final Iterable<QName> path) {
+    private static SchemaNode findNodeInGrouping(
+            final GroupingDefinition grouping, final Iterable<QName> path) {
         final QName current = Iterables.getFirst(path, null);
         if (current == null) {
             LOG.debug("Found grouping {}", grouping);
@@ -283,12 +284,17 @@ public final class SchemaContextUtil {
 
         LOG.trace("Looking for path {} in grouping {}", path, grouping);
         final DataSchemaNode node = grouping.getDataChildByName(current);
-        if (node == null) {
-            LOG.debug("No node matching {} found in grouping {}", current, grouping);
-            return null;
+
+        if (node != null)
+            return findNode(node, nextLevel(path));
+
+        for (GroupingDefinition groupingDefinition : grouping.getGroupings()) {
+            if (groupingDefinition.getQName().equals(current))
+                return findNodeInGrouping(groupingDefinition, nextLevel(path));
         }
 
-        return findNode(node, nextLevel(path));
+        LOG.debug("No node matching {} found in grouping {}", current, grouping);
+        return null;
     }
 
     private static SchemaNode findNodeInRpc(final RpcDefinition rpc, final Iterable<QName> path) {
