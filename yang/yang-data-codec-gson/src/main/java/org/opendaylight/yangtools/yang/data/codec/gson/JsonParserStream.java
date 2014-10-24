@@ -40,6 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
@@ -52,15 +53,22 @@ public final class JsonParserStream implements Closeable, Flushable {
     private final NormalizedNodeStreamWriter writer;
     private final JSONCodecFactory codecs;
     private final SchemaContext schema;
+    private final DataSchemaNode parentNode;
 
-    private JsonParserStream(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext) {
+    private JsonParserStream(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext, final DataSchemaNode parentNode) {
         this.schema = Preconditions.checkNotNull(schemaContext);
         this.writer = Preconditions.checkNotNull(writer);
         this.codecs = JSONCodecFactory.create(schemaContext);
+        this.parentNode = parentNode;
+    }
+
+    public static JsonParserStream create(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext, final SchemaNode parentNode ) {
+        Preconditions.checkArgument(parentNode instanceof DataSchemaNode, "Instance of DataSchemaNode class awaited.");
+        return new JsonParserStream(writer, schemaContext, (DataSchemaNode) parentNode);
     }
 
     public static JsonParserStream create(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext) {
-        return new JsonParserStream(writer, schemaContext);
+        return new JsonParserStream(writer, schemaContext, schemaContext);
     }
 
     public JsonParserStream parse(final JsonReader reader) throws JsonIOException, JsonSyntaxException {
@@ -72,7 +80,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         try {
             reader.peek();
             isEmpty = false;
-            CompositeNodeDataWithSchema compositeNodeDataWithSchema = new CompositeNodeDataWithSchema(schema);
+            CompositeNodeDataWithSchema compositeNodeDataWithSchema = new CompositeNodeDataWithSchema(parentNode);
             read(reader, compositeNodeDataWithSchema);
             compositeNodeDataWithSchema.write(writer);
 
