@@ -16,7 +16,7 @@
         <relativePath>../features-builder/pom.xml</relativePath>
     </parent>
 
-    <artifactId>yangtools-features</artifactId>
+    <artifactId>features-yangtools</artifactId>
     <packaging>jar</packaging>
 
     <build>
