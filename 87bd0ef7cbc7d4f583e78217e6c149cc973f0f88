@@ -206,6 +206,24 @@
     },
     {
       "key": {
+        "uuid": "ba8cc1f7_5b65addf",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONStreamWriterContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-10-27T12:32:18Z",
+      "side": 1,
+      "message": "to print namespace (module name) information for top level element",
+      "parentUuid": "ba8cc1f7_98401b58",
+      "revId": "87bd0ef7cbc7d4f583e78217e6c149cc973f0f88",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "ba8cc1f7_38254fc2",
         "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStream.java",
         "patchSetId": 1
