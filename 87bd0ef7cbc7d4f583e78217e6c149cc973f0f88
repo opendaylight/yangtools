@@ -1,0 +1,259 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba8cc1f7_385eaf46",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/stream/NormalizedNodeWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-10-27T09:27:02Z",
+      "side": 1,
+      "message": "Integer",
+      "revId": "87bd0ef7cbc7d4f583e78217e6c149cc973f0f88",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_585b7354",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/stream/NormalizedNodeWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-10-27T09:27:02Z",
+      "side": 1,
+      "message": "Integer",
+      "revId": "87bd0ef7cbc7d4f583e78217e6c149cc973f0f88",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_f880478d",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/stream/NormalizedNodeWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-10-27T09:27:02Z",
+      "side": 1,
+      "message": "Please use OrderedNormalizedNodeWriter",
+      "revId": "87bd0ef7cbc7d4f583e78217e6c149cc973f0f88",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_d84f8391",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/stream/NormalizedNodeWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-10-27T09:27:02Z",
+      "side": 1,
+      "message": "Why Double.compare? Depth is integer, please use integer. Could not we compare currentDepth \u003c maxDepth",
+      "revId": "87bd0ef7cbc7d4f583e78217e6c149cc973f0f88",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_78443774",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/stream/NormalizedNodeWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-10-27T09:27:02Z",
+      "side": 1,
+      "message": "Same as previous? Why Double.compare? currentDepth \u003c maxDepth",
+      "revId": "87bd0ef7cbc7d4f583e78217e6c149cc973f0f88",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_9849fb8d",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/stream/NormalizedNodeWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-10-27T09:27:02Z",
+      "side": 1,
+      "message": "currentDepth \u003d\u003d maxDepth",
+      "revId": "87bd0ef7cbc7d4f583e78217e6c149cc973f0f88",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_f857e724",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/stream/NormalizedNodeWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-10-27T09:27:02Z",
+      "side": 1,
+      "message": "Unnecessary if depth is integer.",
+      "revId": "87bd0ef7cbc7d4f583e78217e6c149cc973f0f88",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_1855eb1c",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/stream/NormalizedNodeWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 241,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-10-27T09:27:02Z",
+      "side": 1,
+      "message": "Do not increase depth here.",
+      "revId": "87bd0ef7cbc7d4f583e78217e6c149cc973f0f88",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_b8315f0d",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/stream/NormalizedNodeWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 247,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-10-27T09:27:02Z",
+      "side": 1,
+      "message": "Do not increase depth here",
+      "revId": "87bd0ef7cbc7d4f583e78217e6c149cc973f0f88",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_d836a303",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/stream/NormalizedNodeWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-10-27T09:27:02Z",
+      "side": 1,
+      "message": "Increase by one",
+      "revId": "87bd0ef7cbc7d4f583e78217e6c149cc973f0f88",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_783bd7eb",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/stream/NormalizedNodeWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-10-27T09:27:02Z",
+      "side": 1,
+      "message": "Increase by one",
+      "revId": "87bd0ef7cbc7d4f583e78217e6c149cc973f0f88",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_98401b58",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONStreamWriterContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-10-27T09:27:02Z",
+      "side": 1,
+      "message": "Why is this necessary?",
+      "revId": "87bd0ef7cbc7d4f583e78217e6c149cc973f0f88",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_38254fc2",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStream.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-10-27T09:27:02Z",
+      "side": 1,
+      "message": "Why this is necessary? Seems unrelated.",
+      "revId": "87bd0ef7cbc7d4f583e78217e6c149cc973f0f88",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_f82e07a5",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStream.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-10-27T09:27:02Z",
+      "side": 1,
+      "message": "Why is this necessary? Seems unrelated.",
+      "revId": "87bd0ef7cbc7d4f583e78217e6c149cc973f0f88",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_b8187f85",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStream.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-10-27T09:27:02Z",
+      "side": 1,
+      "message": "Why is this necessary? Seems unrelated.",
+      "revId": "87bd0ef7cbc7d4f583e78217e6c149cc973f0f88",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
