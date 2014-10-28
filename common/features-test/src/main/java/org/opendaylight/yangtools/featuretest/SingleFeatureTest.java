@@ -79,6 +79,8 @@ public class SingleFeatureTest {
     public Option[] config() throws IOException {
        return new Option[] {
              bootDelegationPackage("javax.crypto"),
+             bootDelegationPackage("javax.crypto.interfaces"),
+             bootDelegationPackage("javax.crypto.spec"),
              getKarafDistroOption(),
              vmOptions("-Xmx2048m","-XX:MaxPermSize=512m"),
              keepRuntimeFolder(),
