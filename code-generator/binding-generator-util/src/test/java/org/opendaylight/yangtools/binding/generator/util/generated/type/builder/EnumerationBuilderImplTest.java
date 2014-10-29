@@ -7,7 +7,16 @@
  */
 package org.opendaylight.yangtools.binding.generator.util.generated.type.builder;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import com.google.common.base.Optional;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration;
@@ -17,16 +26,6 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.EnumerationType;
-
-import java.util.Collections;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 public class EnumerationBuilderImplTest {
 
@@ -41,9 +40,9 @@ public class EnumerationBuilderImplTest {
     private final String reference = "TestRef";
     private final String valueName = "TestValue";
     private final String valueDescription = "Value used for test";
-    private int value = 12;
+    private final int value = 12;
     private Enumeration enumeration;
-    private QName  qName = QName.create("TestQName", "10-10-2014", "TestLocalQName");
+    private final QName  qName = QName.create("TestQName", "10-10-2014", "TestLocalQName");
 
 
     @Before
@@ -153,14 +152,14 @@ public class EnumerationBuilderImplTest {
      * Internal implementation of EnumPair.
      */
     private static class EnumPairImpl implements EnumTypeDefinition.EnumPair {
-        private QName qname;
-        private SchemaPath path;
-        private String description;
-        private String reference;
-        private Status status;
+        private final QName qname;
+        private final SchemaPath path;
+        private final String description;
+        private final String reference;
+        private final Status status;
         private final List<UnknownSchemaNode> unknownNodes = Collections.emptyList();
-        private String name;
-        private Integer value;
+        private final String name;
+        private final Integer value;
 
         private EnumPairImpl(QName qName) {
             qname = qName;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -7,11 +7,14 @@
  */
 package org.opendaylight.yangtools.binding.generator.util.generated.type.builder;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.Test;
 import org.opendaylight.yangtools.binding.generator.util.Types;
 import org.opendaylight.yangtools.sal.binding.model.api.AnnotationType;
@@ -403,4 +406,113 @@ public class AnnotationBuilderTest {
 
     }
 
+    public void testAddAnnotation() {
+        final AnnotationTypeBuilderImpl annotBuilderImpl = new AnnotationTypeBuilderImpl("org.opedaylight.yangtools.test", "AnnotationTest");
+        annotBuilderImpl.addAnnotation("org.opedaylight.yangtools.test.v1", "AnnotationTest2");
+        annotBuilderImpl.addAnnotation(null, "AnnotationTest2");
+        assertFalse(annotBuilderImpl.toInstance().getAnnotations().isEmpty());
+    }
+
+    @Test
+    public void testAddParameterMethod() {
+        final AnnotationTypeBuilderImpl annotBuilderImpl = new AnnotationTypeBuilderImpl("org.opedaylight.yangtools.test", "AnnotationTest");
+        annotBuilderImpl.addParameter("testParam", "test value");
+        annotBuilderImpl.addParameter(null, "test value");
+        final AnnotationType annotType = annotBuilderImpl.toInstance();
+        assertEquals(1, annotType.getParameters().size());
+    }
+
+    @Test
+    public void testAddParametersMethod() {
+        final AnnotationTypeBuilderImpl annotBuilderImpl = new AnnotationTypeBuilderImpl("org.opedaylight.yangtools.test", "AnnotationTest");
+
+        final List<String> values = new ArrayList<>();
+        values.add("test1");
+        values.add("test2");
+        values.add("test3");
+        annotBuilderImpl.addParameters("testParam", values);
+
+        AnnotationType annotType = annotBuilderImpl.toInstance();
+        assertEquals(1, annotType.getParameters().size());
+
+        annotBuilderImpl.addParameters("testParam", null);
+
+        annotType = annotBuilderImpl.toInstance();
+        assertEquals(1, annotType.getParameters().size());
+    }
+
+    @Test
+    public void testHashCode() {
+        final AnnotationTypeBuilderImpl annotBuilderImpl = new AnnotationTypeBuilderImpl("org.opedaylight.yangtools.test", "AnnotationTest");
+        final AnnotationTypeBuilderImpl annotBuilderImpl2 = new AnnotationTypeBuilderImpl("org.opedaylight.yangtools.test", "AnnotationTest2");
+        assertFalse(annotBuilderImpl.hashCode() == annotBuilderImpl2.hashCode());
+    }
+
+    @Test
+    public void testEquals() {
+        final AnnotationTypeBuilderImpl annotBuilderImpl = new AnnotationTypeBuilderImpl("org.opedaylight.yangtools.test", "AnnotationTest");
+        final AnnotationTypeBuilderImpl annotBuilderImpl2 = new AnnotationTypeBuilderImpl("org.opedaylight.yangtools.test", "AnnotationTest");
+        final AnnotationTypeBuilderImpl annotBuilderImpl3 = annotBuilderImpl2;
+
+        assertTrue(annotBuilderImpl.equals(annotBuilderImpl2));
+        assertTrue(annotBuilderImpl2.equals(annotBuilderImpl3));
+        assertFalse(annotBuilderImpl2.equals(null));
+        assertFalse(annotBuilderImpl2.equals("test"));
+    }
+
+    @Test
+    public void testToString() {
+        final AnnotationTypeBuilderImpl annotBuilderImpl = new AnnotationTypeBuilderImpl("org.opedaylight.yangtools.test", "AnnotationTest");
+        assertNotNull(annotBuilderImpl.toString());
+    }
+
+    @Test
+    public void testMethodsForAnnotationTypeImpl() {
+        final AnnotationTypeBuilderImpl annotBuilderImpl = new AnnotationTypeBuilderImpl("org.opedaylight.yangtools.test", "AnnotationTest");
+        annotBuilderImpl.addParameter("testParam", "test value");
+        final AnnotationType annotationType = annotBuilderImpl.toInstance();
+
+        final AnnotationTypeBuilderImpl annotBuilderImpl2 = new AnnotationTypeBuilderImpl("org.opedaylight.yangtools.test", "AnnotationTest");
+        final AnnotationType annotationType2 = annotBuilderImpl2.toInstance();
+
+        assertTrue(annotationType.containsParameters());
+        assertTrue(annotationType.getAnnotations().isEmpty());
+        assertNotNull(annotationType.getFullyQualifiedName());
+        assertNotNull(annotationType.getName());
+        assertNotNull(annotationType.getPackageName());
+        assertNull(annotationType.getParameter(null));
+        assertNotNull(annotationType.getParameter("testParam"));
+        assertFalse(annotationType.getParameterNames().isEmpty());
+        assertFalse(annotationType.getParameters().isEmpty());
+
+        assertTrue(annotationType.hashCode() == annotationType2.hashCode());
+        assertTrue(annotationType.equals(annotationType2));
+        assertNotNull(annotationType.toString());
+    }
+
+    @Test
+    public void testMethodsForParameterImpl() {
+        final AnnotationTypeBuilderImpl annotBuilderImpl = new AnnotationTypeBuilderImpl("org.opedaylight.yangtools.test", "AnnotationTest");
+        annotBuilderImpl.addParameter("testParam", "test value");
+        annotBuilderImpl.addParameter("testParam", "test value");
+        annotBuilderImpl.addParameter("", "test value");
+        annotBuilderImpl.addParameter(null, "test value");
+        annotBuilderImpl.addParameter("", null);
+        final AnnotationType annotationType = annotBuilderImpl.toInstance();
+
+        final Parameter testParam = annotationType.getParameter("testParam");
+        assertEquals("testParam", testParam.getName());
+        assertEquals("test value", testParam.getValue());
+        assertEquals(0, testParam.getValues().size());
+
+        final List<Parameter> testParams = annotationType.getParameters();
+        final Parameter sameParam = testParams.get(0);
+
+        assertFalse(testParams.get(0).equals(testParams.get(1)));
+        assertFalse(testParams.get(0).equals(null));
+        assertFalse(testParams.get(0).equals("test"));
+        assertTrue(testParams.get(0).equals(sameParam));
+        assertFalse(testParams.get(0).hashCode() == testParams.get(1).hashCode());
+        assertTrue(testParams.get(0).hashCode() == testParams.get(0).hashCode());
+    }
 }

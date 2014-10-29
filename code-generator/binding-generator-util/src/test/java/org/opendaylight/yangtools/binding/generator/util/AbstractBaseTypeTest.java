@@ -30,14 +30,14 @@ public class AbstractBaseTypeTest {
     public void testCreateAbstractBaseTypeWithNullPackagename() {
         expException.expect(IllegalArgumentException.class);
         expException.expectMessage("Package Name for Generated Type cannot be null!");
-        AbstractBaseType baseTypeNullpackagename = new AbstractBaseType(null, "Test");
+        new AbstractBaseType(null, "Test");
     }
 
     @Test
     public void testCreateAbstractBaseTypeWithNullTypeName() {
         expException.expect(IllegalArgumentException.class);
         expException.expectMessage("Name of Generated Type cannot be null!");
-        AbstractBaseType baseTypeNullTypeName = new AbstractBaseType("org.opendaylight.yangtools.test", null);
+        new AbstractBaseType("org.opendaylight.yangtools.test", null);
     }
 
     @Test

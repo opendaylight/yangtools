@@ -60,5 +60,5 @@ public class MethodParameterImplTest {
         assertTrue(!(hash1 == hash3));
         assertTrue(!(hash1 == hash4));
     }
-
 }
+

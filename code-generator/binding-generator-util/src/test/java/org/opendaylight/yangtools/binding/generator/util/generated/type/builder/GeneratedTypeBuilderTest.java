@@ -1,13 +1,19 @@
-/**
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+/*
+ * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 package org.opendaylight.yangtools.binding.generator.util.generated.type.builder;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.Serializable;
 import java.util.List;
-
 import org.junit.Test;
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.Types;
@@ -95,15 +101,13 @@ public class GeneratedTypeBuilderTest {
     @Test(expected = IllegalArgumentException.class)
     public void addConstantIllegalArgumentTest() {
         GeneratedTypeBuilder generatedTypeBuilder = new GeneratedTypeBuilderImpl("my.package", "MyName");
-
-        Constant constant = generatedTypeBuilder.addConstant(Types.typeForClass(String.class), null, "myConstantValue");
+        generatedTypeBuilder.addConstant(Types.typeForClass(String.class), null, "myConstantValue");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void addConstantIllegalArgumentTest2() {
         GeneratedTypeBuilder generatedTypeBuilder = new GeneratedTypeBuilderImpl("my.package", "MyName");
-
-        Constant constant = generatedTypeBuilder.addConstant(null, "myConstantName", "myConstantValue");
+        generatedTypeBuilder.addConstant(null, "myConstantName", "myConstantValue");
     }
 
     @Test
@@ -157,7 +161,6 @@ public class GeneratedTypeBuilderTest {
     @Test(expected = IllegalArgumentException.class)
     public void addMethodIllegalArgumentTest() {
         GeneratedTypeBuilderImpl generatedTypeBuilder = new GeneratedTypeBuilderImpl("my.package", "MyName");
-
         generatedTypeBuilder.addMethod(null);
     }
 
@@ -302,5 +305,4 @@ public class GeneratedTypeBuilderTest {
         assertEquals(SchemaPath.create(true, QName.create("/path")).getPathFromRoot(), instance.getSchemaPath());
         assertEquals("My comment..", instance.getComment());
     }
-
 }
