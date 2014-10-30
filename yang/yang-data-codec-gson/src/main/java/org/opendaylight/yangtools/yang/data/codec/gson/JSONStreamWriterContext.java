@@ -60,7 +60,7 @@ abstract class JSONStreamWriterContext {
 
         // Prepend module name if namespaces do not match
         final URI ns = qname.getNamespace();
-        if (!ns.equals(getNamespace()) || this instanceof JSONStreamWriterRootContext) {
+        if (!ns.equals(getNamespace())) {
             final Module module = schema.findModuleByNamespaceAndRevision(ns, null);
             Preconditions.checkArgument(module != null, "Could not find module for namespace {}", ns);
 
