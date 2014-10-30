@@ -163,7 +163,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
 
     @Override
     public void startUnkeyedListItem(final NodeIdentifier name,final int childSizeHint) throws IllegalStateException {
-        Preconditions.checkArgument(getCurrent() instanceof ImmutableUnkeyedListNodeBuilder);
+        Preconditions.checkArgument(getCurrent() instanceof ImmutableUnkeyedListNodeBuilder || getCurrent() instanceof NormalizedNodeResultBuilder);
         enter(Builders.unkeyedListEntryBuilder().withNodeIdentifier(name));
     }
 

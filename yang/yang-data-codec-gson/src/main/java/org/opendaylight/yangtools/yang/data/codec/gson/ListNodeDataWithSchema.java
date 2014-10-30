@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import java.io.IOException;
-
+import java.util.List;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -17,6 +17,10 @@ class ListNodeDataWithSchema extends CompositeNodeDataWithSchema {
 
     public ListNodeDataWithSchema(final DataSchemaNode schema) {
         super(schema);
+    }
+
+    List<AbstractNodeDataWithSchema> getListEntry() {
+        return children;
     }
 
     @Override
