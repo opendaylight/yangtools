@@ -48,12 +48,12 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
     /**
      * nodes which were added to schema via augmentation and are present in data input
      */
-    private final Multimap<AugmentationSchema, AbstractNodeDataWithSchema> augmentationsToChild = ArrayListMultimap.create();
+    protected final Multimap<AugmentationSchema, AbstractNodeDataWithSchema> augmentationsToChild = ArrayListMultimap.create();
 
     /**
      * remaining data nodes (which aren't added via augment). Every of one them should have the same QName.
      */
-    private final List<AbstractNodeDataWithSchema> children = new ArrayList<>();
+    protected final List<AbstractNodeDataWithSchema> children = new ArrayList<>();
 
     public CompositeNodeDataWithSchema(final DataSchemaNode schema) {
         super(schema);

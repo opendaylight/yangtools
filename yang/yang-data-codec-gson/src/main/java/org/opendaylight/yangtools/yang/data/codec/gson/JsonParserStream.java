@@ -80,10 +80,10 @@ public final class JsonParserStream implements Closeable, Flushable {
         try {
             reader.peek();
             isEmpty = false;
-            CompositeNodeDataWithSchema compositeNodeDataWithSchema = new CompositeNodeDataWithSchema(parentNode);
-            read(reader, compositeNodeDataWithSchema);
-            compositeNodeDataWithSchema.write(writer);
-
+            TopLevelNodeDataWithSchema topLevelNodeDataWithSchema = new TopLevelNodeDataWithSchema(parentNode);
+            read(reader, topLevelNodeDataWithSchema);
+            topLevelNodeDataWithSchema.normalizeTopLevelNode();
+            topLevelNodeDataWithSchema.write(writer);
             return this;
             // return read(reader);
         } catch (EOFException e) {
