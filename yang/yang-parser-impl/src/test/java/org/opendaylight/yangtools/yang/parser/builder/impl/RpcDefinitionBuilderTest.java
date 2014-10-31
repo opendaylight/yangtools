@@ -6,14 +6,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
-
-import java.net.URI;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import org.junit.Before;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
@@ -23,7 +21,6 @@ import org.opendaylight.yangtools.yang.model.util.Uint16;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
-
 /**
  * Test suite for increasing of test coverage of RpcDefinitionBuilder implementation.
  *

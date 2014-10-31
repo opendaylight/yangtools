@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.binding.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-
 import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -17,12 +16,10 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Sets;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -34,7 +31,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
@@ -230,7 +227,7 @@ public class BindingReflections {
     }
 
     /**
-     * Returns root package name for suplied package name.
+     * Returns root package name for supplied package name.
      *
      * @param pkg Package for which find model root package.
      * @return Package of model root.
@@ -407,7 +404,6 @@ public class BindingReflections {
     * @param type YANG Modeled Entity derived from DataContainer
     * @return Iterable of all data children, which have YANG modeled entity
     */
-   @SuppressWarnings("unchecked")
    public static Map<Class<?>,Method> getChildrenClassToMethod(final Class<?> type) {
        checkArgument(type != null, "Target type must not be null");
        checkArgument(DataContainer.class.isAssignableFrom(type), "Supplied type must be derived from DataContainer");
@@ -606,7 +602,7 @@ public class BindingReflections {
      * @return true if and only if classes represents same data.
      */
     @SuppressWarnings({"rawtypes","unchecked"})
-    public static boolean isSubstitutionFor(Class potential, Class target) {
+    public static boolean isSubstitutionFor(final Class potential, final Class target) {
         HashSet<Class> subImplemented = Sets.newHashSet(potential.getInterfaces());
         HashSet<Class> targetImplemented = Sets.newHashSet(target.getInterfaces());
         if(!subImplemented.equals(targetImplemented)) {

@@ -6,9 +6,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
-
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import java.util.List;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -16,10 +17,16 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
-import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
 import org.opendaylight.yangtools.yang.model.util.Uint16;
-import org.opendaylight.yangtools.yang.parser.builder.api.*;
+import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
+import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 /**
@@ -352,7 +359,7 @@ public class CopyUtilsTest extends AbstractBuilderTest {
             return null;
         }
 
-        @Override public void setOriginal(SchemaNodeBuilder original) {
+        @Override public void setOriginal(final SchemaNodeBuilder original) {
 
         }
 
@@ -360,7 +367,7 @@ public class CopyUtilsTest extends AbstractBuilderTest {
             return false;
         }
 
-        @Override public void setAugmenting(boolean augmenting) {
+        @Override public void setAugmenting(final boolean augmenting) {
 
         }
 
@@ -368,7 +375,7 @@ public class CopyUtilsTest extends AbstractBuilderTest {
             return false;
         }
 
-        @Override public void setConfiguration(boolean config) {
+        @Override public void setConfiguration(final boolean config) {
 
         }
 
@@ -384,7 +391,7 @@ public class CopyUtilsTest extends AbstractBuilderTest {
             return null;
         }
 
-        @Override public void setPath(SchemaPath path) {
+        @Override public void setPath(final SchemaPath path) {
 
         }
 
@@ -392,7 +399,7 @@ public class CopyUtilsTest extends AbstractBuilderTest {
             return null;
         }
 
-        @Override public void setModuleName(String moduleName) {
+        @Override public void setModuleName(final String moduleName) {
 
         }
 
@@ -404,11 +411,11 @@ public class CopyUtilsTest extends AbstractBuilderTest {
             return null;
         }
 
-        @Override public void setParent(Builder parent) {
+        @Override public void setParent(final Builder parent) {
 
         }
 
-        @Override public void addUnknownNodeBuilder(UnknownSchemaNodeBuilder unknownNode) {
+        @Override public void addUnknownNodeBuilder(final UnknownSchemaNodeBuilder unknownNode) {
 
         }
 
@@ -424,7 +431,7 @@ public class CopyUtilsTest extends AbstractBuilderTest {
             return null;
         }
 
-        @Override public void setDescription(String description) {
+        @Override public void setDescription(final String description) {
 
         }
 
@@ -432,7 +439,7 @@ public class CopyUtilsTest extends AbstractBuilderTest {
             return null;
         }
 
-        @Override public void setReference(String reference) {
+        @Override public void setReference(final String reference) {
 
         }
 
@@ -440,7 +447,7 @@ public class CopyUtilsTest extends AbstractBuilderTest {
             return null;
         }
 
-        @Override public void setStatus(Status status) {
+        @Override public void setStatus(final Status status) {
 
         }
 
@@ -448,7 +455,7 @@ public class CopyUtilsTest extends AbstractBuilderTest {
             return false;
         }
 
-        @Override public void setAddedByUses(boolean addedByUses) {
+        @Override public void setAddedByUses(final boolean addedByUses) {
 
         }
     }
