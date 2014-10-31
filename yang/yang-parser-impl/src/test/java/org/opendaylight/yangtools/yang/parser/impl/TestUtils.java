@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.impl;
 
 import static org.junit.Assert.assertEquals;
-
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
 import java.io.File;
@@ -149,7 +148,7 @@ final class TestUtils {
     public static SchemaPath createPath(final boolean absolute, final URI namespace, final Date revision, final String prefix, final String... names) {
         List<QName> path = new ArrayList<>();
         for (String name : names) {
-            path.add(new QName(namespace, revision, prefix, name));
+            path.add(QName.create(namespace, revision, name));
         }
         return SchemaPath.create(path, absolute);
     }

@@ -153,8 +153,8 @@ public class XmlStreamUtils {
      */
     public void writeElement(final XMLStreamWriter writer, final @Nonnull Node<?> data, final SchemaNode schema) throws XMLStreamException {
         final QName qname = data.getNodeType();
-        final String pfx = qname.getPrefix() != null ? qname.getPrefix() : "";
         final String ns = qname.getNamespace() != null ? qname.getNamespace().toString() : "";
+        final String pfx = "";
 
         if (isEmptyElement(data)) {
             if (hasAttributes(data)) {
@@ -341,12 +341,7 @@ public class XmlStreamUtils {
     private static void write(final @Nonnull XMLStreamWriter writer, final @Nonnull IdentityrefTypeDefinition type, final @Nonnull Object value) throws XMLStreamException {
         if (value instanceof QName) {
             final QName qname = (QName) value;
-            final String prefix;
-            if (qname.getPrefix() != null && !qname.getPrefix().isEmpty()) {
-                prefix = qname.getPrefix();
-            } else {
-                prefix = "x";
-            }
+            final String prefix = "x";
 
             final String ns = qname.getNamespace().toString();
             writer.writeNamespace(prefix, ns);
