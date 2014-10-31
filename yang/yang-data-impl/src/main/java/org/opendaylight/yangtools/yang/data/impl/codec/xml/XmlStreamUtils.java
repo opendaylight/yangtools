@@ -2,6 +2,7 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.net.URI;
 import java.util.Collection;
@@ -25,10 +26,13 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,9 +44,15 @@ import org.slf4j.LoggerFactory;
 public class XmlStreamUtils {
     private static final Logger LOG = LoggerFactory.getLogger(XmlStreamUtils.class);
     private final XmlCodecProvider codecProvider;
+    private final Optional<SchemaContext> schemaContext;
 
     protected XmlStreamUtils(final XmlCodecProvider codecProvider) {
+        this(codecProvider, null);
+    }
+
+    private XmlStreamUtils(XmlCodecProvider codecProvider, SchemaContext schemaContext) {
         this.codecProvider = Preconditions.checkNotNull(codecProvider);
+        this.schemaContext = Optional.fromNullable(schemaContext);
     }
 
     /**
@@ -273,8 +283,13 @@ public class XmlStreamUtils {
             LOG.debug("Value of {}:{} is null, not encoding it", type.getQName().getNamespace(), type.getQName().getLocalName());
             return;
         }
+        TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(type);
 
-        final TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(type);
+        if (schemaContext.isPresent() && baseType instanceof LeafrefTypeDefinition) {
+            LeafrefTypeDefinition leafrefTypeDefinition = (LeafrefTypeDefinition) baseType;
+            baseType = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypeDefinition, schemaContext.get(), leafrefTypeDefinition);
+        }
+
         if (baseType instanceof IdentityrefTypeDefinition) {
             write(writer, (IdentityrefTypeDefinition) baseType, value);
         } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
@@ -324,5 +339,9 @@ public class XmlStreamUtils {
             LOG.warn("Value of {}:{} is not an InstanceIdentifier but {}", type.getQName().getNamespace(), type.getQName().getLocalName(), value.getClass());
             writer.writeCharacters(String.valueOf(value));
         }
+    }
+
+    public static XmlStreamUtils create(XmlCodecProvider codecProvider, SchemaContext schemaContext) {
+        return new XmlStreamUtils(codecProvider, schemaContext);
     }
 }
