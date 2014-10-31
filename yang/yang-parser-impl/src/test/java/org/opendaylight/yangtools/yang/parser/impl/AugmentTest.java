@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.text.DateFormat;
@@ -24,7 +23,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -48,9 +46,6 @@ public class AugmentTest {
     private static Date fooRev;
     private static Date barRev;
     private static Date bazRev;
-    private static final String foo = "foo";
-    private static final String bar = "bar";
-    private static final String baz = "baz";
     private static QName q0;
     private static QName q1;
     private static QName q2;
@@ -64,9 +59,9 @@ public class AugmentTest {
         barRev = simpleDateFormat.parse("2013-10-14");
         bazRev = simpleDateFormat.parse("2013-10-15");
 
-        q0 = new QName(barNS, barRev, bar, "interfaces");
-        q1 = new QName(barNS, barRev, bar, "ifEntry");
-        q2 = new QName(bazNS, bazRev, baz, "augment-holder");
+        q0 = QName.create(barNS, barRev, "interfaces");
+        q1 = QName.create(barNS, barRev, "ifEntry");
+        q2 = QName.create(bazNS, bazRev, "augment-holder");
     }
 
     @Test
@@ -105,7 +100,7 @@ public class AugmentTest {
         assertNotNull(odl);
 
         // leaf ds0ChannelNumber
-        QName qname = new QName(fooNS, fooRev, foo, "ds0ChannelNumber");
+        QName qname = QName.create(fooNS, fooRev, "ds0ChannelNumber");
         qnames.add(qname);
         assertEquals(qname, ds0ChannelNumber.getQName());
         expectedSchemaPath = SchemaPath.create(qnames, true);
@@ -118,7 +113,7 @@ public class AugmentTest {
         assertEquals(expectedSchemaPath, ds0ChannelNumber.getType().getPath());
 
         // leaf interface-id
-        qname = new QName(fooNS, fooRev, foo, "interface-id");
+        qname = QName.create(fooNS, fooRev, "interface-id");
         assertEquals(qname, interfaceId.getQName());
         qnames.set(3, qname);
         expectedSchemaPath = SchemaPath.create(qnames, true);
@@ -126,7 +121,7 @@ public class AugmentTest {
         assertFalse(interfaceId.isAugmenting());
 
         // container schemas
-        qname = new QName(fooNS, fooRev, foo, "schemas");
+        qname = QName.create(fooNS, fooRev, "schemas");
         assertEquals(qname, schemas.getQName());
         qnames.set(3, qname);
         expectedSchemaPath = SchemaPath.create(qnames, true);
@@ -134,7 +129,7 @@ public class AugmentTest {
         assertFalse(schemas.isAugmenting());
 
         // choice odl
-        qname = new QName(fooNS, fooRev, foo, "odl");
+        qname = QName.create(fooNS, fooRev, "odl");
         assertEquals(qname, odl.getQName());
         qnames.set(3, qname);
         expectedSchemaPath = SchemaPath.create(qnames, true);
@@ -208,28 +203,28 @@ public class AugmentTest {
         assertNotNull(odl);
 
         // leaf ds0ChannelNumber
-        QName qname = new QName(fooNS, fooRev, foo, "ds0ChannelNumber");
+        QName qname = QName.create(fooNS, fooRev, "ds0ChannelNumber");
         assertEquals(qname, ds0ChannelNumber.getQName());
         qnames.add(qname);
         expectedPath = SchemaPath.create(qnames, true);
         assertEquals(expectedPath, ds0ChannelNumber.getPath());
 
         // leaf interface-id
-        qname = new QName(fooNS, fooRev, foo, "interface-id");
+        qname = QName.create(fooNS, fooRev, "interface-id");
         assertEquals(qname, interfaceId.getQName());
         qnames.set(3, qname);
         expectedPath = SchemaPath.create(qnames, true);
         assertEquals(expectedPath, interfaceId.getPath());
 
         // container schemas
-        qname = new QName(fooNS, fooRev, foo, "schemas");
+        qname = QName.create(fooNS, fooRev, "schemas");
         assertEquals(qname, schemas.getQName());
         qnames.set(3, qname);
         expectedPath = SchemaPath.create(qnames, true);
         assertEquals(expectedPath, schemas.getPath());
 
         // choice odl
-        qname = new QName(fooNS, fooRev, foo, "odl");
+        qname = QName.create(fooNS, fooRev, "odl");
         assertEquals(qname, odl.getQName());
         qnames.set(3, qname);
         expectedPath = SchemaPath.create(qnames, true);
@@ -279,10 +274,10 @@ public class AugmentTest {
         qnames.add(q0);
         qnames.add(q1);
         qnames.add(q2);
-        qnames.add(new QName(fooNS, fooRev, foo, "odl"));
+        qnames.add(QName.create(fooNS, fooRev, "odl"));
 
         // case id
-        QName qname = new QName(fooNS, fooRev, foo, "id");
+        QName qname = QName.create(fooNS, fooRev, "id");
         assertEquals(qname, id.getQName());
         qnames.add(qname);
         expectedPath = SchemaPath.create(qnames, true);
@@ -291,7 +286,7 @@ public class AugmentTest {
         assertEquals(1, idChildren.size());
 
         // case node1
-        qname = new QName(fooNS, fooRev, foo, "node1");
+        qname = QName.create(fooNS, fooRev, "node1");
         assertEquals(qname, node1.getQName());
         qnames.set(4, qname);
         expectedPath = SchemaPath.create(qnames, true);
@@ -300,7 +295,7 @@ public class AugmentTest {
         assertTrue(node1Children.isEmpty());
 
         // case node2
-        qname = new QName(fooNS, fooRev, foo, "node2");
+        qname = QName.create(fooNS, fooRev, "node2");
         assertEquals(qname, node2.getQName());
         qnames.set(4, qname);
         expectedPath = SchemaPath.create(qnames, true);
@@ -309,7 +304,7 @@ public class AugmentTest {
         assertTrue(node2Children.isEmpty());
 
         // case node3
-        qname = new QName(fooNS, fooRev, foo, "node3");
+        qname = QName.create(fooNS, fooRev, "node3");
         assertEquals(qname, node3.getQName());
         qnames.set(4, qname);
         expectedPath = SchemaPath.create(qnames, true);
@@ -322,19 +317,19 @@ public class AugmentTest {
         qnames.add(q0);
         qnames.add(q1);
         qnames.add(q2);
-        qnames.add(new QName(fooNS, fooRev, foo, "odl"));
+        qnames.add(QName.create(fooNS, fooRev, "odl"));
 
         // case id child
-        qnames.add(new QName(fooNS, fooRev, foo, "id"));
-        qnames.add(new QName(fooNS, fooRev, foo, "id"));
+        qnames.add(QName.create(fooNS, fooRev, "id"));
+        qnames.add(QName.create(fooNS, fooRev, "id"));
         LeafSchemaNode caseIdChild = (LeafSchemaNode) idChildren.iterator().next();
         assertNotNull(caseIdChild);
         expectedPath = SchemaPath.create(qnames, true);
         assertEquals(expectedPath, caseIdChild.getPath());
 
         // case node3 child
-        qnames.set(4, new QName(fooNS, fooRev, foo, "node3"));
-        qnames.set(5, new QName(fooNS, fooRev, foo, "node3"));
+        qnames.set(4, QName.create(fooNS, fooRev, "node3"));
+        qnames.set(5, QName.create(fooNS, fooRev, "node3"));
         ContainerSchemaNode caseNode3Child = (ContainerSchemaNode) node3Children.iterator().next();
         assertNotNull(caseNode3Child);
         expectedPath = SchemaPath.create(qnames, true);
@@ -361,13 +356,13 @@ public class AugmentTest {
         }
         assertNotNull(submit);
 
-        QName submitQName = new QName(NS_BAR, revision, "b", "submit");
+        QName submitQName = QName.create(NS_BAR, revision, "submit");
         assertEquals(submitQName, submit.getQName());
         ContainerSchemaNode input = submit.getInput();
-        QName inputQName = new QName(NS_BAR, revision, "b", "input");
+        QName inputQName = QName.create(NS_BAR, revision, "input");
         assertEquals(inputQName, input.getQName());
         ChoiceNode arguments = (ChoiceNode) input.getDataChildByName("arguments");
-        QName argumentsQName = new QName(NS_BAR, revision, "b", "arguments");
+        QName argumentsQName = QName.create(NS_BAR, revision, "arguments");
         assertEquals(argumentsQName, arguments.getQName());
         assertFalse(arguments.isAugmenting());
         Set<ChoiceCaseNode> cases = arguments.getCases();
@@ -400,7 +395,7 @@ public class AugmentTest {
         qnames[2] = argumentsQName;
 
         // case attach
-        qnames[3] = new QName(NS_FOO, revision, "f", "attach");
+        qnames[3] = QName.create(NS_FOO, revision, "attach");
         assertEquals(qnames[3], attach.getQName());
         expectedPath = SchemaPath.create(Arrays.asList(qnames), true);
         assertEquals(expectedPath, attach.getPath());
@@ -408,7 +403,7 @@ public class AugmentTest {
         assertEquals(1, attachChildren.size());
 
         // case create
-        qnames[3] = new QName(NS_FOO, revision, "f", "create");
+        qnames[3] = QName.create(NS_FOO, revision, "create");
         assertEquals(qnames[3], create.getQName());
         expectedPath = SchemaPath.create(Arrays.asList(qnames), true);
         assertEquals(expectedPath, create.getPath());
@@ -416,7 +411,7 @@ public class AugmentTest {
         assertEquals(1, createChildren.size());
 
         // case attach
-        qnames[3] = new QName(NS_FOO, revision, "f", "destroy");
+        qnames[3] = QName.create(NS_FOO, revision, "destroy");
         assertEquals(qnames[3], destroy.getQName());
         expectedPath = SchemaPath.create(Arrays.asList(qnames), true);
         assertEquals(expectedPath, destroy.getPath());
