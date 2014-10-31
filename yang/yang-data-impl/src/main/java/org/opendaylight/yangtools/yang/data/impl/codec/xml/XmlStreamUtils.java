@@ -2,8 +2,10 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
@@ -20,15 +22,22 @@ import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
+import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,9 +49,15 @@ import org.slf4j.LoggerFactory;
 public class XmlStreamUtils {
     private static final Logger LOG = LoggerFactory.getLogger(XmlStreamUtils.class);
     private final XmlCodecProvider codecProvider;
+    private final Optional<SchemaContext> schemaContext;
 
     protected XmlStreamUtils(final XmlCodecProvider codecProvider) {
+        this(codecProvider, null);
+    }
+
+    private XmlStreamUtils(XmlCodecProvider codecProvider, SchemaContext schemaContext) {
         this.codecProvider = Preconditions.checkNotNull(codecProvider);
+        this.schemaContext = Optional.fromNullable(schemaContext);
     }
 
     /**
@@ -273,8 +288,13 @@ public class XmlStreamUtils {
             LOG.debug("Value of {}:{} is null, not encoding it", type.getQName().getNamespace(), type.getQName().getLocalName());
             return;
         }
+        TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(type);
 
-        final TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(type);
+        if (schemaContext.isPresent() && baseType instanceof LeafrefTypeDefinition) {
+            LeafrefTypeDefinition leafrefTypeDefinition = (LeafrefTypeDefinition) baseType;
+            baseType = getBaseTypeForLeafRef(leafrefTypeDefinition, schemaContext.get(), leafrefTypeDefinition);
+        }
+
         if (baseType instanceof IdentityrefTypeDefinition) {
             write(writer, (IdentityrefTypeDefinition) baseType, value);
         } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
@@ -295,6 +315,63 @@ public class XmlStreamUtils {
             }
             writer.writeCharacters(text);
         }
+    }
+
+    private static TypeDefinition<?> getBaseTypeForLeafRef(final LeafrefTypeDefinition typeDefinition, final SchemaContext schemaContext, final SchemaNode schema) {
+        RevisionAwareXPath pathStatement = typeDefinition.getPathStatement();
+        pathStatement = new RevisionAwareXPathImpl(stripConditionsFromXPathString(pathStatement), pathStatement.isAbsolute());
+
+        final Module parentModule = SchemaContextUtil.findParentModule(schemaContext, schema);
+
+        final DataSchemaNode dataSchemaNode;
+        if(pathStatement.isAbsolute()) {
+            dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNode(schemaContext, parentModule, pathStatement);
+        } else {
+            dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNodeForRelativeXPath(schemaContext, parentModule, schema, pathStatement);
+        }
+
+        final TypeDefinition<?> targetTypeDefinition = typeDefinition(dataSchemaNode);
+
+
+        if(targetTypeDefinition instanceof LeafrefTypeDefinition) {
+            return getBaseTypeForLeafRef(((LeafrefTypeDefinition) targetTypeDefinition), schemaContext, dataSchemaNode);
+        } else {
+            return targetTypeDefinition;
+        }
+    }
+
+    private static TypeDefinition<? extends Object> typeDefinition(final LeafSchemaNode node) {
+        TypeDefinition<?> baseType = node.getType();
+        while (baseType.getBaseType() != null) {
+            baseType = baseType.getBaseType();
+        }
+
+        return baseType;
+    }
+
+    private static TypeDefinition<? extends Object> typeDefinition(final LeafListSchemaNode node) {
+        TypeDefinition<?> baseType = node.getType();
+        while (baseType.getBaseType() != null) {
+            baseType = baseType.getBaseType();
+        }
+
+        return baseType;
+    }
+
+    private static TypeDefinition<? extends Object> typeDefinition(final DataSchemaNode node) {
+        if (node instanceof LeafListSchemaNode) {
+            return typeDefinition((LeafListSchemaNode) node);
+        } else if (node instanceof LeafSchemaNode) {
+            return typeDefinition((LeafSchemaNode) node);
+        } else if (node instanceof AnyXmlSchemaNode) {
+            return null;
+        } else {
+            throw new IllegalArgumentException("Unhandled parameter types: " + Arrays.<Object> asList(node).toString());
+        }
+    }
+
+    private static String stripConditionsFromXPathString(final RevisionAwareXPath pathStatement) {
+        return pathStatement.toString().replaceAll("[.+]", "");
     }
 
     @SuppressWarnings("deprecation")
@@ -324,5 +401,9 @@ public class XmlStreamUtils {
             LOG.warn("Value of {}:{} is not an InstanceIdentifier but {}", type.getQName().getNamespace(), type.getQName().getLocalName(), value.getClass());
             writer.writeCharacters(String.valueOf(value));
         }
+    }
+
+    public static XmlStreamUtils create(XmlCodecProvider codecProvider, SchemaContext schemaContext) {
+        return new XmlStreamUtils(codecProvider, schemaContext);
     }
 }

@@ -24,6 +24,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
@@ -77,6 +78,7 @@ public class XmlDocumentUtilsTest {
         testRpc = rpcTestModule.getRpcs().iterator().next();
     }
 
+    @Ignore
     @Test
     public void testRpcInputTransform() throws Exception {
 

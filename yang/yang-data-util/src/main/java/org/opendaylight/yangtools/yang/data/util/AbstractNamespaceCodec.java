@@ -59,7 +59,6 @@ abstract class AbstractNamespaceCodec {
             return null;
         }
 
-
         final String first = it.next().trim();
         if (first.isEmpty()) {
             return null;

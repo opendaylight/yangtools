@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import java.net.URI;
 import java.util.Map.Entry;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -23,6 +22,11 @@ public final class InstanceIdentifierForXmlCodec {
     public static YangInstanceIdentifier deserialize(final Element element, final SchemaContext schemaContext) {
         final ElementInstanceIdentifierParser codec = new ElementInstanceIdentifierParser(schemaContext, element);
         return codec.deserialize(element.getTextContent().trim());
+    }
+
+    public static YangInstanceIdentifier deserialize(final String elementTextContent, final SchemaContext schemaContext) {
+        final ElementContentInstanceIdentifierParser codec = new ElementContentInstanceIdentifierParser();
+        return codec.deserialize(elementTextContent.trim());
     }
 
     public static Element serialize(final YangInstanceIdentifier id, final Element element) {
@@ -45,5 +49,12 @@ public final class InstanceIdentifierForXmlCodec {
         final ElementIdentityrefParser codec = new ElementIdentityrefParser(schemaContext, element);
         return codec.deserialize(getIdAndPrefixAsStr(xPathArgument).trim());
     }
+
+    public static QName toIdentity(final String namespace, final String xPathArgument, final SchemaContext schemaContext) {
+        final ElementIdentityrefContextParser codec = new ElementIdentityrefContextParser(namespace, xPathArgument, schemaContext);
+        return codec.deserialize(getIdAndPrefixAsStr(xPathArgument).trim());
+    }
+
+
 
 }

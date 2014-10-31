@@ -12,30 +12,33 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-
+import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.opendaylight.yangtools.sal.binding.generator.impl.BindingGeneratorImpl;
+import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.Node;
-import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
-import org.opendaylight.yangtools.yang.data.impl.NodeFactory;
-import org.opendaylight.yangtools.yang.data.impl.SimpleNodeTOImpl;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.w3c.dom.Document;
 
@@ -78,6 +81,48 @@ public class XmlStreamUtilsTest {
 
         final boolean identical = diff.identical();
         assertTrue("Xml differs: " + diff.toString(), identical);
+    }
+
+    @Ignore
+    @Test
+    public void testLeafRef() throws URISyntaxException, XMLStreamException, FactoryConfigurationError {
+        //Helper helper = new Helper();
+        //String returned = helper.getDeserializedValueFromLeafref();
+        //String expected = "test";
+
+        //assertEquals(expected, returned);
+    }
+
+    static class Helper {
+        public static String getDeserializedValueFromLeafref() throws URISyntaxException, XMLStreamException, FactoryConfigurationError {
+            YangParserImpl yangParser = new YangParserImpl();
+
+            File file = new File(XmlStreamUtils.class.getResource("/leafref-test.yang").toURI());
+            SchemaContext schemaContext = yangParser.parseFiles(Arrays.asList(file));
+            BindingGeneratorImpl bindingGenerator = new BindingGeneratorImpl(false);
+            List<Type> generatedTypes = bindingGenerator.generateTypes(schemaContext);
+
+            TypeDefinition<?> leafrefType = findLeafrefType(generatedTypes);
+            XmlStreamUtils xmlStremUtils = XmlStreamUtils.create(XmlUtils.DEFAULT_XML_CODEC_PROVIDER, schemaContext);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            XMLStreamWriter xmlStreamWriter = XMLOutputFactory.newFactory().createXMLStreamWriter(baos);
+
+            //xmlStremUtils.writeValue(xmlStreamWriter, leafrefType, "test");
+
+            // return baos.toString();
+            return "";
+        }
+
+        private static LeafrefTypeDefinition findLeafrefType(List<Type> generatedTypes) {
+            LeafrefTypeDefinition leafRef = null;
+
+            for (Type genType : generatedTypes) {
+                if (genType instanceof LeafrefTypeDefinition) {
+                    leafRef = (LeafrefTypeDefinition)genType;
+                }
+            }
+            return leafRef;
+        }
     }
 
     @Test
