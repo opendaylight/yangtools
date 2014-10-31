@@ -125,7 +125,7 @@ yin_element_stmt : YIN_ELEMENT_KEYWORD yin_element_arg stmtend;
 argument_stmt : ARGUMENT_KEYWORD string (SEMICOLON | (LEFT_BRACE identifier_stmt* yin_element_stmt? identifier_stmt* RIGHT_BRACE));
 extension_stmt : EXTENSION_KEYWORD string (SEMICOLON | (LEFT_BRACE  (argument_stmt | status_stmt | description_stmt | reference_stmt | unknown_statement)* RIGHT_BRACE));
 revision_date_stmt : REVISION_DATE_KEYWORD string stmtend;
-revision_stmt : REVISION_KEYWORD string (SEMICOLON | (LEFT_BRACE  (description_stmt )? (reference_stmt )? RIGHT_BRACE));
+revision_stmt : REVISION_KEYWORD string (SEMICOLON | (LEFT_BRACE  (description_stmt )? (reference_stmt )? (unknown_statement)? RIGHT_BRACE));
 units_stmt : UNITS_KEYWORD string stmtend;
 reference_stmt : REFERENCE_KEYWORD string stmtend;
 description_stmt : DESCRIPTION_KEYWORD string stmtend;

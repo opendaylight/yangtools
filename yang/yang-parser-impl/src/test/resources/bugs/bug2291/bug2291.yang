@@ -1,0 +1,22 @@
+module bug2291 {
+    yang-version 1;
+    namespace "urn:test:bug:bug2291";
+    prefix "bug2291";
+
+    import bug2291-ext {
+        prefix bug2291-ext;
+    }
+
+    import ietf-inet-types {
+        prefix "inet";
+    }
+
+    revision 2012-04-16 {
+        description "Initial revision";
+        bug2291-ext:migration 1;
+    }
+
+    leaf test {
+        type string;
+    }
+}

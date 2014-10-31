@@ -1,0 +1,13 @@
+module "bug2291-ext" {
+    yang-version 1;
+    namespace "urn:test:bug:bug2291-ext";
+    prefix "bug2291-ext";
+
+    revision 2012-04-16 {
+    }
+
+    extension migration {
+        argument level;
+    }
+
+}
