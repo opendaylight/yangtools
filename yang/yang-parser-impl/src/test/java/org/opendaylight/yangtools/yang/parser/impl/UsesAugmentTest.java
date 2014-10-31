@@ -11,9 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
 import com.google.common.collect.Lists;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
@@ -26,7 +24,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -51,8 +48,6 @@ public class UsesAugmentTest {
     private static final URI GD_NS = URI.create("urn:opendaylight:params:xml:ns:yang:grouping-definitions");
     private Date UG_REV;
     private Date GD_REV;
-    private static final String UG_PREF = "ug";
-    private static final String GD_PREF = "gd";
 
     private Set<Module> modules;
 
@@ -129,7 +124,7 @@ public class UsesAugmentTest {
         assertEquals(1, notifications.size());
         NotificationDefinition pcreq = notifications.iterator().next();
         assertNotNull(pcreq);
-        QName expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "pcreq");
+        QName expectedQName = QName.create(UG_NS, UG_REV, "pcreq");
         path.offer(expectedQName);
         SchemaPath expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, pcreq.getPath());
@@ -138,11 +133,11 @@ public class UsesAugmentTest {
         // * |-- leaf version
         LeafSchemaNode version = (LeafSchemaNode) pcreq.getDataChildByName("version");
         assertNotNull(version);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "version");
+        expectedQName = QName.create(UG_NS, UG_REV, "version");
         path.offer(expectedQName);
         expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, version.getPath());
-        expectedQName = new QName(GD_NS, GD_REV, GD_PREF, "protocol-version");
+        expectedQName = QName.create(GD_NS, GD_REV, "protocol-version");
         path.offer(expectedQName);
         expectedPath = SchemaPath.create(Lists.newArrayList(expectedQName), true);
         assertEquals(expectedPath, version.getType().getPath());
@@ -151,14 +146,14 @@ public class UsesAugmentTest {
         // * |-- leaf type
         LeafSchemaNode type = (LeafSchemaNode) pcreq.getDataChildByName("type");
         assertNotNull(type);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "type");
+        expectedQName = QName.create(UG_NS, UG_REV, "type");
         assertTrue(type.isAddedByUses());
         path.pollLast();
         path.pollLast();
         path.offer(expectedQName);
         expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, type.getPath());
-        expectedQName = new QName(GD_NS, GD_REV, GD_PREF, "int-ext");
+        expectedQName = QName.create(GD_NS, GD_REV, "int-ext");
         path.offer(expectedQName);
         expectedPath = SchemaPath.create(Lists.newArrayList(expectedQName), true);
         assertEquals(expectedPath, type.getType().getPath());
@@ -168,7 +163,7 @@ public class UsesAugmentTest {
         // * |-- list requests
         ListSchemaNode requests = (ListSchemaNode) pcreq.getDataChildByName("requests");
         assertNotNull(requests);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "requests");
+        expectedQName = QName.create(UG_NS, UG_REV, "requests");
         assertEquals(expectedQName, requests.getQName());
         path.pollLast();
         path.pollLast();
@@ -181,7 +176,7 @@ public class UsesAugmentTest {
         // * |-- |-- container rp
         ContainerSchemaNode rp = (ContainerSchemaNode) requests.getDataChildByName("rp");
         assertNotNull(rp);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "rp");
+        expectedQName = QName.create(UG_NS, UG_REV, "rp");
         path.offer(expectedQName);
         expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, rp.getPath());
@@ -191,7 +186,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- leaf processing-rule
         LeafSchemaNode processingRule = (LeafSchemaNode) rp.getDataChildByName("processing-rule");
         assertNotNull(processingRule);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "processing-rule");
+        expectedQName = QName.create(UG_NS, UG_REV, "processing-rule");
         assertEquals(expectedQName, processingRule.getQName());
         path.offer(expectedQName);
         expectedPath = SchemaPath.create(path, true);
@@ -201,7 +196,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- leaf ignore
         LeafSchemaNode ignore = (LeafSchemaNode) rp.getDataChildByName("ignore");
         assertNotNull(ignore);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "ignore");
+        expectedQName = QName.create(UG_NS, UG_REV, "ignore");
         assertEquals(expectedQName, ignore.getQName());
         path.pollLast();
         path.offer(expectedQName);
@@ -212,13 +207,13 @@ public class UsesAugmentTest {
         // * |-- |-- |-- leaf priority
         LeafSchemaNode priority = (LeafSchemaNode) rp.getDataChildByName("priority");
         assertNotNull(priority);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "priority");
+        expectedQName = QName.create(UG_NS, UG_REV, "priority");
         assertEquals(expectedQName, priority.getQName());
         path.pollLast();
         path.offer(expectedQName);
         expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, priority.getPath());
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "uint8");
+        expectedQName = QName.create(UG_NS, UG_REV, "uint8");
         path.offer(expectedQName);
         expectedPath = SchemaPath.create(path, true);
         // TODO
@@ -228,7 +223,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- container box
         ContainerSchemaNode box = (ContainerSchemaNode) rp.getDataChildByName("box");
         assertNotNull(box);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "box");
+        expectedQName = QName.create(UG_NS, UG_REV, "box");
         assertEquals(expectedQName, box.getQName());
         path.pollLast();
         path.pollLast();
@@ -239,7 +234,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- |-- container order
         ContainerSchemaNode order = (ContainerSchemaNode) box.getDataChildByName("order");
         assertNotNull(order);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "order");
+        expectedQName = QName.create(UG_NS, UG_REV, "order");
         assertEquals(expectedQName, order.getQName());
         path.offer(expectedQName);
         expectedPath = SchemaPath.create(path, true);
@@ -250,7 +245,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- |-- |-- leaf delete
         LeafSchemaNode delete = (LeafSchemaNode) order.getDataChildByName("delete");
         assertNotNull(delete);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "delete");
+        expectedQName = QName.create(UG_NS, UG_REV, "delete");
         assertEquals(expectedQName, delete.getQName());
         path.offer(expectedQName);
         expectedPath = SchemaPath.create(path, true);
@@ -260,7 +255,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- |-- |-- leaf setup
         LeafSchemaNode setup = (LeafSchemaNode) order.getDataChildByName("setup");
         assertNotNull(setup);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "setup");
+        expectedQName = QName.create(UG_NS, UG_REV, "setup");
         assertEquals(expectedQName, setup.getQName());
         path.pollLast();
         path.offer(expectedQName);
@@ -271,7 +266,7 @@ public class UsesAugmentTest {
         // * |-- |-- path-key-expansion
         ContainerSchemaNode pke = (ContainerSchemaNode) requests.getDataChildByName("path-key-expansion");
         assertNotNull(pke);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "path-key-expansion");
+        expectedQName = QName.create(UG_NS, UG_REV, "path-key-expansion");
         assertEquals(expectedQName, pke.getQName());
         path.pollLast();
         path.pollLast();
@@ -284,7 +279,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- path-key
         ContainerSchemaNode pathKey = (ContainerSchemaNode) pke.getDataChildByName("path-key");
         assertNotNull(pathKey);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "path-key");
+        expectedQName = QName.create(UG_NS, UG_REV, "path-key");
         assertEquals(expectedQName, pathKey.getQName());
         path.offer(expectedQName);
         expectedPath= SchemaPath.create(path, true);
@@ -294,7 +289,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- |-- leaf processing-rule
         processingRule = (LeafSchemaNode) pathKey.getDataChildByName("processing-rule");
         assertNotNull(processingRule);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "processing-rule");
+        expectedQName = QName.create(UG_NS, UG_REV, "processing-rule");
         assertEquals(expectedQName, processingRule.getQName());
         path.offer(expectedQName);
         expectedPath= SchemaPath.create(path, true);
@@ -304,7 +299,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- |-- leaf ignore
         ignore = (LeafSchemaNode) pathKey.getDataChildByName("ignore");
         assertNotNull(ignore);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "ignore");
+        expectedQName = QName.create(UG_NS, UG_REV, "ignore");
         assertEquals(expectedQName, ignore.getQName());
         path.pollLast();
         path.offer(expectedQName);
@@ -315,7 +310,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- |-- list path-keys
         ListSchemaNode pathKeys = (ListSchemaNode) pathKey.getDataChildByName("path-keys");
         assertNotNull(pathKeys);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "path-keys");
+        expectedQName = QName.create(UG_NS, UG_REV, "path-keys");
         assertEquals(expectedQName, pathKeys.getQName());
         path.pollLast();
         path.offer(expectedQName);
@@ -327,7 +322,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- |-- |-- leaf version
         version = (LeafSchemaNode) pathKeys.getDataChildByName("version");
         assertNotNull(version);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "version");
+        expectedQName = QName.create(UG_NS, UG_REV, "version");
         assertEquals(expectedQName, version.getQName());
         path.offer(expectedQName);
         expectedPath= SchemaPath.create(path, true);
@@ -339,7 +334,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- |-- |-- leaf type
         type = (LeafSchemaNode) pathKeys.getDataChildByName("type");
         assertNotNull(type);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "type");
+        expectedQName = QName.create(UG_NS, UG_REV, "type");
         assertEquals(expectedQName, type.getQName());
         path.pollLast();
         path.offer(expectedQName);
@@ -351,7 +346,7 @@ public class UsesAugmentTest {
         // * |-- |-- container segment-computation
         ContainerSchemaNode sc = (ContainerSchemaNode) requests.getDataChildByName("segment-computation");
         assertNotNull(sc);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "segment-computation");
+        expectedQName = QName.create(UG_NS, UG_REV, "segment-computation");
         assertEquals(expectedQName, sc.getQName());
         path.pollLast();
         path.pollLast();
@@ -364,7 +359,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- container p2p
         ContainerSchemaNode p2p = (ContainerSchemaNode) sc.getDataChildByName("p2p");
         assertNotNull(p2p);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "p2p");
+        expectedQName = QName.create(UG_NS, UG_REV, "p2p");
         assertEquals(expectedQName, p2p.getQName());
         path.offer(expectedQName);
         expectedPath= SchemaPath.create(path, true);
@@ -373,7 +368,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- |-- container endpoints
         ContainerSchemaNode endpoints = (ContainerSchemaNode) p2p.getDataChildByName("endpoints");
         assertNotNull(endpoints);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "endpoints");
+        expectedQName = QName.create(UG_NS, UG_REV, "endpoints");
         assertEquals(expectedQName, endpoints.getQName());
         path.offer(expectedQName);
         expectedPath= SchemaPath.create(path, true);
@@ -382,7 +377,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- |-- |-- leaf processing-rule
         processingRule = (LeafSchemaNode) endpoints.getDataChildByName("processing-rule");
         assertNotNull(processingRule);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "processing-rule");
+        expectedQName = QName.create(UG_NS, UG_REV, "processing-rule");
         assertEquals(expectedQName, processingRule.getQName());
         path.offer(expectedQName);
         expectedPath= SchemaPath.create(path, true);
@@ -392,7 +387,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- |-- |-- leaf ignore
         ignore = (LeafSchemaNode) endpoints.getDataChildByName("ignore");
         assertNotNull(ignore);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "ignore");
+        expectedQName = QName.create(UG_NS, UG_REV, "ignore");
         assertEquals(expectedQName, ignore.getQName());
         path.pollLast();
         path.offer(expectedQName);
@@ -403,7 +398,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- |-- |-- container box
         box = (ContainerSchemaNode) endpoints.getDataChildByName("box");
         assertNotNull(box);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "box");
+        expectedQName = QName.create(UG_NS, UG_REV, "box");
         assertEquals(expectedQName, box.getQName());
         path.pollLast();
         path.offer(expectedQName);
@@ -413,7 +408,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- |-- |-- choice address-family
         ChoiceNode af = (ChoiceNode) endpoints.getDataChildByName("address-family");
         assertNotNull(af);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "address-family");
+        expectedQName = QName.create(UG_NS, UG_REV, "address-family");
         assertEquals(expectedQName, af.getQName());
         path.pollLast();
         path.offer(expectedQName);
@@ -423,7 +418,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- |-- container reported-route
         ContainerSchemaNode reportedRoute = (ContainerSchemaNode) p2p.getDataChildByName("reported-route");
         assertNotNull(reportedRoute);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "reported-route");
+        expectedQName = QName.create(UG_NS, UG_REV, "reported-route");
         assertEquals(expectedQName, reportedRoute.getQName());
         path.pollLast();
         path.pollLast();
@@ -434,7 +429,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- |-- |-- leaf processing-rule
         processingRule = (LeafSchemaNode) reportedRoute.getDataChildByName("processing-rule");
         assertNotNull(processingRule);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "processing-rule");
+        expectedQName = QName.create(UG_NS, UG_REV, "processing-rule");
         assertEquals(expectedQName, processingRule.getQName());
         path.offer(expectedQName);
         expectedPath= SchemaPath.create(path, true);
@@ -444,7 +439,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- |-- |-- leaf ignore
         ignore = (LeafSchemaNode) reportedRoute.getDataChildByName("ignore");
         assertNotNull(ignore);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "ignore");
+        expectedQName = QName.create(UG_NS, UG_REV, "ignore");
         assertEquals(expectedQName, ignore.getQName());
         path.pollLast();
         path.offer(expectedQName);
@@ -455,7 +450,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- |-- |-- list subobjects
         ListSchemaNode subobjects = (ListSchemaNode) reportedRoute.getDataChildByName("subobjects");
         assertNotNull(subobjects);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "subobjects");
+        expectedQName = QName.create(UG_NS, UG_REV, "subobjects");
         assertEquals(expectedQName, subobjects.getQName());
         path.pollLast();
         path.offer(expectedQName);
@@ -465,7 +460,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- |-- |-- container bandwidth
         ContainerSchemaNode bandwidth = (ContainerSchemaNode) reportedRoute.getDataChildByName("bandwidth");
         assertNotNull(bandwidth);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "bandwidth");
+        expectedQName = QName.create(UG_NS, UG_REV, "bandwidth");
         assertEquals(expectedQName, bandwidth.getQName());
         path.pollLast();
         path.offer(expectedQName);
@@ -475,7 +470,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- |-- container bandwidth
         bandwidth = (ContainerSchemaNode) p2p.getDataChildByName("bandwidth");
         assertNotNull(bandwidth);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "bandwidth");
+        expectedQName = QName.create(UG_NS, UG_REV, "bandwidth");
         assertEquals(expectedQName, bandwidth.getQName());
         path.pollLast();
         path.pollLast();
@@ -486,7 +481,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- |-- |-- leaf processing-rule
         processingRule = (LeafSchemaNode) bandwidth.getDataChildByName("processing-rule");
         assertNotNull(processingRule);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "processing-rule");
+        expectedQName = QName.create(UG_NS, UG_REV, "processing-rule");
         assertEquals(expectedQName, processingRule.getQName());
         path.offer(expectedQName);
         expectedPath= SchemaPath.create(path, true);
@@ -496,7 +491,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- |-- |-- leaf ignore
         ignore = (LeafSchemaNode) bandwidth.getDataChildByName("ignore");
         assertNotNull(ignore);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "ignore");
+        expectedQName = QName.create(UG_NS, UG_REV, "ignore");
         assertEquals(expectedQName, ignore.getQName());
         path.pollLast();
         path.offer(expectedQName);
@@ -507,7 +502,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- |-- |-- container bandwidth
         ContainerSchemaNode bandwidthInner = (ContainerSchemaNode) bandwidth.getDataChildByName("bandwidth");
         assertNotNull(bandwidthInner);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "bandwidth");
+        expectedQName = QName.create(UG_NS, UG_REV, "bandwidth");
         assertEquals(expectedQName, bandwidth.getQName());
         path.pollLast();
         path.offer(expectedQName);
@@ -517,7 +512,7 @@ public class UsesAugmentTest {
         // * |-- list svec
         ListSchemaNode svec = (ListSchemaNode) pcreq.getDataChildByName("svec");
         assertNotNull(svec);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "svec");
+        expectedQName = QName.create(UG_NS, UG_REV, "svec");
         assertEquals(expectedQName, svec.getQName());
         path.pollLast();
         path.pollLast();
@@ -531,7 +526,7 @@ public class UsesAugmentTest {
         // * |-- |-- leaf link-diverse
         LeafSchemaNode linkDiverse = (LeafSchemaNode) svec.getDataChildByName("link-diverse");
         assertNotNull(linkDiverse);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "link-diverse");
+        expectedQName = QName.create(UG_NS, UG_REV, "link-diverse");
         assertEquals(expectedQName, linkDiverse.getQName());
         path.offer(expectedQName);
         expectedPath= SchemaPath.create(path, true);
@@ -541,7 +536,7 @@ public class UsesAugmentTest {
         // * |-- |-- leaf processing-rule
         processingRule = (LeafSchemaNode) svec.getDataChildByName("processing-rule");
         assertNotNull(processingRule);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "processing-rule");
+        expectedQName = QName.create(UG_NS, UG_REV, "processing-rule");
         assertEquals(expectedQName, processingRule.getQName());
         path.pollLast();
         path.offer(expectedQName);
@@ -552,7 +547,7 @@ public class UsesAugmentTest {
         // * |-- |-- leaf ignore
         ignore = (LeafSchemaNode) svec.getDataChildByName("ignore");
         assertNotNull(ignore);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "ignore");
+        expectedQName = QName.create(UG_NS, UG_REV, "ignore");
         assertEquals(expectedQName, ignore.getQName());
         path.pollLast();
         path.offer(expectedQName);
@@ -563,7 +558,7 @@ public class UsesAugmentTest {
         // * |-- |-- list metric
         ListSchemaNode metric = (ListSchemaNode) svec.getDataChildByName("metric");
         assertNotNull(metric);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "metric");
+        expectedQName = QName.create(UG_NS, UG_REV, "metric");
         assertEquals(expectedQName, metric.getQName());
         path.pollLast();
         path.offer(expectedQName);
@@ -573,7 +568,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- leaf metric-type
         LeafSchemaNode metricType = (LeafSchemaNode) metric.getDataChildByName("metric-type");
         assertNotNull(metricType);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "metric-type");
+        expectedQName = QName.create(UG_NS, UG_REV, "metric-type");
         assertEquals(expectedQName, metricType.getQName());
         path.offer(expectedQName);
         expectedPath= SchemaPath.create(path, true);
@@ -583,7 +578,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- box
         box = (ContainerSchemaNode) metric.getDataChildByName("box");
         assertNotNull(box);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "box");
+        expectedQName = QName.create(UG_NS, UG_REV, "box");
         assertEquals(expectedQName, box.getQName());
         path.pollLast();
         path.offer(expectedQName);
@@ -593,7 +588,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- leaf processing-rule
         processingRule = (LeafSchemaNode) metric.getDataChildByName("processing-rule");
         assertNotNull(processingRule);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "processing-rule");
+        expectedQName = QName.create(UG_NS, UG_REV, "processing-rule");
         assertEquals(expectedQName, processingRule.getQName());
         path.pollLast();
         path.offer(expectedQName);
@@ -604,7 +599,7 @@ public class UsesAugmentTest {
         // * |-- |-- |-- leaf ignore
         ignore = (LeafSchemaNode) metric.getDataChildByName("ignore");
         assertNotNull(ignore);
-        expectedQName = new QName(UG_NS, UG_REV, UG_PREF, "ignore");
+        expectedQName = QName.create(UG_NS, UG_REV, "ignore");
         assertEquals(expectedQName, ignore.getQName());
         path.pollLast();
         path.offer(expectedQName);
@@ -628,7 +623,7 @@ public class UsesAugmentTest {
         }
         assertNotNull(intExt);
 
-        List<QName> path = Lists.newArrayList(new QName(GD_NS, GD_REV, GD_PREF, "int-ext"));
+        List<QName> path = Lists.newArrayList(QName.create(GD_NS, GD_REV, "int-ext"));
         SchemaPath expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, intExt.getPath());
 

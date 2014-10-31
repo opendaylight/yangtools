@@ -222,8 +222,7 @@ public class YangParserWithContextTest {
 
         // test grouping path
         List<QName> path = new ArrayList<>();
-        QName qname = new QName(URI.create("urn:opendaylight.baz"), simpleDateFormat.parse("2013-02-27"), "baz",
-                "target");
+        QName qname = QName.create(URI.create("urn:opendaylight.baz"), simpleDateFormat.parse("2013-02-27"), "target");
         path.add(qname);
         SchemaPath expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, usesNode.getGroupingPath());
@@ -401,8 +400,8 @@ public class YangParserWithContextTest {
         DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
         Date expectedRev = simpleDateFormat.parse("2013-07-03");
         List<QName> path = new ArrayList<>();
-        path.add(new QName(expectedNS, expectedRev, "bar", "interfaces"));
-        path.add(new QName(expectedNS, expectedRev, "bar", "ifEntry"));
+        path.add(QName.create(expectedNS, expectedRev, "interfaces"));
+        path.add(QName.create(expectedNS, expectedRev, "ifEntry"));
         SchemaPath expectedPath = SchemaPath.create(path, true);
 
         assertEquals(expectedPath, dev.getTargetPath());

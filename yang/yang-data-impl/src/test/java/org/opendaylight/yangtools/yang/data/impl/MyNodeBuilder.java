@@ -33,7 +33,6 @@ public class MyNodeBuilder extends BuilderSupport {
     private static final Logger LOG = LoggerFactory.getLogger(MyNodeBuilder.class);
 
     private URI qnNamespace;
-    private final String qnPrefix;
     private final Date qnRevision;
 
     private CompositeNode rootNode;
@@ -43,7 +42,6 @@ public class MyNodeBuilder extends BuilderSupport {
      */
     private MyNodeBuilder(final QName baseQName) {
         qnNamespace = baseQName.getNamespace();
-        qnPrefix = baseQName.getPrefix();
         qnRevision = baseQName.getRevision();
     }
 
@@ -53,9 +51,9 @@ public class MyNodeBuilder extends BuilderSupport {
     public static MyNodeBuilder newInstance() {
         QName qName = null;
         try {
-            qName = new QName(
+            qName = QName.create(
                     new URI("urn:opendaylight:controller:network"),
-                    new Date(42), "yang-data-impl-groovyTest_", "node");
+                    new Date(42), "node");
         } catch (URISyntaxException e) {
             LOG.error(e.getMessage(), e);
         }
@@ -138,7 +136,7 @@ public class MyNodeBuilder extends BuilderSupport {
 
     private QName createQName(final Object localName) {
         LOG.debug("qname for: "+localName);
-        return new QName(qnNamespace, qnRevision, qnPrefix, (String) localName);
+        return QName.create(qnNamespace, qnRevision, (String) localName);
     }
 
     protected CompositeNode getCurrentNode() {

@@ -85,7 +85,7 @@ public final class BaseTypes {
      * @return built-in base yang type QName.
      */
     public static QName constructQName(final String typeName) {
-        return QName.create(BASE_TYPES_MODULE, "", typeName);
+        return QName.create(BASE_TYPES_MODULE, typeName);
     }
 
     /**

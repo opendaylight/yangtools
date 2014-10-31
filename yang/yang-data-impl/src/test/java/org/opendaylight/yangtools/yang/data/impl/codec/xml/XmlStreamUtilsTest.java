@@ -187,7 +187,7 @@ public class XmlStreamUtilsTest {
         if(prefix.isPresent()) {
             final QName moduleQName = QName.create(namespace, revision, "module");
             final QNameModule module = QNameModule.create(moduleQName.getNamespace(), moduleQName.getRevision());
-            return QName.create(module, prefix.get(), localName);
+            return QName.create(module, localName);
         } else {
             return QName.create(namespace, revision, localName);
         }
