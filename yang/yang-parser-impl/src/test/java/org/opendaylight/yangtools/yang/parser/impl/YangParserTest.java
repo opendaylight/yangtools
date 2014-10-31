@@ -129,7 +129,7 @@ public class YangParserTest {
 
         ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName("ifEntry");
         // test SchemaNode args
-        QName expectedQName = new QName(expectedNamespace, barRev, expectedPrefix, "ifEntry");
+        QName expectedQName = QName.create(expectedNamespace, barRev, "ifEntry");
         assertEquals(expectedQName, ifEntry.getQName());
         SchemaPath expectedPath = TestUtils.createPath(true, expectedNamespace, barRev, expectedPrefix, "interfaces",
                 "ifEntry");
@@ -152,7 +152,7 @@ public class YangParserTest {
         assertEquals(2, availableAugmentations.size());
         // test ListSchemaNode args
         List<QName> expectedKey = new ArrayList<>();
-        expectedKey.add(new QName(expectedNamespace, barRev, expectedPrefix, "ifIndex"));
+        expectedKey.add(QName.create(expectedNamespace, barRev, "ifIndex"));
         assertEquals(expectedKey, ifEntry.getKeyDefinition());
         assertFalse(ifEntry.isUserOrdered());
         // test DataNodeContainer args
@@ -656,8 +656,8 @@ public class YangParserTest {
         assertEquals("system/user ref", dev.getReference());
 
         List<QName> path = new ArrayList<>();
-        path.add(new QName(barNS, barRev, "br", "interfaces"));
-        path.add(new QName(barNS, barRev, "br", "ifEntry"));
+        path.add(QName.create(barNS, barRev, "interfaces"));
+        path.add(QName.create(barNS, barRev, "ifEntry"));
         SchemaPath expectedPath = SchemaPath.create(path, true);
 
         assertEquals(expectedPath, dev.getTargetPath());
@@ -704,7 +704,7 @@ public class YangParserTest {
 
         NotificationDefinition notification = notifications.iterator().next();
         // test SchemaNode args
-        QName expectedQName = new QName(bazNS, bazRev, expectedPrefix, "event");
+        QName expectedQName = QName.create(bazNS, bazRev, "event");
         assertEquals(expectedQName, notification.getQName());
         SchemaPath expectedPath = TestUtils.createPath(true, bazNS, bazRev, expectedPrefix, "event");
         assertEquals(expectedPath, notification.getPath());
