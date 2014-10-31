@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba8cc1f7_9c448875",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/util/YangSchemaUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-10-31T10:48:36Z",
+      "side": 1,
+      "message": "is this \u0027else if\u0027 or a standalone if (e.g. next line)?",
+      "revId": "04f70ce36fa0dc18c9793202b7b6d89cc5967a8b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_fc4fd490",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/util/YangSchemaUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-10-31T10:48:36Z",
+      "side": 1,
+      "message": "we do not seem to ever be breaking the outer loop, so there is no need for groupingSearch label...",
+      "revId": "04f70ce36fa0dc18c9793202b7b6d89cc5967a8b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
