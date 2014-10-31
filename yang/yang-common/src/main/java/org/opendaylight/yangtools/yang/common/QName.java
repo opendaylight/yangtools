@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.Fpre
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.common;
 
 import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.getRevisionFormat;
-
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -17,7 +16,6 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.objcache.ObjectCache;
 import org.opendaylight.yangtools.objcache.ObjectCacheFactory;
@@ -64,12 +62,9 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     private final QNameModule module;
     // Mandatory
     private final String localName;
-    // Nullable
-    private final String prefix;
 
-    private QName(final QNameModule module, final String prefix, final String localName) {
+    private QName(final QNameModule module, final String localName) {
         this.localName = checkLocalName(localName);
-        this.prefix = prefix;
         this.module = module;
     }
 
@@ -99,30 +94,11 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *
      * @param namespace
      *            the namespace assigned to the YANG module
-     * @param revision
-     *            the revision of the YANG module
-     * @param prefix
-     *            locally defined prefix assigned to local name
-     * @param localName
-     *            YANG schema identifier
-     *
-     * @deprecated Prefix storage in QNames is deprecated.
-     */
-    @Deprecated
-    public QName(final URI namespace, final Date revision, final String prefix, final String localName) {
-        this(QNameModule.create(namespace, revision), prefix, localName);
-    }
-
-    /**
-     * QName Constructor.
-     *
-     * @param namespace
-     *            the namespace assigned to the YANG module
      * @param localName
      *            YANG schema identifier
      */
     public QName(final URI namespace, final String localName) {
-        this(namespace, null, "", localName);
+        this(QNameModule.create(namespace, null), localName);
     }
 
     private static String checkLocalName(final String localName) {
@@ -204,18 +180,6 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         return module.getRevision();
     }
 
-    /**
-     * Returns locally defined prefix assigned to local name
-     *
-     * @return locally defined prefix assigned to local name
-     *
-     * @deprecated Prefix storage in QNames is deprecated.
-     */
-    @Deprecated
-    public String getPrefix() {
-        return prefix;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -256,28 +220,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     public static QName create(final QName base, final String localName) {
-        return create(base.getModule(), base.getPrefix(), localName);
-    }
-
-    /**
-     * Creates new QName.
-     *
-     * @param qnameModule
-     *            Namespace and revision enclosed as a QNameModule
-     * @param prefix
-     *            Namespace prefix
-     * @param localName
-     *            Local name part of QName. MUST NOT BE null.
-     * @return Instance of QName
-     *
-     * @deprecated Prefix storage in QNames is deprecated.
-     */
-    @Deprecated
-    public static QName create(final QNameModule module, final String prefix, final String localName) {
-        if (module == null) {
-            throw new NullPointerException("module may not be null");
-        }
-        return new QName(module, prefix, localName);
+        return create(base.getModule(), localName);
     }
 
     /**
@@ -290,7 +233,10 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @return Instance of QName
      */
     public static QName create(final QNameModule qnameModule, final String localName) {
-        return create(qnameModule, null, localName);
+        if (qnameModule == null) {
+            throw new NullPointerException("module may not be null");
+        }
+        return new QName(qnameModule, localName);
     }
 
     /**
@@ -305,7 +251,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @return Instance of QName
      */
     public static QName create(final URI namespace, final Date revision, final String localName) {
-        return create(QNameModule.create(namespace, revision), null, localName);
+        return create(QNameModule.create(namespace, revision), localName);
     }
 
     /**
