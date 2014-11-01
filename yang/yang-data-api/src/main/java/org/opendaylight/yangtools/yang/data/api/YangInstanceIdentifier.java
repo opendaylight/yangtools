@@ -6,6 +6,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
@@ -13,6 +14,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -29,6 +31,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
@@ -489,6 +492,24 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
     public static final class NodeIdentifierWithPredicates extends AbstractPathArgument {
         private static final long serialVersionUID = -4787195606494761540L;
 
+        // Joins a Map into a string based xpath format for predicates, each predicate is in its own bracket
+        private static final Joiner.MapJoiner KEYS_JOINER = Joiner.on("][").withKeyValueSeparator("=");
+        // Transforms a map of keys and values so that every value that is of type String will be quoted with a single quote
+        // to conform with xpath predicates format
+        private static final Maps.EntryTransformer<QName, Object, Object> STRING_VALUE_QUOTER =
+                new Maps.EntryTransformer<QName, Object, Object>() {
+
+            private static final String quotedString = "'%s'";
+
+            @Override
+            public Object transformEntry(@Nullable final QName key, @Nullable final Object value) {
+                if (value instanceof String) {
+                    return String.format(quotedString, value.toString());
+                }
+                return value;
+            }
+        };
+
         private final Map<QName, Object> keyValues;
 
         public NodeIdentifierWithPredicates(final QName node, final Map<QName, Object> keyValues) {
@@ -540,12 +561,16 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
 
         @Override
         public String toString() {
-            return super.toString() + '[' + keyValues + ']';
+            return super.toString() + keysToString(keyValues);
+        }
+
+        private static String keysToString(final Map<QName, Object> keyValues1) {
+            return '[' + KEYS_JOINER.join(Maps.transformEntries(keyValues1, STRING_VALUE_QUOTER)) + ']';
         }
 
         @Override
         public String toRelativeString(final PathArgument previous) {
-            return super.toRelativeString(previous) + '[' + keyValues + ']';
+            return super.toRelativeString(previous) + keysToString(keyValues);
         }
     }
 
