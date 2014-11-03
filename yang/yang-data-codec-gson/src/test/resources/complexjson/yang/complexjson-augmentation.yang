@@ -1,24 +1,30 @@
 module complexjson-augmentation {
     namespace "ns:complex:json:augmentation";
     prefix cjaug;
-    
+
   import complexjson {
     prefix cj;
-  }    
+  }
 
-    revision "2014-08-14" {        
+    revision "2014-08-14" {
     }
-    
+
+    augment "/cj:cont1" {
+        leaf lf11-namesake {
+            type string;
+        }
+    }
+
     augment "/cj:cont1/cj:choc11/cj:c11A" {
-        leaf lf15_11  {
+        leaf lf15_11 {
                     type string;
                 }
-        leaf lf15_12  {
+        leaf lf15_12 {
                     type string;
                 }
-                
-    }    
-    
+
+    }
+
     augment "/cj:cont1" {
         leaf lf12_1aug {
                     type string;
@@ -26,12 +32,12 @@ module complexjson-augmentation {
         leaf lf12_2aug {
             type string;
         }
-    }    
-    
+    }
+
     augment "/cj:cont1/cj:choc11/cj:c11A" {
         leaf lf15_21aug {
                     type string;
                 }
-    }    
+    }
 
 }
