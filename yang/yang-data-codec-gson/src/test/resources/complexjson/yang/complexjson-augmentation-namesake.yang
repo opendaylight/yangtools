@@ -1,0 +1,18 @@
+module complexjson-augmentation-namesake {
+    namespace "ns:complex:json:augmentation:namesake";
+    prefix cjaugnmsk;
+
+  import complexjson {
+    prefix cj;
+  }
+
+    revision "2014-08-14" {
+    }
+
+    augment "/cj:cont1" {
+        leaf lf11-namesake {
+            type string;
+        }
+    }
+
+}
