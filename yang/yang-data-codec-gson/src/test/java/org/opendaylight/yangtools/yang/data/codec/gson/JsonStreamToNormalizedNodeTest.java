@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadModules;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 
@@ -132,6 +133,57 @@ public class JsonStreamToNormalizedNodeTest {
         String inputJson = loadTextFile("/complexjson/unkeyed-node-in-container.json");
         verifyTransformationToNormalizedNode(inputJson, TestingNormalizedNodeStructuresCreator.unkeyedNodeInContainer());
     }
+
+    /**
+     * Top level JSON element contains no information about module name.
+     *
+     * It should be possible to find out potential module name from available schema context.
+     *
+     */
+    @Test
+    public void missingModuleInfoInTopLevelElement() throws IOException, URISyntaxException {
+        String inputJson = loadTextFile("/complexjson/missing-module-in-top-level.json");
+        verifyTransformationToNormalizedNode(inputJson, TestingNormalizedNodeStructuresCreator.topLevelContainer());
+    }
+
+    /**
+     *
+     * Exception expected.
+     *
+     * It tests case when several elements with the same name and various namespaces exists and are in JSON specified
+     * without module name prefix.
+     */
+    @Test
+    public void leafNamesakes() throws IOException, URISyntaxException {
+        String inputJson = loadTextFile("/complexjson/namesakes.json");
+        try {
+            //second parameter isn't necessary because error will be raised before it is used.
+            verifyTransformationToNormalizedNode(inputJson, null);
+        } catch (IllegalStateException e) {
+            final String errorMessage = e.getMessage();
+            assertTrue(errorMessage.contains("Choose suitable module name for element lf11-namesake:"));
+            assertTrue(errorMessage.contains("complexjson-augmentation"));
+            assertTrue(errorMessage.contains("complexjson-augmentation-namesake"));
+        }
+    }
+
+    /**
+     *
+     * Exception expected.
+     *
+     * Json input contains element which doesn't exist in YANG schema
+     */
+    @Test
+    public void parsingNotExistingElement() throws IOException, URISyntaxException {
+        String inputJson = loadTextFile("/complexjson/not-existing-element.json");
+        try {
+            //second parameter isn't necessary because error will be raised before it is used.
+            verifyTransformationToNormalizedNode(inputJson, null);
+        } catch (IllegalStateException e) {
+            assertTrue(e.getMessage().contains("Schema node with name dummy-element wasn't found."));
+        }
+    }
+
 
     private void verifyTransformationToNormalizedNode(final String inputJson,
             final NormalizedNode<?, ?> awaitedStructure) {
