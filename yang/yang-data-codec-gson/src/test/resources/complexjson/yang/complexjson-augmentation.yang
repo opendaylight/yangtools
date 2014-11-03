@@ -9,6 +9,12 @@ module complexjson-augmentation {
     revision "2014-08-14" {        
     }
     
+    augment "/cj:cont1" {
+        leaf lf11-namesake {
+            type string;
+        }
+    }
+    
     augment "/cj:cont1/cj:choc11/cj:c11A" {
         leaf lf15_11  {
                     type string;
