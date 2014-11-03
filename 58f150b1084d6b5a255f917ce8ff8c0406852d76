@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba8cc1f7_0d904494",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONStreamWriterContext.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-11-03T14:27:41Z",
+      "side": 1,
+      "message": "Expose depth as a parameter in another constructor, and use that constructor from the invisible context.\n\nSpecial-casing the descendant classes is not proper OOP.",
+      "revId": "58f150b1084d6b5a255f917ce8ff8c0406852d76",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_2d8d087c",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONStreamWriterContext.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-11-03T14:27:41Z",
+      "side": 1,
+      "message": "Context without a parent is defined to have depth 0.",
+      "revId": "58f150b1084d6b5a255f917ce8ff8c0406852d76",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_6d9310a4",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONStreamWriterContext.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-11-03T14:27:41Z",
+      "side": 1,
+      "message": "Please use proper spaces, also since depth should be counted from zero, the -1 is not needed.",
+      "revId": "58f150b1084d6b5a255f917ce8ff8c0406852d76",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_cde9fc1b",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONStreamWriterContext.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-11-03T14:27:41Z",
+      "side": 1,
+      "message": "since depth is counted from zero and you need to emit it, make this:\n\ni \u003c\u003d depth",
+      "revId": "58f150b1084d6b5a255f917ce8ff8c0406852d76",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
