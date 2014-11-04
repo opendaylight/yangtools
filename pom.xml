@@ -38,6 +38,7 @@
         <module>websocket</module>
         <module>yang</module>
       <!-- module>third-party</module -->
+      <module>yang-validation-tool</module>
     </modules>
 
     <profiles>
