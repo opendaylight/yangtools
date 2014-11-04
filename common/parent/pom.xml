@@ -617,4 +617,7 @@
             </releases>
         </repository>
     </repositories>
+    <modules>
+    	<module>yang-validation-tool</module>
+    </modules>
 </project>
