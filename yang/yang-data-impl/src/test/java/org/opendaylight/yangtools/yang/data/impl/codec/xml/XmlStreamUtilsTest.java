@@ -12,30 +12,38 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
-
+import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.Node;
-import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
-import org.opendaylight.yangtools.yang.data.impl.NodeFactory;
-import org.opendaylight.yangtools.yang.data.impl.SimpleNodeTOImpl;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.w3c.dom.Document;
 
@@ -78,6 +86,83 @@ public class XmlStreamUtilsTest {
 
         final boolean identical = diff.identical();
         assertTrue("Xml differs: " + diff.toString(), identical);
+    }
+
+    @Ignore
+    @Test
+    public void testLeafRef() throws URISyntaxException, XMLStreamException, FactoryConfigurationError, IOException {
+        String returned = Helper.getDeserializedValueFromLeafref();
+        String expected = "test";
+
+        assertEquals(expected, returned);
+    }
+
+    static class Helper {
+        public static String getDeserializedValueFromLeafref() throws URISyntaxException, XMLStreamException, FactoryConfigurationError, IOException {
+            YangParserImpl yangParser = new YangParserImpl();
+            File file = new File(XmlStreamUtils.class.getResource("/leafref-test.yang").toURI());
+            SchemaContext schemaContext = yangParser.parseFiles(Arrays.asList(file));
+            Module module = schemaContext.getModules().iterator().next();
+
+            LeafrefTypeDefinition leafrefTypedef = findLeafrefType(module);
+
+            XmlStreamUtils xmlStremUtils = XmlStreamUtils.create(XmlUtils.DEFAULT_XML_CODEC_PROVIDER, schemaContext);
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            XMLStreamWriter xmlStreamWriter = XMLOutputFactory.newFactory().createXMLStreamWriter(baos);
+
+            SchemaNode schemaNode = findLeafrefType2(module);
+
+            SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypedef, schemaContext, schemaNode);
+            xmlStremUtils.writeValue(xmlStreamWriter, leafrefTypedef, "test");
+            baos.close();
+            return baos.toString();
+        }
+
+        private static LeafrefTypeDefinition findLeafrefType(final Module module) {
+            for (DataSchemaNode schemaNode: module.getChildNodes()) {
+
+                if (schemaNode instanceof ContainerSchemaNode) {
+                    for (DataSchemaNode childNode : ((ContainerSchemaNode)schemaNode).getChildNodes()) {
+                        if (childNode instanceof LeafSchemaNode) {
+                            LeafSchemaNode leafSchemaNode = (LeafSchemaNode)childNode;
+
+                            TypeDefinition<?> leafSchemaNodeType = leafSchemaNode.getType();
+
+                            if (leafSchemaNodeType instanceof LeafrefTypeDefinition) {
+                                LeafrefTypeDefinition leafreftTypedef = (LeafrefTypeDefinition)leafSchemaNodeType;
+                                return leafreftTypedef;
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
+        private static DataNodeContainer childNode(ContainerSchemaNode schemaNode) {
+            // TODO Auto-generated method stub
+            return null;
+        }
+    }
+
+    private static SchemaNode findLeafrefType2(final Module module) {
+        for (DataSchemaNode schemaNode: module.getChildNodes()) {
+
+            if (schemaNode instanceof ContainerSchemaNode) {
+                for (DataSchemaNode childNode : ((ContainerSchemaNode)schemaNode).getChildNodes()) {
+                    if (childNode instanceof LeafSchemaNode) {
+                        LeafSchemaNode leafSchemaNode = (LeafSchemaNode)childNode;
+
+                        TypeDefinition<?> leafSchemaNodeType = leafSchemaNode.getType();
+
+                        if (leafSchemaNodeType instanceof LeafrefTypeDefinition) {
+                            return leafSchemaNode;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     @Test
