@@ -16,6 +16,74 @@
       "revId": "ec8d733f86a0d964291dfafc2595a9ea8411191a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_8383c3cb",
+        "filename": "yang/yang-data-impl/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 128,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2014-11-05T15:44:33Z",
+      "side": 1,
+      "message": "This dependency should not be here, please remove",
+      "revId": "ec8d733f86a0d964291dfafc2595a9ea8411191a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_0377b303",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/AbstractNamespaceCodec.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2014-11-05T15:44:33Z",
+      "side": 1,
+      "message": "No real change to this file, please revert",
+      "revId": "ec8d733f86a0d964291dfafc2595a9ea8411191a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_636a3f1c",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaContextUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 630,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2014-11-05T15:44:33Z",
+      "side": 1,
+      "message": "Investigate why for relative xpath the base type cannot be found.",
+      "revId": "ec8d733f86a0d964291dfafc2595a9ea8411191a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_436dbb31",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaContextUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 651,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2014-11-05T15:44:33Z",
+      "side": 1,
+      "message": "Please fix this regex, it should be .replaceAll(\"\\\\[.*\\\\]\", \"\");",
+      "revId": "ec8d733f86a0d964291dfafc2595a9ea8411191a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
