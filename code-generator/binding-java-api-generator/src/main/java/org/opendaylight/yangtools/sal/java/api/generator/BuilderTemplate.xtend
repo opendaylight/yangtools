@@ -512,7 +512,7 @@ class BuilderTemplate extends BaseTemplate {
             «val allProps = new ArrayList(properties)»
             «val isList = implementsIfc(type, Types.parameterizedTypeFor(Types.typeForClass(Identifiable), type))»
             «val keyType = type.getKey»
-            «IF isList && keyType != null»
+            «IF isList && keyType != null && keyType instanceof GeneratedTransferObject»
                 «val keyProps = new ArrayList((keyType as GeneratedTransferObject).properties)»
                 «Collections.sort(keyProps,
                     [ p1, p2 |
