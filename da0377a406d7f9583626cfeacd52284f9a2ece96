@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba8cc1f7_237e77af",
+        "filename": "yang/yang-data-impl/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2014-11-05T17:38:35Z",
+      "side": 1,
+      "message": "These whitespaces should probably be removed",
+      "revId": "da0377a406d7f9583626cfeacd52284f9a2ece96",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_c34a2b83",
+        "filename": "yang/yang-data-impl/src/test/resources/leafref-test.yang",
+        "patchSetId": 4
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2014-11-05T17:38:35Z",
+      "side": 1,
+      "message": "Trailing whitespaces again...",
+      "revId": "da0377a406d7f9583626cfeacd52284f9a2ece96",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
