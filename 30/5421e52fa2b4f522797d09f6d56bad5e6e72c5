@@ -1,0 +1,7 @@
+Code-Review+2: Tony Tkacik <ttkacik@cisco.com>
+Verified+1: jenkins-yangtools <jenkins-lispflowmapping@opendaylight.org>
+Submitted-by: Tony Tkacik <ttkacik@cisco.com>
+Submitted-at: Wed, 05 Nov 2014 13:31:54 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/12485
+Project: yangtools
+Branch: refs/heads/stable/helium
