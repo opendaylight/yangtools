@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba8cc1f7_2369978b",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XmlStreamUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 295,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2014-11-05T09:21:11Z",
+      "side": 1,
+      "message": "Right here a recursive call to writeValue should be to handle leafrefs pointing to leafrefs. Please also test leafref pointing to a leafref pointing to some concrete type.",
+      "revId": "aac1337f3393afff598459e1f827f1d4b561fb64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_e363afaf",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XmlStreamUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 319,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2014-11-05T09:21:11Z",
+      "side": 1,
+      "message": "This method needs to be public since I have to use it in Restconf in MD-SAL. Also it would make more sense if it was in utility class such as SchemaContextUtil. Please move it there and make it public",
+      "revId": "aac1337f3393afff598459e1f827f1d4b561fb64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_036c939b",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XmlStreamUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 367,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2014-11-05T09:21:11Z",
+      "side": 1,
+      "message": "Please remove the AnyXml branch, since leafref cannot point to an AnyXml node. Even if it could, null would not really help us, exception should be thrown.",
+      "revId": "aac1337f3393afff598459e1f827f1d4b561fb64",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
