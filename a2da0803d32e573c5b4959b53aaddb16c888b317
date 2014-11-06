@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba8cc1f7_1c7ab188",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/BuilderTemplate.xtend",
+        "patchSetId": 1
+      },
+      "lineNbr": 515,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-11-06T11:02:11Z",
+      "side": 1,
+      "message": "First question will be... how we get ConcreteTypeImpl here?\n\nConcreteTypeImpl represent already preexisting class in JVM and this DTO (keyType) is obviously generated.\n\nSo could you please look up also how we ended up with ConcreteTypeImpl here?",
+      "revId": "a2da0803d32e573c5b4959b53aaddb16c888b317",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
