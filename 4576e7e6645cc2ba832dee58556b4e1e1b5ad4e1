@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba8cc1f7_dcec49ca",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2014-11-06T12:57:51Z",
+      "side": 0,
+      "message": "I think, it is better to remove added quick fix test parent !\u003d null, because then we do not know that something in generation went wrong. Everything finished with success, but some elements in generated code are missing.",
+      "revId": "4576e7e6645cc2ba832dee58556b4e1e1b5ad4e1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
