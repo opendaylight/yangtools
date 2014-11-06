@@ -11,14 +11,17 @@ import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -231,185 +234,112 @@ public final class SchemaContextUtil {
         return findNodeInModule(module, path);
     }
 
-    private static SchemaNode findNodeInModule(final Module module, final Iterable<QName> path) {
-        final QName current = path.iterator().next();
+    private static SchemaNode findNodeInModule(Module module, Iterable<QName> path) {
 
-        LOG.trace("Looking for data container {} in module {}", current, module);
-        SchemaNode parent = module.getDataChildByName(current);
-        if (parent != null) {
-            final SchemaNode ret = findNode((DataSchemaNode) parent, nextLevel(path));
-            if (ret != null) {
-                return ret;
-            }
+        Preconditions.checkArgument(module != null, "Parent reference cannot be NULL");
+        Preconditions.checkArgument(path != null, "Path reference cannot be NULL");
+
+        if (!path.iterator().hasNext()) {
+            LOG.debug("No node matching {} found in node {}", path, module);
+            return null;
         }
 
-        LOG.trace("Looking for RPC {} in module {}", current, module);
-        parent = getRpcByName(module, current);
-        if (parent != null) {
-            final SchemaNode ret = findNodeInRpc((RpcDefinition) parent, nextLevel(path));
-            if (ret != null) {
-                return ret;
-            }
+        QName current = path.iterator().next();
+        LOG.trace("Looking for node {} in module {}", current, module);
+
+        SchemaNode foundNode = null;
+
+        foundNode = module.getDataChildByName(current);
+        if (foundNode == null)
+            foundNode = getGroupingByName(module, current);
+        if (foundNode == null)
+            foundNode = getRpcByName(module, current);
+        if (foundNode == null)
+            foundNode = getNotificationByName(module, current);
+
+        if (foundNode == null) {
+            LOG.debug("No node matching {} found in node {}", path, module);
+            return null;
         }
 
-        LOG.trace("Looking for notification {} in module {}", current, module);
-        parent = getNotificationByName(module, current);
-        if (parent != null) {
-            final SchemaNode ret = findNodeInNotification((NotificationDefinition) parent, nextLevel(path));
-            if (ret != null) {
-                return ret;
-            }
-        }
+        Iterable<QName> nextPath = nextLevel(path);
 
-        LOG.trace("Looking for grouping {} in module {}", current, module);
-        parent = getGroupingByName(module, current);
-        if (parent != null) {
-            final SchemaNode ret = findNodeInGrouping((GroupingDefinition) parent, nextLevel(path));
-            if (ret != null) {
-                return ret;
-            }
-        }
+        // if foundNode is not null and we are at the end of path return
+        // foundNode
+        if (!nextPath.iterator().hasNext())
+            return foundNode;
 
-        LOG.debug("No node matching {} found in module {}", path, module);
-        return null;
+        // if foundNode is not null and we are not at the end of path go deeper
+        return findNodeIn(foundNode, nextPath);
+
     }
 
-    private static SchemaNode findNodeInGrouping(
-            final GroupingDefinition grouping, final Iterable<QName> path) {
-        final QName current = Iterables.getFirst(path, null);
-        if (current == null) {
-            LOG.debug("Found grouping {}", grouping);
-            return grouping;
+    private static SchemaNode findNodeIn(SchemaNode parent, Iterable<QName> path) {
+
+        Preconditions.checkArgument(parent != null, "Parent reference cannot be NULL");
+        Preconditions.checkArgument(path != null, "Path reference cannot be NULL");
+
+        if (!path.iterator().hasNext()) {
+            LOG.debug("No node matching {} found in node {}", path, parent);
+            return null;
         }
 
-        LOG.trace("Looking for path {} in grouping {}", path, grouping);
-        final DataSchemaNode node = grouping.getDataChildByName(current);
+        QName current = path.iterator().next();
+        LOG.trace("Looking for node {} in node {}", current, parent);
 
-        if (node != null)
-            return findNode(node, nextLevel(path));
+        SchemaNode foundNode = null;
 
-        for (GroupingDefinition groupingDefinition : grouping.getGroupings()) {
-            if (groupingDefinition.getQName().equals(current))
-                return findNodeInGrouping(groupingDefinition, nextLevel(path));
+        if (parent instanceof DataNodeContainer)
+            foundNode = findInDataNodeContainer((DataNodeContainer) parent, current);
+
+        if (foundNode == null && parent instanceof RpcDefinition)
+            foundNode = findInRpcDefinition((RpcDefinition) parent, current);
+
+        if (foundNode == null && parent instanceof ChoiceNode)
+            foundNode = ((ChoiceNode) parent).getCaseNodeByName(current);
+
+        if (foundNode == null) {
+            LOG.debug("No node matching {} found in node {}", path, parent);
+            return null;
         }
 
-        LOG.debug("No node matching {} found in grouping {}", current, grouping);
-        return null;
+        // if foundNode is not null and we are at the end of path return
+        // foundNode
+        Iterable<QName> nextPath = nextLevel(path);
+        if (!nextPath.iterator().hasNext())
+            return foundNode;
+
+        // if foundNode is not null and we are not at the end of path go deeper
+        return findNodeIn(foundNode, nextPath);
+
     }
 
-    private static SchemaNode findNodeInRpc(final RpcDefinition rpc, final Iterable<QName> path) {
-        final QName current = Iterables.getFirst(path, null);
-        if (current == null) {
-            LOG.debug("Found RPC {}", rpc);
-            return rpc;
-        }
+    private static SchemaNode findInRpcDefinition(RpcDefinition parent, QName current) {
 
-        LOG.trace("Looking for path {} in rpc {}", path, rpc);
+        SchemaNode foundNode = null;
         switch (current.getLocalName()) {
         case "input":
-            return findNode(rpc.getInput(), nextLevel(path));
+            foundNode = parent.getInput();
+            break;
         case "output":
-            return findNode(rpc.getOutput(), nextLevel(path));
+            foundNode = parent.getOutput();
+            break;
         default:
-            LOG.debug("Invalid component {} of path {} in RPC {}", current, path, rpc);
-            return null;
+            foundNode = getGroupingByName(parent, current);
         }
+
+        return foundNode;
     }
 
-    private static SchemaNode findNodeInNotification(final NotificationDefinition ntf, final Iterable<QName> path) {
-        final QName current = Iterables.getFirst(path, null);
-        if (current == null) {
-            LOG.debug("Found notification {}", ntf);
-            return ntf;
-        }
+    private static SchemaNode findInDataNodeContainer(DataNodeContainer parent, QName current) {
 
-        LOG.trace("Looking for path {} in notification {}", path, ntf);
-        DataSchemaNode node = ntf.getDataChildByName(current);
-        if (node == null) {
-            LOG.debug("No node matching {} found in notification {}", current, ntf);
-            return null;
-        }
+        SchemaNode foundNode = null;
 
-        return findNode(node, nextLevel(path));
-    }
+        foundNode = parent.getDataChildByName(current);
+        if (foundNode == null)
+            foundNode = getGroupingByName(parent, current);
 
-    private static SchemaNode findNode(final ChoiceNode parent, final Iterable<QName> path) {
-        final QName current = Iterables.getFirst(path, null);
-        if (current == null) {
-            return parent;
-        }
-        ChoiceCaseNode node = parent.getCaseNodeByName(current);
-        if (node != null) {
-            return findNodeInCase(node, nextLevel(path));
-        }
-        return null;
-    }
-
-    private static SchemaNode findNode(final ContainerSchemaNode parent, final Iterable<QName> path) {
-        final QName current = Iterables.getFirst(path, null);
-        if (current == null) {
-            return parent;
-        }
-
-        final DataSchemaNode node = parent.getDataChildByName(current);
-        if (node == null) {
-            LOG.debug("Failed to find {} in parent {}", path, parent);
-            return null;
-        }
-
-        return findNode(node, nextLevel(path));
-    }
-
-    private static SchemaNode findNode(final ListSchemaNode parent, final Iterable<QName> path) {
-        final QName current = Iterables.getFirst(path, null);
-        if (current == null) {
-            return parent;
-        }
-
-        DataSchemaNode node = parent.getDataChildByName(current);
-        if (node == null) {
-            LOG.debug("Failed to find {} in parent {}", path, parent);
-            return null;
-        }
-        return findNode(node, nextLevel(path));
-    }
-
-    private static SchemaNode findNode(final DataSchemaNode parent, final Iterable<QName> path) {
-        final SchemaNode node;
-        if (!Iterables.isEmpty(path)) {
-            if (parent instanceof ContainerSchemaNode) {
-                node = findNode((ContainerSchemaNode) parent, path);
-            } else if (parent instanceof ListSchemaNode) {
-                node = findNode((ListSchemaNode) parent, path);
-            } else if (parent instanceof ChoiceNode) {
-                node = findNode((ChoiceNode) parent, path);
-            } else {
-                throw new IllegalArgumentException(
-                        String.format("Path nesting violation in parent %s path %s", parent, path));
-            }
-        } else {
-            node = parent;
-        }
-
-        if (node == null) {
-            LOG.debug("Failed to find {} in parent {}", path, parent);
-            return null;
-        }
-        return node;
-    }
-
-    private static SchemaNode findNodeInCase(final ChoiceCaseNode parent, final Iterable<QName> path) {
-        final QName current = Iterables.getFirst(path, null);
-        if (current == null) {
-            return parent;
-        }
-
-        DataSchemaNode node = parent.getDataChildByName(current);
-        if (node == null) {
-            LOG.debug("Failed to find {} in parent {}", path, parent);
-            return null;
-        }
-        return findNode(node, nextLevel(path));
+        return foundNode;
     }
 
     private static RpcDefinition getRpcByName(final Module module, final QName name) {
@@ -434,8 +364,17 @@ public final class SchemaContextUtil {
         return null;
     }
 
-    private static GroupingDefinition getGroupingByName(final Module module, final QName name) {
-        for (GroupingDefinition grouping : module.getGroupings()) {
+    private static GroupingDefinition getGroupingByName(final DataNodeContainer dataNodeContainer, final QName name) {
+        for (GroupingDefinition grouping : dataNodeContainer.getGroupings()) {
+            if (grouping.getQName().equals(name)) {
+                return grouping;
+            }
+        }
+        return null;
+    }
+
+    private static GroupingDefinition getGroupingByName(final RpcDefinition rpc, final QName name) {
+        for (GroupingDefinition grouping : rpc.getGroupings()) {
             if (grouping.getQName().equals(name)) {
                 return grouping;
             }

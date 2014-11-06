@@ -1233,13 +1233,11 @@ public class BindingGeneratorImpl implements BindingGenerator {
                         final SchemaPath sp = choiceNode.getPath();
                         parent = findDataSchemaNode(schemaContext, sp.getParent());
                     }
-                    if (parent != null) {
-                        GeneratedTypeBuilder childOfType = findChildNodeByPath(parent.getPath());
-                        if (childOfType == null) {
-                            childOfType = findGroupingByPath(parent.getPath());
-                        }
-                        resolveDataSchemaNodes(module, basePackageName, caseTypeBuilder, childOfType, caseChildNodes);
+                    GeneratedTypeBuilder childOfType = findChildNodeByPath(parent.getPath());
+                    if (childOfType == null) {
+                        childOfType = findGroupingByPath(parent.getPath());
                     }
+                    resolveDataSchemaNodes(module, basePackageName, caseTypeBuilder, childOfType, caseChildNodes);
                 }
             }
             processUsesAugments(caseNode, module);

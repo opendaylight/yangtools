@@ -14,6 +14,7 @@ import org.mockito.MockitoAnnotations;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -537,6 +538,341 @@ public class SchemaContextUtilTest {
 
         assertNull(SchemaContextUtil.findDataSchemaNode(mockContext, module, xpath));
 
+    }
+
+    @Test
+    public void findNodeInSchemaContextGroupingsTest() throws URISyntaxException, IOException,
+            YangSyntaxErrorException, ParseException {
+
+        File resourceFile = new File(getClass().getResource("/schema-context-util-test/my-module.yang").toURI());
+        File resourceDir = resourceFile.getParentFile();
+
+        YangParserImpl parser = YangParserImpl.getInstance();
+        SchemaContext context = parser.parseFile(resourceFile, resourceDir);
+
+        Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
+                QName.parseRevision("2014-10-07"));
+
+        // find grouping in container
+        DataNodeContainer dataContainer = (DataNodeContainer) myModule.getDataChildByName("my-container");
+        SchemaNode testNode = getGroupingByName(dataContainer, "my-grouping-in-container");
+
+        SchemaPath path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"),
+                QName.create(myModule.getQNameModule(), "my-grouping-in-container"));
+        SchemaNode foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNotNull(testNode);
+        assertNotNull(foundNode);
+        assertEquals(testNode, foundNode);
+
+        testNode = ((GroupingDefinition) testNode).getDataChildByName("my-leaf-in-grouping-in-container");
+        path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-container"));
+
+        foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNotNull(testNode);
+        assertNotNull(foundNode);
+        assertEquals(testNode, foundNode);
+
+        // find grouping in list
+        dataContainer = (DataNodeContainer) ((DataNodeContainer) myModule.getDataChildByName("my-container"))
+                .getDataChildByName("my-list");
+        testNode = getGroupingByName(dataContainer, "my-grouping-in-list");
+
+        path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"),
+                QName.create(myModule.getQNameModule(), "my-list"),
+                QName.create(myModule.getQNameModule(), "my-grouping-in-list"));
+        foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNotNull(testNode);
+        assertNotNull(foundNode);
+        assertEquals(testNode, foundNode);
+
+        testNode = ((GroupingDefinition) testNode).getDataChildByName("my-leaf-in-grouping-in-list");
+        path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-list"));
+
+        foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNotNull(testNode);
+        assertNotNull(foundNode);
+        assertEquals(testNode, foundNode);
+
+        // find grouping in grouping
+        dataContainer = getGroupingByName(myModule, "my-grouping");
+        testNode = getGroupingByName(dataContainer, "my-grouping-in-grouping");
+
+        path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-grouping"),
+                QName.create(myModule.getQNameModule(), "my-grouping-in-grouping"));
+        foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNotNull(testNode);
+        assertNotNull(foundNode);
+        assertEquals(testNode, foundNode);
+
+        testNode = ((GroupingDefinition) testNode).getDataChildByName("my-leaf-in-grouping-in-grouping");
+        path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-grouping"));
+
+        foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNotNull(testNode);
+        assertNotNull(foundNode);
+        assertEquals(testNode, foundNode);
+
+        // find grouping in rpc
+        RpcDefinition rpc = getRpcByName(myModule, "my-rpc");
+        for (GroupingDefinition grouping : rpc.getGroupings()) {
+            if (grouping.getQName().getLocalName().equals("my-grouping-in-rpc")) {
+                testNode = grouping;
+            }
+        }
+
+        path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-rpc"),
+                QName.create(myModule.getQNameModule(), "my-grouping-in-rpc"));
+        foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNotNull(testNode);
+        assertNotNull(foundNode);
+        assertEquals(testNode, foundNode);
+
+        testNode = ((GroupingDefinition) testNode).getDataChildByName("my-leaf-in-grouping-in-rpc");
+        path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-rpc"));
+
+        foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNotNull(testNode);
+        assertNotNull(foundNode);
+        assertEquals(testNode, foundNode);
+
+        // find grouping in output
+        dataContainer = getRpcByName(myModule, "my-rpc").getOutput();
+        testNode = getGroupingByName(dataContainer, "my-grouping-in-output");
+
+        path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-rpc"),
+                QName.create(myModule.getQNameModule(), "output"),
+                QName.create(myModule.getQNameModule(), "my-grouping-in-output"));
+        foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNotNull(testNode);
+        assertNotNull(foundNode);
+        assertEquals(testNode, foundNode);
+
+        testNode = ((GroupingDefinition) testNode).getDataChildByName("my-leaf-in-grouping-in-output");
+        path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-output"));
+
+        foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNotNull(testNode);
+        assertNotNull(foundNode);
+        assertEquals(testNode, foundNode);
+
+        // find grouping in input
+        dataContainer = getRpcByName(myModule, "my-rpc").getInput();
+        testNode = getGroupingByName(dataContainer, "my-grouping-in-input");
+
+        path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-rpc"),
+                QName.create(myModule.getQNameModule(), "input"),
+                QName.create(myModule.getQNameModule(), "my-grouping-in-input"));
+        foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNotNull(testNode);
+        assertNotNull(foundNode);
+        assertEquals(testNode, foundNode);
+
+        testNode = ((GroupingDefinition) testNode).getDataChildByName("my-leaf-in-grouping-in-input");
+        path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-input"));
+
+        foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNotNull(testNode);
+        assertNotNull(foundNode);
+        assertEquals(testNode, foundNode);
+
+        // find grouping in notification
+        dataContainer = getNotificationByName(myModule, "my-notification");
+        testNode = getGroupingByName(dataContainer, "my-grouping-in-notification");
+
+        path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-notification"),
+                QName.create(myModule.getQNameModule(), "my-grouping-in-notification"));
+        foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNotNull(testNode);
+        assertNotNull(foundNode);
+        assertEquals(testNode, foundNode);
+
+        testNode = ((GroupingDefinition) testNode).getDataChildByName("my-leaf-in-grouping-in-notification");
+        path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-notification"));
+
+        foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNotNull(testNode);
+        assertNotNull(foundNode);
+        assertEquals(testNode, foundNode);
+
+        // find grouping in case
+        dataContainer = (DataNodeContainer) ((ChoiceNode) myModule.getDataChildByName("my-choice")).getCaseNodeByName(
+                "one").getDataChildByName("my-container-in-case");
+        testNode = getGroupingByName(dataContainer, "my-grouping-in-case");
+
+        path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-choice"),
+                QName.create(myModule.getQNameModule(), "one"),
+                QName.create(myModule.getQNameModule(), "my-container-in-case"),
+                QName.create(myModule.getQNameModule(), "my-grouping-in-case"));
+        foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNotNull(testNode);
+        assertNotNull(foundNode);
+        assertEquals(testNode, foundNode);
+
+        testNode = ((GroupingDefinition) testNode).getDataChildByName("my-leaf-in-grouping-in-case");
+        path = path.createChild(QName.create(myModule.getQNameModule(), "my-leaf-in-grouping-in-case"));
+
+        foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNotNull(testNode);
+        assertNotNull(foundNode);
+        assertEquals(testNode, foundNode);
+
+    }
+
+    @Test
+    public void findNodeInSchemaContextGroupingsTest2() throws URISyntaxException, IOException,
+            YangSyntaxErrorException, ParseException {
+
+        File resourceFile = new File(getClass().getResource("/schema-context-util-test/my-module.yang").toURI());
+        File resourceDir = resourceFile.getParentFile();
+
+        YangParserImpl parser = YangParserImpl.getInstance();
+        SchemaContext context = parser.parseFile(resourceFile, resourceDir);
+
+        Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
+                QName.parseRevision("2014-10-07"));
+
+        // find grouping in container
+        DataNodeContainer dataContainer = (DataNodeContainer) myModule.getDataChildByName("my-container");
+        SchemaNode testNode = getGroupingByName(dataContainer, "my-grouping-in-container2");
+
+        SchemaPath path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"),
+                QName.create(myModule.getQNameModule(), "my-grouping-in-container2"));
+        SchemaNode foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNull(testNode);
+        assertNull(foundNode);
+
+        // find grouping in list
+        dataContainer = (DataNodeContainer) ((DataNodeContainer) myModule.getDataChildByName("my-container"))
+                .getDataChildByName("my-list");
+        testNode = getGroupingByName(dataContainer, "my-grouping-in-list2");
+
+        path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-container"),
+                QName.create(myModule.getQNameModule(), "my-list"),
+                QName.create(myModule.getQNameModule(), "my-grouping-in-list2"));
+        foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNull(testNode);
+        assertNull(foundNode);
+
+        // find grouping in grouping
+        dataContainer = getGroupingByName(myModule, "my-grouping");
+        testNode = getGroupingByName(dataContainer, "my-grouping-in-grouping2");
+
+        path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-grouping"),
+                QName.create(myModule.getQNameModule(), "my-grouping-in-grouping2"));
+        foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNull(testNode);
+        assertNull(foundNode);
+
+        // find grouping in rpc
+        RpcDefinition rpc = getRpcByName(myModule, "my-rpc");
+        for (GroupingDefinition grouping : rpc.getGroupings()) {
+            if (grouping.getQName().getLocalName().equals("my-grouping-in-rpc2")) {
+                testNode = grouping;
+            }
+        }
+
+        path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-rpc"),
+                QName.create(myModule.getQNameModule(), "my-grouping-in-rpc2"));
+        foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNull(testNode);
+        assertNull(foundNode);
+
+        // find grouping in output
+        dataContainer = getRpcByName(myModule, "my-rpc").getOutput();
+        testNode = getGroupingByName(dataContainer, "my-grouping-in-output2");
+
+        path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-rpc"),
+                QName.create(myModule.getQNameModule(), "output"),
+                QName.create(myModule.getQNameModule(), "my-grouping-in-output2"));
+        foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNull(testNode);
+        assertNull(foundNode);
+
+        // find grouping in input
+        dataContainer = getRpcByName(myModule, "my-rpc").getInput();
+        testNode = getGroupingByName(dataContainer, "my-grouping-in-input2");
+
+        path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-rpc"),
+                QName.create(myModule.getQNameModule(), "input"),
+                QName.create(myModule.getQNameModule(), "my-grouping-in-input2"));
+        foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNull(testNode);
+        assertNull(foundNode);
+
+        // find grouping in notification
+        dataContainer = getNotificationByName(myModule, "my-notification");
+        testNode = getGroupingByName(dataContainer, "my-grouping-in-notification2");
+
+        path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-notification"),
+                QName.create(myModule.getQNameModule(), "my-grouping-in-notification2"));
+        foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNull(testNode);
+        assertNull(foundNode);
+
+        // find grouping in case
+        dataContainer = (DataNodeContainer) ((ChoiceNode) myModule.getDataChildByName("my-choice")).getCaseNodeByName(
+                "one").getDataChildByName("my-container-in-case");
+        testNode = getGroupingByName(dataContainer, "my-grouping-in-case2");
+
+        path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-choice"),
+                QName.create(myModule.getQNameModule(), "one"),
+                QName.create(myModule.getQNameModule(), "my-container-in-case"),
+                QName.create(myModule.getQNameModule(), "my-grouping-in-case2"));
+        foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
+
+        assertNull(testNode);
+        assertNull(foundNode);
+
+    }
+
+    private static GroupingDefinition getGroupingByName(DataNodeContainer dataNodeContainer, String name) {
+        for (GroupingDefinition grouping : dataNodeContainer.getGroupings()) {
+            if (grouping.getQName().getLocalName().equals(name)) {
+                return grouping;
+            }
+        }
+        return null;
+    }
+
+    private static RpcDefinition getRpcByName(Module module, String name) {
+        for (RpcDefinition rpc : module.getRpcs()) {
+            if (rpc.getQName().getLocalName().equals(name)) {
+                return rpc;
+            }
+        }
+        return null;
+    }
+
+    private static NotificationDefinition getNotificationByName(Module module, String name) {
+        for (NotificationDefinition notification : module.getNotifications()) {
+            if (notification.getQName().getLocalName().equals(name)) {
+                return notification;
+            }
+        }
+        return null;
     }
 
 }
