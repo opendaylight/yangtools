@@ -12,30 +12,37 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
-
+import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.Node;
-import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
-import org.opendaylight.yangtools.yang.data.impl.NodeFactory;
-import org.opendaylight.yangtools.yang.data.impl.SimpleNodeTOImpl;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.w3c.dom.Document;
 
@@ -78,6 +85,14 @@ public class XmlStreamUtilsTest {
 
         final boolean identical = diff.identical();
         assertTrue("Xml differs: " + diff.toString(), identical);
+    }
+
+    @Test
+    public void testLeafRef() throws URISyntaxException, XMLStreamException, FactoryConfigurationError, IOException {
+        final String readedValueFromXmlStream = Helper.getDeserializedValueFromXMLStreamWriter();
+        final String expected = "pointToStringLeafleafname3";
+
+        assertEquals(expected, readedValueFromXmlStream);
     }
 
     @Test
@@ -125,5 +140,111 @@ public class XmlStreamUtilsTest {
         } else {
             return QName.create(namespace, revision, localName);
         }
+    }
+
+    static class Helper {
+        public static String getDeserializedValueFromXMLStreamWriter() throws URISyntaxException, XMLStreamException, FactoryConfigurationError, IOException {
+            final String result;
+            final YangParserImpl yangParser = new YangParserImpl();
+            final File file = new File(XmlStreamUtils.class.getResource("/leafref-test.yang").toURI());
+            final SchemaContext schemaContext = yangParser.parseFiles(Arrays.asList(file));
+            final Module module = schemaContext.getModules().iterator().next();
+            final LeafrefTypeDefinition leafrefTypedef = findLeafrefType(module, "pointToStringLeaf");
+
+            final XmlStreamUtils xmlStremUtils = XmlStreamUtils.create(XmlUtils.DEFAULT_XML_CODEC_PROVIDER, schemaContext);
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            final XMLStreamWriter xmlStreamWriter = XMLOutputFactory.newFactory().createXMLStreamWriter(baos);
+
+            final SchemaNode schemaNode = findSchemaNodeWithLeafrefType(module, "pointToStringLeaf");
+            final TypeDefinition<?> targetBaseType = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypedef, schemaContext, schemaNode);
+            xmlStremUtils.writeValue(xmlStreamWriter, targetBaseType, "pointToStringLeaf");
+
+
+            final LeafrefTypeDefinition leafrefTypedef2 = findLeafrefType(module, "leafname3");
+            final SchemaNode schemaNode2 = findSchemaNodeWithLeafrefType(module, "leafname3");
+            final TypeDefinition<?> targetBaseType2 = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypedef2, schemaContext, schemaNode2);
+            xmlStremUtils.writeValue(xmlStreamWriter, targetBaseType2, "leafname3");
+
+            // test to find same node once pointed with relative path and another with absolute path
+            final LeafrefTypeDefinition leafrefTypedef3 = findLeafrefType(module, "absname");
+            final SchemaNode schemaNode3 = findSchemaNodeWithLeafrefType(module, "absname");
+            final TypeDefinition<?> targetBaseType3 = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypedef3, schemaContext, schemaNode3);
+
+            final LeafrefTypeDefinition leafrefTypedef4 = findLeafrefType(module, "absname");
+            final SchemaNode schemaNode4 = findSchemaNodeWithLeafrefType(module, "absname");
+            final TypeDefinition<?> targetBaseType4 = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypedef4, schemaContext, schemaNode4);
+
+            assertTrue(targetBaseType4 instanceof InstanceIdentifierType);
+            assertEquals(targetBaseType3, targetBaseType4);
+
+            xmlStreamWriter.flush();
+            baos.flush();
+            result = baos.toString();
+            xmlStreamWriter.close();
+            baos.close();
+            return result;
+        }
+
+        private static LeafrefTypeDefinition findLeafrefType(final Module module, final String nodeName) {
+            for (final DataSchemaNode schemaNode: module.getChildNodes()) {
+
+                if (schemaNode instanceof ContainerSchemaNode) {
+                    for (final DataSchemaNode childNode : ((ContainerSchemaNode)schemaNode).getChildNodes()) {
+                        if (childNode instanceof ContainerSchemaNode) {
+                            for (final DataSchemaNode childNode2 : ((ContainerSchemaNode)childNode).getChildNodes()) {
+                                if (childNode2 instanceof LeafSchemaNode) {
+                                    final LeafSchemaNode leafSchemaNode = (LeafSchemaNode)childNode2;
+                                    final TypeDefinition<?> leafSchemaNodeType = leafSchemaNode.getType();
+
+                                    if (leafSchemaNodeType instanceof LeafrefTypeDefinition && leafSchemaNode.getQName().getLocalName().equals(nodeName)) {
+                                        return (LeafrefTypeDefinition)leafSchemaNodeType;
+                                    }
+                                }
+                            }
+                        }
+                        if (childNode instanceof LeafSchemaNode) {
+                            final LeafSchemaNode leafSchemaNode = (LeafSchemaNode)childNode;
+                            final TypeDefinition<?> leafSchemaNodeType = leafSchemaNode.getType();
+
+                            if (leafSchemaNodeType instanceof LeafrefTypeDefinition && leafSchemaNode.getQName().getLocalName().equals(nodeName)) {
+                                return (LeafrefTypeDefinition)leafSchemaNodeType;
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
+    private static SchemaNode findSchemaNodeWithLeafrefType(final Module module, final String nodeName) {
+        for (final DataSchemaNode schemaNode: module.getChildNodes()) {
+
+            if (schemaNode instanceof ContainerSchemaNode) {
+                for (final DataSchemaNode childNode : ((ContainerSchemaNode)schemaNode).getChildNodes()) {
+                    if (childNode instanceof ContainerSchemaNode) {
+                        for (final DataSchemaNode childNode2 : ((ContainerSchemaNode)childNode).getChildNodes()) {
+                            if (childNode2 instanceof LeafSchemaNode) {
+                                final LeafSchemaNode leafSchemaNode = (LeafSchemaNode)childNode2;
+                                final TypeDefinition<?> leafSchemaNodeType = leafSchemaNode.getType();
+
+                                if (leafSchemaNodeType instanceof LeafrefTypeDefinition && leafSchemaNode.getQName().getLocalName().equals(nodeName)) {
+                                    return leafSchemaNode;
+                                }
+                            }
+                        }
+                    }
+                    if (childNode instanceof LeafSchemaNode) {
+                        final LeafSchemaNode leafSchemaNode = (LeafSchemaNode)childNode;
+                        final TypeDefinition<?> leafSchemaNodeType = leafSchemaNode.getType();
+
+                        if (leafSchemaNodeType instanceof LeafrefTypeDefinition && leafSchemaNode.getQName().getLocalName().equals(nodeName)) {
+                            return leafSchemaNode;
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

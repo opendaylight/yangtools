@@ -571,19 +571,19 @@ public final class SchemaContextUtil {
      *            Yang Module
      * @param relativeXPath
      *            Non conditional Revision Aware Relative XPath
-     * @param leafrefSchemaPath
-     *            Schema Path for Leafref
+     * @param actualSchemaNode
+     *            actual schema node
      * @return list of QName
      */
     private static Iterable<QName> resolveRelativeXPath(final SchemaContext context, final Module module,
-            final RevisionAwareXPath relativeXPath, final SchemaNode leafrefParentNode) {
+            final RevisionAwareXPath relativeXPath, final SchemaNode actualSchemaNode) {
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
         Preconditions.checkArgument(module != null, "Module reference cannot be NULL");
         Preconditions.checkArgument(relativeXPath != null, "Non Conditional Revision Aware XPath cannot be NULL");
         Preconditions.checkState(!relativeXPath.isAbsolute(),
                 "Revision Aware XPath MUST be relative i.e. MUST contains ../, "
                         + "for non relative Revision Aware XPath use findDataSchemaNode method");
-        Preconditions.checkState(leafrefParentNode.getPath() != null,
+        Preconditions.checkState(actualSchemaNode.getPath() != null,
                 "Schema Path reference for Leafref cannot be NULL");
 
         final Iterable<String> xpaths = SLASH_SPLITTER.split(relativeXPath.toString());
@@ -595,8 +595,18 @@ public final class SchemaContextUtil {
             ++colCount;
         }
 
-        final Iterable<QName> parent = leafrefParentNode.getPath().getPathFromRoot();
-        return Iterables.concat(Iterables.limit(parent, Iterables.size(parent) - colCount),
+        final Iterable<QName> schemaNodePath = actualSchemaNode.getPath().getPathFromRoot();
+
+        if (Iterables.size(schemaNodePath) - colCount >= 0) {
+            return Iterables.concat(Iterables.limit(schemaNodePath, Iterables.size(schemaNodePath) - colCount),
+                    Iterables.transform(Iterables.skip(xpaths, colCount), new Function<String, QName>() {
+                        @Override
+                        public QName apply(final String input) {
+                            return stringPathPartToQName(context, module, input);
+                        }
+                    }));
+        }
+        return Iterables.concat(schemaNodePath,
                 Iterables.transform(Iterables.skip(xpaths, colCount), new Function<String, QName>() {
                     @Override
                     public QName apply(final String input) {
@@ -627,9 +637,7 @@ public final class SchemaContextUtil {
         if(pathStatement.isAbsolute()) {
             dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNode(schemaContext, parentModule, pathStatement);
         } else {
-            SchemaPath parentSchemaPath = schema.getPath().getParent();
-            SchemaNode parentSchemaNode = SchemaContextUtil.findDataSchemaNode(schemaContext, parentSchemaPath);
-            dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNodeForRelativeXPath(schemaContext, parentModule, parentSchemaNode, pathStatement);
+            dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNodeForRelativeXPath(schemaContext, parentModule, schema, pathStatement);
         }
 
         final TypeDefinition<?> targetTypeDefinition = typeDefinition(dataSchemaNode);
