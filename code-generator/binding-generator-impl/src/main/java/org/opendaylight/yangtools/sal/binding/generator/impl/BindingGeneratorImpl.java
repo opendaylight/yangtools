@@ -26,9 +26,11 @@ import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findD
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findNodeInSchemaContext;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
 
+import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -37,6 +39,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.BindingTypes;
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
@@ -1233,13 +1236,12 @@ public class BindingGeneratorImpl implements BindingGenerator {
                         final SchemaPath sp = choiceNode.getPath();
                         parent = findDataSchemaNode(schemaContext, sp.getParent());
                     }
-                    if (parent != null) {
-                        GeneratedTypeBuilder childOfType = findChildNodeByPath(parent.getPath());
-                        if (childOfType == null) {
-                            childOfType = findGroupingByPath(parent.getPath());
-                        }
-                        resolveDataSchemaNodes(module, basePackageName, caseTypeBuilder, childOfType, caseChildNodes);
+                    Preconditions.checkState(parent != null, "Could not find Choice node parent "+choiceNode.getPath().getParent());
+                    GeneratedTypeBuilder childOfType = findChildNodeByPath(parent.getPath());
+                    if (childOfType == null) {
+                        childOfType = findGroupingByPath(parent.getPath());
                     }
+                    resolveDataSchemaNodes(module, basePackageName, caseTypeBuilder, childOfType, caseChildNodes);
                 }
             }
             processUsesAugments(caseNode, module);
