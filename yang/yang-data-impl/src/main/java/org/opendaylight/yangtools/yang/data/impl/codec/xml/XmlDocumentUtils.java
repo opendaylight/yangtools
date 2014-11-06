@@ -97,12 +97,35 @@ public class XmlDocumentUtils {
      * Node Container Schema and transformed accordingly.
      *
      * @param data Data DOM root element
-     * @param schema Data Node Container Schema
+     * @param schemaNode Data Node Container Schema
      * @param codecProvider XML Codec Provider
      * @return new instance of XML Document
      * @throws UnsupportedDataTypeException
+     *
+     * @deprecated Use {@link #toDocument(org.opendaylight.yangtools.yang.data.api.CompositeNode, com.google.common.base.Optional, org.opendaylight.yangtools.yang.model.api.DataNodeContainer, XmlCodecProvider)} instead.
+     * The whole schema context allows for proper serialization of leafrefs.
      */
-    public static Document toDocument(final CompositeNode data, final DataNodeContainer schema, final XmlCodecProvider codecProvider)
+    public static Document toDocument(final CompositeNode data, final DataNodeContainer schemaNode, final XmlCodecProvider codecProvider)
+            throws UnsupportedDataTypeException {
+        return toDocument(data, Optional.<SchemaContext>absent(), schemaNode, codecProvider);
+    }
+
+    /**
+     * Serializes data DOM node into a w3c DOM document. Whole schema context is used to resolve leafref elements.
+     *
+     * @param data Data DOM root element
+     * @param schemaContext Entire schema context for correct leafref resolution
+     * @param schema Data Node Container Schema
+     * @param codecProvider XML Codec Provider
+     * @return serialized w3c DOM document
+     * @throws UnsupportedDataTypeException
+     */
+    public static Document toDocument(final CompositeNode data, final SchemaContext schemaContext, final DataNodeContainer schemaNode, final XmlCodecProvider codecProvider)
+            throws UnsupportedDataTypeException {
+        return toDocument(data, Optional.of(schemaContext), schemaNode, codecProvider);
+    }
+
+    private static Document toDocument(final CompositeNode data, final Optional<SchemaContext> schemaContext, final DataNodeContainer schema, final XmlCodecProvider codecProvider)
             throws UnsupportedDataTypeException {
         Preconditions.checkNotNull(data);
         Preconditions.checkNotNull(schema);
@@ -114,7 +137,8 @@ public class XmlDocumentUtils {
         final DOMResult result = new DOMResult(getDocument());
         try {
             final XMLStreamWriter writer = FACTORY.createXMLStreamWriter(result);
-            XmlStreamUtils.create(codecProvider).writeDocument(writer, data, (SchemaNode)schema);
+            XmlStreamUtils xmlStreamUtils = schemaContext.isPresent() ? XmlStreamUtils.create(codecProvider, schemaContext.get()) : XmlStreamUtils.create(codecProvider);
+            xmlStreamUtils.writeDocument(writer, data, (SchemaNode) schema);
             writer.close();
             return (Document)result.getNode();
         } catch (XMLStreamException e) {

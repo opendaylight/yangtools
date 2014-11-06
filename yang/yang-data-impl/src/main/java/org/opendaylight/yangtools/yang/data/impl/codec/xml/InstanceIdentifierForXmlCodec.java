@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import java.net.URI;
 import java.util.Map.Entry;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
