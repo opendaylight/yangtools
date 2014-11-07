@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba8cc1f7_82417a3b",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/util/YangSchemaUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-11-07T09:32:29Z",
+      "side": 1,
+      "message": "currentArg.equals(grouping.getQName()) will be faster",
+      "revId": "5b8143b571aea88db9122dacea7870566ab8a293",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
