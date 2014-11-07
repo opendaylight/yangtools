@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba8cc1f7_220bced7",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 1235,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-11-07T10:28:27Z",
+      "side": 1,
+      "message": "Do not remove  parent\u003dnull (tricky part with ChoiceCase-s is sometimes we are not able to determine java parent type in case of groupings). Or we well need better algorithm to determine parent node (grouping class which has choice... or normal class which has associated choice).",
+      "revId": "df8d0c78a2d25e7041e0315cf11673f87ce47a16",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_e21406f7",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaContextUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 265,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-11-07T10:28:27Z",
+      "side": 1,
+      "message": "Could not be this reworked to use single instance of iterator instead of allocating new iterable for each level?\n\nIteraror.next() gives you current argument and moves to next,\nso we could potentially speed up this. Also with multiple iterables,\nit is hard to read...which one you are iterating.",
+      "revId": "df8d0c78a2d25e7041e0315cf11673f87ce47a16",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
