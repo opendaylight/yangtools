@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
@@ -23,7 +24,6 @@ import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
@@ -146,7 +146,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             in.beginObject();
             while (in.hasNext()) {
                 final String jsonElementName = in.nextName();
-                final NamespaceAndName namespaceAndName = resolveNamespace(jsonElementName, parent.getSchema());
+                final NamespaceAndName namespaceAndName = resolveNamespace(jsonElementName);
                 final String localName = namespaceAndName.getName();
                 addNamespace(namespaceAndName.getUri());
                 if (namesakes.contains(jsonElementName)) {
@@ -213,11 +213,19 @@ public final class JsonParserStream implements Closeable, Flushable {
         namespaces.pop();
     }
 
-    private void addNamespace(final URI namespace) {
-        namespaces.push(namespace);
+    private void addNamespace(final Optional<URI> namespace) {
+        if (!namespace.isPresent()) {
+            if (namespaces.isEmpty()) {
+                throw new IllegalStateException("Namespace has to be specified at top level.");
+            } else {
+                namespaces.push(namespaces.peek());
+            }
+        } else {
+            namespaces.push(namespace.get());
+        }
     }
 
-    private NamespaceAndName resolveNamespace(final String childName, final DataSchemaNode dataSchemaNode) {
+    private NamespaceAndName resolveNamespace(final String childName) {
         int lastIndexOfColon = childName.lastIndexOf(':');
         String moduleNamePart = null;
         String nodeNamePart = null;
@@ -232,52 +240,8 @@ public final class JsonParserStream implements Closeable, Flushable {
             nodeNamePart = childName;
         }
 
-        if (namespace == null) {
-            Set<URI> potentialUris = Collections.emptySet();
-            potentialUris = resolveAllPotentialNamespaces(nodeNamePart, dataSchemaNode);
-            if (potentialUris.contains(getCurrentNamespace())) {
-                namespace = getCurrentNamespace();
-            } else if (potentialUris.size() == 1) {
-                namespace = potentialUris.iterator().next();
-            } else if (potentialUris.size() > 1) {
-                throw new IllegalStateException("Choose suitable module name for element "+nodeNamePart+":"+toModuleNames(potentialUris));
-            } else if (potentialUris.isEmpty()) {
-                throw new IllegalStateException("Schema node with name "+nodeNamePart+" wasn't found.");
-            }
-        }
-
-        return new NamespaceAndName(nodeNamePart, namespace);
-    }
-
-    private String toModuleNames(Set<URI> potentialUris) {
-        final StringBuilder builder = new StringBuilder();
-        for (URI potentialUri : potentialUris) {
-            builder.append("\n");
-            //FIXME how to get information about revision from JSON input? currently first available is used.
-            builder.append(schema.findModuleByNamespace(potentialUri).iterator().next().getName());
-        }
-        return builder.toString();
-    }
-
-    private Set<URI> resolveAllPotentialNamespaces(final String elementName, final DataSchemaNode dataSchemaNode) {
-        final Set<URI> potentialUris = new HashSet<>();
-        final Set<ChoiceNode> choices = new HashSet<>();
-        if (dataSchemaNode instanceof DataNodeContainer) {
-            for (DataSchemaNode childSchemaNode : ((DataNodeContainer) dataSchemaNode).getChildNodes()) {
-                if (childSchemaNode instanceof ChoiceNode) {
-                    choices.add((ChoiceNode)childSchemaNode);
-                } else if (childSchemaNode.getQName().getLocalName().equals(elementName)) {
-                    potentialUris.add(childSchemaNode.getQName().getNamespace());
-                }
-            }
-
-            for (ChoiceNode choiceNode : choices) {
-                for (ChoiceCaseNode concreteCase : choiceNode.getCases()) {
-                    potentialUris.addAll(resolveAllPotentialNamespaces(elementName, concreteCase));
-                }
-            }
-        }
-        return potentialUris;
+        Optional<URI> namespaceOpt = namespace == null ? Optional.<URI> absent() : Optional.of(namespace);
+        return new NamespaceAndName(nodeNamePart, namespaceOpt);
     }
 
     private URI getCurrentNamespace() {
@@ -328,10 +292,10 @@ public final class JsonParserStream implements Closeable, Flushable {
     }
 
     private static class NamespaceAndName {
-        private final URI uri;
+        private final Optional<URI> uri;
         private final String name;
 
-        public NamespaceAndName(final String name, final URI uri) {
+        public NamespaceAndName(final String name, final Optional<URI> uri) {
             this.name = name;
             this.uri = uri;
         }
@@ -340,7 +304,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             return name;
         }
 
-        public URI getUri() {
+        public Optional<URI> getUri() {
             return uri;
         }
     }
