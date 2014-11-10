@@ -9,7 +9,9 @@
 package org.opendaylight.yangtools.yang.data.api;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -36,7 +38,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  *
  * @author Thomas Pantelis
  */
-public class InstanceIdentifierTest {
+public class YangInstanceIdentifierTest {
 
     static QName nodeName1 = QName.create("test", "2014-5-28", "node1");
     static QName nodeName2 = QName.create("test", "2014-5-28", "node2");
@@ -47,19 +49,44 @@ public class InstanceIdentifierTest {
     static QName key3 = QName.create("test", "2014-5-28", "key3");
 
     @Test
+    public void testGetLastPathArgument() {
+    	YangInstanceIdentifier id1 = YangInstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
+    	assertEquals( "getLastPathArgument", new NodeIdentifier(nodeName2), id1.getLastPathArgument());
+    	YangInstanceIdentifier id2 = YangInstanceIdentifier.create();
+    	assertNull( id2.getLastPathArgument() );
+    }
+
+    @Test
     public void testHashCodeEquals() {
+
+        YangInstanceIdentifier id1 = YangInstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
+        YangInstanceIdentifier id2 = YangInstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
+
+        assertEquals( "hashCode", id1.hashCode(), id2.hashCode() );
+    }
+
+    @Test
+    public void testEquals() {
 
         YangInstanceIdentifier id1 = YangInstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
         YangInstanceIdentifier id2 = YangInstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
         YangInstanceIdentifier id3 = YangInstanceIdentifier.create(new NodeIdentifier(nodeName2), new NodeIdentifier(nodeName1));
         YangInstanceIdentifier id4 = YangInstanceIdentifier.create(new NodeIdentifier(nodeName1));
 
-        assertEquals( "hashCode", id1.hashCode(), id2.hashCode() );
+        assertEquals( "equals", false, id1.equals( null ) );
+        assertEquals( "equals", true, id1.equals( id1 ) );
         assertEquals( "equals", true, id1.equals( id2 ) );
-
         assertEquals( "equals", false, id1.equals( id3 ) );
         assertEquals( "equals", false, id1.equals( id4 ) );
         assertEquals( "equals", false, id1.equals( new Object() ) );
+    }
+
+    @Test
+    public void testToString() {
+    	YangInstanceIdentifier id = YangInstanceIdentifier.create(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2));
+
+    	assertNotNull( id.toString() );
+
     }
 
     @Test
@@ -98,7 +125,6 @@ public class InstanceIdentifierTest {
                 Lists.newArrayList(new NodeIdentifier(nodeName1), new NodeIdentifier(nodeName2)));
 
         Optional<YangInstanceIdentifier> relative = id1.relativeTo( id2 );
-
         assertEquals( "isPresent", true, relative.isPresent() );
 
         Iterable<PathArgument> p = relative.get().getPathArguments();
@@ -112,6 +138,13 @@ public class InstanceIdentifierTest {
 
         relative = id2.relativeTo( id1 );
         assertEquals( "isPresent", false, relative.isPresent() );
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testContainsNull() {
+        final YangInstanceIdentifier id = YangInstanceIdentifier.create(new NodeIdentifier(nodeName1));
+
+        id.contains( null );
     }
 
     @Test
@@ -208,6 +241,7 @@ public class InstanceIdentifierTest {
         assertEquals( "equals", false, node1.equals( new Object() ) );
 
         assertNotNull( node1.toString() ); // for code coverage
+        assertNotNull( node1.toRelativeString(node2) );
 
         NodeIdentifierWithPredicates node3 = new NodeIdentifierWithPredicates( nodeName1,
                 ImmutableMap.<QName, Object>builder().put( key1, 10 ).put( key2, 20 ).build() );
@@ -254,6 +288,7 @@ public class InstanceIdentifierTest {
         assertEquals( "equals", false, node1.equals( new Object() ) );
 
         assertNotNull( node1.toString() ); // for code coverage
+        assertNotNull( node1.toRelativeString(node2) );
 
         NodeWithValue node3 = new NodeWithValue( nodeName1, new byte[]{1,2} );
         NodeWithValue node4 = new NodeWithValue( nodeName1, new byte[]{1,2} );
@@ -270,18 +305,27 @@ public class InstanceIdentifierTest {
 
         NodeIdentifier node1 = new NodeIdentifier( nodeName1 );
         assertEquals( "getNodeType", nodeName1, node1.getNodeType() );
-
         NodeIdentifier node2 = new NodeIdentifier( nodeName1 );
+        AugmentationIdentifier node3 = new AugmentationIdentifier( Sets.newHashSet( nodeName1, nodeName2 ) );
 
         assertEquals( "hashCode", node1.hashCode(), node2.hashCode() );
-        assertEquals( "equals", true, node1.equals( node2 ) );
         assertEquals( "compareTo", 0, node1.compareTo( node2 ) );
-
-        assertEquals( "equals", false, node1.equals( new NodeIdentifier( nodeName3 ) ) );
         assertEquals( "compareTo", true, node1.compareTo( new NodeIdentifier( nodeName3 ) ) != 0 );
+
+        assertEquals( "equals", false, node1.equals( null ) );
+        assertEquals( "equals", false, node1.equals( node3 ) );
+        assertEquals( "equals", true, node1.equals( node1 ) );
+        assertEquals( "equals", true, node1.equals( node2 ) );
+        assertEquals( "equals", false, node1.equals( new NodeIdentifier( nodeName3 ) ) );
         assertEquals( "equals", false, node1.equals( new Object() ) );
 
         assertNotNull( node1.toString() ); // for code coverage
+    }
+
+    @Test(expected=UnsupportedOperationException.class)
+    public void testAugmentationIdentifierNodeType() {
+        AugmentationIdentifier node1 = new AugmentationIdentifier( Sets.newHashSet( nodeName1, nodeName2 ) );
+        node1.getNodeType();
     }
 
     @Test
@@ -289,19 +333,27 @@ public class InstanceIdentifierTest {
 
         AugmentationIdentifier node1 = new AugmentationIdentifier( Sets.newHashSet( nodeName1, nodeName2 ) );
         assertEquals( "getPossibleChildNames", Sets.newHashSet( nodeName1, nodeName2 ), node1.getPossibleChildNames() );
-
         AugmentationIdentifier node2 = new AugmentationIdentifier( Sets.newHashSet( nodeName2, nodeName1 ) );
+        AugmentationIdentifier node3 = new AugmentationIdentifier( Sets.newHashSet( nodeName1, nodeName3 ) );
+        AugmentationIdentifier node4 = new AugmentationIdentifier( Sets.newHashSet( nodeName1, nodeName2, nodeName3 ) );
+        NodeIdentifier node5 = new NodeIdentifier( nodeName3 );
 
         assertEquals( "hashCode", node1.hashCode(), node2.hashCode() );
-        assertEquals( "equals", true, node1.equals( node2 ) );
 
-        assertEquals( "equals", false,
-                node1.equals( new AugmentationIdentifier( Sets.newHashSet( nodeName1, nodeName3 ) ) ) );
-        assertEquals( "equals", false,
-                node1.equals( new AugmentationIdentifier( Sets.newHashSet( nodeName1 ) ) ) );
+        assertEquals( "equals", true, node1.equals( node1 ) );
+        assertEquals( "equals", true, node1.equals( node2 ) );
+        assertEquals( "equals", false, node1.equals( node3 ) );
+        assertEquals( "equals", false, node1.equals( new AugmentationIdentifier( Sets.newHashSet( nodeName1 ) ) ) );
         assertEquals( "equals", false, node1.equals( new Object() ) );
 
+        assertEquals( "compareTo", -1, node1.compareTo( node5 ) );
+        assertNotEquals( "compareTo", -1, node1.compareTo( node2 ) );
+        assertEquals( "compareTo", 0, node1.compareTo( node2 ) );
+        assertEquals( "compareTo", 1, node1.compareTo( node4 ) );
+        assertEquals( "compareTo", -1, node4.compareTo( node1 ) );
+
         assertNotNull( node1.toString() ); // for code coverage
+        assertNotNull( node1.toRelativeString(node5));
     }
 
     @Test
