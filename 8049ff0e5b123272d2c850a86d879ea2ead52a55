@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba8cc1f7_36378c01",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/ParserListenerUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 315,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-11-10T09:13:54Z",
+      "side": 1,
+      "message": "new LinkedHashSet\u003c\u003e()",
+      "revId": "8049ff0e5b123272d2c850a86d879ea2ead52a55",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
