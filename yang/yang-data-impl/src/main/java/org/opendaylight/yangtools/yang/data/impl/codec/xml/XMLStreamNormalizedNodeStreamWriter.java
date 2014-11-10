@@ -7,12 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
-import static javax.xml.XMLConstants.DEFAULT_NS_PREFIX;
-
 import com.google.common.base.Preconditions;
-import java.io.IOException;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -30,6 +25,12 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+import java.io.IOException;
+
+import static javax.xml.XMLConstants.DEFAULT_NS_PREFIX;
 
 /**
  * A {@link NormalizedNodeStreamWriter} which translates the events into an
@@ -128,6 +129,11 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
 
     @Override
     public void startLeafSet(final NodeIdentifier name, final int childSizeHint) {
+        tracker.startLeafSet(name);
+    }
+
+    @Override
+    public void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint) {
         tracker.startLeafSet(name);
     }
 

@@ -7,22 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
-import static org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.UNKNOWN_SIZE;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-
-import java.io.Closeable;
-import java.io.Flushable;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Set;
-
-import javax.xml.stream.XMLStreamReader;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
@@ -35,11 +24,21 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.OrderedLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.xml.stream.XMLStreamReader;
+import java.io.Closeable;
+import java.io.Flushable;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Set;
+
+import static org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.UNKNOWN_SIZE;
 
 /**
  * This is an experimental iterator over a {@link NormalizedNode}. This is essentially
@@ -212,8 +211,12 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
             writer.startMapNode(n.getIdentifier(), childSizeHint(n.getValue()));
             return writeChildren(n.getValue());
         }
+        if (node instanceof OrderedLeafSetNode) {
+            final LeafSetNode<?> n = (LeafSetNode<?>) node;
+            writer.startOrderedLeafSet(n.getIdentifier(), childSizeHint(n.getValue()));
+            return writeChildren(n.getValue());
+        }
         if (node instanceof LeafSetNode) {
-            //covers also OrderedLeafSetNode for which doesn't exist start* method
             final LeafSetNode<?> n = (LeafSetNode<?>) node;
             writer.startLeafSet(n.getIdentifier(), childSizeHint(n.getValue()));
             return writeChildren(n.getValue());

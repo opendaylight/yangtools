@@ -8,14 +8,6 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Preconditions;
-
-import java.io.IOException;
-import java.util.AbstractMap;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
@@ -28,6 +20,13 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.Augmentat
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+
+import java.io.IOException;
+import java.util.AbstractMap;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Map;
+import java.util.Map.Entry;
 
 class BindingToNormalizedStreamWriter implements BindingStreamEventWriter, Delegator<NormalizedNodeStreamWriter> {
 
@@ -153,32 +152,37 @@ class BindingToNormalizedStreamWriter implements BindingStreamEventWriter, Deleg
     @Override
     public void startLeafSet(final String localName, final int childSizeHint) throws IOException, IllegalArgumentException {
         getDelegate().startLeafSet(enter(localName, NodeIdentifier.class), childSizeHint);
-    };
+    }
+
+    @Override
+    public void startOrderedLeafSet(final String localName, final int childSizeHint) throws IOException, IllegalArgumentException {
+        getDelegate().startOrderedLeafSet(enter(localName, NodeIdentifier.class), childSizeHint);
+    }
 
     @Override
     public void startMapEntryNode(final Identifier<?> key, final int childSizeHint) throws IOException, IllegalArgumentException {
         duplicateSchemaEnter();
         NodeIdentifierWithPredicates identifier = ((ListNodeCodecContext) current()).serialize(key);
         getDelegate().startMapEntryNode(identifier, childSizeHint);
-    };
+    }
 
     @Override
     public <T extends DataObject & Identifiable<?>> void startMapNode(final Class<T> mapEntryType,
             final int childSizeHint) throws IOException, IllegalArgumentException {
         getDelegate().startMapNode(enter(mapEntryType, NodeIdentifier.class), childSizeHint);
-    };
+    }
 
     @Override
     public <T extends DataObject & Identifiable<?>> void startOrderedMapNode(final Class<T> mapEntryType,
             final int childSizeHint) throws IOException, IllegalArgumentException {
         getDelegate().startOrderedMapNode(enter(mapEntryType, NodeIdentifier.class), childSizeHint);
-    };
+    }
 
     @Override
     public void startUnkeyedList(final Class<? extends DataObject> obj, final int childSizeHint)
             throws IOException, IllegalArgumentException {
         getDelegate().startUnkeyedList(enter(obj, NodeIdentifier.class), childSizeHint);
-    };
+    }
 
     @Override
     public void startUnkeyedListItem(final int childSizeHint) throws IllegalStateException, IOException {
