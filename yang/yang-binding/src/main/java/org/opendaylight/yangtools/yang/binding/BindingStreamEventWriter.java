@@ -152,6 +152,32 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
     void startLeafSet(String localName, int childSizeHint) throws IOException, IllegalArgumentException;
 
     /**
+     *
+     * Emits a start of leaf set (leaf-list).
+     * <p>
+     * Emits start of leaf set, during writing leaf set event, only
+     * {@link #leafSetEntryNode(Object)} calls are valid. Leaf set event is
+     * finished by calling {@link #endNode()}.
+     *
+     * @param localName
+     *            name of node as defined in schema, namespace and revision are
+     *            derived from parent node.
+     * @param childSizeHint
+     *            Non-negative count of expected direct child nodes or
+     *            {@link #UNKNOWN_SIZE} if count is unknown. This is only hint
+     *            and should not fail writing of child events, if there are more
+     *            events than count.
+     * @throws IllegalArgumentException
+     *             If emitted leaf node is invalid in current context or was
+     *             emitted multiple times.
+     * @throws IllegalStateException
+     *             If node was emitted inside <code>map</code>,
+     *             <code>choice</code> <code>unkeyed list</code> node.
+     * @throws IOException if an underlying IO error occurs
+     */
+    void startOrderedLeafSet(String localName, int childSizeHint) throws IOException, IllegalArgumentException;
+
+    /**
      * Emits a leaf set entry node
      *
      * @param value
