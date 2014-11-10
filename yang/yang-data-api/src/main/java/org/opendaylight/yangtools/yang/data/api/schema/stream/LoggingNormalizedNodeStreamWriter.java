@@ -2,15 +2,14 @@ package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
-
-import java.util.ArrayDeque;
-import java.util.Deque;
-
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /**
  * A {@link NormalizedNodeStreamWriter} which logs the events into a {@link Logger}.
@@ -77,6 +76,12 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
     public void startLeafSet(final NodeIdentifier name, final int childSizeHint) {
         LOG.debug("{}{}(leaf-list)", ind(), name);
         incIndent();
+    }
+
+    @Override
+    public void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint) {
+//        LOG.debug("{}{}(leaf-list)", ind(), name);
+//        incIndent();
     }
 
     @Override

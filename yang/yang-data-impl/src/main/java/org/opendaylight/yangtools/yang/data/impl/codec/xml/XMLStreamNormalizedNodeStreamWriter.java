@@ -209,6 +209,11 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
     }
 
     @Override
+    public void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint) {
+        tracker.startLeafSet(name);
+    }
+
+    @Override
     public void leafSetEntryNode(final Object value) throws IOException {
         final LeafListSchemaNode schema = tracker.leafSetEntryNode();
         writeElement(schema.getQName(), schema, value);

@@ -200,6 +200,12 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
     }
 
     @Override
+    public void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint) throws IOException {
+        tracker.startLeafSet(name);
+        context = new JSONStreamWriterListContext(context, name);
+    }
+
+    @Override
     public void leafSetEntryNode(final Object value) throws IOException {
         final LeafListSchemaNode schema = tracker.leafSetEntryNode();
         final JSONCodec<Object> codec = codecs.codecFor(schema);
