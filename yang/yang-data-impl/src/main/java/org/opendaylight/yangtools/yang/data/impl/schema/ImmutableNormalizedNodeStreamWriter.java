@@ -8,12 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import com.google.common.base.Preconditions;
-
-import java.io.IOException;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.List;
-
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -30,6 +24,11 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLe
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
+
+import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.List;
 
 /**
  *
@@ -130,6 +129,14 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     public void startLeafSet(final NodeIdentifier name,final int childSizeHint) throws IllegalArgumentException {
         checkDataNodeContainer();
         ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = Builders.leafSetBuilder();
+        builder.withNodeIdentifier(name);
+        enter(builder);
+    }
+
+    @Override
+    public void startOrderedLeafSet(final NodeIdentifier name,final int childSizeHint) throws IllegalArgumentException {
+        checkDataNodeContainer();
+        ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = Builders.orderedLeafSetBuilder();
         builder.withNodeIdentifier(name);
         enter(builder);
     }
