@@ -16,6 +16,24 @@
       "revId": "a8f86bde0241a6e8cb1fda6120cd9f79482fb7f4",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_26499bd0",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/nodes/AbstractImmutableNormalizedValueAttrNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2014-11-11T13:50:42Z",
+      "side": 1,
+      "message": "I thing that no yang type results in an array of boolean, char, double, float etc. for now, but I handled this types for two reasons:\n1.Someone can construct LeafNodes directly in java code like following:\nboolean[] value \u003d new boolean[] { true, false };\nLeafNode\u003cboolean[]\u003e leafNode \u003d ImmutableNodes.leafNode(LEAF_QNAME, value);\n2. I do not know, but maybe in next versions of yang models this can be allowed and it was a little effort to handle it now, so I did that.",
+      "parentUuid": "ba8cc1f7_0631f759",
+      "revId": "a8f86bde0241a6e8cb1fda6120cd9f79482fb7f4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
