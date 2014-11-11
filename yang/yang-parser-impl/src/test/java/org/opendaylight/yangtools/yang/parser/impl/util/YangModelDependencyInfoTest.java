@@ -8,9 +8,11 @@
 package org.opendaylight.yangtools.yang.parser.impl.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-
+import static org.junit.Assert.assertTrue;
 import java.io.InputStream;
 import org.junit.Test;
 
@@ -24,6 +26,8 @@ public class YangModelDependencyInfoTest {
         assertEquals("ietf-inet-types", info.getName());
         assertEquals("2010-09-24", info.getFormattedRevision());
         assertNotNull(info.getDependencies());
+
+        assertTrue(info.equals(info));
     }
 
     @Test
@@ -44,5 +48,26 @@ public class YangModelDependencyInfoTest {
         assertNotNull(info);
         assertEquals("module-without-revision", info.getName());
         assertNull(info.getFormattedRevision());
+    }
+
+    @Test
+    public void testEquals() {
+    	InputStream stream1 = getClass().getResourceAsStream("/ietf/ietf-inet-types@2010-09-24.yang");
+        YangModelDependencyInfo info1 = YangModelDependencyInfo.fromInputStream(stream1);
+        InputStream stream2 = getClass().getResourceAsStream("/no-revision/module-without-revision.yang");
+        YangModelDependencyInfo info2 = YangModelDependencyInfo.fromInputStream(stream2);
+
+    	assertTrue(info1.equals(info1));
+    	assertFalse(info1.equals(null));
+        assertFalse(info1.equals(stream1));
+        assertFalse(info1.equals(info2));
+    }
+
+    @Test
+    public void testHashcode() {
+        InputStream stream = getClass().getResourceAsStream("/no-revision/module-without-revision.yang");
+        YangModelDependencyInfo info = YangModelDependencyInfo.fromInputStream(stream);
+
+        assertNotEquals("hashcode", 31, info.hashCode());
     }
 }
