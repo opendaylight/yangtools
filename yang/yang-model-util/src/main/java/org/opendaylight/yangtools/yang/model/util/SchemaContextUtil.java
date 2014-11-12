@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
@@ -17,6 +18,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -358,11 +361,27 @@ public final class SchemaContextUtil {
 
         final DataSchemaNode node = parent.getDataChildByName(current);
         if (node == null) {
+            final Optional<SchemaNode> isfromAugment = findInAugment(parent, current);
+            if(isfromAugment.isPresent()) {
+                return isfromAugment.get();
+            }
+
             LOG.debug("Failed to find {} in parent {}", path, parent);
             return null;
         }
 
         return findNode(node, nextLevel(path));
+    }
+
+    private static Optional<SchemaNode> findInAugment(final AugmentationTarget parent, final QName node) {
+        for (final AugmentationSchema augmentationSchema : parent.getAvailableAugmentations()) {
+            final DataSchemaNode dataChildByName = augmentationSchema.getDataChildByName(node);
+            if(dataChildByName != null) {
+                return Optional.<SchemaNode>of(dataChildByName);
+            }
+        }
+
+        return Optional.absent();
     }
 
     private static SchemaNode findNode(final ListSchemaNode parent, final Iterable<QName> path) {
@@ -373,6 +392,11 @@ public final class SchemaContextUtil {
 
         DataSchemaNode node = parent.getDataChildByName(current);
         if (node == null) {
+            final Optional<SchemaNode> isfromAugment = findInAugment(parent, current);
+            if(isfromAugment.isPresent()) {
+                return isfromAugment.get();
+            }
+
             LOG.debug("Failed to find {} in parent {}", path, parent);
             return null;
         }
@@ -411,6 +435,11 @@ public final class SchemaContextUtil {
 
         DataSchemaNode node = parent.getDataChildByName(current);
         if (node == null) {
+            final Optional<SchemaNode> isfromAugment = findInAugment(parent, current);
+            if(isfromAugment.isPresent()) {
+                return isfromAugment.get();
+            }
+
             LOG.debug("Failed to find {} in parent {}", path, parent);
             return null;
         }
@@ -513,8 +542,7 @@ public final class SchemaContextUtil {
             Preconditions.checkArgument(module != null, "Failed to resolve xpath: no module found for prefix %s in module %s",
                     modulePrefix, parentModule.getName());
 
-            // FIXME: Module should have a QNameModule handle
-            return QName.create(module.getNamespace(), module.getRevision(), prefixedName.next());
+            return QName.create(module.getQNameModule(), prefixedName.next());
         } else {
             return QName.create(parentModule.getNamespace(), parentModule.getRevision(), prefixedPathPart);
         }
@@ -625,7 +653,7 @@ public final class SchemaContextUtil {
      *            Schema Context
      * @param schema
      *            Schema Node
-     * @return
+     * @return recursively found type definition this leafref is pointing to or null if the xpath is incorrect (null is there to preserve backwards compatibility)
      */
     public static TypeDefinition<?> getBaseTypeForLeafRef(final LeafrefTypeDefinition typeDefinition, final SchemaContext schemaContext, final SchemaNode schema) {
         RevisionAwareXPath pathStatement = typeDefinition.getPathStatement();
@@ -638,6 +666,13 @@ public final class SchemaContextUtil {
             dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNode(schemaContext, parentModule, pathStatement);
         } else {
             dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNodeForRelativeXPath(schemaContext, parentModule, schema, pathStatement);
+        }
+
+        // FIXME this is just to preserve backwards compatibility since yangtools do not mind wrong leafref xpaths
+        // and current expected behaviour for such cases is to just use pure string
+        // This should throw an exception about incorrect XPath in leafref
+        if(dataSchemaNode == null) {
+            return null;
         }
 
         final TypeDefinition<?> targetTypeDefinition = typeDefinition(dataSchemaNode);
