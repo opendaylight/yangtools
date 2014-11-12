@@ -105,7 +105,9 @@ fragment HEX : [0-9a-fA-F] ;
           
 END_IDENTIFIER_SEMICOLON : ';' -> type(SEMICOLON),popMode;
 END_IDENTIFIER_LEFT_BRACE : '{' ->type(LEFT_BRACE), popMode;
- 
+
+START_INNER_BLOCK_COMMENT : '/*' ->pushMode(BLOCK_COMMENT_MODE), skip ;
+
 fragment SUB_STRING : ('"' (ESC | ~["])*'"') | ('\'' (ESC | ~['])*'\'') ;
 
 STRING: ((~( '\r' | '\n' | '\t' | ' ' | ';' | '{' | '"' | '\'')~( '\r' | '\n' | '\t' | ' ' | ';' | '{' )* ) | SUB_STRING ) ->popMode;// IDENTIFIER ;
