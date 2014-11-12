@@ -10,9 +10,11 @@ package org.opendaylight.yangtools.yang.binding.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.test.mock.FooChild;
 import org.opendaylight.yangtools.yang.binding.test.mock.InstantiatedFoo;
@@ -69,6 +71,9 @@ public class InstanceIdentifierTest {
 
         assertFalse(nodeOne.contains(nodes));
         assertTrue(nodes.contains(nodeOne));
+        
+        assertTrue(nodes.containsWildcarded(nodeOne));
+        assertFalse(nodeOne.containsWildcarded(nodes));
     }
 
     @Test
@@ -111,9 +116,34 @@ public class InstanceIdentifierTest {
 
     }
 
-
     void childOfTest() {
         InstanceIdentifier.builder(Nodes.class).child(InstantiatedFoo.class).child(FooChild.class);
+    }
+    
+    @Test
+    public void basicTests() {
+    	InstanceIdentifier<DataObject> instanceIdentifier1 = InstanceIdentifier.create(DataObject.class);
+    	InstanceIdentifier<DataObject> instanceIdentifier2 = InstanceIdentifier.create(DataObject.class);
+    	Object object = new Object();
+    	
+    	assertTrue(instanceIdentifier1.equals(instanceIdentifier1));
+    	assertFalse(instanceIdentifier1.equals(null));
+    	assertFalse(instanceIdentifier1.equals(object));
+    	assertTrue(instanceIdentifier1.equals(instanceIdentifier2));
+    	
+    	assertNotNull(instanceIdentifier1.hashCode());
+    	
+    	assertNotNull(instanceIdentifier1.toString());
+    }
+    
+    @Test
+    public void firstIdentifierOfTest() {
+    	InstanceIdentifier<Node> instanceIdentifier = InstanceIdentifier.builder(Nodes.class).child(Node.class,new NodeKey(10)).toInstance();
+    	
+    	InstanceIdentifier<Nodes> nodesIdentifier = instanceIdentifier.firstIdentifierOf(Nodes.class);
+    	assertNotNull(nodesIdentifier);
+    	InstanceIdentifier<DataObject> dataObjectIdentifier = instanceIdentifier.firstIdentifierOf(DataObject.class);
+    	assertNull(dataObjectIdentifier);
     }
 
 }
