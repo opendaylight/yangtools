@@ -10,7 +10,10 @@ package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 import com.google.common.base.Objects;
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
+
+import java.util.Arrays;
 import java.util.Map;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -53,17 +56,20 @@ public abstract class AbstractImmutableNormalizedValueAttrNode<K extends YangIns
 
     @Override
     protected boolean valueEquals(final AbstractImmutableNormalizedNode<?, ?> other) {
-        // We can not call directly getValue.equals because of Empty Type Definition leaves
-        // which allways have NULL value
-        if (!Objects.equal(getValue(), other.getValue())) {
+        // We can not call directly getValue.equals because of Empty Type
+        // Definition leaves which allways have NULL value
+
+        if (!java.util.Objects.deepEquals(getValue(), other.getValue())) {
             return false;
         }
 
-// FIXME: are attributes part of hashCode/equals?
-//        final Set<Entry<QName, String>> tas = getAttributes().entrySet();
-//        final Set<Entry<QName, String>> oas = container.getAttributes().entrySet();
-//
-//        return tas.containsAll(oas) && oas.containsAll(tas);
+        // FIXME: are attributes part of hashCode/equals?
+        // final Set<Entry<QName, String>> tas = getAttributes().entrySet();
+        // final Set<Entry<QName, String>> oas =
+        // container.getAttributes().entrySet();
+        //
+        // return tas.containsAll(oas) && oas.containsAll(tas);
         return true;
     }
+
 }
