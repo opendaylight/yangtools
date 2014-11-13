@@ -1,0 +1,47 @@
+module choice-test {
+    yang-version 1;
+    namespace "uri:choice-test";
+    prefix tst;
+
+    revision 2014-10-07 {
+        description
+                "Choice test.";
+    }
+
+    choice mychoice {
+        case one {
+            container mycontainer {
+                leaf mychoiceleafone {
+                    type string;
+                }
+            }
+        }
+        case two {
+            list mylist {
+                leaf mychoiceleaftwo {
+                    type int16;
+                }
+            }
+        }
+    }
+
+    container myrootcontainer {
+        choice mychoice2 {
+            case one2 {
+                container mycontainer2 {
+                    leaf mychoiceleafone2 {
+                        type string;
+                    }
+                }
+            }
+            case two2 {
+                list mylist2 {
+                    leaf mychoiceleaftwo2 {
+                        type int16;
+                    }
+                }
+            }
+        }
+    }
+}
+
