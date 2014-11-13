@@ -1210,36 +1210,42 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 final Iterable<DataSchemaNode> caseChildNodes = caseNode.getChildNodes();
                 if (caseChildNodes != null) {
                     final SchemaPath nodeSp = choiceNode.getPath();
-                    final Object parentNode = findDataSchemaNode(schemaContext, nodeSp.getParent());
 
-                    SchemaNode parent;
-                    if (parentNode instanceof AugmentationSchema) {
-                        final AugmentationSchema augSchema = (AugmentationSchema) parentNode;
-                        final SchemaPath targetPath = augSchema.getTargetPath();
-                        SchemaNode targetSchemaNode = findDataSchemaNode(schemaContext, targetPath);
-                        if (targetSchemaNode instanceof DataSchemaNode
-                                && ((DataSchemaNode) targetSchemaNode).isAddedByUses()) {
-                            if (targetSchemaNode instanceof DerivableSchemaNode) {
-                                targetSchemaNode = ((DerivableSchemaNode) targetSchemaNode).getOriginal().orNull();
+                    if (nodeSp.getParent().getPathFromRoot().iterator().hasNext()) {
+                        final Object parentNode = findDataSchemaNode(schemaContext, nodeSp.getParent());
+
+                        SchemaNode parent;
+                        if (parentNode instanceof AugmentationSchema) {
+                            final AugmentationSchema augSchema = (AugmentationSchema) parentNode;
+                            final SchemaPath targetPath = augSchema.getTargetPath();
+                            SchemaNode targetSchemaNode = findDataSchemaNode(schemaContext, targetPath);
+                            if (targetSchemaNode instanceof DataSchemaNode
+                                    && ((DataSchemaNode) targetSchemaNode).isAddedByUses()) {
+                                if (targetSchemaNode instanceof DerivableSchemaNode) {
+                                    targetSchemaNode = ((DerivableSchemaNode) targetSchemaNode).getOriginal().orNull();
+                                }
+                                if (targetSchemaNode == null) {
+                                    throw new IllegalStateException(
+                                            "Failed to find target node from grouping for augmentation " + augSchema
+                                                    + " in module " + module.getName());
+                                }
                             }
-                            if (targetSchemaNode == null) {
-                                throw new IllegalStateException(
-                                        "Failed to find target node from grouping for augmentation " + augSchema
-                                        + " in module " + module.getName());
-                            }
+                            parent = targetSchemaNode;
+                        } else {
+                            final SchemaPath sp = choiceNode.getPath();
+                            parent = findDataSchemaNode(schemaContext, sp.getParent());
                         }
-                        parent = targetSchemaNode;
-                    } else {
-                        final SchemaPath sp = choiceNode.getPath();
-                        parent = findDataSchemaNode(schemaContext, sp.getParent());
-                    }
-                    Preconditions.checkState(parent != null, "Could not find Choice node parent "+choiceNode.getPath().getParent());
-                    GeneratedTypeBuilder childOfType = findChildNodeByPath(parent.getPath());
-                    if (childOfType == null) {
-                        childOfType = findGroupingByPath(parent.getPath());
-                    }
-                    resolveDataSchemaNodes(module, basePackageName, caseTypeBuilder, childOfType, caseChildNodes);
-                }
+                        Preconditions.checkState(parent != null, "Could not find Choice node parent "
+                                + choiceNode.getPath().getParent());
+                        GeneratedTypeBuilder childOfType = findChildNodeByPath(parent.getPath());
+                        if (childOfType == null) {
+                            childOfType = findGroupingByPath(parent.getPath());
+                        }
+                        resolveDataSchemaNodes(module, basePackageName, caseTypeBuilder, childOfType, caseChildNodes);
+                    } else
+                        resolveDataSchemaNodes(module, basePackageName, caseTypeBuilder, moduleToDataType(module),
+                                caseChildNodes);
+               }
             }
             processUsesAugments(caseNode, module);
         }
