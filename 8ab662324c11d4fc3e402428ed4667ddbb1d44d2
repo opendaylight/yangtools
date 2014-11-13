@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba8cc1f7_f7883b24",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XmlStreamUtilsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-11-13T14:40:44Z",
+      "side": 1,
+      "message": "assertNotNull(file)",
+      "revId": "8ab662324c11d4fc3e402428ed4667ddbb1d44d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_178eff2e",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XmlStreamUtilsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-11-13T14:40:44Z",
+      "side": 1,
+      "message": "assertNotNull(schemaContext)",
+      "revId": "8ab662324c11d4fc3e402428ed4667ddbb1d44d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_b782b3fe",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XmlStreamUtilsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-11-13T14:40:44Z",
+      "side": 1,
+      "message": "assertEquals(1,schemaContext.getModules.size())",
+      "revId": "8ab662324c11d4fc3e402428ed4667ddbb1d44d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_d703b771",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XmlStreamUtilsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-11-13T14:40:44Z",
+      "side": 1,
+      "message": "why is writeValue called?\nIt should be enough to just test whether targetBaseType is of some type different from LeafrefTypeDefinition",
+      "revId": "8ab662324c11d4fc3e402428ed4667ddbb1d44d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_b735d347",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XmlStreamUtilsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-11-13T14:40:44Z",
+      "side": 1,
+      "message": "this equal doesn\u0027t give me sense, because compared values are got from the same \u0027absname\u0027. probably second (leafrefTypedef4) should be \u0027relname\u0027",
+      "revId": "8ab662324c11d4fc3e402428ed4667ddbb1d44d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_97a0cf91",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XmlStreamUtilsTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 219,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-11-13T14:40:44Z",
+      "side": 1,
+      "message": "method is only used for leafref-test.yang.\nEvery node in this yang has unique name so we can search for first match.\n\nBetter sollution would be recursive call of method due to big number of \u003e\u003efor\u003c\u003c and \u003e\u003eif\u003c\u003c.\n\nTry to use something like this\n\n        private static LeafSchemaNode findSchemaNodeWithLeafrefType(final DataNodeContainer module, final String nodeName) {\n            for (final DataSchemaNode childNode : module.getChildNodes()) {\n                if (childNode instanceof DataNodeContainer) {\n                    LeafSchemaNode leafrefFromRecursion \u003d findSchemaNodeWithLeafrefType((DataNodeContainer)childNode, nodeName);\n                    if (leafrefFromRecursion !\u003d null) {\n                        return leafrefFromRecursion;\n                    }\n                } else if (childNode.getQName().getLocalName().equals(nodeName) \u0026\u0026 childNode instanceof LeafSchemaNode) {\n                    final TypeDefinition\u003c?\u003e leafSchemaNodeType \u003d ((LeafSchemaNode)childNode).getType();\n                    if (leafSchemaNodeType instanceof LeafrefTypeDefinition) {\n                        return (LeafSchemaNode)childNode;\n                    }\n                }\n            }\n            return null;\n        }\n\n\n        private static LeafrefTypeDefinition findLeafrefType(final DataNodeContainer module, final String nodeName) {\n            LeafSchemaNode leafWithLeafRefType \u003d findSchemaNodeWithLeafrefType(module, nodeName);\n            return leafWithLeafRefType !\u003d null ? (LeafrefTypeDefinition) leafWithLeafRefType.getType() : null;\n        }\n\nBTW It should be possible to change order of these two method in getDeserializedValueFromXMLStreamWriter(). First findSchemaNodeWithLeafrefType and then just get LeafrefTypeDefinition from SchemaNode",
+      "revId": "8ab662324c11d4fc3e402428ed4667ddbb1d44d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_579c8769",
+        "filename": "yang/yang-data-impl/src/test/resources/leafref-test.yang",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-11-13T14:40:44Z",
+      "side": 1,
+      "message": "shouldn\u0027t it be \n../../lt:interface............?",
+      "revId": "8ab662324c11d4fc3e402428ed4667ddbb1d44d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_77950b3f",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaContextUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 593,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-11-13T14:40:44Z",
+      "side": 1,
+      "message": "what about case ../../node1/node2/../node1/node3?\nis it possible? is it handled?",
+      "revId": "8ab662324c11d4fc3e402428ed4667ddbb1d44d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba8cc1f7_77f8ab7c",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaContextUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 630,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-11-13T14:40:44Z",
+      "side": 1,
+      "message": "probably typeDefinition parameter isn\u0027t necessary because this information is possible to get from schema which should be of type LeafSchemaNode with LeafrefTypeDefinition",
+      "revId": "8ab662324c11d4fc3e402428ed4667ddbb1d44d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
