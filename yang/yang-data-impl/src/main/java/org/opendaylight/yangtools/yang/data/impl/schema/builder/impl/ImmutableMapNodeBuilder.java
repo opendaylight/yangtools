@@ -118,10 +118,10 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
             return Optional.fromNullable(children.get(child));
         }
 
-		@Override
-		public Iterable<MapEntryNode> getValue() {
-			return Iterables.unmodifiableIterable(children.values());
-		}
+        @Override
+        public Iterable<MapEntryNode> getValue() {
+            return Iterables.unmodifiableIterable(children.values());
+        }
 
         @Override
         protected int valueHashCode() {
