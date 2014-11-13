@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import com.google.common.base.Preconditions;
 import java.util.Map;
-
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueAttrNode;
-
-import com.google.common.base.Preconditions;
 
 public class ImmutableLeafSetEntryNodeBuilder<T> extends AbstractImmutableNormalizedNodeBuilder<YangInstanceIdentifier.NodeWithValue, T, LeafSetEntryNode<T>> {
 
@@ -31,7 +30,7 @@ public class ImmutableLeafSetEntryNodeBuilder<T> extends AbstractImmutableNormal
 
         ImmutableLeafSetEntryNode(final YangInstanceIdentifier.NodeWithValue nodeIdentifier, final T value, final Map<QName, String> attributes) {
             super(nodeIdentifier, value, attributes);
-            Preconditions.checkArgument(nodeIdentifier.getValue().equals(value),
+            Preconditions.checkArgument(Objects.deepEquals(nodeIdentifier.getValue(), value),
                     "Node identifier contains different value: %s than value itself: %s", nodeIdentifier, value);
         }
     }
