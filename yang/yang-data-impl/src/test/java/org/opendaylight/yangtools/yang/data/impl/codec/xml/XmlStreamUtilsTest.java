@@ -9,39 +9,61 @@
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
-
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
-
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.Node;
-import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
-import org.opendaylight.yangtools.yang.data.impl.NodeFactory;
-import org.opendaylight.yangtools.yang.data.impl.SimpleNodeTOImpl;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.model.util.StringType;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.w3c.dom.Document;
 
 public class XmlStreamUtilsTest {
 
     public static final XMLOutputFactory XML_OUTPUT_FACTORY = XMLOutputFactory.newFactory();
+
+    private static SchemaContext schemaContext;
+    private static Module leafRefModule;
+
+    @BeforeClass
+    public static void initialize() throws URISyntaxException {
+        final YangParserImpl yangParser = new YangParserImpl();
+        final File file = new File(XmlStreamUtils.class.getResource("/leafref-test.yang").toURI());
+        schemaContext = yangParser.parseFiles(Arrays.asList(file));
+        assertNotNull(schemaContext);
+        assertEquals(1,schemaContext.getModules().size());
+        leafRefModule = schemaContext.getModules().iterator().next();
+        assertNotNull(leafRefModule);
+    }
+
 
     @Test
     public void testWriteAttribute() throws Exception {
@@ -78,6 +100,50 @@ public class XmlStreamUtilsTest {
 
         final boolean identical = diff.identical();
         assertTrue("Xml differs: " + diff.toString(), identical);
+    }
+
+    /**
+     * One leafref reference to other leafref via relative references
+     */
+    @Test
+    public void testLeafRefRelativeChaining() {
+        getTargetNodeForLeafRef("leafname3",StringType.class);
+    }
+
+    @Test
+    public void testLeafRefRelative() {
+        getTargetNodeForLeafRef("pointToStringLeaf",StringType.class);
+    }
+
+    @Test
+    public void testLeafRefAbsoluteWithSameTarget() {
+        getTargetNodeForLeafRef("absname",InstanceIdentifierType.class);
+    }
+
+    /**
+     * Tests relative path with double point inside path (e. g. "../../lf:interface/../lf:cont2/lf:stringleaf")
+     */
+    @Ignore //ignored because this isn't implemented
+    @Test
+    public void testLeafRefWithDoublePointInPath() {
+        getTargetNodeForLeafRef("lf-with-double-point-inside",StringType.class);
+    }
+
+    @Test
+    public void testLeafRefRelativeAndAbsoluteWithSameTarget() {
+        final TypeDefinition<?> targetNodeForAbsname = getTargetNodeForLeafRef("absname",InstanceIdentifierType.class);
+        final TypeDefinition<?> targetNodeForRelname = getTargetNodeForLeafRef("relname",InstanceIdentifierType.class);
+        assertEquals(targetNodeForAbsname, targetNodeForRelname);
+    }
+
+    private TypeDefinition<?> getTargetNodeForLeafRef(final String nodeName, final Class<?> clas) {
+        final LeafSchemaNode schemaNode = findSchemaNodeWithLeafrefType(leafRefModule, nodeName);
+        assertNotNull(schemaNode);
+        final LeafrefTypeDefinition leafrefTypedef = findLeafrefType(schemaNode);
+        assertNotNull(leafrefTypedef);
+        final TypeDefinition<?> targetBaseType = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypedef, schemaContext, schemaNode);
+        assertEquals("Wrong class found.", clas, targetBaseType.getClass());
+        return targetBaseType;
     }
 
     @Test
@@ -125,5 +191,30 @@ public class XmlStreamUtilsTest {
         } else {
             return QName.create(namespace, revision, localName);
         }
+    }
+
+    private LeafSchemaNode findSchemaNodeWithLeafrefType(final DataNodeContainer module, final String nodeName) {
+        for (final DataSchemaNode childNode : module.getChildNodes()) {
+            if (childNode instanceof DataNodeContainer) {
+                LeafSchemaNode leafrefFromRecursion = findSchemaNodeWithLeafrefType((DataNodeContainer)childNode, nodeName);
+                if (leafrefFromRecursion != null) {
+                    return leafrefFromRecursion;
+                }
+            } else if (childNode.getQName().getLocalName().equals(nodeName) && childNode instanceof LeafSchemaNode) {
+                final TypeDefinition<?> leafSchemaNodeType = ((LeafSchemaNode)childNode).getType();
+                if (leafSchemaNodeType instanceof LeafrefTypeDefinition) {
+                    return (LeafSchemaNode)childNode;
+                }
+            }
+        }
+        return null;
+    }
+
+    private LeafrefTypeDefinition findLeafrefType(final LeafSchemaNode schemaNode) {
+        final TypeDefinition<?> type = schemaNode.getType();
+        if (type instanceof LeafrefTypeDefinition) {
+            return (LeafrefTypeDefinition)type;
+        }
+        return null;
     }
 }
