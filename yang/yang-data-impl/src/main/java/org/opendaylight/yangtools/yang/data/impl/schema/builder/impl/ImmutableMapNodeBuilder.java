@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.Iterables;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -21,9 +22,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.Iterables;
 
 public class ImmutableMapNodeBuilder
         implements CollectionNodeBuilder<MapEntryNode, MapNode> {
@@ -113,10 +111,10 @@ public class ImmutableMapNodeBuilder
             return Optional.fromNullable(children.get(child));
         }
 
-		@Override
-		public Iterable<MapEntryNode> getValue() {
-			return Iterables.unmodifiableIterable(children.values());
-		}
+        @Override
+        public Iterable<MapEntryNode> getValue() {
+            return Iterables.unmodifiableIterable(children.values());
+        }
 
         @Override
         protected int valueHashCode() {
