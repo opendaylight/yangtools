@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -20,7 +19,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
 abstract class AbstractImmutableDataContainerNodeBuilder<I extends YangInstanceIdentifier.PathArgument, R extends DataContainerNode<I>> implements DataContainerNodeBuilder<I, R> {
-
+    private static final int DEFAULT_CAPACITY = 4;
     private Map<YangInstanceIdentifier.PathArgument, DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>> value;
     private I nodeIdentifier;
 
@@ -33,12 +32,12 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends YangInstanceI
     private boolean dirty;
 
     protected AbstractImmutableDataContainerNodeBuilder() {
-        this.value = new HashMap<>();
+        this.value = new HashMap<>(DEFAULT_CAPACITY);
         this.dirty = false;
     }
 
     protected AbstractImmutableDataContainerNodeBuilder(final int sizeHint) {
-        this.value = new HashMap<>(sizeHint);
+        this.value = new HashMap<>(DEFAULT_CAPACITY);
         this.dirty = false;
     }
 

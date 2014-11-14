@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.Iterables;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -25,16 +26,17 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueNode;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.Iterables;
-
 public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSetEntryNode<T>> {
-
+    private static final int DEFAULT_CAPACITY = 4;
     private final Map<YangInstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> value;
     private YangInstanceIdentifier.NodeIdentifier nodeIdentifier;
 
     protected ImmutableLeafSetNodeBuilder() {
-        value = new HashMap<>();
+        value = new HashMap<>(DEFAULT_CAPACITY);
+    }
+
+    protected ImmutableLeafSetNodeBuilder(final int sizeHint) {
+        value = new HashMap<>(sizeHint * 4 / 3);
     }
 
     protected ImmutableLeafSetNodeBuilder(final ImmutableLeafSetNode<T> node) {
@@ -44,6 +46,10 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
 
     public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create() {
         return new ImmutableLeafSetNodeBuilder<>();
+    }
+
+    public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create(final int sizeHint) {
+        return new ImmutableLeafSetNodeBuilder<>(sizeHint);
     }
 
     public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create(final LeafSetNode<T> node) {
