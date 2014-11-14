@@ -24,10 +24,9 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableN
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueNode;
 
 public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> {
-
     private List<UnkeyedListEntryNode> value;
     private YangInstanceIdentifier.NodeIdentifier nodeIdentifier;
-    private boolean dirty = false;
+    private boolean dirty;
 
     protected ImmutableUnkeyedListNodeBuilder() {
         this.value = new LinkedList<>();
@@ -42,6 +41,10 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
     }
 
     public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create() {
+        return new ImmutableUnkeyedListNodeBuilder();
+    }
+
+    public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create(final int sizeHint) {
         return new ImmutableUnkeyedListNodeBuilder();
     }
 

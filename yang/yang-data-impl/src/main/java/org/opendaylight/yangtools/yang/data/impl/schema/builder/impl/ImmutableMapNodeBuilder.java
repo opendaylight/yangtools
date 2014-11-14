@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.Iterables;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -22,17 +23,17 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.Iterables;
-
-public class ImmutableMapNodeBuilder
-        implements CollectionNodeBuilder<MapEntryNode, MapNode> {
-
+public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNode, MapNode> {
+    private static final int DEFAULT_CAPACITY = 4;
     private final Map<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> value;
     private YangInstanceIdentifier.NodeIdentifier nodeIdentifier;
 
     protected ImmutableMapNodeBuilder() {
-        this.value = new HashMap<>();
+        this.value = new HashMap<>(DEFAULT_CAPACITY);
+    }
+
+    protected ImmutableMapNodeBuilder(final int sizeHint) {
+        this.value = new HashMap<>(DEFAULT_CAPACITY);
     }
 
     protected ImmutableMapNodeBuilder(final ImmutableMapNode node) {
@@ -42,6 +43,10 @@ public class ImmutableMapNodeBuilder
 
     public static CollectionNodeBuilder<MapEntryNode, MapNode> create() {
         return new ImmutableMapNodeBuilder();
+    }
+
+    public static CollectionNodeBuilder<MapEntryNode, MapNode> create(final int sizeHint) {
+        return new ImmutableMapNodeBuilder(sizeHint);
     }
 
     public static CollectionNodeBuilder<MapEntryNode, MapNode> create(final MapNode node) {
