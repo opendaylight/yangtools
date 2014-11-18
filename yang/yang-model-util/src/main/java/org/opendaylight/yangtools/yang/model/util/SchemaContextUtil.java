@@ -513,8 +513,7 @@ public final class SchemaContextUtil {
             Preconditions.checkArgument(module != null, "Failed to resolve xpath: no module found for prefix %s in module %s",
                     modulePrefix, parentModule.getName());
 
-            // FIXME: Module should have a QNameModule handle
-            return QName.create(module.getNamespace(), module.getRevision(), prefixedName.next());
+            return QName.create(module.getQNameModule(), prefixedName.next());
         } else {
             return QName.create(parentModule.getNamespace(), parentModule.getRevision(), prefixedPathPart);
         }
@@ -626,7 +625,7 @@ public final class SchemaContextUtil {
      *            Schema Context
      * @param schema
      *            Schema Node
-     * @return
+     * @return recursively found type definition this leafref is pointing to or null if the xpath is incorrect (null is there to preserve backwards compatibility)
      */
     public static TypeDefinition<?> getBaseTypeForLeafRef(final LeafrefTypeDefinition typeDefinition, final SchemaContext schemaContext, final SchemaNode schema) {
         RevisionAwareXPath pathStatement = typeDefinition.getPathStatement();
@@ -639,6 +638,13 @@ public final class SchemaContextUtil {
             dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNode(schemaContext, parentModule, pathStatement);
         } else {
             dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNodeForRelativeXPath(schemaContext, parentModule, schema, pathStatement);
+        }
+
+        // FIXME this is just to preserve backwards compatibility since yangtools do not mind wrong leafref xpaths
+        // and current expected behaviour for such cases is to just use pure string
+        // This should throw an exception about incorrect XPath in leafref
+        if(dataSchemaNode == null) {
+            return null;
         }
 
         final TypeDefinition<?> targetTypeDefinition = typeDefinition(dataSchemaNode);
