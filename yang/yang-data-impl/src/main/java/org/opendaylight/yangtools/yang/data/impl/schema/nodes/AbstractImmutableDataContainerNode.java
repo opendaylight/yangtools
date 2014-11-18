@@ -39,6 +39,15 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
         return children.hashCode();
     }
 
+    /**
+     * DO NOT USE THIS METHOD.
+     *
+     * This is an implementation-internal API and no outside users should use it. If you do,
+     * you are asking for trouble, as the returned object is not guaranteed to conform to
+     * java.util.Map interface.
+     *
+     * @return An unmodifiable view if this node's children.
+     */
     public final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> getChildren() {
         return children;
     }

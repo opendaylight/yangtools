@@ -43,6 +43,17 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends YangInstanceI
 
     protected AbstractImmutableDataContainerNodeBuilder(final AbstractImmutableDataContainerNode<I> node) {
         this.nodeIdentifier = node.getIdentifier();
+
+        /*
+         * FIXME: BUG-2402: this call is not what we actually want. We are the
+         *        only user of getChildren(), and we really want this to be a
+         *        zero-copy operation if we happen to not modify the children.
+         *        If we do, we want to perform an efficient copy-on-write before
+         *        we make the change.
+         *
+         *        With this interface we end up creating a lot of short-lived
+         *        objects in case we modify the map -- see checkDirty().
+         */
         this.value = node.getChildren();
         this.dirty = true;
     }
@@ -62,6 +73,13 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends YangInstanceI
 
     private void checkDirty() {
         if (dirty) {
+            /*
+             * FIXME: BUG-2402: This is the second part of the above. Note
+             *        that value here is usually a read-only view. Invocation
+             *        of this constructor will force instantiation of a wrapper
+             *        Map.Entry object, just to make sure this read path does
+             *        not modify the map.
+             */
             value = new HashMap<>(value);
             dirty = false;
         }
