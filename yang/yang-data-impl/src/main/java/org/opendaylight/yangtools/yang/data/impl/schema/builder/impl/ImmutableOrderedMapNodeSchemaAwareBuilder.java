@@ -17,8 +17,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-import com.google.common.base.Preconditions;
-
 public class ImmutableOrderedMapNodeSchemaAwareBuilder extends ImmutableOrderedMapNodeBuilder {
 
     private final ListSchemaNode schema;
