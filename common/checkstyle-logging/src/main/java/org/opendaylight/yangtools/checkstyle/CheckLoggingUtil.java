@@ -23,7 +23,7 @@ public class CheckLoggingUtil {
     public static final String LOGGER_TYPE_NAME = Logger.class.getSimpleName();
     public static final String LOGGER_TYPE_FULL_NAME = Logger.class.getName();
     public static final String LOGGER_VAR_NAME = "LOG";
-    private static final List<String> LOG_METHODS = Lists.newArrayList("debug", "info", "error", "warn", "trace");
+    private static final List<String> LOG_METHODS = Lists.newArrayList("LOG.debug", "LOG.info", "LOG.error", "LOG.warn", "LOG.trace");
 
     private CheckLoggingUtil() {}
 
@@ -51,7 +51,7 @@ public class CheckLoggingUtil {
 
     public static String getMethodName(final DetailAST aAST) {
         if(aAST.getFirstChild().getLastChild() != null) {
-            return aAST.getFirstChild().getLastChild().getText();
+            return aAST.getFirstChild().getFirstChild().getText() + "." + aAST.getFirstChild().getLastChild().getText();
         }
         return aAST.getFirstChild().getText();
     }

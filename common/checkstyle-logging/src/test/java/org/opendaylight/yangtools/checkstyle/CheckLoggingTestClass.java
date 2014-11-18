@@ -33,5 +33,13 @@ public class CheckLoggingTestClass {
         LOG.warn("foo", string);
         LOG.warn("foo {}", string);
         LOG.warn("foo {}", string, e);
+        LOG.warn(
+            "Unable to parse configuration snapshot from {}. Initial config from {} will be IGNORED in this run. " +
+            "Note that subsequent config files may fail due to this problem. " +
+            "Xml markup in this file needs to be fixed, for detailed information see enclosed exception.",
+            string, string, e);
+        LOG.warn("foo" + string);
+        LOG.warn("foo" + "bar");
+        LOG.warn("foo" + "bar" + "bar");
     }
 }

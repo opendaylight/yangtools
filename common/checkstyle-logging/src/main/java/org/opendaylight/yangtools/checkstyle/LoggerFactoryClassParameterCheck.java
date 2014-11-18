@@ -15,7 +15,7 @@ import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 public class LoggerFactoryClassParameterCheck extends Check {
 
     private static final String LOG_MESSAGE = "LoggerFactory.getLogger Class argument is incorrect.";
-    private static final String METHOD_NAME = "getLogger";
+    private static final String METHOD_NAME = "LoggerFactory.getLogger";
 
     @Override
     public int[] getDefaultTokens() {
