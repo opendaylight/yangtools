@@ -40,7 +40,7 @@ module isis-topology {
 	typedef iso-net-id {
         description "ISO NET ID. RFC 1237";
         type string {
-            pattern '[0-9a-fA-F]{2}((.[0-9a-fA-F]{4}){6}*)';
+            pattern '[0-9a-fA-F]{2}((.[0-9a-fA-F]{4}){6})';
         }
     }
 
