@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a91bd0f_226d3005",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaContextUtil.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 363,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-11-18T08:58:05Z",
+      "side": 1,
+      "message": "why is this specific searching here?\nI tested it and getDataChildByName() will also return child node which were added via augmentation.\nTest was done for ListSchemaNode and ContainerSchemaNode",
+      "revId": "6008c9f2cddeeff4d0a00d5233adce469f73907e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
