@@ -8,27 +8,38 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import com.google.common.base.Preconditions;
-
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
 
 /**
@@ -83,11 +94,10 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
      * <p>
      * This method is useful for clients, which knows there will be one
      * top level node written, but does not know which type of {@link NormalizedNode}
-     * will be writen.
-     *
+     * will be written.
      *
      * @param result {@link NormalizedNodeResult} object which will hold result value.
-     * @return {@link NormalizedNodeStreamWriter} whcih will write item to supplied result holder.
+     * @return {@link NormalizedNodeStreamWriter} which will write item to supplied result holder.
      */
     public static final NormalizedNodeStreamWriter from(final NormalizedNodeResult result) {
         return new ImmutableNormalizedNodeStreamWriter(new NormalizedNodeResultBuilder(result));
@@ -127,9 +137,10 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @Override
-    public void startLeafSet(final NodeIdentifier name,final int childSizeHint) throws IllegalArgumentException {
+    public void startLeafSet(final NodeIdentifier name, final int childSizeHint) throws IllegalArgumentException {
         checkDataNodeContainer();
-        ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = Builders.leafSetBuilder();
+        ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = UNKNOWN_SIZE == childSizeHint ?
+                ImmutableLeafSetNodeBuilder.create() : ImmutableLeafSetNodeBuilder.create(childSizeHint);
         builder.withNodeIdentifier(name);
         enter(builder);
     }
@@ -145,53 +156,73 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     @Override
     public void anyxmlNode(final NodeIdentifier name, final Object value) throws IllegalArgumentException {
         checkDataNodeContainer();
-
-
     }
 
     @Override
-    public void startContainerNode(final NodeIdentifier name,final int childSizeHint) throws IllegalArgumentException {
+    public void startContainerNode(final NodeIdentifier name, final int childSizeHint) throws IllegalArgumentException {
         checkDataNodeContainer();
-        enter(Builders.containerBuilder().withNodeIdentifier(name));
+
+        final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> builder = UNKNOWN_SIZE == childSizeHint ?
+                ImmutableContainerNodeBuilder.create() : ImmutableContainerNodeBuilder.create(childSizeHint);
+        enter(builder.withNodeIdentifier(name));
     }
 
     @Override
-    public void startUnkeyedList(final NodeIdentifier name,final int childSizeHint) throws IllegalArgumentException {
+    public void startUnkeyedList(final NodeIdentifier name, final int childSizeHint) throws IllegalArgumentException {
         checkDataNodeContainer();
-        enter(Builders.unkeyedListBuilder().withNodeIdentifier(name));
+
+        final CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> builder = UNKNOWN_SIZE == childSizeHint ?
+                ImmutableUnkeyedListNodeBuilder.create() : ImmutableUnkeyedListNodeBuilder.create(childSizeHint);
+        enter(builder.withNodeIdentifier(name));
     }
 
     @Override
-    public void startUnkeyedListItem(final NodeIdentifier name,final int childSizeHint) throws IllegalStateException {
+    public void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) throws IllegalStateException {
         Preconditions.checkArgument(getCurrent() instanceof ImmutableUnkeyedListNodeBuilder);
-        enter(Builders.unkeyedListEntryBuilder().withNodeIdentifier(name));
+
+        final DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> builder = UNKNOWN_SIZE == childSizeHint ?
+                ImmutableUnkeyedListEntryNodeBuilder.create() : ImmutableUnkeyedListEntryNodeBuilder.create(childSizeHint);
+        enter(builder.withNodeIdentifier(name));
     }
 
     @Override
-    public void startMapNode(final NodeIdentifier name,final int childSizeHint) throws IllegalArgumentException {
+    public void startMapNode(final NodeIdentifier name, final int childSizeHint) throws IllegalArgumentException {
         checkDataNodeContainer();
-        enter(Builders.mapBuilder().withNodeIdentifier(name));
+
+        final CollectionNodeBuilder<MapEntryNode, MapNode> builder = UNKNOWN_SIZE == childSizeHint ?
+                ImmutableMapNodeBuilder.create() : ImmutableMapNodeBuilder.create(childSizeHint);
+        enter(builder.withNodeIdentifier(name));
     }
 
     @Override
-    public void startMapEntryNode(final NodeIdentifierWithPredicates identifier,final int childSizeHint) throws IllegalArgumentException {
+    public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint) throws IllegalArgumentException {
         if(!(getCurrent() instanceof NormalizedNodeResultBuilder)) {
             Preconditions.checkArgument(getCurrent() instanceof ImmutableMapNodeBuilder || getCurrent() instanceof ImmutableOrderedMapNodeBuilder);
         }
-        enter(Builders.mapEntryBuilder().withNodeIdentifier(identifier));
+
+        final DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> builder = UNKNOWN_SIZE == childSizeHint ?
+                ImmutableMapEntryNodeBuilder.create() : ImmutableMapEntryNodeBuilder.create(childSizeHint);
+        enter(builder.withNodeIdentifier(identifier));
     }
 
     @Override
-    public void startOrderedMapNode(final NodeIdentifier name,final int childSizeHint) throws IllegalArgumentException {
+    public void startOrderedMapNode(final NodeIdentifier name, final int childSizeHint) throws IllegalArgumentException {
         checkDataNodeContainer();
-        enter(Builders.orderedMapBuilder().withNodeIdentifier(name));
+
+        final CollectionNodeBuilder<MapEntryNode, OrderedMapNode> builder = UNKNOWN_SIZE == childSizeHint ?
+                ImmutableOrderedMapNodeBuilder.create() : ImmutableOrderedMapNodeBuilder.create(childSizeHint);
+        enter(builder.withNodeIdentifier(name));
     }
 
     @Override
-    public void startChoiceNode(final NodeIdentifier name,final int childSizeHint) throws IllegalArgumentException {
+    public void startChoiceNode(final NodeIdentifier name, final int childSizeHint) throws IllegalArgumentException {
         checkDataNodeContainer();
-        enter(Builders.choiceBuilder().withNodeIdentifier(name));
+
+        final DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> builder = UNKNOWN_SIZE == childSizeHint ?
+                ImmutableChoiceNodeBuilder.create() : ImmutableChoiceNodeBuilder.create(childSizeHint);
+        enter(builder.withNodeIdentifier(name));
     }
+
     @Override
     public void startAugmentationNode(final AugmentationIdentifier identifier) throws IllegalArgumentException {
         checkDataNodeContainer();

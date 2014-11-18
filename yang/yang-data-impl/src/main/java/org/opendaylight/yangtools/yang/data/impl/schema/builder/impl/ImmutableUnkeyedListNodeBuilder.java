@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -21,14 +23,10 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueNode;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
-
 public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> {
-
     private List<UnkeyedListEntryNode> value;
     private YangInstanceIdentifier.NodeIdentifier nodeIdentifier;
-    private boolean dirty = false;
+    private boolean dirty;
 
     protected ImmutableUnkeyedListNodeBuilder() {
         this.value = new LinkedList<>();
@@ -43,6 +41,10 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
     }
 
     public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create() {
+        return new ImmutableUnkeyedListNodeBuilder();
+    }
+
+    public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create(final int sizeHint) {
         return new ImmutableUnkeyedListNodeBuilder();
     }
 
@@ -95,7 +97,11 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
     @Override
     public UnkeyedListNode build() {
         dirty = true;
-        return new ImmutableUnkeyedListNode(nodeIdentifier, ImmutableList.copyOf(value));
+        if (value.isEmpty()) {
+            return new EmptyImmutableUnkeyedListNode(nodeIdentifier);
+        } else {
+            return new ImmutableUnkeyedListNode(nodeIdentifier, ImmutableList.copyOf(value));
+        }
     }
 
     @Override
@@ -107,6 +113,37 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
     public NormalizedNodeContainerBuilder<NodeIdentifier, PathArgument, UnkeyedListEntryNode, UnkeyedListNode> removeChild(
             final PathArgument key) {
         return withoutChild(key);
+    }
+
+    protected static final class EmptyImmutableUnkeyedListNode extends AbstractImmutableNormalizedNode<YangInstanceIdentifier.NodeIdentifier, Iterable<UnkeyedListEntryNode>> implements Immutable, UnkeyedListNode {
+        protected EmptyImmutableUnkeyedListNode(final NodeIdentifier nodeIdentifier) {
+            super(nodeIdentifier);
+        }
+
+        @Override
+        public Iterable<UnkeyedListEntryNode> getValue() {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public UnkeyedListEntryNode getChild(final int position) {
+            return null;
+        }
+
+        @Override
+        public int getSize() {
+            return 0;
+        }
+
+        @Override
+        protected boolean valueEquals(final AbstractImmutableNormalizedNode<?, ?> other) {
+            return Collections.EMPTY_LIST.equals(other.getValue());
+        }
+
+        @Override
+        protected int valueHashCode() {
+            return Collections.EMPTY_LIST.hashCode();
+        }
     }
 
     protected static final class ImmutableUnkeyedListNode extends

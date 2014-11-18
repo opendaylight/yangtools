@@ -9,6 +9,9 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -20,19 +23,19 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-public class ImmutableOrderedMapNodeBuilder
-        implements CollectionNodeBuilder<MapEntryNode, OrderedMapNode> {
-
+public class ImmutableOrderedMapNodeBuilder implements CollectionNodeBuilder<MapEntryNode, OrderedMapNode> {
+    private static final int DEFAULT_CAPACITY = 4;
     private Map<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> value;
     private YangInstanceIdentifier.NodeIdentifier nodeIdentifier;
-    private boolean dirty = false;
+    private boolean dirty;
 
     protected ImmutableOrderedMapNodeBuilder() {
-        this.value = new LinkedHashMap<>();
+        this.value = new LinkedHashMap<>(DEFAULT_CAPACITY);
+        this.dirty = false;
+    }
+
+    protected ImmutableOrderedMapNodeBuilder(final int sizeHint) {
+        this.value = new LinkedHashMap<>(DEFAULT_CAPACITY);
         this.dirty = false;
     }
 
@@ -44,6 +47,10 @@ public class ImmutableOrderedMapNodeBuilder
 
     public static CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create() {
         return new ImmutableOrderedMapNodeBuilder();
+    }
+
+    public static CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create(final int sizeHint) {
+        return new ImmutableOrderedMapNodeBuilder(sizeHint);
     }
 
     public static CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create(final MapNode node) {
@@ -145,9 +152,9 @@ public class ImmutableOrderedMapNodeBuilder
             return children.size();
         }
 
-		@Override
-		public Iterable<MapEntryNode> getValue() {
-			return Iterables.unmodifiableIterable(children.values());
-		}
+        @Override
+        public Iterable<MapEntryNode> getValue() {
+            return Iterables.unmodifiableIterable(children.values());
+        }
     }
 }
