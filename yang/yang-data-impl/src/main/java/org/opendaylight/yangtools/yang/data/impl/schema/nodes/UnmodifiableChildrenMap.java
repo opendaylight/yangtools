@@ -16,15 +16,12 @@ import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Internal equivalent of {@link Collections}' unmodifiable Map. It does not retain
  * keySet/entrySet references, thus lowering the memory overhead.
  */
 final class UnmodifiableChildrenMap implements Map<PathArgument, DataContainerChild<? extends PathArgument, ?>>, Serializable {
-    private static final Logger LOG = LoggerFactory.getLogger(UnmodifiableChildrenMap.class);
     private static final long serialVersionUID = 1L;
     private final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> delegate;
     private transient Collection<DataContainerChild<? extends PathArgument, ?>> values;
@@ -115,10 +112,15 @@ final class UnmodifiableChildrenMap implements Map<PathArgument, DataContainerCh
 
     @Override
     public Set<Entry<PathArgument, DataContainerChild<? extends PathArgument, ?>>> entrySet() {
-        LOG.warn("Invocation of inefficient entrySet()", new Throwable().fillInStackTrace());
+        /*
+         * Okay, this is not as efficient as it could be -- we could save ourselves the
+         * map instantiation. The cost of that would be re-implementation of a read-only
+         * Map.Entry to ensure our delegate is never modified.
+         *
+         * Let's skip that and use whatever the JRE gives us instead.
+         */
         return Collections.unmodifiableMap(delegate).entrySet();
     }
-
 
     @Override
     public boolean equals(final Object o) {
