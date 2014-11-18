@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a91bd0f_452b9e30",
+        "filename": "yang-validation-tool/src/main/java/org/opendaylight/yangtools/yang/validation/tool/Main.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-11-18T12:32:00Z",
+      "side": 1,
+      "message": "validate should be before params.yangSourceDir",
+      "revId": "d7693ce7579d11096f106419e881cfbf813c80c4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a91bd0f_e51f5208",
+        "filename": "yang-validation-tool/src/main/java/org/opendaylight/yangtools/yang/validation/tool/Params.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-11-18T12:32:00Z",
+      "side": 1,
+      "message": "why is yangSourceDir public?",
+      "revId": "d7693ce7579d11096f106419e881cfbf813c80c4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a91bd0f_05f6f6d7",
+        "filename": "yang-validation-tool/src/main/java/org/opendaylight/yangtools/yang/validation/tool/Params.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-11-18T12:32:00Z",
+      "side": 1,
+      "message": "why \"prog\"?",
+      "revId": "d7693ce7579d11096f106419e881cfbf813c80c4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a91bd0f_a502aab2",
+        "filename": "yang-validation-tool/src/main/java/org/opendaylight/yangtools/yang/validation/tool/ParamsUtil.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-11-18T12:32:00Z",
+      "side": 1,
+      "message": "why \"opt\" name?",
+      "revId": "d7693ce7579d11096f106419e881cfbf813c80c4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
