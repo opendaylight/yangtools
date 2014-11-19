@@ -12,11 +12,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
-
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
@@ -85,7 +83,7 @@ public final class TreeNodeUtils {
             nesting++;
         }
         if(current.isPresent()) {
-            final YangInstanceIdentifier currentPath = YangInstanceIdentifier.create(path.getPath().subList(0, nesting));
+            final YangInstanceIdentifier currentPath = YangInstanceIdentifier.create(Iterables.limit(path.getPathArguments(), nesting));
             return new SimpleEntry<YangInstanceIdentifier,T>(currentPath,current.get());
         }
 
@@ -96,8 +94,7 @@ public final class TreeNodeUtils {
          * present. At any rate we check state just to be on the safe side.
          */
         Preconditions.checkState(nesting > 0);
-        final YangInstanceIdentifier parentPath = YangInstanceIdentifier.create(path.getPath().subList(0, nesting - 1));
-
+        final YangInstanceIdentifier parentPath = YangInstanceIdentifier.create(Iterables.limit(path.getPathArguments(), nesting - 1));
         return new SimpleEntry<YangInstanceIdentifier,T>(parentPath,parent.get());
     }
 
