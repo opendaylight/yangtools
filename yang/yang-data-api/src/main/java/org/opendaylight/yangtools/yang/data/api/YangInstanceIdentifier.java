@@ -116,17 +116,6 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
     }
 
     /**
-     * Returns a list of path arguments.
-     *
-     * @deprecated Use {@link #getPathArguments()} instead.
-     * @return Immutable list of path arguments.
-     */
-    @Deprecated
-    public List<PathArgument> getPath() {
-        return getLegacyPath();
-    }
-
-    /**
      * Returns an ordered iteration of path arguments.
      *
      * @return Immutable iteration of path arguments.
