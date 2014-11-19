@@ -479,8 +479,13 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      *
      * @param id instance identifier
      * @return key associated with the last component
+     * @throws IllegalArgumentException if the supplied identifier type cannot have a key.
+     * @throws NullPointerException if id is null.
      */
     public static <N extends Identifiable<K> & DataObject, K extends Identifier<N>> K keyOf(final InstanceIdentifier<N> id) {
+        Preconditions.checkNotNull(id);
+        Preconditions.checkArgument(id instanceof KeyedInstanceIdentifier, "%s does not have a key", id);
+
         @SuppressWarnings("unchecked")
         final K ret = ((KeyedInstanceIdentifier<N, K>)id).getKey();
         return ret;
