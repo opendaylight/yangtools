@@ -9,12 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import com.google.common.base.Function;
-import com.google.common.base.Objects;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -56,13 +50,22 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+
+import com.google.common.base.Function;
+import com.google.common.base.Objects;
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 
 public class XmlDocumentUtils {
     private static class ElementWithSchemaContext {
@@ -267,7 +270,13 @@ public class XmlDocumentUtils {
 
     private static Object resolveValueFromSchemaType(final Element xmlElement, final DataSchemaNode schema, final TypeDefinition<?> type,
         final XmlCodecProvider codecProvider,final SchemaContext schemaCtx) {
-        final TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(type);
+
+        TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(type);
+        if (baseType instanceof LeafrefTypeDefinition) {
+            final LeafrefTypeDefinition leafrefTypeDefinition = (LeafrefTypeDefinition) baseType;
+            baseType = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypeDefinition, schemaCtx, schema);
+        }
+
         final String text = xmlElement.getTextContent();
         final Object value;
 
@@ -276,7 +285,7 @@ public class XmlDocumentUtils {
         } else if (baseType instanceof IdentityrefTypeDefinition) {
             value = InstanceIdentifierForXmlCodec.toIdentity(text, xmlElement, schemaCtx);
         } else {
-            final TypeDefinitionAwareCodec<?, ?> codec = codecProvider.codecFor(type);
+            final TypeDefinitionAwareCodec<?, ?> codec = codecProvider.codecFor(baseType);
             if (codec == null) {
                 LOG.info("No codec for schema {}, falling back to text", schema);
                 value = text;
