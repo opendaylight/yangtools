@@ -9,14 +9,11 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
-
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
-
 import javax.xml.stream.XMLStreamWriter;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -32,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -52,11 +50,19 @@ public final class SchemaTracker {
     private final DataNodeContainer root;
 
     private SchemaTracker(final SchemaContext context, final SchemaPath path) {
-        DataSchemaNode current = Preconditions.checkNotNull(context);
+        SchemaNode current = Preconditions.checkNotNull(context);
         for (QName qname : path.getPathFromRoot()) {
-            final DataSchemaNode child;
+            SchemaNode child;
             if(current instanceof DataNodeContainer) {
                 child = ((DataNodeContainer) current).getDataChildByName(qname);
+                if (child == null && current instanceof SchemaContext) {
+                    for (GroupingDefinition grouping : ((DataNodeContainer) current).getGroupings()) {
+                        if (grouping.getQName().equals(qname)) {
+                            child = grouping;
+                            break;
+                        }
+                    }
+                }
             } else if (current instanceof ChoiceNode) {
                 child = ((ChoiceNode) current).getCaseNodeByName(qname);
             } else {
