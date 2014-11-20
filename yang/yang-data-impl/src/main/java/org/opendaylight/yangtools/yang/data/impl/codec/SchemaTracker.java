@@ -9,14 +9,11 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
-
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
-
 import javax.xml.stream.XMLStreamWriter;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -32,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -51,12 +49,12 @@ public final class SchemaTracker {
     private final Deque<Object> schemaStack = new ArrayDeque<>();
     private final DataNodeContainer root;
 
-    private SchemaTracker(final SchemaContext context, final SchemaPath path) {
-        DataSchemaNode current = Preconditions.checkNotNull(context);
+    private SchemaTracker(final SchemaContext context, final SchemaPath path, final boolean groupingAllowed) {
+        SchemaNode current = Preconditions.checkNotNull(context);
         for (QName qname : path.getPathFromRoot()) {
-            final DataSchemaNode child;
+            SchemaNode child;
             if(current instanceof DataNodeContainer) {
-                child = ((DataNodeContainer) current).getDataChildByName(qname);
+                child = findSchemaNodeForDataNodeContainer(current, qname, groupingAllowed);
             } else if (current instanceof ChoiceNode) {
                 child = ((ChoiceNode) current).getCaseNodeByName(qname);
             } else {
@@ -66,6 +64,29 @@ public final class SchemaTracker {
         }
         Preconditions.checkArgument(current instanceof DataNodeContainer,"Schema path must point to container or list. Supplied path %s pointed to: %s",path,current);
         this.root = (DataNodeContainer) current;
+    }
+
+    /**
+     * Searches for child with name {@code qname} in {@code parentNode}.
+     *
+     * If {@code parentNode} is of type SchemaContext then also checks whether child with name {@code qname} isn't
+     * grouping.
+     *
+     * @param parentNode
+     * @param qname
+     * @return schema node with name {@code qname}
+     */
+    private SchemaNode findSchemaNodeForDataNodeContainer(final SchemaNode parentNode, final QName qname, final boolean groupingAllowed) {
+        SchemaNode foundSchema = ((DataNodeContainer) parentNode).getDataChildByName(qname);
+        if (foundSchema == null && parentNode instanceof SchemaContext && groupingAllowed) {
+            for (GroupingDefinition grouping : ((DataNodeContainer) parentNode).getGroupings()) {
+                if (grouping.getQName().equals(qname)) {
+                    foundSchema = grouping;
+                    break;
+                }
+            }
+        }
+        return foundSchema;
     }
 
     /**
@@ -79,6 +100,15 @@ public final class SchemaTracker {
         return create(context, SchemaPath.ROOT);
     }
 
+    public static SchemaTracker create(final SchemaContext context, final SchemaPath path, boolean groupingsAllowed) {
+        if (groupingsAllowed) {
+            return new SchemaTracker(context, path, groupingsAllowed);
+        } else {
+            return create(context, path);
+        }
+
+    }
+
     /**
      * Create a new writer with the specified context and rooted in the specified schema path
      *
@@ -88,7 +118,7 @@ public final class SchemaTracker {
      * @return A new {@link NormalizedNodeStreamWriter}
      */
     public static SchemaTracker create(final SchemaContext context, final SchemaPath path) {
-        return new SchemaTracker(context, path);
+        return new SchemaTracker(context, path, false);
     }
 
     public Object getParent() {

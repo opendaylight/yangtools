@@ -53,7 +53,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
     private JSONStreamWriterContext context;
 
     private JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final SchemaPath path,
-            final Writer writer, final URI initialNs, final int indentSize) {
+            final Writer writer, final URI initialNs, final int indentSize, final boolean groupingAllowed) {
         this.writer = Preconditions.checkNotNull(writer);
 
         Preconditions.checkArgument(indentSize >= 0, "Indent size must be non-negative");
@@ -63,7 +63,11 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
             indent = null;
         }
         this.codecs = Preconditions.checkNotNull(codecFactory);
-        this.tracker = SchemaTracker.create(codecFactory.getSchemaContext(), path);
+        if (groupingAllowed) {
+            this.tracker = SchemaTracker.create(codecFactory.getSchemaContext(), path, groupingAllowed);
+        } else {
+            this.tracker = SchemaTracker.create(codecFactory.getSchemaContext(), path);
+        }
         this.context = new JSONStreamWriterRootContext(initialNs);
     }
 
@@ -75,7 +79,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * @return A stream writer instance
      */
     public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final Writer writer) {
-        return new JSONNormalizedNodeStreamWriter(JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, writer, null, 0);
+        return new JSONNormalizedNodeStreamWriter(JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, writer, null, 0, false);
     }
 
     /**
@@ -87,7 +91,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * @return A stream writer instance
      */
     public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final SchemaPath path, final Writer writer) {
-        return new JSONNormalizedNodeStreamWriter(JSONCodecFactory.create(schemaContext), path, writer, null, 0);
+        return new JSONNormalizedNodeStreamWriter(JSONCodecFactory.create(schemaContext), path, writer, null, 0, false);
     }
 
     /**
@@ -101,7 +105,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      */
     public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final SchemaPath path,
             final URI initialNs, final Writer writer) {
-        return new JSONNormalizedNodeStreamWriter(JSONCodecFactory.create(schemaContext), path, writer, initialNs, 0);
+        return new JSONNormalizedNodeStreamWriter(JSONCodecFactory.create(schemaContext), path, writer, initialNs, 0, false);
     }
 
     /**
@@ -113,7 +117,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * @return A stream writer instance
      */
     public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final Writer writer, final int indentSize) {
-        return new JSONNormalizedNodeStreamWriter(JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, writer, null, indentSize);
+        return new JSONNormalizedNodeStreamWriter(JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, writer, null, indentSize, false);
     }
 
     /**
@@ -126,7 +130,12 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * @return A stream writer instance
      */
     public static NormalizedNodeStreamWriter create(final JSONCodecFactory codecFactory, final Writer writer, final int indentSize) {
-        return new JSONNormalizedNodeStreamWriter(codecFactory, SchemaPath.ROOT, writer, null, indentSize);
+        return new JSONNormalizedNodeStreamWriter(codecFactory, SchemaPath.ROOT, writer, null, indentSize, false);
+    }
+
+    public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final SchemaPath path, final URI initialNs,
+            final Writer writer, final boolean groupingAllowed) {
+        return new JSONNormalizedNodeStreamWriter(JSONCodecFactory.create(schemaContext), path, writer, initialNs, 0, groupingAllowed);
     }
 
     @Override
