@@ -63,7 +63,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
             return repository.getSchemaSource(input, ASTSchemaSource.class);
         }
     };
-    private final Cache<Collection<SourceIdentifier>, SchemaContext> cache = CacheBuilder.newBuilder().softValues().build();
+    private final Cache<Collection<SourceIdentifier>, SchemaContext> cache = CacheBuilder.newBuilder().weakValues().build();
 
     private final AsyncFunction<List<ASTSchemaSource>, SchemaContext> assembleSources = new AsyncFunction<List<ASTSchemaSource>, SchemaContext>() {
         @Override
