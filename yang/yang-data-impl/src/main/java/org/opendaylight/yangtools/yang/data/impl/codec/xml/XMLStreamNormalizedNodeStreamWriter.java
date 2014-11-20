@@ -38,13 +38,22 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
 
     private final XMLStreamWriter writer;
-    private final SchemaTracker tracker;
+    private SchemaTracker tracker;
     private final XmlStreamUtils streamUtils;
 
-    private XMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final SchemaContext context, final SchemaPath path) {
+    private XMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final SchemaContext context) {
         this.writer = Preconditions.checkNotNull(writer);
-        this.tracker = SchemaTracker.create(context, path);
         this.streamUtils = XmlStreamUtils.create(XmlUtils.DEFAULT_XML_CODEC_PROVIDER, context);
+    }
+
+    public XMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final SchemaContext context, final SchemaPath path,
+            final boolean groupingsAllowed) {
+        this(writer, context);
+        if (groupingsAllowed) {
+            this.tracker = SchemaTracker.create(context, path, groupingsAllowed);
+        } else {
+            this.tracker = SchemaTracker.create(context, path);
+        }
     }
 
     /**
@@ -67,7 +76,11 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
      * @return A new {@link NormalizedNodeStreamWriter}
      */
     public static NormalizedNodeStreamWriter create(final XMLStreamWriter writer, final SchemaContext context, final SchemaPath path) {
-        return new XMLStreamNormalizedNodeStreamWriter(writer, context, path);
+        return new XMLStreamNormalizedNodeStreamWriter(writer, context, path, false);
+    }
+
+    public static NormalizedNodeStreamWriter create(final XMLStreamWriter writer, final SchemaContext context, final SchemaPath path, final boolean groupingsAllowed) {
+        return new XMLStreamNormalizedNodeStreamWriter(writer, context, path, groupingsAllowed);
     }
 
     private void writeStartElement( QName qname) throws XMLStreamException {
