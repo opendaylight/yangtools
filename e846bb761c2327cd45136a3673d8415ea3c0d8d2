@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a91bd0f_19a09b8f",
+        "filename": "yang-validation-tool/src/main/java/org/opendaylight/yangtools/yang/validation/tool/Main.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-11-20T06:34:49Z",
+      "side": 1,
+      "message": "now it is ok that validate() is before calling of getYangSourceDir(). But what if validation isn\u0027t successfull?\nI suggest that validate should return boolean value which would be checked here and if it would be false code behind params.validate() wouldn\u0027t be executed.",
+      "revId": "e846bb761c2327cd45136a3673d8415ea3c0d8d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
