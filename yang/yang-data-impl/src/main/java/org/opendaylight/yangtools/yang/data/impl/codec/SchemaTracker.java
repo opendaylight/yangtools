@@ -9,14 +9,11 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
-
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.HashSet;
-
 import javax.xml.stream.XMLStreamWriter;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -32,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -52,11 +50,11 @@ public final class SchemaTracker {
     private final DataNodeContainer root;
 
     private SchemaTracker(final SchemaContext context, final SchemaPath path) {
-        DataSchemaNode current = Preconditions.checkNotNull(context);
+        SchemaNode current = Preconditions.checkNotNull(context);
         for (QName qname : path.getPathFromRoot()) {
-            final DataSchemaNode child;
+            SchemaNode child;
             if(current instanceof DataNodeContainer) {
-                child = ((DataNodeContainer) current).getDataChildByName(qname);
+                child = findSchemaNodeForDataNodeContainer(current, qname);
             } else if (current instanceof ChoiceNode) {
                 child = ((ChoiceNode) current).getCaseNodeByName(qname);
             } else {
@@ -66,6 +64,29 @@ public final class SchemaTracker {
         }
         Preconditions.checkArgument(current instanceof DataNodeContainer,"Schema path must point to container or list. Supplied path %s pointed to: %s",path,current);
         this.root = (DataNodeContainer) current;
+    }
+
+    /**
+     * Searches for child with name {@code qname} in {@code parentNode}.
+     *
+     * If {@code parentNode} is of type SchemaContext then also checks whether child with name {@code qname} isn't
+     * grouping.
+     *
+     * @param parentNode
+     * @param qname
+     * @return schema node with name {@code qname}
+     */
+    private SchemaNode findSchemaNodeForDataNodeContainer(final SchemaNode parentNode, final QName qname) {
+        SchemaNode foundSchema = ((DataNodeContainer) parentNode).getDataChildByName(qname);
+        if (foundSchema == null && parentNode instanceof SchemaContext) {
+            for (GroupingDefinition grouping : ((DataNodeContainer) parentNode).getGroupings()) {
+                if (grouping.getQName().equals(qname)) {
+                    foundSchema = grouping;
+                    break;
+                }
+            }
+        }
+        return foundSchema;
     }
 
     /**
