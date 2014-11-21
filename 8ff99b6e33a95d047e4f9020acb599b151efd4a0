@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a91bd0f_9e2b2c82",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONStreamWriterContext.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2014-11-21T09:27:52Z",
+      "side": 1,
+      "message": "Could you remove this change? It was also reverted on stable/helium branch.",
+      "revId": "8ff99b6e33a95d047e4f9020acb599b151efd4a0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
