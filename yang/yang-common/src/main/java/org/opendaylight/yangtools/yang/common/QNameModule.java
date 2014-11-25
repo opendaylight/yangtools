@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
+import com.google.common.base.Objects;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -162,5 +163,10 @@ public final class QNameModule implements Immutable, Serializable {
             LOG.error("", e);
         }
         return compositeURI;
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).omitNullValues().add("ns", getNamespace()).add("rev", getFormattedRevision()).toString();
     }
 }
