@@ -26,12 +26,14 @@ public class MapNodeModification implements Modification<ListSchemaNode, MapNode
                                     Optional<MapNode> modification, OperationStack operationStack) throws DataModificationException {
 
         // Merge or None operation on parent, leaving actual if modification not present
-        if (!modification.isPresent())
+        if (!modification.isPresent()) {
             return actual;
+        }
 
         Map<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> resultNodes = Maps.newLinkedHashMap();
-        if(actual.isPresent())
+        if(actual.isPresent()) {
             resultNodes.putAll(mapEntries(actual.get()));
+        }
 
         // TODO implement ordering for modification nodes
 
@@ -82,8 +84,9 @@ public class MapNodeModification implements Modification<ListSchemaNode, MapNode
     }
 
     private Optional<MapNode> build(ListSchemaNode schema, Map<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> resultNodes) {
-        if(resultNodes.isEmpty())
+        if(resultNodes.isEmpty()) {
             return Optional.absent();
+        }
 
         CollectionNodeBuilder<MapEntryNode, MapNode> b = Builders.mapBuilder(schema);
 

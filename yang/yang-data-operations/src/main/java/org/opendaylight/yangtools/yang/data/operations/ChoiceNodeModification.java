@@ -61,8 +61,9 @@ final class ChoiceNodeModification extends
             detectedCase = detectedCaseForChild.get();
         }
 
-        if (detectedCase == null)
+        if (detectedCase == null) {
             return childrenToProcess;
+        }
 
         // Filter out child nodes that do not belong to detected case =
         // Nodes from other cases present in actual
