@@ -7,10 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.xpath;
 
-import com.google.common.base.Converter;
 import javax.annotation.Nonnull;
-import javax.xml.xpath.XPathException;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
@@ -24,18 +21,10 @@ public interface XPathSchemaContextFactory {
     /**
      * Create an {@link XPathSchemaContext} based on a {@link SchemaContext}. This effectively binds the namespaces
      * the user expects to map to YANG schema. The {@link XPathExpression} compilation, relocation and optimization
-     * processes can take advantage of the YANG schema provided and the prefix mappings requested by the provided
-     * mapper.
-     *
-     * The user must provide a prefix-to-mapping {@link Converter}, which will be used to convert any prefixes found
-     * in the XPath expression being compiled in the resulting context.
+     * processes can take advantage of the YANG schema provided.
      *
      * @param context SchemaContext associated with the resulting {@link XPathSchemaContext}
-     * @param prefixToNamespace Prefix-to-namespace converter
      * @return An {@link XPathSchemaContext} instance
-     * @throws IllegalArgumentException if the converter contains a namespace which does not exist in the supplied
-     *                                  SchemaContext.
      */
-    @Nonnull XPathSchemaContext createContext(@Nonnull SchemaContext context,
-            Converter<String, QNameModule> prefixToNamespace) throws XPathException;
+    @Nonnull XPathSchemaContext createContext(@Nonnull SchemaContext context);
 }
