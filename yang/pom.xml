@@ -36,6 +36,7 @@
         <module>yang-parser-api</module>
         <module>yang-parser-impl</module>
         <module>yang-model-export</module>
+        <module>yang-data-jaxen</module>
     </modules>
     <build>
         <plugins>
