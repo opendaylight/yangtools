@@ -8,11 +8,8 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.google.common.base.Optional;
-
 import java.util.Iterator;
-
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -24,6 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
+// FIXME: move into the util package
 public final class NormalizedNodeUtils {
     private NormalizedNodeUtils() {
         throw new UnsupportedOperationException("Utilities class should not be instantiated");
