@@ -8,8 +8,10 @@
 package org.opendaylight.yangtools.yang.data.api.schema.xpath;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Converter;
 import javax.annotation.Nonnull;
 import javax.xml.xpath.XPathExpressionException;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
@@ -22,14 +24,18 @@ public interface XPathSchemaContext {
     /**
      * Compile an XPath expression for execution on {@link XPathDocument}s produced by this context.
      *
-     * @param xpath XPath expression to compile
+     * The user must provide a prefix-to-mapping {@link Converter}, which will be used to convert any prefixes found
+     * in the XPath expression being compiled in the resulting context.
+     *
      * @param schemaPath Schema path of the node at which this expression is expected to be evaluated
+     * @param prefixes Prefix-to-namespace converter
+     * @param xpath XPath expression to compile
      * @return A compiled XPath expression
      * @throws XPathExpressionException if the provided expression is invalid, either syntactically or by referencing
      *         namespaces unknown to this schema context.
      */
-    @Nonnull XPathExpression compileExpression(@Nonnull String xpath, @Nonnull SchemaPath schemaPath)
-            throws XPathExpressionException;
+    @Nonnull XPathExpression compileExpression(@Nonnull SchemaPath schemaPath,
+            Converter<String, QNameModule> prefixes, @Nonnull String xpath) throws XPathExpressionException;
 
     /**
      * Create a new document context.
