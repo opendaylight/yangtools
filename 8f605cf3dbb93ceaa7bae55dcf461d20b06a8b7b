@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_28ac24ed",
+        "filename": "code-generator/binding-java-api-generator/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-11-27T08:22:28Z",
+      "side": 1,
+      "message": "remomve this dependency",
+      "revId": "8f605cf3dbb93ceaa7bae55dcf461d20b06a8b7b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_48a5f002",
+        "filename": "code-generator/binding-java-api-generator/src/test/java/org/opendaylight/yangtools/sal/java/api/generator/test/UnionTypedefUnusedImportTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-11-27T08:22:28Z",
+      "side": 1,
+      "message": "relativeFilePath isn\u0027t necessary\nwhen you look to 36 row only GENERATOR_OUTPUT_PATH+ FS.... is enough",
+      "revId": "8f605cf3dbb93ceaa7bae55dcf461d20b06a8b7b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_68aa2cd6",
+        "filename": "code-generator/binding-java-api-generator/src/test/java/org/opendaylight/yangtools/sal/java/api/generator/test/UnionTypedefUnusedImportTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-11-27T08:22:28Z",
+      "side": 1,
+      "message": "JavaProjectBuilder from imported artifact isn\u0027t necessary.\nYou can still load file content to String and then look for \n\"import .......;\"\nstring.",
+      "revId": "8f605cf3dbb93ceaa7bae55dcf461d20b06a8b7b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
