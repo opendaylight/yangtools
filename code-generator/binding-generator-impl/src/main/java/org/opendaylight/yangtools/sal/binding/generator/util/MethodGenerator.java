@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.util;
 
+import javassist.CannotCompileException;
 import javassist.CtMethod;
 
 public interface MethodGenerator {
-    void process(CtMethod method);
+    void process(CtMethod method) throws CannotCompileException;
 }
