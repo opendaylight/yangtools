@@ -25,9 +25,14 @@ public class LogMessageConcatenationCheck extends Check {
     public void visitToken(DetailAST aAST) {
         final String methodName = CheckLoggingUtil.getMethodName(aAST);
         if(CheckLoggingUtil.isLogMethod(methodName)) {
-            final String logMessage = aAST.findFirstToken(TokenTypes.ELIST).getFirstChild().getFirstChild().getText();
-            if(logMessage.contains("+")) {
-                log(aAST.getLineNo(), LOG_MESSAGE);
+            DetailAST plus = aAST.findFirstToken(TokenTypes.ELIST).getFirstChild().findFirstToken(TokenTypes.PLUS);
+            if (plus != null) {
+                while (plus.getChildCount(TokenTypes.PLUS) != 0) {
+                    plus = plus.findFirstToken(TokenTypes.PLUS);
+                }
+                if (plus.getChildCount(TokenTypes.STRING_LITERAL) != 2) {
+                    log(aAST.getLineNo(), LOG_MESSAGE);
+                }
             }
         }
     }
