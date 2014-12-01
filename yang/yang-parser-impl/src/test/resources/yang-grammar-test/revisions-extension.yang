@@ -1,0 +1,24 @@
+module revisions-extension {
+    namespace "my-namespace";
+    prefix pre;
+
+    include submodule-header-extension {
+        revision-date 2007-06-09;
+    }
+
+    revision "2007-06-09" {
+        description "Initial revision.";
+    }
+
+    pre:my-extension 1;
+
+    revision "2008-06-09" {
+        description "Revision 2.";
+    }
+
+    extension my-extension {
+        description "my description ...";
+        argument "number";
+    }
+
+}

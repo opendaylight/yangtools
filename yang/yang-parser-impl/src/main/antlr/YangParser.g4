@@ -139,10 +139,10 @@ import_stmt : IMPORT_KEYWORD string LEFT_BRACE  prefix_stmt  (revision_date_stmt
 yang_version_stmt : YANG_VERSION_KEYWORD string stmtend;
 data_def_stmt : container_stmt | leaf_stmt | leaf_list_stmt | list_stmt | choice_stmt | anyxml_stmt | uses_stmt;
 body_stmts : (( identifier_stmt| extension_stmt | feature_stmt | identity_stmt | typedef_stmt | grouping_stmt | data_def_stmt | augment_stmt | rpc_stmt | notification_stmt | deviation_stmt) )*;
-revision_stmts :  (revision_stmt )* (stmtsep)*;
+revision_stmts :  (revision_stmt | stmtsep)*;
 linkage_stmts : (import_stmt stmtsep* | include_stmt stmtsep*)*;
 meta_stmts : (organization_stmt stmtsep* | contact_stmt stmtsep* | description_stmt stmtsep* | reference_stmt stmtsep*)*;
 submodule_header_stmts : (yang_version_stmt stmtsep* | belongs_to_stmt stmtsep*)+ ;
 module_header_stmts :  (yang_version_stmt stmtsep* | namespace_stmt stmtsep* | prefix_stmt stmtsep*)+ ;
-submodule_stmt : SUBMODULE_KEYWORD string LEFT_BRACE  submodule_header_stmts linkage_stmts meta_stmts revision_stmts body_stmts RIGHT_BRACE;
+submodule_stmt : SUBMODULE_KEYWORD string LEFT_BRACE stmtsep* submodule_header_stmts linkage_stmts meta_stmts revision_stmts body_stmts RIGHT_BRACE;
 module_stmt : MODULE_KEYWORD string LEFT_BRACE stmtsep* module_header_stmts linkage_stmts meta_stmts revision_stmts body_stmts RIGHT_BRACE;
