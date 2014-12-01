@@ -9,11 +9,9 @@ package org.opendaylight.yangtools.sal.binding.generator.util;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
-
 import java.util.Collection;
 import java.util.Map;
 import java.util.WeakHashMap;
-
 import javassist.CannotCompileException;
 import javassist.ClassClassPath;
 import javassist.ClassPath;
@@ -24,7 +22,6 @@ import javassist.CtMethod;
 import javassist.LoaderClassPath;
 import javassist.Modifier;
 import javassist.NotFoundException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,13 +101,13 @@ public final class JavassistUtils {
         }
     }
 
-    public CtClass createClass(final String fqn, final ClassGenerator cls) {
+    public CtClass createClass(final String fqn, final ClassGenerator cls) throws CannotCompileException {
         CtClass target = classPool.makeClass(fqn);
         cls.process(target);
         return target;
     }
 
-    public CtClass createClass(final String fqn, final CtClass superInterface, final ClassGenerator cls) {
+    public CtClass createClass(final String fqn, final CtClass superInterface, final ClassGenerator cls) throws CannotCompileException {
         CtClass target = classPool.makeClass(fqn);
         implementsType(target, superInterface);
         cls.process(target);
