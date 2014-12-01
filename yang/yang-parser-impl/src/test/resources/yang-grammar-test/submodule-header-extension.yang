@@ -1,0 +1,18 @@
+submodule submodule-header-extension {
+
+    pre:my-extension2 2;
+
+    belongs-to revisions-extension {
+        prefix pre;
+    }
+
+    revision "2007-06-09" {
+        description "Initial revision.";
+    }
+
+    extension my-extension2 {
+        description "my description ...";
+        argument "number";
+    }
+
+}

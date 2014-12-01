@@ -12,13 +12,16 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -31,6 +34,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -60,6 +64,7 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.util.Decimal64;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.Int16;
@@ -68,6 +73,7 @@ import org.opendaylight.yangtools.yang.model.util.StringType;
 import org.opendaylight.yangtools.yang.model.util.Uint32;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
 import org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils;
+import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public class YangParserTest {
     public static final String FS = File.separator;
@@ -923,4 +929,36 @@ public class YangParserTest {
         assertEquals(2, foo.getAugmentations().size());
     }
 
+    @Test
+    public void unknownStatementInSubmoduleHeaderTest() throws IOException, URISyntaxException {
+
+        File yang = new File(getClass().getResource("/yang-grammar-test/submodule-header-extension.yang").toURI());
+
+        try {
+            YangParserImpl.getInstance().parseFile(yang, yang.getParentFile());
+        } catch (YangSyntaxErrorException | YangParseException e) {
+            e.printStackTrace();
+            fail("YangSyntaxErrorException or YangParseException should not be thrown");
+        }
+
+    }
+
+    @Test
+    public void unknownStatementBetweenRevisionsTest() throws IOException, URISyntaxException {
+
+        File yangModul = new File(getClass().getResource("/yang-grammar-test/revisions-extension.yang").toURI());
+        File yangSubmodul = new File(getClass().getResource("/yang-grammar-test/submodule-header-extension.yang")
+                .toURI());
+
+        List<File> yangs = new ArrayList<File>();
+        yangs.add(yangModul);
+        yangs.add(yangSubmodul);
+
+        try {
+            YangParserImpl.getInstance().parseFiles(yangs);
+        } catch (YangParseException e) {
+            e.printStackTrace();
+            fail("YangParseException should not be thrown");
+        }
+    }
 }
