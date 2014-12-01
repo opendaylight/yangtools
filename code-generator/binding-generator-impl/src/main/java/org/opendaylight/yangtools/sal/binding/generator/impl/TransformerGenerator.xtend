@@ -1705,15 +1705,3 @@ class TransformerGenerator extends AbstractTransformerGenerator {
     }
 }
 
-@Data
-class PropertyPair {
-
-    String getterName;
-
-    Type type;
-
-    @Property
-    Type returnType;
-    @Property
-    SchemaNode schemaNode;
-}
