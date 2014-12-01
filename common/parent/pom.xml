@@ -27,18 +27,11 @@
     </prerequisites>
 
     <properties>
-        <commons.io.version>2.4</commons.io.version>
-        <ctrie.version>0.2.0</ctrie.version>
-        <exam.version>3.0.0</exam.version>
-        <groovy.version>2.1.6</groovy.version>
         <yangtools.version>0.7.0-SNAPSHOT</yangtools.version>
-        <karaf.version>3.0.1</karaf.version>
-        <nexusproxy>http://nexus.opendaylight.org/content</nexusproxy>
-        <maven.javadoc.version>2.9.1</maven.javadoc.version>
-        <jsr305.version>2.0.1</jsr305.version>
-        <maven.depends.version>1.2</maven.depends.version>
 
-        <!-- Sonar config -->
+        <!-- FIXME: these will be upstreamed -->
+        <maven.depends.version>1.2</maven.depends.version>
+        <maven.javadoc.version>2.9.1</maven.javadoc.version>
         <sonar-jacoco-listeners.version>2.4</sonar-jacoco-listeners.version>
         <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
         <sonar.jacoco.reportPath>target/code-coverage/jacoco.exec</sonar.jacoco.reportPath>
