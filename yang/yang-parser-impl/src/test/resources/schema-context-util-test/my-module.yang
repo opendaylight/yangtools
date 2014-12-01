@@ -19,6 +19,11 @@ module my-module {
         leaf my-leaf-in-gouping2 {
             type string;
         }
+        grouping my-grouping-in-grouping {
+            leaf my-leaf-in-grouping-in-grouping {
+                type string;
+            }
+        }
     }
 
     container my-container {
@@ -33,6 +38,16 @@ module my-module {
             leaf-list my-leaf-list-in-list {
                 type int16;
             }
+            grouping my-grouping-in-list {
+                leaf my-leaf-in-grouping-in-list {
+                    type string;
+                }
+            }
+        }
+        grouping my-grouping-in-container {
+            leaf my-leaf-in-grouping-in-container {
+                type string;
+            }
         }
     }
 
@@ -41,11 +56,27 @@ module my-module {
             leaf my-input-leaf {
                 type string;
             }
+            grouping my-grouping-in-input {
+                leaf my-leaf-in-grouping-in-input {
+                    type string;
+                }
+            }
         }
 
         output {
             leaf my-output-leaf {
                 type int16;
+            }
+            grouping my-grouping-in-output {
+                leaf my-leaf-in-grouping-in-output {
+                    type string;
+                }
+            }
+        }
+
+        grouping my-grouping-in-rpc {
+            leaf my-leaf-in-grouping-in-rpc {
+                type string;
             }
         }
     }
@@ -54,12 +85,24 @@ module my-module {
         leaf my-notification-leaf {
             type string;
         }
+        grouping my-grouping-in-notification {
+            leaf my-leaf-in-grouping-in-notification {
+                type string;
+            }
+        }
     }
 
     choice my-choice {
         case one {
             leaf my-choice-leaf-one {
                 type string;
+            }
+            container my-container-in-case {
+                grouping my-grouping-in-case {
+                    leaf my-leaf-in-grouping-in-case {
+                        type string;
+                    }
+                }
             }
         }
         case two {
@@ -68,5 +111,25 @@ module my-module {
             }
         }
     }
-}
 
+    grouping my-name {
+        choice my-choice {
+            case case-one {
+                container one {
+                    //empty
+                }
+            }
+            case case-two {
+                container two {
+                    //empty
+                }
+            }
+        }
+    }
+
+    rpc my-name {
+        input {
+            uses my-name;
+        }
+    }
+}
