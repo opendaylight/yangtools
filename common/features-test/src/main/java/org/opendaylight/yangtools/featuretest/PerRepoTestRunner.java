@@ -35,11 +35,14 @@ public class PerRepoTestRunner extends ParentRunner<PerFeatureRunner> {
     private static final String FEATURES_FILENAME = "features.xml";
     protected final List<PerFeatureRunner> children = new ArrayList<PerFeatureRunner>();
 
+    static {
+        // Static initialization, as we may be invoked multiple times
+        URL.setURLStreamHandlerFactory(new CustomBundleURLStreamHandlerFactory());
+    }
 
     public PerRepoTestRunner(final Class<?> testClass) throws InitializationError {
         super(testClass);
         try {
-            URL.setURLStreamHandlerFactory(new CustomBundleURLStreamHandlerFactory());
             URL repoURL = getClass().getClassLoader().getResource(FEATURES_FILENAME);
             boolean recursive = Boolean.getBoolean(REPO_RECURSE);
             LOG.info("Creating test runners for repoURL {} recursive {}",repoURL,recursive);
