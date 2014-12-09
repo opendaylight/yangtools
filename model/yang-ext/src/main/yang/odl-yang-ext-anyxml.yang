@@ -1,0 +1,70 @@
+module odl-yang-ext-anyxml {
+    yang-version 1;
+    namespace "urn:opendaylight:params:ns:yang:extension:schema:anyxml";
+    prefix "anyxml";
+
+    import odl-yang-ext-schema {
+        prefix schema;
+    }
+    
+    contact "Anton Tkacik <ttkacik@cisco.com>";
+
+    description 
+            "Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+
+            This program and the accompanying materials are made available under the
+            terms of the Eclipse Public License v1.0 which accompanies this distribution,
+            and is available at http://www.eclipse.org/legal/epl-v10.html";
+
+    revision "2014-03-19" {
+        description "";
+    }
+
+
+    identity anyxml-type {
+
+    }
+
+    identity data-tree-root {
+        base anyxml-type;
+    }
+
+    identity referenced-data {
+        base anyxml-type;
+    }
+
+    extension anyxml-type {
+        schema:use-in anyxml;
+        argument value {
+            type identityref {
+                base anyxml-type;
+            }
+        }
+        schema:substatement target-reference;
+    }
+
+
+    /*
+        e.g. (Using data tree root as schema)
+            rpc edit-config {
+                  anyxml data {
+                        anyxml:anyxml-type anyxml:data-tree-root;
+                  }
+            } 
+
+        e.g. (Using instance identifier for schema)
+            notification data-changed {
+                leaf path {
+                    type instance-identifier;
+                }
+                anyxml data {
+                    anyxml:anyxml-type anyxml:referenced-data {
+                        anyxml:target-reference ../path;
+                    }
+                }
+
+            }
+    */
+
+
+}
