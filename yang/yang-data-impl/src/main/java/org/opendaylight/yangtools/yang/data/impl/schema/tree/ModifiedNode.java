@@ -11,17 +11,15 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.concepts.Identifiable;
+import javax.annotation.concurrent.GuardedBy;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
-
-import javax.annotation.concurrent.GuardedBy;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Node Modification Node and Tree
@@ -32,7 +30,7 @@ import java.util.Map;
  * This tree is lazily created and populated via {@link #modifyChild(PathArgument)}
  * and {@link StoreMetadataNode} which represents original state {@link #getOriginal()}.
  */
-final class ModifiedNode implements StoreTreeNode<ModifiedNode>, Identifiable<PathArgument>, NodeModification {
+final class ModifiedNode extends NodeModification implements StoreTreeNode<ModifiedNode> {
 
     public static final Predicate<ModifiedNode> IS_TERMINAL_PREDICATE = new Predicate<ModifiedNode>() {
         @Override
@@ -59,7 +57,7 @@ final class ModifiedNode implements StoreTreeNode<ModifiedNode>, Identifiable<Pa
     private Optional<TreeNode> snapshotCache;
     private NormalizedNode<?, ?> value;
 
-    private ModifiedNode(final PathArgument identifier, final Optional<TreeNode> original, boolean isOrdered) {
+    private ModifiedNode(final PathArgument identifier, final Optional<TreeNode> original, final boolean isOrdered) {
         this.identifier = identifier;
         this.original = original;
 
@@ -90,7 +88,7 @@ final class ModifiedNode implements StoreTreeNode<ModifiedNode>, Identifiable<Pa
      * @return original store metadata
      */
     @Override
-    public Optional<TreeNode> getOriginal() {
+    Optional<TreeNode> getOriginal() {
         return original;
     }
 
@@ -100,7 +98,7 @@ final class ModifiedNode implements StoreTreeNode<ModifiedNode>, Identifiable<Pa
      * @return modification type
      */
     @Override
-    public ModificationType getType() {
+    ModificationType getType() {
         return modificationType;
     }
 
@@ -129,7 +127,7 @@ final class ModifiedNode implements StoreTreeNode<ModifiedNode>, Identifiable<Pa
      * @return {@link org.opendaylight.controller.md.sal.dom.store.impl.tree.data.ModifiedNode} for specified child, with {@link #getOriginal()}
      *         containing child metadata if child was present in original data.
      */
-    public ModifiedNode modifyChild(final PathArgument child, boolean isOrdered) {
+    public ModifiedNode modifyChild(final PathArgument child, final boolean isOrdered) {
         clearSnapshot();
         if (modificationType == ModificationType.UNMODIFIED) {
             updateModificationType(ModificationType.SUBTREE_MODIFIED);
@@ -159,7 +157,7 @@ final class ModifiedNode implements StoreTreeNode<ModifiedNode>, Identifiable<Pa
      * @return all recorded direct child modifications
      */
     @Override
-    public Iterable<ModifiedNode> getChildren() {
+    Iterable<ModifiedNode> getChildren() {
         return children.values();
     }
 
@@ -227,7 +225,7 @@ final class ModifiedNode implements StoreTreeNode<ModifiedNode>, Identifiable<Pa
                 + modificationType + ", childModification=" + children + "]";
     }
 
-    public static ModifiedNode createUnmodified(final TreeNode metadataTree, boolean isOrdered) {
+    public static ModifiedNode createUnmodified(final TreeNode metadataTree, final boolean isOrdered) {
         return new ModifiedNode(metadataTree.getIdentifier(), Optional.of(metadataTree), isOrdered);
     }
 }
