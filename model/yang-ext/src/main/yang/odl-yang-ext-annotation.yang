@@ -1,0 +1,65 @@
+module odl-yang-ext-annotation {
+    yang-version 1;
+    namespace "urn:opendaylight:params:ns:yang:extension:schema:compat";
+    prefix "anyxml";
+
+    import odl-yang-ext-schema {
+        prefix schema;
+    }
+    
+    contact "Anton Tkacik <ttkacik@cisco.com>";
+
+    description 
+            "Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+
+            This program and the accompanying materials are made available under the
+            terms of the Eclipse Public License v1.0 which accompanies this distribution,
+            and is available at http://www.eclipse.org/legal/epl-v10.html";
+
+    revision "2014-03-19" {
+        description "";
+    }
+
+    extension annotate-data {
+        
+    }
+
+    extension annotate-extension {
+        
+    }
+
+    /*
+        
+        extension-group nc-data {
+            anyxml:anyxml-type anyxml:data-tree-root;
+        }
+
+        annotate "/nc:edit-config/input/data" {
+            uses-extension-group nc-data-edit;
+        }
+        annotate "/nc:get-config/output/data" {
+            uses-extension-group nc-data;
+        }
+        annotate "/nc:get/input/data" {
+            uses-extension-group nc-data;
+        }
+
+
+        e.g. (Using instance identifier for schema)
+            notification data-changed {
+                leaf path {
+                    type instance-identifier;
+                }
+                anyxml data {
+                    anyxml:anyxml-type anyxml:referenced-data {
+                        anyxml:target-reference ../path;
+                    }
+                }
+
+            }
+
+        extension-mapping  
+    */
+
+
+}
