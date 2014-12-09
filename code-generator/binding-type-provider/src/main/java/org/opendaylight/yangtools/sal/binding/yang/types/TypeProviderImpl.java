@@ -621,7 +621,7 @@ public final class TypeProviderImpl implements TypeProvider {
      */
     private void resolveTypeDefsFromContext() {
         final Set<Module> modules = schemaContext.getModules();
-        Preconditions.checkArgument(modules != null, "Sef of Modules cannot be NULL!");
+        Preconditions.checkArgument(modules != null, "Set of Modules cannot be NULL!");
         final Module[] modulesArray = new Module[modules.size()];
         int i = 0;
         for (Module modul : modules) {
@@ -635,8 +635,7 @@ public final class TypeProviderImpl implements TypeProvider {
             if (dateTypeMap == null) {
                 dateTypeMap = new HashMap<>();
             }
-            final Map<String, Type> typeMap = new HashMap<>();
-            dateTypeMap.put(module.getRevision(), typeMap);
+            dateTypeMap.put(module.getRevision(), Collections.<String, Type>emptyMap());
             genTypeDefsContextMap.put(module.getName(), dateTypeMap);
         }
 
@@ -731,8 +730,12 @@ public final class TypeProviderImpl implements TypeProvider {
                 }
                 if (returnType != null) {
                     final Map<Date, Map<String, Type>> modulesByDate = genTypeDefsContextMap.get(moduleName);
-                    final Map<String, Type> typeMap = modulesByDate.get(moduleRevision);
+                    Map<String, Type> typeMap = modulesByDate.get(moduleRevision);
                     if (typeMap != null) {
+                        if (typeMap.isEmpty()) {
+                            typeMap = new HashMap<>(4);
+                            modulesByDate.put(moduleRevision, typeMap);
+                        }
                         typeMap.put(typedefName, returnType);
                     }
                     return returnType;
@@ -976,7 +979,7 @@ public final class TypeProviderImpl implements TypeProvider {
         if (typeModule != null && typeModule.getName() != null) {
             final Map<Date, Map<String, Type>> modulesByDate = genTypeDefsContextMap.get(typeModule.getName());
             final Map<String, Type> genTOs = modulesByDate.get(typeModule.getRevision());
-            if (genTOs != null) {
+            if (genTOs != null && !genTOs.isEmpty()) {
                 return genTOs.get(searchedTypeName);
             }
         }
