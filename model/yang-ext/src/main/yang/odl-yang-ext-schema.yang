@@ -1,0 +1,93 @@
+module odl-yang-ext-schema {
+    yang-version 1;
+    namespace "urn:opendaylight:params:ns:yang:extension:schema:schema";
+    prefix "ext-schema";
+    
+    import odl-yang-ext-schema-types {
+    	prefix yang-types;
+    }
+
+    contact "Anton Tkacik <ttkacik@cisco.com>";
+
+    description 
+            "Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+
+            This program and the accompanying materials are made available under the
+            terms of the Eclipse Public License v1.0 which accompanies this distribution,
+            and is available at http://www.eclipse.org/legal/epl-v10.html";
+
+    revision "2014-03-19" {
+        description "";
+    }
+
+    extension use-in {
+        schema:use-in "extension";
+        schema:occurence "*";
+        argument "name" {
+            type yang-types:statement-or-extension;
+          }
+        description "Specifies which statements can occur as substatement to the
+              given statement.";
+    }
+
+    extension argument-type {
+        schema:use-in "argument";
+        schema:occurence "?";
+        schema:substatement "type";
+        schema:substatement default {
+            schema:argument-type yang-types:type-definition;
+            description "Specifies type of extension argument.";
+        }
+        description "Specifies argument type of extension.";
+    }
+
+    extension substatement {
+        schema:use-in "extension";
+        schema:occurence "*";
+        schema:substatement description {
+            description "Description of substatement.";
+        }
+        schema:substatement argument-type {
+            description 
+            	"Specializes argument type of statement.  
+                
+                For example default statement is always defined as string,
+                but based on used context it may have further additional constraints
+                placed on value (e.g. default in integer leaf, default in case or
+                default in argument-type.)";
+        }
+
+    }
+
+    extension occurence {
+        description
+			"Specifices how an extension statement may be used.
+			
+			If this statement is given as a substatement to 'extension',
+			it applies to all 'use-in' statements.
+			
+			If this statement is given as a substatement to 'tailf:substatement',
+			it applies to this substatement.";
+        argument value {
+            type enumeration {
+                enum "?" {
+                    description
+                        "The extenstion may be given zero or one time.
+                        This is the default.";
+                }
+                enum "*" {
+                    description
+                        "The extenstion may be given zero or multiple times.";
+                }
+                enum "+" {
+                    description
+                        "The extenstion must be given at least once.";
+                }
+                enum "1" {
+                    description
+                        "The extenstion must be given exactly once.";
+                }
+        	}
+        }
+    }
+}
