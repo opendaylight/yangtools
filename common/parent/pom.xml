@@ -430,7 +430,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <!--
                 <executions>
                     <execution>
                         <id>enforce-dependencies</id>
@@ -444,7 +443,6 @@
                         </goals>
                     </execution>
                 </executions>
-                -->
             </plugin>
 
             <plugin>
