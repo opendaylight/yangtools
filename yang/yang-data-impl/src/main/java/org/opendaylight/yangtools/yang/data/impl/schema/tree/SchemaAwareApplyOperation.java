@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
+import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -38,8 +39,6 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
 
 abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaAwareApplyOperation.class);
@@ -209,10 +208,16 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
             return modification.storeSnapshot(Optional.of(applySubtreeChange(modification, currentMeta.get(),
                     version)));
         case MERGE:
-            if(currentMeta.isPresent()) {
-                return modification.storeSnapshot(Optional.of(applyMerge(modification,currentMeta.get(), version)));
+            final TreeNode result;
+
+            // This is a slight optimization: a merge on a non-existing node equals to a write
+            if (currentMeta.isPresent()) {
+                result = applyMerge(modification,currentMeta.get(), version);
+            } else {
+                result = applyWrite(modification, currentMeta, version);
             }
-            // intentional fall-through: if the node does not exist a merge is same as a write
+
+            return modification.storeSnapshot(Optional.of(result));
         case WRITE:
             return modification.storeSnapshot(Optional.of(applyWrite(modification, currentMeta, version)));
         case UNMODIFIED:
