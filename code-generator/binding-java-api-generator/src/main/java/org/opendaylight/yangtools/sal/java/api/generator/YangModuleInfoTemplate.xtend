@@ -218,8 +218,7 @@ class YangModuleInfoTemplate {
             importMap.put(typeName, typePackageName);
         }
         if (type instanceof ParameterizedType) {
-            val ParameterizedType paramType = (type as ParameterizedType)
-            val Type[] params = paramType.getActualTypeArguments()
+            val Type[] params = type.getActualTypeArguments()
             if (params != null) {
                 for (Type param : params) {
                     putTypeIntoImports(param);
@@ -260,11 +259,10 @@ class YangModuleInfoTemplate {
 
     final def StringBuilder addActualTypeParameters(StringBuilder builder, Type type) {
         if (type instanceof ParameterizedType) {
-            val ParameterizedType pType = (type as ParameterizedType)
-            val Type[] pTypes = pType.getActualTypeArguments();
-            builder.append("<");
+            val Type[] pTypes = type.getActualTypeArguments();
+            builder.append('<');
             builder.append(getParameters(pTypes));
-            builder.append(">");
+            builder.append('>');
         }
         return builder;
     }

@@ -155,7 +155,7 @@ class WadlRestconfGenerator {
 		var StringBuilder path = new StringBuilder
 		path.append(schemaNode.QName.localName)
 		if (schemaNode instanceof ListSchemaNode) {
-			val listKeys = (schemaNode as ListSchemaNode).keyDefinition
+			val listKeys = schemaNode.keyDefinition
 			for (listKey : listKeys) {
 				pathListParams.add((schemaNode as DataNodeContainer).getDataChildByName(listKey) as LeafSchemaNode) 
 				path.append(PATH_DELIMETER + "{" + listKey.localName + "}")
