@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.sal.binding.model.api;
 
 import java.util.List;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
  * Generated Transfer Object extends {@link GeneratedType} and is designed to
@@ -63,6 +64,8 @@ public interface GeneratedTransferObject extends GeneratedType {
     List<GeneratedProperty> getToStringIdentifiers();
 
     boolean isTypedef();
+
+    TypeDefinition getBaseType();
 
     /**
      * Return boolean value which describe whether Generated Transfer Object
