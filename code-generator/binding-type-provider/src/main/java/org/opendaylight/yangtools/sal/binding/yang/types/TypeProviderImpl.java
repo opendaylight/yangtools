@@ -1099,6 +1099,7 @@ public final class TypeProviderImpl implements TypeProvider {
             genTOBuilder.setReference(typeDef.getReference());
             genTOBuilder.setSchemaPath(typeDef.getPath().getPathFromRoot());
             genTOBuilder.setModuleName(moduleName);
+            genTOBuilder.setBaseType(typeDef);
 
             final List<Bit> bitList = bitsTypeDefinition.getBits();
             GeneratedPropertyBuilder genPropertyBuilder;

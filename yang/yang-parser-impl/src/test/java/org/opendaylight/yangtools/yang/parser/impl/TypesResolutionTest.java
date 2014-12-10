@@ -339,4 +339,11 @@ public class TypesResolutionTest {
         parser.parseFiles(Arrays.asList(extdef, unionbug, inet));
     }
 
+    @Test
+    public void testUnionWithBits() throws Exception {
+        File unionbits = new File(getClass().getResource("/types/union-with-bits/union-bits-model.yang").toURI());
+        YangContextParser parser = new YangParserImpl();
+        parser.parseFiles(Arrays.asList(unionbits));
+    }
+
 }

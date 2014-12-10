@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
 import com.google.common.base.Preconditions
 
 /**
@@ -126,6 +127,10 @@ class ClassTemplate extends BaseTemplate {
                 «ENDIF»
             «ENDFOR»
 
+            «IF (genTO.isTypedef() == true && genTO.getBaseType instanceof BitsTypeDefinition)»
+                «generateGetValueForBitsTypeDef»
+            «ENDIF»
+
             «generateHashCode»
 
             «generateEquals»
@@ -136,6 +141,26 @@ class ClassTemplate extends BaseTemplate {
 
             «generateRangeMethod("range", "_range")»
 
+        }
+
+    '''
+
+    /**
+     * Template method which generates the method <code>getValue()</code> for typedef,
+     * which base type is BitsDefinition.
+     *
+     * @return string with the <code>getValue()</code> method definition in JAVA format
+     */
+    def protected generateGetValueForBitsTypeDef() '''
+
+        public boolean[] getValue() {
+            return new boolean[]{
+        «FOR i : 0..< genTO.properties.size»
+           «IF i ==0»        «genTO.properties.get(i).fieldName»
+           «ELSE»        ,«genTO.properties.get(i).fieldName»
+                    «ENDIF»
+                «ENDFOR»
+            };
         }
     '''
 
