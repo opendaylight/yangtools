@@ -1,0 +1,59 @@
+module unionbitsmodel {
+    namespace "urn:ubt";
+    prefix "ubt";
+
+    revision 2014-12-10 {
+    }
+
+    typedef port-state-v13 {
+        description
+            "Current state of the physical port. These are not configurable from the controller.";
+
+        type bits {
+            bit link_down {
+                //description "No physical link present.";
+                position 0;
+            }
+
+            bit blocked {
+                //description "Port is blocked";
+                position 1;
+            }
+
+            bit live {
+                //description "Live for Fast Failover Group.";
+                position 2;
+            }
+        }
+    }
+
+    typedef port-state-v10 {
+        description "Current state of the physical port. These are not configurable from the controller.";
+
+        type bits {
+            bit link_down {
+                description "No physical link present.";
+                position 0;
+            }
+
+            bit blocked {
+                    description "Port is blocked";
+                    position 1;
+                }
+                bit live {
+                    description "Live for Fast Failover Group.";
+                    position 2;
+                }
+                bit stp_listen {
+                    description "Not learning or relaying frames.";
+                }
+            }
+        }
+
+    typedef my-union-type {
+        type union {
+            type port-state-v13;
+            type port-state-v10;
+        }
+    }
+}

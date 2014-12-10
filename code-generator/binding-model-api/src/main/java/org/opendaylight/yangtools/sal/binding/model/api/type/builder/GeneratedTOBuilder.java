@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.sal.binding.model.api.type.builder;
 
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
  * Generated Transfer Object Builder is interface that contains methods to build
@@ -77,6 +78,14 @@ public interface GeneratedTOBuilder extends GeneratedTypeBuilderBase<GeneratedTO
     GeneratedTransferObject toInstance();
 
     void setTypedef(boolean isTypedef);
+
+    /**
+     * Sets the base type for Java representation of YANG typedef
+     *
+     * @param typeDef
+     *           Type Definition
+     */
+    void setBaseType(TypeDefinition typeDef);
 
     /**
      *
