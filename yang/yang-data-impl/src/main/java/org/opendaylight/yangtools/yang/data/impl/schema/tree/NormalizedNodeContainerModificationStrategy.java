@@ -148,10 +148,20 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
         final MutableTreeNode newMeta = currentMeta.mutable();
         newMeta.setSubtreeVersion(version);
 
+        /*
+         * The user has issued an empty merge operation. In this case we do not perform
+         * a data tree mutation, do not pass GO, and do not collect useless garbage.
+         */
+        final Iterable<ModifiedNode> children = modification.getChildren();
+        if (Iterables.isEmpty(children)) {
+            newMeta.setData(currentMeta.getData());
+            return newMeta.seal();
+        }
+
         @SuppressWarnings("rawtypes")
         NormalizedNodeContainerBuilder dataBuilder = createBuilder(currentMeta.getData());
 
-        return mutateChildren(newMeta, dataBuilder, version, modification.getChildren());
+        return mutateChildren(newMeta, dataBuilder, version, children);
     }
 
     @Override
