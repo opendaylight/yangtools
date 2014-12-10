@@ -58,14 +58,16 @@ class EnumTemplate extends BaseTemplate {
 
 
             int value;
-            static java.util.Map<java.lang.Integer, «enums.name»> valueMap;
+            private static final java.util.Map<java.lang.Integer, «enums.name»> VALUE_MAP;
 
             static {
-                valueMap = new java.util.HashMap<>();
+                final com.google.common.collect.ImmutableMap.Builder<java.lang.Integer, «enums.name»> b = com.google.common.collect.ImmutableMap.builder();
                 for («enums.name» enumItem : «enums.name».values())
                 {
-                    valueMap.put(enumItem.value, enumItem);
+                    b.put(enumItem.value, enumItem);
                 }
+
+                VALUE_MAP = b.build();
             }
         
             private «enums.name»(int value) {
@@ -84,7 +86,7 @@ class EnumTemplate extends BaseTemplate {
              * @return corresponding «enums.name» item
              */
             public static «enums.name» forValue(int valueArg) {
-                return valueMap.get(valueArg);
+                return VALUE_MAP.get(valueArg);
             }
         }
     '''
