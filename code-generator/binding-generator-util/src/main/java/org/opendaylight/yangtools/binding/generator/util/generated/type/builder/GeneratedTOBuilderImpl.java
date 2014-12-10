@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTO
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.util.LazyCollections;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<GeneratedTOBuilder> implements GeneratedTOBuilder {
 
@@ -30,6 +31,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
     private boolean isTypedef = false;
     private boolean isUnionType = false;
     private boolean isUnionTypeBuilder = false;
+    private TypeDefinition baseType = null;
     private Restrictions restrictions;
     private GeneratedPropertyBuilder SUID;
     private String reference;
@@ -141,6 +143,11 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
     }
 
     @Override
+    public void setBaseType(final TypeDefinition typeDef) {
+        this.baseType = typeDef;
+    }
+
+    @Override
     public void setIsUnion(final boolean isUnion) {
         this.isUnionType = isUnion;
     }
@@ -178,6 +185,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         private final List<GeneratedProperty> stringProperties;
         private final GeneratedTransferObject extendsType;
         private final boolean isTypedef;
+        private final TypeDefinition baseType;
         private final boolean isUnionType;
         private final boolean isUnionTypeBuilder;
         private final Restrictions restrictions;
@@ -198,6 +206,7 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
             this.stringProperties = toUnmodifiableProperties(builder.toStringProperties);
 
             this.isTypedef = builder.isTypedef;
+            this.baseType = builder.baseType;
             this.isUnionType = builder.isUnionType;
             this.isUnionTypeBuilder = builder.isUnionTypeBuilder;
             this.restrictions = builder.restrictions;
@@ -216,6 +225,11 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         @Override
         public boolean isTypedef() {
             return isTypedef;
+        }
+
+        @Override
+        public TypeDefinition getBaseType() {
+            return baseType;
         }
 
         @Override
