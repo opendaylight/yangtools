@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.sal.binding.generator.impl
 
 import com.google.common.base.Joiner
+import com.google.common.base.Supplier
 import java.io.File
 import java.security.ProtectionDomain
 import java.util.AbstractMap.SimpleEntry
@@ -26,7 +27,7 @@ import javassist.ClassPool
 import javassist.CtClass
 import javassist.CtField
 import javassist.CtMethod
-import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil
+import org.eclipse.xtend.lib.Property
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl
 import org.opendaylight.yangtools.binding.generator.util.Types
 import org.opendaylight.yangtools.sal.binding.generator.util.CodeGenerationException
@@ -114,7 +115,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
             val typeSpec = typeSpecBuilder.toInstance();
             val newret = generateTransformerFor(inputType, typeSpec, node);
             listener.onClassProcessed(inputType);
-            return newret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
+            return newret
         ]
     }
 
@@ -136,7 +137,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
             val typeSpec = typeSpecBuilder.toInstance();
             val newret = generateTransformerFor(inputType, typeSpec, node);
             listener.onClassProcessed(inputType);
-            return newret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
+            return newret
         ]
     }
 
@@ -154,7 +155,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
             //mappingForNodes(node.childNodes, typeSpec.allProperties, bindingId)
             val newret = generateAugmentationTransformerFor(inputType, typeSpec, node);
             listener.onClassProcessed(inputType);
-            return newret as Class<? extends BindingCodec<Map<QName,Object>, Object>>;
+            return newret
         ]
     }
 
@@ -169,7 +170,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
             val typeSpecBuilder = getDefinition(ref)
             val typeSpec = typeSpecBuilder.toInstance();
             val newret = generateCaseCodec(inputType, typeSpec, node);
-            return newret as Class<? extends BindingCodec<Object, Object>>;
+            return newret
         ]
     }
 
@@ -195,8 +196,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         if (cl === null) {
             cl = Thread.currentThread.contextClassLoader
         }
-        ClassLoaderUtils.withClassLoader(cl,
-            [ |
+        val Supplier<?> sup = [ |
                 if (!(node instanceof DataNodeContainer)) {
                     return null
                 }
@@ -223,10 +223,11 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                 if (node instanceof DataNodeContainer) {
                     mappingForNodes((node as DataNodeContainer).childNodes, properties, parent)
                 } else if (node instanceof ChoiceNode) {
-                    mappingForNodes((node as ChoiceNode).cases, properties, parent)
+                    mappingForNodes(node.cases, properties, parent)
                 }
                 return null;
-            ])
+            ]
+        ClassLoaderUtils.withClassLoader(cl, sup)
     }
 
     private def void mappingForNodes(Collection<? extends DataSchemaNode> childNodes, Map<String, Type> properties,
@@ -1178,7 +1179,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
                 ]
                 method(Object, "fromDomValue", Object) [
                     modifiers = PUBLIC + FINAL + STATIC
-                    val sortedBits = IterableExtensions.sort(typeDef.bits, [o1, o2|o1.propertyName.compareTo(o2.propertyName)])
+                    val sortedBits = IterableExtensions.sortWith(typeDef.bits, [o1, o2|o1.propertyName.compareTo(o2.propertyName)])
                     val body = '''
                         {
                             //System.out.println("«inputType.simpleName»#fromDomValue: "+$1);
@@ -1298,7 +1299,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
     private def dispatch Class<?> generateValueTransformer(Class<?> inputType, Enumeration typeSpec, TypeDefinition<?> type) {
         var EnumerationType enumSchemaType
         if (type instanceof EnumerationType) {
-            enumSchemaType = type as EnumerationType
+            enumSchemaType = type
         } else {
             val typeRef = new ReferencedTypeImpl(typeSpec.packageName, typeSpec.name);
             val schema = getSchemaNode(typeRef) as ExtendedType;
