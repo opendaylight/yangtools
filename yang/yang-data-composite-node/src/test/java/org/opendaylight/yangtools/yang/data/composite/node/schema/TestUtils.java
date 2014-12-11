@@ -33,8 +33,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
 import org.opendaylight.yangtools.yang.data.impl.NodeFactory;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
@@ -196,14 +196,14 @@ public class TestUtils {
                         Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("lf21"))
                                 .withValue("value in cont2/lf21").build()).build());
 
-        CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> lst1 = Builders.unkeyedListBuilder().withNodeIdentifier(
+        CollectionNodeBuilder<MapEntryNode, MapNode> lst1 = Builders.mapBuilder().withNodeIdentifier(
                 getNodeIdentifier("lst1"));
-        lst1.withChild(Builders.unkeyedListEntryBuilder()
-                .withNodeIdentifier(getNodeIdentifier("lst1"))
+        lst1.withChild(Builders.mapEntryBuilder()
+                .withNodeIdentifier(getNodeIdentifierPredicate("lst1", new HashMap<String, Object>()))
                 .withValue(Collections.<DataContainerChild<? extends PathArgument, ?>> emptyList()).build());
         containerBuilder.withChild(lst1.build());
 
-        CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> lst2 = Builders.unkeyedListBuilder().withNodeIdentifier(
+        CollectionNodeBuilder<MapEntryNode, MapNode> lst2 = Builders.mapBuilder().withNodeIdentifier(
                 getNodeIdentifier("lst2"));
 
         Map<String, Object> lst2_1 = new HashMap<>();
@@ -212,7 +212,7 @@ public class TestUtils {
         List<DataContainerChild<? extends PathArgument, ?>> lst2_1_values = new ArrayList<>();
         lst2_1_values.add(Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("lf21"))
                 .withValue("some value21").build());
-        lst2.withChild(Builders.unkeyedListEntryBuilder().withNodeIdentifier(getNodeIdentifier("lst2"))
+        lst2.withChild(Builders.mapEntryBuilder().withNodeIdentifier(getNodeIdentifierPredicate("lst2", lst2_1))
                 .withValue(lst2_1_values).build());
 
         Map<String, Object> lst2_2 = new HashMap<>();
@@ -220,7 +220,7 @@ public class TestUtils {
         List<DataContainerChild<? extends PathArgument, ?>> lst2_2_values = new ArrayList<>();
         lst2_2_values.add(Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("lf22"))
                 .withValue("some value22").build());
-        lst2.withChild(Builders.unkeyedListEntryBuilder().withNodeIdentifier(getNodeIdentifier("lst2"))
+        lst2.withChild(Builders.mapEntryBuilder().withNodeIdentifier(getNodeIdentifierPredicate("lst2", lst2_2))
                 .withValue(lst2_2_values).build());
         containerBuilder.withChild(lst2.build());
 

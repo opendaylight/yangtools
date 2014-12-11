@@ -22,7 +22,7 @@ public final class MapNodeCnSnParser extends MapNodeBaseParser<Node<?>> {
     }
 
     @Override
-    protected ToNormalizedNodeParser<Node<?>, MapEntryNode, ListSchemaNode> getListEntryNodeParser() {
+    protected ToNormalizedNodeParser<Node<?>, MapEntryNode, ListSchemaNode> getMapEntryNodeParser() {
         return mapEntryNodeCnSnParser;
     }
 

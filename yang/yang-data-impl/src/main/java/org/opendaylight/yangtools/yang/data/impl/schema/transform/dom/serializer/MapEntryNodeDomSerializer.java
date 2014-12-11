@@ -7,13 +7,40 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.serializer;
 
+import java.util.Collections;
+
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
+import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer.MapEntryNodeBaseSerializer;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer.NodeSerializerDispatcher;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-final class MapEntryNodeDomSerializer extends ListEntryNodeDomSerializer<MapEntryNode> {
+import com.google.common.base.Preconditions;
+
+final class MapEntryNodeDomSerializer extends MapEntryNodeBaseSerializer<Element> {
+    private final NodeSerializerDispatcher<Element> dispatcher;
+    private final Document doc;
+
     MapEntryNodeDomSerializer(final Document doc, final NodeSerializerDispatcher<Element> dispatcher) {
-        super(doc, dispatcher);
+        this.doc = Preconditions.checkNotNull(doc);
+        this.dispatcher = Preconditions.checkNotNull(dispatcher);
+    }
+
+    @Override
+    public Iterable<Element> serialize(ListSchemaNode schema, MapEntryNode node) {
+        Element itemEl = XmlDocumentUtils.createElementFor(doc, node);
+
+        for (Element element : super.serialize(schema, node)) {
+            itemEl.appendChild(element);
+        }
+
+        return Collections.singletonList(itemEl);
+    }
+
+    @Override
+    protected NodeSerializerDispatcher<Element> getNodeDispatcher() {
+        return dispatcher;
     }
 }
