@@ -7,23 +7,37 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
+import java.util.Map;
+
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.MapEntryNodeBaseParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.NodeParserDispatcher;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
 import org.w3c.dom.Element;
 
-final class MapEntryNodeDomParser extends ListEntryNodeDomParser<MapEntryNode> {
+import com.google.common.base.Preconditions;
+import com.google.common.collect.LinkedListMultimap;
+
+final class MapEntryNodeDomParser extends MapEntryNodeBaseParser<Element> {
+
+    private final NodeParserDispatcher<Element> dispatcher;
 
     MapEntryNodeDomParser(final NodeParserDispatcher<Element> dispatcher) {
-        super(dispatcher);
+        this.dispatcher = Preconditions.checkNotNull(dispatcher);
     }
 
     @Override
-    protected final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> getBuilder(
-            ListSchemaNode schema) {
-        return Builders.mapEntryBuilder(schema);
+    protected LinkedListMultimap<QName, Element> mapChildElements(Iterable<Element> elements) {
+        return DomUtils.mapChildElementsForSingletonNode(elements.iterator().next());
+    }
+
+    @Override
+    protected NodeParserDispatcher<Element> getDispatcher() {
+        return dispatcher;
+    }
+
+    @Override
+    protected Map<QName, String> getAttributes(Element element) {
+        return DomUtils.toAttributes(element.getAttributes());
     }
 }

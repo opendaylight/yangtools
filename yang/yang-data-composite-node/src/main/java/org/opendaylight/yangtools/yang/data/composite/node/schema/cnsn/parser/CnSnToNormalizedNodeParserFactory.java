@@ -16,9 +16,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParserFactory;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.NodeParserDispatcher;
@@ -38,12 +35,9 @@ public class CnSnToNormalizedNodeParserFactory implements ToNormalizedNodeParser
     private final LeafSetNodeCnSnParser leafSetNodeCnSnParser;
     private final MapNodeCnSnParser mapNodeCnSnParser;
     private final MapEntryNodeCnSnParser mapEntryNodeCnSnParser;
-    private final UnkeyedListNodeCnSnParser unkeyedListNodeCnSnParser;
-    private final UnkeyedListEntryNodeCnSnParser unkeyedListEntryNodeCnSnParser;
     private final ChoiceNodeCnSnParser choiceNodeCnSnParser;
     private final AugmentationNodeCnSnParser augmentationNodeCnSnParser;
     private final AnyXmlNodeCnSnParser anyXmlNodeCnSnParser;
-    private final OrderedListNodeCnSnParser orderedListNodeCnSnParser;
 
     private CnSnToNormalizedNodeParserFactory() {
         leafNodeCnSnParser = new LeafNodeCnSnParser();
@@ -59,9 +53,6 @@ public class CnSnToNormalizedNodeParserFactory implements ToNormalizedNodeParser
         containerNodeCnSnParser = new ContainerNodeCnSnParser(dispatcher);
         mapEntryNodeCnSnParser = new MapEntryNodeCnSnParser(dispatcher);
         mapNodeCnSnParser = new MapNodeCnSnParser(mapEntryNodeCnSnParser);
-        orderedListNodeCnSnParser = new OrderedListNodeCnSnParser(mapEntryNodeCnSnParser);
-        unkeyedListEntryNodeCnSnParser = new UnkeyedListEntryNodeCnSnParser(dispatcher);
-        unkeyedListNodeCnSnParser = new UnkeyedListNodeCnSnParser(unkeyedListEntryNodeCnSnParser);
         choiceNodeCnSnParser = new ChoiceNodeCnSnParser(dispatcher);
         augmentationNodeCnSnParser = new AugmentationNodeCnSnParser(dispatcher);
 
@@ -115,20 +106,4 @@ public class CnSnToNormalizedNodeParserFactory implements ToNormalizedNodeParser
     public ToNormalizedNodeParser<Node<?>, AnyXmlNode, AnyXmlSchemaNode> getAnyXmlNodeParser() {
         return anyXmlNodeCnSnParser;
     }
-
-    @Override
-    public ToNormalizedNodeParser<Node<?>, UnkeyedListNode, ListSchemaNode> getUnkeyedListNodeParser() {
-        return unkeyedListNodeCnSnParser;
-    }
-
-    @Override
-    public ToNormalizedNodeParser<Node<?>, UnkeyedListEntryNode, ListSchemaNode> getUnkeyedListEntryNodeParser() {
-        return unkeyedListEntryNodeCnSnParser;
-    }
-
-    @Override
-    public ToNormalizedNodeParser<Node<?>, OrderedMapNode, ListSchemaNode> getOrderedListNodeParser() {
-        return orderedListNodeCnSnParser;
-    }
-
 }

@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -31,14 +30,13 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  *            type of resulting/serialized element from NormalizedNode
  */
 public interface FromNormalizedNodeSerializerFactory<E> {
-    FromNormalizedNodeSerializer<E, AugmentationNode, AugmentationSchema> getAugmentationNodeSerializer();
-    FromNormalizedNodeSerializer<E, ChoiceNode, org.opendaylight.yangtools.yang.model.api.ChoiceNode> getChoiceNodeSerializer();
-    FromNormalizedNodeSerializer<E, ContainerNode, ContainerSchemaNode> getContainerNodeSerializer();
-    FromNormalizedNodeSerializer<E, LeafNode<?>, LeafSchemaNode> getLeafNodeSerializer();
-    FromNormalizedNodeSerializer<E, LeafSetEntryNode<?>, LeafListSchemaNode> getLeafSetEntryNodeSerializer();
-    FromNormalizedNodeSerializer<E, LeafSetNode<?>, LeafListSchemaNode> getLeafSetNodeSerializer();
-    FromNormalizedNodeSerializer<E, MapEntryNode, ListSchemaNode> getMapEntryNodeSerializer();
-    FromNormalizedNodeSerializer<E, MapNode, ListSchemaNode> getMapNodeSerializer();
-    FromNormalizedNodeSerializer<E, UnkeyedListNode, ListSchemaNode> getUnkeyedListNodeSerializer();
-    FromNormalizedNodeSerializer<E, AnyXmlNode, AnyXmlSchemaNode> getAnyXmlNodeSerializer();
+	FromNormalizedNodeSerializer<E, AugmentationNode, AugmentationSchema> getAugmentationNodeSerializer();
+	FromNormalizedNodeSerializer<E, ChoiceNode, org.opendaylight.yangtools.yang.model.api.ChoiceNode> getChoiceNodeSerializer();
+	FromNormalizedNodeSerializer<E, ContainerNode, ContainerSchemaNode> getContainerNodeSerializer();
+	FromNormalizedNodeSerializer<E, LeafNode<?>, LeafSchemaNode> getLeafNodeSerializer();
+	FromNormalizedNodeSerializer<E, LeafSetEntryNode<?>, LeafListSchemaNode> getLeafSetEntryNodeSerializer();
+	FromNormalizedNodeSerializer<E, LeafSetNode<?>, LeafListSchemaNode> getLeafSetNodeSerializer();
+	FromNormalizedNodeSerializer<E, MapEntryNode, ListSchemaNode> getMapEntryNodeSerializer();
+	FromNormalizedNodeSerializer<E, MapNode, ListSchemaNode> getMapNodeSerializer();
+	FromNormalizedNodeSerializer<E, AnyXmlNode, AnyXmlSchemaNode> getAnyXmlNodeSerializer();
 }

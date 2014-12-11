@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.FromNormalizedNodeSerializer;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.FromNormalizedNodeSerializerFactory;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer.NodeSerializerDispatcher;
@@ -38,8 +37,6 @@ public final class CnSnFromNormalizedNodeSerializerFactory implements FromNormal
     private final LeafSetEntryNodeCnSnSerializer leafSetEntryNodeSerializer;
     private final MapEntryNodeCnSnSerializer mapEntryNodeSerializer;
     private final AnyXmlNodeCnSnSerializer anyXmlNodeSerializer;
-    private final UnkeyedListNodeCnSnSerializer unkeyedListNodeSerializer;
-    private final UnkeyedListEntryNodeCnSnSerializer unkeyedListEntryNodeSerializer;
 
     private CnSnFromNormalizedNodeSerializerFactory() {
         final NodeSerializerDispatcher.BaseNodeSerializerDispatcher<Node<?>> dispatcher = new NodeSerializerDispatcher.BaseNodeSerializerDispatcher<Node<?>>(
@@ -58,9 +55,6 @@ public final class CnSnFromNormalizedNodeSerializerFactory implements FromNormal
 
         mapEntryNodeSerializer = new MapEntryNodeCnSnSerializer(dispatcher);
         mapNodeSerializer = new MapNodeCnSnSerializer(mapEntryNodeSerializer);
-
-        unkeyedListEntryNodeSerializer = new UnkeyedListEntryNodeCnSnSerializer(dispatcher);
-        unkeyedListNodeSerializer = new UnkeyedListNodeCnSnSerializer(unkeyedListEntryNodeSerializer);
     }
 
 
@@ -113,10 +107,5 @@ public final class CnSnFromNormalizedNodeSerializerFactory implements FromNormal
     @Override
     public FromNormalizedNodeSerializer<Node<?>, AnyXmlNode, AnyXmlSchemaNode> getAnyXmlNodeSerializer() {
         return anyXmlNodeSerializer;
-    }
-
-    @Override
-    public FromNormalizedNodeSerializer<Node<?>, UnkeyedListNode, ListSchemaNode> getUnkeyedListNodeSerializer() {
-        return unkeyedListNodeSerializer;
     }
 }
