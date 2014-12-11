@@ -11,6 +11,9 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.concepts.Identifiable;
@@ -19,9 +22,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Node Modification Node and Tree
@@ -60,7 +60,7 @@ final class ModifiedNode implements StoreTreeNode<ModifiedNode>, Identifiable<Pa
     private Optional<TreeNode> snapshotCache;
     private NormalizedNode<?, ?> value;
 
-    private ModifiedNode(final PathArgument identifier, final Optional<TreeNode> original, boolean isOrdered) {
+    private ModifiedNode(final PathArgument identifier, final Optional<TreeNode> original, final boolean isOrdered) {
         this.identifier = identifier;
         this.original = original;
 
@@ -130,7 +130,7 @@ final class ModifiedNode implements StoreTreeNode<ModifiedNode>, Identifiable<Pa
      * @return {@link org.opendaylight.controller.md.sal.dom.store.impl.tree.data.ModifiedNode} for specified child, with {@link #getOriginal()}
      *         containing child metadata if child was present in original data.
      */
-    public ModifiedNode modifyChild(final PathArgument child, boolean isOrdered) {
+    public ModifiedNode modifyChild(final PathArgument child, final boolean isOrdered) {
         clearSnapshot();
         if (modificationType == ModificationType.UNMODIFIED) {
             updateModificationType(ModificationType.SUBTREE_MODIFIED);
@@ -221,10 +221,28 @@ final class ModifiedNode implements StoreTreeNode<ModifiedNode>, Identifiable<Pa
         this.value = data;
     }
 
+    /**
+     * Seal the modification node and prune any children which has not been
+     * modified.
+     */
     void seal() {
         clearSnapshot();
-        for (ModifiedNode child : children.values()) {
+
+        // Walk all child nodes and remove any children which have not
+        // been modified.
+        final Iterator<ModifiedNode> it = children.values().iterator();
+        while (it.hasNext()) {
+            final ModifiedNode child = it.next();
             child.seal();
+
+            if (child.modificationType == ModificationType.UNMODIFIED) {
+                it.remove();
+            }
+        }
+
+        // A SUBTREE_MODIFIED node without any children is a no-op
+        if (modificationType == ModificationType.SUBTREE_MODIFIED && children.isEmpty()) {
+            updateModificationType(ModificationType.UNMODIFIED);
         }
     }
 
@@ -252,7 +270,7 @@ final class ModifiedNode implements StoreTreeNode<ModifiedNode>, Identifiable<Pa
                 + modificationType + ", childModification=" + children + "]";
     }
 
-    public static ModifiedNode createUnmodified(final TreeNode metadataTree, boolean isOrdered) {
+    public static ModifiedNode createUnmodified(final TreeNode metadataTree, final boolean isOrdered) {
         return new ModifiedNode(metadataTree.getIdentifier(), Optional.of(metadataTree), isOrdered);
     }
 }
