@@ -7,8 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
+import com.google.gson.stream.JsonWriter;
+import java.io.IOException;
 import org.opendaylight.yangtools.concepts.Codec;
 
 interface JSONCodec<T> extends Codec<String, T> {
+    // FIXME: Unused, remove once we are sure we do not need this anymore.
     boolean needQuotes();
+
+    void serializeToWriter(JsonWriter writer, T value) throws IOException;
 }

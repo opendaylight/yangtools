@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.base.Preconditions;
-
+import com.google.gson.stream.JsonWriter;
+import java.io.IOException;
 import java.net.URI;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringIdentityrefCodec;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -37,5 +37,10 @@ final class JSONStringIdentityrefCodec extends AbstractModuleStringIdentityrefCo
     @Override
     public boolean needQuotes() {
         return true;
+    }
+
+    @Override
+    public void serializeToWriter(JsonWriter writer, QName value) throws IOException {
+        writer.value(serialize(value));
     }
 }

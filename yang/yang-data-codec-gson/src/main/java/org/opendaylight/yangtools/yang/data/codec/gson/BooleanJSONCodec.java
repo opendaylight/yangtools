@@ -9,26 +9,26 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
-import org.opendaylight.yangtools.yang.data.api.codec.LeafrefCodec;
+import org.opendaylight.yangtools.concepts.Codec;
 
-final class JSONLeafrefCodec implements JSONCodec<Object>, LeafrefCodec<String> {
-    @Override
-    public Object deserialize(final String input) {
-        return input;
-    }
-
-    @Override
-    public String serialize(final Object input) {
-        return String.valueOf(input);
+/**
+ * A {@link JSONCodec} which does not need double quotes in output representation.
+ *
+ * @param <T> Deserialized value type
+ */
+final class BooleanJSONCodec extends AbstractJSONCodec<Boolean> {
+    BooleanJSONCodec(final Codec<String, Boolean> codec) {
+        super(codec);
     }
 
     @Override
     public boolean needQuotes() {
-        return true;
+        return false;
     }
 
+
     @Override
-    public void serializeToWriter(JsonWriter writer, Object value) throws IOException {
-        writer.value(serialize(value));
-    }
+    public void serializeToWriter(JsonWriter writer, Boolean value) throws IOException {
+        writer.value(value);
+    };
 }

@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.base.Preconditions;
-
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.data.api.codec.BooleanCodec;
 import org.opendaylight.yangtools.yang.data.api.codec.DecimalCodec;
@@ -39,13 +38,15 @@ abstract class AbstractJSONCodec<T> implements JSONCodec<T> {
      * @param codec underlying codec
      * @return A JSONCodec instance
      */
-    public static <T> JSONCodec<T> create(final Codec<String, T> codec) {
-        if (codec instanceof BooleanCodec || codec instanceof DecimalCodec ||
+    public static JSONCodec<?> create(final Codec<String, ?> codec) {
+        if (codec instanceof BooleanCodec ) {
+            return new BooleanJSONCodec((BooleanCodec<String>) codec);
+        } else if (codec instanceof DecimalCodec ||
                 codec instanceof Int8Codec || codec instanceof Int16Codec ||
                 codec instanceof Int32Codec || codec instanceof Int64Codec ||
                 codec instanceof Uint8Codec || codec instanceof Uint16Codec ||
                 codec instanceof Uint32Codec || codec instanceof Uint64Codec) {
-            return new UnquotedJSONCodec<>(codec);
+            return new NumberJSONCodec(codec);
         }
 
         return new QuotedJSONCodec<>(codec);

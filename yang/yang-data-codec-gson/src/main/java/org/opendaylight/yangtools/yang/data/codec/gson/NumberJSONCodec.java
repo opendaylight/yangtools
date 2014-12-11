@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
+import com.google.gson.stream.JsonWriter;
+import java.io.IOException;
 import org.opendaylight.yangtools.concepts.Codec;
 
 /**
@@ -14,13 +16,18 @@ import org.opendaylight.yangtools.concepts.Codec;
  *
  * @param <T> Deserialized value type
  */
-final class UnquotedJSONCodec<T> extends AbstractJSONCodec<T> {
-    UnquotedJSONCodec(final Codec<String, T> codec) {
+final class NumberJSONCodec<T extends Number> extends AbstractJSONCodec<T > {
+    NumberJSONCodec(final Codec<String, T> codec) {
         super(codec);
     }
 
     @Override
     public boolean needQuotes() {
         return false;
+    }
+
+    @Override
+    public void serializeToWriter(JsonWriter writer, T value) throws IOException {
+        writer.value(value);
     }
 }

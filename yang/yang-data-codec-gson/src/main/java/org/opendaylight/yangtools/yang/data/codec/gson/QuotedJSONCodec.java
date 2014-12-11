@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
+import com.google.gson.stream.JsonWriter;
+import java.io.IOException;
 import org.opendaylight.yangtools.concepts.Codec;
 
 /**
@@ -22,5 +24,10 @@ final class QuotedJSONCodec<T> extends AbstractJSONCodec<T> {
     @Override
     public boolean needQuotes() {
         return true;
+    }
+
+    @Override
+    public void serializeToWriter(JsonWriter writer, T value) throws IOException {
+        writer.value(serialize(value));
     }
 }
