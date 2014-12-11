@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_56c4983f",
+        "filename": "code-generator/binding-type-provider/src/main/java/org/opendaylight/yangtools/sal/binding/yang/types/TypeProviderImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 733,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-12-11T09:16:38Z",
+      "side": 1,
+      "message": "returned typeMap can be null therefore it shuld be\nif (typeMap !\u003d null) {\n\tif (typeMap.isEmpty()) {\n            typeMap \u003d new HashMap\u003c\u003e();\t    \n        }\n        modulesByDate.put(moduleRevision, typeMap);\t        \n        typeMap.put(typedefName, returnType);\n}\nreturn returnType;",
+      "revId": "d8f890853b5e4ed8d21a5b9b1e8d2ccdc14f6023",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
