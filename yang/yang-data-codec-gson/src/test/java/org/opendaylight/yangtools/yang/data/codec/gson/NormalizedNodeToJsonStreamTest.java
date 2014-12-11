@@ -382,11 +382,11 @@ public class NormalizedNodeToJsonStreamTest {
 
     private String normalizedNodeToJsonStreamTransformation(final Writer writer,
             final NormalizedNode<?, ?> inputStructure) throws IOException {
-        writer.write("{\n");
+
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.create(schemaContext, writer, 2);
         final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
         nodeWriter.write(inputStructure);
-        writer.write("\n}");
+
         nodeWriter.close();
         return writer.toString();
     }

@@ -7,8 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import java.io.Writer;
+import java.io.IOException;
 import java.net.URI;
+
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+
+import com.google.gson.stream.JsonWriter;
 
 /**
  * The root node of a particular {@link JSONNormalizedNodeStreamWriter} instance.
@@ -20,7 +24,12 @@ final class JSONStreamWriterRootContext extends JSONStreamWriterURIContext {
     }
 
     @Override
-    protected void emitEnd(final Writer writer) {
-        throw new IllegalArgumentException("Top-level node reached");
+    protected void emitStart(final SchemaContext schema, final JsonWriter writer) throws IOException {
+        writer.beginObject();
+    }
+
+    @Override
+    protected void emitEnd(final JsonWriter writer) throws IOException {
+        writer.endObject();
     }
 }
