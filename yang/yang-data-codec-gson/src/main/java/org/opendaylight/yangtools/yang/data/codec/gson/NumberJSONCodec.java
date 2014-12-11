@@ -11,10 +11,20 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import org.opendaylight.yangtools.concepts.Codec;
 
-interface JSONCodec<T> extends Codec<String, T> {
-    // FIXME: Unused, remove once we are sure we do not need this anymore.
-    boolean needQuotes();
+/**
+ * A {@link JSONCodec} which does not need double quotes in output representation.
+ *
+ * @param <T> Deserialized value type
+ */
+final class NumberJSONCodec<T extends Number> extends AbstractJSONCodec<T > {
+    NumberJSONCodec(final Codec<String, T> codec) {
+        super(codec);
+    }
 
+    @Override
+    public boolean needQuotes() {
+        return false;
+    }
 
     /**
      * Serialize specified value with specified JsonWriter.
@@ -22,5 +32,8 @@ interface JSONCodec<T> extends Codec<String, T> {
      * @param writer JsonWriter
      * @param value
      */
-    void serializeToWriter(JsonWriter writer, T value) throws IOException;
+    @Override
+    public void serializeToWriter(JsonWriter writer, T value) throws IOException {
+        writer.value(value);
+    }
 }

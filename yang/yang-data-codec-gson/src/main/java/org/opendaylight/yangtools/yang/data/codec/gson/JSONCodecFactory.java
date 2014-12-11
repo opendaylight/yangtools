@@ -12,7 +12,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-
+import com.google.gson.stream.JsonWriter;
+import java.io.IOException;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -44,6 +45,12 @@ public final class JSONCodecFactory {
         @Override
         public boolean needQuotes() {
             return false;
+        }
+
+        @Override
+        public void serializeToWriter(JsonWriter writer, Object value) throws IOException {
+            // NOOP since codec is unkwown.
+
         }
     };
 
@@ -78,7 +85,7 @@ public final class JSONCodecFactory {
                 return NULL_CODEC;
             }
 
-            return AbstractJSONCodec.create(codec);
+            return (JSONCodec<Object>) AbstractJSONCodec.create(codec);
         }
     });
 
