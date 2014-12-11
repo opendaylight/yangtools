@@ -51,21 +51,23 @@ final class OperationWithModification {
     public static OperationWithModification from(final ModificationApplyOperation operation,
             final ModifiedNode modification) {
         return new OperationWithModification(operation, modification);
-
     }
 
     public void merge(final NormalizedNode<?, ?> data) {
         modification.merge(data);
         applyOperation.verifyStructure(modification);
-
     }
 
     public OperationWithModification forChild(final PathArgument childId) {
         ModificationApplyOperation childOp = applyOperation.getChild(childId).get();
-        boolean isOrdered = true;
+
+        final boolean isOrdered;
         if (childOp instanceof SchemaAwareApplyOperation) {
             isOrdered = ((SchemaAwareApplyOperation) childOp).isOrdered();
+        } else {
+            isOrdered = true;
         }
+
         ModifiedNode childMod = modification.modifyChild(childId, isOrdered);
 
         return from(childOp,childMod);
