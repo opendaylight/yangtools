@@ -8,10 +8,14 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.base.Preconditions;
+import com.google.gson.stream.JsonWriter;
+
 import java.io.IOException;
-import java.io.Writer;
+import java.io.StringWriter;
 import java.net.URI;
+
 import javax.annotation.Nonnull;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -26,7 +30,6 @@ abstract class JSONStreamWriterContext {
     private final boolean mandatory;
     private final int depth;
     private boolean emittedMyself = false;
-    private boolean haveChild = false;
 
     /**
      * Construct a new context.
@@ -55,21 +58,21 @@ abstract class JSONStreamWriterContext {
      * @param qname Namespace/name tuple
      * @throws IOException when the writer reports it
      */
-    final void writeChildJsonIdentifier(final SchemaContext schema, final Writer writer, final QName qname) throws IOException {
-        writer.append('"');
+    final void writeChildJsonIdentifier(final SchemaContext schema, final JsonWriter writer, final QName qname) throws IOException {
 
+        StringWriter strWriter = new StringWriter();
         // Prepend module name if namespaces do not match
         final URI ns = qname.getNamespace();
         if (!ns.equals(getNamespace())) {
             final Module module = schema.findModuleByNamespaceAndRevision(ns, null);
             Preconditions.checkArgument(module != null, "Could not find module for namespace {}", ns);
 
-            writer.append(module.getName());
-            writer.append(':');
+            strWriter.append(module.getName());
+            strWriter.append(':');
         }
+        strWriter.append(qname.getLocalName());
 
-        writer.append(qname.getLocalName());
-        writer.append("\":");
+        writer.name(strWriter.toString());
     }
 
     /**
@@ -81,7 +84,7 @@ abstract class JSONStreamWriterContext {
      * @param qname Namespace/name tuple
      * @throws IOException when the writer reports it
      */
-    protected final void writeMyJsonIdentifier(final SchemaContext schema, final Writer writer, final QName qname) throws IOException {
+    protected final void writeMyJsonIdentifier(final SchemaContext schema, final JsonWriter writer, final QName qname) throws IOException {
         parent.writeChildJsonIdentifier(schema, writer, qname);
     }
 
@@ -99,7 +102,7 @@ abstract class JSONStreamWriterContext {
      * @param writer Output writer
      * @throws IOException
      */
-    protected abstract void emitStart(final SchemaContext schema, final Writer writer) throws IOException;
+    protected abstract void emitStart(final SchemaContext schema, final JsonWriter writer) throws IOException;
 
     /**
      * Emit the end of an element.
@@ -108,12 +111,12 @@ abstract class JSONStreamWriterContext {
      * @param writer Output writer
      * @throws IOException
      */
-    protected abstract void emitEnd(final Writer writer) throws IOException;
+    protected abstract void emitEnd(final JsonWriter writer) throws IOException;
 
-    private final void emitMyself(final SchemaContext schema, final Writer writer, final String indent) throws IOException {
+    private final void emitMyself(final SchemaContext schema, final JsonWriter writer) throws IOException {
         if (!emittedMyself) {
             if (parent != null) {
-                parent.emittingChild(schema, writer, indent);
+                parent.emittingChild(schema, writer);
             }
 
             emitStart(schema, writer);
@@ -128,23 +131,10 @@ abstract class JSONStreamWriterContext {
      *
      * @param schema Schema context
      * @param writer Output writer
-     * @param indent Indentation string
      * @throws IOException when writer reports it
      */
-    final void emittingChild(final SchemaContext schema, final Writer writer, final String indent) throws IOException {
-        emitMyself(schema, writer, indent);
-        if (haveChild) {
-            writer.append(',');
-        }
-
-        if (indent != null) {
-            writer.append('\n');
-
-            for (int i = 0; i < depth; i++) {
-                writer.append(indent);
-            }
-        }
-        haveChild = true;
+    final void emittingChild(final SchemaContext schema, final JsonWriter writer) throws IOException {
+        emitMyself(schema, writer);
     }
 
     /**
@@ -153,14 +143,13 @@ abstract class JSONStreamWriterContext {
      *
      * @param schema Schema context
      * @param writer Output writer
-     * @param indent Indentation string
      * @return Parent node context
      * @throws IOException when writer reports it
      * @throws IllegalArgumentException if this node cannot be ended (e.g. root)
      */
-    final JSONStreamWriterContext endNode(final SchemaContext schema, final Writer writer, final String indent) throws IOException {
+    final JSONStreamWriterContext endNode(final SchemaContext schema, final JsonWriter writer) throws IOException {
         if (!emittedMyself && mandatory) {
-            emitMyself(schema, writer, indent);
+            emitMyself(schema, writer);
         }
 
         if (emittedMyself) {

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.gson.stream.JsonWriter;
@@ -41,27 +40,22 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      */
     private static final boolean DEFAULT_EMIT_EMPTY_CONTAINERS = true;
 
-    /**
-     * Matcher used to check if a string needs to be escaped.
-     */
-    private static final CharMatcher JSON_ILLEGAL_STRING_CHARACTERS = CharMatcher.anyOf("\\\"\n\r");
-
     private final SchemaTracker tracker;
     private final JSONCodecFactory codecs;
-    private final Writer writer;
-    private final String indent;
+    private final JsonWriter writer;
     private JSONStreamWriterContext context;
 
     private JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final SchemaPath path,
             final Writer writer, final URI initialNs, final int indentSize) {
-        this.writer = Preconditions.checkNotNull(writer);
+
+        this.writer = new JsonWriter(Preconditions.checkNotNull(writer));
 
         Preconditions.checkArgument(indentSize >= 0, "Indent size must be non-negative");
-        if (indentSize != 0) {
-            indent = Strings.repeat(" ", indentSize);
-        } else {
-            indent = null;
-        }
+        String indent = "";
+        if (indentSize != 0) indent = Strings.repeat(" ", indentSize);
+
+        this.writer.setIndent(indent);
+
         this.codecs = Preconditions.checkNotNull(codecFactory);
         this.tracker = SchemaTracker.create(codecFactory.getSchemaContext(), path);
         this.context = new JSONStreamWriterRootContext(initialNs);
@@ -134,7 +128,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         final LeafSchemaNode schema = tracker.leafNode(name);
         final JSONCodec<Object> codec = codecs.codecFor(schema.getType());
 
-        context.emittingChild(codecs.getSchemaContext(), writer, indent);
+        context.emittingChild(codecs.getSchemaContext(), writer);
         context.writeChildJsonIdentifier(codecs.getSchemaContext(), writer, name.getNodeType());
         writeValue(codec.serialize(value), codec.needQuotes());
     }
@@ -150,7 +144,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         final LeafListSchemaNode schema = tracker.leafSetEntryNode();
         final JSONCodec<Object> codec = codecs.codecFor(schema.getType());
 
-        context.emittingChild(codecs.getSchemaContext(), writer, indent);
+        context.emittingChild(codecs.getSchemaContext(), writer);
         writeValue(codec.serialize(value), codec.needQuotes());
     }
 
@@ -214,7 +208,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         final AnyXmlSchemaNode schema = tracker.anyxmlNode(name);
         // FIXME: should have a codec based on this :)
 
-        context.emittingChild(codecs.getSchemaContext(), writer, indent);
+        context.emittingChild(codecs.getSchemaContext(), writer);
         context.writeChildJsonIdentifier(codecs.getSchemaContext(), writer, name.getNodeType());
         writeValue(String.valueOf(value), true);
     }
@@ -222,34 +216,12 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
     @Override
     public void endNode() throws IOException {
         tracker.endNode();
-        context = context.endNode(codecs.getSchemaContext(), writer, indent);
+        context = context.endNode(codecs.getSchemaContext(), writer);
+        if(context instanceof JSONStreamWriterRootContext) context.emitEnd(writer);
     }
 
     private void writeValue(final String str, final boolean needQuotes) throws IOException {
-        if (needQuotes) {
-            writer.append('"');
-
-            final int needEscape = JSON_ILLEGAL_STRING_CHARACTERS.countIn(str);
-            if (needEscape != 0) {
-                final char[] escaped = new char[str.length() + needEscape];
-                int offset = 0;
-
-                for (int i = 0; i < str.length(); i++) {
-                    final char c = str.charAt(i);
-                    if (JSON_ILLEGAL_STRING_CHARACTERS.matches(c)) {
-                        escaped[offset++] = '\\';
-                    }
-                    escaped[offset++] = c;
-                }
-                writer.write(escaped);
-            } else {
-                writer.append(str);
-            }
-
-            writer.append('"');
-        } else {
-            writer.append(str);
-        }
+        writer.value(str);
     }
 
     @Override
