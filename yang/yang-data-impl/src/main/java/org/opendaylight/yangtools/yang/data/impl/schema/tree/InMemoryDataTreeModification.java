@@ -14,7 +14,6 @@ import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
@@ -71,19 +70,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
     public void merge(final YangInstanceIdentifier path, final NormalizedNode<?, ?> data) {
         checkSealed();
 
-        mergeImpl(resolveModificationFor(path),data);
-    }
-
-    private void mergeImpl(final OperationWithModification op,final NormalizedNode<?,?> data) {
-        if (data instanceof NormalizedNodeContainer<?,?,?>) {
-            @SuppressWarnings({ "rawtypes", "unchecked" })
-            NormalizedNodeContainer<?,?,NormalizedNode<PathArgument, ?>> dataContainer = (NormalizedNodeContainer) data;
-            for(NormalizedNode<PathArgument, ?> child : dataContainer.getValue()) {
-                PathArgument childId = child.getIdentifier();
-                mergeImpl(op.forChild(childId), child);
-            }
-        }
-        op.merge(data);
+        resolveModificationFor(path).merge(data);
     }
 
     @Override
