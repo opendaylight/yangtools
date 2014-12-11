@@ -51,14 +51,7 @@ public interface NodeParserDispatcher<E> {
             } else if (schema instanceof LeafListSchemaNode) {
                 return factory.getLeafSetNodeParser().parse(childNodes, (LeafListSchemaNode) schema);
             } else if (schema instanceof ListSchemaNode) {
-                final ListSchemaNode listSchemaNode = (ListSchemaNode)schema;
-                if (listSchemaNode.isUserOrdered()) {
-                    return factory.getOrderedListNodeParser().parse(childNodes, listSchemaNode);
-                } else if (listSchemaNode.getKeyDefinition().isEmpty()) {
-                    return factory.getUnkeyedListNodeParser().parse(childNodes, listSchemaNode);
-                } else {
-                    return factory.getMapNodeParser().parse(childNodes, listSchemaNode);
-                }
+                return factory.getMapNodeParser().parse(childNodes, (ListSchemaNode) schema);
             } else if (schema instanceof ChoiceNode) {
                 return factory.getChoiceNodeParser().parse(childNodes, (ChoiceNode) schema);
             } else if (schema instanceof AugmentationSchema) {

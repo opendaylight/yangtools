@@ -9,12 +9,11 @@ package org.opendaylight.yangtools.yang.data.composite.node.schema.cnsn.serializ
 
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.FromNormalizedNodeSerializer;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer.ListNodeBaseSerializer;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer.MapNodeBaseSerializer;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-public class MapNodeCnSnSerializer extends ListNodeBaseSerializer<Node<?>, MapNode, MapEntryNode> {
+public class MapNodeCnSnSerializer extends MapNodeBaseSerializer<Node<?>> {
 
     private final FromNormalizedNodeSerializer<Node<?>, MapEntryNode, ListSchemaNode> mapEntrySerializer;
 
@@ -23,7 +22,7 @@ public class MapNodeCnSnSerializer extends ListNodeBaseSerializer<Node<?>, MapNo
     }
 
     @Override
-    protected FromNormalizedNodeSerializer<Node<?>, MapEntryNode, ListSchemaNode> getListEntryNodeSerializer() {
+    protected FromNormalizedNodeSerializer<Node<?>, MapEntryNode, ListSchemaNode> getMapEntryNodeDomSerializer() {
         return mapEntrySerializer;
     }
 }

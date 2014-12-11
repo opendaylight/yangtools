@@ -38,9 +38,9 @@ public class Bug2180Test {
     public void orderedListParseTest() throws DataValidationFailedException, URISyntaxException {
         ContainerSchemaNode topContainerSchemaNode = (ContainerSchemaNode) TestUtils.resolveDataSchemaNode("top", bug2111TestModule);
         ListSchemaNode aceListSchemaNode = (ListSchemaNode) topContainerSchemaNode.getDataChildByName("ordered-list");
-        ToNormalizedNodeParser<Node<?>, OrderedMapNode, ListSchemaNode> orderedListNodeParser =
-                CnSnToNormalizedNodeParserFactory.getInstance().getOrderedListNodeParser();
-        MapNode mapNode = orderedListNodeParser.parse(new ArrayList<Node<?>>(), aceListSchemaNode);
+        ToNormalizedNodeParser<Node<?>, MapNode, ListSchemaNode> mapNodeParser =
+                CnSnToNormalizedNodeParserFactory.getInstance().getMapNodeParser();
+        MapNode mapNode = mapNodeParser.parse(new ArrayList<Node<?>>(), aceListSchemaNode);
         assertTrue(mapNode instanceof OrderedMapNode);
     }
 
