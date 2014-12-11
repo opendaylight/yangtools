@@ -12,6 +12,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import java.util.HashMap;
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -19,7 +20,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 
-import javax.annotation.concurrent.GuardedBy;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -32,6 +32,7 @@ import java.util.Map;
  * This tree is lazily created and populated via {@link #modifyChild(PathArgument)}
  * and {@link StoreMetadataNode} which represents original state {@link #getOriginal()}.
  */
+@NotThreadSafe
 final class ModifiedNode implements StoreTreeNode<ModifiedNode>, Identifiable<PathArgument>, NodeModification {
 
     public static final Predicate<ModifiedNode> IS_TERMINAL_PREDICATE = new Predicate<ModifiedNode>() {
@@ -240,7 +241,6 @@ final class ModifiedNode implements StoreTreeNode<ModifiedNode>, Identifiable<Pa
         return Optional.fromNullable(snapshotCache);
     }
 
-    @GuardedBy("this")
     private void updateModificationType(final ModificationType type) {
         modificationType = type;
         clearSnapshot();
