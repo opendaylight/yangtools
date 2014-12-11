@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.base.Preconditions;
 
-import java.io.Writer;
+
 
 /**
  * A virtual recursion level in {@link JSONNormalizedNodeStreamWriter}, used for nodes
@@ -21,7 +21,7 @@ final class JSONStreamWriterInvisibleContext extends JSONStreamWriterURIContext 
     }
 
     @Override
-    protected void emitEnd(final Writer writer) {
+    protected void emitEnd(final JSONWriter writer) {
         // No-op
     }
 }
