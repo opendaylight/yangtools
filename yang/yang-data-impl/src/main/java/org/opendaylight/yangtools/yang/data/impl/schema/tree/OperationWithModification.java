@@ -25,15 +25,18 @@ final class OperationWithModification {
         this.applyOperation = op;
     }
 
-    public OperationWithModification write(final NormalizedNode<?, ?> value) {
+    void write(final NormalizedNode<?, ?> value) {
         modification.write(value);
         applyOperation.verifyStructure(modification);
-        return this;
     }
 
-    public OperationWithModification delete() {
+    void merge(final NormalizedNode<?, ?> data) {
+        modification.merge(data);
+        applyOperation.verifyStructure(modification);
+    }
+
+    void delete() {
         modification.delete();
-        return this;
     }
 
     public ModifiedNode getModification() {
@@ -51,12 +54,6 @@ final class OperationWithModification {
     public static OperationWithModification from(final ModificationApplyOperation operation,
             final ModifiedNode modification) {
         return new OperationWithModification(operation, modification);
-
-    }
-
-    public void merge(final NormalizedNode<?, ?> data) {
-        modification.merge(data);
-        applyOperation.verifyStructure(modification);
 
     }
 
