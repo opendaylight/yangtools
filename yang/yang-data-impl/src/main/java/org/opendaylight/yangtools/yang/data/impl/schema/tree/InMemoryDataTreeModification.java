@@ -61,10 +61,10 @@ final class InMemoryDataTreeModification implements DataTreeModification {
     }
 
     @Override
-    public void write(final YangInstanceIdentifier path, final NormalizedNode<?, ?> value) {
+    public void write(final YangInstanceIdentifier path, final NormalizedNode<?, ?> data) {
         checkSealed();
 
-        resolveModificationFor(path).write(value);
+        resolveModificationFor(path).write(data);
     }
 
     @Override
