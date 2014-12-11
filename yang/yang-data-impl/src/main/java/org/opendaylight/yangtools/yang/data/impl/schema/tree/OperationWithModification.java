@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 
@@ -30,8 +31,21 @@ final class OperationWithModification {
         applyOperation.verifyStructure(modification);
     }
 
-    void merge(final NormalizedNode<?, ?> data) {
+    private void mergeImpl(final NormalizedNode<?,?> data) {
+        if (data instanceof NormalizedNodeContainer<?,?,?>) {
+            @SuppressWarnings({ "rawtypes", "unchecked" })
+            NormalizedNodeContainer<?,?,NormalizedNode<PathArgument, ?>> dataContainer = (NormalizedNodeContainer) data;
+            for (NormalizedNode<PathArgument, ?> child : dataContainer.getValue()) {
+                PathArgument childId = child.getIdentifier();
+                forChild(childId).mergeImpl(child);
+            }
+        }
+
         modification.merge(data);
+    }
+
+    void merge(final NormalizedNode<?, ?> data) {
+        mergeImpl(data);
         applyOperation.verifyStructure(modification);
     }
 
@@ -56,7 +70,7 @@ final class OperationWithModification {
         return new OperationWithModification(operation, modification);
     }
 
-    public OperationWithModification forChild(final PathArgument childId) {
+    private OperationWithModification forChild(final PathArgument childId) {
         ModificationApplyOperation childOp = applyOperation.getChild(childId).get();
         boolean isOrdered = true;
         if (childOp instanceof SchemaAwareApplyOperation) {
