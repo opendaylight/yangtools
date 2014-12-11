@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import java.io.IOException;
-import java.io.Writer;
 import java.net.URI;
 
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+
 
 /**
  * Abstract class tracking a virtual level of {@link JSONNormalizedNodeStreamWriter}
@@ -31,7 +31,7 @@ abstract class JSONStreamWriterURIContext extends JSONStreamWriterContext {
     }
 
     @Override
-    protected final void emitStart(final SchemaContext schema, final Writer writer) throws IOException {
+    protected void emitStart(final SchemaContext schema, final JSONWriter writer) throws IOException {
         // No-op
     }
 }

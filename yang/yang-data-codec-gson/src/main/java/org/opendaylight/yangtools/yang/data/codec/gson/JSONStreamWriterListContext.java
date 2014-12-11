@@ -8,8 +8,9 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.base.Preconditions;
+
 import java.io.IOException;
-import java.io.Writer;
+
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -23,13 +24,13 @@ final class JSONStreamWriterListContext extends JSONStreamWriterQNameContext {
     }
 
     @Override
-    protected void emitStart(final SchemaContext schema, final Writer writer) throws IOException {
+    protected void emitStart(final SchemaContext schema, final JSONWriter writer) throws IOException {
         writeMyJsonIdentifier(schema, writer, getQName());
-        writer.append('[');
+        writer.beginArray();
     }
 
     @Override
-    protected void emitEnd(final Writer writer) throws IOException {
-        writer.append(']');
+    protected void emitEnd(final JSONWriter writer) throws IOException {
+        writer.endArray();
     }
 }
