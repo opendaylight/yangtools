@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.io.Writer;
@@ -32,7 +30,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
  *
  * Values of leaf and leaf-list are NOT translated according to codecs.
  *
- * FIXME: rewrite this in terms of {@link JsonWriter}.
  */
 public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
     /**
@@ -41,27 +38,13 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      */
     private static final boolean DEFAULT_EMIT_EMPTY_CONTAINERS = true;
 
-    /**
-     * Matcher used to check if a string needs to be escaped.
-     */
-    private static final CharMatcher JSON_ILLEGAL_STRING_CHARACTERS = CharMatcher.anyOf("\\\"\n\r");
-
     private final SchemaTracker tracker;
     private final JSONCodecFactory codecs;
-    private final Writer writer;
-    private final String indent;
+    private final JsonWriter writer;
     private JSONStreamWriterContext context;
 
-    private JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final SchemaPath path,
-            final Writer writer, final URI initialNs, final int indentSize) {
-        this.writer = Preconditions.checkNotNull(writer);
-
-        Preconditions.checkArgument(indentSize >= 0, "Indent size must be non-negative");
-        if (indentSize != 0) {
-            indent = Strings.repeat(" ", indentSize);
-        } else {
-            indent = null;
-        }
+    private JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final SchemaPath path, final URI initialNs, JsonWriter JsonWriter) {
+        this.writer = JsonWriter;
         this.codecs = Preconditions.checkNotNull(codecFactory);
         this.tracker = SchemaTracker.create(codecFactory.getSchemaContext(), path);
         this.context = new JSONStreamWriterRootContext(initialNs);
@@ -75,7 +58,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * @return A stream writer instance
      */
     public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final Writer writer) {
-        return new JSONNormalizedNodeStreamWriter(JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, writer, null, 0);
+        return create(schemaContext, SchemaPath.ROOT, null, writer);
     }
 
     /**
@@ -87,7 +70,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * @return A stream writer instance
      */
     public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final SchemaPath path, final Writer writer) {
-        return new JSONNormalizedNodeStreamWriter(JSONCodecFactory.create(schemaContext), path, writer, null, 0);
+        return create(schemaContext, path, null, writer);
     }
 
     /**
@@ -101,7 +84,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      */
     public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final SchemaPath path,
             final URI initialNs, final Writer writer) {
-        return new JSONNormalizedNodeStreamWriter(JSONCodecFactory.create(schemaContext), path, writer, initialNs, 0);
+        return create(JSONCodecFactory.create(schemaContext), path, initialNs, JsonWriterFactory.createJsonWriter(writer));
     }
 
     /**
@@ -113,7 +96,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * @return A stream writer instance
      */
     public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final Writer writer, final int indentSize) {
-        return new JSONNormalizedNodeStreamWriter(JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, writer, null, indentSize);
+        return create(JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, null,JsonWriterFactory.createJsonWriter(writer, indentSize));
     }
 
     /**
@@ -126,7 +109,35 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * @return A stream writer instance
      */
     public static NormalizedNodeStreamWriter create(final JSONCodecFactory codecFactory, final Writer writer, final int indentSize) {
-        return new JSONNormalizedNodeStreamWriter(codecFactory, SchemaPath.ROOT, writer, null, indentSize);
+        return create(codecFactory, SchemaPath.ROOT, null, JsonWriterFactory.createJsonWriter(writer,indentSize));
+    }
+
+    /**
+     * Create a new stream writer, which writes to the specified output stream.
+     *
+     * @param schemaContext Schema context
+     * @param path Schema Path
+     * @param initialNs Initial namespace
+     * @param jsonWriter JsonWriter
+     * @return A stream writer instance
+     */
+    public static NormalizedNodeStreamWriter create(SchemaContext schemaContext, SchemaPath path, URI initialNs,
+            JsonWriter jsonWriter) {
+        return create(JSONCodecFactory.create(schemaContext), path, initialNs, jsonWriter);
+    }
+
+    /**
+     * Create a new stream writer, which writes to the specified output stream. The codec factory
+     * can be reused between multiple writers.
+     *
+     * @param codecFactory JSON codec factory
+     * @param path Schema Path
+     * @param initialNs Initial namespace
+     * @param jsonWriter JsonWriter
+     * @return A stream writer instance
+     */
+    public static NormalizedNodeStreamWriter create(JSONCodecFactory codecFactory, SchemaPath path, URI initialNs, JsonWriter jsonWriter) {
+        return new JSONNormalizedNodeStreamWriter(codecFactory, path, initialNs, jsonWriter);
     }
 
     @Override
@@ -134,9 +145,10 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         final LeafSchemaNode schema = tracker.leafNode(name);
         final JSONCodec<Object> codec = codecs.codecFor(schema.getType());
 
-        context.emittingChild(codecs.getSchemaContext(), writer, indent);
+        context.emittingChild(codecs.getSchemaContext(), writer);
         context.writeChildJsonIdentifier(codecs.getSchemaContext(), writer, name.getNodeType());
-        writeValue(codec.serialize(value), codec.needQuotes());
+
+        writeValue(value, codec);
     }
 
     @Override
@@ -150,8 +162,9 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         final LeafListSchemaNode schema = tracker.leafSetEntryNode();
         final JSONCodec<Object> codec = codecs.codecFor(schema.getType());
 
-        context.emittingChild(codecs.getSchemaContext(), writer, indent);
-        writeValue(codec.serialize(value), codec.needQuotes());
+        context.emittingChild(codecs.getSchemaContext(), writer);
+
+        writeValue(value, codec);
     }
 
     /*
@@ -218,42 +231,23 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         final AnyXmlSchemaNode schema = tracker.anyxmlNode(name);
         // FIXME: should have a codec based on this :)
 
-        context.emittingChild(codecs.getSchemaContext(), writer, indent);
+        context.emittingChild(codecs.getSchemaContext(), writer);
         context.writeChildJsonIdentifier(codecs.getSchemaContext(), writer, name.getNodeType());
-        writeValue(String.valueOf(value), true);
+        writer.value(String.valueOf(value));
     }
 
     @Override
     public void endNode() throws IOException {
         tracker.endNode();
-        context = context.endNode(codecs.getSchemaContext(), writer, indent);
+        context = context.endNode(codecs.getSchemaContext(), writer);
+        if(context instanceof JSONStreamWriterRootContext) {
+            context.emitEnd(writer);
+        }
     }
 
-    private void writeValue(final String str, final boolean needQuotes) throws IOException {
-        if (needQuotes) {
-            writer.append('"');
-
-            final int needEscape = JSON_ILLEGAL_STRING_CHARACTERS.countIn(str);
-            if (needEscape != 0) {
-                final char[] escaped = new char[str.length() + needEscape];
-                int offset = 0;
-
-                for (int i = 0; i < str.length(); i++) {
-                    final char c = str.charAt(i);
-                    if (JSON_ILLEGAL_STRING_CHARACTERS.matches(c)) {
-                        escaped[offset++] = '\\';
-                    }
-                    escaped[offset++] = c;
-                }
-                writer.write(escaped);
-            } else {
-                writer.append(str);
-            }
-
-            writer.append('"');
-        } else {
-            writer.append(str);
-        }
+    private void writeValue(Object value, JSONCodec<Object> codec)
+            throws IOException {
+        codec.serializeToWriter(writer,value);
     }
 
     @Override
@@ -266,5 +260,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         writer.flush();
         writer.close();
     }
+
+
 
 }
