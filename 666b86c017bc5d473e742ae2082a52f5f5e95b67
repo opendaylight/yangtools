@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_56ad7887",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/BaseTemplate.xtend",
+        "patchSetId": 7
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-12-11T08:48:57Z",
+      "side": 1,
+      "message": "is comment \n//check for unused imports \nfor this code or shuld be printed before every line of generated code?",
+      "revId": "666b86c017bc5d473e742ae2082a52f5f5e95b67",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}

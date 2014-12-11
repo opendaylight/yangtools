@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_b6a07c91",
+        "filename": "code-generator/binding-java-api-generator/pom.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-12-11T08:48:57Z",
+      "side": 0,
+      "message": "nothing was changed in this file, so remove it from commit",
+      "revId": "6618afec551f319dc46626ddb7a88f472f553d72",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
