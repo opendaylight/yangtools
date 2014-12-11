@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
+import com.google.gson.stream.JsonWriter;
+import java.io.IOException;
 import org.opendaylight.yangtools.yang.data.api.codec.LeafrefCodec;
 
 final class JSONLeafrefCodec implements JSONCodec<Object>, LeafrefCodec<String> {
@@ -23,5 +25,16 @@ final class JSONLeafrefCodec implements JSONCodec<Object>, LeafrefCodec<String> 
     @Override
     public boolean needQuotes() {
         return true;
+    }
+
+    /**
+     * Serialize specified value with specified JsonWriter.
+     *
+     * @param writer JsonWriter
+     * @param value
+     */
+    @Override
+    public void serializeToWriter(JsonWriter writer, Object value) throws IOException {
+        writer.value(serialize(value));
     }
 }
