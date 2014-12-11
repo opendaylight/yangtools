@@ -66,13 +66,24 @@ abstract class BaseTemplate {
     protected def imports() ''' 
         «IF !importMap.empty»
             «FOR entry : importMap.entrySet»
-                «IF entry.value != fullyQualifiedName»
+                «IF !hasSamePackage(entry.value)»
                     import «entry.value».«entry.key»;
                 «ENDIF»
             «ENDFOR»
         «ENDIF»
 
     '''
+
+    /**
+     * Checks if packages of generated type and imported type is the same
+     *
+     * @param importedTypePackageNam
+     * the package name of imported type
+     * @return true if the packages are the same false otherwise
+     */
+    final private def boolean hasSamePackage(String importedTypePackageName) {
+        return type.packageName.equals(importedTypePackageName);
+    }
 
     protected abstract def CharSequence body();
 
