@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_7673d44d",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/ClassTemplate.xtend",
+        "patchSetId": 1
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-12-11T08:12:37Z",
+      "side": 1,
+      "message": "wasn\u0027t possible to do it like\n«FOR property: genTO.properties SEPARATOR \u0027,\u0027»\n     \"«property.fieldName»\"\n«ENDFOR»",
+      "revId": "e7dc304dafc259f64fc1ee71bfeb6da8f6ed2cb5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
