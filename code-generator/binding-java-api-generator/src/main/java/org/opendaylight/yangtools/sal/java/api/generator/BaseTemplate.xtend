@@ -59,13 +59,17 @@ abstract class BaseTemplate {
     protected def imports() ''' 
         «IF !importMap.empty»
             «FOR entry : importMap.entrySet»
-                «IF entry.value != fullyQualifiedName»
+                «IF !hasSamePackage(entry.value)»
                     import «entry.value».«entry.key»;
                 «ENDIF»
             «ENDFOR»
         «ENDIF»
 
     '''
+        
+    final private def boolean hasSamePackage(String importedTypePackageName) {
+        return type.packageName.equals(importedTypePackageName);
+    }
 
     protected abstract def CharSequence body();
 

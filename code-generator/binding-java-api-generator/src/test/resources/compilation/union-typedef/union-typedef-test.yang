@@ -1,0 +1,19 @@
+module union-typedef-test {
+    yang-version 1;
+    namespace "org:opendaylight:yangtools:union:typedef";
+    prefix "tp";
+
+    description
+        "Test unused import";
+
+    revision "2014-11-24" {
+        reference "WILL BE DEFINED LATER";
+    }
+
+    typedef typedef-union {
+        type union {
+            type int32;
+            type string;
+        }
+    }
+}
