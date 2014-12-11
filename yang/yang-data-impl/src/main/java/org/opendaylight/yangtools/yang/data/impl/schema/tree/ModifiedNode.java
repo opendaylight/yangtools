@@ -169,10 +169,35 @@ final class ModifiedNode implements StoreTreeNode<ModifiedNode>, Identifiable<Pa
      *
      */
     public void delete() {
+        final ModificationType newType;
+
+        switch (modificationType) {
+        case DELETE:
+        case UNMODIFIED:
+            // We need to record this delete.
+            newType = ModificationType.DELETE;
+            break;
+        case MERGE:
+        case SUBTREE_MODIFIED:
+        case WRITE:
+            /*
+             * We are canceling a previous modification. This is a bit tricky,
+             * as the original write may have just introduced the data, or it
+             * may have modified it.
+             *
+             * As documented in BUG-2470, a delete of data introduced in this
+             * transaction needs to be turned into a no-op.
+             */
+            newType = original.isPresent() ? ModificationType.DELETE : ModificationType.UNMODIFIED;
+            break;
+        default:
+            throw new IllegalStateException("Unhandled deletion of node with " + modificationType);
+        }
+
         clearSnapshot();
-        updateModificationType(ModificationType.DELETE);
         children.clear();
         this.value = null;
+        updateModificationType(newType);
     }
 
     /**
