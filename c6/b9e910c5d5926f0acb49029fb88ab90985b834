@@ -1,0 +1,7 @@
+Verified+1: jenkins-yangtools <jenkins-lispflowmapping@opendaylight.org>
+Code-Review+2: Robert Varga <nite@hq.sk>
+Submitted-by: Robert Varga <nite@hq.sk>
+Submitted-at: Fri, 12 Dec 2014 10:09:09 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/13569
+Project: yangtools
+Branch: refs/heads/stable/helium
