@@ -81,8 +81,9 @@ public class DefaultSourceCodeGenerator implements SourceCodeGenerator {
             CtClass[] paramTypes = method.getParameterTypes();
             if (paramTypes != null) {
                 for (int i = 0; i < paramTypes.length; i++) {
-                    if (i > 0)
+                    if (i > 0) {
                         builder.append(", ");
+                    }
                     builder.append(paramTypes[i].getName()).append(" $")
                             .append(i + 1);
                 }
