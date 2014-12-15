@@ -18,8 +18,6 @@ import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 public abstract class AbstractRegistration implements AutoCloseable {
     private static final AtomicIntegerFieldUpdater<AbstractRegistration> CLOSED_UPDATER =
             AtomicIntegerFieldUpdater.newUpdater(AbstractRegistration.class, "closed");
-
-    @SuppressWarnings("unused") // updated by CLOSED_UPDATER
     private volatile int closed = 0;
 
     /**
@@ -36,7 +34,7 @@ public abstract class AbstractRegistration implements AutoCloseable {
      * @return true if the registration was closed, false otherwise.
      */
     protected final boolean isClosed() {
-        return CLOSED_UPDATER.get(this) != 0;
+        return closed != 0;
     }
 
     @Override
