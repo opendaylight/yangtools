@@ -53,8 +53,9 @@ final class OperationStack {
     }
 
     private ModifyAction getOperation(NormalizedNode<?, ?> modificationNode) {
-        if (!(modificationNode instanceof AttributesContainer))
+        if (!(modificationNode instanceof AttributesContainer)) {
             return null;
+        }
 
         String operationString = ((AttributesContainer) modificationNode).getAttributes().get(OPERATION_NAME);
 
