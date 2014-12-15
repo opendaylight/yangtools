@@ -255,29 +255,34 @@ public final class SchemaContextUtil {
         Iterable<QName> nextPath = nextLevel(path);
 
         foundNode = module.getDataChildByName(current);
-        if (foundNode != null && nextPath.iterator().hasNext())
+        if (foundNode != null && nextPath.iterator().hasNext()) {
             foundNode = findNodeIn(foundNode, nextPath);
+        }
 
         if (foundNode == null) {
             foundNode = getGroupingByName(module, current);
-            if (foundNode != null && nextPath.iterator().hasNext())
+            if (foundNode != null && nextPath.iterator().hasNext()) {
                 foundNode = findNodeIn(foundNode, nextPath);
+            }
         }
 
         if (foundNode == null) {
             foundNode = getRpcByName(module, current);
-            if (foundNode != null && nextPath.iterator().hasNext())
+            if (foundNode != null && nextPath.iterator().hasNext()) {
                 foundNode = findNodeIn(foundNode, nextPath);
+            }
         }
 
         if (foundNode == null) {
             foundNode = getNotificationByName(module, current);
-            if (foundNode != null && nextPath.iterator().hasNext())
+            if (foundNode != null && nextPath.iterator().hasNext()) {
                 foundNode = findNodeIn(foundNode, nextPath);
+            }
         }
 
-        if (foundNode == null)
+        if (foundNode == null) {
             LOG.debug("No node matching {} found in node {}", path, module);
+        }
 
         return foundNode;
 
@@ -303,13 +308,15 @@ public final class SchemaContextUtil {
             DataNodeContainer parentDataNodeContainer = (DataNodeContainer) parent;
 
             foundNode = parentDataNodeContainer.getDataChildByName(current);
-            if (foundNode != null && nextPath.iterator().hasNext())
+            if (foundNode != null && nextPath.iterator().hasNext()) {
                 foundNode = findNodeIn(foundNode, nextPath);
+            }
 
             if (foundNode == null) {
                 foundNode = getGroupingByName(parentDataNodeContainer, current);
-                if (foundNode != null && nextPath.iterator().hasNext())
+                if (foundNode != null && nextPath.iterator().hasNext()) {
                     foundNode = findNodeIn(foundNode, nextPath);
+                }
             }
         }
 
@@ -318,31 +325,36 @@ public final class SchemaContextUtil {
 
             if (current.getLocalName().equals("input")) {
                 foundNode = parentRpcDefinition.getInput();
-                if (foundNode != null && nextPath.iterator().hasNext())
+                if (foundNode != null && nextPath.iterator().hasNext()) {
                     foundNode = findNodeIn(foundNode, nextPath);
+                }
             }
 
             if (current.getLocalName().equals("output")) {
                 foundNode = parentRpcDefinition.getOutput();
-                if (foundNode != null && nextPath.iterator().hasNext())
+                if (foundNode != null && nextPath.iterator().hasNext()) {
                     foundNode = findNodeIn(foundNode, nextPath);
+                }
             }
 
             if (foundNode == null) {
                 foundNode = getGroupingByName(parentRpcDefinition, current);
-                if (foundNode != null && nextPath.iterator().hasNext())
+                if (foundNode != null && nextPath.iterator().hasNext()) {
                     foundNode = findNodeIn(foundNode, nextPath);
+                }
             }
         }
 
         if (foundNode == null && parent instanceof ChoiceNode) {
             foundNode = ((ChoiceNode) parent).getCaseNodeByName(current);
-            if (foundNode != null && nextPath.iterator().hasNext())
+            if (foundNode != null && nextPath.iterator().hasNext()) {
                 foundNode = findNodeIn(foundNode, nextPath);
+            }
         }
 
-        if (foundNode == null)
+        if (foundNode == null) {
             LOG.debug("No node matching {} found in node {}", path, parent);
+        }
 
         return foundNode;
 
