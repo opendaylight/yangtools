@@ -16,17 +16,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
@@ -606,6 +602,37 @@ public final class SchemaContextUtil {
         } else {
             return targetTypeDefinition;
         }
+    }
+
+    /**
+     * Returns base type for {@code typeDefinition} which belongs to module specified via {@code qName}. This handle case
+     * when leafref type isn't specified as type substatement of leaf or leaf-list but is defined in other module as typedef
+     * which is then imported to referenced module.
+     *
+     * Because {@code typeDefinition} is definied via typedef statement, only absolute path is meaningful.
+     *
+     * @param typeDefinition
+     * @param schemaContext
+     * @param qName
+     * @return
+     */
+    public static TypeDefinition<?> getBaseTypeForLeafRef(final LeafrefTypeDefinition typeDefinition, final SchemaContext schemaContext, final QName qName) {
+        RevisionAwareXPath pathStatement = typeDefinition.getPathStatement();
+        pathStatement = new RevisionAwareXPathImpl(stripConditionsFromXPathString(pathStatement), pathStatement.isAbsolute());
+
+        final Module parentModule = schemaContext.findModuleByNamespaceAndRevision(qName.getNamespace(),qName.getRevision());
+
+        DataSchemaNode dataSchemaNode;
+        if(pathStatement.isAbsolute()) {
+            dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNode(schemaContext, parentModule, pathStatement);
+            final TypeDefinition<?> targetTypeDefinition = typeDefinition(dataSchemaNode);
+            if(targetTypeDefinition instanceof LeafrefTypeDefinition) {
+                return getBaseTypeForLeafRef(((LeafrefTypeDefinition) targetTypeDefinition), schemaContext, dataSchemaNode);
+            } else {
+                return targetTypeDefinition;
+            }
+        }
+        return null;
     }
 
     /**
