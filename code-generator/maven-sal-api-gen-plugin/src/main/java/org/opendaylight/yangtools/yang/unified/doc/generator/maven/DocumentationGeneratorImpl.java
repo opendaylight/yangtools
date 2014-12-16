@@ -12,15 +12,14 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.unified.doc.generator.GeneratorImpl;
+import org.opendaylight.yangtools.yang.unified.doc.generator.GeneratorImpl1;
 import org.opendaylight.yangtools.yang2sources.spi.CodeGenerator;
 
-public class DocumentationGeneratorImpl extends GeneratorImpl implements CodeGenerator {
+public class DocumentationGeneratorImpl extends GeneratorImpl1 implements CodeGenerator {
 
     @Override
     public Collection<File> generateSources(SchemaContext arg0, File arg1, Set<Module> arg2) throws IOException {
