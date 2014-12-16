@@ -16,6 +16,24 @@
       "revId": "d8f890853b5e4ed8d21a5b9b1e8d2ccdc14f6023",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_7fdac479",
+        "filename": "code-generator/binding-type-provider/src/main/java/org/opendaylight/yangtools/sal/binding/yang/types/TypeProviderImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 733,
+      "author": {
+        "id": 552
+      },
+      "writtenOn": "2014-12-16T09:26:41Z",
+      "side": 1,
+      "message": "I was noticed that returned map \u003etypeMap\u003c should be always different from null because at line 638 it is set to Collections.emptyMap for \"every module revision\"",
+      "parentUuid": "7a96c907_56c4983f",
+      "revId": "d8f890853b5e4ed8d21a5b9b1e8d2ccdc14f6023",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
