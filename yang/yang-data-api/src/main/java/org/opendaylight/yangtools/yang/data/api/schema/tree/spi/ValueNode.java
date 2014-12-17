@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Optional;import java.lang.Override;import java.lang.String;import java.lang.UnsupportedOperationException;
+import com.google.common.base.Optional;
 
 /**
  * Concretization of AbstractTreeNode for leaf nodes which only contain data.
