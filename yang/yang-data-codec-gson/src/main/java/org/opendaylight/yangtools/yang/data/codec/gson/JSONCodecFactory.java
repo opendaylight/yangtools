@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
@@ -117,6 +118,9 @@ public final class JSONCodecFactory {
     private JSONCodec<Object> createFromSimpleType(final TypeDefinition<?> type) {
         if (type instanceof InstanceIdentifierTypeDefinition) {
             return (JSONCodec<Object>) iidCodec;
+        }
+        if (type instanceof EmptyTypeDefinition) {
+            return (JSONCodec<Object>) JSONEmptyCodec.INSTANCE;
         }
 
         final TypeDefinitionAwareCodec<Object, ?> codec = TypeDefinitionAwareCodec.from(type);
