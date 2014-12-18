@@ -129,15 +129,19 @@ public final class JsonParserStream implements Closeable, Flushable {
         case BEGIN_ARRAY:
             in.beginArray();
             while (in.hasNext()) {
-                AbstractNodeDataWithSchema newChild = null;
-                if (parent instanceof ListNodeDataWithSchema) {
-                    newChild = new ListEntryNodeDataWithSchema(parent.getSchema());
-                    ((CompositeNodeDataWithSchema) parent).addChild(newChild);
-                } else if (parent instanceof LeafListNodeDataWithSchema) {
-                    newChild = new LeafListEntryNodeDataWithSchema(parent.getSchema());
-                    ((CompositeNodeDataWithSchema) parent).addChild(newChild);
+                if (parent instanceof LeafNodeDataWithSchema) {
+                    read(in,parent);
+                } else {
+                    AbstractNodeDataWithSchema newChild = null;
+                    if (parent instanceof ListNodeDataWithSchema) {
+                        newChild = new ListEntryNodeDataWithSchema(parent.getSchema());
+                        ((CompositeNodeDataWithSchema) parent).addChild(newChild);
+                    } else if (parent instanceof LeafListNodeDataWithSchema) {
+                        newChild = new LeafListEntryNodeDataWithSchema(parent.getSchema());
+                        ((CompositeNodeDataWithSchema) parent).addChild(newChild);
+                    }
+                    read(in, newChild);
                 }
-                read(in, newChild);
             }
             in.endArray();
             return;
