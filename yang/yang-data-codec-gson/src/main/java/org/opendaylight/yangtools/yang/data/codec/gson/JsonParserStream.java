@@ -127,8 +127,12 @@ public final class JsonParserStream implements Closeable, Flushable {
         case BEGIN_ARRAY:
             in.beginArray();
             while (in.hasNext()) {
-                final AbstractNodeDataWithSchema newChild = newArrayEntry(parent);
-                read(in, newChild);
+                if (parent instanceof LeafNodeDataWithSchema) {
+                    read(in, parent);
+                } else {
+                    final AbstractNodeDataWithSchema newChild = newArrayEntry(parent);
+                    read(in, newChild);
+                }
             }
             in.endArray();
             return;
@@ -185,7 +189,7 @@ public final class JsonParserStream implements Closeable, Flushable {
     }
 
     private boolean isArray(final AbstractNodeDataWithSchema parent) {
-        return parent instanceof ListNodeDataWithSchema || parent instanceof ListNodeDataWithSchema;
+        return parent instanceof ListNodeDataWithSchema || parent instanceof LeafListNodeDataWithSchema;
     }
 
     private AbstractNodeDataWithSchema newArrayEntry(final AbstractNodeDataWithSchema parent) {

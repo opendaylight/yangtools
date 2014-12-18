@@ -2,10 +2,8 @@ package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
-
 import java.util.ArrayDeque;
 import java.util.Deque;
-
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -99,12 +97,16 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
 
     @Override
     public void leafSetEntryNode(final Object value) {
-        LOG.debug("{}{}({}) ", ind(), value, value.getClass().getSimpleName());
+            LOG.debug("{}{}({}) ", ind(), value, value.getClass().getSimpleName());
     }
 
     @Override
     public void leafNode(final NodeIdentifier name, final Object value) {
-        LOG.debug("{}{}(leaf({}))=", ind(), name, value.getClass().getSimpleName(), value);
+        if(value == null) {
+            LOG.debug("{}{}(leaf(null))=null", ind(), name);
+        } else {
+            LOG.debug("{}{}(leaf({}))={}", ind(), name, value.getClass().getSimpleName(), value);
+        }
     }
 
     @Override
