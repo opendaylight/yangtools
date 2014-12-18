@@ -19,6 +19,7 @@ import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.resolveC
 import com.google.common.collect.Sets;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import java.io.IOException;
@@ -30,9 +31,14 @@ import java.util.Iterator;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
@@ -43,6 +49,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  */
 public class NormalizedNodeToJsonStreamTest {
 
+    private static final QName CONT_1 = QName.create("ns:complex:json", "2014-08-11", "cont1");
+    private static final QName EMPTY_LEAF = QName.create(CONT_1,"empty");
     private static SchemaContext schemaContext;
 
     public interface JsonValidator {
@@ -76,19 +84,19 @@ public class NormalizedNodeToJsonStreamTest {
 
     @Test
     public void leafNodeInContainer() throws IOException, URISyntaxException {
-        Writer writer = new StringWriter();
-        NormalizedNode<?, ?> leafNodeInContainer = TestingNormalizedNodeStructuresCreator.leafNodeInContainer();
-        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, leafNodeInContainer);
+        final Writer writer = new StringWriter();
+        final NormalizedNode<?, ?> leafNodeInContainer = TestingNormalizedNodeStructuresCreator.leafNodeInContainer();
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, leafNodeInContainer);
         new JsonValidator() {
 
             @Override
-            public void validate(String jsonOutput) {
-                JsonObject cont1 = resolveCont1(jsonOutput);
+            public void validate(final String jsonOutput) {
+                final JsonObject cont1 = resolveCont1(jsonOutput);
                 assertNotNull(cont1);
 
-                JsonPrimitive lf11 = childPrimitive(cont1, "complexjson:lf11", "lf11");
+                final JsonPrimitive lf11 = childPrimitive(cont1, "complexjson:lf11", "lf11");
                 assertNotNull(lf11);
-                int asInt = lf11.getAsInt();
+                final int asInt = lf11.getAsInt();
                 assertEquals(453, asInt);
             }
         }.validate(jsonOutput);
@@ -97,20 +105,20 @@ public class NormalizedNodeToJsonStreamTest {
 
     @Test
     public void leafListNodeInContainerMultiline() throws IOException, URISyntaxException {
-        Writer writer = new StringWriter();
-        NormalizedNode<?, ?> leafListNodeInContainer = TestingNormalizedNodeStructuresCreator.leafListNodeInContainerMultiline();
-        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, leafListNodeInContainer);
+        final Writer writer = new StringWriter();
+        final NormalizedNode<?, ?> leafListNodeInContainer = TestingNormalizedNodeStructuresCreator.leafListNodeInContainerMultiline();
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, leafListNodeInContainer);
         new JsonValidator() {
 
             @Override
-            public void validate(String jsonOutput) {
-                JsonObject cont1 = resolveCont1(jsonOutput);
+            public void validate(final String jsonOutput) {
+                final JsonObject cont1 = resolveCont1(jsonOutput);
                 assertNotNull(cont1);
-                JsonArray lflst11 = childArray(cont1, "complexjson:lflst11", "lflst11");
+                final JsonArray lflst11 = childArray(cont1, "complexjson:lflst11", "lflst11");
                 assertNotNull(lflst11);
 
-                HashSet<Object> lflst11Values = Sets.newHashSet();
-                for (JsonElement jsonElement : lflst11) {
+                final HashSet<Object> lflst11Values = Sets.newHashSet();
+                for (final JsonElement jsonElement : lflst11) {
                     assertTrue(jsonElement instanceof JsonPrimitive);
                     lflst11Values.add(((JsonPrimitive) jsonElement).getAsString());
                 }
@@ -123,20 +131,20 @@ public class NormalizedNodeToJsonStreamTest {
 
     @Test
     public void leafNodeViaAugmentationInContainer() throws IOException, URISyntaxException {
-        Writer writer = new StringWriter();
-        NormalizedNode<?, ?> leafNodeViaAugmentationInContainer = TestingNormalizedNodeStructuresCreator
+        final Writer writer = new StringWriter();
+        final NormalizedNode<?, ?> leafNodeViaAugmentationInContainer = TestingNormalizedNodeStructuresCreator
                 .leafNodeViaAugmentationInContainer();
-        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, leafNodeViaAugmentationInContainer);
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, leafNodeViaAugmentationInContainer);
         new JsonValidator() {
 
             @Override
-            public void validate(String jsonOutput) {
-                JsonObject cont1 = resolveCont1(jsonOutput);
+            public void validate(final String jsonOutput) {
+                final JsonObject cont1 = resolveCont1(jsonOutput);
                 assertNotNull(cont1);
 
-                JsonPrimitive lf12_1 = childPrimitive(cont1, "complexjson:lf12_1", "lf12_1");
+                final JsonPrimitive lf12_1 = childPrimitive(cont1, "complexjson:lf12_1", "lf12_1");
                 assertNotNull(lf12_1);
-                String asString = lf12_1.getAsString();
+                final String asString = lf12_1.getAsString();
                 assertEquals("lf12 value", asString);
             }
         }.validate(jsonOutput);
@@ -145,20 +153,20 @@ public class NormalizedNodeToJsonStreamTest {
 
     @Test
     public void leafListNodeInContainer() throws IOException, URISyntaxException {
-        Writer writer = new StringWriter();
-        NormalizedNode<?, ?> leafListNodeInContainer = TestingNormalizedNodeStructuresCreator.leafListNodeInContainer();
-        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, leafListNodeInContainer);
+        final Writer writer = new StringWriter();
+        final NormalizedNode<?, ?> leafListNodeInContainer = TestingNormalizedNodeStructuresCreator.leafListNodeInContainer();
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, leafListNodeInContainer);
         new JsonValidator() {
 
             @Override
-            public void validate(String jsonOutput) {
-                JsonObject cont1 = resolveCont1(jsonOutput);
+            public void validate(final String jsonOutput) {
+                final JsonObject cont1 = resolveCont1(jsonOutput);
                 assertNotNull(cont1);
-                JsonArray lflst11 = childArray(cont1, "complexjson:lflst11", "lflst11");
+                final JsonArray lflst11 = childArray(cont1, "complexjson:lflst11", "lflst11");
                 assertNotNull(lflst11);
 
-                HashSet<Object> lflst11Values = Sets.newHashSet();
-                for (JsonElement jsonElement : lflst11) {
+                final HashSet<Object> lflst11Values = Sets.newHashSet();
+                for (final JsonElement jsonElement : lflst11) {
                     assertTrue(jsonElement instanceof JsonPrimitive);
                     lflst11Values.add(((JsonPrimitive) jsonElement).getAsString());
                 }
@@ -170,33 +178,33 @@ public class NormalizedNodeToJsonStreamTest {
 
     @Test
     public void keyedListNodeInContainer() throws IOException, URISyntaxException {
-        Writer writer = new StringWriter();
-        NormalizedNode<?, ?> keyedListNodeInContainer = TestingNormalizedNodeStructuresCreator
+        final Writer writer = new StringWriter();
+        final NormalizedNode<?, ?> keyedListNodeInContainer = TestingNormalizedNodeStructuresCreator
                 .keyedListNodeInContainer();
-        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, keyedListNodeInContainer);
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, keyedListNodeInContainer);
         new JsonValidator() {
 
             @Override
-            public void validate(String jsonOutput) {
-                JsonObject cont1 = resolveCont1(jsonOutput);
+            public void validate(final String jsonOutput) {
+                final JsonObject cont1 = resolveCont1(jsonOutput);
                 assertNotNull(cont1);
-                JsonArray lst11 = childArray(cont1, "complexjson:lst11", "lst11");
+                final JsonArray lst11 = childArray(cont1, "complexjson:lst11", "lst11");
                 assertNotNull(lst11);
 
-                Iterator<JsonElement> iterator = lst11.iterator();
+                final Iterator<JsonElement> iterator = lst11.iterator();
                 assertTrue(iterator.hasNext());
-                JsonElement lst11Entry1Raw = iterator.next();
+                final JsonElement lst11Entry1Raw = iterator.next();
                 assertFalse(iterator.hasNext());
                 assertTrue(lst11Entry1Raw instanceof JsonObject);
-                JsonObject lst11Entry1 = (JsonObject) lst11Entry1Raw;
+                final JsonObject lst11Entry1 = (JsonObject) lst11Entry1Raw;
 
-                JsonPrimitive key111 = childPrimitive(lst11Entry1, "complexjson:key111", "key111");
+                final JsonPrimitive key111 = childPrimitive(lst11Entry1, "complexjson:key111", "key111");
                 assertNotNull(key111);
-                JsonPrimitive lf112 = childPrimitive(lst11Entry1, "complexjson:lf112", "lf112");
+                final JsonPrimitive lf112 = childPrimitive(lst11Entry1, "complexjson:lf112", "lf112");
                 assertNotNull(lf112);
-                JsonPrimitive lf113 = childPrimitive(lst11Entry1, "complexjson:lf113", "lf113");
+                final JsonPrimitive lf113 = childPrimitive(lst11Entry1, "complexjson:lf113", "lf113");
                 assertNotNull(lf113);
-                JsonPrimitive lf111 = childPrimitive(lst11Entry1, "complexjson:lf111", "lf111");
+                final JsonPrimitive lf111 = childPrimitive(lst11Entry1, "complexjson:lf111", "lf111");
                 assertNotNull(lf111);
 
                 assertEquals("key111 value", key111.getAsString());
@@ -209,16 +217,16 @@ public class NormalizedNodeToJsonStreamTest {
 
     @Test
     public void choiceNodeInContainer() throws IOException, URISyntaxException {
-        Writer writer = new StringWriter();
-        NormalizedNode<?, ?> choiceNodeInContainer = TestingNormalizedNodeStructuresCreator.choiceNodeInContainer();
-        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, choiceNodeInContainer);
+        final Writer writer = new StringWriter();
+        final NormalizedNode<?, ?> choiceNodeInContainer = TestingNormalizedNodeStructuresCreator.choiceNodeInContainer();
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, choiceNodeInContainer);
         new JsonValidator() {
 
             @Override
-            public void validate(String jsonOutput) {
-                JsonObject cont1 = resolveCont1(jsonOutput);
+            public void validate(final String jsonOutput) {
+                final JsonObject cont1 = resolveCont1(jsonOutput);
                 assertNotNull(cont1);
-                JsonPrimitive lf13 = childPrimitive(cont1, "complexjson:lf13", "lf13");
+                final JsonPrimitive lf13 = childPrimitive(cont1, "complexjson:lf13", "lf13");
                 assertNotNull(lf13);
 
                 assertEquals("lf13 value", lf13.getAsString());
@@ -239,24 +247,24 @@ public class NormalizedNodeToJsonStreamTest {
 //    @Ignore
     @Test
     public void caseNodeAugmentationInChoiceInContainer() throws IOException, URISyntaxException {
-        Writer writer = new StringWriter();
-        NormalizedNode<?, ?> caseNodeAugmentationInChoiceInContainer = TestingNormalizedNodeStructuresCreator
+        final Writer writer = new StringWriter();
+        final NormalizedNode<?, ?> caseNodeAugmentationInChoiceInContainer = TestingNormalizedNodeStructuresCreator
                 .caseNodeAugmentationInChoiceInContainer();
-        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, caseNodeAugmentationInChoiceInContainer);
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, caseNodeAugmentationInChoiceInContainer);
         new JsonValidator() {
 
             @Override
-            public void validate(String jsonOutput) {
-                JsonObject cont1 = resolveCont1(jsonOutput);
+            public void validate(final String jsonOutput) {
+                final JsonObject cont1 = resolveCont1(jsonOutput);
                 assertNotNull(cont1);
 
-                JsonPrimitive lf15_21 = childPrimitive(cont1, "complexjson:lf15_21", "lf15_21");
+                final JsonPrimitive lf15_21 = childPrimitive(cont1, "complexjson:lf15_21", "lf15_21");
                 assertNotNull(lf15_21);
-                JsonPrimitive lf13 = childPrimitive(cont1, "complexjson:lf13", "lf13");
+                final JsonPrimitive lf13 = childPrimitive(cont1, "complexjson:lf13", "lf13");
                 assertNotNull(lf13);
-                JsonPrimitive lf15_11 = childPrimitive(cont1, "complexjson:lf15_11", "lf15_11");
+                final JsonPrimitive lf15_11 = childPrimitive(cont1, "complexjson:lf15_11", "lf15_11");
                 assertNotNull(lf15_11);
-                JsonPrimitive lf15_12 = childPrimitive(cont1, "complexjson:lf15_12", "lf15_12");
+                final JsonPrimitive lf15_12 = childPrimitive(cont1, "complexjson:lf15_12", "lf15_12");
                 assertNotNull(lf15_12);
 
                 assertEquals("lf15_21 value", lf15_21.getAsString());
@@ -281,27 +289,27 @@ public class NormalizedNodeToJsonStreamTest {
 //    @Ignore
     @Test
     public void caseNodeExternalAugmentationInChoiceInContainer() throws IOException, URISyntaxException {
-        Writer writer = new StringWriter();
-        NormalizedNode<?, ?> caseNodeExternalAugmentationInChoiceInContainer = TestingNormalizedNodeStructuresCreator
+        final Writer writer = new StringWriter();
+        final NormalizedNode<?, ?> caseNodeExternalAugmentationInChoiceInContainer = TestingNormalizedNodeStructuresCreator
                 .caseNodeExternalAugmentationInChoiceInContainer();
-        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer,
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer,
                 caseNodeExternalAugmentationInChoiceInContainer);
         new JsonValidator() {
 
             @Override
-            public void validate(String jsonOutput) {
-                JsonObject cont1 = resolveCont1(jsonOutput);
+            public void validate(final String jsonOutput) {
+                final JsonObject cont1 = resolveCont1(jsonOutput);
                 assertNotNull(cont1);
 
-                JsonPrimitive lf15_11Augment = childPrimitive(cont1, "complexjson-augmentation:lf15_11");
+                final JsonPrimitive lf15_11Augment = childPrimitive(cont1, "complexjson-augmentation:lf15_11");
                 assertNotNull(lf15_11Augment);
-                JsonPrimitive lf15_12Augment = childPrimitive(cont1, "complexjson-augmentation:lf15_12");
+                final JsonPrimitive lf15_12Augment = childPrimitive(cont1, "complexjson-augmentation:lf15_12");
                 assertNotNull(lf15_12Augment);
-                JsonPrimitive lf13 = childPrimitive(cont1, "complexjson:lf13", "lf13");
+                final JsonPrimitive lf13 = childPrimitive(cont1, "complexjson:lf13", "lf13");
                 assertNotNull(lf13);
-                JsonPrimitive lf15_11 = childPrimitive(cont1, "complexjson:lf15_11", "lf15_11");
+                final JsonPrimitive lf15_11 = childPrimitive(cont1, "complexjson:lf15_11", "lf15_11");
                 assertNotNull(lf15_11);
-                JsonPrimitive lf15_12 = childPrimitive(cont1, "complexjson:lf15_12", "lf15_12");
+                final JsonPrimitive lf15_12 = childPrimitive(cont1, "complexjson:lf15_12", "lf15_12");
                 assertNotNull(lf15_12);
 
                 assertEquals("lf15_11 value from augmentation", lf15_11Augment.getAsString());
@@ -326,19 +334,19 @@ public class NormalizedNodeToJsonStreamTest {
 //    @Ignore
     @Test
     public void choiceNodeAugmentationInContainer() throws IOException, URISyntaxException {
-        Writer writer = new StringWriter();
-        NormalizedNode<?, ?> choiceNodeAugmentationInContainer = TestingNormalizedNodeStructuresCreator
+        final Writer writer = new StringWriter();
+        final NormalizedNode<?, ?> choiceNodeAugmentationInContainer = TestingNormalizedNodeStructuresCreator
                 .choiceNodeAugmentationInContainer();
-        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer,
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer,
                 choiceNodeAugmentationInContainer);
         new JsonValidator() {
 
             @Override
-            public void validate(String jsonOutput) {
-                JsonObject cont1 = resolveCont1(jsonOutput);
+            public void validate(final String jsonOutput) {
+                final JsonObject cont1 = resolveCont1(jsonOutput);
                 assertNotNull(cont1);
 
-                JsonPrimitive lf17 = childPrimitive(cont1, "complexjson:lf17","lf17");
+                final JsonPrimitive lf17 = childPrimitive(cont1, "complexjson:lf17","lf17");
                 assertNotNull(lf17);
                 assertEquals("lf17 value",lf17.getAsString());
             }
@@ -347,29 +355,29 @@ public class NormalizedNodeToJsonStreamTest {
 
     @Test
     public void unkeyedNodeInContainer() throws IOException, URISyntaxException {
-        Writer writer = new StringWriter();
-        NormalizedNode<?, ?> unkeyedNodeInContainer = TestingNormalizedNodeStructuresCreator
+        final Writer writer = new StringWriter();
+        final NormalizedNode<?, ?> unkeyedNodeInContainer = TestingNormalizedNodeStructuresCreator
                 .unkeyedNodeInContainer();
-        String jsonOutput = normalizedNodeToJsonStreamTransformation(writer,
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer,
                 unkeyedNodeInContainer);
         new JsonValidator() {
 
             @Override
-            public void validate(String jsonOutput) {
-                JsonObject cont1 = resolveCont1(jsonOutput);
+            public void validate(final String jsonOutput) {
+                final JsonObject cont1 = resolveCont1(jsonOutput);
                 assertNotNull(cont1);
 
-                JsonArray lst12 = childArray(cont1, "complexjson:lst12","lst12");
+                final JsonArray lst12 = childArray(cont1, "complexjson:lst12","lst12");
                 assertNotNull(lst12);
 
-                Iterator<JsonElement> iterator = lst12.iterator();
+                final Iterator<JsonElement> iterator = lst12.iterator();
                 assertTrue(iterator.hasNext());
-                JsonElement lst12Entry1Raw = iterator.next();
+                final JsonElement lst12Entry1Raw = iterator.next();
                 assertFalse(iterator.hasNext());
 
                 assertTrue(lst12Entry1Raw instanceof JsonObject);
-                JsonObject lst12Entry1 = (JsonObject)lst12Entry1Raw;
-                JsonPrimitive lf121 = childPrimitive(lst12Entry1, "complexjson:lf121", "lf121");
+                final JsonObject lst12Entry1 = (JsonObject)lst12Entry1Raw;
+                final JsonPrimitive lf121 = childPrimitive(lst12Entry1, "complexjson:lf121", "lf121");
                 assertNotNull(lf121);
 
                 assertEquals("lf121 value",lf121.getAsString());
@@ -377,6 +385,23 @@ public class NormalizedNodeToJsonStreamTest {
             }
         }.validate(jsonOutput);
 
+    }
+
+    @Test
+    public void emptyTypeTest() throws IOException, URISyntaxException {
+        final StringWriter writer = new StringWriter();
+        final ContainerNode emptyStructure = Builders.containerBuilder()
+                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(CONT_1))
+                .addChild(ImmutableNodes.leafNode(EMPTY_LEAF, null))
+                .build();
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer,
+                emptyStructure);
+        final JsonObject cont1 = resolveCont1(jsonOutput);
+        final JsonElement emptyObj = cont1.get("empty");
+        assertNotNull(emptyObj);
+        assertTrue(emptyObj instanceof JsonArray);
+        assertEquals(1,emptyObj.getAsJsonArray().size());
+        assertTrue(emptyObj.getAsJsonArray().get(0) instanceof JsonNull);
     }
 
     private String normalizedNodeToJsonStreamTransformation(final Writer writer,

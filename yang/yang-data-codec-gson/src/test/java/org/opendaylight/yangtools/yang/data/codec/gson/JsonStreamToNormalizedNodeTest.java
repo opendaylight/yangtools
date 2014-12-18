@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadModules;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 
@@ -20,8 +21,13 @@ import java.net.URISyntaxException;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -33,6 +39,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
  */
 public class JsonStreamToNormalizedNodeTest {
 
+    private static final QName CONT_1 = QName.create("ns:complex:json", "2014-08-11", "cont1");
+    private static final QName EMPTY_LEAF = QName.create(CONT_1,"empty");
     private static SchemaContext schemaContext;
 
     @BeforeClass
@@ -161,12 +169,24 @@ public class JsonStreamToNormalizedNodeTest {
         try {
             //second parameter isn't necessary because error will be raised before it is used.
             verifyTransformationToNormalizedNode(inputJson, null);
+            fail("Expected exception not raised");
         } catch (final IllegalStateException e) {
             final String errorMessage = e.getMessage();
             assertTrue(errorMessage.contains("Choose suitable module name for element lf11-namesake:"));
             assertTrue(errorMessage.contains("complexjson-augmentation"));
             assertTrue(errorMessage.contains("complexjson-augmentation-namesake"));
         }
+    }
+
+    @Test
+    public void emptyTypeTest() throws IOException, URISyntaxException {
+        final String inputJson = loadTextFile("/complexjson/type-empty.json");
+        final ContainerNode awaitedStructure = Builders.containerBuilder()
+                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(CONT_1))
+                .addChild(ImmutableNodes.leafNode(EMPTY_LEAF, null))
+                .build();
+
+        verifyTransformationToNormalizedNode(inputJson, awaitedStructure);
     }
 
     /**

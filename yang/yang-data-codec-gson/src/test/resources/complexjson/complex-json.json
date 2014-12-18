@@ -1,5 +1,6 @@
 {
     "complexjson:cont1": {
+        "empty": [null],
         "lf12-any":[
             {
                 "anyxml-in-data":"foo"
