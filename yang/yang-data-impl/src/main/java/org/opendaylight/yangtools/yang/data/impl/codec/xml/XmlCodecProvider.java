@@ -7,11 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
+import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 public interface XmlCodecProvider {
 
     TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codecFor(TypeDefinition<?> baseType);
+
+    Optional<SchemaContext> getSchemaContext();
 
 }

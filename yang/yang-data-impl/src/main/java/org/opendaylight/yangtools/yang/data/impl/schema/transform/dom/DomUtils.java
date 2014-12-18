@@ -9,25 +9,25 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
-
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.Set;
 import javax.xml.XMLConstants;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.dom.DOMResult;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlStreamUtils;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlUtils;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -44,9 +44,25 @@ public final class DomUtils {
 
     public static Object parseXmlValue(final Element xml, final XmlCodecProvider codecProvider, final TypeDefinition<?> type) {
         TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codec = codecProvider.codecFor(type);
-
         String text = xml.getTextContent();
         text = text.trim();
+
+        if (codec == null && codecProvider.getSchemaContext().isPresent()) {
+            if (type instanceof IdentityrefTypeDefinition) {
+                String[] namespaceAndValue = text.split(":");
+                if (namespaceAndValue.length == 2) {
+                    String namespace = xml.lookupNamespaceURI(namespaceAndValue[0]);
+                    if (namespace != null && !namespace.isEmpty()) {
+                        final URI uri = URI.create(namespace);
+                        Set<Module> modules = codecProvider.getSchemaContext().get().findModuleByNamespace(uri);
+                        if (!modules.isEmpty()) {
+                            return QName.create(modules.iterator().next().getQNameModule(), namespaceAndValue[1]);
+                        }
+                    }
+                }
+            }
+        }
+
 
         Object value;
         if (codec != null) {

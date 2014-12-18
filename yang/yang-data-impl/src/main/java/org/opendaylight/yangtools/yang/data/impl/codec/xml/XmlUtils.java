@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
+import com.google.common.base.Optional;
 import java.util.Map;
-
 import javax.annotation.Nonnull;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
@@ -28,6 +28,10 @@ public final class XmlUtils {
         @Override
         public TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codecFor(final TypeDefinition<?> baseType) {
             return TypeDefinitionAwareCodec.from(baseType);
+        }
+        @Override
+        public Optional<SchemaContext> getSchemaContext() {
+            return Optional.absent();
         }
     };
 
