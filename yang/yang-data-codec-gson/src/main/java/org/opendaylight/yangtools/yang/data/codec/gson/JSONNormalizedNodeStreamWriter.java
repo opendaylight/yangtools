@@ -11,6 +11,9 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.gson.stream.JsonWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.net.URI;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -22,10 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-
-import java.io.IOException;
-import java.io.Writer;
-import java.net.URI;
+import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 
 /**
  * This implementation will create JSON output as output stream.
@@ -136,7 +136,11 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
 
         context.emittingChild(codecs.getSchemaContext(), writer, indent);
         context.writeChildJsonIdentifier(codecs.getSchemaContext(), writer, name.getNodeType());
-        writeValue(codec.serialize(value), codec.needQuotes());
+        if (schema.getType() instanceof EmptyTypeDefinition) {
+            writer.append("[null]");
+        } else {
+            writeValue(codec.serialize(value), codec.needQuotes());
+        }
     }
 
     @Override
