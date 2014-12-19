@@ -36,10 +36,12 @@ import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
+import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
+import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -50,6 +52,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
@@ -100,6 +103,18 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
     public BindingStreamEventWriter newWriterWithoutIdentifier(final InstanceIdentifier<?> path,
             final NormalizedNodeStreamWriter domWriter) {
         return new BindingToNormalizedStreamWriter(getCodecContextNode(path, null), domWriter);
+    }
+
+    BindingStreamEventWriter newRpcWriter(final Class<? extends DataContainer> rpcInputOrOutput,
+            final NormalizedNodeStreamWriter domWriter) {
+        final NodeCodecContext schema = root.getRpc(rpcInputOrOutput);
+        return new BindingToNormalizedStreamWriter(schema, domWriter);
+    }
+
+    BindingStreamEventWriter newNotificationWriter(final Class<? extends Notification> notification,
+            final NormalizedNodeStreamWriter domWriter) {
+        final NodeCodecContext schema = root.getNotification(notification);
+        return new BindingToNormalizedStreamWriter(schema, domWriter);
     }
 
     public DataContainerCodecContext<?> getCodecContextNode(final InstanceIdentifier<?> binding,
@@ -181,6 +196,14 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
             return currentList;
         }
         return currentNode;
+    }
+
+    NotificationCodecContext getNotificationContext(final SchemaPath notification) {
+        return root.getNotification(notification);
+    }
+
+    ContainerNodeCodecContext getRpcDataContext(final SchemaPath path) {
+        return root.getRpc(path);
     }
 
     @Override
@@ -460,5 +483,9 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
         }
         return new IdentifiableItemCodec(schema, identifier, listClz, valueCtx);
     }
+
+
+
+
 
 }
