@@ -9,63 +9,82 @@ package org.opendaylight.yangtools.binding.data.codec.api;
 
 import java.util.Map;
 import java.util.Map.Entry;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
+import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
- * Serialization service, which provides two-way serialization between
- * Java Binding Data representation and NormalizedNode representation.
+ * Serialization service, which provides two-way serialization between Java
+ * Binding Data representation and NormalizedNode representation.
  */
 public interface BindingNormalizedNodeSerializer {
 
-     /**
-      * Translates supplied Binding Instance Identifier into NormalizedNode instance identifier.
-      *
-      * @param binding Binding Instance Identifier
-      * @return DOM Instance Identifier
-      */
-     YangInstanceIdentifier toYangInstanceIdentifier(@Nonnull InstanceIdentifier<?> binding);
+    /**
+     * Translates supplied Binding Instance Identifier into NormalizedNode
+     * instance identifier.
+     *
+     * @param binding
+     *            Binding Instance Identifier
+     * @return DOM Instance Identifier
+     */
+    YangInstanceIdentifier toYangInstanceIdentifier(@Nonnull InstanceIdentifier<?> binding);
 
-     /**
-      * Translates supplied YANG Instance Identifier into Binding instance identifier.
-      *
-      * @param dom YANG Instance Identifier
-      * @return Binding Instance Identifier, or null if the instance identifier is not
-      *         representable.
-      */
-     @Nullable InstanceIdentifier<?> fromYangInstanceIdentifier(@Nonnull YangInstanceIdentifier dom);
+    /**
+     * Translates supplied YANG Instance Identifier into Binding instance
+     * identifier.
+     *
+     * @param dom
+     *            YANG Instance Identifier
+     * @return Binding Instance Identifier, or null if the instance identifier
+     *         is not representable.
+     */
+    @Nullable
+    InstanceIdentifier<?> fromYangInstanceIdentifier(@Nonnull YangInstanceIdentifier dom);
 
-     /**
-      * Translates supplied Binding Instance Identifier and data into NormalizedNode representation.
-      *
-      * @param path Binding Instance Identifier pointing to data
-      * @param data Data object representing data
-      * @return NormalizedNode representation
-      */
-     <T extends DataObject> Entry<YangInstanceIdentifier, NormalizedNode<?,?>> toNormalizedNode(InstanceIdentifier<T> path, T data);
+    /**
+     * Translates supplied Binding Instance Identifier and data into
+     * NormalizedNode representation.
+     *
+     * @param path
+     *            Binding Instance Identifier pointing to data
+     * @param data
+     *            Data object representing data
+     * @return NormalizedNode representation
+     */
+    <T extends DataObject> Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> toNormalizedNode(
+            InstanceIdentifier<T> path, T data);
 
-     /**
-      * Translates supplied YANG Instance Identifier and NormalizedNode into Binding data.
-      *
-      * @param path Binding Instance Identifier
-      * @param data NormalizedNode representing data
-      * @return DOM Instance Identifier
-      */
-     @Nullable Entry<InstanceIdentifier<?>,DataObject> fromNormalizedNode(@Nonnull YangInstanceIdentifier path, NormalizedNode<?, ?> data);
+    /**
+     * Translates supplied YANG Instance Identifier and NormalizedNode into
+     * Binding data.
+     *
+     * @param path
+     *            Binding Instance Identifier
+     * @param data
+     *            NormalizedNode representing data
+     * @return DOM Instance Identifier
+     */
+    @Nullable
+    Entry<InstanceIdentifier<?>, DataObject> fromNormalizedNode(@Nonnull YangInstanceIdentifier path,
+            NormalizedNode<?, ?> data);
 
-     /**
-      * Returns map view which contains translated set of entries to normalized nodes.
-      * Returned set will not contain representation of leaf nodes.
-      *
-      * @param dom Map of YANG Instance Identifier to Data
-      * @return Map of Binding Instance Identifier to data.
-      */
-     Map<InstanceIdentifier<?>,DataObject> fromNormalizedNodes(Map<YangInstanceIdentifier,NormalizedNode<?,?>> dom);
+    /**
+     * Returns map view which contains translated set of entries to normalized
+     * nodes. Returned set will not contain representation of leaf nodes.
+     *
+     * @param dom
+     *            Map of YANG Instance Identifier to Data
+     * @return Map of Binding Instance Identifier to data.
+     */
+    Map<InstanceIdentifier<?>, DataObject> fromNormalizedNodes(Map<YangInstanceIdentifier, NormalizedNode<?, ?>> dom);
 
+    ContainerNode toNormalizedNodeNotification(Notification data);
+
+    ContainerNode toNormalizedNodeRpcData(DataContainer data);
 }

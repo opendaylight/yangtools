@@ -83,11 +83,11 @@ public class BindingRuntimeContext implements Immutable {
         this.strategy = strategy;
         this.schemaContext = schema;
 
-        BindingGeneratorImpl generator = new BindingGeneratorImpl(false);
+        final BindingGeneratorImpl generator = new BindingGeneratorImpl(false);
         generator.generateTypes(schema);
-        Map<Module, ModuleContext> modules = generator.getModuleContexts();
+        final Map<Module, ModuleContext> modules = generator.getModuleContexts();
 
-        for (ModuleContext ctx : modules.values()) {
+        for (final ModuleContext ctx : modules.values()) {
             augmentationToSchema.putAll(ctx.getTypeToAugmentation());
             typeToDefiningSchema.putAll(ctx.getTypeToSchema());
 
@@ -177,7 +177,7 @@ public class BindingRuntimeContext implements Immutable {
 
     public Entry<AugmentationIdentifier, AugmentationSchema> getResolvedAugmentationSchema(final DataNodeContainer target,
             final Class<? extends Augmentation<?>> aug) {
-        AugmentationSchema origSchema = getAugmentationDefinition(aug);
+        final AugmentationSchema origSchema = getAugmentationDefinition(aug);
         /*
          * FIXME: Validate augmentation schema lookup
          *
@@ -190,15 +190,15 @@ public class BindingRuntimeContext implements Immutable {
          * with data and it is up to underlying user to validate data.
          *
          */
-        Set<QName> childNames = new HashSet<>();
-        Set<DataSchemaNode> realChilds = new HashSet<>();
-        for (DataSchemaNode child : origSchema.getChildNodes()) {
+        final Set<QName> childNames = new HashSet<>();
+        final Set<DataSchemaNode> realChilds = new HashSet<>();
+        for (final DataSchemaNode child : origSchema.getChildNodes()) {
             realChilds.add(target.getDataChildByName(child.getQName()));
             childNames.add(child.getQName());
         }
 
-        AugmentationIdentifier identifier = new AugmentationIdentifier(childNames);
-        AugmentationSchema proxy = new AugmentationSchemaProxy(origSchema, realChilds);
+        final AugmentationIdentifier identifier = new AugmentationIdentifier(childNames);
+        final AugmentationSchema proxy = new AugmentationSchemaProxy(origSchema, realChilds);
         return new AbstractMap.SimpleEntry<>(identifier, proxy);
     }
 
@@ -213,7 +213,7 @@ public class BindingRuntimeContext implements Immutable {
      * @throws IllegalArgumentException If supplied class does not represent case.
      */
     public Optional<ChoiceCaseNode> getCaseSchemaDefinition(final ChoiceNode schema, final Class<?> childClass) throws IllegalArgumentException {
-        DataSchemaNode origSchema = getSchemaDefinition(childClass);
+        final DataSchemaNode origSchema = getSchemaDefinition(childClass);
         Preconditions.checkArgument(origSchema instanceof ChoiceCaseNode, "Supplied schema %s is not case.", origSchema);
 
         /* FIXME: Make sure that if there are multiple augmentations of same
@@ -243,8 +243,8 @@ public class BindingRuntimeContext implements Immutable {
      *     which was used to generate supplied class.
      */
     public Entry<GeneratedType, Object> getTypeWithSchema(final Class<?> type) {
-        Object schema = typeToDefiningSchema.get(referencedType(type));
-        Type definedType = typeToDefiningSchema.inverse().get(schema);
+        final Object schema = typeToDefiningSchema.get(referencedType(type));
+        final Type definedType = typeToDefiningSchema.inverse().get(schema);
         Preconditions.checkNotNull(schema);
         Preconditions.checkNotNull(definedType);
         if(definedType instanceof GeneratedTypeBuilder) {
@@ -256,20 +256,20 @@ public class BindingRuntimeContext implements Immutable {
     }
 
     public ImmutableMap<Type, Entry<Type, Type>> getChoiceCaseChildren(final DataNodeContainer schema) {
-        Map<Type,Entry<Type,Type>> childToCase = new HashMap<>();;
-        for (ChoiceNode choice :  FluentIterable.from(schema.getChildNodes()).filter(ChoiceNode.class)) {
-            ChoiceNode originalChoice = getOriginalSchema(choice);
-            Type choiceType = referencedType(typeToDefiningSchema.inverse().get(originalChoice));
-            Collection<Type> cases = choiceToCases.get(choiceType);
+        final Map<Type,Entry<Type,Type>> childToCase = new HashMap<>();;
+        for (final ChoiceNode choice :  FluentIterable.from(schema.getChildNodes()).filter(ChoiceNode.class)) {
+            final ChoiceNode originalChoice = getOriginalSchema(choice);
+            final Type choiceType = referencedType(typeToDefiningSchema.inverse().get(originalChoice));
+            final Collection<Type> cases = choiceToCases.get(choiceType);
 
             for (Type caze : cases) {
-                Entry<Type,Type> caseIdentifier = new SimpleEntry<>(choiceType,caze);
-                HashSet<Type> caseChildren = new HashSet<>();
+                final Entry<Type,Type> caseIdentifier = new SimpleEntry<>(choiceType,caze);
+                final HashSet<Type> caseChildren = new HashSet<>();
                 if (caze instanceof GeneratedTypeBuilder) {
                     caze = ((GeneratedTypeBuilder) caze).toInstance();
                 }
                 collectAllContainerTypes((GeneratedType) caze, caseChildren);
-                for (Type caseChild : caseChildren) {
+                for (final Type caseChild : caseChildren) {
                     childToCase.put(caseChild, caseIdentifier);
                 }
             }
@@ -278,25 +278,25 @@ public class BindingRuntimeContext implements Immutable {
     }
 
     public Set<Class<?>> getCases(final Class<?> choice) {
-        Collection<Type> cazes = choiceToCases.get(referencedType(choice));
-        Set<Class<?>> ret = new HashSet<>(cazes.size());
-        for(Type caze : cazes) {
+        final Collection<Type> cazes = choiceToCases.get(referencedType(choice));
+        final Set<Class<?>> ret = new HashSet<>(cazes.size());
+        for(final Type caze : cazes) {
             try {
                 final Class<?> c = strategy.loadClass(caze);
                 ret.add(c);
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 LOG.warn("Failed to load class for case {}, ignoring it", caze, e);
             }
         }
         return ret;
     }
 
-    public Class<?> getClassForSchema(final DataSchemaNode childSchema) {
-        DataSchemaNode origSchema = getOriginalSchema(childSchema);
-        Type clazzType = typeToDefiningSchema.inverse().get(origSchema);
+    public Class<?> getClassForSchema(final SchemaNode childSchema) {
+        final SchemaNode origSchema = getOriginalSchema(childSchema);
+        final Type clazzType = typeToDefiningSchema.inverse().get(origSchema);
         try {
             return strategy.loadClass(clazzType);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             throw new IllegalStateException(e);
         }
     }
@@ -304,8 +304,8 @@ public class BindingRuntimeContext implements Immutable {
     public ImmutableMap<AugmentationIdentifier,Type> getAvailableAugmentationTypes(final DataNodeContainer container) {
         final Map<AugmentationIdentifier,Type> identifierToType = new HashMap<>();
         if (container instanceof AugmentationTarget) {
-            Set<AugmentationSchema> augments = ((AugmentationTarget) container).getAvailableAugmentations();
-            for (AugmentationSchema augment : augments) {
+            final Set<AugmentationSchema> augments = ((AugmentationTarget) container).getAvailableAugmentations();
+            for (final AugmentationSchema augment : augments) {
                 // Augmentation must have child nodes if is to be used with Binding classes
                 AugmentationSchema augOrig = augment;
                 while (augOrig.getOriginalDefinition().isPresent()) {
@@ -313,7 +313,7 @@ public class BindingRuntimeContext implements Immutable {
                 }
 
                 if (!augment.getChildNodes().isEmpty()) {
-                    Type augType = typeToDefiningSchema.inverse().get(augOrig);
+                    final Type augType = typeToDefiningSchema.inverse().get(augOrig);
                     if (augType != null) {
                         identifierToType.put(getAugmentationIdentifier(augment),augType);
                     }
@@ -325,8 +325,8 @@ public class BindingRuntimeContext implements Immutable {
     }
 
     private AugmentationIdentifier getAugmentationIdentifier(final AugmentationSchema augment) {
-        Set<QName> childNames = new HashSet<>();
-        for (DataSchemaNode child : augment.getChildNodes()) {
+        final Set<QName> childNames = new HashSet<>();
+        for (final DataSchemaNode child : augment.getChildNodes()) {
             childNames.add(child.getQName());
         }
         return new AugmentationIdentifier(childNames);
@@ -340,7 +340,7 @@ public class BindingRuntimeContext implements Immutable {
     }
 
     private static Set<Type> collectAllContainerTypes(final GeneratedType type, final Set<Type> collection) {
-        for (MethodSignature definition : type.getMethodDefinitions()) {
+        for (final MethodSignature definition : type.getMethodDefinitions()) {
             Type childType = definition.getReturnType();
             if(childType instanceof ParameterizedType) {
                 childType = ((ParameterizedType) childType).getActualTypeArguments()[0];
@@ -349,7 +349,7 @@ public class BindingRuntimeContext implements Immutable {
                 collection.add(referencedType(childType));
             }
         }
-        for (Type parent : type.getImplements()) {
+        for (final Type parent : type.getImplements()) {
             if (parent instanceof GeneratedType) {
                 collectAllContainerTypes((GeneratedType) parent, collection);
             }
@@ -359,6 +359,7 @@ public class BindingRuntimeContext implements Immutable {
 
     private static final <T extends SchemaNode> T getOriginalSchema(final T choice) {
         @SuppressWarnings("unchecked")
+        final
         T original = (T) SchemaNodeUtils.getRootOriginalIfPossible(choice);
         if (original != null) {
             return original;
@@ -367,11 +368,11 @@ public class BindingRuntimeContext implements Immutable {
     }
 
     public Class<?> getIdentityClass(final QName input) {
-        Type identityType = identities.get(input);
+        final Type identityType = identities.get(input);
         Preconditions.checkArgument(identityType != null, "Supplied QName %s is not a valid identity", input);
         try {
             return strategy.loadClass(identityType);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             throw new IllegalArgumentException("Required class " + identityType + "was not found.",e);
         }
     }

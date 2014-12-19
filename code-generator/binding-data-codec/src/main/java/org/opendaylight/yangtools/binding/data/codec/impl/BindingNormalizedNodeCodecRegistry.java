@@ -13,28 +13,29 @@ import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-
 import java.io.IOException;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeWriterFactory;
 import org.opendaylight.yangtools.binding.data.codec.gen.impl.DataObjectSerializerGenerator;
 import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.sal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
+import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializer;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializerImplementation;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializerRegistry;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
@@ -86,21 +87,60 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
 
     @Override
     public <T extends DataObject> Entry<YangInstanceIdentifier,NormalizedNode<?,?>> toNormalizedNode(final InstanceIdentifier<T> path, final T data) {
-        NormalizedNodeResult result = new NormalizedNodeResult();
+        final NormalizedNodeResult result = new NormalizedNodeResult();
         // We create DOM stream writer which produces normalized nodes
-        NormalizedNodeStreamWriter domWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final NormalizedNodeStreamWriter domWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
         // We create Binding Stream Writer which translates from Binding to Normalized Nodes
-        Entry<YangInstanceIdentifier, BindingStreamEventWriter> writeCtx = codecContext.newWriter(path, domWriter);
+        final Entry<YangInstanceIdentifier, BindingStreamEventWriter> writeCtx = codecContext.newWriter(path, domWriter);
 
         // We get serializer which reads binding data and uses Binding To Normalized Node writer to write result
         try {
             getSerializer(path.getTargetType()).serialize(data, writeCtx.getValue());
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOG.error("Unexpected failure while serializing path {} data {}", path, data, e);
             throw new IllegalStateException("Failed to create normalized node", e);
         }
         return new SimpleEntry<YangInstanceIdentifier,NormalizedNode<?,?>>(writeCtx.getKey(),result.getResult());
+    }
+
+    @Override
+    public ContainerNode toNormalizedNodeNotification(final Notification data) {
+        final NormalizedNodeResult result = new NormalizedNodeResult();
+        // We create DOM stream writer which produces normalized nodes
+        final NormalizedNodeStreamWriter domWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        final Class<? extends DataObject> type = (Class) data.getImplementedInterface();
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        final BindingStreamEventWriter writer = newNotificationWriter((Class) type, domWriter);
+        try {
+            // FIXME: Should be cast to DataObject necessary?
+            getSerializer(type).serialize((DataObject) data, writer);
+        } catch (final IOException e) {
+            LOG.error("Unexpected failure while serializing data {}", data, e);
+            throw new IllegalStateException("Failed to create normalized node", e);
+        }
+        return (ContainerNode) result.getResult();
+
+    }
+
+    @Override
+    public ContainerNode toNormalizedNodeRpcData(final DataContainer data) {
+        final NormalizedNodeResult result = new NormalizedNodeResult();
+        // We create DOM stream writer which produces normalized nodes
+        final NormalizedNodeStreamWriter domWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        final Class<? extends DataObject> type = (Class) data.getImplementedInterface();
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        final BindingStreamEventWriter writer = newRpcWriter(type, domWriter);
+        try {
+            // FIXME: Should be cast to DataObject necessary?
+            getSerializer(type).serialize((DataObject) data, writer);
+        } catch (final IOException e) {
+            LOG.error("Unexpected failure while serializing data {}", data, e);
+            throw new IllegalStateException("Failed to create normalized node", e);
+        }
+        return (ContainerNode) result.getResult();
     }
 
     private static boolean isBindingRepresentable(final NormalizedNode<?, ?> data) {
@@ -151,7 +191,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         throw new UnsupportedOperationException("Not implemented yet");
     }
 
-    @Override
+   @Override
     public Entry<YangInstanceIdentifier, BindingStreamEventWriter> newWriterAndIdentifier(final InstanceIdentifier<?> path, final NormalizedNodeStreamWriter domWriter) {
         return codecContext.newWriter(path, domWriter);
     }
@@ -161,9 +201,22 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         return codecContext.newWriterWithoutIdentifier(path, domWriter);
     }
 
+    @Override
+    public BindingStreamEventWriter newNotificationWriter(final Class<? extends Notification> notification,
+            final NormalizedNodeStreamWriter streamWriter) {
+        return codecContext.newNotificationWriter(notification, streamWriter);
+    }
+
+
+    @Override
+    public BindingStreamEventWriter newRpcWriter(final Class<? extends DataContainer> rpcInputOrOutput,
+            final NormalizedNodeStreamWriter streamWriter) {
+        return codecContext.newRpcWriter(rpcInputOrOutput,streamWriter);
+    }
+
 
     public <T extends DataObject> Function<Optional<NormalizedNode<?, ?>>, Optional<T>>  deserializeFunction(final InstanceIdentifier<T> path) {
-        DataObjectCodecContext<?> ctx = (DataObjectCodecContext<?>) codecContext.getCodecContextNode(path, null);
+        final DataObjectCodecContext<?> ctx = (DataObjectCodecContext<?>) codecContext.getCodecContextNode(path, null);
         return new DeserializeFunction<T>(ctx);
     }
 
@@ -186,11 +239,11 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         }
     }
 
-    private class GeneratorLoader extends CacheLoader<Class<? extends DataObject>, DataObjectSerializer> {
+    private class GeneratorLoader extends CacheLoader<Class<? extends DataContainer>, DataObjectSerializer> {
 
         @Override
-        public DataObjectSerializer load(final Class<? extends DataObject> key) throws Exception {
-            DataObjectSerializerImplementation prototype = generator.getSerializer(key);
+        public DataObjectSerializer load(final Class<? extends DataContainer> key) throws Exception {
+            final DataObjectSerializerImplementation prototype = generator.getSerializer(key);
             return new DataObjectSerializerProxy(prototype);
         }
     }
@@ -214,5 +267,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
             delegate.serialize(BindingNormalizedNodeCodecRegistry.this, obj, stream);
         }
     }
+
+
 
 }

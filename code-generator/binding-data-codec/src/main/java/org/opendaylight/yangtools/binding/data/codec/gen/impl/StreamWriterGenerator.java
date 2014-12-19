@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 
 /**
  * Concrete implementation of {@link AbstractStreamWriterGenerator}
@@ -62,6 +63,17 @@ public class StreamWriterGenerator extends AbstractStreamWriterGenerator {
 
     @Override
     protected DataObjectSerializerSource generateContainerSerializer(final GeneratedType type, final ContainerSchemaNode node) {
+
+        return new AugmentableDataNodeContainerEmmiterSource(this, type, node) {
+            @Override
+            public CharSequence emitStartEvent() {
+                return startContainerNode(classReference(type), getChildSizeFromSchema(node));
+            }
+        };
+    }
+
+    @Override
+    protected DataObjectSerializerSource generateNotificationSerializer(final GeneratedType type, final NotificationDefinition node) {
 
         return new AugmentableDataNodeContainerEmmiterSource(this, type, node) {
             @Override
