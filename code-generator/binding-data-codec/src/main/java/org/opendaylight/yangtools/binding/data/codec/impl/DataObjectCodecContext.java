@@ -11,7 +11,11 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedMap;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -44,9 +48,8 @@ import org.slf4j.LoggerFactory;
 
 abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataContainerCodecContext<T> {
     private static final Logger LOG = LoggerFactory.getLogger(DataObjectCodecContext.class);
-
+    private static final Class<?>[] CONSTRUCTOR_ARGS = new Class[] { InvocationHandler.class };
     private static final Comparator<Method> METHOD_BY_ALPHABET = new Comparator<Method>() {
-
         @Override
         public int compare(final Method o1, final Method o2) {
             return o1.getName().compareTo(o2.getName());
@@ -58,7 +61,10 @@ abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataC
     private final ImmutableSortedMap<Method, NodeContextSupplier> byMethod;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byStreamClass;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClass;
-    protected final Method augmentationGetter;
+    private final Constructor<?> proxyConstructor;
+
+    // FIXME: this field seems to be unused
+    private final Method augmentationGetter;
 
     protected DataObjectCodecContext(final DataContainerCodecPrototype<T> prototype) {
         super(prototype);
@@ -114,6 +120,13 @@ abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataC
         this.byStreamClass = ImmutableMap.copyOf(byStreamClassBuilder);
         byBindingArgClassBuilder.putAll(byStreamClass);
         this.byBindingArgClass = ImmutableMap.copyOf(byBindingArgClassBuilder);
+
+        final Class<?> proxyClass = Proxy.getProxyClass(bindingClass().getClassLoader(),  new Class[] { bindingClass() });
+        try {
+            proxyConstructor = proxyClass.getConstructor(CONSTRUCTOR_ARGS);
+        } catch (NoSuchMethodException | SecurityException e) {
+            throw new IllegalStateException("Failed to find constructor");
+        }
     }
 
     @Override
@@ -254,6 +267,14 @@ abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataC
             return childContext.dataFromNormalizedNode(domChild.get());
         }
         return null;
+    }
+
+    protected final DataObject createBindingProxy(final NormalizedNodeContainer<?, ?, ?> node) {
+        try {
+            return (DataObject) proxyConstructor.newInstance(new Object[] { new LazyDataObject(this, node) });
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+            throw new IllegalStateException("Failed to construct proxy for " + node, e);
+        }
     }
 
     public Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAllAugmentationsFrom(

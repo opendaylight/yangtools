@@ -8,9 +8,7 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Preconditions;
-
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -30,7 +28,6 @@ final class CaseNodeCodecContext extends DataObjectCodecContext<ChoiceCaseNode> 
     @Override
     protected Object dataFromNormalizedNode(final NormalizedNode<?, ?> normalizedNode) {
         Preconditions.checkState(normalizedNode instanceof ChoiceNode);
-        return LazyDataObject.create(this, (ChoiceNode) normalizedNode);
+        return createBindingProxy((ChoiceNode) normalizedNode);
     }
-
 }

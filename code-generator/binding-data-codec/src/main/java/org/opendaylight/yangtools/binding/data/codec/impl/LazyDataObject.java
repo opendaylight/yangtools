@@ -21,7 +21,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.opendaylight.yangtools.binding.data.codec.util.AugmentationReader;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
-import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -46,16 +45,9 @@ class LazyDataObject implements InvocationHandler, AugmentationReader {
     private volatile Integer cachedHashcode = null;
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private LazyDataObject(final DataObjectCodecContext<?> ctx, final NormalizedNodeContainer data) {
+    LazyDataObject(final DataObjectCodecContext<?> ctx, final NormalizedNodeContainer data) {
         this.context = Preconditions.checkNotNull(ctx, "Context must not be null");
         this.data = Preconditions.checkNotNull(data, "Data must not be null");
-    }
-
-    @SuppressWarnings("rawtypes")
-    static DataObject create(final DataObjectCodecContext ctx, final NormalizedNodeContainer<?, ?, ?> data) {
-        Class<?> bindingClass = ctx.bindingClass();
-        return (DataObject) Proxy.newProxyInstance(bindingClass.getClassLoader(), new Class<?>[] { bindingClass },
-                new LazyDataObject(ctx, data));
     }
 
     @Override
@@ -222,5 +214,4 @@ class LazyDataObject implements InvocationHandler, AugmentationReader {
         }
         return true;
     }
-
 }

@@ -8,11 +8,9 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.collect.Iterables;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
@@ -30,7 +28,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class ListNodeCodecContext extends DataObjectCodecContext<ListSchemaNode> {
-
     private final Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> codec;
     private final Method keyGetter;
 
@@ -87,14 +84,15 @@ final class ListNodeCodecContext extends DataObjectCodecContext<ListSchemaNode> 
     protected Object dataFromNormalizedNode(final NormalizedNode<?, ?> node) {
         if (node instanceof MapNode) {
             return fromMap((MapNode) node);
-        } else if(node instanceof MapEntryNode)  {
+        } else if (node instanceof MapEntryNode) {
             return fromMapEntry((MapEntryNode) node);
         } else if (node instanceof UnkeyedListNode) {
             return fromUnkeyedList((UnkeyedListNode) node);
-        }  else if(node instanceof UnkeyedListEntryNode) {
+        } else if (node instanceof UnkeyedListEntryNode) {
             return fromUnkeyedListEntry((UnkeyedListEntryNode) node);
+        } else {
+            throw new IllegalStateException("Unsupported data type " + node.getClass());
         }
-        throw new IllegalStateException("Unsupported data type " + node.getClass());
     }
 
     private List<DataObject> fromMap(final MapNode nodes) {
@@ -106,11 +104,11 @@ final class ListNodeCodecContext extends DataObjectCodecContext<ListSchemaNode> 
     }
 
     private DataObject fromMapEntry(final MapEntryNode node) {
-        return LazyDataObject.create(this, node);
+        return createBindingProxy(node);
     }
 
     private DataObject fromUnkeyedListEntry(final UnkeyedListEntryNode node) {
-        return LazyDataObject.create(this, node);
+        return createBindingProxy(node);
     }
 
     private List<DataObject> fromUnkeyedList(final UnkeyedListNode nodes) {
@@ -123,8 +121,9 @@ final class ListNodeCodecContext extends DataObjectCodecContext<ListSchemaNode> 
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
     Object getBindingChildValue(final Method method, final NormalizedNodeContainer dom) {
-        if (method.equals(keyGetter) && dom instanceof MapEntryNode) {
+        if (dom instanceof MapEntryNode && method.equals(keyGetter)) {
             NodeIdentifierWithPredicates identifier = ((MapEntryNode) dom).getIdentifier();
             return codec.deserialize(identifier).getKey();
         }
