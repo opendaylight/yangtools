@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-
 import com.google.common.base.Optional;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 
 public class SchemaNodeUtils {
 
@@ -36,4 +38,16 @@ public class SchemaNodeUtils {
         }
         return previous.orNull();
     }
+
+
+    public static ContainerSchemaNode getRpcDataSchema(final RpcDefinition rpc, final QName qname) {
+           switch (qname.getLocalName()) {
+           case "input":
+               return rpc.getInput();
+           case "output":
+               return rpc.getOutput();
+           default:
+               throw new IllegalArgumentException("Supplied qname " + qname + " does not represent rpc input or output.");
+           }
+       }
 }

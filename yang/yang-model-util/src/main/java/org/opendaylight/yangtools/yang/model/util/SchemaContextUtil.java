@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -118,11 +119,11 @@ public final class SchemaContextUtil {
         Preconditions.checkArgument(module != null, "Module reference cannot be NULL");
         Preconditions.checkArgument(nonCondXPath != null, "Non Conditional Revision Aware XPath cannot be NULL");
 
-        String strXPath = nonCondXPath.toString();
+        final String strXPath = nonCondXPath.toString();
         if (strXPath != null) {
             Preconditions.checkArgument(strXPath.indexOf('[') == -1, "Revision Aware XPath may not contain a condition");
             if (nonCondXPath.isAbsolute()) {
-                List<QName> qnamedPath = xpathToQNamePath(context, module, strXPath);
+                final List<QName> qnamedPath = xpathToQNamePath(context, module, strXPath);
                 if (qnamedPath != null) {
                     return findNodeInSchemaContext(context, qnamedPath);
                 }
@@ -180,9 +181,9 @@ public final class SchemaContextUtil {
                 "Revision Aware XPath MUST be relative i.e. MUST contains ../, "
                         + "for non relative Revision Aware XPath use findDataSchemaNode method");
 
-        SchemaPath actualNodePath = actualSchemaNode.getPath();
+        final SchemaPath actualNodePath = actualSchemaNode.getPath();
         if (actualNodePath != null) {
-            Iterable<QName> qnamePath = resolveRelativeXPath(context, module, relativeXPath, actualSchemaNode);
+            final Iterable<QName> qnamePath = resolveRelativeXPath(context, module, relativeXPath, actualSchemaNode);
 
             if (qnamePath != null) {
                 return findNodeInSchemaContext(context, qnamePath);
@@ -234,7 +235,23 @@ public final class SchemaContextUtil {
         return findNodeInModule(module, path);
     }
 
-    private static SchemaNode findNodeInModule(Module module, Iterable<QName> path) {
+    /**
+     * Returns NotificationDefinition from Schema Context
+     *
+     * @param schema SchemaContext in which lookup should be performed.
+     * @param qname QName of notification
+     * @return Notification schema or null, if notification is not present in schema context.
+     */
+    public static @Nullable NotificationDefinition getNotificationSchema(final SchemaContext schema, final SchemaPath path) {
+        for (final NotificationDefinition potential : schema.getNotifications()) {
+            if (path.equals(potential.getPath())) {
+               return potential;
+            }
+        }
+        return null;
+    }
+
+    private static SchemaNode findNodeInModule(final Module module, final Iterable<QName> path) {
 
         Preconditions.checkArgument(module != null, "Parent reference cannot be NULL");
         Preconditions.checkArgument(path != null, "Path reference cannot be NULL");
@@ -244,11 +261,11 @@ public final class SchemaContextUtil {
             return null;
         }
 
-        QName current = path.iterator().next();
+        final QName current = path.iterator().next();
         LOG.trace("Looking for node {} in module {}", current, module);
 
         SchemaNode foundNode = null;
-        Iterable<QName> nextPath = nextLevel(path);
+        final Iterable<QName> nextPath = nextLevel(path);
 
         foundNode = module.getDataChildByName(current);
         if (foundNode != null && nextPath.iterator().hasNext()) {
@@ -284,7 +301,7 @@ public final class SchemaContextUtil {
 
     }
 
-    private static SchemaNode findNodeIn(SchemaNode parent, Iterable<QName> path) {
+    private static SchemaNode findNodeIn(final SchemaNode parent, final Iterable<QName> path) {
 
         Preconditions.checkArgument(parent != null, "Parent reference cannot be NULL");
         Preconditions.checkArgument(path != null, "Path reference cannot be NULL");
@@ -294,14 +311,14 @@ public final class SchemaContextUtil {
             return null;
         }
 
-        QName current = path.iterator().next();
+        final QName current = path.iterator().next();
         LOG.trace("Looking for node {} in node {}", current, parent);
 
         SchemaNode foundNode = null;
-        Iterable<QName> nextPath = nextLevel(path);
+        final Iterable<QName> nextPath = nextLevel(path);
 
         if (parent instanceof DataNodeContainer) {
-            DataNodeContainer parentDataNodeContainer = (DataNodeContainer) parent;
+            final DataNodeContainer parentDataNodeContainer = (DataNodeContainer) parent;
 
             foundNode = parentDataNodeContainer.getDataChildByName(current);
             if (foundNode != null && nextPath.iterator().hasNext()) {
@@ -317,7 +334,7 @@ public final class SchemaContextUtil {
         }
 
         if (foundNode == null && parent instanceof RpcDefinition) {
-            RpcDefinition parentRpcDefinition = (RpcDefinition) parent;
+            final RpcDefinition parentRpcDefinition = (RpcDefinition) parent;
 
             if (current.getLocalName().equals("input")) {
                 foundNode = parentRpcDefinition.getInput();
@@ -361,7 +378,7 @@ public final class SchemaContextUtil {
     }
 
     private static RpcDefinition getRpcByName(final Module module, final QName name) {
-        for (RpcDefinition rpc : module.getRpcs()) {
+        for (final RpcDefinition rpc : module.getRpcs()) {
             if (rpc.getQName().equals(name)) {
                 return rpc;
             }
@@ -370,7 +387,7 @@ public final class SchemaContextUtil {
     }
 
     private static NotificationDefinition getNotificationByName(final Module module, final QName name) {
-        for (NotificationDefinition notification : module.getNotifications()) {
+        for (final NotificationDefinition notification : module.getNotifications()) {
             if (notification.getQName().equals(name)) {
                 return notification;
             }
@@ -379,7 +396,7 @@ public final class SchemaContextUtil {
     }
 
     private static GroupingDefinition getGroupingByName(final DataNodeContainer dataNodeContainer, final QName name) {
-        for (GroupingDefinition grouping : dataNodeContainer.getGroupings()) {
+        for (final GroupingDefinition grouping : dataNodeContainer.getGroupings()) {
             if (grouping.getQName().equals(name)) {
                 return grouping;
             }
@@ -388,7 +405,7 @@ public final class SchemaContextUtil {
     }
 
     private static GroupingDefinition getGroupingByName(final RpcDefinition rpc, final QName name) {
-        for (GroupingDefinition grouping : rpc.getGroupings()) {
+        for (final GroupingDefinition grouping : rpc.getGroupings()) {
             if (grouping.getQName().equals(name)) {
                 return grouping;
             }
@@ -418,8 +435,8 @@ public final class SchemaContextUtil {
         Preconditions.checkArgument(parentModule != null, "Parent Module reference cannot be NULL");
         Preconditions.checkArgument(xpath != null, "XPath string reference cannot be NULL");
 
-        List<QName> path = new LinkedList<QName>();
-        for (String pathComponent : SLASH_SPLITTER.split(xpath)) {
+        final List<QName> path = new LinkedList<QName>();
+        for (final String pathComponent : SLASH_SPLITTER.split(xpath)) {
             if (!pathComponent.isEmpty()) {
                 path.add(stringPathPartToQName(context, parentModule, pathComponent));
             }
@@ -457,7 +474,7 @@ public final class SchemaContextUtil {
             final Iterator<String> prefixedName = COLON_SPLITTER.split(prefixedPathPart).iterator();
             final String modulePrefix = prefixedName.next();
 
-            Module module = resolveModuleForPrefix(context, parentModule, modulePrefix);
+            final Module module = resolveModuleForPrefix(context, parentModule, modulePrefix);
             Preconditions.checkArgument(module != null, "Failed to resolve xpath: no module found for prefix %s in module %s",
                     modulePrefix, parentModule.getName());
 
@@ -500,8 +517,8 @@ public final class SchemaContextUtil {
             return module;
         }
 
-        Set<ModuleImport> imports = module.getImports();
-        for (ModuleImport mi : imports) {
+        final Set<ModuleImport> imports = module.getImports();
+        for (final ModuleImport mi : imports) {
             if (prefix.equals(mi.getPrefix())) {
                 return context.findModuleByName(mi.getModuleName(), mi.getRevision());
             }
@@ -539,7 +556,7 @@ public final class SchemaContextUtil {
         // FIXME: is .contains() the right check here?
         // FIXME: case ../../node1/node2/../node3/../node4
         int colCount = 0;
-        for (Iterator<String> it = xpaths.iterator(); it.hasNext() && it.next().contains(".."); ) {
+        for (final Iterator<String> it = xpaths.iterator(); it.hasNext() && it.next().contains(".."); ) {
             ++colCount;
         }
 
