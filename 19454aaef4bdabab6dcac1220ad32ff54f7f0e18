@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_587efeaf",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaContextUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 620,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-12-19T09:05:49Z",
+      "side": 1,
+      "message": "make this final -- re-assigning a variable is bad for readability",
+      "revId": "19454aaef4bdabab6dcac1220ad32ff54f7f0e18",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_f84a6a82",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaContextUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 626,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2014-12-19T09:05:49Z",
+      "side": 1,
+      "message": "rework logic for readability:\n\nif (!pathStatement.isAbsolute()) {\n    return null;\n}\n\n...",
+      "revId": "19454aaef4bdabab6dcac1220ad32ff54f7f0e18",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
