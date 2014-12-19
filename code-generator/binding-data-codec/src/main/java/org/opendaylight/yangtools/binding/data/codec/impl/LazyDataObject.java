@@ -53,7 +53,7 @@ class LazyDataObject implements InvocationHandler, AugmentationReader {
     @Override
     public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
         if (method.getParameterTypes().length == 0) {
-            String name = method.getName();
+            final String name = method.getName();
             if (GET_IMPLEMENTED_INTERFACE.equals(name)) {
                 return context.bindingClass();
             } else if (TO_STRING.equals(name)) {
@@ -78,9 +78,9 @@ class LazyDataObject implements InvocationHandler, AugmentationReader {
             return false;
         }
         try {
-            for (Method m : context.getHashCodeAndEqualsMethods()) {
-                Object thisValue = getBindingData(m);
-                Object otherValue = m.invoke(other);
+            for (final Method m : context.getHashCodeAndEqualsMethods()) {
+                final Object thisValue = getBindingData(m);
+                final Object otherValue = m.invoke(other);
                 if(!Objects.equals(thisValue, otherValue)) {
                     return false;
                 }
@@ -93,15 +93,15 @@ class LazyDataObject implements InvocationHandler, AugmentationReader {
     }
 
     private Integer bindingHashCode() {
-        Integer ret = cachedHashcode;
+        final Integer ret = cachedHashcode;
         if (ret != null) {
             return ret;
         }
 
         final int prime = 31;
         int result = 1;
-        for (Method m : context.getHashCodeAndEqualsMethods()) {
-            Object value = getBindingData(m);
+        for (final Method m : context.getHashCodeAndEqualsMethods()) {
+            final Object value = getBindingData(m);
             result += prime * result + ((value == null) ? 0 : value.hashCode());
         }
         if (Augmentation.class.isAssignableFrom(context.bindingClass())) {
@@ -114,7 +114,7 @@ class LazyDataObject implements InvocationHandler, AugmentationReader {
     private Object getBindingData(final Method method) {
         Object cached = cachedData.get(method);
         if (cached == null) {
-            Object readedValue = context.getBindingChildValue(method, data);
+            final Object readedValue = context.getBindingChildValue(method, data);
             if (readedValue == null) {
                 cached = NULL_VALUE;
             } else {
@@ -166,9 +166,9 @@ class LazyDataObject implements InvocationHandler, AugmentationReader {
     }
 
     public String bindingToString() {
-        ToStringHelper helper = com.google.common.base.Objects.toStringHelper(context.bindingClass()).omitNullValues();
+        final ToStringHelper helper = com.google.common.base.Objects.toStringHelper(context.bindingClass()).omitNullValues();
 
-        for (Method m :context.getHashCodeAndEqualsMethods()) {
+        for (final Method m :context.getHashCodeAndEqualsMethods()) {
             helper.add(m.getName(), getBindingData(m));
         }
         if (Augmentable.class.isAssignableFrom(context.bindingClass())) {
@@ -197,7 +197,7 @@ class LazyDataObject implements InvocationHandler, AugmentationReader {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        LazyDataObject other = (LazyDataObject) obj;
+        final LazyDataObject other = (LazyDataObject) obj;
         if (context == null) {
             if (other.context != null) {
                 return false;
