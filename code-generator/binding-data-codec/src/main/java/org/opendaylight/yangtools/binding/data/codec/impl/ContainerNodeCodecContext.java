@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Preconditions;
-
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -22,7 +21,7 @@ final class ContainerNodeCodecContext extends DataObjectCodecContext<ContainerSc
     @Override
     protected Object dataFromNormalizedNode(final NormalizedNode<?, ?> data) {
         Preconditions.checkState(data instanceof ContainerNode);
-        return LazyDataObject.create(this, (ContainerNode) data);
+        return createBindingProxy((ContainerNode) data);
     }
 
 }
