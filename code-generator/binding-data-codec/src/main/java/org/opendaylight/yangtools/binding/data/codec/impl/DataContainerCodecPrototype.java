@@ -17,12 +17,14 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 class DataContainerCodecPrototype<T> implements NodeContextSupplier {
@@ -66,21 +68,27 @@ class DataContainerCodecPrototype<T> implements NodeContextSupplier {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     static <T extends DataSchemaNode> DataContainerCodecPrototype<T> from(final Class<?> cls, final T schema,
             final CodecContextFactory factory) {
-        NodeIdentifier arg = new NodeIdentifier(schema.getQName());
+        final NodeIdentifier arg = new NodeIdentifier(schema.getQName());
         return new DataContainerCodecPrototype(cls, arg, schema, factory);
     }
 
     static DataContainerCodecPrototype<SchemaContext> rootPrototype(final CodecContextFactory factory) {
-        SchemaContext schema = factory.getRuntimeContext().getSchemaContext();
-        NodeIdentifier arg = new NodeIdentifier(schema.getQName());
+        final SchemaContext schema = factory.getRuntimeContext().getSchemaContext();
+        final NodeIdentifier arg = new NodeIdentifier(schema.getQName());
         return new DataContainerCodecPrototype<SchemaContext>(DataRoot.class, arg, schema, factory);
     }
 
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public static DataContainerCodecPrototype<?> from(final Class<?> augClass, final AugmentationIdentifier arg,
+    static DataContainerCodecPrototype<?> from(final Class<?> augClass, final AugmentationIdentifier arg,
             final AugmentationSchema schema, final CodecContextFactory factory) {
         return new DataContainerCodecPrototype(augClass, arg, schema, factory);
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    static DataContainerCodecPrototype<NotificationDefinition> from(final Class<?> augClass, final NotificationDefinition schema, final CodecContextFactory factory) {
+        final PathArgument arg = new NodeIdentifier(schema.getQName());
+        return new DataContainerCodecPrototype<NotificationDefinition>(augClass,arg, schema, factory);
     }
 
     protected final T getSchema() {

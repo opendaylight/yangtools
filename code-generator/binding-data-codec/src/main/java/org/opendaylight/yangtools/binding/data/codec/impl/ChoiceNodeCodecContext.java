@@ -43,7 +43,7 @@ final class ChoiceNodeCodecContext extends DataContainerCodecContext<ChoiceNode>
         Map<Class<?>, DataContainerCodecPrototype<?>> byCaseChildClassBuilder = new HashMap<>();
         Set<Class<?>> potentialSubstitutions = new HashSet<>();
         // Walks all cases for supplied choice in current runtime context
-        for (Class caze : factory().getRuntimeContext().getCases(bindingClass())) {
+        for (Class<?> caze : factory().getRuntimeContext().getCases(bindingClass())) {
             // We try to load case using exact match thus name
             // and original schema must equals
             DataContainerCodecPrototype<ChoiceCaseNode> cazeDef = loadCase(caze);
