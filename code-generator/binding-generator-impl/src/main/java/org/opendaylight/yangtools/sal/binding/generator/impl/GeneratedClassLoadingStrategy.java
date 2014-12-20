@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.sal.binding.generator.impl;
 
 import org.opendaylight.yangtools.sal.binding.generator.api.ClassLoadingStrategy;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.binding.util.ClassLoaderUtils;
+import org.opendaylight.yangtools.util.ClassLoaderUtils;
 
 public abstract class GeneratedClassLoadingStrategy implements ClassLoadingStrategy {
 
