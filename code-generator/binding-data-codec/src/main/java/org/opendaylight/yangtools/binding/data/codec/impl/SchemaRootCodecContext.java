@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.DataRoot;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 class SchemaRootCodecContext extends DataContainerCodecContext<SchemaContext> {
 
-    private final LoadingCache<Class<?>, DataContainerCodecContext<?>> children = CacheBuilder.newBuilder().build(
+    private final LoadingCache<Class<?>, DataContainerCodecContext<?>> childrenByClass = CacheBuilder.newBuilder().build(
             new CacheLoader<Class<?>, DataContainerCodecContext<?>>() {
                 @Override
                 public DataContainerCodecContext<?> load(final Class<?> key) {
@@ -37,6 +37,22 @@ class SchemaRootCodecContext extends DataContainerCodecContext<SchemaContext> {
                     return DataContainerCodecPrototype.from(key, childSchema, factory()).get();
                 }
             });
+
+    private final LoadingCache<QName, DataContainerCodecContext<?>> childrenByQName = CacheBuilder.newBuilder().build(
+        new CacheLoader<QName, DataContainerCodecContext<?>>() {
+            @Override
+            public DataContainerCodecContext<?> load(final QName qname) {
+                final DataSchemaNode childSchema = schema().getDataChildByName(qname);
+                Preconditions.checkArgument(childSchema != null, "Argument %s is not valid child of %s", qname, schema());
+
+                if (childSchema instanceof DataNodeContainer || childSchema instanceof ChoiceNode) {
+                    final Class<?> childCls = factory().getRuntimeContext().getClassForSchema(childSchema);
+                    return getStreamChild(childCls);
+                } else {
+                    throw new UnsupportedOperationException("Unsupported child type " + childSchema.getClass());
+                }
+            }
+        });
 
     private SchemaRootCodecContext(final DataContainerCodecPrototype<SchemaContext> dataPrototype) {
         super(dataPrototype);
@@ -56,7 +72,7 @@ class SchemaRootCodecContext extends DataContainerCodecContext<SchemaContext> {
 
     @Override
     protected DataContainerCodecContext<?> getStreamChild(final Class<?> childClass) {
-        return children.getUnchecked(childClass);
+        return childrenByClass.getUnchecked(childClass);
     }
 
     @Override
@@ -65,23 +81,13 @@ class SchemaRootCodecContext extends DataContainerCodecContext<SchemaContext> {
     }
 
     @Override
-    protected YangInstanceIdentifier.PathArgument getDomPathArgument() {
+    protected PathArgument getDomPathArgument() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    protected NodeCodecContext getYangIdentifierChild(final YangInstanceIdentifier.PathArgument arg) {
-        // FIXME: Optimize this
-        QName childQName = arg.getNodeType();
-        DataSchemaNode childSchema = schema().getDataChildByName(childQName);
-        Preconditions.checkArgument(childSchema != null, "Argument %s is not valid child of %s", arg, schema());
-        if (childSchema instanceof DataNodeContainer || childSchema instanceof ChoiceNode) {
-            Class<?> childCls = factory().getRuntimeContext().getClassForSchema(childSchema);
-            DataContainerCodecContext<?> childNode = getStreamChild(childCls);
-            return childNode;
-        } else {
-            throw new UnsupportedOperationException();
-        }
+    protected NodeCodecContext getYangIdentifierChild(final PathArgument arg) {
+        return childrenByQName.getUnchecked(arg.getNodeType());
     }
 
     @Override
