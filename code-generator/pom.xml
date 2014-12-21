@@ -32,6 +32,7 @@
         <module>maven-sal-api-gen-plugin</module>
         <module>binding-test-model</module>
         <module>binding-data-codec</module>
+        <module>binding-parent</module>
     </modules>
 
     <build>
