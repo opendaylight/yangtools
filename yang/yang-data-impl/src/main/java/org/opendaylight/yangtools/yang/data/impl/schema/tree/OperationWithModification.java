@@ -45,8 +45,16 @@ final class OperationWithModification {
     }
 
     void merge(final NormalizedNode<?, ?> data) {
+        /*
+         * A merge operation will end up overwriting parts of the tree, retaining others.
+         * We want to make sure we do not validate the complete resulting structure, but
+         * rather just what was written. In order to do that, we first pretend the data
+         * was written, run verification and then perform the merge -- with the explicit
+         * assumption that adding the newly-validated data with the previously-validated
+         * data will not result in invalid data.
+         */
+        applyOperation.verifyStructure(modification.asNewlyWritten(data));
         mergeImpl(data);
-        applyOperation.verifyStructure(modification);
     }
 
     void delete() {
