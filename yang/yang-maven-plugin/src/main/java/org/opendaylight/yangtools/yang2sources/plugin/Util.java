@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -82,7 +83,9 @@ final class Util {
 
     static Collection<File> listFiles(File root, File[] excludedFiles, Log log) throws FileNotFoundException {
         if (!root.exists()) {
-            throw new FileNotFoundException(root.toString());
+        	log.warn(Util.message("yang source directory %s not found.  No code will be generated.",YangToSourcesProcessor.LOG_PREFIX,
+        			root.toString()));
+        	return Collections.emptyList();
         }
         Collection<File> result = new ArrayList<>();
         Collection<File> yangFiles = FileUtils.listFiles(root, new String[] { YANG_SUFFIX }, true);
