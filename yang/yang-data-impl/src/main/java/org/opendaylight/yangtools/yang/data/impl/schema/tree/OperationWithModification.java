@@ -30,9 +30,30 @@ final class OperationWithModification {
         applyOperation.verifyStructure(modification);
     }
 
-    void merge(final NormalizedNode<?, ?> data) {
+    private void recursiveMerge(final NormalizedNode<?,?> data) {
+        if (data instanceof NormalizedNodeContainer<?,?,?>) {
+            @SuppressWarnings({ "rawtypes", "unchecked" })
+            NormalizedNodeContainer<?,?,NormalizedNode<PathArgument, ?>> dataContainer = (NormalizedNodeContainer) data;
+            for (NormalizedNode<PathArgument, ?> child : dataContainer.getValue()) {
+                PathArgument childId = child.getIdentifier();
+                forChild(childId).recursiveMerge(child);
+            }
+        }
+
         modification.merge(data);
-        applyOperation.verifyStructure(modification);
+    }
+
+    void merge(final NormalizedNode<?, ?> data) {
+        /*
+         * A merge operation will end up overwriting parts of the tree, retaining others.
+         * We want to make sure we do not validate the complete resulting structure, but
+         * rather just what was written. In order to do that, we first pretend the data
+         * was written, run verification and then perform the merge -- with the explicit
+         * assumption that adding the newly-validated data with the previously-validated
+         * data will not result in invalid data.
+         */
+        applyOperation.verifyStructure(modification.asNewlyWritten(data));
+        recursiveMerge(data);
     }
 
     void delete() {
