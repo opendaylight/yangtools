@@ -31,19 +31,9 @@ public class YangToSourcesPluginTestIT {
     // TODO Test yang files in transitive dependencies
 
     @Test
-    public void testYangRootNotExist() throws URISyntaxException {
-        try {
-            setUp("test-parent/YangRootNotExist/", false);
-        } catch (VerificationException e) {
-            assertVerificationException(e,
-                    "[ERROR] yang-to-sources: Unable to parse yang files from ");
-            assertVerificationException(
-                    e,
-                    "Caused by: org.apache.maven.plugin.MojoExecutionException: yang-to-sources: Unable to parse yang files from ");
-            return;
-        }
-
-        fail("Verification exception should have been thrown");
+    public void testYangRootNotExist() throws Exception {
+        Verifier v = setUp("test-parent/YangRootNotExist/", false);
+        v.verifyTextInLog("[WARNING] yang-to-sources: YANG source directory");
     }
 
     @Test
