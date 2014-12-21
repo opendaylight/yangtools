@@ -270,6 +270,19 @@ final class ModifiedNode implements StoreTreeNode<ModifiedNode>, Identifiable<Pa
                 + modificationType + ", childModification=" + children + "]";
     }
 
+    /**
+     * Create a node which will reflect the state of this node, except it will behave as newly-written
+     * value. This is useful only for merge validation.
+     *
+     * @param value Value associated with the node
+     * @return An isolated node. This node should never reach a datatree.
+     */
+    ModifiedNode asNewlyWritten(final NormalizedNode<?, ?> value) {
+        final ModifiedNode ret = new ModifiedNode(getIdentifier(), Optional.<TreeNode>absent(), false);
+        ret.write(value);
+        return ret;
+    }
+
     public static ModifiedNode createUnmodified(final TreeNode metadataTree, final boolean isOrdered) {
         return new ModifiedNode(metadataTree.getIdentifier(), Optional.of(metadataTree), isOrdered);
     }
