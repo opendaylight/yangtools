@@ -206,7 +206,7 @@ class YangToSourcesProcessor {
             withMetaInf.mkdirs();
 
             try {
-                Collection<File> files = Util.listFiles(yangFilesRootDir, excludedFiles, null);
+                Collection<File> files = Util.listFiles(yangFilesRootDir, excludedFiles, log);
                 for (File file : files) {
                     org.apache.commons.io.FileUtils.copyFile(file, new File(withMetaInf, file.getName()));
                 }
