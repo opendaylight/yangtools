@@ -79,7 +79,6 @@
         <bundle>mvn:org.opendaylight.yangtools/binding-model-api/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/binding-type-provider/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/binding-data-codec/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools.thirdparty/xtend-lib-osgi/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-model-api/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-model-util/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-parser-api/{{VERSION}}</bundle>
