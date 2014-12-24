@@ -42,7 +42,6 @@ public class BundleStartTest {
         options.add(mavenBundle("org.apache.commons", "commons-lang3").versionAsInProject());
         options.add(mavenBundle("org.opendaylight.yangtools.thirdparty", "antlr4-runtime-osgi-nohead")
                 .versionAsInProject());
-        options.add(mavenBundle("org.opendaylight.yangtools.thirdparty", "xtend-lib-osgi").versionAsInProject());
         options.add(mavenBundle("org.javassist", "javassist").versionAsInProject());
 
         options.add(mavenBundle(GROUP, "concepts").versionAsInProject());
