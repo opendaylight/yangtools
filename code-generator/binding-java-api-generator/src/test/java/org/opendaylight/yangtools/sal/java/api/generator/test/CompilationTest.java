@@ -27,7 +27,7 @@ import static org.opendaylight.yangtools.sal.java.api.generator.test.Compilation
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.cleanUp;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.getSourceFiles;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.testCompilation;
-
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import java.io.File;
 import java.lang.annotation.Annotation;
@@ -40,7 +40,8 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
@@ -578,15 +579,21 @@ public class CompilationTest extends BaseCompilationTest {
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
-    private void generateTestSources(String resourceDirPath, File sourcesOutputDir) throws Exception {
+    private void generateTestSources(final String resourceDirPath, final File sourcesOutputDir) throws Exception {
         final List<File> sourceFiles = getSourceFiles(resourceDirPath);
         final SchemaContext context = parser.parseFiles(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);
-        final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
+        Collections.sort(types, new Comparator<Type>() {
+            @Override
+            public int compare(final Type o1, final Type o2) {
+                return o2.getName().compareTo(o1.getName());
+            }
+        });
+        final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
         generator.generateToFile(sourcesOutputDir);
     }
 
-    private void testReturnTypeIdentityref(Class<?> clazz, String methodName, String returnTypeStr) throws Exception {
+    private void testReturnTypeIdentityref(final Class<?> clazz, final String methodName, final String returnTypeStr) throws Exception {
         Method method;
         java.lang.reflect.Type returnType;
         try {
@@ -606,7 +613,7 @@ public class CompilationTest extends BaseCompilationTest {
         }
     }
 
-    private void testReturnTypeInstanceIdentitifer(ClassLoader loader, Class<?> clazz, String methodName)
+    private void testReturnTypeInstanceIdentitifer(final ClassLoader loader, final Class<?> clazz, final String methodName)
             throws Exception {
         Method method;
         Class<?> rawReturnType;

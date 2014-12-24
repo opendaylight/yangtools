@@ -18,11 +18,10 @@ import static org.opendaylight.yangtools.sal.java.api.generator.test.Compilation
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.cleanUp;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.getSourceFiles;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.testCompilation;
-
+import com.google.common.collect.ImmutableSet;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.HashSet;
 import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
@@ -75,11 +74,11 @@ public class NestedGroupingCompilationTest extends BaseCompilationTest {
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
-    private void generateTestSources(String resourceDirPath, File sourcesOutputDir) throws Exception {
+    private void generateTestSources(final String resourceDirPath, final File sourcesOutputDir) throws Exception {
         final List<File> sourceFiles = getSourceFiles(resourceDirPath);
         final SchemaContext context = parser.parseFiles(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);
-        final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
+        final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
         generator.generateToFile(sourcesOutputDir);
     }
 
