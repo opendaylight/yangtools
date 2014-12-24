@@ -21,11 +21,10 @@ import static org.opendaylight.yangtools.sal.java.api.generator.test.Compilation
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.getSourceFiles;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.testAugmentation;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.testCompilation;
-
+import com.google.common.collect.ImmutableSet;
 import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.HashSet;
 import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
@@ -44,7 +43,7 @@ public class AugmentToUsesInAugmentCompilationTest extends BaseCompilationTest {
         final List<File> sourceFiles = getSourceFiles("/compilation/augment-uses-to-augment");
         final SchemaContext context = parser.parseFiles(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);
-        final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
+        final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
         generator.generateToFile(sourcesOutputDir);
 
         // Test if all sources are generated from 'module foo'
