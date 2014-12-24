@@ -224,11 +224,6 @@
             <artifactId>binding-data-codec</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.opendaylight.yangtools.thirdparty</groupId>
-            <artifactId>xtend-lib-osgi</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
         </dependency>
