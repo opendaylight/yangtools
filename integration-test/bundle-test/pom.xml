@@ -60,11 +60,6 @@
             <artifactId>antlr4-runtime-osgi-nohead</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools.thirdparty</groupId>
-            <artifactId>xtend-lib-osgi</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
