@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
  * to the data store tree.
  *
  * This tree is lazily created and populated via {@link #modifyChild(PathArgument)}
- * and {@link StoreMetadataNode} which represents original state {@link #getOriginal()}.
+ * and {@link TreeNode} which represents original state as tracked by {@link #getOriginal()}.
  */
 @NotThreadSafe
 final class ModifiedNode extends NodeModification implements StoreTreeNode<ModifiedNode> {
@@ -119,14 +119,14 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
 
     /**
      *
-     * Returns child modification if child was modified, creates {@link org.opendaylight.controller.md.sal.dom.store.impl.tree.data.ModifiedNode}
+     * Returns child modification if child was modified, creates {@link ModifiedNode}
      * for child otherwise.
      *
      * If this node's {@link ModificationType} is {@link ModificationType#UNMODIFIED}
      * changes modification type to {@link ModificationType#SUBTREE_MODIFIED}
      *
      * @param child
-     * @return {@link org.opendaylight.controller.md.sal.dom.store.impl.tree.data.ModifiedNode} for specified child, with {@link #getOriginal()}
+     * @return {@link ModifiedNode} for specified child, with {@link #getOriginal()}
      *         containing child metadata if child was present in original data.
      */
     ModifiedNode modifyChild(final PathArgument child, final boolean isOrdered) {
