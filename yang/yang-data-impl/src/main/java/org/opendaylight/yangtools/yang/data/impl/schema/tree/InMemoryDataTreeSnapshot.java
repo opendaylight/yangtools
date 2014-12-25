@@ -1,15 +1,14 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeSnapshot;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeUtils;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeSnapshot;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 final class InMemoryDataTreeSnapshot implements DataTreeSnapshot {
     private final RootModificationApplyOperation applyOper;
@@ -33,7 +32,7 @@ final class InMemoryDataTreeSnapshot implements DataTreeSnapshot {
 
     @Override
     public Optional<NormalizedNode<?, ?>> readNode(final YangInstanceIdentifier path) {
-        return NormalizedNodeUtils.findNode(rootNode.getData(), path);
+        return NormalizedNodes.findNode(rootNode.getData(), path);
     }
 
     @Override
