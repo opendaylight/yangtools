@@ -34,8 +34,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
  */
 @NotThreadSafe
 final class ModifiedNode extends NodeModification implements StoreTreeNode<ModifiedNode> {
-
-    public static final Predicate<ModifiedNode> IS_TERMINAL_PREDICATE = new Predicate<ModifiedNode>() {
+    static final Predicate<ModifiedNode> IS_TERMINAL_PREDICATE = new Predicate<ModifiedNode>() {
         @Override
         public boolean apply(final @Nonnull ModifiedNode input) {
             Preconditions.checkNotNull(input);
@@ -72,9 +71,9 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     }
 
     /**
+     * Return the value which was written to this node.
      *
-     *
-     * @return
+     * @return Currently-written value
      */
     public NormalizedNode<?, ?> getWrittenValue() {
         return value;
@@ -130,7 +129,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * @return {@link org.opendaylight.controller.md.sal.dom.store.impl.tree.data.ModifiedNode} for specified child, with {@link #getOriginal()}
      *         containing child metadata if child was present in original data.
      */
-    public ModifiedNode modifyChild(final PathArgument child, final boolean isOrdered) {
+    ModifiedNode modifyChild(final PathArgument child, final boolean isOrdered) {
         clearSnapshot();
         if (modificationType == ModificationType.UNMODIFIED) {
             updateModificationType(ModificationType.SUBTREE_MODIFIED);
@@ -154,7 +153,6 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     }
 
     /**
-     *
      * Returns all recorded direct child modification
      *
      * @return all recorded direct child modifications
@@ -165,11 +163,9 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     }
 
     /**
-     *
      * Records a delete for associated node.
-     *
      */
-    public void delete() {
+    void delete() {
         final ModificationType newType;
 
         switch (modificationType) {
@@ -202,23 +198,37 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     }
 
     /**
-     *
      * Records a write for associated node.
      *
      * @param value
      */
-    public void write(final NormalizedNode<?, ?> value) {
+    void write(final NormalizedNode<?, ?> value) {
         clearSnapshot();
         updateModificationType(ModificationType.WRITE);
         children.clear();
         this.value = value;
     }
 
-    public void merge(final NormalizedNode<?, ?> data) {
+    void merge(final NormalizedNode<?, ?> value) {
         clearSnapshot();
         updateModificationType(ModificationType.MERGE);
-        // FIXME: Probably merge with previous value.
-        this.value = data;
+
+        /*
+         * Blind overwrite of any previous data is okay, no matter whether the node
+         * is simple or complex type.
+         *
+         * If this is a simple or complex type with unkeyed children, this merge will
+         * be turned into a write operation, overwriting whatever was there before.
+         *
+         * If this is a container with keyed children, there are two possibilities:
+         * - if it existed before, this value will never be consulted and the children
+         *   will get explicitly merged onto the original data.
+         * - if it did not exist before, this value will be used as a seed write and
+         *   children will be merged into it.
+         * In either case we rely on OperationWithModification to manipulate the children
+         * before calling this method, so unlike a write we do not want to clear them.
+         */
+        this.value = value;
     }
 
     /**
