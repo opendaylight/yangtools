@@ -5,23 +5,22 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.schema.tree;
+package org.opendaylight.yangtools.yang.data.api.schema;
 
+import com.google.common.annotations.Beta;
+import com.google.common.base.Strings;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
-
-import com.google.common.base.Strings;
 
 /**
- * Data store tree manipulation utilities.
+ * A set of utility methods for interacting with {@link NormalizedNode} objects.
  */
-public final class StoreUtils {
+@Beta
+public final class NormalizedNodes {
     private static final int STRINGTREE_INDENT = 4;
 
-    private StoreUtils() {
+    private NormalizedNodes() {
         throw new UnsupportedOperationException("Utility class should not be instantiated");
     }
 
@@ -64,7 +63,8 @@ public final class StoreUtils {
             return builder.toString();
         } else if (identifier instanceof AugmentationIdentifier) {
             return "augmentation";
+        } else {
+            return identifier.getNodeType().getLocalName();
         }
-        return identifier.getNodeType().getLocalName();
     }
 }
