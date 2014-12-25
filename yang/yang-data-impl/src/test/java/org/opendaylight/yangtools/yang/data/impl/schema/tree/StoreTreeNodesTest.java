@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static org.junit.Assert.assertEquals;
@@ -8,17 +15,15 @@ import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntry;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
-
 import com.google.common.base.Optional;
-
 import java.util.Map;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
@@ -27,9 +32,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-public class TreeNodeUtilsTest {
-    private static final Logger LOG = LoggerFactory.getLogger(TreeNodeUtilsTest.class);
+public class StoreTreeNodesTest {
+    private static final Logger LOG = LoggerFactory.getLogger(StoreTreeNodesTest.class);
 
     private static final Short ONE_ID = 1;
     private static final Short TWO_ID = 2;
@@ -96,7 +100,7 @@ public class TreeNodeUtilsTest {
         InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
                 TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper);
         TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
-        Optional<TreeNode> node = TreeNodeUtils.findNode(rootNode, OUTER_LIST_1_PATH);
+        Optional<TreeNode> node = StoreTreeNodes.findNode(rootNode, OUTER_LIST_1_PATH);
         assertPresentAndType(node, TreeNode.class);
     }
 
@@ -108,7 +112,7 @@ public class TreeNodeUtilsTest {
         final YangInstanceIdentifier outerList1InvalidPath = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
                 .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 3) //
                 .build();
-        Optional<TreeNode> node = TreeNodeUtils.findNode(rootNode, outerList1InvalidPath);
+        Optional<TreeNode> node = StoreTreeNodes.findNode(rootNode, outerList1InvalidPath);
         assertFalse(node.isPresent());
     }
 
@@ -119,7 +123,7 @@ public class TreeNodeUtilsTest {
         TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         TreeNode foundNode = null;
         try {
-            foundNode = TreeNodeUtils.findNodeChecked(rootNode, OUTER_LIST_1_PATH);
+            foundNode = StoreTreeNodes.findNodeChecked(rootNode, OUTER_LIST_1_PATH);
         } catch (IllegalArgumentException e) {
             fail("Illegal argument exception was thrown and should not have been" + e.getMessage());
         }
@@ -135,7 +139,7 @@ public class TreeNodeUtilsTest {
                 .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 3) //
                 .build();
         try {
-            TreeNodeUtils.findNodeChecked(rootNode, outerList1InvalidPath);
+            StoreTreeNodes.findNodeChecked(rootNode, outerList1InvalidPath);
             fail("Illegal argument exception should have been thrown");
         } catch (IllegalArgumentException e) {
             LOG.debug("Illegal argument exception was thrown as expected: '{}' - '{}'", e.getClass(), e.getMessage());
@@ -147,9 +151,9 @@ public class TreeNodeUtilsTest {
         InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
                 TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper);
         TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
-        Optional<TreeNode> expectedNode = TreeNodeUtils.findNode(rootNode, TWO_TWO_PATH);
+        Optional<TreeNode> expectedNode = StoreTreeNodes.findNode(rootNode, TWO_TWO_PATH);
         assertPresentAndType(expectedNode, TreeNode.class);
-        Map.Entry<YangInstanceIdentifier, TreeNode> actualNode = TreeNodeUtils.findClosest(rootNode, TWO_TWO_PATH);
+        Map.Entry<YangInstanceIdentifier, TreeNode> actualNode = StoreTreeNodes.findClosest(rootNode, TWO_TWO_PATH);
         assertEquals("Expected node and actual node are not the same", expectedNode.get(), actualNode.getValue());
     }
 
@@ -165,9 +169,9 @@ public class TreeNodeUtilsTest {
                 .node(TestModel.INNER_LIST_QNAME) //
                 .nodeWithKey(TestModel.INNER_LIST_QNAME, TestModel.NAME_QNAME, "three") //
                 .build();
-        Optional<TreeNode> expectedNode = TreeNodeUtils.findNode(rootNode, outerListInnerListPath);
+        Optional<TreeNode> expectedNode = StoreTreeNodes.findNode(rootNode, outerListInnerListPath);
         assertPresentAndType(expectedNode, TreeNode.class);
-        Map.Entry<YangInstanceIdentifier, TreeNode> actualNode = TreeNodeUtils.findClosest(rootNode, twoTwoInvalidPath);
+        Map.Entry<YangInstanceIdentifier, TreeNode> actualNode = StoreTreeNodes.findClosest(rootNode, twoTwoInvalidPath);
         assertEquals("Expected node and actual node are not the same", expectedNode.get(), actualNode.getValue());
     }
 
@@ -176,7 +180,7 @@ public class TreeNodeUtilsTest {
         InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
                 TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper);
         TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
-        Optional<TreeNode> node = TreeNodeUtils.getChild(Optional.fromNullable(rootNode),
+        Optional<TreeNode> node = StoreTreeNodes.getChild(Optional.fromNullable(rootNode),
                 TestModel.TEST_PATH.getLastPathArgument());
         assertPresentAndType(node, TreeNode.class);
     }
@@ -186,7 +190,7 @@ public class TreeNodeUtilsTest {
         InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
                 TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper);
         TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
-        Optional<TreeNode> node = TreeNodeUtils.getChild(Optional.fromNullable(rootNode),
+        Optional<TreeNode> node = StoreTreeNodes.getChild(Optional.fromNullable(rootNode),
                 TestModel.OUTER_LIST_PATH.getLastPathArgument());
         assertFalse(node.isPresent());
     }
