@@ -8,14 +8,12 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Preconditions;
-
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
@@ -158,7 +156,7 @@ class BindingToNormalizedStreamWriter implements BindingStreamEventWriter, Deleg
     @Override
     public void startMapEntryNode(final Identifier<?> key, final int childSizeHint) throws IOException, IllegalArgumentException {
         duplicateSchemaEnter();
-        NodeIdentifierWithPredicates identifier = ((ListNodeCodecContext) current()).serialize(key);
+        NodeIdentifierWithPredicates identifier = ((KeyedListNodeCodecContext) current()).serialize(key);
         getDelegate().startMapEntryNode(identifier, childSizeHint);
     };
 
