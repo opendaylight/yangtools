@@ -113,11 +113,10 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         }
     }
 
-    private Optional<TreeNode> resolveSnapshot(final YangInstanceIdentifier path,
-            final ModifiedNode modification) {
-        final Optional<Optional<TreeNode>> potentialSnapshot = modification.getSnapshotCache();
-        if (potentialSnapshot.isPresent()) {
-            return potentialSnapshot.get();
+    private Optional<TreeNode> resolveSnapshot(final YangInstanceIdentifier path, final ModifiedNode modification) {
+        final Optional<TreeNode> potentialSnapshot = modification.getSnapshot();
+        if (potentialSnapshot != null) {
+            return potentialSnapshot;
         }
 
         try {
