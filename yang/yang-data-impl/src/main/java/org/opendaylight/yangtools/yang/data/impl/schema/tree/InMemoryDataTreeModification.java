@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeUtils;
@@ -87,7 +88,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
          * the requested path which has been modified. If no such node exists,
          * we use the node itself.
          */
-        final Entry<YangInstanceIdentifier, ModifiedNode> entry = TreeNodeUtils.findClosestsOrFirstMatch(rootNode, path, ModifiedNode.IS_TERMINAL_PREDICATE);
+        final Entry<YangInstanceIdentifier, ModifiedNode> entry = StoreTreeNodes.findClosestsOrFirstMatch(rootNode, path, ModifiedNode.IS_TERMINAL_PREDICATE);
         final YangInstanceIdentifier key = entry.getKey();
         final ModifiedNode mod = entry.getValue();
 
@@ -121,7 +122,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
             strategyTree.upgradeIfPossible();
         }
 
-        return TreeNodeUtils.<ModificationApplyOperation>findNodeChecked(strategyTree, path);
+        return StoreTreeNodes.<ModificationApplyOperation>findNodeChecked(strategyTree, path);
     }
 
     private OperationWithModification resolveModificationFor(final YangInstanceIdentifier path) {
