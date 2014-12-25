@@ -250,13 +250,13 @@ final class ModifiedNode implements StoreTreeNode<ModifiedNode>, Identifiable<Pa
         snapshotCache = null;
     }
 
-    public Optional<TreeNode> storeSnapshot(final Optional<TreeNode> snapshot) {
-        snapshotCache = snapshot;
-        return snapshot;
+    Optional<TreeNode> getSnapshot() {
+        return snapshotCache;
     }
 
-    public Optional<Optional<TreeNode>> getSnapshotCache() {
-        return Optional.fromNullable(snapshotCache);
+    Optional<TreeNode> setSnapshot(final Optional<TreeNode> snapshot) {
+        snapshotCache = Preconditions.checkNotNull(snapshot);
+        return snapshot;
     }
 
     private void updateModificationType(final ModificationType type) {

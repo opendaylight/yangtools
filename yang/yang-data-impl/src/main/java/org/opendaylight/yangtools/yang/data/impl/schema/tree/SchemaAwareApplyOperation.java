@@ -201,11 +201,11 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
 
         switch (modification.getType()) {
         case DELETE:
-            return modification.storeSnapshot(Optional.<TreeNode> absent());
+            return modification.setSnapshot(Optional.<TreeNode> absent());
         case SUBTREE_MODIFIED:
             Preconditions.checkArgument(currentMeta.isPresent(), "Metadata not available for modification",
                     modification);
-            return modification.storeSnapshot(Optional.of(applySubtreeChange(modification, currentMeta.get(),
+            return modification.setSnapshot(Optional.of(applySubtreeChange(modification, currentMeta.get(),
                     version)));
         case MERGE:
             final TreeNode result;
@@ -217,9 +217,9 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
                 result = applyWrite(modification, currentMeta, version);
             }
 
-            return modification.storeSnapshot(Optional.of(result));
+            return modification.setSnapshot(Optional.of(result));
         case WRITE:
-            return modification.storeSnapshot(Optional.of(applyWrite(modification, currentMeta, version)));
+            return modification.setSnapshot(Optional.of(applyWrite(modification, currentMeta, version)));
         case UNMODIFIED:
             return currentMeta;
         default:
