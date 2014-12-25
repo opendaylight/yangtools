@@ -92,6 +92,11 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
          * As it turns out, once we materialize the written data, we can share the
          * code path with the subtree change. So let's create an unsealed TreeNode
          * and run the common parts on it -- which end with the node being sealed.
+         *
+         * FIXME: this code needs to be moved out from the prepare() path and into
+         *        the read() and seal() paths. Merging of writes needs to be charged
+         *        to the code which originated this, not to the code which is
+         *        attempting to make it visible.
          */
         final MutableTreeNode mutable = newValueMeta.mutable();
         mutable.setSubtreeVersion(version);
