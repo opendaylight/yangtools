@@ -5,16 +5,14 @@ import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntry;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
-
+import com.google.common.base.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeUtils;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
-
-import com.google.common.base.Optional;
 
 /**
  *
@@ -108,10 +106,10 @@ public class NormalizedNodeUtilsTest {
         NormalizedNode<?, ?> tree = createDocumentOne();
         assertNotNull(tree);
 
-        Optional<NormalizedNode<?, ?>> listFooResult = NormalizedNodeUtils.findNode(tree, LIST_A_FOO_PATH);
+        Optional<NormalizedNode<?, ?>> listFooResult = NormalizedNodes.findNode(tree, LIST_A_FOO_PATH);
         assertTrue(listFooResult.isPresent());
 
-        Optional<NormalizedNode<?, ?>> listTwoResult = NormalizedNodeUtils.findNode(tree, LIST_B_TWO_PATH);
+        Optional<NormalizedNode<?, ?>> listTwoResult = NormalizedNodes.findNode(tree, LIST_B_TWO_PATH);
         assertTrue(listTwoResult.isPresent());
     }
 
