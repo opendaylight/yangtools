@@ -8,11 +8,10 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.collect.Iterables;
-
 import javax.annotation.concurrent.GuardedBy;
-
 import org.opendaylight.yangtools.binding.data.codec.impl.NodeCodecContext.CodecContextFactory;
 import org.opendaylight.yangtools.yang.binding.DataRoot;
+import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -130,7 +129,11 @@ class DataContainerCodecPrototype<T> implements NodeContextSupplier {
         if (schema instanceof ContainerSchemaNode) {
             return new ContainerNodeCodecContext((DataContainerCodecPrototype) this);
         } else if (schema instanceof ListSchemaNode) {
-            return new ListNodeCodecContext((DataContainerCodecPrototype) this);
+            if (Identifiable.class.isAssignableFrom(getBindingClass())) {
+                return new KeyedListNodeCodecContext((DataContainerCodecPrototype) this);
+            } else {
+                return new ListNodeCodecContext((DataContainerCodecPrototype) this);
+            }
         } else if (schema instanceof ChoiceNode) {
             return new ChoiceNodeCodecContext((DataContainerCodecPrototype) this);
         } else if (schema instanceof AugmentationSchema) {
