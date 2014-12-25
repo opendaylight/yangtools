@@ -9,9 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
 import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
-
 import java.util.Map;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
