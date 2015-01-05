@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.Future;
 
+import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.RpcError.ErrorSeverity;
 import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
 
@@ -154,6 +155,15 @@ public final class RpcResultBuilder<T> {
     }
 
     /**
+     * Returns a builder for a successful result.
+     *
+     * @param builder for the result value
+     */
+    public static <T> RpcResultBuilder<T> success( Builder<T> result ) {
+        return success(result.build());
+    }
+
+    /**
      * Returns a builder for a failed result.
      */
     public static <T> RpcResultBuilder<T> failed() {
@@ -256,6 +266,15 @@ public final class RpcResultBuilder<T> {
     public RpcResultBuilder<T> withResult( T result ) {
         this.result = result;
         return this;
+    }
+
+    /**
+     * Sets the value of the result.
+     *
+     * @param builder for the result value
+     */
+    public RpcResultBuilder<T> withResult( Builder<T> result ) {
+        return withResult(result.build());
     }
 
     private void addError( ErrorSeverity severity, ErrorType errorType,
