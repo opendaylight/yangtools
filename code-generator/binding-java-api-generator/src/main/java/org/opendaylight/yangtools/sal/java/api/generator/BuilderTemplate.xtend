@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.Type
 import org.opendaylight.yangtools.yang.binding.Augmentable
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.Identifiable
+import org.opendaylight.yangtools.concepts.Builder
 
 /**
  * Template for generating JAVA builder classes. 
@@ -47,6 +48,11 @@ class BuilderTemplate extends BaseTemplate {
      * Constant with the suffix for builder classes.
      */
     val static BUILDER = 'Builder'
+
+    /**
+     * Constant with the name of the BuilderFor interface
+     */
+     val static BUILDERFOR = Builder.simpleName;
 
     /**
      * Constant with suffix for the classes which are generated from the builder classes.
@@ -72,6 +78,7 @@ class BuilderTemplate extends BaseTemplate {
     new(GeneratedType genType) {
         super(genType)
         this.properties = propertiesFromMethods(createMethods)
+        importMap.put(Builder.simpleName, Builder.package.name)
     }
 
     /**
@@ -209,7 +216,7 @@ class BuilderTemplate extends BaseTemplate {
      */
     override body() '''
         «wrapToDocumentation(formatDataForJavaDoc(type))»
-        public class «type.name»«BUILDER» {
+        public class «type.name»«BUILDER» implements «BUILDERFOR» <«type.importedName»> {
 
             «generateFields(false)»
 
