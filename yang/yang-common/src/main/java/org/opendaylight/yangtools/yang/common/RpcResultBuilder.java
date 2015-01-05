@@ -153,6 +153,10 @@ public final class RpcResultBuilder<T> {
          return new RpcResultBuilder<T>( true, result );
     }
 
+    public static <T> RpcResultBuilder<T> success(BuilderFor<T> result) {
+        return success(result.build());
+    }
+
     /**
      * Returns a builder for a failed result.
      */
@@ -256,6 +260,9 @@ public final class RpcResultBuilder<T> {
     public RpcResultBuilder<T> withResult( T result ) {
         this.result = result;
         return this;
+    }
+    public RpcResultBuilder<T> withResult( BuilderFor<T> result ) {
+        return withResult(result.build());
     }
 
     private void addError( ErrorSeverity severity, ErrorType errorType,
