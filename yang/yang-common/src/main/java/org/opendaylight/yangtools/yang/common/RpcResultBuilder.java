@@ -10,11 +10,13 @@ package org.opendaylight.yangtools.yang.common;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.concurrent.Future;
 
 import org.opendaylight.yangtools.yang.common.RpcError.ErrorSeverity;
 import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.util.concurrent.Futures;
 
 /**
  * A builder for creating RpcResult instances.
@@ -388,5 +390,9 @@ public final class RpcResultBuilder<T> {
 
         return new RpcResultImpl<T>( successful, result,
                 errors != null ? errors.build() : Collections.<RpcError>emptyList() );
+    }
+
+    public Future<RpcResult<T>> buildFuture() {
+        return Futures.immediateFuture(build());
     }
 }
