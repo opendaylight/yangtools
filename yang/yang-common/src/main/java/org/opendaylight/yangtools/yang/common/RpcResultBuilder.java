@@ -10,11 +10,14 @@ package org.opendaylight.yangtools.yang.common;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.concurrent.Future;
 
 import org.opendaylight.yangtools.yang.common.RpcError.ErrorSeverity;
 import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
+import org.opendaylight.yangtools.concepts.Builder;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.util.concurrent.Futures;
 
 /**
  * A builder for creating RpcResult instances.
@@ -23,7 +26,7 @@ import com.google.common.collect.ImmutableList;
  *
  * @param <T> the result value type
  */
-public final class RpcResultBuilder<T> {
+public final class RpcResultBuilder<T> implements Builder<RpcResult<T>>{
 
     private static class RpcResultImpl<T> implements RpcResult<T> {
 
@@ -384,9 +387,29 @@ public final class RpcResultBuilder<T> {
         return this;
     }
 
+    @Override
     public RpcResult<T> build() {
 
         return new RpcResultImpl<T>( successful, result,
                 errors != null ? errors.build() : Collections.<RpcError>emptyList() );
+    }
+
+    /**
+     * Builds RpcResult and wraps it in a Future
+     *
+     * This is a convenience method to assist those writing rpcs
+     * that produce immediate results.  It allows you to replace
+     *
+     * Futures.immediateFuture(rpcResult.build())
+     *
+     * with
+     *
+     * rpcResult.buildFuture();
+     *
+     * @return Future for RpcResult built by RpcResultBuilder
+     *
+     */
+    public Future<RpcResult<T>> buildFuture() {
+        return Futures.immediateFuture(build());
     }
 }
