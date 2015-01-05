@@ -8,13 +8,14 @@
 
 package org.opendaylight.yangtools.yang.common;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Collection;
 import java.util.Collections;
-
+import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.RpcError.ErrorSeverity;
 import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
-
-import com.google.common.collect.ImmutableList;
 
 /**
  * A builder for creating RpcResult instances.
@@ -23,7 +24,7 @@ import com.google.common.collect.ImmutableList;
  *
  * @param <T> the result value type
  */
-public final class RpcResultBuilder<T> {
+public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
 
     private static class RpcResultImpl<T> implements RpcResult<T> {
 
@@ -31,8 +32,8 @@ public final class RpcResultBuilder<T> {
         private final T result;
         private final boolean successful;
 
-        RpcResultImpl( boolean successful, T result,
-                       Collection<RpcError> errors ) {
+        RpcResultImpl( final boolean successful, final T result,
+                       final Collection<RpcError> errors ) {
             this.successful = successful;
             this.result = result;
             this.errors = errors;
@@ -70,9 +71,9 @@ public final class RpcResultBuilder<T> {
         private final ErrorType errorType;
         private final Throwable cause;
 
-        RpcErrorImpl( ErrorSeverity severity, ErrorType errorType,
-                String tag, String message, String applicationTag, String info,
-                Throwable cause ) {
+        RpcErrorImpl( final ErrorSeverity severity, final ErrorType errorType,
+                final String tag, final String message, final String applicationTag, final String info,
+                final Throwable cause ) {
             this.severity = severity;
             this.errorType = errorType;
             this.tag = tag;
@@ -130,7 +131,7 @@ public final class RpcResultBuilder<T> {
     private T result;
     private final boolean successful;
 
-    private RpcResultBuilder( boolean successful, T result ) {
+    private RpcResultBuilder( final boolean successful, final T result ) {
         this.successful = successful;
         this.result = result;
     }
@@ -147,7 +148,7 @@ public final class RpcResultBuilder<T> {
      *
      * @param result the result value
      */
-    public static <T> RpcResultBuilder<T> success( T result ) {
+    public static <T> RpcResultBuilder<T> success( final T result ) {
          return new RpcResultBuilder<T>( true, result );
     }
 
@@ -163,7 +164,7 @@ public final class RpcResultBuilder<T> {
      *
      * @param success true if successful, false otherwise.
      */
-    public static <T> RpcResultBuilder<T> status( boolean success ) {
+    public static <T> RpcResultBuilder<T> status( final boolean success ) {
         return new RpcResultBuilder<T>( success, null );
     }
 
@@ -172,7 +173,7 @@ public final class RpcResultBuilder<T> {
      *
      * @param other the other RpcResult.
      */
-    public static <T> RpcResultBuilder<T> from( RpcResult<T> other ) {
+    public static <T> RpcResultBuilder<T> from( final RpcResult<T> other ) {
         return new RpcResultBuilder<T>( other.isSuccessful(), other.getResult() )
                                                       .withRpcErrors( other.getErrors() );
     }
@@ -187,7 +188,7 @@ public final class RpcResultBuilder<T> {
      *
      * @return an RpcError
      */
-    public static RpcError newError( ErrorType errorType, String tag, String message ) {
+    public static RpcError newError( final ErrorType errorType, final String tag, final String message ) {
         return new RpcErrorImpl( ErrorSeverity.ERROR, errorType,
                 tag != null ? tag : "operation-failed", message, null, null, null );
     }
@@ -206,8 +207,8 @@ public final class RpcResultBuilder<T> {
      *
      * @return an RpcError
      */
-    public static RpcError newError(  ErrorType errorType, String tag, String message,
-            String applicationTag, String info, Throwable cause ) {
+    public static RpcError newError(  final ErrorType errorType, final String tag, final String message,
+            final String applicationTag, final String info, final Throwable cause ) {
         return new RpcErrorImpl( ErrorSeverity.ERROR, errorType,
                 tag != null ? tag : "operation-failed", message, applicationTag, info, cause );
     }
@@ -222,7 +223,7 @@ public final class RpcResultBuilder<T> {
      *
      * @return an RpcError
      */
-    public static RpcError newWarning( ErrorType errorType, String tag, String message ) {
+    public static RpcError newWarning( final ErrorType errorType, final String tag, final String message ) {
         return new RpcErrorImpl( ErrorSeverity.WARNING, errorType, tag, message, null, null, null );
     }
 
@@ -240,8 +241,8 @@ public final class RpcResultBuilder<T> {
      *
      * @return an RpcError
      */
-    public static RpcError newWarning(  ErrorType errorType, String tag, String message,
-            String applicationTag, String info, Throwable cause ) {
+    public static RpcError newWarning(  final ErrorType errorType, final String tag, final String message,
+            final String applicationTag, final String info, final Throwable cause ) {
         return new RpcErrorImpl( ErrorSeverity.WARNING, errorType, tag, message,
                                  applicationTag, info, cause );
     }
@@ -251,21 +252,21 @@ public final class RpcResultBuilder<T> {
      *
      * @param result the result value
      */
-    public RpcResultBuilder<T> withResult( T result ) {
+    public RpcResultBuilder<T> withResult( final T result ) {
         this.result = result;
         return this;
     }
 
-    private void addError( ErrorSeverity severity, ErrorType errorType,
-            String tag, String message, String applicationTag, String info,
-            Throwable cause ) {
+    private void addError( final ErrorSeverity severity, final ErrorType errorType,
+            final String tag, final String message, final String applicationTag, final String info,
+            final Throwable cause ) {
 
         addError( new RpcErrorImpl( severity, errorType,
                                     tag != null ? tag : "operation-failed", message,
                                     applicationTag, info, cause ) );
     }
 
-    private void addError( RpcError error ) {
+    private void addError( final RpcError error ) {
 
         if( errors == null ) {
             errors = new ImmutableList.Builder<RpcError>();
@@ -282,7 +283,7 @@ public final class RpcResultBuilder<T> {
      *        {@link RpcError#getTag} for a list of suggested values.
      * @param message a string suitable for human display that describes the warning condition.
      */
-    public RpcResultBuilder<T> withWarning( ErrorType errorType, String tag, String message ) {
+    public RpcResultBuilder<T> withWarning( final ErrorType errorType, final String tag, final String message ) {
         addError( ErrorSeverity.WARNING, errorType, tag, message, null, null, null );
         return this;
     }
@@ -299,8 +300,8 @@ public final class RpcResultBuilder<T> {
      *        and/or implementation-specific debugging information.
      * @param cause the exception that triggered the warning.
      */
-    public RpcResultBuilder<T> withWarning( ErrorType errorType, String tag, String message,
-            String applicationTag, String info, Throwable cause ) {
+    public RpcResultBuilder<T> withWarning( final ErrorType errorType, final String tag, final String message,
+            final String applicationTag, final String info, final Throwable cause ) {
         addError( ErrorSeverity.WARNING, errorType, tag, message, applicationTag, info, cause );
         return this;
     }
@@ -311,7 +312,7 @@ public final class RpcResultBuilder<T> {
      * @param errorType the conceptual layer at which the error occurred.
      * @param message a string suitable for human display that describes the error condition.
      */
-    public RpcResultBuilder<T> withError( ErrorType errorType, String message ) {
+    public RpcResultBuilder<T> withError( final ErrorType errorType, final String message ) {
         addError( ErrorSeverity.ERROR, errorType, null, message, null, null, null );
         return this;
     }
@@ -324,7 +325,7 @@ public final class RpcResultBuilder<T> {
      *        {@link RpcError#getTag} for a list of suggested values.
      * @param message a string suitable for human display that describes the error condition.
      */
-    public RpcResultBuilder<T> withError( ErrorType errorType, String tag, String message ) {
+    public RpcResultBuilder<T> withError( final ErrorType errorType, final String tag, final String message ) {
         addError( ErrorSeverity.ERROR, errorType, tag, message, null, null, null );
         return this;
     }
@@ -336,8 +337,8 @@ public final class RpcResultBuilder<T> {
      * @param message a string suitable for human display that describes the error condition.
      * @param cause the exception that triggered the error.
      */
-    public RpcResultBuilder<T> withError( ErrorType errorType, String message,
-                                          Throwable cause ) {
+    public RpcResultBuilder<T> withError( final ErrorType errorType, final String message,
+                                          final Throwable cause ) {
         addError( ErrorSeverity.ERROR, errorType, null, message, null, null, cause );
         return this;
     }
@@ -354,8 +355,8 @@ public final class RpcResultBuilder<T> {
      *        and/or implementation-specific debugging information.
      * @param cause the exception that triggered the error.
      */
-    public RpcResultBuilder<T> withError( ErrorType errorType, String tag, String message,
-            String applicationTag, String info, Throwable cause ) {
+    public RpcResultBuilder<T> withError( final ErrorType errorType, final String tag, final String message,
+            final String applicationTag, final String info, final Throwable cause ) {
         addError( ErrorSeverity.ERROR, errorType, tag, message, applicationTag, info, cause );
         return this;
     }
@@ -365,7 +366,7 @@ public final class RpcResultBuilder<T> {
      *
      * @param error the RpcError
      */
-    public RpcResultBuilder<T> withRpcError( RpcError error ) {
+    public RpcResultBuilder<T> withRpcError( final RpcError error ) {
         addError( error );
         return this;
     }
@@ -375,7 +376,7 @@ public final class RpcResultBuilder<T> {
      *
      * @param errors the list of RpcErrors
      */
-    public RpcResultBuilder<T> withRpcErrors( Collection<RpcError> errors ) {
+    public RpcResultBuilder<T> withRpcErrors( final Collection<RpcError> errors ) {
         if( errors != null ) {
             for( RpcError error: errors ) {
                 addError( error );
@@ -384,9 +385,29 @@ public final class RpcResultBuilder<T> {
         return this;
     }
 
+    @Override
     public RpcResult<T> build() {
 
         return new RpcResultImpl<T>( successful, result,
                 errors != null ? errors.build() : Collections.<RpcError>emptyList() );
+    }
+
+    /**
+     * Builds RpcResult and wraps it in a Future
+     *
+     * This is a convenience method to assist those writing rpcs
+     * that produce immediate results.  It allows you to replace
+     *
+     * Futures.immediateFuture(rpcResult.build())
+     *
+     * with
+     *
+     * rpcResult.buildFuture();
+     *
+     * @return Future for RpcResult built by RpcResultBuilder
+     *
+     */
+    public ListenableFuture<RpcResult<T>> buildFuture() {
+        return Futures.immediateFuture(build());
     }
 }
