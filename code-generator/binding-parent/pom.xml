@@ -44,6 +44,12 @@ and is available at http://www.eclipse.org/legal/epl-v10.html
                     </dependency>
                 </dependencies>
             </dependencyManagement>
+            <dependencies>
+              <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>yang-binding</artifactId>
+              </dependency>
+            </dependencies>
             <build>
                 <pluginManagement>
                     <plugins>
