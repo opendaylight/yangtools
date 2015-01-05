@@ -153,6 +153,15 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
     }
 
     /**
+     * Returns a builder for a successful result.
+     *
+     * @param builder builder for the result value
+     */
+    public static <T> RpcResultBuilder<T> success( final Builder<T> builder ) {
+        return success(builder.build());
+    }
+
+    /**
      * Returns a builder for a failed result.
      */
     public static <T> RpcResultBuilder<T> failed() {
@@ -255,6 +264,15 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
     public RpcResultBuilder<T> withResult( final T result ) {
         this.result = result;
         return this;
+    }
+
+    /**
+     * Sets the value of the result.
+     *
+     * @param builder builder for the result value
+     */
+    public RpcResultBuilder<T> withResult( final Builder<T> result ) {
+        return withResult(builder.build());
     }
 
     private void addError( final ErrorSeverity severity, final ErrorType errorType,
