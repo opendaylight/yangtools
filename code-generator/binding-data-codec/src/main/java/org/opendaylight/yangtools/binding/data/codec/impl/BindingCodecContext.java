@@ -59,19 +59,20 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class BindingCodecContext implements CodecContextFactory, Immutable {
+final class BindingCodecContext implements CodecContextFactory, Immutable {
     private static final Logger LOG = LoggerFactory.getLogger(BindingCodecContext.class);
     private static final String GETTER_PREFIX = "get";
 
-    private final SchemaRootCodecContext root;
-    private final BindingRuntimeContext context;
     private final Codec<YangInstanceIdentifier, InstanceIdentifier<?>> instanceIdentifierCodec =
             new InstanceIdentifierCodec();
-    private final Codec<QName, Class<?>> identityCodec = new IdentityCodec();
+    private final Codec<QName, Class<?>> identityCodec;
+    private final BindingRuntimeContext context;
+    private final SchemaRootCodecContext root;
 
     public BindingCodecContext(final BindingRuntimeContext context) {
         this.context = Preconditions.checkNotNull(context, "Binding Runtime Context is required.");
         this.root = SchemaRootCodecContext.create(this);
+        this.identityCodec = new IdentityCodec(context);
     }
 
     @Override
@@ -315,7 +316,12 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
         }
     }
 
-    private class IdentityCodec implements Codec<QName, Class<?>> {
+    private static class IdentityCodec implements Codec<QName, Class<?>> {
+        private final BindingRuntimeContext context;
+
+        IdentityCodec(final BindingRuntimeContext context) {
+            this.context = Preconditions.checkNotNull(context);
+        }
 
         @Override
         public Class<?> deserialize(final QName input) {
