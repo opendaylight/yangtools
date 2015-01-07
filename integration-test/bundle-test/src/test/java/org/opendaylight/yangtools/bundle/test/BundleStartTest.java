@@ -43,8 +43,6 @@ public class BundleStartTest {
         options.add(mavenBundle("org.opendaylight.yangtools.thirdparty", "antlr4-runtime-osgi-nohead")
                 .versionAsInProject());
         options.add(mavenBundle("org.opendaylight.yangtools.thirdparty", "xtend-lib-osgi").versionAsInProject());
-        options.add(mavenBundle("org.sonatype.plexus", "plexus-build-api").versionAsInProject());
-        options.add(mavenBundle("org.codehaus.plexus", "plexus-slf4j-logging").versionAsInProject());
         options.add(mavenBundle("org.javassist", "javassist").versionAsInProject());
 
         options.add(mavenBundle(GROUP, "concepts").versionAsInProject());
@@ -64,10 +62,8 @@ public class BundleStartTest {
         options.add(mavenBundle(GROUP, "binding-generator-impl").versionAsInProject());
         options.add(mavenBundle(GROUP, "binding-generator-spi").versionAsInProject());
         options.add(mavenBundle(GROUP, "binding-generator-util").versionAsInProject());
-        options.add(mavenBundle(GROUP, "binding-java-api-generator").versionAsInProject());
         options.add(mavenBundle(GROUP, "binding-model-api").versionAsInProject());
         options.add(mavenBundle(GROUP, "binding-type-provider").versionAsInProject());
-        options.add(mavenBundle(GROUP, "maven-sal-api-gen-plugin").versionAsInProject());
 
         options.add(junitBundles());
         return options;
@@ -96,9 +92,7 @@ public class BundleStartTest {
         testBundle("binding-generator-spi");
         testBundle("binding-generator-util");
         testBundle("binding-model-api");
-        testBundle("binding-java-api-generator");
         testBundle("binding-type-provider");
-        testBundle("maven-sal-api-gen-plugin");
     }
 
     private void testBundle(String name) throws BundleException {
