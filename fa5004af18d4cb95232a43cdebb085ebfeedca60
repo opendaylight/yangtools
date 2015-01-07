@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_8de4383c",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/parser/impl/YangParserTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 949,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2015-01-07T14:47:41Z",
+      "side": 1,
+      "message": "I would expect English naming like \"yangModule\" and \"yangSubmodule\" rather than \"...Modul\". Perhaps just typo...",
+      "revId": "fa5004af18d4cb95232a43cdebb085ebfeedca60",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
