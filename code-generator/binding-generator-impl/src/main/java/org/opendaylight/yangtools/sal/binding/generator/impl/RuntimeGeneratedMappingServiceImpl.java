@@ -13,26 +13,7 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
-
-import java.net.URI;
-import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.ExecutionException;
-
 import javassist.ClassPool;
-
-import javax.annotation.concurrent.GuardedBy;
-
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
 import org.opendaylight.yangtools.binding.generator.util.Types;
@@ -74,6 +55,22 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.concurrent.GuardedBy;
+import java.net.URI;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.ExecutionException;
 
 public class RuntimeGeneratedMappingServiceImpl implements BindingIndependentMappingService, SchemaContextListener,
 SchemaLock, AutoCloseable, SchemaContextHolder, TypeResolver {
@@ -159,6 +156,7 @@ SchemaLock, AutoCloseable, SchemaContextHolder, TypeResolver {
                 Type serviceClass = new ReferencedTypeImpl(namespace, BindingMapping.getClassName(module.getName())
                         + "Service");
                 serviceTypeToRpc.put(serviceClass, rpcs);
+                updatePromisedSchemas(serviceClass);
             }
 
             Map<SchemaPath, Type> typedefs = context.getTypedefs();
@@ -337,8 +335,10 @@ SchemaLock, AutoCloseable, SchemaContextHolder, TypeResolver {
         Set<QName> serviceRef = serviceTypeToRpc.get(new ReferencedTypeImpl(service.getPackage().getName(), service
                 .getSimpleName()));
         if (serviceRef == null) {
-            serviceRef = Collections.emptySet();
-        }
+            waitForSchema(service);
+            serviceRef = serviceTypeToRpc.get(new ReferencedTypeImpl(service.getPackage().getName(), service
+                    .getSimpleName()));
+            }
         return serviceRef;
     }
 
