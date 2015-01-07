@@ -24,7 +24,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>xtend-lib-osgi</module>
         <module>antlr4-runtime-osgi</module>
     </modules>
 

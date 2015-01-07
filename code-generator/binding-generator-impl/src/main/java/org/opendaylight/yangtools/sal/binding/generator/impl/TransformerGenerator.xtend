@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.sal.binding.generator.impl
 
 import com.google.common.base.Joiner
+import com.google.common.base.Supplier
 import java.io.File
 import java.security.ProtectionDomain
 import java.util.AbstractMap.SimpleEntry
@@ -195,38 +196,38 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         if (cl === null) {
             cl = Thread.currentThread.contextClassLoader
         }
-        ClassLoaderUtils.withClassLoader(cl,
-            [ |
-                if (!(node instanceof DataNodeContainer)) {
-                    return null
-                }
-                var InstanceIdentifier<?> bindingId = getBindingIdentifierByPath(node.path)
-                if (bindingId != null) {
-                    return null
-                }
-                val ref = Types.typeForClass(inputType)
-                var typeSpecBuilder = getDefinition(ref)
-                if (typeSpecBuilder == null) {
-                    typeSpecBuilder = getTypeBuilder(node.path);
-                }
-                checkState(typeSpecBuilder !== null, "Could not find type definition for %s, $s", inputType.name, node);
-                val typeSpec = typeSpecBuilder.toInstance();
-                var InstanceIdentifier<?> parent
-                if (parentId == null) {
-                    bindingId = InstanceIdentifier.create(inputType as Class)
-                    parent = bindingId
-                    putPathToBindingIdentifier(node.path, bindingId)
-                } else {
-                    parent = putPathToBindingIdentifier(node.path, parentId, inputType)
-                }
-                val Map<String, Type> properties = typeSpec.allProperties
-                if (node instanceof DataNodeContainer) {
-                    mappingForNodes((node as DataNodeContainer).childNodes, properties, parent)
-                } else if (node instanceof ChoiceNode) {
-                    mappingForNodes((node as ChoiceNode).cases, properties, parent)
-                }
-                return null;
-            ])
+
+        val Supplier<?> sup = [ |
+            if (!(node instanceof DataNodeContainer)) {
+                return null
+            }
+            var InstanceIdentifier<?> bindingId = getBindingIdentifierByPath(node.path)
+            if (bindingId != null) {
+                return null
+            }
+            val ref = Types.typeForClass(inputType)
+            var typeSpecBuilder = getDefinition(ref)
+            if (typeSpecBuilder == null) {
+                typeSpecBuilder = getTypeBuilder(node.path);
+            }
+            checkState(typeSpecBuilder !== null, "Could not find type definition for %s, $s", inputType.name, node);
+            val typeSpec = typeSpecBuilder.toInstance();
+            var InstanceIdentifier<?> parent
+            if (parentId == null) {
+                bindingId = InstanceIdentifier.create(inputType as Class)
+                parent = bindingId
+                putPathToBindingIdentifier(node.path, bindingId)
+            } else {
+                parent = putPathToBindingIdentifier(node.path, parentId, inputType)
+            }
+            val Map<String, Type> properties = typeSpec.allProperties
+            if (node instanceof DataNodeContainer) {
+                mappingForNodes((node as DataNodeContainer).childNodes, properties, parent)
+            } else if (node instanceof ChoiceNode) {
+                mappingForNodes((node as ChoiceNode).cases, properties, parent)
+            }
+            return null ]
+        ClassLoaderUtils.withClassLoader(cl, sup)
     }
 
     private def void mappingForNodes(Collection<? extends DataSchemaNode> childNodes, Map<String, Type> properties,
