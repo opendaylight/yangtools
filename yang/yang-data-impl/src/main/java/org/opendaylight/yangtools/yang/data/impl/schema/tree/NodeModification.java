@@ -19,13 +19,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
  * It is used by the validation code to allow for a read-only view of the
  * modification tree as we should never modify that during validation.
  */
-interface NodeModification extends Identifiable<PathArgument> {
+abstract class NodeModification implements Identifiable<PathArgument> {
     /**
      * Get the type of modification.
      *
      * @return Modification type.
      */
-    ModificationType getType();
+    abstract ModificationType getType();
 
     /**
      * Get the original tree node to which the modification is to be applied.
@@ -33,12 +33,12 @@ interface NodeModification extends Identifiable<PathArgument> {
      * @return The original node, or {@link Optional#absent()} if the node is
      *         a new node.
      */
-    Optional<TreeNode> getOriginal();
+    abstract Optional<TreeNode> getOriginal();
 
     /**
      * Get a read-only view of children nodes.
      *
      * @return Iterable of all children nodes.
      */
-    Iterable<? extends NodeModification> getChildren();
+    abstract Iterable<? extends NodeModification> getChildren();
 }

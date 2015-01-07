@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
  * and {@link StoreMetadataNode} which represents original state {@link #getOriginal()}.
  */
 @NotThreadSafe
-final class ModifiedNode implements StoreTreeNode<ModifiedNode>, Identifiable<PathArgument>, NodeModification {
+final class ModifiedNode extends NodeModification implements StoreTreeNode<ModifiedNode> {
 
     public static final Predicate<ModifiedNode> IS_TERMINAL_PREDICATE = new Predicate<ModifiedNode>() {
         @Override
@@ -91,7 +91,7 @@ final class ModifiedNode implements StoreTreeNode<ModifiedNode>, Identifiable<Pa
      * @return original store metadata
      */
     @Override
-    public Optional<TreeNode> getOriginal() {
+    Optional<TreeNode> getOriginal() {
         return original;
     }
 
@@ -101,7 +101,7 @@ final class ModifiedNode implements StoreTreeNode<ModifiedNode>, Identifiable<Pa
      * @return modification type
      */
     @Override
-    public ModificationType getType() {
+    ModificationType getType() {
         return modificationType;
     }
 
@@ -160,7 +160,7 @@ final class ModifiedNode implements StoreTreeNode<ModifiedNode>, Identifiable<Pa
      * @return all recorded direct child modifications
      */
     @Override
-    public Iterable<ModifiedNode> getChildren() {
+    Iterable<ModifiedNode> getChildren() {
         return children.values();
     }
 
