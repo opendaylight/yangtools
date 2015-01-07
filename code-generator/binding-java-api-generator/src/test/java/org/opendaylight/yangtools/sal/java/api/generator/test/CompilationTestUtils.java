@@ -381,7 +381,7 @@ public class CompilationTestUtils {
         Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(filesList);
         Iterable<String> options = Arrays.asList("-d", compiledOutputDir.getAbsolutePath());
         boolean compiled = compiler.getTask(null, null, null, options, null, compilationUnits).call();
-        assertTrue(compiled);
+        assertTrue("Compilation failed", compiled);
     }
 
     /**
