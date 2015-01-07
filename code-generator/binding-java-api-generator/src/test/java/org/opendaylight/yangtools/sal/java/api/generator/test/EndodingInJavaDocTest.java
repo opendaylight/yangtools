@@ -7,9 +7,8 @@ import static org.opendaylight.yangtools.sal.java.api.generator.test.Compilation
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.cleanUp;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.getSourceFiles;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.testCompilation;
-
+import com.google.common.collect.ImmutableSet;
 import java.io.File;
-import java.util.HashSet;
 import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
@@ -32,7 +31,7 @@ public class EndodingInJavaDocTest extends BaseCompilationTest {
         final List<File> sourceFiles = getSourceFiles("/compilation/encoding-javadoc");
         final SchemaContext context = parser.parseFiles(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);
-        final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
+        final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
         generator.generateToFile(sourcesOutputDir);
 
         // Test if sources are compilable
