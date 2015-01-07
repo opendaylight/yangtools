@@ -70,8 +70,8 @@ public class RandomPrefixTest {
         final RandomPrefix a = new RandomPrefix();
 
         final URI uri = URI.create("localhost");
-        final QName qName = QName.create(QNameModule.create(uri, new Date()), "p1", "local-name");
-        final QName qName2 = QName.create(QNameModule.create(uri, new Date()), "p2", "local-name");
+        final QName qName = QName.create(QNameModule.create(uri, new Date()), "local-name");
+        final QName qName2 = QName.create(QNameModule.create(uri, new Date()), "local-name");
 
         assertEquals(a.encodePrefix(qName.getNamespace()), a.encodePrefix(qName2.getNamespace()));
     }
@@ -83,9 +83,9 @@ public class RandomPrefixTest {
         final URI uri = URI.create("localhost");
         QName qName = QName.create(uri, new Date(), "local-name");
         assertEquals("a", a.encodePrefix(qName.getNamespace()));
-        qName = QName.create(QNameModule.create(uri, new Date()), "", "local-name");
+        qName = QName.create(QNameModule.create(uri, new Date()), "local-name");
         assertEquals("a", a.encodePrefix(qName.getNamespace()));
-        qName = QName.create(QNameModule.create(URI.create("second"), new Date()), "", "local-name");
+        qName = QName.create(QNameModule.create(URI.create("second"), new Date()), "local-name");
         assertEquals("b", a.encodePrefix(qName.getNamespace()));
 
     }

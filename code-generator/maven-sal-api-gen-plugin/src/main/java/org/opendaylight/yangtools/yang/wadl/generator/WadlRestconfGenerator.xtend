@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.wadl.generator
 import java.io.BufferedWriter
 import java.io.File
 import java.io.OutputStreamWriter
+import java.net.URI
 import java.util.ArrayList
 import java.util.HashSet
 import java.util.List
@@ -157,8 +158,11 @@ class WadlRestconfGenerator {
 		if (schemaNode instanceof ListSchemaNode) {
 			val listKeys = (schemaNode as ListSchemaNode).keyDefinition
 			for (listKey : listKeys) {
-				pathListParams.add((schemaNode as DataNodeContainer).getDataChildByName(listKey) as LeafSchemaNode) 
-				path.append(PATH_DELIMETER + "{" + listKey.localName + "}")
+				pathListParams.add((schemaNode as DataNodeContainer).getDataChildByName(listKey) as LeafSchemaNode)
+				path.append(PATH_DELIMETER)
+				path.append('{')
+				path.append(listKey.localName)
+				path.append('}')
 			}
 		}
 		return path.toString
@@ -185,8 +189,7 @@ class WadlRestconfGenerator {
 	private def resourceParams() '''
 		«FOR pathParam : pathListParams»
 		    «IF pathParam != null»
-			«val prefix = pathParam.type.QName.prefix»
-			«val type = if (prefix.nullOrEmpty) pathParam.type.QName.localName else prefix + ":" + pathParam.type.QName.localName»
+			«val type = pathParam.type.QName.localName»
 			<param required="true" style="template" name="«pathParam.QName.localName»" type="«type»"/>
 			«ENDIF»
 		«ENDFOR»
@@ -195,7 +198,7 @@ class WadlRestconfGenerator {
 	private def methodGet(DataSchemaNode schemaNode) '''
 		<method name="GET">
 			<response>
-				«representation(schemaNode.QName.prefix, schemaNode.QName.localName)»
+				«representation(schemaNode.QName.namespace, schemaNode.QName.localName)»
 			</response>
 		</method>
 	'''
@@ -203,7 +206,7 @@ class WadlRestconfGenerator {
 	private def mehodPut(DataSchemaNode schemaNode) '''
 		<method name="PUT">
 			<request>
-				«representation(schemaNode.QName.prefix, schemaNode.QName.localName)»
+				«representation(schemaNode.QName.namespace, schemaNode.QName.localName)»
 			</request>
 		</method>
 	'''
@@ -211,7 +214,7 @@ class WadlRestconfGenerator {
 	private def mehodPost(DataSchemaNode schemaNode) '''
 		<method name="POST">
 			<request>
-				«representation(schemaNode.QName.prefix, schemaNode.QName.localName)»
+				«representation(schemaNode.QName.namespace, schemaNode.QName.localName)»
 			</request>
 		</method>
 	'''
@@ -235,8 +238,8 @@ class WadlRestconfGenerator {
 		<method name="DELETE" />
 	'''
 
-	private def representation(String prefix, String name) '''
-		«val elementData = if (prefix.nullOrEmpty) name else prefix + ":" + name»
+	private def representation(URI prefix, String name) '''
+		«val elementData = name»
 		<representation mediaType="application/xml" element="«elementData»"/>
 		<representation mediaType="text/xml" element="«elementData»"/>
 		<representation mediaType="application/json" element="«elementData»"/>

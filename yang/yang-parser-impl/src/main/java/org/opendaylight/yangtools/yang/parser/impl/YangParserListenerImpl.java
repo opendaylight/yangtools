@@ -114,7 +114,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     private final SchemaPathStack stack = new SchemaPathStack();
     private final Map<String, TreeMap<Date, URI>> namespaceContext;
     private final String sourcePath;
-    private QName moduleQName = new QName(null, new Date(0L), null, "dummy");
+    private QName moduleQName = QName.create(null, new Date(0L), "dummy");
     private ModuleBuilder moduleBuilder;
     private String moduleName;
     private int augmentOrder;
@@ -249,7 +249,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                 setLog("namespace", namespaceStr);
             } else if (treeNode instanceof Prefix_stmtContext) {
                 yangModelPrefix = stringFromNode(treeNode);
-                this.moduleQName = QName.create(moduleQName.getModule(), yangModelPrefix, moduleQName.getLocalName());
+                this.moduleQName = QName.create(moduleQName.getModule(), moduleQName.getLocalName());
                 moduleBuilder.setPrefix(yangModelPrefix);
                 setLog("prefix", yangModelPrefix);
             } else if (treeNode instanceof Yang_version_stmtContext) {

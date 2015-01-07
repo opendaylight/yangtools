@@ -107,7 +107,7 @@ public class YangParserSimpleTest {
 
         ContainerSchemaNode nodes = (ContainerSchemaNode) test.getDataChildByName("nodes");
         // test SchemaNode args
-        QName expectedQName = new QName(snNS, snRev, snPref, "nodes");
+        QName expectedQName = QName.create(snNS, snRev, "nodes");
         assertEquals(expectedQName, nodes.getQName());
         SchemaPath expectedPath = TestUtils.createPath(true, snNS, snRev, snPref, "nodes");
         assertEquals(expectedPath, nodes.getPath());
@@ -155,7 +155,7 @@ public class YangParserSimpleTest {
         Set<TypeDefinition<?>> typedefs = nodes.getTypeDefinitions();
         assertEquals(1, typedefs.size());
         TypeDefinition<?> nodesType = typedefs.iterator().next();
-        QName typedefQName = new QName(snNS, snRev, snPref, "nodes-type");
+        QName typedefQName = QName.create(snNS, snRev, "nodes-type");
         assertEquals(typedefQName, nodesType.getQName());
         SchemaPath nodesTypePath = TestUtils.createPath(true, snNS, snRev, snPref, "nodes", "nodes-type");
         assertEquals(nodesTypePath, nodesType.getPath());
@@ -177,7 +177,7 @@ public class YangParserSimpleTest {
         Set<GroupingDefinition> groupings = nodes.getGroupings();
         assertEquals(1, groupings.size());
         GroupingDefinition nodeGroup = groupings.iterator().next();
-        QName groupQName = new QName(snNS, snRev, snPref, "node-group");
+        QName groupQName = QName.create(snNS, snRev, "node-group");
         assertEquals(groupQName, nodeGroup.getQName());
         SchemaPath nodeGroupPath = TestUtils.createPath(true, snNS, snRev, snPref, "nodes", "node-group");
         assertEquals(nodeGroupPath, nodeGroup.getPath());
@@ -202,7 +202,7 @@ public class YangParserSimpleTest {
 
         List<QName> path = new ArrayList<>();
         for (String name : names) {
-            path.add(new QName(ns, rev, prefix, name));
+            path.add(QName.create(ns, rev, name));
         }
         return SchemaPath.create(path, true);
     }
