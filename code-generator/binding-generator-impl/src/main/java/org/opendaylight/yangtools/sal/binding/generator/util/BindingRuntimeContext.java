@@ -9,6 +9,9 @@ package org.opendaylight.yangtools.sal.binding.generator.util;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.HashBiMap;
@@ -78,6 +81,20 @@ public class BindingRuntimeContext implements Immutable {
     private final Multimap<Type, Type> augmentableToAugmentations = HashMultimap.create();
     private final Multimap<Type, Type> choiceToCases = HashMultimap.create();
     private final Map<QName, Type> identities = new HashMap<>();
+
+    private final LoadingCache<QName, Class<?>> identityClasses = CacheBuilder.newBuilder().weakValues().build(
+        new CacheLoader<QName, Class<?>>() {
+            @Override
+            public Class<?> load(final QName key) {
+                final Type identityType = identities.get(key);
+                Preconditions.checkArgument(identityType != null, "Supplied QName %s is not a valid identity", key);
+                try {
+                    return strategy.loadClass(identityType);
+                } catch (ClassNotFoundException e) {
+                    throw new IllegalArgumentException("Required class " + identityType + "was not found.", e);
+                }
+            }
+        });
 
     private BindingRuntimeContext(final ClassLoadingStrategy strategy, final SchemaContext schema) {
         this.strategy = strategy;
@@ -367,13 +384,6 @@ public class BindingRuntimeContext implements Immutable {
     }
 
     public Class<?> getIdentityClass(final QName input) {
-        Type identityType = identities.get(input);
-        Preconditions.checkArgument(identityType != null, "Supplied QName %s is not a valid identity", input);
-        try {
-            return strategy.loadClass(identityType);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalArgumentException("Required class " + identityType + "was not found.",e);
-        }
+        return identityClasses.getUnchecked(input);
     }
-
 }
