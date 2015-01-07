@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -59,6 +60,6 @@ final class DataTreeState {
     @Override
     public String toString() {
         final TreeNode r = root;
-        return Objects.toStringHelper(this).add("data", StoreUtils.toStringTree(r.getData())).toString();
+        return Objects.toStringHelper(this).add("data", NormalizedNodes.toStringTree(r.getData())).toString();
     }
 }

@@ -14,11 +14,12 @@ import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
-import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,14 +88,14 @@ final class InMemoryDataTreeModification implements DataTreeModification {
          * the requested path which has been modified. If no such node exists,
          * we use the node itself.
          */
-        final Entry<YangInstanceIdentifier, ModifiedNode> entry = TreeNodeUtils.findClosestsOrFirstMatch(rootNode, path, ModifiedNode.IS_TERMINAL_PREDICATE);
+        final Entry<YangInstanceIdentifier, ModifiedNode> entry = StoreTreeNodes.findClosestsOrFirstMatch(rootNode, path, ModifiedNode.IS_TERMINAL_PREDICATE);
         final YangInstanceIdentifier key = entry.getKey();
         final ModifiedNode mod = entry.getValue();
 
         final Optional<TreeNode> result = resolveSnapshot(key, mod);
         if (result.isPresent()) {
             NormalizedNode<?, ?> data = result.get().getData();
-            return NormalizedNodeUtils.findNode(key, data, path);
+            return NormalizedNodes.findNode(key, data, path);
         } else {
             return Optional.absent();
         }
@@ -121,7 +122,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
             strategyTree.upgradeIfPossible();
         }
 
-        return TreeNodeUtils.<ModificationApplyOperation>findNodeChecked(strategyTree, path);
+        return StoreTreeNodes.<ModificationApplyOperation>findNodeChecked(strategyTree, path);
     }
 
     private OperationWithModification resolveModificationFor(final YangInstanceIdentifier path) {

@@ -56,7 +56,7 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
     @SuppressWarnings("rawtypes")
     @Override
     protected void verifyWrittenStructure(final NormalizedNode<?, ?> writtenValue) {
-        checkArgument(nodeClass.isInstance(writtenValue), "Node should must be of type %s", nodeClass);
+        checkArgument(nodeClass.isInstance(writtenValue), "Node %s is not of type %s", writtenValue, nodeClass);
         checkArgument(writtenValue instanceof NormalizedNodeContainer);
 
         NormalizedNodeContainer container = (NormalizedNodeContainer) writtenValue;

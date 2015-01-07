@@ -5,8 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.schema.tree;
+package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
@@ -17,13 +18,13 @@ import java.util.Iterator;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 
 /**
- * A set of utility methods for interacting with {@link org.opendaylight.controller.md.sal.dom.store.impl.tree.spi.TreeNode} objects.
+ * A set of utility methods for interacting with {@link StoreTreeNode} objects.
  */
-public final class TreeNodeUtils {
-    private TreeNodeUtils() {
+@Beta
+public final class StoreTreeNodes {
+    private StoreTreeNodes() {
         throw new UnsupportedOperationException("Utility class should not be instantiated");
     }
 
@@ -82,7 +83,7 @@ public final class TreeNodeUtils {
             current = current.get().getChild(pathIter.next());
             nesting++;
         }
-        if(current.isPresent()) {
+        if (current.isPresent()) {
             final YangInstanceIdentifier currentPath = YangInstanceIdentifier.create(Iterables.limit(path.getPathArguments(), nesting));
             return new SimpleEntry<YangInstanceIdentifier,T>(currentPath,current.get());
         }
@@ -98,11 +99,10 @@ public final class TreeNodeUtils {
         return new SimpleEntry<YangInstanceIdentifier,T>(parentPath,parent.get());
     }
 
-    public static <T extends StoreTreeNode<T>> Optional<T> getChild(final Optional<T> parent,final PathArgument child) {
-        if(parent.isPresent()) {
+    public static <T extends StoreTreeNode<T>> Optional<T> getChild(final Optional<T> parent, final PathArgument child) {
+        if (parent.isPresent()) {
             return parent.get().getChild(child);
         }
         return Optional.absent();
     }
-
 }
