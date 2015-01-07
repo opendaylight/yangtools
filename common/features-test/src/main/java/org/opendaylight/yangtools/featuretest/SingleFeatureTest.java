@@ -15,7 +15,6 @@ import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.vmOptions;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.editConfigurationFilePut;
-//import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.debugConfiguration;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.logLevel;
@@ -58,7 +57,7 @@ public class SingleFeatureTest {
     /*
      * Default values for karaf distro version, type, groupId, and artifactId
      */
-    private static final String KARAF_DISTRO_VERSION = "3.0.1";
+    private static final String KARAF_DISTRO_VERSION = "3.0.2";
     private static final String KARAF_DISTRO_TYPE = "zip";
     private static final String KARAF_DISTRO_ARTIFACTID = "apache-karaf";
     private static final String KARAF_DISTRO_GROUPID = "org.apache.karaf";
