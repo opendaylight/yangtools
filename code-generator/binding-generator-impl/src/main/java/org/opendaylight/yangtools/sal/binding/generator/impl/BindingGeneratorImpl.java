@@ -559,7 +559,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 processUsesAugments(notification, module);
 
                 final GeneratedTypeBuilder notificationInterface = addDefaultInterfaceDefinition(basePackageName,
-                        notification, BindingTypes.DATA_OBJECT, module);
+                        notification, null, module);
                 notificationInterface.addImplementsType(NOTIFICATION);
                 genCtx.get(module).addChildNodeType(notification, notificationInterface);
 
