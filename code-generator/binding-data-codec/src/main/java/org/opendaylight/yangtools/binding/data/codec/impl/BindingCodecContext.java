@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -90,9 +91,9 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
 
     public Entry<YangInstanceIdentifier, BindingStreamEventWriter> newWriter(final InstanceIdentifier<?> path,
             final NormalizedNodeStreamWriter domWriter) {
-        LinkedList<YangInstanceIdentifier.PathArgument> yangArgs = new LinkedList<>();
-        DataContainerCodecContext<?> codecContext = getCodecContextNode(path, yangArgs);
-        BindingStreamEventWriter writer = new BindingToNormalizedStreamWriter(codecContext, domWriter);
+        final LinkedList<YangInstanceIdentifier.PathArgument> yangArgs = new LinkedList<>();
+        final DataContainerCodecContext<?> codecContext = getCodecContextNode(path, yangArgs);
+        final BindingStreamEventWriter writer = new BindingToNormalizedStreamWriter(codecContext, domWriter);
         return new SimpleEntry<>(YangInstanceIdentifier.create(yangArgs), writer);
     }
 
@@ -104,7 +105,7 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
     public DataContainerCodecContext<?> getCodecContextNode(final InstanceIdentifier<?> binding,
             final List<YangInstanceIdentifier.PathArgument> builder) {
         DataContainerCodecContext<?> currentNode = root;
-        for (InstanceIdentifier.PathArgument bindingArg : binding.getPathArguments()) {
+        for (final InstanceIdentifier.PathArgument bindingArg : binding.getPathArguments()) {
             currentNode = currentNode.getIdentifierChild(bindingArg, builder);
         }
         return currentNode;
@@ -126,7 +127,7 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
         NodeCodecContext currentNode = root;
         ListNodeCodecContext currentList = null;
 
-        for (YangInstanceIdentifier.PathArgument domArg : dom.getPathArguments()) {
+        for (final YangInstanceIdentifier.PathArgument domArg : dom.getPathArguments()) {
             Preconditions.checkArgument(currentNode instanceof DataContainerCodecContext<?>, "Unexpected child of non-container node %s", currentNode);
             final DataContainerCodecContext<?> previous = (DataContainerCodecContext<?>) currentNode;
             final NodeCodecContext nextNode = previous.getYangIdentifierChild(domArg);
@@ -185,8 +186,8 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
     @Override
     public ImmutableMap<String, LeafNodeCodecContext> getLeafNodes(final Class<?> parentClass,
             final DataNodeContainer childSchema) {
-        HashMap<String, DataSchemaNode> getterToLeafSchema = new HashMap<>();
-        for (DataSchemaNode leaf : childSchema.getChildNodes()) {
+        final HashMap<String, DataSchemaNode> getterToLeafSchema = new HashMap<>();
+        for (final DataSchemaNode leaf : childSchema.getChildNodes()) {
             final TypeDefinition<?> typeDef;
             if (leaf instanceof LeafSchemaNode) {
                 typeDef = ((LeafSchemaNode) leaf).getType();
@@ -196,14 +197,14 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
                 continue;
             }
 
-            String getterName = getGetterName(leaf.getQName(), typeDef);
+            final String getterName = getGetterName(leaf.getQName(), typeDef);
             getterToLeafSchema.put(getterName, leaf);
         }
         return getLeafNodesUsingReflection(parentClass, getterToLeafSchema);
     }
 
     private String getGetterName(final QName qName, TypeDefinition<?> typeDef) {
-        String suffix = BindingMapping.getClassName(qName);
+        final String suffix = BindingMapping.getClassName(qName);
 
         while (typeDef.getBaseType() != null) {
             typeDef = typeDef.getBaseType();
@@ -216,15 +217,15 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
 
     private ImmutableMap<String, LeafNodeCodecContext> getLeafNodesUsingReflection(final Class<?> parentClass,
             final Map<String, DataSchemaNode> getterToLeafSchema) {
-        Map<String, LeafNodeCodecContext> leaves = new HashMap<>();
-        for (Method method : parentClass.getMethods()) {
+        final Map<String, LeafNodeCodecContext> leaves = new HashMap<>();
+        for (final Method method : parentClass.getMethods()) {
             if (method.getParameterTypes().length == 0) {
-                DataSchemaNode schema = getterToLeafSchema.get(method.getName());
+                final DataSchemaNode schema = getterToLeafSchema.get(method.getName());
                 final Class<?> valueType;
                 if (schema instanceof LeafSchemaNode) {
                     valueType = method.getReturnType();
                 } else if (schema instanceof LeafListSchemaNode) {
-                    Type genericType = ClassLoaderUtils.getFirstGenericParameter(method.getGenericReturnType());
+                    final Type genericType = ClassLoaderUtils.getFirstGenericParameter(method.getGenericReturnType());
 
                     if (genericType instanceof Class<?>) {
                         valueType = (Class<?>) genericType;
@@ -236,7 +237,7 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
                 } else {
                     continue; // We do not have schema for leaf, so we will ignore it (eg. getClass, getImplementedInterface).
                 }
-                Codec<Object, Object> codec = getCodec(valueType, schema);
+                final Codec<Object, Object> codec = getCodec(valueType, schema);
                 final LeafNodeCodecContext leafNode = new LeafNodeCodecContext(schema, codec, method);
                 leaves.put(schema.getQName().getLocalName(), leafNode);
             }
@@ -284,15 +285,15 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
         } else if (rootType instanceof InstanceIdentifierTypeDefinition) {
             return ValueTypeCodec.encapsulatedValueCodecFor(valueType, instanceIdentifierCodec);
         } else if (rootType instanceof UnionTypeDefinition) {
-            Callable<UnionTypeCodec> loader = UnionTypeCodec.loader(valueType, (UnionTypeDefinition) rootType);
+            final Callable<UnionTypeCodec> loader = UnionTypeCodec.loader(valueType, (UnionTypeDefinition) rootType);
             try {
                 return loader.call();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalStateException("Unable to load codec for " + valueType, e);
             }
         } else if(rootType instanceof LeafrefTypeDefinition) {
-            Entry<GeneratedType, Object> typeWithSchema = context.getTypeWithSchema(valueType);
-            Object schema = typeWithSchema.getValue();
+            final Entry<GeneratedType, Object> typeWithSchema = context.getTypeWithSchema(valueType);
+            final Object schema = typeWithSchema.getValue();
             Preconditions.checkState(schema instanceof TypeDefinition<?>);
             return getCodec(valueType, (TypeDefinition<?>) schema);
         }
@@ -303,7 +304,7 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
 
         @Override
         public YangInstanceIdentifier serialize(final InstanceIdentifier<?> input) {
-            List<YangInstanceIdentifier.PathArgument> domArgs = new ArrayList<>();
+            final List<YangInstanceIdentifier.PathArgument> domArgs = new ArrayList<>();
             getCodecContextNode(input, domArgs);
             return YangInstanceIdentifier.create(domArgs);
         }
@@ -312,7 +313,15 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
         public InstanceIdentifier<?> deserialize(final YangInstanceIdentifier input) {
             final List<InstanceIdentifier.PathArgument> builder = new ArrayList<>();
             final NodeCodecContext codec = getCodecContextNode(input, builder);
-            return codec == null ? null : InstanceIdentifier.create(builder);
+            if (codec == null) {
+                return null;
+            }
+            if (codec instanceof ListNodeCodecContext && Iterables.getLast(builder) instanceof InstanceIdentifier.Item) {
+                // We ended up in list, but without key, which means it represent list as a whole,
+                // which is not binding representable.
+                return null;
+            }
+            return InstanceIdentifier.create(builder);
         }
     }
 
@@ -354,7 +363,7 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
 
         public Object getAndSerialize(final Object obj) {
             try {
-                Object value = getter.invoke(obj);
+                final Object value = getter.invoke(obj);
                 Preconditions.checkArgument(value != null,
                         "All keys must be specified for %s. Missing key is %s. Supplied key is %s",
                         getter.getDeclaringClass(), getter.getName(), obj);
@@ -388,7 +397,7 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
              * they are defined.
              */
             final Map<QName, ValueContext> keys = new LinkedHashMap<>();
-            for (QName qname : schema.getKeyDefinition()) {
+            for (final QName qname : schema.getKeyDefinition()) {
                 keys.put(qname, keyValueContexts.get(qname));
             }
             this.keyValueContexts = ImmutableMap.copyOf(keys);
@@ -398,8 +407,8 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
         public IdentifiableItem<?, ?> deserialize(final NodeIdentifierWithPredicates input) {
             final Collection<QName> keys = schema.getKeyDefinition();
             final ArrayList<Object> bindingValues = new ArrayList<>(keys.size());
-            for (QName key : keys) {
-                Object yangValue = input.getKeyValues().get(key);
+            for (final QName key : keys) {
+                final Object yangValue = input.getKeyValues().get(key);
                 bindingValues.add(keyValueContexts.get(key).deserialize(yangValue));
             }
 
@@ -417,10 +426,10 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
 
         @Override
         public NodeIdentifierWithPredicates serialize(final IdentifiableItem<?, ?> input) {
-            Object value = input.getKey();
+            final Object value = input.getKey();
 
-            Map<QName, Object> values = new LinkedHashMap<>();
-            for (Entry<QName, ValueContext> valueCtx : keyValueContexts.entrySet()) {
+            final Map<QName, Object> values = new LinkedHashMap<>();
+            for (final Entry<QName, ValueContext> valueCtx : keyValueContexts.entrySet()) {
                 values.put(valueCtx.getKey(), valueCtx.getValue().getAndSerialize(value));
             }
             return new NodeIdentifierWithPredicates(schema.getQName(), values);
@@ -429,8 +438,8 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
 
     @SuppressWarnings("unchecked")
     private static Constructor<? extends Identifier<?>> getConstructor(final Class<? extends Identifier<?>> clazz) {
-        for (@SuppressWarnings("rawtypes") Constructor constr : clazz.getConstructors()) {
-            Class<?>[] parameters = constr.getParameterTypes();
+        for (@SuppressWarnings("rawtypes") final Constructor constr : clazz.getConstructors()) {
+            final Class<?>[] parameters = constr.getParameterTypes();
             if (!clazz.equals(parameters[0])) {
                 // It is not copy constructor;
                 return constr;
@@ -442,11 +451,11 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
     @Override
     public Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> getPathArgumentCodec(final Class<?> listClz,
             final ListSchemaNode schema) {
-        Class<? extends Identifier<?>> identifier = ClassLoaderUtils.findFirstGenericArgument(listClz,
+        final Class<? extends Identifier<?>> identifier = ClassLoaderUtils.findFirstGenericArgument(listClz,
                 Identifiable.class);
-        Map<QName, ValueContext> valueCtx = new HashMap<>();
-        for (LeafNodeCodecContext leaf : getLeafNodes(identifier, schema).values()) {
-            QName name = leaf.getDomPathArgument().getNodeType();
+        final Map<QName, ValueContext> valueCtx = new HashMap<>();
+        for (final LeafNodeCodecContext leaf : getLeafNodes(identifier, schema).values()) {
+            final QName name = leaf.getDomPathArgument().getNodeType();
             valueCtx.put(name, new ValueContext(identifier, leaf));
         }
         return new IdentifiableItemCodec(schema, identifier, listClz, valueCtx);
