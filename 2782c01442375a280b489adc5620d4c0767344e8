@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_0bb1f0f7",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-01-08T12:28:24Z",
+      "side": 1,
+      "message": "Please make first line shorter and more expresive such as:\n\nUpdated Json Stream Writer to  use gson JsonWriter\n\nCustom implementation of JSON writing...",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 76
+      },
+      "revId": "2782c01442375a280b489adc5620d4c0767344e8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_4ba7f8bd",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONNormalizedNodeStreamWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-01-08T12:28:24Z",
+      "side": 1,
+      "message": "JSONWriter should be injectable via constructor and static factory. \n\nAll existing static factory methods should instantiate JSONWriter from supplied writer.\n\nAlso please add new static factory which will allow for supplying custom instance of JSONWriter.",
+      "range": {
+        "startLine": 48,
+        "startChar": 4,
+        "endLine": 49,
+        "endChar": 77
+      },
+      "revId": "2782c01442375a280b489adc5620d4c0767344e8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_8bc5005d",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONNormalizedNodeStreamWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-01-08T12:28:24Z",
+      "side": 1,
+      "message": "This will write each and every value as a string which actually breaks specification: https://tools.ietf.org/html/draft-ietf-netmod-yang-json-01\n\nBetter approach is to define method in JSONCodec interface such as\nwriteTo(JsonWriter w,value) instead of codec.serialize.\n\nin writeTo method codec will serialize value in necessary and invoke proper method for writing value, since yang-json uses\nat different formats for value:\n\nquoted string for string, identitities and instance-identifiers\nnumber (writer.value(Number)) for numbers\nboolean (writer.value(Boolean)) for booleans\narray with null for empty type",
+      "range": {
+        "startLine": 223,
+        "startChar": 4,
+        "endLine": 224,
+        "endChar": 26
+      },
+      "revId": "2782c01442375a280b489adc5620d4c0767344e8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
