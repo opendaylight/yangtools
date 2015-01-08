@@ -1,0 +1,7 @@
+module notification-test {
+    namespace "notification-test";
+    prefix test;
+
+    notification foo {
+    }
+}
