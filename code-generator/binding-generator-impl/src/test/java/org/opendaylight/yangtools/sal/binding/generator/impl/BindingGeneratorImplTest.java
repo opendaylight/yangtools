@@ -113,4 +113,41 @@ public class BindingGeneratorImplTest {
 
     }
 
+    @Test
+    public void notificationGenerationTest() throws IOException, YangSyntaxErrorException, URISyntaxException {
+        File resourceFile = new File(getClass().getResource("/binding-generator-impl-test/notification-test.yang")
+                .toURI());
+        File resourceDir = resourceFile.getParentFile();
+
+        YangParserImpl parser = YangParserImpl.getInstance();
+        SchemaContext context = parser.parseFile(resourceFile, resourceDir);
+
+        List<Type> generateTypes = new BindingGeneratorImpl(false).generateTypes(context);
+
+        GeneratedType foo = null;
+        for (Type type : generateTypes) {
+            if (type.getName().equals("Foo")) {
+                foo = (GeneratedType) type;
+                break;
+            }
+        }
+
+        Type childOf = null;
+        Type dataObject = null;
+        List<Type> impl = foo.getImplements();
+        for (Type type : impl) {
+            switch (type.getName()) {
+            case "ChildOf":
+                childOf = type;
+                break;
+            case "DataObject":
+                dataObject = type;
+                break;
+            }
+        }
+
+        assertNull(childOf);
+        assertNotNull(dataObject);
+    }
+
 }
