@@ -21,6 +21,7 @@
     <artifactId>yangtools-aggregator</artifactId>
     <groupId>org.opendaylight.yangtools</groupId>
     <version>0.6.4-SNAPSHOT</version>
+    <name>yangtools</name> <!-- Used by Sonar to set project name -->
     <packaging>pom</packaging>
 
     <scm>
