@@ -448,6 +448,9 @@ class BuilderTemplate extends BaseTemplate {
                 this.«field.fieldName» = value;
                 return this;
             }
+            public «type.name»«BUILDER» set«field.name.toFirstUpper»(Builder<«field.returnType.importedName»> value) {
+                return set«field.name.toFirstUpper»(value.build());
+            }
             «generateLengthMethod(length, field.returnType, type.name+BUILDER, length)»
             «generateRangeMethod(range, field.returnType.restrictions, field.returnType, type.name+BUILDER, range)»
         «ENDFOR»
