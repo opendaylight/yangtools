@@ -33,7 +33,7 @@ public class DataObjectReadingUtilTest {
     public void setup() {
         MockitoAnnotations.initMocks(this);
 
-        path = InstanceIdentifier.builder(Nodes.class).toInstance();
+        path = InstanceIdentifier.builder(Nodes.class).build();
         ImmutableMap map = ImmutableMap.<InstanceIdentifier<? extends DataObject>,
                 DataObject>builder().put(path, mockedDataObject).build();
 

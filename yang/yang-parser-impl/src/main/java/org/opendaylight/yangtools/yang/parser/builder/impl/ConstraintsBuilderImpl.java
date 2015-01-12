@@ -8,9 +8,11 @@
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import com.google.common.collect.ImmutableSet;
+
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -68,7 +70,7 @@ public final class ConstraintsBuilderImpl implements ConstraintsBuilder {
      * @see org.opendaylight.yangtools.yang.parser.builder.impl.IConstraintsBuilder#build()
      */
     @Override
-    public ConstraintDefinition toInstance() {
+    public ConstraintDefinition build() {
         if (instance != null) {
             return instance;
         }
@@ -320,6 +322,12 @@ public final class ConstraintsBuilderImpl implements ConstraintsBuilder {
             sb.append("]");
             return sb.toString();
         }
+    }
+
+    @Override
+    @Deprecated
+    public ConstraintDefinition toInstance() {
+        return build();
     }
 
 }

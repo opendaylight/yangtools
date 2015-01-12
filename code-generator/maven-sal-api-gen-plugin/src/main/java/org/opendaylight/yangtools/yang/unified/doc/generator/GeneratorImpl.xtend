@@ -754,7 +754,7 @@ class GeneratorImpl {
 
     def CharSequence tree(Module module) '''
         «strong(module.name)»
-        «module.childNodes.treeSet(YangInstanceIdentifier.builder.toInstance())»
+        «module.childNodes.treeSet(YangInstanceIdentifier.builder.build())»
     '''
 
     private def dispatch CharSequence tree(ChoiceNode node,YangInstanceIdentifier path) '''
@@ -794,7 +794,7 @@ class GeneratorImpl {
         «IF !childNodes.nullOrEmpty»
             <h2>Child nodes</h2>
 
-            «childNodes.printChildren(3,YangInstanceIdentifier.builder().toInstance())»
+            «childNodes.printChildren(3,YangInstanceIdentifier.builder().build())»
         «ENDIF»
     '''
 

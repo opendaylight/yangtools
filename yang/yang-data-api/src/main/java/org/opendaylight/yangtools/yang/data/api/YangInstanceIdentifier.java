@@ -161,7 +161,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
             hash.addArgument(a);
         }
 
-        return new YangInstanceIdentifier(path, hash.toInstance());
+        return new YangInstanceIdentifier(path, hash.build());
     }
 
     public static final YangInstanceIdentifier create(final Iterable<? extends PathArgument> path) {
@@ -468,6 +468,12 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
          * @return {@link YangInstanceIdentifier}
          */
         YangInstanceIdentifier build();
+
+        /*
+         * @deprecated use build()
+         */
+        @Deprecated
+        YangInstanceIdentifier toInstance();
     }
 
     /**
@@ -734,7 +740,6 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
             return this;
         }
 
-        @Override
         @Deprecated
         public YangInstanceIdentifier toInstance() {
             return build();
@@ -742,7 +747,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
 
         @Override
         public YangInstanceIdentifier build() {
-            return new YangInstanceIdentifier(ImmutableList.copyOf(path), hash.toInstance());
+            return new YangInstanceIdentifier(ImmutableList.copyOf(path), hash.build());
         }
     }
 

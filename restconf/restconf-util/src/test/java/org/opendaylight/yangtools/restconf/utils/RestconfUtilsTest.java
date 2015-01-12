@@ -45,7 +45,7 @@ public class RestconfUtilsTest {
     @Test
     public void firstTest() { // test static state collisions with the other test
         final InstanceIdentifier<Topology> instanceIdentifier = InstanceIdentifier.builder(NetworkTopology.class)
-                .child(Topology.class, new TopologyKey(new TopologyId("example-pcep-topology"))).toInstance();
+                .child(Topology.class, new TopologyKey(new TopologyId("example-pcep-topology"))).build();
         final InputStream is = this.getClass().getClassLoader().getResourceAsStream("topology-bug1196-linux.xml");
         RestconfUtils.toRestconfIdentifier(instanceIdentifier, this.mappingService,
                 this.mappingService.getSchemaContext()).getValue();

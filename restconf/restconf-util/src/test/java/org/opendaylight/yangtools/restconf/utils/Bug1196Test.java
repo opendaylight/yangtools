@@ -63,7 +63,7 @@ public class Bug1196Test {
     @Test
     public void testXmlDataToDataObjectLinuxCase() {
         final InstanceIdentifier<Topology> instanceIdentifier = InstanceIdentifier.builder(NetworkTopology.class)
-                .child(Topology.class, new TopologyKey(new TopologyId("example-pcep-topology"))).toInstance();
+                .child(Topology.class, new TopologyKey(new TopologyId("example-pcep-topology"))).build();
         final InputStream is = this.getClass().getClassLoader().getResourceAsStream("topology-bug1196-linux.xml");
         final DataSchemaNode dataSchema = RestconfUtils.toRestconfIdentifier(instanceIdentifier, this.mappingService,
                 this.mappingService.getSchemaContext()).getValue();
@@ -98,7 +98,7 @@ public class Bug1196Test {
     @Test
     public void testXmlDataToDataObjectUnixCase() {
         final InstanceIdentifier<Topology> instanceIdentifier = InstanceIdentifier.builder(NetworkTopology.class)
-                .child(Topology.class, new TopologyKey(new TopologyId("example-pcep-topology"))).toInstance();
+                .child(Topology.class, new TopologyKey(new TopologyId("example-pcep-topology"))).build();
         final InputStream is = this.getClass().getClassLoader().getResourceAsStream("topology-bug1196-unix.xml");
         final DataSchemaNode dataSchema = RestconfUtils.toRestconfIdentifier(instanceIdentifier, this.mappingService,
                 this.mappingService.getSchemaContext()).getValue();
