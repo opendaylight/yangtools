@@ -68,7 +68,7 @@ public final class ConstraintsBuilderImpl implements ConstraintsBuilder {
      * @see org.opendaylight.yangtools.yang.parser.builder.impl.IConstraintsBuilder#build()
      */
     @Override
-    public ConstraintDefinition toInstance() {
+    public ConstraintDefinition build() {
         if (instance != null) {
             return instance;
         }
@@ -320,6 +320,15 @@ public final class ConstraintsBuilderImpl implements ConstraintsBuilder {
             sb.append("]");
             return sb.toString();
         }
+    }
+
+    /*
+     * @deprecated Use #build() instead.
+     */
+    @Override
+    @Deprecated
+    public ConstraintDefinition toInstance() {
+        return build();
     }
 
 }

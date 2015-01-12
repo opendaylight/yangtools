@@ -31,7 +31,7 @@ public class ContainerNodeCnSnSerializer extends ContainerNodeBaseSerializer<Nod
         CompositeNodeBuilder<ImmutableCompositeNode> compNodeBuilder = ImmutableCompositeNode.builder();
         compNodeBuilder.setQName(node.getNodeType());
         compNodeBuilder.addAll(super.serialize(schema, node));
-        return Collections.<Node<?>> singletonList(compNodeBuilder.toInstance());        
+        return Collections.<Node<?>> singletonList(compNodeBuilder.build());
     }
 
     @Override

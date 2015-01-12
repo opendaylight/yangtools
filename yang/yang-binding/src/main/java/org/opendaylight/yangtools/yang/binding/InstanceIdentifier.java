@@ -430,7 +430,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
         }
         Preconditions.checkArgument(a != null, "pathArguments may not be empty");
 
-        return trustedCreate(a, pathArguments, hashBuilder.toInstance(), wildcard);
+        return trustedCreate(a, pathArguments, hashBuilder.build(), wildcard);
     }
 
     /**
@@ -667,6 +667,12 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
          * @return
          */
         InstanceIdentifier<T> build();
+
+        /*
+         * @deprecated use #build()
+         */
+        @Deprecated
+        InstanceIdentifier<T> toInstance();
     }
 
     private void writeObject(final java.io.ObjectOutputStream out) throws IOException {

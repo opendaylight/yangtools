@@ -55,7 +55,7 @@ public class Bug527Test {
 
     @Test
     public void testToDataObjectMappingWithNestedAugmentations() {
-        InstanceIdentifier<Factory> factoryId = InstanceIdentifier.builder(Factory.class).toInstance();
+        InstanceIdentifier<Factory> factoryId = InstanceIdentifier.builder(Factory.class).build();
         InputStream is = this.getClass().getClassLoader().getResourceAsStream("topology-bug527.xml");
         DataSchemaNode dataSchema = RestconfUtils.toRestconfIdentifier(factoryId, mappingService,
                 mappingService.getSchemaContext()).getValue();

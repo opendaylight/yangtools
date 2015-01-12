@@ -257,14 +257,14 @@ public class TestingNormalizedNodeStructuresCreator {
         SimpleNode<?> anyxmlInData = NodeFactory.createImmutableSimpleNode(
                 QName.create("ns:complex:json", "2014-08-11", "anyxml-in-data"), null, "foo");
         return ImmutableCompositeNode.builder().add(anyxmlInData)
-                .setQName(QName.create("ns:complex:json", "2014-08-11", "lf12-any")).toInstance();
+                .setQName(QName.create("ns:complex:json", "2014-08-11", "lf12-any")).build();
     }
 
     private static CompositeNode prepareLf13Value() {
         SimpleNode<?> anyxmlInData = NodeFactory.createImmutableSimpleNode(
                 QName.create("ns:complex:json", "2014-08-11", "anyxml-in-data"), null, "foo");
         return ImmutableCompositeNode.builder().add(anyxmlInData)
-                .setQName(QName.create("ns:complex:json", "2014-08-11", "lf13-any")).toInstance();
+                .setQName(QName.create("ns:complex:json", "2014-08-11", "lf13-any")).build();
     }
 
     public static NormalizedNode<?, ?> leafNodeInContainer() {

@@ -9,20 +9,21 @@ package org.opendaylight.yangtools.concepts;
 
 /**
  * Builder object which produces a product.
- * 
+ *
  * @param <P> Product of builder
- * 
+ *
  * @author Tony Tkacik &lt;ttkacik@cisco.com&gt;
  */
 public interface Builder<P> extends Mutable {
-    
+
     /**
      * Returns instance of the product.
-     * 
+     *
      * Multiple calls to this method are not required to return
      * same instance if the state of the builder was changed.
-     * 
+     *
      * @return Newly-built instance
      */
-    P toInstance();
+    P build();
+
 }

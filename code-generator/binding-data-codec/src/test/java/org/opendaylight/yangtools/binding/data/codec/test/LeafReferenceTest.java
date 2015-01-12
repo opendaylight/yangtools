@@ -32,7 +32,7 @@ public class LeafReferenceTest extends AbstractBindingRuntimeTest {
 
     private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
     private static final InstanceIdentifier<TreeComplexLeaves> BA_TOP_LEVEL_LIST = InstanceIdentifier.builder(Top.class)
-            .child(TopLevelList.class, TOP_FOO_KEY).augmentation(TreeComplexLeaves.class).toInstance();
+            .child(TopLevelList.class, TOP_FOO_KEY).augmentation(TreeComplexLeaves.class).build();
 
     private BindingNormalizedNodeCodecRegistry registry;
 

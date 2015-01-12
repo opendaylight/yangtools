@@ -278,6 +278,11 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
         }
 
         @Override
+        public ImmutableCompositeNode build() {
+            return ImmutableCompositeNode.create(this.getQName(), this.getAttributes(), this.getChildNodes());
+        }
+
+        @Deprecated
         public ImmutableCompositeNode toInstance() {
             return ImmutableCompositeNode.create(this.getQName(), this.getAttributes(), this.getChildNodes());
         }
