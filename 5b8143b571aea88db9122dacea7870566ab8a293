@@ -16,6 +16,24 @@
       "revId": "5b8143b571aea88db9122dacea7870566ab8a293",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_590d8f8f",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/util/YangSchemaUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-01-13T15:21:42Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba8cc1f7_82417a3b",
+      "revId": "5b8143b571aea88db9122dacea7870566ab8a293",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
