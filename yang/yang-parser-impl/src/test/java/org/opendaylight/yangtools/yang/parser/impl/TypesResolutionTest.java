@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
 import org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
+import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public class TypesResolutionTest {
     private Set<Module> testedModules;
@@ -346,4 +347,10 @@ public class TypesResolutionTest {
         parser.parseFiles(Arrays.asList(unionbits));
     }
 
+    @Test(expected = YangParseException.class)
+    public void testUnionInList() throws Exception {
+       File unioninlist = new File(getClass().getResource("/types/union-in-list/unioninlisttest.yang").toURI());
+       YangContextParser parser = new YangParserImpl();
+       parser.parseFiles(Arrays.asList(unioninlist));
+    }
 }
