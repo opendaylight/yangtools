@@ -816,6 +816,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
             } else if (childNode instanceof Key_stmtContext) {
                 final Set<String> key = createListKey((Key_stmtContext) childNode);
                 builder.setKeys(key);
+            } else if (childNode instanceof YangParser.Identifier_stmtContext) {
+                if (childNode.getChild(0).toString().equals("union")) {
+                    throw new YangParseException(moduleName, line, "Union is not substatement of list");
+                }
             }
         }
     }

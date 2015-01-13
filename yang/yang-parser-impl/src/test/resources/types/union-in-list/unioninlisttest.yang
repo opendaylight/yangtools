@@ -1,0 +1,32 @@
+module unioninlisttest {
+
+    namespace "urn:uilt";
+    prefix "uilt";
+
+    revision 2015-01-13 {
+    }
+
+    list foo {
+        key "name";
+        unique "ip port";
+
+        leaf name {
+            type string;
+        }
+
+        union {
+            type int32;
+            type enumeration {
+                enum "test";
+            }
+        }
+
+        leaf ip {
+            type string;
+        }
+
+        leaf port {
+            type string;
+        }
+    }
+}
