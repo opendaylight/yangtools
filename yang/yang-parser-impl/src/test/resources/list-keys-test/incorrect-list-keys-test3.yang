@@ -1,0 +1,21 @@
+module incorrect-list-keys-test3 {
+
+    namespace "incorrect-list-keys-test3";
+    prefix "test";
+
+    grouping grp_leaf {
+        leaf grp_leaf {
+            type string;
+        }
+        list grp_list {
+            leaf grp_leaf {
+                type string;
+            }
+        }
+    }
+
+    list test1 {
+        key "grp_list";
+        uses grp_leaf;
+    }
+}
