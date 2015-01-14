@@ -1,0 +1,40 @@
+module test {
+    aaa {
+        bbb {
+            yang-version 1;
+        }
+    }
+
+    yang-version: 1;
+    namespace "tst";
+    prefix test;
+
+    include subtest {
+        ccc {
+            ddd {
+                yang-version 1;
+            }
+        }
+        revision-date 2015-01-14;
+    }
+
+    import test2 {
+        eee {
+           fff {
+            yang-version 1;
+           }
+        }
+        prefix test2;
+        revision-date 2015-01-14;
+    }
+
+    revision 2015-01-14 {
+        ggg {
+            hhh {
+                yang-version 1;
+            }
+        }
+
+        description "Initial revision.";
+    }
+}
