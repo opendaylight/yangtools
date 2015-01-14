@@ -1,0 +1,12 @@
+module incorrect-list-keys-test2 {
+
+    namespace "incorrect-list-keys-test2";
+    prefix "test";
+
+    list test1 {
+        key "test1_key1 test1_key2";
+        leaf test1_key1 {
+            type string;
+        }
+    }
+}
