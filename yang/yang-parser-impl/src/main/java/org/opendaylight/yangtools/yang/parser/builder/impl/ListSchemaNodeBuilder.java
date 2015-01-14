@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -98,6 +99,11 @@ public final class ListSchemaNodeBuilder extends AbstractDocumentedDataNodeConta
                 if (keyPart == null) {
                     throw new YangParseException(getModuleName(), getLine(), "Failed to resolve list key for name "
                             + key);
+                }
+
+                if (!(keyPart instanceof LeafSchemaNode)) {
+                    throw new YangParseException(getModuleName(), getLine(), "List key : \"" + key
+                            + "\" does not reference any Leaf of the List");
                 }
 
                 final QName qname = keyPart.getQName();
