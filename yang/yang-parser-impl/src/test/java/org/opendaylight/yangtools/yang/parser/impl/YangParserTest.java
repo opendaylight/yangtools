@@ -961,4 +961,23 @@ public class YangParserTest {
             fail("YangParseException should not be thrown");
         }
     }
+
+    @Test
+    public void unknownStatementsInStatementsTest() throws IOException, URISyntaxException {
+        File yangModule1 = new File(getClass().getResource("/yang-grammar-test/stmtsep-in-statements.yang").toURI());
+        File yangModule2 = new File(getClass().getResource("/yang-grammar-test/stmtsep-in-statements2.yang").toURI());
+        File yangSubModule = new File(getClass().getResource("/yang-grammar-test/stmtsep-in-statements-sub.yang").toURI());
+
+        List<File> yangs = new ArrayList<File>();
+        yangs.add(yangModule1);
+        yangs.add(yangModule2);
+        yangs.add(yangSubModule);
+
+        try {
+            YangParserImpl.getInstance().parseFiles(yangs);
+        } catch (YangParseException e) {
+            e.printStackTrace();
+            fail("YangParseException should not be thrown");
+        }
+    }
 }

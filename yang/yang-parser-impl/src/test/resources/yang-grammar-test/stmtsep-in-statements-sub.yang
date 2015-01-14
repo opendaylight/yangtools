@@ -1,0 +1,28 @@
+submodule subtest {
+    aaa {
+       bbb {
+        yang-version 1;
+       }
+    }
+
+    yang-version: 1;
+
+    belongs-to test {
+        aaa {
+           bbb {
+            yang-version 1;
+           }
+        }
+       prefix test;
+    }
+
+    revision 2015-01-14 {
+        ccc {
+            ddd {
+                yang-version 1;
+            }
+        }
+
+        description "Initial revision.";
+    }
+}

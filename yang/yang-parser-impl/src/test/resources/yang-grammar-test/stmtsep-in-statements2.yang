@@ -1,0 +1,21 @@
+module test2 {
+    aaa {
+        bbb {
+            yang-version 1;
+        }
+    }
+
+    yang-version: 1;
+    namespace "tst2";
+    prefix test2;
+
+    revision 2015-01-14 {
+        ccc {
+            ddd {
+                yang-version 1;
+            }
+        }
+
+        description "Initial revision.";
+    }
+}
