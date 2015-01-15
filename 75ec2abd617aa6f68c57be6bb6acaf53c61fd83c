@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_bf86f363",
+        "filename": "code-generator/binding-generator-util/src/main/java/org/opendaylight/yangtools/binding/generator/util/generated/type/builder/GeneratedTOBuilderImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-15T00:53:50Z",
+      "side": 1,
+      "message": "Override should be on a separate line",
+      "revId": "75ec2abd617aa6f68c57be6bb6acaf53c61fd83c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_7f806b46",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/ClassTemplate.xtend",
+        "patchSetId": 2
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-15T00:53:50Z",
+      "side": 1,
+      "message": "the \"\u003d\u003d true\" part is not necessary",
+      "revId": "75ec2abd617aa6f68c57be6bb6acaf53c61fd83c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_df909f97",
+        "filename": "code-generator/binding-model-api/src/main/java/org/opendaylight/yangtools/sal/binding/model/api/GeneratedTransferObject.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-15T00:53:50Z",
+      "side": 1,
+      "message": "please add javadoc for newly-introduced API method",
+      "revId": "75ec2abd617aa6f68c57be6bb6acaf53c61fd83c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_ff8b1b66",
+        "filename": "code-generator/binding-model-api/src/main/java/org/opendaylight/yangtools/sal/binding/model/api/type/builder/GeneratedTOBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-15T00:53:50Z",
+      "side": 1,
+      "message": "missing javadoc",
+      "revId": "75ec2abd617aa6f68c57be6bb6acaf53c61fd83c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
