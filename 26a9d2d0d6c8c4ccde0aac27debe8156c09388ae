@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_7f45cb15",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangParserListenerImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 821,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-15T01:02:19Z",
+      "side": 1,
+      "message": "\"union state statement is not allowed inside a list statement\"",
+      "revId": "26a9d2d0d6c8c4ccde0aac27debe8156c09388ae",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
