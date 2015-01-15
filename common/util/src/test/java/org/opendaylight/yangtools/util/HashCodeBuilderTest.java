@@ -16,12 +16,12 @@ public class HashCodeBuilderTest {
     @Test
     public void testAllMethodsOfHashCodeBuilder() {
         final HashCodeBuilder<String> hashCodeBuilder = new HashCodeBuilder<>();
-        assertEquals("Default hash code should be '1'.", 1, hashCodeBuilder.toInstance().intValue());
+        assertEquals("Default hash code should be '1'.", 1, hashCodeBuilder.build().intValue());
 
         int nextHashCode = HashCodeBuilder.nextHashCode(1, "test");
         assertEquals("Next hash code should be '3556529'.", 3556529, nextHashCode);
 
         hashCodeBuilder.addArgument("another test");
-        assertEquals("Updated internal hash code should be '700442706'.", -700442706, hashCodeBuilder.toInstance().intValue());
+        assertEquals("Updated internal hash code should be '700442706'.", -700442706, hashCodeBuilder.build().intValue());
     }
 }

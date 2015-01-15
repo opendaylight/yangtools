@@ -39,7 +39,7 @@ public class BindingReadingTest {
     private static final NodeId SOURCE_NODE_ID = new NodeId("node:id");
     private static final TpId SOURCE_TP_ID = new TpId("source:tp");
     private static final InstanceIdentifier<NetworkTopology> NETWORK_TOPOLOGY_PATH = InstanceIdentifier.builder(
-            NetworkTopology.class).toInstance();
+            NetworkTopology.class).build();
     private NetworkTopology networkModel;
     private Link linkModel;
 

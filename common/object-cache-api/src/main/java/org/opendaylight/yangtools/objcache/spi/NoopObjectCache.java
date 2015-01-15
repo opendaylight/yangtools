@@ -38,6 +38,6 @@ public final class NoopObjectCache implements ObjectCache {
 
 	@Override
 	public <B extends ProductAwareBuilder<P>, P> P getProduct(final B builder) {
-		return builder.toInstance();
+		return builder.build();
 	}
 }

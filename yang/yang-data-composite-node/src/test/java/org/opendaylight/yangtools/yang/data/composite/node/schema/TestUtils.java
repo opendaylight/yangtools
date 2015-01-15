@@ -128,27 +128,27 @@ public class TestUtils {
         contBuilder.setQName(QName.create(MODULE_BASE, "cont"));
 
         // cont1
-        contBuilder.add(ImmutableCompositeNode.builder().setQName(QName.create(MODULE_BASE, "cont1")).toInstance());
+        contBuilder.add(ImmutableCompositeNode.builder().setQName(QName.create(MODULE_BASE, "cont1")).build());
 
         // cont2
         CompositeNodeBuilder<ImmutableCompositeNode> cont2 = ImmutableCompositeNode.builder().setQName(
                 QName.create(MODULE_BASE, "cont2"));
         cont2.add(createMutableSimpleNode(QName.create(MODULE_BASE, "lf21"), null, "value in cont2/lf21", null, null));
-        contBuilder.add(cont2.toInstance());
+        contBuilder.add(cont2.build());
 
         // lst1
-        contBuilder.add(ImmutableCompositeNode.builder().setQName(QName.create(MODULE_BASE, "lst1")).toInstance());
+        contBuilder.add(ImmutableCompositeNode.builder().setQName(QName.create(MODULE_BASE, "lst1")).build());
 
         // lst2
         CompositeNodeBuilder<ImmutableCompositeNode> lst2_1Builder = ImmutableCompositeNode.builder().setQName(
                 QName.create(MODULE_BASE, "lst2"));
         lst2_1Builder.add(createMutableSimpleNode(QName.create(MODULE_BASE, "lf21"), null, "some value21", null, null));
-        contBuilder.add(lst2_1Builder.toInstance());
+        contBuilder.add(lst2_1Builder.build());
 
         CompositeNodeBuilder<ImmutableCompositeNode> lst2_2Builder = ImmutableCompositeNode.builder().setQName(
                 QName.create(MODULE_BASE, "lst2"));
         lst2_2Builder.add(createMutableSimpleNode(QName.create(MODULE_BASE, "lf22"), null, "some value22", null, null));
-        contBuilder.add(lst2_2Builder.toInstance());
+        contBuilder.add(lst2_2Builder.build());
 
         // lflst1
         contBuilder.add(createMutableSimpleNode(QName.create(MODULE_BASE, "lflst1"), null, "lflst1_1", null, null));
@@ -166,19 +166,19 @@ public class TestUtils {
                 QName.create(MODULE_AUGMENT, "cont3"));
         cont3Builder.add(createMutableSimpleNode(QName.create(MODULE_AUGMENT, "lf31"), null,
                 "value in leaf in augment", null, null));
-        contBuilder.add(cont3Builder.toInstance());
+        contBuilder.add(cont3Builder.build());
 
         // anxml-composite
         CompositeNodeBuilder<ImmutableCompositeNode> anxmlCompositeBuilder = ImmutableCompositeNode.builder().setQName(
                 QName.create(MODULE_BASE, "anxml-composite"));
         anxmlCompositeBuilder.add(NodeFactory.createImmutableSimpleNode(QName.create(MODULE_BASE, "anxml-cont"), null,
                 null));
-        contBuilder.add(anxmlCompositeBuilder.toInstance());
+        contBuilder.add(anxmlCompositeBuilder.build());
 
         // anxml-simple
         contBuilder.add(NodeFactory.createImmutableSimpleNode(QName.create(MODULE_BASE, "anxml-simple"), null,43));
 
-        return contBuilder.toInstance();
+        return contBuilder.build();
     }
 
     /**
@@ -265,7 +265,7 @@ public class TestUtils {
                                 .setQName(QName.create("simple:container:yang", "2013-11-12", "anxml-composite"))
                                 .add(NodeFactory.createImmutableSimpleNode(
                                         QName.create("simple:container:yang", "2013-11-12", "anxml-cont"), null, null))
-                                .toInstance()).build());
+                                .build()).build());
 
         containerBuilder
                 .withChild(Builders

@@ -37,7 +37,7 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
 
     @Override
     public int hashCode() {
-        return hashBuilder.toInstance();
+        return hashBuilder.build();
     }
 
     @SuppressWarnings("unchecked")
@@ -96,11 +96,14 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
         }
 
         @SuppressWarnings("unchecked")
-        final InstanceIdentifier<T> ret = (InstanceIdentifier<T>) InstanceIdentifier.trustedCreate(arg, pathArguments, hashBuilder.toInstance(), wildcard);
+        final InstanceIdentifier<T> ret = (InstanceIdentifier<T>) InstanceIdentifier.trustedCreate(arg, pathArguments, hashBuilder.build(), wildcard);
         return ret;
     }
 
-    @Override
+    /*
+     * @deprecated Use #build() instead.
+     */
+    @Deprecated
     public InstanceIdentifier<T> toInstance() {
         return build();
     }
