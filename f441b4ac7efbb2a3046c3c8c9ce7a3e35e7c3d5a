@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_bfd4b347",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/ListSchemaNodeBuilder.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-15T00:57:02Z",
+      "side": 1,
+      "message": "new whitespace -- please fix your editor settings",
+      "revId": "f441b4ac7efbb2a3046c3c8c9ce7a3e35e7c3d5a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_7fce2bb6",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/parser/impl/ListKeysTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-15T00:57:02Z",
+      "side": 1,
+      "message": "missing license and wrong year",
+      "revId": "f441b4ac7efbb2a3046c3c8c9ce7a3e35e7c3d5a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
