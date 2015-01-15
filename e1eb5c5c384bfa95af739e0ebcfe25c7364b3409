@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_4a9feb50",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/RpcResultBuilder.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 397,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-15T19:14:16Z",
+      "side": 1,
+      "message": "/** to start a javadoc, it is also missing a @return statement",
+      "revId": "e1eb5c5c384bfa95af739e0ebcfe25c7364b3409",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_2aa4dfa4",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/RpcResultBuilder.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 410,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-15T19:14:16Z",
+      "side": 1,
+      "message": "Should return ListenableFuture",
+      "revId": "e1eb5c5c384bfa95af739e0ebcfe25c7364b3409",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
