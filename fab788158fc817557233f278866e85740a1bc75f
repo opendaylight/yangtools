@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_4a64cbe4",
+        "filename": "common/concepts/src/main/java/org/opendaylight/yangtools/concepts/CompositeObjectRegistration.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2015-01-15T13:17:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_bf30339f",
+      "revId": "fab788158fc817557233f278866e85740a1bc75f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_5f27af64",
         "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/InstanceIdentifier.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2015-01-15T01:14:49Z",
       "side": 1,
       "message": "typo, should read @deprecated. Also be sure to use a link.",
+      "revId": "fab788158fc817557233f278866e85740a1bc75f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_0a5ec312",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/InstanceIdentifier.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 672,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2015-01-15T13:17:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_5f27af64",
       "revId": "fab788158fc817557233f278866e85740a1bc75f",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_aa9c6fc1",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/YangInstanceIdentifier.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 473,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2015-01-15T13:17:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_1f21274d",
+      "revId": "fab788158fc817557233f278866e85740a1bc75f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_3f1c2313",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/ConstraintsBuilderImpl.java",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2015-01-15T01:14:49Z",
       "side": 1,
       "message": "fix your editor settings: import groups should not be separated",
+      "revId": "fab788158fc817557233f278866e85740a1bc75f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_ca9f7bb3",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/ConstraintsBuilderImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 9
+      },
+      "writtenOn": "2015-01-15T13:17:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_3f1c2313",
       "revId": "fab788158fc817557233f278866e85740a1bc75f",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
