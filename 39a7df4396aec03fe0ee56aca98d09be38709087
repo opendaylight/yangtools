@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_df6c1f9f",
+        "filename": "yang/yang-data-api/src/test/java/org/opendaylight/yangtools/yang/data/api/InstanceIdentifierTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-15T01:08:14Z",
+      "side": 1,
+      "message": "fix your editor to remove trailing whitespace, please.",
+      "revId": "39a7df4396aec03fe0ee56aca98d09be38709087",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_3f6e6397",
+        "filename": "yang/yang-data-api/src/test/java/org/opendaylight/yangtools/yang/data/api/InstanceIdentifierTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-15T01:08:14Z",
+      "side": 1,
+      "message": "move this check to a separate test, as the expected exception could be thrown by one of the previous checks -- leading to the test passing when it should not",
+      "revId": "39a7df4396aec03fe0ee56aca98d09be38709087",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_ff679bb5",
+        "filename": "yang/yang-data-api/src/test/java/org/opendaylight/yangtools/yang/data/api/InstanceIdentifierTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 323,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-15T01:08:14Z",
+      "side": 1,
+      "message": "same as above -- move the check which throws this exception into a separate test.",
+      "revId": "39a7df4396aec03fe0ee56aca98d09be38709087",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
