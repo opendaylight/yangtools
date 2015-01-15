@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_bf6273ab",
+        "filename": "yang/yang-binding/src/test/java/org/opendaylight/yangtools/yang/binding/test/InstanceIdentifierTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 74,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-15T01:04:56Z",
+      "side": 1,
+      "message": "remove trailing whitespace, please",
+      "revId": "7ddac1fb110ed25655ccd68f0698b1c21cd88a3c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
