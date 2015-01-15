@@ -88,11 +88,9 @@ public class BindingReflections {
      * This method uses first generic argument of
      * implemented {@link ChildOf} interface.
      *
-     * @param augmentation
-     *            {@link Augmentation} subclass for which we want to determine
-     *            augmentation target.
-     * @return Augmentation target - class which augmentation provides
-     *         additional extensions.
+     * @param childClass
+     *            child class for which we want to find the parent class.
+     * @return Parent class, e.g. class of which the childClass is ChildOf.
      */
     public static Class<?> findHierarchicalParent(final Class<? extends ChildOf<?>> childClass) {
         return ClassLoaderUtils.findFirstGenericArgument(childClass, ChildOf.class);
@@ -104,11 +102,9 @@ public class BindingReflections {
      * This method is shorthand which gets DataObject class by invoking
      * {@link DataObject#getImplementedInterface()} and uses {@link #findHierarchicalParent(Class)}.
      *
-     * @param childClass
-     *            {@link Augmentation} subclass for which we want to determine
-     *            augmentation target.
-     * @return Augmentation target - class which augmentation provides
-     *         additional extensions.
+     * @param child
+     *            Child object for which the parent needs to be located.
+     * @return Parent class, or null if a parent is not found.
      */
     public static Class<?> findHierarchicalParent(final DataObject child) {
         if (child instanceof ChildOf) {
@@ -229,7 +225,7 @@ public class BindingReflections {
     /**
      * Returns root package name for supplied package name.
      *
-     * @param pkg Package for which find model root package.
+     * @param name Package for which find model root package.
      * @return Package of model root.
      */
     public static String getModelRootPackageName(final String name) {

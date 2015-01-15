@@ -33,6 +33,7 @@ public interface SchemaSourceProvider<T extends SchemaSourceRepresentation> {
      * a representation of that particular revision or throw {@link MissingSchemaSourceException}.
      * <li> If the source identifier does not specify a revision, this method returns
      * the newest available revision, or throws {@link MissingSchemaSourceException}.
+     * </ul>
      *
      * In either case the returned representation is required to report a non-null
      * revision in the {@link SourceIdentifier} returned from

@@ -29,7 +29,7 @@ public class TrackingLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
 
     /**
      * Holds largestQueueSize, this long field should be only accessed
-     * using {@value #LARGEST_QUEUE_SIZE_UPDATER}
+     * using {@link #LARGEST_QUEUE_SIZE_UPDATER}
      */
     private volatile int largestQueueSize = 0;
 

@@ -27,8 +27,7 @@ import org.opendaylight.yangtools.objcache.ObjectCacheFactory;
  * </ul>
  *
  * Source identifier is designated to be carry only necessary information
- * to look-up YANG model source and to be used by {@link AdvancedSchemaSourceProvider}
- * and similar.
+ * to look-up YANG model source and to be used by various SchemaSourceProviders.
  *
  * <b>Note:</b>On source retrieval layer it is impossible to distinguish
  * between YANG module and/or submodule unless source is present.
@@ -161,7 +160,7 @@ public final class SourceIdentifier implements Identifier, Immutable {
      * Where revision is  date in format YYYY-mm-dd.
      * <p>
      *
-     * @see http://tools.ietf.org/html/rfc6020#section-5.2
+     * @see <a href="http://tools.ietf.org/html/rfc6020#section-5.2">RFC6020</a>
      *
      * @return Filename for this source identifier.
      */

@@ -118,7 +118,7 @@ public interface YangModelParser {
      * @param yangModelStreams
      *            yang streams to parse
      * @return Map of Yang Modules
-     * @deprecated Use {@link YangContextParser#parseSources(java.util.Collection<com.google.common.io.ByteSource>)}
+     * @deprecated Use {@link YangContextParser#parseSources(java.util.Collection)}
      */
     //TODO: when working with input streams do not swallow IOException, it should be propagated without having to wrap it in a runtime exception
     //FIXME: it is not defined in which state are the returning streams.

@@ -71,7 +71,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     /**
      * Look up specified QName in the global cache and return a shared reference.
      *
-     * @param module QName instance
+     * @param qname QName instance
      * @return Cached instance, according to {@link ObjectCache} policy.
      */
     public static QName cachedReference(final QName qname) {
@@ -196,7 +196,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * {@link QName} and its {@link #getLocalName()}, {@link #getNamespace()} and
      * {@link #getRevision()} are equals to same properties of this instance.
      *
-     * @param o the object to be compared for equality with this QName
+     * @param obj the object to be compared for equality with this QName
      * @return <tt>true</tt> if the specified object is equal to this QName
      *
      */

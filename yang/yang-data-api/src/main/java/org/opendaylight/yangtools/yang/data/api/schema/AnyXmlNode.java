@@ -28,19 +28,18 @@ import org.opendaylight.yangtools.yang.data.api.Node;
  * <pre>
  * {@code <foo>justSomeString</foo>}
  * </pre>
- * </li>
- *
  * this AnyXmlNode returns SimpleNode with QName{namespace=someNamespace, revision=someRevision, localName=foo} and value="justSomeString"
+ * </li>
  *
  * <li>
  * but with xml value:
  * <pre>
  * {@code <foo><bar>stringInXml</bar></foo>}
  * </pre>
- * </li>
- *
  * this AnyXmlNode returns CompositeNode with QName{}namespace=someNamespace, revision=someRevision, localName=foo}
  * and values [SimpleNode with QName{}namespace=someNamespace, revision=someRevision, localName=bar} and value="stringInXml"]
+ * </li>
+ *
  * </ul>
  * </p>
  */

@@ -19,7 +19,6 @@ public interface CodeGenerator {
      * @param type
      *            Input type to be processed
      * @return generated JAVA code
-     * @throws IOException
      */
     String generate(Type type);
 

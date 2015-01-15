@@ -13,7 +13,7 @@ package org.opendaylight.yangtools.concepts;
  * This interface is mutually exclusive with {@link Immutable}  and other
  * {@link MutationBehaviour}s.
  * 
- * @author Tony Tkacik <ttkacik@cisco.com>
+ * @author Tony Tkacik
  *
  */
 public interface Mutable extends MutationBehaviour<Mutable>{

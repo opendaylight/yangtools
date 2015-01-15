@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.sal.binding.model.api;
 
 /**
- * Represents an instance of simple parametrized type such as List<String>.
+ * Represents an instance of simple parametrized type such as List&lt;String&gt;.
  *
  * The parametrized Type is designed to be used to store information of Java
  * Generic Type. The array of {@link #getActualTypeArguments()} holds
@@ -20,7 +20,7 @@ public interface ParameterizedType extends Type {
      * Returns array of Types that are defined for Parameterized Type.
      * <br>
      * (for example if ParameterizedType encapsulates java generic Map that
-     * specifies two parameters Map<K,V> and the K is java.lang.Integer and V
+     * specifies two parameters Map&lt;K,V&gt; and the K is java.lang.Integer and V
      * is defined as GeneratedType the array will contain two Types to store
      * the information of generic parameters.)
      *

@@ -26,7 +26,7 @@ import java.io.IOException;
  *
  * <li><code>list</code> - YANG list statement has two representation in event
  * stream - unkeyed list and map. Unkeyed list is YANG list which did not
- * specify key.</li>
+ * specify key.
  *
  * <ul>
  * <li><code>Map</code> - Map start event is emitted using
@@ -37,8 +37,8 @@ import java.io.IOException;
  * <li><code>UnkeyedList</code> - Unkeyed list represent list without keys,
  * unkeyed list start is emitted using {@link #startUnkeyedList(Class, int)} list
  * end is emitted using {@link #endNode()}. Each list item is emitted using
- * {@link #startUnkeyedListItem()} and ended using {@link #endNode()}.</li>
- * </ul>
+ * {@link #startUnkeyedListItem(int)} and ended using {@link #endNode()}.</li>
+ * </ul></li>
  *
  * <li><code>leaf</code> - Leaf node event is emitted using
  * {@link #leafNode(String, Object)}. {@link #endNode()} MUST be not emitted for
@@ -47,7 +47,7 @@ import java.io.IOException;
  * <li><code>leaf-list</code> - Leaf list start is emitted using
  * {@link #startLeafSet(String, int)}. Leaf list end is emitted using
  * {@link #endNode()}. Leaf list entries are emitted using
- * {@link #leafSetEntryNode(Object).
+ * {@link #leafSetEntryNode(Object)}.
  *
  * <li><code>anyxml - Anyxml node event is emitted using
  * {@link #leafNode(String, Object)}. {@link #endNode()} MUST be not emitted
@@ -207,7 +207,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *
      * <p>
      * End of unkeyed list event is emitted by invoking {@link #endNode()}.
-     * Valid subevents is only {@link #startUnkeyedListItem()}. All other
+     * Valid subevents is only {@link #startUnkeyedListItem(int)}. All other
      * methods will throw {@link IllegalArgumentException}.
      *
      * @param localName
@@ -318,8 +318,6 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *
      * <p>
      * Valid sub-events are:
-     * <<p>
-     * Valid sub-events are:
      * <ul>
      * <li>{@link #leafNode(String, Object)}</li>
      * <li>{@link #startContainerNode(Class, int)}</li>
@@ -349,13 +347,11 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      * Emits start of choice node.
      *
      * <p>
-     * Valid sub-event in {@link #startCase(QName, int)}, which selects case
+     * Valid sub-event in {@link #startCase(Class, int)}, which selects case
      * which should be written.
-     * <ul>
      *
-     * @param localName
-     *            name of node as defined in schema, namespace and revision are
-     *            derived from parent node.
+     * @param choice
+     *            Choice class.
      * @param childSizeHint
      *            Non-negative count of expected direct child nodes or
      *            {@link #UNKNOWN_SIZE} if count is unknown. This is only hint
@@ -363,8 +359,8 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *            events than count.
      * @throws IllegalArgumentException
      * @throws IllegalStateException
-     *             If node was emitted inside <code>map</code>, <code>choice
-     *             </code> <code>unkeyed list</code> node.
+     *             If node was emitted inside <code>map</code>, <code>choice</code>,
+     *             <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
     void startChoiceNode(Class<? extends DataContainer> choice, int childSizeHint) throws IOException, IllegalArgumentException;
@@ -385,7 +381,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      * <li>{@link #startAugmentationNode(Class)}</li>
      * </ul>
      *
-     * @param name
+     * @param caze Case class
      * @throws IllegalArgumentException
      * @throws IOException if an underlying IO error occurs
      */
@@ -400,8 +396,6 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      * <p>
      * Valid sub-events are:
      *
-     * <p>
-     * Valid sub-events are:
      * <ul>
      * <li>{@link #leafNode(String, Object)}</li>
      * <li>{@link #startContainerNode(Class, int)}</li>
@@ -415,10 +409,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      * Note this is only method, which does not require childSizeHint, since
      * maximum value is always size of <code>possibleChildren</code>.
      *
-     * @param module
-     *            QName module of YANG module in which augmentation was defined
-     * @param possibleChildren
-     *            Local names of all valid children defined by augmentation.
+     * @param augmentationType augmentation class
      * @throws IllegalArgumentException
      *             If augmentation is invalid in current context.
      * @throws IOException if an underlying IO error occurs

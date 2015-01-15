@@ -427,11 +427,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
     }
 
     /**
-     *
      * Fluent Builder of Instance Identifier instances
-     *
-     * @
-     *
      */
     public interface InstanceIdentifierBuilder extends Builder<YangInstanceIdentifier> {
         /**

@@ -392,7 +392,7 @@ public final class YangModelBasicValidationListener extends YangParserBaseListen
     /**
      * Constraints:
      * <ol>
-     * <liNo duplicate uniques</li>
+     * <li>No duplicate uniques</li>
      * </ol>
      */
     @Override

@@ -141,7 +141,7 @@ public abstract class YangSourceContextResolver {
      * <li>All sources which imported or included this source will be present in
      * {@link YangSourceContext#getMissingDependencies()}</li>
      * </ul>
-     *
+     * </li></ul>
      *
      *
      * @param identifier

@@ -107,7 +107,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      * Check whether an instance identifier contains any wildcards. A wildcard
      * is an path argument which has a null key.
      *
-     * @return @true if any of the path arguments has a null key.
+     * @return true if any of the path arguments has a null key.
      */
     public final boolean isWildcarded() {
         return wildcarded;
@@ -164,7 +164,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      * quick checks on their specific fields.
      *
      * @param other The other identifier, guaranteed to be the same class
-     * @return @true if the other identifier cannot be equal to this one.
+     * @return true if the other identifier cannot be equal to this one.
      */
     protected boolean fastNonEqual(final InstanceIdentifier<?> other) {
         return false;
@@ -286,7 +286,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      * non-wildcarded PathArgument counterpart.
      *
      * @param other Identifier which should be checked for inclusion.
-     * @return @true if this identifier contains the other object
+     * @return true if this identifier contains the other object
      */
     public final boolean containsWildcarded(final InstanceIdentifier<?> other) {
         Preconditions.checkNotNull(other, "other should not be null");
@@ -364,7 +364,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
     /**
      * Create a new InstanceIdentifierBuilder given a base InstanceIdentifier
      *
-     * @param basePath
+     * @param base
      * @param <T>
      * @return
      *
@@ -438,7 +438,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      *
      * Example
      * <pre>
-     *  List<PathArgument> path = Arrays.asList(new Item(Nodes.class))
+     *  List&lt;PathArgument&gt; path = Arrays.asList(new Item(Nodes.class))
      *  new InstanceIdentifier(path);
      * </pre>
      *
