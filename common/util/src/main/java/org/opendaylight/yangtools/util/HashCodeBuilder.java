@@ -20,7 +20,7 @@ public final class HashCodeBuilder<T> implements Builder<Integer> {
 
     /**
      * Create a new instance, with internal hash initialized to 1,
-     * equivalent of {@link #HashCodeBuilder(1)}.
+     * equivalent of <code>HashCodeBuilder(1)</code>.
      */
     public HashCodeBuilder() {
         this(1);

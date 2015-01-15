@@ -71,7 +71,6 @@ public final class SchemaTracker {
     /**
      * Create a new writer with the specified context as its root.
      *
-     * @param writer Output {@link XMLStreamWriter}
      * @param context Associated {@link SchemaContext}.
      * @return A new {@link NormalizedNodeStreamWriter}
      */
@@ -82,8 +81,8 @@ public final class SchemaTracker {
     /**
      * Create a new writer with the specified context and rooted in the specified schema path
      *
-     * @param writer Output {@link XMLStreamWriter}
-     * @param context Associated {@link SchemaContext}.
+     * @param context Associated {@link SchemaContext}
+     * @param path schema path
      *
      * @return A new {@link NormalizedNodeStreamWriter}
      */

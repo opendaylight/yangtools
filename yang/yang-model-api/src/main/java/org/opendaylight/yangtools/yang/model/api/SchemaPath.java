@@ -168,8 +168,8 @@ public abstract class SchemaPath implements Immutable {
     /**
      * Create a new instance.
      *
-     * @param path path from root
-     * @param hash intended hash code
+     * @param parent Parent SchemaPath
+     * @param qname next path element
      * @return A new SchemaPath instance
      */
     protected abstract SchemaPath createInstance(SchemaPath parent, QName qname);

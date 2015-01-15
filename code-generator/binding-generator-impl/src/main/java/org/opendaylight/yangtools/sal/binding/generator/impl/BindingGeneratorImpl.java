@@ -213,7 +213,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *         <ul>
      *         <li>are generated from <code>context</code> schema nodes and</li>
      *         <li>are also part of some of the module in <code>modules</code>
-     *         set</li>.
+     *         set.</li>
      *         </ul>
      * @throws IllegalArgumentException
      *             <ul>

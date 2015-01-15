@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * implementation perspective certain operations on a schema source may require it
  * to be first transformed into a particular representation before they can be
  * applied. Such transformations are affected via instances of
- * {@link SchemaSourceTransformation}.
+ * SchemaSourceTransformation.
  *
  * Typical examples of a schema source representation include:
  * <ul>
@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * <li>a {@link com.google.common.io.ByteSource} - source for input streams
  * containing source code
  * <li>Parsed abstract syntax tree (AST), which is the result of a syntactic parser
+ * </ul>
  *
  * Implementations of this interface expected to comply with the {@link Immutable}
  * contract.

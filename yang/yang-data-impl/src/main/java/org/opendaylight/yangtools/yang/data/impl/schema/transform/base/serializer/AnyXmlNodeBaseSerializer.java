@@ -26,11 +26,9 @@ public abstract class AnyXmlNodeBaseSerializer<E> implements
     }
 
     /**
-     *
      * Serialize the inner value of a AnyXmlNode into element of type E.
      *
      * @param node to be serialized
-     * @param schema schema for leaf
      * @return serialized inner value as an Element
      */
     protected abstract E serializeAnyXml(AnyXmlNode node);

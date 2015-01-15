@@ -291,7 +291,7 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
      * for all reachable binding objects.
      *
      * @param type Binding type of augmentation
-     * @param node Schema of augmentation
+     * @param schema Schema of augmentation
      * @return Source for augmentation node writer
      */
     protected abstract DataObjectSerializerSource generateSerializer(GeneratedType type, AugmentationSchema schema);

@@ -26,7 +26,7 @@ import javax.annotation.Nullable;
 
 /**
  * An implementation of ListeningExecutorService that attempts to detect deadlock scenarios that
- * could occur if clients invoke the returned Future's <ode>get</code> methods synchronously.
+ * could occur if clients invoke the returned Future's <code>get</code> methods synchronously.
  * <p>
  * Deadlock scenarios are most apt to occur with a backing single-threaded executor where setting of
  * the Future's result is executed on the single thread. Here's a scenario:

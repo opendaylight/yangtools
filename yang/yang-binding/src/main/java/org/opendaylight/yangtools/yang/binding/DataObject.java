@@ -10,8 +10,7 @@ package org.opendaylight.yangtools.yang.binding;
 /**
  * Data container is an interface which has structured contents.
  * 
- * 
- * @author Tony Tkacik <ttkacik@cisco.com>
+ * @author Tony Tkacik
  *
  */
 public interface DataObject extends DataContainer {

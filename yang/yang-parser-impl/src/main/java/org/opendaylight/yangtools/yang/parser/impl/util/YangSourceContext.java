@@ -45,6 +45,7 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils;
  * been referenced by other YANG sources, but source code for them is missing.
  * <li>{@link #getMissingDependencies()} - map of {@link SourceIdentifier} and
  * their imports for which source codes was not available.
+ * </ul>
  *
  * {@link YangSourceContext} may be associated with {@link SchemaSourceProvider}
  * (see {@link #getDelegate()}, which was used for retrieval of sources during

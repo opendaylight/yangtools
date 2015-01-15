@@ -18,7 +18,7 @@ import com.google.common.base.Preconditions;
  * <li>name - property name</li>
  * <li>type - Java type for property</li>
  * <li>value - value to which property should be initialized</li>
- *
+ * </ul>
  */
 public class StaticConstantDefinition {
 

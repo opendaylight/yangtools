@@ -32,6 +32,7 @@ import com.google.common.base.Optional;
  * containing source code
  * <li>Parsed AST - abstract syntax tree, which is result of a parser, but still
  * it is not linked against other schemas.
+ * </ul>
  *
  * <p>
  * Conversion between representations should be done via implementations of
