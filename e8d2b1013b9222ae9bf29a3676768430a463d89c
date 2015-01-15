@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_9fd45721",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/RpcResultBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 389,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-15T01:16:33Z",
+      "side": 1,
+      "message": "looks like this class should be implementing the newly-fixed Builder interface?",
+      "revId": "e8d2b1013b9222ae9bf29a3676768430a463d89c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_ff155be5",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/RpcResultBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 395,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-15T01:16:33Z",
+      "side": 1,
+      "message": "Please add a javadoc",
+      "revId": "e8d2b1013b9222ae9bf29a3676768430a463d89c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
