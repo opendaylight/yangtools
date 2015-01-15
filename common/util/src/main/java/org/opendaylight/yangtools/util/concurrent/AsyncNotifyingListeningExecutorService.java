@@ -23,16 +23,16 @@ import com.google.common.util.concurrent.AbstractListeningExecutorService;
 import com.google.common.util.concurrent.ListenableFuture;
 
 /**
- * An {@link ListeningExecutorService} implementation that also allows for an {@link Executor} to be
+ * An {@link com.google.common.util.concurrent.ListeningExecutorService} implementation that also allows for an {@link Executor} to be
  * specified on construction that is used to execute {@link ListenableFuture} callback Runnables,
- * registered via {@link Futures#addCallback} or {@link ListenableFuture#addListener} directly,
+ * registered via {@link com.google.common.util.concurrent.Futures#addCallback} or {@link ListenableFuture#addListener} directly,
  * asynchronously when a task that is run on this executor completes. This is useful when you want
  * to guarantee listener callback executions are off-loaded onto another thread to avoid blocking
  * the thread that completed the task, as a common use case is to pass an executor that runs tasks
  * in the same thread as the caller (ie <code>MoreExecutors#sameThreadExecutor</code>}) to
  * {@link ListenableFuture#addListener}.
  * <p>
- * Most commonly, this class would be used in lieu of <code>MoreExecutors#listeningDecorator<code>
+ * Most commonly, this class would be used in lieu of <code>MoreExecutors#listeningDecorator</code>
  * when the underlying delegate Executor is single-threaded, in which case, you may not want
  * ListenableFuture callbacks to block the single thread.
  * <p>

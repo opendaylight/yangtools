@@ -10,10 +10,8 @@ package org.opendaylight.yangtools.yang.data.api.codec;
 import org.opendaylight.yangtools.concepts.Codec;
 
 /**
- *
- *
  * FIXME: In Helium release this codec should be changed to
- * {@link UnsignedShort}
+ *        an UnsignedShort (which needs to be defined somewhere).
  *
  * @author ttkacik
  *

@@ -253,7 +253,7 @@ public final class SchemaUtils {
      * Retrieves real schemas for augmented child node.
      *
      * Schema of the same child node from augment, and directly from target is not the same.
-     * Schema of child node from augment is incomplete, therefore its useless for xml <-> normalizedNode translation.
+     * Schema of child node from augment is incomplete, therefore its useless for XML/NormalizedNode translation.
      *
      */
     public static Set<DataSchemaNode> getRealSchemasForAugment(final AugmentationTarget targetSchema, final AugmentationSchema augmentSchema) {

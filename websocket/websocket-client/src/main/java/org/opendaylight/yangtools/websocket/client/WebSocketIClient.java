@@ -95,8 +95,8 @@ public class WebSocketIClient {
     }
 
     /**
-     * Writes a String message via {@link ChannelOutboundInvoker} through the
-     * {@link ChannelPipeline} and request to actual {@link #flush()} to flush
+     * Writes a String message through the
+     * {@link ChannelPipeline} and request to actual {@link Channel#flush()} to flush
      * all pending data to the actual transport.
      *
      * @param message
@@ -107,8 +107,8 @@ public class WebSocketIClient {
     }
 
     /**
-     * Writes a Object message via {@link ChannelOutboundInvoker} through the
-     * {@link ChannelPipeline} and request to actual {@link #flush()} to flush
+     * Writes a Object message through the
+     * {@link ChannelPipeline} and request to actual {@link Channel#flush()} to flush
      * all pending data to the actual transport.
      *
      * @param message
@@ -119,9 +119,9 @@ public class WebSocketIClient {
     }
 
     /**
-     * Writes {@link PingWebSocketFrame} via {@link ChannelOutboundInvoker}
+     * Writes {@link PingWebSocketFrame}
      * through the {@link ChannelPipeline} and request to actual
-     * {@link #flush()} to flush all pending data to the actual transport.
+     * {@link Channel#flush()} to flush all pending data to the actual transport.
      */
     public void ping() {
         clientChannel.writeAndFlush(new PingWebSocketFrame(Unpooled

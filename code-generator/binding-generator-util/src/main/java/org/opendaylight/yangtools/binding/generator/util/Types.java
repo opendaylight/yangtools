@@ -100,7 +100,7 @@ public final class Types {
 
     /**
      * Returns an instance of {@link ParameterizedType} describing the typed
-     * {@link Map}<K,V>
+     * {@link Map}&lt;K,V&gt;
      *
      * @param keyType
      *            Key Type
@@ -114,7 +114,7 @@ public final class Types {
 
     /**
      * Returns an instance of {@link ParameterizedType} describing the typed
-     * {@link Set}<V> with concrete type of value.
+     * {@link Set}&lt;V&gt; with concrete type of value.
      *
      * @param valueType
      *            Value Type
@@ -126,7 +126,7 @@ public final class Types {
 
     /**
      * Returns an instance of {@link ParameterizedType} describing the typed
-     * {@link List}<V> with concrete type of value.
+     * {@link List}&lt;V&gt; with concrete type of value.
      *
      * @param valueType
      *            Value Type

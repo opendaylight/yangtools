@@ -39,11 +39,11 @@ import com.google.common.annotations.VisibleForTesting;
  * <ol>
  * <li>List yang files from {@link #yangFilesRootDir}</li>
  * <li>Process yang files using {@link YangParserImpl}</li>
- * <li>For each {@link CodeGenerator} from {@link #codeGenerators}:</li>
+ * <li>For each {@link CodeGenerator} from {@link #codeGenerators}:
  * <ol>
  * <li>Instantiate using default constructor</li>
  * <li>Call {@link CodeGenerator#generateSources(SchemaContext, File, Set)}</li>
- * </ol>
+ * </ol></li>
  * </ol>
  */
 @Mojo(name = "generate-sources", defaultPhase = LifecyclePhase.GENERATE_SOURCES, requiresDependencyResolution = ResolutionScope.COMPILE, requiresProject = true)

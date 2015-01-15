@@ -121,7 +121,7 @@ public final class XmlDocumentUtils {
      *
      * @param data Data DOM root element
      * @param schemaContext Entire schema context for correct leafref resolution
-     * @param schema Data Node Container Schema
+     * @param schemaNode Data Node Container Schema
      * @param codecProvider XML Codec Provider
      * @return serialized w3c DOM document
      * @throws UnsupportedDataTypeException
@@ -173,7 +173,6 @@ public final class XmlDocumentUtils {
      * @param data Data DOM root element
      * @param codecProvider XML Codec Provider
      * @return new instance of XML Document
-     * @throws UnsupportedDataTypeException
      */
     public static Document toDocument(final CompositeNode data, final XmlCodecProvider codecProvider) {
         final DOMResult result = new DOMResult(getDocument());

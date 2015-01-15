@@ -11,7 +11,7 @@ package org.opendaylight.yangtools.yang.data.api;
 /**
  * @author michal.rehak
  *
- * @deprecated Use {@link NormalizedNodeUtils} instead.
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes} instead.
  */
 @Deprecated
 public interface NodeModificationBuilder {

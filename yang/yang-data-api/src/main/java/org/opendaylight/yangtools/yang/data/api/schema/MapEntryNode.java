@@ -21,7 +21,7 @@ public interface MapEntryNode extends AttributesContainer, DataContainerNode<Nod
      * Returns identifier of this node in parent map node
      *
      * Contents of identifier is defined by <code>key</code> (
-     * {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.ListSchemaNode#getKeyDefinition()}
+     * {@link org.opendaylight.yangtools.yang.model.api.ListSchemaNode#getKeyDefinition()}
      * ) statement in YANG schema for associated list item and child {@link LeafNode}s
      * values with {@link org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier}
      * as defined in the schema.

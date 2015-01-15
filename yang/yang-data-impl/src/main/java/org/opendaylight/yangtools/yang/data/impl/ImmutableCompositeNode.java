@@ -66,8 +66,6 @@ public final class ImmutableCompositeNode extends AbstractNodeTO<List<Node<?>>> 
 
     /**
      * @param qname
-     * @param parent
-     *            use null to create top composite node (without parent)
      * @param value
      * @param modifyAction
      */

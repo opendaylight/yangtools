@@ -120,7 +120,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * Create a new stream writer, which writes to the specified output stream. The codec factory
      * can be reused between multiple writers.
      *
-     * @param codecFactor JSON codec factory
+     * @param codecFactory JSON codec factory
      * @param writer Output writer
      * @param indentSize indentation size
      * @return A stream writer instance

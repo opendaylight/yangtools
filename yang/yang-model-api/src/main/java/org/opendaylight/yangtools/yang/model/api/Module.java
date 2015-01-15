@@ -13,44 +13,44 @@ import javax.annotation.concurrent.Immutable;
 
 /**
  * This interface contains the methods for getting the data from the YANG
- * module.<br />
- * <br />
- * <i>Example of YANG module</i> <code><br/>
- * {@link #getName() <b><font color="#FF0000">module</font></b>} module_name{<br />
-    &nbsp;&nbsp;{@link #getYangVersion() <b><font color="#8b4513">yang-version</font></b>} "1";<br /><br />
+ * module.<br>
+ * <br>
+ * <i>Example of YANG module</i> <code><br>
+ * {@link #getName() <b><font color="#FF0000">module</font></b>} module_name{<br>
+    &nbsp;&nbsp;{@link #getYangVersion() <b><font color="#8b4513">yang-version</font></b>} "1";<br><br>
 
-    &nbsp;&nbsp;{@link #getNamespace() <b><font color="#00FF00">namespace</font></b>} "urn:module:namespace";<br />
-    &nbsp;&nbsp;{@link #getPrefix() <b><font color="#0000FF">prefix</font></b><a name="prefix"></a>} "prefix";<br /><br />
+    &nbsp;&nbsp;{@link #getNamespace() <b><font color="#00FF00">namespace</font></b>} "urn:module:namespace";<br>
+    &nbsp;&nbsp;{@link #getPrefix() <b><font color="#0000FF">prefix</font></b><a name="prefix"></a>} "prefix";<br><br>
 
-    &nbsp;&nbsp;{@link #getDescription() <b><font color="#b8860b">description</font></b>} "description test";<br />
-    &nbsp;&nbsp;{@link #getReference() <b><font color="#008b8b">reference</font></b>} "reference test";<br /><br />
+    &nbsp;&nbsp;{@link #getDescription() <b><font color="#b8860b">description</font></b>} "description test";<br>
+    &nbsp;&nbsp;{@link #getReference() <b><font color="#008b8b">reference</font></b>} "reference test";<br><br>
 
-    &nbsp;&nbsp;{@link #getOrganization() <b><font color="#606060">organization</font></b>} "John Doe, john.doe@email.com";<br />
-    &nbsp;&nbsp;{@link #getContact() <b><font color="#FF9900">contact</font></b>} "http://www.opendaylight.org/";<br /><br />
+    &nbsp;&nbsp;{@link #getOrganization() <b><font color="#606060">organization</font></b>} "John Doe, john.doe@email.com";<br>
+    &nbsp;&nbsp;{@link #getContact() <b><font color="#FF9900">contact</font></b>} "http://www.opendaylight.org/";<br><br>
 
-    &nbsp;&nbsp;{@link #getFeatures() <b><font color="#8b0000">feature</font></b>} feature-test{<br />
-    &nbsp;&nbsp;&nbsp;&nbsp; description "description of some feature";<br />
-    &nbsp;&nbsp;}</br>
+    &nbsp;&nbsp;{@link #getFeatures() <b><font color="#8b0000">feature</font></b>} feature-test{<br>
+    &nbsp;&nbsp;&nbsp;&nbsp; description "description of some feature";<br>
+    &nbsp;&nbsp;}<br>
 
-    &nbsp;&nbsp;{@link #getNotifications() <b><font color="#b22222">notification</font></b>} notification-test;<br />
-    &nbsp;&nbsp;{@link #getRpcs() <b><font color="#d2691e">rpc</font></b>} rpc-test;<br />
-    <!-- &nbsp;&nbsp;{@link #getDeviations() <b><font color="#b8860b">deviation</font></b>} deviation-test;<br /> -->
-    &nbsp;&nbsp;{@link #getIdentities() <b><font color="#bdb76b">identity</font></b>} identity-test;<br />
-    &nbsp;&nbsp;{@link #getExtensionSchemaNodes() <b><font color="#808000">extension</font></b>} extension-test;<br />
+    &nbsp;&nbsp;{@link #getNotifications() <b><font color="#b22222">notification</font></b>} notification-test;<br>
+    &nbsp;&nbsp;{@link #getRpcs() <b><font color="#d2691e">rpc</font></b>} rpc-test;<br>
+    <!-- &nbsp;&nbsp;{@link #getDeviations() <b><font color="#b8860b">deviation</font></b>} deviation-test;<br> -->
+    &nbsp;&nbsp;{@link #getIdentities() <b><font color="#bdb76b">identity</font></b>} identity-test;<br>
+    &nbsp;&nbsp;{@link #getExtensionSchemaNodes() <b><font color="#808000">extension</font></b>} extension-test;<br>
 
 
-    &nbsp;&nbsp;{@link #getRevision() <b><font color="#339900">revision</font></b>} 2011-08-27 {<br />
+    &nbsp;&nbsp;{@link #getRevision() <b><font color="#339900">revision</font></b>} 2011-08-27 {<br>
 
-    &nbsp;&nbsp;{@link #getImports() <b><font color="#9400d3">import</font></b>} other_module {<br />
-    &nbsp;&nbsp;&nbsp;&nbsp;prefix "other_module_prefix"<br />
-    &nbsp;&nbsp;&nbsp;&nbsp;revision-date 2011-08-27<br />
-    &nbsp;&nbsp;}<br /><br />
+    &nbsp;&nbsp;{@link #getImports() <b><font color="#9400d3">import</font></b>} other_module {<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;prefix "other_module_prefix"<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;revision-date 2011-08-27<br>
+    &nbsp;&nbsp;}<br><br>
 
-    &nbsp;&nbsp;container cont {<br />
-    &nbsp;&nbsp;}<br />
+    &nbsp;&nbsp;container cont {<br>
+    &nbsp;&nbsp;}<br>
 
-    &nbsp;&nbsp;{@link #getAugmentations() <b><font color="#dc143c">augment</font></b>} "/cont" { ;<br />
-    &nbsp;&nbsp;}<br />
+    &nbsp;&nbsp;{@link #getAugmentations() <b><font color="#dc143c">augment</font></b>} "/cont" { ;<br>
+    &nbsp;&nbsp;}<br>
     }
 
     </code>

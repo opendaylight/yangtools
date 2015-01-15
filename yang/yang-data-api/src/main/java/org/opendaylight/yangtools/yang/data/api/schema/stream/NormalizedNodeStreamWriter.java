@@ -25,11 +25,11 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * <li><code>container</code> - Container node representation, start event is
  * emitted using {@link #startContainerNode(NodeIdentifier, int)} and node end event is
  * emitted using {@link #endNode()}. Container node is implementing
- * {@link DataObject} interface.
+ * the org.opendaylight.yangtools.yang.binding.DataObject interface.
  *
  * <li><code>list</code> - YANG list statement has two representation in event
  * stream - unkeyed list and map. Unkeyed list is YANG list which did not
- * specify key.</li>
+ * specify key.
  *
  * <ul>
  * <li><code>Map</code> - Map start event is emitted using
@@ -41,7 +41,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * unkeyed list start is emitted using {@link #startUnkeyedList(NodeIdentifier, int)} list
  * end is emitted using {@link #endNode()}. Each list item is emitted using
  * {@link #startUnkeyedListItem(NodeIdentifier, int)} and ended using {@link #endNode()}.</li>
- * </ul>
+ * </ul></li>
  *
  * <li><code>leaf</code> - Leaf node event is emitted using
  * {@link #leafNode(NodeIdentifier, Object)}. {@link #endNode()} MUST NOT BE emitted for
@@ -50,7 +50,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * <li><code>leaf-list</code> - Leaf list start is emitted using
  * {@link #startLeafSet(NodeIdentifier, int)}. Leaf list end is emitted using
  * {@link #endNode()}. Leaf list entries are emmited using
- * {@link #leafSetEntryNode(Object).
+ * {@link #leafSetEntryNode(Object)}.
  *
  * <li><code>anyxml - Anyxml node event is emitted using
  * {@link #leafNode(NodeIdentifier, Object)}. {@link #endNode()} MUST NOT BE emitted

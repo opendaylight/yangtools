@@ -16,7 +16,7 @@ package org.opendaylight.yangtools.yang.binding;
  * also adds marker interface for augmentations (extensions) -
  * {@link Augmentable}
  * 
- * @author Tony Tkacik <ttkacik@cisco.com>
+ * @author Tony Tkacik
  * @param <T>
  *            Base class which should implements this interface and is target
  *            for augmentation.

@@ -19,7 +19,7 @@ public interface Datastore {
      * Reads data from data store and return's result in future.
      * 
      * This call is equivalent to invocation of {@link #readData(InstanceIdentifier, RetrievalStrategy)}
-     * with {@link DefaultRetrievalStrategy.Default}.
+     * with {@link DefaultRetrievalStrategy#getInstance()}.
      * 
      * @param path InstanceIdentifier representing path in YANG schema to be retrieved.
      * @return Future promising the data requested. If the requested data are not present returns value of {@link Optional#absent()}.

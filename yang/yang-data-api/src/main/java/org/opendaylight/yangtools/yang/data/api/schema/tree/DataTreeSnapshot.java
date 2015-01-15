@@ -30,7 +30,6 @@ public interface DataTreeSnapshot {
      * Create a new data tree modification based on this snapshot, using the
      * specified data application strategy.
      *
-     * @param strategy data modification strategy
      * @return A new data tree modification
      */
     DataTreeModification newModification();

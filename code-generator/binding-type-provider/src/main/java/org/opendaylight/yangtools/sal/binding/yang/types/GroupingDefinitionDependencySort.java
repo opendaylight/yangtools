@@ -32,17 +32,17 @@ public class GroupingDefinitionDependencySort {
 
     /**
      * Sorts set <code>groupingDefinitions</code> according to the mutual
-     * dependencies.<br />
+     * dependencies.<br>
      *
      * Elements of <code>groupingDefinitions</code> are firstly transformed to
      * {@link org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Node
      * Node} interfaces and then are sorted by
      * {@link org.opendaylight.yangtools.yang.parser.util.TopologicalSort#sort(Set)
-     * sort()} method of <code>TopologicalSort</code>.<br />
-     * <br />
+     * sort()} method of <code>TopologicalSort</code>.<br>
+     * <br>
      *
      *
-     * <i>Definition of dependency relation:<br />
+     * <i>Definition of dependency relation:<br>
      * The first <code>GroupingDefinition</code> object (in this context)
      * depends on second <code>GroupingDefinition</code> object if the first one
      * contains in its set of <code>UsesNode</code> (obtained through
