@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_057d54b1",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/RpcResultBuilder.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 412,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-16T14:04:17Z",
+      "side": 1,
+      "message": "please return a ListenableFuture here",
+      "revId": "9d8b56f3e6f77f637777bb20d0c1c531a2bc15a8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
