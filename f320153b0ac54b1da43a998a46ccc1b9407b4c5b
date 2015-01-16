@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_cbed3d27",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 2018,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-16T20:58:30Z",
+      "side": 1,
+      "message": "create a static utility method to perform this. the method should take StringBuilder as an argument, use a constant, pre-compiled pattern and take advantage of StringBuilder() being a CharSequence:\n\n\nPattern p;\nStringBuilder sb;\n\np.matcher(sb).replaceAll(\"newString\");\nreturn sb.toString();\n\nThe performance and maintainability difference is huge.",
+      "revId": "f320153b0ac54b1da43a998a46ccc1b9407b4c5b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
