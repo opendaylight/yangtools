@@ -25,10 +25,12 @@ import static org.opendaylight.yangtools.binding.generator.util.Types.typeForCla
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNode;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findNodeInSchemaContext;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
+import java.util.regex.Pattern;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.google.common.annotations.VisibleForTesting;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -121,6 +123,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
      * Constant with the concrete name of namespace.
      */
     private static final String YANG_EXT_NAMESPACE = "urn:opendaylight:yang:extension:yang-ext";
+
+    private static final Pattern UNICODE_CHAR_PATTERN = Pattern.compile("\\\\+u");
 
     private final Map<Module, ModuleContext> genCtx = new HashMap<>();
 
@@ -2052,7 +2056,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             sb.append(NEW_LINE);
         }
 
-        return sb.toString();
+        return replaceAllIllegalChars(sb);
     }
 
     private String createDescription(final SchemaNode schemaNode, final String fullyQualifiedName) {
@@ -2115,7 +2119,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             }
         }
 
-        return sb.toString();
+        return replaceAllIllegalChars(sb);
     }
 
     private boolean hasBuilderClass(final SchemaNode schemaNode) {
@@ -2155,7 +2159,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             sb.append("</pre>");
         }
 
-        return sb.toString();
+        return replaceAllIllegalChars(sb);
     }
 
     private GeneratedTypeBuilder findChildNodeByPath(final SchemaPath path) {
@@ -2190,6 +2194,11 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
     public Map<Module, ModuleContext> getModuleContexts() {
         return genCtx;
+    }
+
+    @VisibleForTesting
+    static String replaceAllIllegalChars(StringBuilder stringBuilder){
+        return UNICODE_CHAR_PATTERN.matcher(stringBuilder).replaceAll("\\\\\\\\u");
     }
 
 }
