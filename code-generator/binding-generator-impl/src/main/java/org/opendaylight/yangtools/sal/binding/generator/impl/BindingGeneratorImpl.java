@@ -2018,7 +2018,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             sb.append(NEW_LINE);
         }
 
-        return sb.toString();
+        return sb.toString().replaceAll("\\\\u", "\\\\\\\\u");
     }
 
     private String createDescription(final SchemaNode schemaNode, final String fullyQualifiedName) {
@@ -2082,7 +2082,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             }
         }
 
-        return sb.toString();
+        return sb.toString().replaceAll("\\\\u", "\\\\\\\\u");
     }
 
     private boolean hasBuilderClass(final SchemaNode schemaNode) {
@@ -2122,7 +2122,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             sb.append("</pre>");
         }
 
-        return sb.toString();
+        return sb.toString().replaceAll("\\\\u", "\\\\\\\\u");
     }
 
     private GeneratedTypeBuilder findChildNodeByPath(final SchemaPath path) {
