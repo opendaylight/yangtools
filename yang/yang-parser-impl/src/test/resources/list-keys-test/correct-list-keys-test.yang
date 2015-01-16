@@ -1,0 +1,79 @@
+module correct-list-keys-test {
+
+    namespace "correct-list-keys-test";
+    prefix "test";
+
+    list test1 {
+        key "test1_key";
+        leaf test1_key {
+            type string;
+        }
+    }
+
+    list test2 {
+        key "test2_key1 test2_key2 test2_key3";
+        leaf test2_key1 {
+            type string;
+        }
+        leaf test2_key2 {
+            type string;
+        }
+        leaf test2_key3 {
+            type string;
+        }
+    }
+
+    grouping grp_leaf {
+        leaf grp_leaf {
+            type string;
+        }
+    }
+
+    list test3 {
+        key "grp_leaf";
+        uses grp_leaf;
+    }
+
+    list test4 {
+        key "test4_key1 grp_leaf test4_key2";
+        uses grp_leaf;
+        leaf test4_key1 {
+            type string;
+        }
+        leaf test4_key2 {
+            type string;
+        }
+    }
+
+    list test5 {
+        key "aug_leaf";
+    }
+
+    augment /test5 {
+        leaf aug_leaf {
+            type string;
+        }
+    }
+
+    list test6 {
+        key "aug_leaf grp_leaf test6_key1";
+        uses grp_leaf;
+        leaf test6_key1 {
+            type string;
+        }
+    }
+
+    augment /test6 {
+        leaf aug_leaf {
+            type string;
+        }
+    }
+
+    list test7 {
+        key "grp_leaf";
+    }
+
+    augment /test7 {
+        uses grp_leaf;
+    }
+}

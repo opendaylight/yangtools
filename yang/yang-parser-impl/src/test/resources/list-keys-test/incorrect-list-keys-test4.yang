@@ -1,0 +1,18 @@
+module incorrect-list-keys-test4 {
+
+    namespace "incorrect-list-keys-test4";
+    prefix "test";
+
+    grouping grp_leaf {
+        list grp_leaf {
+        }
+    }
+
+    list test1 {
+        key "grp_leaf";
+    }
+
+    augment /test1 {
+        uses grp_leaf;
+    }
+}
