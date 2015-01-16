@@ -25,6 +25,7 @@ import static org.opendaylight.yangtools.binding.generator.util.Types.typeForCla
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNode;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findNodeInSchemaContext;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
+import java.util.regex.Pattern;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
@@ -2015,7 +2016,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             sb.append(NEW_LINE);
         }
 
-        return sb.toString();
+        return replaceAllIllegalChars(sb);
     }
 
     private String createDescription(final SchemaNode schemaNode, final String fullyQualifiedName) {
@@ -2078,7 +2079,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             }
         }
 
-        return sb.toString();
+        return replaceAllIllegalChars(sb);
     }
 
     private boolean hasBuilderClass(final SchemaNode schemaNode) {
@@ -2118,7 +2119,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             sb.append("</pre>");
         }
 
-        return sb.toString();
+        return replaceAllIllegalChars(sb);
     }
 
     private GeneratedTypeBuilder findChildNodeByPath(final SchemaPath path) {
@@ -2153,6 +2154,12 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
     public Map<Module, ModuleContext> getModuleContexts() {
         return genCtx;
+    }
+
+    private static final Pattern UNICODE_CHAR_PATTERN = Pattern.compile("\\\\+u");
+
+    public static String replaceAllIllegalChars(StringBuilder stringBuilder){
+        return UNICODE_CHAR_PATTERN.matcher(stringBuilder).replaceAll("\\\\\\\\u");
     }
 
 }
