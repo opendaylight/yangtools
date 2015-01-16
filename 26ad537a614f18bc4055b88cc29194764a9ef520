@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_2b970192",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1214,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-16T20:49:29Z",
+      "side": 1,
+      "message": "nodeSp.getParent() is repeated all over the place, does it make sense to cache it?\n\nAlso note that getParent() returns null when we are at the top-level -- which seems to be what you are checking for with that iterator.\n\nAlso a comment on the check would be nice.",
+      "revId": "26ad537a614f18bc4055b88cc29194764a9ef520",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_4b928da0",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 1239,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-16T20:49:29Z",
+      "side": 1,
+      "message": "use Preconditions.checkState(..., \"blah %s\", obj) instead of string concatenation while we\u0027re here",
+      "revId": "26ad537a614f18bc4055b88cc29194764a9ef520",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
