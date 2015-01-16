@@ -25,12 +25,10 @@ import static org.opendaylight.yangtools.binding.generator.util.Types.typeForCla
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNode;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findNodeInSchemaContext;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
-
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -39,7 +37,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.BindingTypes;
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
@@ -1611,10 +1608,10 @@ public class BindingGeneratorImpl implements BindingGenerator {
      * <code>schemaNode</code>.
      *
      * The new builder always implements
-     * {@link org.opendaylight.yangtools.yang.binding.DataObject DataObject}.<br />
+     * {@link org.opendaylight.yangtools.yang.binding.DataObject DataObject}.<br>
      * If <code>schemaNode</code> is instance of GroupingDefinition it also
      * implements {@link org.opendaylight.yangtools.yang.binding.Augmentable
-     * Augmentable}.<br />
+     * Augmentable}.<br>
      * If <code>schemaNode</code> is instance of
      * {@link org.opendaylight.yangtools.yang.model.api.DataNodeContainer
      * DataNodeContainer} it can also implement nodes which are specified in
@@ -2005,7 +2002,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             }
         }
         sb.append(NEW_LINE);
-        sb.append("<br />(Source path: <i>");
+        sb.append("<br>(Source path: <i>");
         sb.append(moduleSourcePath);
         sb.append("</i>):");
         sb.append(NEW_LINE);
@@ -2033,18 +2030,12 @@ public class BindingGeneratorImpl implements BindingGenerator {
         if (verboseClassComments) {
             final Module module = findParentModule(schemaContext, schemaNode);
             final StringBuilder linkToBuilderClass = new StringBuilder();
-            final StringBuilder linkToKeyClass = new StringBuilder();
             final String[] namespace = Iterables.toArray(BSDOT_SPLITTER.split(fullyQualifiedName), String.class);
             String className = namespace[namespace.length - 1];
 
             if (hasBuilderClass(schemaNode)) {
                 linkToBuilderClass.append(className);
                 linkToBuilderClass.append("Builder");
-
-                if (schemaNode instanceof ListSchemaNode) {
-                    linkToKeyClass.append(className);
-                    linkToKeyClass.append("Key");
-                }
             }
 
             sb.append("<p>");
@@ -2052,7 +2043,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             sb.append(module.getName());
             sb.append("</b>");
             sb.append(NEW_LINE);
-            sb.append("<br />(Source path: <i>");
+            sb.append("<br>(Source path: <i>");
             sb.append(module.getModuleSourcePath());
             sb.append("</i>):");
             sb.append(NEW_LINE);
@@ -2074,11 +2065,16 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 sb.append(NEW_LINE);
                 sb.append("@see ");
                 sb.append(linkToBuilderClass);
-                if (schemaNode instanceof ListSchemaNode) {
-                    sb.append("@see ");
-                    sb.append(linkToKeyClass);
-                }
                 sb.append(NEW_LINE);
+                if (schemaNode instanceof ListSchemaNode) {
+                    final List<QName> keyDef = ((ListSchemaNode)schemaNode).getKeyDefinition();
+                    if (keyDef != null && !keyDef.isEmpty()) {
+                        sb.append("@see ");
+                        sb.append(className);
+                        sb.append("Key");
+                    }
+		    sb.append(NEW_LINE);
+                }
             }
         }
 
@@ -2112,7 +2108,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             sb.append(module.getName());
             sb.append("</b>");
             sb.append(NEW_LINE);
-            sb.append("<br />Source path: <i>");
+            sb.append("<br>Source path: <i>");
             sb.append(module.getModuleSourcePath());
             sb.append("</i>):");
             sb.append(NEW_LINE);

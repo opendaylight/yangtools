@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator
 
+import com.google.common.base.CharMatcher
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.Range
 import java.math.BigDecimal
@@ -196,11 +197,22 @@ abstract class BaseTemplate {
         '''.toString
     }
 
+    private static final CharMatcher AMP_MATCHER = CharMatcher.is('&');
+    private static final CharMatcher GT_MATCHER = CharMatcher.is('>');
+    private static final CharMatcher LT_MATCHER = CharMatcher.is('<');
+
     def encodeJavadocSymbols(String description) {
-        if (!description.nullOrEmpty) {
-            return description.replace("*/", "&#42;&#47;")
+        if (description.nullOrEmpty) {
+            return description;
         }
-        return description;
+
+        var ret = description.replace("*/", "&#42;&#47;")
+
+        // FIXME: Use Guava's HtmlEscapers once we have it available
+        ret = AMP_MATCHER.replaceFrom(ret, "&amp;");
+        ret = GT_MATCHER.replaceFrom(ret, "&gt;");
+        ret = LT_MATCHER.replaceFrom(ret, "&lt;");
+        return ret;
     }
 
     def protected String formatDataForJavaDoc(GeneratedType type, String additionalComment) {
