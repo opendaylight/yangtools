@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.sal.java.api.generator
 
 import com.google.common.base.CharMatcher
+import com.google.common.base.Splitter
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.Range
 import java.math.BigDecimal
@@ -18,6 +19,7 @@ import java.util.HashMap
 import java.util.List
 import java.util.Map
 import java.util.StringTokenizer
+import java.util.regex.Pattern
 import org.opendaylight.yangtools.binding.generator.util.Types
 import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty
@@ -31,7 +33,11 @@ abstract class BaseTemplate {
     protected val GeneratedType type;
     protected val Map<String, String> importMap;
 
-    private static final String NEW_LINE = '\n'
+    private static final char NEW_LINE = '\n'
+    private static final CharMatcher NL_MATCHER = CharMatcher.is(NEW_LINE)
+    private static final CharMatcher TAB_MATCHER = CharMatcher.is('\t')
+    private static final Pattern SPACES_PATTERN = Pattern.compile(" +")
+    private static final Splitter NL_SPLITTER = Splitter.on(NL_MATCHER)
 
     new(GeneratedType _type) {
         if (_type == null) {
@@ -168,18 +174,15 @@ abstract class BaseTemplate {
     }
 
     def String wrapToDocumentation(String text) {
-        val StringTokenizer tokenizer = new StringTokenizer(text, "\n", false)
-        val StringBuilder sb = new StringBuilder()
-
-        if(text.empty)
+        if (text.empty)
             return ""
 
-        sb.append("/**")
+        val StringBuilder sb = new StringBuilder("/**")
         sb.append(NEW_LINE)
 
-        while(tokenizer.hasMoreTokens) {
+        for (String t : NL_SPLITTER.split(text)) {
             sb.append(" * ")
-            sb.append(tokenizer.nextToken)
+            sb.append(t)
             sb.append(NEW_LINE)
         }
         sb.append(" */")
@@ -238,7 +241,7 @@ abstract class BaseTemplate {
         var char lastChar = ' '
         var boolean badEnding = false
 
-        if(text.endsWith(".") || text.endsWith(":") || text.endsWith(",")) {
+        if (text.endsWith('.') || text.endsWith(':') || text.endsWith(',')) {
             tempText = text.substring(0, text.length - 1)
             lastChar = text.charAt(text.length - 1)
             badEnding = true
@@ -265,9 +268,9 @@ abstract class BaseTemplate {
         var boolean isFirstElementOnNewLineEmptyChar = false;
 
         formattedText = formattedText.encodeJavadocSymbols
-        formattedText = formattedText.replace(NEW_LINE, "")
-        formattedText = formattedText.replace("\t", "")
-        formattedText = formattedText.replaceAll(" +", " ");
+        formattedText = NL_MATCHER.removeFrom(formattedText)
+        formattedText = TAB_MATCHER.removeFrom(formattedText)
+        formattedText = SPACES_PATTERN.matcher(formattedText).replaceAll(" ")
 
         val StringTokenizer tokenizer = new StringTokenizer(formattedText, " ", true);
 
