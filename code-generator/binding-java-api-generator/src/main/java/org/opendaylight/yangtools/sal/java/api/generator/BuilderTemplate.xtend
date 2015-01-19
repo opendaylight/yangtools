@@ -455,10 +455,14 @@ class BuilderTemplate extends BaseTemplate {
 
             public «type.name»«BUILDER» add«augmentField.name.toFirstUpper»(«Class.importedName»<? extends «augmentField.returnType.importedName»> augmentationType, «augmentField.returnType.importedName» augmentation) {
                 if (augmentation == null) {
-                    this.«augmentField.name».remove(augmentationType);
-                } else {
-                    this.«augmentField.name».put(augmentationType, augmentation);
+                    return remove«augmentField.name.toFirstUpper»(augmentationType);
                 }
+                this.«augmentField.name».put(augmentationType, augmentation);
+                return this;
+            }
+
+            public «type.name»«BUILDER» remove«augmentField.name.toFirstUpper»(«Class.importedName»<? extends «augmentField.returnType.importedName»> augmentationType) {
+                this.«augmentField.name».remove(augmentationType);
                 return this;
             }
         «ENDIF»
