@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Optional;
 import java.util.List;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
@@ -54,16 +55,19 @@ abstract class DataContainerCodecContext<T> extends NodeCodecContext {
      * and adds YANG instance identifiers to supplied list.
      *
      * @param arg Binding Instance Identifier Argument
-     * @return Context of child
+     * @return Context of child or null if supplied {@code arg} does not represent valid child.
      * @throws IllegalArgumentException If supplied argument does not represent valid child.
      */
-    protected  DataContainerCodecContext<?> getIdentifierChild(final InstanceIdentifier.PathArgument arg,
+    protected @Nullable DataContainerCodecContext<?> getIdentifierChild(final InstanceIdentifier.PathArgument arg,
             final List<YangInstanceIdentifier.PathArgument> builder) {
         final DataContainerCodecContext<?> child = getStreamChild(arg.getType());
-        if (builder != null) {
-            child.addYangPathArgument(arg,builder);
+        if(child != null) {
+            if (builder != null) {
+                child.addYangPathArgument(arg,builder);
+            }
+            return child;
         }
-        return child;
+        return null;
     }
 
     /**
@@ -91,10 +95,10 @@ abstract class DataContainerCodecContext<T> extends NodeCodecContext {
      * must issue getChild(ChoiceClass).getChild(CaseClass).
      *
      * @param childClass
-     * @return Context of child
+     * @return Context of child node or null, if supplied class is not subtree child
      * @throws IllegalArgumentException If supplied child class is not valid in specified context.
      */
-    protected abstract DataContainerCodecContext<?> getStreamChild(final Class<?> childClass) throws IllegalArgumentException;
+    protected abstract @Nullable DataContainerCodecContext<?> getStreamChild(final Class<?> childClass) throws IllegalArgumentException;
 
     /**
      *

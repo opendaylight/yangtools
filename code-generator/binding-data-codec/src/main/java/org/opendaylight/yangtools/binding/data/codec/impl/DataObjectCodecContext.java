@@ -177,20 +177,25 @@ abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataC
     protected DataContainerCodecContext<?> getIdentifierChild(final InstanceIdentifier.PathArgument arg,
             final List<YangInstanceIdentifier.PathArgument> builder) {
 
-        Class<? extends DataObject> argType = arg.getType();
-        DataContainerCodecPrototype<?> ctxProto = byBindingArgClass.get(argType);
-        Preconditions.checkArgument(ctxProto != null,"Invalid child");
-
-        DataContainerCodecContext<?> context = ctxProto.get();
-        if(context instanceof ChoiceNodeCodecContext) {
-            ChoiceNodeCodecContext casted = (ChoiceNodeCodecContext) context;
-            casted.addYangPathArgument(arg, builder);
-            DataContainerCodecContext<?> caze = casted.getCazeByChildClass(arg.getType());
-            caze.addYangPathArgument(arg, builder);
-            return caze.getIdentifierChild(arg, builder);
+        final Class<? extends DataObject> argType = arg.getType();
+        final DataContainerCodecPrototype<?> ctxProto = byBindingArgClass.get(argType);
+        if(ctxProto != null) {
+            final DataContainerCodecContext<?> context = ctxProto.get();
+            if(context instanceof ChoiceNodeCodecContext) {
+                final ChoiceNodeCodecContext choice = (ChoiceNodeCodecContext) context;
+                final DataContainerCodecContext<?> caze = choice.getCazeByChildClass(arg.getType());
+                if(caze != null) {
+                    choice.addYangPathArgument(arg, builder);
+                    caze.addYangPathArgument(arg, builder);
+                    return caze.getIdentifierChild(arg, builder);
+                }
+                return null;
+            }
+            context.addYangPathArgument(arg, builder);
+            return context;
         }
-        context.addYangPathArgument(arg, builder);
-        return context;
+        // Argument is not valid child.
+        return null;
     }
 
     @Override

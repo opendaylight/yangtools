@@ -46,6 +46,7 @@ public interface BindingNormalizedNodeWriterFactory {
      *            Stream writer on which events will be invoked.
      * @return Instance Identifier and {@link BindingStreamEventWriter}
      *         which will write to supplied {@link NormalizedNodeStreamWriter}.
+     * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
      */
     @Nonnull Entry<YangInstanceIdentifier, BindingStreamEventWriter> newWriterAndIdentifier(@Nonnull InstanceIdentifier<?> path,
             @Nonnull NormalizedNodeStreamWriter domWriter);
@@ -66,6 +67,7 @@ public interface BindingNormalizedNodeWriterFactory {
      * @param domWriter Stream writer on which events will be invoked.
      * @return {@link BindingStreamEventWriter}
      *         which will write to supplied {@link NormalizedNodeStreamWriter}.
+     * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
      */
     @Nonnull
     BindingStreamEventWriter newWriter(@Nonnull InstanceIdentifier<?> path,
