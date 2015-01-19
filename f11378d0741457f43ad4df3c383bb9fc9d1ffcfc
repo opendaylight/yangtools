@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_806f0fc5",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 1214,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2015-01-19T15:41:46Z",
+      "side": 1,
+      "message": "In case that Choice Node is in Yang module directly (i.e. it is not nested in another yang element), his parent\u0027s path is not null, but it is empty SchemaPath which Parent and QName are null (i.e. SchemaPath.ROOT or SchemaPath.SAME). Anyway, if and only if the path from root is not empty, we can go inside the if statement, so I must perform the check in this way.",
+      "range": {
+        "startLine": 1214,
+        "startChar": 24,
+        "endLine": 1214,
+        "endChar": 44
+      },
+      "revId": "f11378d0741457f43ad4df3c383bb9fc9d1ffcfc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
