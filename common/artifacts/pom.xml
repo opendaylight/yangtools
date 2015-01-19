@@ -15,10 +15,6 @@
     <version>0.7.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <prerequisites>
-        <maven>3.0.4</maven>
-    </prerequisites>
-
     <properties>
         <!-- Model versions -->
         <ietf.topology.version>2013.10.21.7-SNAPSHOT</ietf.topology.version>
