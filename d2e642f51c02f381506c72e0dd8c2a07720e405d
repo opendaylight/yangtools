@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_5d9fb450",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/BaseTemplate.xtend",
+        "patchSetId": 7
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-19T10:10:19Z",
+      "side": 1,
+      "message": "just \u0027return Arrays.copyOf()\u0027...",
+      "revId": "d2e642f51c02f381506c72e0dd8c2a07720e405d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_fdad6089",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/ClassTemplate.xtend",
+        "patchSetId": 7
+      },
+      "lineNbr": 275,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-19T10:10:19Z",
+      "side": 1,
+      "message": "trailing whitespace",
+      "revId": "d2e642f51c02f381506c72e0dd8c2a07720e405d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_1da92c7b",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/ClassTemplate.xtend",
+        "patchSetId": 7
+      },
+      "lineNbr": 279,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-19T10:10:19Z",
+      "side": 1,
+      "message": "inconsistent whitespace",
+      "revId": "d2e642f51c02f381506c72e0dd8c2a07720e405d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
