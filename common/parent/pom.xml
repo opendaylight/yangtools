@@ -36,7 +36,6 @@
         <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
         <sonar.jacoco.reportPath>target/code-coverage/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.jacoco.itReportPath>target/code-coverage/jacoco-it.exec</sonar.jacoco.itReportPath>
-        <sonar.profile>Sonar way with Findbugs</sonar.profile>
     </properties>
 
     <dependencyManagement>
@@ -540,7 +539,7 @@
 
 
     <!-- Note: we can not use variables for these URLs because we need to
-         be able to download the parent pom from the repository the first 
+         be able to download the parent pom from the repository the first
          time we go to use it (since it is in a different project).
          To override the settings, use the "mirror" section of the
          settings.xml. See http://maven.apache.org/settings.html -->
