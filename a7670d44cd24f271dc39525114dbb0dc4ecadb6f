@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_fd76c03d",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/api/BindingNormalizedNodeSerializer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-19T10:00:25Z",
+      "side": 1,
+      "message": "how does error reporting work? e.g. when dom values/keys is mismatched, does this succeed?\n\nWhy exactly do we need this bulk method?",
+      "revId": "a7670d44cd24f271dc39525114dbb0dc4ecadb6f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_1d728c49",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/api/BindingNormalizedNodeSerializer.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 126,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-19T10:00:25Z",
+      "side": 1,
+      "message": "how are nulls handled? Error porting?",
+      "revId": "a7670d44cd24f271dc39525114dbb0dc4ecadb6f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_bd903844",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/api/BindingNormalizedNodeWriterFactory.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-19T10:00:25Z",
+      "side": 1,
+      "message": "mising javadoc",
+      "revId": "a7670d44cd24f271dc39525114dbb0dc4ecadb6f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_dd93c44d",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/AbstractStreamWriterGenerator.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-19T10:00:25Z",
+      "side": 1,
+      "message": "missing javadoc, arguments in abstract methods should not have \u0027final\u0027 keyword, as it is useless.",
+      "revId": "a7670d44cd24f271dc39525114dbb0dc4ecadb6f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_7d9ab064",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/SchemaRootCodecContext.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-19T10:00:25Z",
+      "side": 1,
+      "message": "different how, why?",
+      "revId": "a7670d44cd24f271dc39525114dbb0dc4ecadb6f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_9d9d3c5c",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaNodeUtils.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-19T10:00:25Z",
+      "side": 1,
+      "message": "missing javadoc",
+      "revId": "a7670d44cd24f271dc39525114dbb0dc4ecadb6f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
