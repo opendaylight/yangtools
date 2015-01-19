@@ -8,14 +8,12 @@
 package org.opendaylight.yangtools.binding.data.codec.util;
 
 import com.google.common.base.Preconditions;
-
 import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
@@ -49,14 +47,14 @@ public class AugmentableDispatchSerializer implements DataObjectSerializerImplem
             } else {
                 augmentations = BindingReflections.getAugmentations((Augmentable<?>) obj);
             }
-            for (Entry<Class<? extends Augmentation<?>>, Augmentation<?>> aug : augmentations.entrySet()) {
+            for (final Entry<Class<? extends Augmentation<?>>, Augmentation<?>> aug : augmentations.entrySet()) {
                 emitAugmentation(aug.getKey(), aug.getValue(), stream, reg);
             }
         }
     }
 
     private Map<Class<? extends Augmentation<?>>, Augmentation<?>> getFromProxy(final DataObject obj) {
-        InvocationHandler proxy = Proxy.getInvocationHandler(obj);
+        final InvocationHandler proxy = Proxy.getInvocationHandler(obj);
         if (proxy instanceof AugmentationReader) {
             return ((AugmentationReader) proxy).getAugmentations(obj);
         }
@@ -66,9 +64,17 @@ public class AugmentableDispatchSerializer implements DataObjectSerializerImplem
     @SuppressWarnings("rawtypes")
     private void emitAugmentation(final Class type, final Augmentation<?> value, final BindingStreamEventWriter stream,
             final DataObjectSerializerRegistry registry) throws IOException {
+        /*
+         * Binding Specification allowed to insert augmentation with null for
+         * value, which effectively could be used to remove augmentation
+         * from builder / DTO.
+         */
+        if(value == null) {
+            return;
+        }
         Preconditions.checkArgument(value instanceof DataObject);
         @SuppressWarnings("unchecked")
-        DataObjectSerializer serializer = registry.getSerializer(type);
+        final DataObjectSerializer serializer = registry.getSerializer(type);
         if (serializer != null) {
             serializer.serialize((DataObject) value, stream);
         } else {
