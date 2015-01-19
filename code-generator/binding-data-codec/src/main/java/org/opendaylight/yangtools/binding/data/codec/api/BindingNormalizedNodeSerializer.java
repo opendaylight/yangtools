@@ -9,10 +9,8 @@ package org.opendaylight.yangtools.binding.data.codec.api;
 
 import java.util.Map;
 import java.util.Map.Entry;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -29,6 +27,7 @@ public interface BindingNormalizedNodeSerializer {
       *
       * @param binding Binding Instance Identifier
       * @return DOM Instance Identifier
+      * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
       */
      YangInstanceIdentifier toYangInstanceIdentifier(@Nonnull InstanceIdentifier<?> binding);
 
@@ -47,6 +46,7 @@ public interface BindingNormalizedNodeSerializer {
       * @param path Binding Instance Identifier pointing to data
       * @param data Data object representing data
       * @return NormalizedNode representation
+      * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
       */
      <T extends DataObject> Entry<YangInstanceIdentifier, NormalizedNode<?,?>> toNormalizedNode(InstanceIdentifier<T> path, T data);
 
