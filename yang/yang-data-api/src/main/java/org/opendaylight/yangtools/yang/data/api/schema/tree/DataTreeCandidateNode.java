@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
+import com.google.common.base.Optional;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-
-import com.google.common.base.Optional;
 
 /**
  * A single node within a {@link DataTreeCandidate}. The nodes are organized
@@ -19,26 +20,36 @@ import com.google.common.base.Optional;
  * tree restricted to the modified nodes.
  */
 public interface DataTreeCandidateNode {
+
     /**
      * Get the node identifier.
      *
      * @return The node identifier.
      */
-    PathArgument getIdentifier();
+    @Nonnull PathArgument getIdentifier();
 
     /**
      * Get an unmodifiable iterable of modified child nodes.
      *
      * @return Unmodifiable iterable of modified child nodes.
      */
-    Iterable<DataTreeCandidateNode> getChildNodes();
+    @Nonnull Iterable<DataTreeCandidateNode> getChildNodes();
+
+    /**
+     * Returns modified child or null if child was not modified
+     * / does not exists.
+     *
+     * @param identifier Identifier of child node
+     * @return Modified child or null if child was not modified.
+     */
+    @Nullable DataTreeCandidateNode getModifiedChild(PathArgument identifier);
 
     /**
      * Return the type of modification this node is undergoing.
      *
      * @return Node modification type.
      */
-    ModificationType getModificationType();
+    @Nonnull ModificationType getModificationType();
 
     /**
      * Return the before-image of data corresponding to the node.

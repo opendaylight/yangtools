@@ -51,13 +51,17 @@ final class InMemoryDataTreeCandidate extends AbstractDataTreeCandidate {
             }
         }
 
+        private DataTreeCandidateNode childNode(final ModifiedNode input) {
+            final PathArgument id = input.getIdentifier();
+            return new ChildNode(input, childMeta(oldMeta, id), childMeta(newMeta, id));
+        }
+
         @Override
         public Iterable<DataTreeCandidateNode> getChildNodes() {
             return Iterables.transform(mod.getChildren(), new Function<ModifiedNode, DataTreeCandidateNode>() {
                 @Override
                 public DataTreeCandidateNode apply(final ModifiedNode input) {
-                    final PathArgument id = input.getIdentifier();
-                    return new ChildNode(input, childMeta(oldMeta, id), childMeta(newMeta, id));
+                    return childNode(input);
                 }
             });
         }
@@ -83,6 +87,15 @@ final class InMemoryDataTreeCandidate extends AbstractDataTreeCandidate {
         @Override
         public Optional<NormalizedNode<?, ?>> getDataBefore() {
             return optionalData(oldMeta);
+        }
+
+        @Override
+        public DataTreeCandidateNode getModifiedChild(final PathArgument identifier) {
+            final Optional<ModifiedNode> childMod = mod.getChild(identifier);
+            if(childMod.isPresent()) {
+                return childNode(mod);
+            }
+            return null;
         }
     }
 
