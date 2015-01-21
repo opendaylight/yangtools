@@ -1,0 +1,47 @@
+module opendaylight-yangtools-union-test {
+
+    namespace "urn:opendaylight:params:xml:ns:yang:yangtools:test:union";
+    prefix union-test;
+
+
+    description
+        "This module contains a collection of YANG definitions used for
+        some test cases.";
+
+    revision "2015-01-21" {
+        description
+        "Test model for testing union data types.";
+    }
+
+    typedef lowest-level1 {
+        type string;
+    }
+
+    typedef lowest-level2 {
+        type string;
+    }
+
+    typedef non-union-test-type {
+        type string;
+    }
+
+    typedef union-test-type {
+        type union {
+            type lowest-level1;
+            type lowest-level2;
+        }
+    }
+
+    typedef top-level {
+        type union {
+            type non-union-test-type;
+            type union-test-type;
+        }
+    }
+
+    container wrapper {
+        leaf wrap {
+            type top-level;
+        }
+    }
+}
