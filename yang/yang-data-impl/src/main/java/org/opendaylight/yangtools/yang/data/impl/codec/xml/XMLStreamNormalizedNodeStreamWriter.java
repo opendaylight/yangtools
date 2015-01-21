@@ -72,10 +72,12 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
 
     private void writeStartElement( QName qname) throws XMLStreamException {
         String ns = qname.getNamespace().toString();
-        String parentNs = writer.getNamespaceContext().getNamespaceURI(DEFAULT_NS_PREFIX);
         writer.writeStartElement(DEFAULT_NS_PREFIX, qname.getLocalName(), ns);
-        if (!ns.equals(parentNs)) {
-            writer.writeDefaultNamespace(ns);
+        if(writer.getNamespaceContext() != null) {
+            String parentNs = writer.getNamespaceContext().getNamespaceURI(DEFAULT_NS_PREFIX);
+            if (!ns.equals(parentNs)) {
+                writer.writeDefaultNamespace(ns);
+            }
         }
     }
 
