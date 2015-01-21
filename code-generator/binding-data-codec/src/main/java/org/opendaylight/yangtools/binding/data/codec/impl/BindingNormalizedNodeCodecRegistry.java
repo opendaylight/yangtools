@@ -13,14 +13,12 @@ import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-
 import java.io.IOException;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeWriterFactory;
 import org.opendaylight.yangtools.binding.data.codec.gen.impl.DataObjectSerializerGenerator;
@@ -86,17 +84,17 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
 
     @Override
     public <T extends DataObject> Entry<YangInstanceIdentifier,NormalizedNode<?,?>> toNormalizedNode(final InstanceIdentifier<T> path, final T data) {
-        NormalizedNodeResult result = new NormalizedNodeResult();
+        final NormalizedNodeResult result = new NormalizedNodeResult();
         // We create DOM stream writer which produces normalized nodes
-        NormalizedNodeStreamWriter domWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final NormalizedNodeStreamWriter domWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
         // We create Binding Stream Writer which translates from Binding to Normalized Nodes
-        Entry<YangInstanceIdentifier, BindingStreamEventWriter> writeCtx = codecContext.newWriter(path, domWriter);
+        final Entry<YangInstanceIdentifier, BindingStreamEventWriter> writeCtx = codecContext.newWriter(path, domWriter);
 
         // We get serializer which reads binding data and uses Binding To Normalized Node writer to write result
         try {
             getSerializer(path.getTargetType()).serialize(data, writeCtx.getValue());
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOG.error("Unexpected failure while serializing path {} data {}", path, data, e);
             throw new IllegalStateException("Failed to create normalized node", e);
         }
@@ -161,9 +159,8 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         return codecContext.newWriterWithoutIdentifier(path, domWriter);
     }
 
-
     public <T extends DataObject> Function<Optional<NormalizedNode<?, ?>>, Optional<T>>  deserializeFunction(final InstanceIdentifier<T> path) {
-        DataObjectCodecContext<?> ctx = (DataObjectCodecContext<?>) codecContext.getCodecContextNode(path, null);
+        final DataObjectCodecContext<?> ctx = (DataObjectCodecContext<?>) codecContext.getCodecContextNode(path, null);
         return new DeserializeFunction<T>(ctx);
     }
 
@@ -190,7 +187,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
 
         @Override
         public DataObjectSerializer load(final Class<? extends DataObject> key) throws Exception {
-            DataObjectSerializerImplementation prototype = generator.getSerializer(key);
+            final DataObjectSerializerImplementation prototype = generator.getSerializer(key);
             return new DataObjectSerializerProxy(prototype);
         }
     }

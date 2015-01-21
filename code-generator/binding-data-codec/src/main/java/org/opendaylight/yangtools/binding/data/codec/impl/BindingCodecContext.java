@@ -44,18 +44,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,9 +77,9 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
 
     public Entry<YangInstanceIdentifier, BindingStreamEventWriter> newWriter(final InstanceIdentifier<?> path,
             final NormalizedNodeStreamWriter domWriter) {
-        LinkedList<YangInstanceIdentifier.PathArgument> yangArgs = new LinkedList<>();
-        DataContainerCodecContext<?> codecContext = getCodecContextNode(path, yangArgs);
-        BindingStreamEventWriter writer = new BindingToNormalizedStreamWriter(codecContext, domWriter);
+        final LinkedList<YangInstanceIdentifier.PathArgument> yangArgs = new LinkedList<>();
+        final DataContainerCodecContext<?> codecContext = getCodecContextNode(path, yangArgs);
+        final BindingStreamEventWriter writer = new BindingToNormalizedStreamWriter(codecContext, domWriter);
         return new SimpleEntry<>(YangInstanceIdentifier.create(yangArgs), writer);
     }
 
@@ -100,11 +88,25 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
         return new BindingToNormalizedStreamWriter(getCodecContextNode(path, null), domWriter);
     }
 
-    public DataContainerCodecContext<?> getCodecContextNode(final InstanceIdentifier<?> binding,
-            final List<YangInstanceIdentifier.PathArgument> builder) {
+    /**
+     *
+     * Finds codec context for supplied instance identifier
+     *
+     * TODO: Lithium: Decrease visibility of method and consider providing better API.
+     *
+     * @param binding Binding Instance Identifier for which codec should be retrieved.
+     * @param builder List which should be updated by Yang Instance Identifier components or null,
+     *        if serialization to Yang Instance Identifier is unnecessary.
+     * @return Codec context for type represented by instance identifier
+     * @throws IllegalArgumentException If supplied {@code binding} Instance Identifier is not valid
+     *          in current schema context.
+     */
+    public @Nonnull DataContainerCodecContext<?> getCodecContextNode(final @Nonnull InstanceIdentifier<?> binding,
+            final @Nullable List<YangInstanceIdentifier.PathArgument> builder) {
         DataContainerCodecContext<?> currentNode = root;
-        for (InstanceIdentifier.PathArgument bindingArg : binding.getPathArguments()) {
+        for (final InstanceIdentifier.PathArgument bindingArg : binding.getPathArguments()) {
             currentNode = currentNode.getIdentifierChild(bindingArg, builder);
+            Preconditions.checkArgument(currentNode != null, "Supplied Instance Identifier %s is not valid.",binding);
         }
         return currentNode;
     }
@@ -119,13 +121,14 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
      * @param bindingArguments Collection for traversed path arguments
      * @return Codec for target node, or @null if the node does not have a
      *         binding representation (choice, case, leaf).
+     *
      */
     @Nullable NodeCodecContext getCodecContextNode(final @Nonnull YangInstanceIdentifier dom,
             final @Nonnull Collection<InstanceIdentifier.PathArgument> bindingArguments) {
         NodeCodecContext currentNode = root;
         ListNodeCodecContext currentList = null;
 
-        for (YangInstanceIdentifier.PathArgument domArg : dom.getPathArguments()) {
+        for (final YangInstanceIdentifier.PathArgument domArg : dom.getPathArguments()) {
             Preconditions.checkArgument(currentNode instanceof DataContainerCodecContext<?>, "Unexpected child of non-container node %s", currentNode);
             final DataContainerCodecContext<?> previous = (DataContainerCodecContext<?>) currentNode;
             final NodeCodecContext nextNode = previous.getYangIdentifierChild(domArg);
@@ -184,8 +187,8 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
     @Override
     public ImmutableMap<String, LeafNodeCodecContext> getLeafNodes(final Class<?> parentClass,
             final DataNodeContainer childSchema) {
-        HashMap<String, DataSchemaNode> getterToLeafSchema = new HashMap<>();
-        for (DataSchemaNode leaf : childSchema.getChildNodes()) {
+        final HashMap<String, DataSchemaNode> getterToLeafSchema = new HashMap<>();
+        for (final DataSchemaNode leaf : childSchema.getChildNodes()) {
             final TypeDefinition<?> typeDef;
             if (leaf instanceof LeafSchemaNode) {
                 typeDef = ((LeafSchemaNode) leaf).getType();
@@ -195,14 +198,14 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
                 continue;
             }
 
-            String getterName = getGetterName(leaf.getQName(), typeDef);
+            final String getterName = getGetterName(leaf.getQName(), typeDef);
             getterToLeafSchema.put(getterName, leaf);
         }
         return getLeafNodesUsingReflection(parentClass, getterToLeafSchema);
     }
 
     private String getGetterName(final QName qName, TypeDefinition<?> typeDef) {
-        String suffix = BindingMapping.getClassName(qName);
+        final String suffix = BindingMapping.getClassName(qName);
 
         while (typeDef.getBaseType() != null) {
             typeDef = typeDef.getBaseType();
@@ -215,15 +218,15 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
 
     private ImmutableMap<String, LeafNodeCodecContext> getLeafNodesUsingReflection(final Class<?> parentClass,
             final Map<String, DataSchemaNode> getterToLeafSchema) {
-        Map<String, LeafNodeCodecContext> leaves = new HashMap<>();
-        for (Method method : parentClass.getMethods()) {
+        final Map<String, LeafNodeCodecContext> leaves = new HashMap<>();
+        for (final Method method : parentClass.getMethods()) {
             if (method.getParameterTypes().length == 0) {
-                DataSchemaNode schema = getterToLeafSchema.get(method.getName());
+                final DataSchemaNode schema = getterToLeafSchema.get(method.getName());
                 final Class<?> valueType;
                 if (schema instanceof LeafSchemaNode) {
                     valueType = method.getReturnType();
                 } else if (schema instanceof LeafListSchemaNode) {
-                    Type genericType = ClassLoaderUtils.getFirstGenericParameter(method.getGenericReturnType());
+                    final Type genericType = ClassLoaderUtils.getFirstGenericParameter(method.getGenericReturnType());
 
                     if (genericType instanceof Class<?>) {
                         valueType = (Class<?>) genericType;
@@ -235,7 +238,7 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
                 } else {
                     continue; // We do not have schema for leaf, so we will ignore it (eg. getClass, getImplementedInterface).
                 }
-                Codec<Object, Object> codec = getCodec(valueType, schema);
+                final Codec<Object, Object> codec = getCodec(valueType, schema);
                 final LeafNodeCodecContext leafNode = new LeafNodeCodecContext(schema, codec, method);
                 leaves.put(schema.getQName().getLocalName(), leafNode);
             }
@@ -283,15 +286,15 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
         } else if (rootType instanceof InstanceIdentifierTypeDefinition) {
             return ValueTypeCodec.encapsulatedValueCodecFor(valueType, instanceIdentifierCodec);
         } else if (rootType instanceof UnionTypeDefinition) {
-            Callable<UnionTypeCodec> loader = UnionTypeCodec.loader(valueType, (UnionTypeDefinition) rootType);
+            final Callable<UnionTypeCodec> loader = UnionTypeCodec.loader(valueType, (UnionTypeDefinition) rootType);
             try {
                 return loader.call();
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalStateException("Unable to load codec for " + valueType, e);
             }
         } else if(rootType instanceof LeafrefTypeDefinition) {
-            Entry<GeneratedType, Object> typeWithSchema = context.getTypeWithSchema(valueType);
-            Object schema = typeWithSchema.getValue();
+            final Entry<GeneratedType, Object> typeWithSchema = context.getTypeWithSchema(valueType);
+            final Object schema = typeWithSchema.getValue();
             Preconditions.checkState(schema instanceof TypeDefinition<?>);
             return getCodec(valueType, (TypeDefinition<?>) schema);
         }
@@ -302,7 +305,7 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
 
         @Override
         public YangInstanceIdentifier serialize(final InstanceIdentifier<?> input) {
-            List<YangInstanceIdentifier.PathArgument> domArgs = new ArrayList<>();
+            final List<YangInstanceIdentifier.PathArgument> domArgs = new ArrayList<>();
             getCodecContextNode(input, domArgs);
             return YangInstanceIdentifier.create(domArgs);
         }
@@ -348,7 +351,7 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
 
         public Object getAndSerialize(final Object obj) {
             try {
-                Object value = getter.invoke(obj);
+                final Object value = getter.invoke(obj);
                 Preconditions.checkArgument(value != null,
                         "All keys must be specified for %s. Missing key is %s. Supplied key is %s",
                         getter.getDeclaringClass(), getter.getName(), obj);
@@ -382,7 +385,7 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
              * they are defined.
              */
             final Map<QName, ValueContext> keys = new LinkedHashMap<>();
-            for (QName qname : schema.getKeyDefinition()) {
+            for (final QName qname : schema.getKeyDefinition()) {
                 keys.put(qname, keyValueContexts.get(qname));
             }
             this.keyValueContexts = ImmutableMap.copyOf(keys);
@@ -392,8 +395,8 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
         public IdentifiableItem<?, ?> deserialize(final NodeIdentifierWithPredicates input) {
             final Collection<QName> keys = schema.getKeyDefinition();
             final ArrayList<Object> bindingValues = new ArrayList<>(keys.size());
-            for (QName key : keys) {
-                Object yangValue = input.getKeyValues().get(key);
+            for (final QName key : keys) {
+                final Object yangValue = input.getKeyValues().get(key);
                 bindingValues.add(keyValueContexts.get(key).deserialize(yangValue));
             }
 
@@ -411,10 +414,10 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
 
         @Override
         public NodeIdentifierWithPredicates serialize(final IdentifiableItem<?, ?> input) {
-            Object value = input.getKey();
+            final Object value = input.getKey();
 
-            Map<QName, Object> values = new LinkedHashMap<>();
-            for (Entry<QName, ValueContext> valueCtx : keyValueContexts.entrySet()) {
+            final Map<QName, Object> values = new LinkedHashMap<>();
+            for (final Entry<QName, ValueContext> valueCtx : keyValueContexts.entrySet()) {
                 values.put(valueCtx.getKey(), valueCtx.getValue().getAndSerialize(value));
             }
             return new NodeIdentifierWithPredicates(schema.getQName(), values);
@@ -423,8 +426,8 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
 
     @SuppressWarnings("unchecked")
     private static Constructor<? extends Identifier<?>> getConstructor(final Class<? extends Identifier<?>> clazz) {
-        for (@SuppressWarnings("rawtypes") Constructor constr : clazz.getConstructors()) {
-            Class<?>[] parameters = constr.getParameterTypes();
+        for (@SuppressWarnings("rawtypes") final Constructor constr : clazz.getConstructors()) {
+            final Class<?>[] parameters = constr.getParameterTypes();
             if (!clazz.equals(parameters[0])) {
                 // It is not copy constructor;
                 return constr;
@@ -436,11 +439,11 @@ class BindingCodecContext implements CodecContextFactory, Immutable {
     @Override
     public Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> getPathArgumentCodec(final Class<?> listClz,
             final ListSchemaNode schema) {
-        Class<? extends Identifier<?>> identifier = ClassLoaderUtils.findFirstGenericArgument(listClz,
+        final Class<? extends Identifier<?>> identifier = ClassLoaderUtils.findFirstGenericArgument(listClz,
                 Identifiable.class);
-        Map<QName, ValueContext> valueCtx = new HashMap<>();
-        for (LeafNodeCodecContext leaf : getLeafNodes(identifier, schema).values()) {
-            QName name = leaf.getDomPathArgument().getNodeType();
+        final Map<QName, ValueContext> valueCtx = new HashMap<>();
+        for (final LeafNodeCodecContext leaf : getLeafNodes(identifier, schema).values()) {
+            final QName name = leaf.getDomPathArgument().getNodeType();
             valueCtx.put(name, new ValueContext(identifier, leaf));
         }
         return new IdentifiableItemCodec(schema, identifier, listClz, valueCtx);

@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.data.codec.api;
 
 import java.util.Map.Entry;
-
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -44,6 +43,7 @@ public interface BindingNormalizedNodeWriterFactory {
      *            Stream writer on which events will be invoked.
      * @return Instance Identifier and {@link BindingStreamEventWriter}
      *         which will write to supplied {@link NormalizedNodeStreamWriter}.
+     * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
      */
     Entry<YangInstanceIdentifier, BindingStreamEventWriter> newWriterAndIdentifier(InstanceIdentifier<?> path,
             NormalizedNodeStreamWriter domWriter);
@@ -64,6 +64,7 @@ public interface BindingNormalizedNodeWriterFactory {
      * @param domWriter Stream writer on which events will be invoked.
      * @return {@link BindingStreamEventWriter}
      *         which will write to supplied {@link NormalizedNodeStreamWriter}.
+     * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
      */
     BindingStreamEventWriter newWriter(InstanceIdentifier<?> path, NormalizedNodeStreamWriter domWriter);
 }
