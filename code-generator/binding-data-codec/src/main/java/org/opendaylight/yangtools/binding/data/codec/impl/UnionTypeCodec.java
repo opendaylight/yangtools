@@ -16,9 +16,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.UnionType;
 
 final class UnionTypeCodec extends ReflectionBasedCodec {
 
@@ -44,12 +46,24 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
                     String methodName = "get" + BindingMapping.getClassName(subtype.getQName());
                     Method valueGetter = unionCls.getMethod(methodName);
                     Class<?> valueType = valueGetter.getReturnType();
-                    SchemaUnawareCodec valueCodec = ValueTypeCodec.getCodecFor(valueType, subtype);
+                    Codec<Object, Object> valueCodec = UnionTypeCodec.getCodecForType(valueType, subtype);
                     values.add(new UnionValueOptionContext(valueType,valueGetter, valueCodec));
                 }
                 return new UnionTypeCodec(unionCls, values);
             }
         };
+    }
+
+    private static Codec<Object, Object> getCodecForType(Class valueType, TypeDefinition subtype) {
+        if (subtype.getBaseType() instanceof UnionType) {
+            try {
+                return UnionTypeCodec.loader(valueType, (UnionType) subtype.getBaseType()).call();
+            } catch (final Exception e) {
+                throw new IllegalStateException("Could not construct Union Type Codec");
+            }
+        } else {
+            return ValueTypeCodec.getCodecFor(valueType, subtype);
+        }
     }
 
     @Override
