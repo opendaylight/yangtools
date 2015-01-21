@@ -97,7 +97,7 @@ abstract class ValueTypeCodec implements Codec<Object, Object> {
         while (rootType.getBaseType() != null) {
             rootType = rootType.getBaseType();
         }
-        if(rootType instanceof EmptyTypeDefinition) {
+        if (rootType instanceof EmptyTypeDefinition) {
             return EMPTY_CODEC;
         }
         return NOOP_CODEC;
