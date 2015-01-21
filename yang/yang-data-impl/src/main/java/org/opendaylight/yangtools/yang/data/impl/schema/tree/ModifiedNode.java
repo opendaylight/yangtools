@@ -16,7 +16,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
-import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
@@ -147,7 +146,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             currentMetadata = Optional.absent();
         }
 
-        ModifiedNode newlyCreated = new ModifiedNode(child, currentMetadata, isOrdered);
+        final ModifiedNode newlyCreated = new ModifiedNode(child, currentMetadata, isOrdered);
         children.put(child, newlyCreated);
         return newlyCreated;
     }
