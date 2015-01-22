@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.util.repo.SourceIdentifier;
  * {@link YangSourceContext}.
  *
  */
+@Deprecated
 @NotThreadSafe
 public final class YangSourceFromDependencyInfoResolver extends YangSourceContextResolver {
 

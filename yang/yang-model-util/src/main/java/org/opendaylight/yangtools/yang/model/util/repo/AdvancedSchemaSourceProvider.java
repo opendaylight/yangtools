@@ -40,7 +40,11 @@ import com.google.common.base.Optional;
  *
  * @param <T>
  *            Schema source representation type provided by this implementation
+ *
+ * @deprecated Replaced with {@link org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider}
+ * and related APIs.
  */
+@Deprecated
 public interface AdvancedSchemaSourceProvider<T> extends SchemaSourceProvider<T> {
 
     /**

@@ -33,8 +33,11 @@ import com.google.common.annotations.Beta;
  *
  * @param <I> Input schema source representation
  * @param <O> Output schema source representation
+ *
+ * @deprecated Replaced with {@link org.opendaylight.yangtools.yang.model.repo.util.SchemaSourceTransformer}
  */
 @Beta
+@Deprecated
 public interface SchemaSourceTransformation<I, O> {
 
     /**

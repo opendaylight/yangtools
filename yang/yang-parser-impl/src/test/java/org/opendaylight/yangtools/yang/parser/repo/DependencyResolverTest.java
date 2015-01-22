@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
 
+@Deprecated
 public class DependencyResolverTest {
 
     @Test

@@ -56,36 +56,37 @@ import org.slf4j.LoggerFactory;
  * </ul>
  *
  */
+@Deprecated
 @NotThreadSafe
 public abstract class YangSourceContextResolver {
 
     /**
-     * 
+     *
      * State of source code resolution
-     * 
+     *
      */
     public enum ResolutionState {
         /**
-         * 
+         *
          * Source was missing during source resolution
-         * 
+         *
          */
-        MISSING_SOURCE, 
+        MISSING_SOURCE,
         /**
-         * 
-         * One or multiple of dependencies of source are missing 
-         * 
+         *
+         * One or multiple of dependencies of source are missing
+         *
          */
-        MISSING_DEPENDENCY, 
+        MISSING_DEPENDENCY,
         /**
          * Other error ocurred during resolution
-         * 
+         *
          */
-        OTHER_ERROR, 
+        OTHER_ERROR,
         /**
          * Source, its dependencies and its transient dependencies
          * are resolved.
-         * 
+         *
          */
         EVERYTHING_OK,
     }

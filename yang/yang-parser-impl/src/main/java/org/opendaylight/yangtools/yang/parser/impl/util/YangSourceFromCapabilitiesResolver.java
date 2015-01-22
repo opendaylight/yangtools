@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.util.repo.SourceIdentifier;
  * and there is {@link SchemaSourceProvider} able to retrieve YANG models.
  *
  */
+@Deprecated
 public final class YangSourceFromCapabilitiesResolver extends YangSourceContextResolver {
 
     private final Iterable<QName> capabilities;

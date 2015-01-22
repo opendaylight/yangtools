@@ -45,6 +45,7 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
  * @see SubmoduleDependencyInfo
  *
  */
+
 public abstract class YangModelDependencyInfo {
 
     private final String name;

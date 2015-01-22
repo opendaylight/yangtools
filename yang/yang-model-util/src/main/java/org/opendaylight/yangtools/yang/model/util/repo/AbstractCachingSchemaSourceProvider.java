@@ -7,11 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.util.repo;
 
-import org.opendaylight.yangtools.concepts.Delegator;
-
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import org.opendaylight.yangtools.concepts.Delegator;
 
 
 /**
@@ -21,7 +20,10 @@ import com.google.common.base.Preconditions;
  *
  * @param <I> Input Schema Source Representation
  * @param <O> Output Schema Source Representation
+ *
+ * @deprecated Replaced with {@link org.opendaylight.yangtools.yang.model.repo.util.AbstractSchemaSourceCache}
  */
+@Deprecated
 public abstract class AbstractCachingSchemaSourceProvider<I, O> implements AdvancedSchemaSourceProvider<O>,
         Delegator<AdvancedSchemaSourceProvider<I>> {
 

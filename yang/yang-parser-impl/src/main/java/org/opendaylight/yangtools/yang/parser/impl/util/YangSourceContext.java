@@ -57,6 +57,7 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils;
  *
  */
 // FIXME: for some reason this class is Closeable even though close is never called and no resources are leaked
+@Deprecated
 @ThreadSafe
 public class YangSourceContext implements AdvancedSchemaSourceProvider<InputStream>, Closeable,
         Delegator<AdvancedSchemaSourceProvider<InputStream>> {
@@ -70,11 +71,11 @@ public class YangSourceContext implements AdvancedSchemaSourceProvider<InputStre
 
     /**
      * Construct YANG Source Context
-     * 
+     *
      * @param validSourcesSet Set of identifiers of valid sources
      * @param missingSourcesSet Set of identifiers of missing sources
      * @param missingDependenciesMap Map of identifiers of resolved sources and their missing imports.
-     * @param sourceProvider Source provider which was used for context resolution or 
+     * @param sourceProvider Source provider which was used for context resolution or
      *          null if provider was not used.
      */
     YangSourceContext(final ImmutableSet<SourceIdentifier> validSourcesSet,
