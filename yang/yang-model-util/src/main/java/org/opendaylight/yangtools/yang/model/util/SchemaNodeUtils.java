@@ -7,10 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 
 public class SchemaNodeUtils {
 
@@ -36,4 +41,24 @@ public class SchemaNodeUtils {
         }
         return previous.orNull();
     }
+
+    /**
+     * Returns RPC input or output schema based on supplied QName
+     *
+     * @param rpc RPC Definition
+     * @param qname input or output QName with namespace same as RPC
+     * @return input or output schema. Returns null if RPC does not have input/output specified.
+     */
+    public static @Nullable ContainerSchemaNode getRpcDataSchema(final @Nonnull RpcDefinition rpc, @Nonnull final QName qname) {
+        Preconditions.checkNotNull(rpc, "Rpc Schema must not be null");
+        Preconditions.checkNotNull(qname,"QName must not be null");
+        switch (qname.getLocalName()) {
+           case "input":
+               return rpc.getInput();
+           case "output":
+               return rpc.getOutput();
+           default:
+               throw new IllegalArgumentException("Supplied qname " + qname + " does not represent rpc input or output.");
+           }
+       }
 }

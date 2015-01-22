@@ -8,9 +8,11 @@
 package org.opendaylight.yangtools.binding.data.codec.api;
 
 import java.util.Map.Entry;
-
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
+import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 
@@ -45,8 +47,8 @@ public interface BindingNormalizedNodeWriterFactory {
      * @return Instance Identifier and {@link BindingStreamEventWriter}
      *         which will write to supplied {@link NormalizedNodeStreamWriter}.
      */
-    Entry<YangInstanceIdentifier, BindingStreamEventWriter> newWriterAndIdentifier(InstanceIdentifier<?> path,
-            NormalizedNodeStreamWriter domWriter);
+    @Nonnull Entry<YangInstanceIdentifier, BindingStreamEventWriter> newWriterAndIdentifier(@Nonnull InstanceIdentifier<?> path,
+            @Nonnull NormalizedNodeStreamWriter domWriter);
 
     /**
      *
@@ -65,5 +67,41 @@ public interface BindingNormalizedNodeWriterFactory {
      * @return {@link BindingStreamEventWriter}
      *         which will write to supplied {@link NormalizedNodeStreamWriter}.
      */
-    BindingStreamEventWriter newWriter(InstanceIdentifier<?> path, NormalizedNodeStreamWriter domWriter);
+    @Nonnull
+    BindingStreamEventWriter newWriter(@Nonnull InstanceIdentifier<?> path,
+            @Nonnull NormalizedNodeStreamWriter domWriter);
+
+    /**
+     *
+     * Creates a {@link BindingStreamEventWriter} for rpc data which will
+     * translate to NormalizedNode model and invoke proper events on supplied
+     * {@link NormalizedNodeStreamWriter}.
+     *
+     * @param rpcInputOrOutput Binding class representing RPC input or output,
+     *            for which writer should be instantiated
+     * @param domWriter
+     *            Stream writer on which events will be invoked.
+     * @return {@link BindingStreamEventWriter} which will write to supplied
+     *         {@link NormalizedNodeStreamWriter}.
+     */
+    @Nonnull
+    BindingStreamEventWriter newRpcWriter(@Nonnull Class<? extends DataContainer> rpcInputOrOutput,
+            @Nonnull NormalizedNodeStreamWriter domWriter);
+
+    /**
+     *
+     * Creates a {@link BindingStreamEventWriter} for notification which will
+     * translate to NormalizedNode model and invoke proper events on supplied
+     * {@link NormalizedNodeStreamWriter}.
+     *
+     * @param notification Binding class representing notification,
+     *            for which writer should be instantiated
+     * @param domWriter
+     *            Stream writer on which events will be invoked.
+     * @return {@link BindingStreamEventWriter} which will write to supplied
+     *         {@link NormalizedNodeStreamWriter}.
+     */
+    @Nonnull
+    BindingStreamEventWriter newNotificationWriter(@Nonnull Class<? extends Notification> notification,
+            @Nonnull NormalizedNodeStreamWriter domWriter);
 }

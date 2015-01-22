@@ -12,18 +12,15 @@ import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map.Entry;
-
 import javassist.CannotCompileException;
 import javassist.CtClass;
 import javassist.CtField;
 import javassist.CtMethod;
 import javassist.Modifier;
 import javassist.NotFoundException;
-
 import org.opendaylight.yangtools.binding.data.codec.gen.spi.StaticConstantDefinition;
 import org.opendaylight.yangtools.binding.data.codec.util.AugmentableDispatchSerializer;
 import org.opendaylight.yangtools.binding.generator.util.Types;
@@ -42,6 +39,7 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,7 +120,7 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
             try {
                 cls = (Class<? extends DataObjectSerializerImplementation>) ClassLoaderUtils
                         .loadClass(type.getClassLoader(), serializerName);
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 cls = generateSerializer(type, serializerName);
             }
 
@@ -145,7 +143,7 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
              * classes. This should be almost as good as that, as we are resetting the
              * fields to final before ever leaking the class.
              */
-            for (StaticConstantDefinition constant : source.getStaticConstants()) {
+            for (final StaticConstantDefinition constant : source.getStaticConstants()) {
                 final Field field = cls.getDeclaredField(constant.getName());
                 field.setAccessible(true);
                 field.set(null, constant.getValue());
@@ -162,15 +160,15 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
     private DataObjectSerializerSource generateEmitterSource(final Class<?> type, final String serializerName) {
         Types.typeForClass(type);
         javassist.appendClassLoaderIfMissing(type.getClassLoader());
-        Entry<GeneratedType, Object> typeWithSchema = context.getTypeWithSchema(type);
-        GeneratedType generatedType = typeWithSchema.getKey();
-        Object schema = typeWithSchema.getValue();
+        final Entry<GeneratedType, Object> typeWithSchema = context.getTypeWithSchema(type);
+        final GeneratedType generatedType = typeWithSchema.getKey();
+        final Object schema = typeWithSchema.getValue();
 
         final DataObjectSerializerSource source;
         if (schema instanceof ContainerSchemaNode) {
             source = generateContainerSerializer(generatedType, (ContainerSchemaNode) schema);
         } else if (schema instanceof ListSchemaNode){
-            ListSchemaNode casted = (ListSchemaNode) schema;
+            final ListSchemaNode casted = (ListSchemaNode) schema;
             if (casted.getKeyDefinition().isEmpty()) {
                 source = generateUnkeyedListEntrySerializer(generatedType, casted);
             } else {
@@ -180,6 +178,8 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
             source = generateSerializer(generatedType,(AugmentationSchema) schema);
         } else if(schema instanceof ChoiceCaseNode) {
             source = generateCaseSerializer(generatedType,(ChoiceCaseNode) schema);
+        } else if(schema instanceof NotificationDefinition) {
+            source = generateNotificationSerializer(generatedType,(NotificationDefinition) schema);
         } else {
             throw new UnsupportedOperationException("Schema type " + schema.getClass() + " is not supported");
         }
@@ -205,8 +205,8 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
                     );
 
                     // Generate any static fields
-                    for (StaticConstantDefinition def : source.getStaticConstants()) {
-                        CtField field = new CtField(javassist.asCtClass(def.getType()), def.getName(), cls);
+                    for (final StaticConstantDefinition def : source.getStaticConstants()) {
+                        final CtField field = new CtField(javassist.asCtClass(def.getType()), def.getName(), cls);
                         field.setModifiers(Modifier.PRIVATE + Modifier.STATIC);
                         cls.addField(field);
                     }
@@ -219,7 +219,7 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
                     cls.setModifiers(Modifier.setPublic(cls.getModifiers()));
                 }
             });
-        } catch (NotFoundException e) {
+        } catch (final NotFoundException e) {
             LOG.error("Failed to instatiate serializer {}", source, e);
             throw new LinkageError("Unexpected instantation problem: serializer prototype not found", e);
         }
@@ -295,5 +295,19 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
      * @return Source for augmentation node writer
      */
     protected abstract DataObjectSerializerSource generateSerializer(GeneratedType type, AugmentationSchema schema);
+
+    /**
+     * Generates serializer source for notification node,
+     * which will read supplied binding type and invoke proper methods
+     * on supplied {@link BindingStreamEventWriter}.
+     * <p>
+     * Implementation is required to recursively invoke events
+     * for all reachable binding objects.
+     *
+     * @param type Binding type of notification
+     * @param node Schema of notification
+     * @return Source for notification node writer
+     */
+    protected abstract DataObjectSerializerSource generateNotificationSerializer(GeneratedType type, NotificationDefinition node);
 
 }
