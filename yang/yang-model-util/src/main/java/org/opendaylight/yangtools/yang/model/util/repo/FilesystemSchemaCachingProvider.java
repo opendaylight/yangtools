@@ -16,17 +16,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TreeMap;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.opendaylight.yangtools.yang.model.repo.util.FilesystemSchemaSourceCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -159,56 +153,9 @@ public final class FilesystemSchemaCachingProvider<I> extends AbstractCachingSch
     }
 
     public static File sourceIdToFile(final SourceIdentifier identifier, final File storageDirectory) {
-        File file = null;
-        String rev = identifier.getRevision();
-        if (rev == null || rev.isEmpty()) {
-            file = findFileWithNewestRev(identifier, storageDirectory);
-        } else {
-            file = new File(storageDirectory, identifier.toYangFilename());
-        }
-        return file;
-    }
-
-    private static File findFileWithNewestRev(final SourceIdentifier identifier, final File storageDirectory) {
-        File[] files = storageDirectory.listFiles(new FilenameFilter() {
-            final Pattern p = Pattern.compile(Pattern.quote(identifier.getName()) + "(\\.yang|@\\d\\d\\d\\d-\\d\\d-\\d\\d.yang)");
-
-            @Override
-            public boolean accept(final File dir, final String name) {
-                return p.matcher(name).matches();
-            }
-        });
-
-        if (files.length == 0) {
-            return new File(storageDirectory, identifier.toYangFilename());
-        }
-        if (files.length == 1) {
-            return files[0];
-        }
-
-        File file = null;
-        TreeMap<Date, File> map = new TreeMap<>();
-        for (File sorted : files) {
-            String fileName = sorted.getName();
-            Matcher m = REVISION_PATTERN.matcher(fileName);
-            if (m.find()) {
-                String revStr = m.group();
-                DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-                try {
-                    Date d = df.parse(revStr);
-                    map.put(d, sorted);
-                } catch (ParseException e) {
-                    LOG.info("Unable to parse date from yang file name");
-                    map.put(new Date(0L), sorted);
-                }
-
-            } else {
-                map.put(new Date(0L), sorted);
-            }
-        }
-        file = map.lastEntry().getValue();
-
-        return file;
+        org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier newIdentifier =
+                org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier.create(identifier.getName(), Optional.fromNullable(identifier.getRevision()));
+        return FilesystemSchemaSourceCache.sourceIdToFile(newIdentifier, storageDirectory);
     }
 
     public static FilesystemSchemaCachingProvider<String> createFromStringSourceProvider(

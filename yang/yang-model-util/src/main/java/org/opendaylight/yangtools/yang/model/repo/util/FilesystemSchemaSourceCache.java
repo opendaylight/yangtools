@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.util;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -15,6 +16,7 @@ import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.FileVisitResult;
@@ -23,9 +25,14 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
@@ -35,7 +42,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource.Costs;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
-import org.opendaylight.yangtools.yang.model.util.repo.FilesystemSchemaCachingProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,7 +93,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
     private static final Pattern CACHED_FILE_PATTERN =
             Pattern.compile(
                     "(?<moduleName>[^@]+)" +
-                    "(@(?<revision>" + FilesystemSchemaCachingProvider.REVISION_PATTERN + "))?");
+                    "(@(?<revision>" + SourceIdentifier.REVISION_PATTERN + "))?");
 
     /**
      * Restore cache state
@@ -109,7 +115,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
 
     @Override
     public synchronized CheckedFuture<? extends T, SchemaSourceException> getSource(final SourceIdentifier sourceIdentifier) {
-        final File file = FilesystemSchemaCachingProvider.sourceIdToFile(toLegacy(sourceIdentifier), storageDirectory);
+        final File file = sourceIdToFile(sourceIdentifier, storageDirectory);
         if(file.exists() && file.canRead()) {
             LOG.trace("Source {} found in cache as {}", sourceIdentifier, file);
             final SchemaSourceRepresentation restored = storageAdapters.get(representation).restore(sourceIdentifier, file);
@@ -135,15 +141,74 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
     }
 
     private File sourceIdToFile(final T source) {
-        return FilesystemSchemaCachingProvider.sourceIdToFile(toLegacy(source.getIdentifier()), storageDirectory);
+        return sourceIdToFile(source.getIdentifier(), storageDirectory);
+    }
+    /*
+     *  FIXME: Move of code from deprecated FilesystemSchemaCachingProvider
+     *  to reduce cycle. Decrease visibility once FilesystemSchemaCachingProvider
+     *  is removed.
+     */
+    @Beta
+    public static File sourceIdToFile(final SourceIdentifier identifier, final File storageDirectory) {
+        File file = null;
+        String rev = identifier.getRevision();
+        if (rev == null || rev.isEmpty()) {
+            file = findFileWithNewestRev(identifier, storageDirectory);
+        } else {
+            file = new File(storageDirectory, identifier.toYangFilename());
+        }
+        return file;
+    }
+
+    private static File findFileWithNewestRev(final SourceIdentifier identifier, final File storageDirectory) {
+        File[] files = storageDirectory.listFiles(new FilenameFilter() {
+            final Pattern p = Pattern.compile(Pattern.quote(identifier.getName()) + "(\\.yang|@\\d\\d\\d\\d-\\d\\d-\\d\\d.yang)");
+
+            @Override
+            public boolean accept(final File dir, final String name) {
+                return p.matcher(name).matches();
+            }
+        });
+
+        if (files.length == 0) {
+            return new File(storageDirectory, identifier.toYangFilename());
+        }
+        if (files.length == 1) {
+            return files[0];
+        }
+
+        File file = null;
+        TreeMap<Date, File> map = new TreeMap<>();
+        for (File sorted : files) {
+            String fileName = sorted.getName();
+            Matcher m = SourceIdentifier.REVISION_PATTERN.matcher(fileName);
+            if (m.find()) {
+                String revStr = m.group();
+                /*
+                 * FIXME: Consider using string for comparison.
+                 * String is comparable, pattern check tested format
+                 * so comparing as ASCII string should be sufficient
+                 */
+                DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                try {
+                    Date d = df.parse(revStr);
+                    map.put(d, sorted);
+                } catch (ParseException e) {
+                    LOG.info("Unable to parse date from yang file name");
+                    map.put(new Date(0L), sorted);
+                }
+
+            } else {
+                map.put(new Date(0L), sorted);
+            }
+        }
+        file = map.lastEntry().getValue();
+
+        return file;
     }
 
     private void storeSource(final File file, final T schemaRepresentation) {
         storageAdapters.get(representation).store(file, schemaRepresentation);
-    }
-
-    private static org.opendaylight.yangtools.yang.model.util.repo.SourceIdentifier toLegacy(final SourceIdentifier identifier) {
-        return new org.opendaylight.yangtools.yang.model.util.repo.SourceIdentifier(identifier.getName(), Optional.fromNullable(identifier.getRevision()));
     }
 
     private static abstract class StorageAdapter<T extends SchemaSourceRepresentation> {
