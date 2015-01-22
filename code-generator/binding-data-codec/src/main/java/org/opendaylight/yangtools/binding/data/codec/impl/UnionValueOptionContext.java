@@ -12,12 +12,12 @@ import java.lang.reflect.Method;
 import org.opendaylight.yangtools.concepts.Codec;
 
 final class UnionValueOptionContext {
-
+    // FIXME: migrate to invocation
     final Method getter;
     final Class<?> bindingType;
     final Codec<Object,Object> codec;
 
-    UnionValueOptionContext(final Class<?> valueType,final Method getter, final Codec<Object, Object> codec) {
+    UnionValueOptionContext(final Class<?> valueType, final Method getter, final Codec<Object, Object> codec) {
         this.getter = getter;
         this.bindingType = valueType;
         this.codec = codec;

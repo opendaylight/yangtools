@@ -23,9 +23,10 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> {
+    // FIXME: migrate to invocation API
+    private final Constructor<? extends Identifier<?>> constructor;
     private final Map<QName, ValueContext> keyValueContexts;
     private final ListSchemaNode schema;
-    private final Constructor<? extends Identifier<?>> constructor;
     private final Class<?> identifiable;
 
     public IdentifiableItemCodec(final ListSchemaNode schema, final Class<? extends Identifier<?>> keyClass,

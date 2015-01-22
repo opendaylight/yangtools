@@ -61,6 +61,7 @@ abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataC
     private final ImmutableSortedMap<Method, NodeContextSupplier> byMethod;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byStreamClass;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClass;
+    // FIXME: migrate to invocation API
     private final Constructor<?> proxyConstructor;
 
     // FIXME: this field seems to be unused
