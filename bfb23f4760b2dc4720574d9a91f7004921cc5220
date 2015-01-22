@@ -16,6 +16,23 @@
       "revId": "bfb23f4760b2dc4720574d9a91f7004921cc5220",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_a7bedafd",
+        "filename": "code-generator/binding-generator-impl/src/test/java/org/opendaylight/yangtools/sal/binding/generator/impl/ReplaceAllIllegalCharsTest.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-22T18:44:45Z",
+      "side": 1,
+      "message": "no .* imports, please.",
+      "revId": "bfb23f4760b2dc4720574d9a91f7004921cc5220",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
