@@ -9,13 +9,12 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import java.util.Collections;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
-
-import java.util.Collections;
 
 /**
  * Internal utility class for an empty candidate. We instantiate this class
@@ -47,6 +46,11 @@ final class NoopDataTreeCandidate extends AbstractDataTreeCandidate {
         @Override
         public Optional<NormalizedNode<?, ?>> getDataBefore() {
             return Optional.absent();
+        }
+
+        @Override
+        public DataTreeCandidateNode getModifiedChild(final PathArgument identifier) {
+            return null;
         }
     };
 
