@@ -1,9 +1,8 @@
 package org.opendaylight.yangtools.yang.model.util.repo;
 
-import org.opendaylight.yangtools.concepts.Delegator;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import org.opendaylight.yangtools.concepts.Delegator;
 
 /**
  *
@@ -16,7 +15,10 @@ import com.google.common.base.Preconditions;
  *            Representation of schema sources used by delegate
  * @param <O>
  *            Representation of schema sources exposed by this provider
+ *
+ * @deprecated Replaced with {@link org.opendaylight.yangtools.yang.model.repo.util.SchemaSourceTransformer}
  */
+@Deprecated
 public final class TransformingSourceProvider<I, O> implements //
         AdvancedSchemaSourceProvider<O>, Delegator<AdvancedSchemaSourceProvider<I>> {
 

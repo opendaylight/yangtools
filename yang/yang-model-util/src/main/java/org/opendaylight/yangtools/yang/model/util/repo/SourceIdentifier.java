@@ -7,9 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.util.repo;
 
-import org.opendaylight.yangtools.concepts.Immutable;
-
 import com.google.common.base.Optional;
+import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
  *
@@ -34,7 +33,9 @@ import com.google.common.base.Optional;
  * http://tools.ietf.org/html/rfc6022#section-3.1 ).
  *
  *
+ * @deprecated Replaced with {@link org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier}
  */
+@Deprecated
 public final class SourceIdentifier implements Immutable {
 
     private final String name;

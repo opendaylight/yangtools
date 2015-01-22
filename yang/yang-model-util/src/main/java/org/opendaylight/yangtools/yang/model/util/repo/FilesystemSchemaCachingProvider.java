@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.util.repo;
 
+import com.google.common.base.Charsets;
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,14 +27,8 @@ import java.util.Date;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Charsets;
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 
 /**
  * Filesystem-based schema caching source provider
@@ -42,7 +40,10 @@ import com.google.common.base.Preconditions;
  * @param <I>
  *            Input format in which schema source is represented.
  *
+ * @deprecated Replaced with {@link org.opendaylight.yangtools.yang.model.repo.util.FilesystemSchemaSourceCache}
+ *
  */
+@Deprecated
 public final class FilesystemSchemaCachingProvider<I> extends AbstractCachingSchemaSourceProvider<I, InputStream> {
     private static final Logger LOG = LoggerFactory.getLogger(FilesystemSchemaCachingProvider.class);
     public static final Pattern REVISION_PATTERN = Pattern.compile("\\d\\d\\d\\d-\\d\\d-\\d\\d");

@@ -17,7 +17,9 @@ import com.google.common.base.Optional;
  * for other components.
  *
  * @param <F> Format in which YANG source is represented.
+ * @deprecated Repalced With {@link AdvancedSchemaSourceProvider}
  */
+@Deprecated
 public interface SchemaSourceProvider<F> {
 
     /**

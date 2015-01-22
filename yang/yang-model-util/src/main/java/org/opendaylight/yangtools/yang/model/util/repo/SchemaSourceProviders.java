@@ -7,21 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.model.util.repo;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
-import org.opendaylight.yangtools.concepts.Delegator;
-
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import org.opendaylight.yangtools.concepts.Delegator;
 
 /**
  *
  * Utility functions for {@link SchemaSourceProvider}
  *
+ *
+ * @deprecated Utility classes for deprecated APIs.
  */
+@Deprecated
 public final class SchemaSourceProviders {
 
     @SuppressWarnings("rawtypes")
