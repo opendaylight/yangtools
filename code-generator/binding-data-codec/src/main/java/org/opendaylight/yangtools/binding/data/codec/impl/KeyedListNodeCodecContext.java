@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class KeyedListNodeCodecContext extends ListNodeCodecContext {
     private final Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> codec;
+    // FIXME: migrate to invocation API
     private final Method keyGetter;
 
     KeyedListNodeCodecContext(final DataContainerCodecPrototype<ListSchemaNode> prototype) {

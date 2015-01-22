@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.binding.BindingMapping;
 
 final class ValueContext {
     private final Codec<Object, Object> codec;
+    // FIXME: migrate to invocation API
     private final Method getter;
 
     ValueContext(final Class<?> identifier, final LeafNodeCodecContext leaf) {
