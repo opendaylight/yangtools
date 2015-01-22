@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import com.google.common.base.Optional;
+import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -29,11 +30,11 @@ public interface DataTreeCandidateNode {
     @Nonnull PathArgument getIdentifier();
 
     /**
-     * Get an unmodifiable iterable of modified child nodes.
+     * Get an unmodifiable collection of modified child nodes.
      *
-     * @return Unmodifiable iterable of modified child nodes.
+     * @return Unmodifiable collection of modified child nodes.
      */
-    @Nonnull Iterable<DataTreeCandidateNode> getChildNodes();
+    @Nonnull Collection<DataTreeCandidateNode> getChildNodes();
 
     /**
      * Returns modified child or null if child was not modified

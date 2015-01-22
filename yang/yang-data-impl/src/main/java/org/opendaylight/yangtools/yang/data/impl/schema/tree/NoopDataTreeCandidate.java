@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import java.util.Collection;
 import java.util.Collections;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -29,7 +30,7 @@ final class NoopDataTreeCandidate extends AbstractDataTreeCandidate {
         }
 
         @Override
-        public Iterable<DataTreeCandidateNode> getChildNodes() {
+        public Collection<DataTreeCandidateNode> getChildNodes() {
             return Collections.emptyList();
         }
 
