@@ -7,8 +7,12 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import java.util.concurrent.Callable;
 import org.opendaylight.yangtools.binding.data.codec.impl.ValueTypeCodec.SchemaUnawareCodec;
@@ -19,26 +23,26 @@ import org.opendaylight.yangtools.binding.data.codec.impl.ValueTypeCodec.SchemaU
  * types, which are same as in NormalizedNode model.
  *
  */
-class EncapsulatedValueCodec extends ReflectionBasedCodec implements SchemaUnawareCodec {
+final class EncapsulatedValueCodec extends ReflectionBasedCodec implements SchemaUnawareCodec {
+    private static final Lookup LOOKUP = MethodHandles.publicLookup();
+    private static final MethodType OBJ_METHOD = MethodType.methodType(Object.class, Object.class);
+    private final MethodHandle constructor;
+    private final MethodHandle getter;
 
-    private final Method getter;
-    private final Constructor<?> constructor;
-
-    EncapsulatedValueCodec(final Class<?> typeClz) {
+    private EncapsulatedValueCodec(final Class<?> typeClz, final MethodHandle constructor, final MethodHandle getter) {
         super(typeClz);
-        try {
-            this.getter = typeClz.getMethod("getValue");
-            this.constructor = typeClz.getConstructor(getter.getReturnType());
-        } catch (NoSuchMethodException | SecurityException e) {
-            throw new IllegalStateException("Could not resolve required method.", e);
-        }
+        this.constructor = Preconditions.checkNotNull(constructor);
+        this.getter = Preconditions.checkNotNull(getter);
     }
 
     static Callable<EncapsulatedValueCodec> loader(final Class<?> typeClz) {
         return new Callable<EncapsulatedValueCodec>() {
             @Override
             public EncapsulatedValueCodec call() throws Exception {
-                return new EncapsulatedValueCodec(typeClz);
+                final Method m = typeClz.getMethod("getValue");
+                final MethodHandle getter = LOOKUP.unreflect(m).asType(OBJ_METHOD);
+                final MethodHandle constructor = LOOKUP.findConstructor(typeClz, MethodType.methodType(void.class, m.getReturnType())).asType(OBJ_METHOD);
+                return new EncapsulatedValueCodec(typeClz, constructor, getter);
             }
         };
     }
@@ -46,18 +50,18 @@ class EncapsulatedValueCodec extends ReflectionBasedCodec implements SchemaUnawa
     @Override
     public Object deserialize(final Object input) {
         try {
-            return constructor.newInstance(input);
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new IllegalStateException(e);
+            return constructor.invokeExact(input);
+        } catch (Throwable e) {
+            throw Throwables.propagate(e);
         }
     }
 
     @Override
     public Object serialize(final Object input) {
         try {
-            return getter.invoke(input);
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new IllegalStateException(e);
+            return getter.invokeExact(input);
+        } catch (Throwable e) {
+            throw Throwables.propagate(e);
         }
     }
 }

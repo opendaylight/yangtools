@@ -9,11 +9,14 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedMap;
-import java.lang.reflect.Constructor;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Collection;
@@ -48,7 +51,9 @@ import org.slf4j.LoggerFactory;
 
 abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataContainerCodecContext<T> {
     private static final Logger LOG = LoggerFactory.getLogger(DataObjectCodecContext.class);
-    private static final Class<?>[] CONSTRUCTOR_ARGS = new Class[] { InvocationHandler.class };
+    private static final Lookup LOOKUP = MethodHandles.publicLookup();
+    private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class, InvocationHandler.class);
+    private static final MethodType DATAOBJECT_TYPE = MethodType.methodType(DataObject.class, InvocationHandler.class);
     private static final Comparator<Method> METHOD_BY_ALPHABET = new Comparator<Method>() {
         @Override
         public int compare(final Method o1, final Method o2) {
@@ -61,7 +66,7 @@ abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataC
     private final ImmutableSortedMap<Method, NodeContextSupplier> byMethod;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byStreamClass;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClass;
-    private final Constructor<?> proxyConstructor;
+    private final MethodHandle proxyConstructor;
 
     // FIXME: this field seems to be unused
     private final Method augmentationGetter;
@@ -123,9 +128,9 @@ abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataC
 
         final Class<?> proxyClass = Proxy.getProxyClass(bindingClass().getClassLoader(),  new Class[] { bindingClass() });
         try {
-            proxyConstructor = proxyClass.getConstructor(CONSTRUCTOR_ARGS);
-        } catch (NoSuchMethodException | SecurityException e) {
-            throw new IllegalStateException("Failed to find constructor");
+            proxyConstructor = LOOKUP.findConstructor(proxyClass, CONSTRUCTOR_TYPE).asType(DATAOBJECT_TYPE);
+        } catch (NoSuchMethodException | IllegalAccessException e) {
+            throw new IllegalStateException("Failed to find contructor for class " + proxyClass);
         }
     }
 
@@ -271,9 +276,9 @@ abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataC
 
     protected final DataObject createBindingProxy(final NormalizedNodeContainer<?, ?, ?> node) {
         try {
-            return (DataObject) proxyConstructor.newInstance(new Object[] { new LazyDataObject(this, node) });
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            throw new IllegalStateException("Failed to construct proxy for " + node, e);
+            return (DataObject) proxyConstructor.invokeExact((InvocationHandler)new LazyDataObject(this, node));
+        } catch (Throwable e) {
+            throw Throwables.propagate(e);
         }
     }
 
