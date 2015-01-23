@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -157,7 +158,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * @return all recorded direct child modifications
      */
     @Override
-    Iterable<ModifiedNode> getChildren() {
+    Collection<ModifiedNode> getChildren() {
         return children.values();
     }
 

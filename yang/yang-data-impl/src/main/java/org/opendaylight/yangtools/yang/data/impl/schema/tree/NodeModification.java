@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 
 import com.google.common.base.Optional;
+import java.util.Collection;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
@@ -38,7 +39,7 @@ abstract class NodeModification implements Identifiable<PathArgument> {
     /**
      * Get a read-only view of children nodes.
      *
-     * @return Iterable of all children nodes.
+     * @return Collection of all children nodes.
      */
-    abstract Iterable<? extends NodeModification> getChildren();
+    abstract Collection<? extends NodeModification> getChildren();
 }
