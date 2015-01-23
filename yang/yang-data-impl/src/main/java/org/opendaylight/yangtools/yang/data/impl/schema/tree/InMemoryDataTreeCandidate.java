@@ -10,7 +10,8 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.Collections2;
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -57,8 +58,8 @@ final class InMemoryDataTreeCandidate extends AbstractDataTreeCandidate {
         }
 
         @Override
-        public Iterable<DataTreeCandidateNode> getChildNodes() {
-            return Iterables.transform(mod.getChildren(), new Function<ModifiedNode, DataTreeCandidateNode>() {
+        public Collection<DataTreeCandidateNode> getChildNodes() {
+            return Collections2.transform(mod.getChildren(), new Function<ModifiedNode, DataTreeCandidateNode>() {
                 @Override
                 public DataTreeCandidateNode apply(final ModifiedNode input) {
                     return childNode(input);
