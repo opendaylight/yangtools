@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_d9dd0972",
+        "filename": "code-generator/binding-data-codec/src/test/java/org/opendaylight/yangtools/binding/data/codec/test/UnionTypeTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-01-23T09:13:31Z",
+      "side": 1,
+      "message": "Just for future: Could the QName be reused from generated Wrapper class instead of using QName.create with strings ?",
+      "revId": "134bc3f2bb1d71c55aad9014efde1a9a2d252e40",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
