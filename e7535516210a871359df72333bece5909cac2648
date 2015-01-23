@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_79e155cf",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/SourceIdentifier.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-23T12:48:16Z",
+      "side": 1,
+      "message": "missing javadoc",
+      "revId": "e7535516210a871359df72333bece5909cac2648",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_19e851b3",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/repo/util/FilesystemSchemaSourceCache.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-23T12:48:16Z",
+      "side": 1,
+      "message": "final File file;\n\nmakes sure it is initilized once",
+      "revId": "e7535516210a871359df72333bece5909cac2648",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
