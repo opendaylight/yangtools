@@ -9,17 +9,12 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +28,6 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.sal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
-import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
@@ -65,10 +59,9 @@ import org.slf4j.LoggerFactory;
 
 final class BindingCodecContext implements CodecContextFactory, Immutable {
     private static final Logger LOG = LoggerFactory.getLogger(BindingCodecContext.class);
-    private static final String GETTER_PREFIX = "get";
+    static final String GETTER_PREFIX = "get";
 
-    private final Codec<YangInstanceIdentifier, InstanceIdentifier<?>> instanceIdentifierCodec =
-            new InstanceIdentifierCodec();
+    private final Codec<YangInstanceIdentifier, InstanceIdentifier<?>> instanceIdentifierCodec;
     private final Codec<QName, Class<?>> identityCodec;
     private final BindingRuntimeContext context;
     private final SchemaRootCodecContext root;
@@ -77,6 +70,7 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
         this.context = Preconditions.checkNotNull(context, "Binding Runtime Context is required.");
         this.root = SchemaRootCodecContext.create(this);
         this.identityCodec = new IdentityCodec(context);
+        this.instanceIdentifierCodec = new InstanceIdentifierCodec(this);
     }
 
     @Override
@@ -268,8 +262,6 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
         return ImmutableMap.copyOf(leaves);
     }
 
-
-
     private Codec<Object, Object> getCodec(final Class<?> valueType, final DataSchemaNode schema) {
         final TypeDefinition<?> instantiatedType;
         if (schema instanceof LeafSchemaNode) {
@@ -323,154 +315,6 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
         return ValueTypeCodec.getCodecFor(valueType, instantiatedType);
     }
 
-    private class InstanceIdentifierCodec implements Codec<YangInstanceIdentifier, InstanceIdentifier<?>> {
-
-        @Override
-        public YangInstanceIdentifier serialize(final InstanceIdentifier<?> input) {
-            final List<YangInstanceIdentifier.PathArgument> domArgs = new ArrayList<>();
-            getCodecContextNode(input, domArgs);
-            return YangInstanceIdentifier.create(domArgs);
-        }
-
-        @Override
-        public InstanceIdentifier<?> deserialize(final YangInstanceIdentifier input) {
-            final List<InstanceIdentifier.PathArgument> builder = new ArrayList<>();
-            final NodeCodecContext codec = getCodecContextNode(input, builder);
-            if (codec == null) {
-                return null;
-            }
-            if (codec instanceof ListNodeCodecContext && Iterables.getLast(builder) instanceof InstanceIdentifier.Item) {
-                // We ended up in list, but without key, which means it represent list as a whole,
-                // which is not binding representable.
-                return null;
-            }
-            return InstanceIdentifier.create(builder);
-        }
-    }
-
-    private static class IdentityCodec implements Codec<QName, Class<?>> {
-        private final BindingRuntimeContext context;
-
-        IdentityCodec(final BindingRuntimeContext context) {
-            this.context = Preconditions.checkNotNull(context);
-        }
-
-        @Override
-        public Class<?> deserialize(final QName input) {
-            Preconditions.checkArgument(input != null, "Input must not be null.");
-            return context.getIdentityClass(input);
-        }
-
-        @Override
-        public QName serialize(final Class<?> input) {
-            Preconditions.checkArgument(BaseIdentity.class.isAssignableFrom(input));
-            return BindingReflections.findQName(input);
-        }
-    }
-
-    private static class ValueContext {
-
-        Method getter;
-        Codec<Object, Object> codec;
-
-        public ValueContext(final Class<?> identifier, final LeafNodeCodecContext leaf) {
-            final String getterName = GETTER_PREFIX
-                    + BindingMapping.getClassName(leaf.getDomPathArgument().getNodeType());
-            try {
-                getter = identifier.getMethod(getterName);
-            } catch (NoSuchMethodException | SecurityException e) {
-                throw new IllegalStateException(e);
-            }
-            codec = leaf.getValueCodec();
-        }
-
-        public Object getAndSerialize(final Object obj) {
-            try {
-                final Object value = getter.invoke(obj);
-                Preconditions.checkArgument(value != null,
-                        "All keys must be specified for %s. Missing key is %s. Supplied key is %s",
-                        getter.getDeclaringClass(), getter.getName(), obj);
-                return codec.serialize(value);
-            } catch (IllegalAccessException | InvocationTargetException e) {
-                throw new IllegalArgumentException(e);
-            }
-        }
-
-        public Object deserialize(final Object obj) {
-            return codec.deserialize(obj);
-        }
-
-    }
-
-    private static class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> {
-
-        private final Map<QName, ValueContext> keyValueContexts;
-        private final ListSchemaNode schema;
-        private final Constructor<? extends Identifier<?>> constructor;
-        private final Class<?> identifiable;
-
-        public IdentifiableItemCodec(final ListSchemaNode schema, final Class<? extends Identifier<?>> keyClass,
-                final Class<?> identifiable, final Map<QName, ValueContext> keyValueContexts) {
-            this.schema = schema;
-            this.identifiable = identifiable;
-            this.constructor = getConstructor(keyClass);
-
-            /*
-             * We need to re-index to make sure we instantiate nodes in the order in which
-             * they are defined.
-             */
-            final Map<QName, ValueContext> keys = new LinkedHashMap<>();
-            for (final QName qname : schema.getKeyDefinition()) {
-                keys.put(qname, keyValueContexts.get(qname));
-            }
-            this.keyValueContexts = ImmutableMap.copyOf(keys);
-        }
-
-        @Override
-        public IdentifiableItem<?, ?> deserialize(final NodeIdentifierWithPredicates input) {
-            final Collection<QName> keys = schema.getKeyDefinition();
-            final ArrayList<Object> bindingValues = new ArrayList<>(keys.size());
-            for (final QName key : keys) {
-                final Object yangValue = input.getKeyValues().get(key);
-                bindingValues.add(keyValueContexts.get(key).deserialize(yangValue));
-            }
-
-            final Identifier<?> identifier;
-            try {
-                identifier = constructor.newInstance(bindingValues.toArray());
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-                throw new IllegalStateException(String.format("Failed to instantiate key class %s", constructor.getDeclaringClass()), e);
-            }
-
-            @SuppressWarnings({ "rawtypes", "unchecked" })
-            final IdentifiableItem identifiableItem = new IdentifiableItem(identifiable, identifier);
-            return identifiableItem;
-        }
-
-        @Override
-        public NodeIdentifierWithPredicates serialize(final IdentifiableItem<?, ?> input) {
-            final Object value = input.getKey();
-
-            final Map<QName, Object> values = new LinkedHashMap<>();
-            for (final Entry<QName, ValueContext> valueCtx : keyValueContexts.entrySet()) {
-                values.put(valueCtx.getKey(), valueCtx.getValue().getAndSerialize(value));
-            }
-            return new NodeIdentifierWithPredicates(schema.getQName(), values);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Constructor<? extends Identifier<?>> getConstructor(final Class<? extends Identifier<?>> clazz) {
-        for (@SuppressWarnings("rawtypes") final Constructor constr : clazz.getConstructors()) {
-            final Class<?>[] parameters = constr.getParameterTypes();
-            if (!clazz.equals(parameters[0])) {
-                // It is not copy constructor;
-                return constr;
-            }
-        }
-        throw new IllegalArgumentException("Supplied class " + clazz + "does not have required constructor.");
-    }
-
     @Override
     public Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> getPathArgumentCodec(final Class<?> listClz,
             final ListSchemaNode schema) {
@@ -483,9 +327,4 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
         }
         return new IdentifiableItemCodec(schema, identifier, listClz, valueCtx);
     }
-
-
-
-
-
 }
