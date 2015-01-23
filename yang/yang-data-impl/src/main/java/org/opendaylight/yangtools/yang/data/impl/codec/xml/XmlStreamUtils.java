@@ -50,7 +50,7 @@ public class XmlStreamUtils {
         this(codecProvider, null);
     }
 
-    private XmlStreamUtils(XmlCodecProvider codecProvider, SchemaContext schemaContext) {
+    private XmlStreamUtils(final XmlCodecProvider codecProvider, final SchemaContext schemaContext) {
         this.codecProvider = Preconditions.checkNotNull(codecProvider);
         this.schemaContext = Optional.fromNullable(schemaContext);
     }
@@ -232,7 +232,7 @@ public class XmlStreamUtils {
         }
     }
 
-    private void writeChildElement(XMLStreamWriter writer, Node<?> child, DataNodeContainer parentSchema) throws XMLStreamException {
+    private void writeChildElement(final XMLStreamWriter writer, final Node<?> child, final DataNodeContainer parentSchema) throws XMLStreamException {
         DataSchemaNode childSchema = null;
         if (parentSchema != null) {
             childSchema = SchemaUtils.findFirstSchema(child.getNodeType(), parentSchema.getChildNodes()).orNull();
@@ -337,7 +337,6 @@ public class XmlStreamUtils {
         }
     }
 
-    @SuppressWarnings("deprecation")
     private static void write(final @Nonnull XMLStreamWriter writer, final @Nonnull IdentityrefTypeDefinition type, final @Nonnull Object value) throws XMLStreamException {
         if (value instanceof QName) {
             final QName qname = (QName) value;
@@ -361,7 +360,7 @@ public class XmlStreamUtils {
         }
     }
 
-    public static XmlStreamUtils create(XmlCodecProvider codecProvider, SchemaContext schemaContext) {
+    public static XmlStreamUtils create(final XmlCodecProvider codecProvider, final SchemaContext schemaContext) {
         return new XmlStreamUtils(codecProvider, schemaContext);
     }
 }

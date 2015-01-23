@@ -85,7 +85,6 @@ class DataContainerCodecPrototype<T> implements NodeContextSupplier {
         return new DataContainerCodecPrototype(augClass, arg, schema, factory);
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     static DataContainerCodecPrototype<NotificationDefinition> from(final Class<?> augClass, final NotificationDefinition schema, final CodecContextFactory factory) {
         final PathArgument arg = new NodeIdentifier(schema.getQName());
         return new DataContainerCodecPrototype<NotificationDefinition>(augClass,arg, schema, factory);
@@ -132,6 +131,7 @@ class DataContainerCodecPrototype<T> implements NodeContextSupplier {
     }
 
     @GuardedBy("this")
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     private DataContainerCodecContext createInstance() {
         // FIXME: make protected abstract
         if (schema instanceof ContainerSchemaNode) {
