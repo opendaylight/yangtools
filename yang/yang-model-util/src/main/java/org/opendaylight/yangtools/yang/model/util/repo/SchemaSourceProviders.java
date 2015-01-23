@@ -159,7 +159,6 @@ public final class SchemaSourceProviders {
          * (non-Javadoc)
          * @see org.opendaylight.yangtools.yang.model.util.repo.AdvancedSchemaSourceProvider#getSchemaSource(org.opendaylight.yangtools.yang.model.util.repo.SourceIdentifier)
          */
-        @SuppressWarnings("deprecation")
         @Override
         public Optional<O> getSchemaSource(final SourceIdentifier sourceIdentifier) {
 
@@ -177,7 +176,6 @@ public final class SchemaSourceProviders {
          * @see org.opendaylight.yangtools.yang.model.util.repo.AdvancedSchemaSourceProvider#getSchemaSource(org.opendaylight.yangtools.yang.model.util.repo.SourceIdentifier)
          */
         @Override
-        @SuppressWarnings("deprecation")
         public Optional<O> getSchemaSource(final String moduleName, final Optional<String> revision) {
             return delegate.getSchemaSource(moduleName, revision);
         }
