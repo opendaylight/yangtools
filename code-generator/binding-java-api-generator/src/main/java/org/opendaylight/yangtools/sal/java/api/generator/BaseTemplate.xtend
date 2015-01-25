@@ -101,7 +101,11 @@ abstract class BaseTemplate {
     final protected def getterMethod(GeneratedProperty field) {
         '''
             public «field.returnType.importedName» «field.getterMethodName»() {
+                «IF field.returnType.importedName.contains("[]")»
+                return Arrays.copyOf(«field.fieldName», «field.fieldName».length);
+                «ELSE»
                 return «field.fieldName»;
+                «ENDIF»
             }
         '''
     }
@@ -308,19 +312,6 @@ abstract class BaseTemplate {
         sb.append(NEW_LINE)
 
         return sb.toString
-    }
-
-    def isDocumentationParametersNullOrEmtpy(GeneratedType type) {
-        val boolean isTypeDescriptionNullOrEmpty = type.description.nullOrEmpty
-        val boolean isTypeReferenceNullOrEmpty = type.reference.nullOrEmpty
-        val boolean isTypeModuleNameNullOrEmpty = type.moduleName.nullOrEmpty
-        val boolean isTypeSchemaPathNullOrEmpty = type.schemaPath.nullOrEmpty
-
-        if (isTypeDescriptionNullOrEmpty && isTypeReferenceNullOrEmpty && isTypeModuleNameNullOrEmpty
-            && isTypeSchemaPathNullOrEmpty) {
-            return true
-        }
-        return false
     }
 
     def generateRestrictions(Type type, String paramName, Type returnType) '''
