@@ -94,7 +94,6 @@
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>binding-data-codec</artifactId>
-            <version>0.7.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>
