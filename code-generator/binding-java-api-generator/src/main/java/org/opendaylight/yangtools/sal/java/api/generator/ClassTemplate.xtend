@@ -297,7 +297,7 @@ class ClassTemplate extends BaseTemplate {
 
         «FOR p : properties»
             «IF p.returnType.importedName.contains("[]")»
-            this.«p.fieldName» = Arrays.copyOf(«p.fieldName», «p.fieldName».length);
+            this.«p.fieldName» = «p.fieldName» == null ? null : «p.fieldName».clone();
             «ELSE»
             this.«p.fieldName» = «p.fieldName»;
             «ENDIF»

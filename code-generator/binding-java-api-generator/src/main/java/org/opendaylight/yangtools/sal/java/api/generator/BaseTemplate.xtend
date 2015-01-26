@@ -102,7 +102,7 @@ abstract class BaseTemplate {
         '''
             public «field.returnType.importedName» «field.getterMethodName»() {
                 «IF field.returnType.importedName.contains("[]")»
-                return Arrays.copyOf(«field.fieldName», «field.fieldName».length);
+                return «field.fieldName» == null ? null : «field.fieldName».clone();
                 «ELSE»
                 return «field.fieldName»;
                 «ENDIF»

@@ -53,7 +53,7 @@ class UnionTemplate extends ClassTemplate {
                     «FOR other : finalProperties»
                         «IF other.name.equals("value")»
                             «IF other.returnType.importedName.contains("[]")»
-                            this.«other.fieldName» = Arrays.copyOf(«other.fieldName», «other.fieldName».length);
+                            this.«other.fieldName» = «other.fieldName» == null ? null : «other.fieldName».clone();
                             «ELSE»
                             this.«other.fieldName» = «other.fieldName»;
                             «ENDIF»
@@ -126,7 +126,7 @@ class UnionTemplate extends ClassTemplate {
             «IF !properties.empty»
                 «FOR p : properties»
                     «IF p.returnType.importedName.contains("[]")»
-                    this.«p.fieldName» = Arrays.copyOf(source.«p.fieldName», source.«p.fieldName».length);
+                    this.«p.fieldName» = source.«p.fieldName» == null ? null : source.«p.fieldName».clone();
                     «ELSE»
                     this.«p.fieldName» = source.«p.fieldName»;
                     «ENDIF»
