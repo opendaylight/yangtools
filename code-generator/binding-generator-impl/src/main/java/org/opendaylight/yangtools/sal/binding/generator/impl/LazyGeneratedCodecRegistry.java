@@ -38,6 +38,7 @@ import org.opendaylight.yangtools.sal.binding.generator.util.CodeGenerationExcep
 import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
+import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
@@ -48,7 +49,6 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
-import org.opendaylight.yangtools.yang.binding.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.Node;
@@ -1010,7 +1010,7 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
             }
         }
 
-        private Optional<ChoiceNode> findChoiceInChoiceCases(ChoiceNode choice, Class<?> choiceType) {
+        private Optional<ChoiceNode> findChoiceInChoiceCases(final ChoiceNode choice, final Class<?> choiceType) {
             for(ChoiceCaseNode caze : choice.getCases()) {
                 Optional<ChoiceNode> potential = BindingSchemaContextUtils.findInstantiatedChoice(caze, choiceType);
                 if(potential.isPresent()) {
