@@ -271,7 +271,7 @@ public final class Types {
         public ParametrizedTypeImpl(final Type rawType, final Type[] actTypes) {
             super(rawType.getPackageName(), rawType.getName());
             this.rawType = rawType;
-            this.actualTypes = Arrays.copyOf(actTypes, actTypes.length);
+            this.actualTypes = actTypes.clone();
         }
 
     }
