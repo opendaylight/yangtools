@@ -27,7 +27,6 @@ import javassist.ClassPool
 import javassist.CtClass
 import javassist.CtField
 import javassist.CtMethod
-import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl
 import org.opendaylight.yangtools.binding.generator.util.Types
 import org.opendaylight.yangtools.sal.binding.generator.util.CodeGenerationException
