@@ -26,15 +26,14 @@ import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
-import org.opendaylight.yangtools.yang.model.util.repo.AdvancedSchemaSourceProvider;
-import org.opendaylight.yangtools.yang.model.util.repo.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
         implements //
-        AdvancedSchemaSourceProvider<InputStream>, ModuleInfoRegistry, SchemaContextProvider {
+        ModuleInfoRegistry, SchemaContextProvider {
 
     private ModuleInfoBackedContext(final ClassLoadingStrategy loadingStrategy) {
         this.backingLoadingStrategy = loadingStrategy;
@@ -152,24 +151,6 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
         resolveModuleInfo(yangModuleInfo);
 
         return registration;
-    }
-
-    @Override
-    public Optional<InputStream> getSchemaSource(final SourceIdentifier sourceIdentifier) {
-        YangModuleInfo info = sourceIdentifierToModuleInfo.get(sourceIdentifier);
-        if (info == null) {
-            return Optional.absent();
-        }
-        try {
-            return Optional.of(info.getModuleSourceStream());
-        } catch (IOException e) {
-            return Optional.absent();
-        }
-    }
-
-    @Override
-    public Optional<InputStream> getSchemaSource(final String moduleName, final Optional<String> revision) {
-        return getSchemaSource(SourceIdentifier.create(moduleName, revision));
     }
 
     private static class YangModuleInfoRegistration extends AbstractObjectRegistration<YangModuleInfo> {
