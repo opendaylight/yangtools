@@ -10,11 +10,12 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-
+import java.util.regex.Pattern;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.objcache.ObjectCache;
 import org.opendaylight.yangtools.objcache.ObjectCacheFactory;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 
 /**
  * YANG Schema source identifier
@@ -43,6 +44,18 @@ public final class SourceIdentifier implements Identifier, Immutable {
      * Marks the source as oldest.
      */
     public static final String NOT_PRESENT_FORMATTED_REVISION = "0000-00-00";
+
+    /**
+     *
+     * Simplified compiled revision pattern in format YYYY-mm-dd, which checks
+     * only distribution of number elements.
+     * <p>
+     * For checking if supplied string is real date, use {@link SimpleDateFormatUtil}
+     * instead.
+     *
+     */
+    public static final Pattern REVISION_PATTERN = Pattern.compile("\\d\\d\\d\\d-\\d\\d-\\d\\d");
+
 
     private static final ObjectCache CACHE = ObjectCacheFactory.getObjectCache(SourceIdentifier.class);
     private static final long serialVersionUID = 1L;
