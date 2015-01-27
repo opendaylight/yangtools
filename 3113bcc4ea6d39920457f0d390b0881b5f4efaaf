@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_43a338b2",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2159,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-27T09:34:52Z",
+      "side": 1,
+      "message": "move to the head of the class",
+      "revId": "3113bcc4ea6d39920457f0d390b0881b5f4efaaf",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_a3c47c5f",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 2161,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-27T09:34:52Z",
+      "side": 1,
+      "message": "package-private, plus add a @VisibleForTesting annotation",
+      "revId": "3113bcc4ea6d39920457f0d390b0881b5f4efaaf",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
