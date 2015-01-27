@@ -11,6 +11,9 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.gson.stream.JsonWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.net.URI;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -21,11 +24,8 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-
-import java.io.IOException;
-import java.io.Writer;
-import java.net.URI;
 
 /**
  * This implementation will create JSON output as output stream.
@@ -161,8 +161,12 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
     @SuppressWarnings("unused")
     @Override
     public void startContainerNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        final ContainerSchemaNode schema = tracker.startContainerNode(name);
-        context = new JSONStreamWriterNamedObjectContext(context, name, DEFAULT_EMIT_EMPTY_CONTAINERS || schema.isPresenceContainer());
+        final SchemaNode schema = tracker.startContainerNode(name);
+
+        final boolean isPresence = schema instanceof ContainerSchemaNode ?
+                ((ContainerSchemaNode) schema).isPresenceContainer() : DEFAULT_EMIT_EMPTY_CONTAINERS;
+
+        context = new JSONStreamWriterNamedObjectContext(context, name, isPresence);
     }
 
     @Override

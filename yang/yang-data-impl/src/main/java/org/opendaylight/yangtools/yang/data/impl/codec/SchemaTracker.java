@@ -8,7 +8,10 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
@@ -31,6 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -48,20 +52,29 @@ public final class SchemaTracker {
     private final DataNodeContainer root;
 
     private SchemaTracker(final SchemaContext context, final SchemaPath path) {
-        DataSchemaNode current = Preconditions.checkNotNull(context);
-        for (QName qname : path.getPathFromRoot()) {
-            final DataSchemaNode child;
+        SchemaNode current = Preconditions.checkNotNull(context);
+        for (final QName qname : path.getPathFromRoot()) {
+            SchemaNode child;
             if(current instanceof DataNodeContainer) {
                 child = ((DataNodeContainer) current).getDataChildByName(qname);
+
+                if(child == null && current instanceof SchemaContext) {
+                    child = tryFindNotification((SchemaContext) current, qname)
+                            .orNull();
+                }
             } else if (current instanceof ChoiceNode) {
                 child = ((ChoiceNode) current).getCaseNodeByName(qname);
             } else {
-                throw new IllegalArgumentException(String.format("Schema node %s does not allow children.",current));
+                throw new IllegalArgumentException(String.format("Schema node %s does not allow children.", current));
             }
             current = child;
         }
         Preconditions.checkArgument(current instanceof DataNodeContainer,"Schema path must point to container or list. Supplied path %s pointed to: %s",path,current);
         this.root = (DataNodeContainer) current;
+    }
+
+    private Optional<SchemaNode> tryFindNotification(final SchemaContext ctx, final QName qname) {
+        return Optional.<SchemaNode>fromNullable(Iterables.find(ctx.getNotifications(), new SchemaNodePredicate(qname), null));
     }
 
     /**
@@ -100,6 +113,9 @@ public final class SchemaTracker {
         if(parent instanceof DataNodeContainer) {
             schema = ((DataNodeContainer)parent).getDataChildByName(qname);
 
+            if(schema == null && parent instanceof NotificationDefinition) {
+                schema = ((NotificationDefinition) parent);
+            }
         } else if(parent instanceof ChoiceNode) {
             for(ChoiceCaseNode caze : ((ChoiceNode) parent).getCases()) {
                 DataSchemaNode potential = caze.getDataChildByName(qname);
@@ -158,13 +174,16 @@ public final class SchemaTracker {
         return (ChoiceNode)schema;
     }
 
-    public ContainerSchemaNode startContainerNode(final NodeIdentifier name) {
+    public SchemaNode startContainerNode(final NodeIdentifier name) {
         LOG.debug("Enter container {}", name);
         final SchemaNode schema = getSchema(name);
 
-        Preconditions.checkArgument(schema instanceof ContainerSchemaNode, "Node %s is not a container", schema.getPath());
+        boolean isAllowed = schema instanceof ContainerSchemaNode;
+        isAllowed |= schema instanceof NotificationDefinition;
+
+        Preconditions.checkArgument(isAllowed, "Node %s is not a container nor a notification", schema.getPath());
         schemaStack.push(schema);
-        return (ContainerSchemaNode)schema;
+        return schema;
     }
 
     public AugmentationSchema startAugmentationNode(final AugmentationIdentifier identifier) {
@@ -192,5 +211,18 @@ public final class SchemaTracker {
 
     public Object endNode() {
         return schemaStack.pop();
+    }
+
+    private static final class SchemaNodePredicate implements Predicate<SchemaNode> {
+        private final QName qname;
+
+        public SchemaNodePredicate(final QName qname) {
+            this.qname = qname;
+        }
+
+        @Override
+        public boolean apply(final SchemaNode input) {
+            return input.getQName().equals(qname);
+        }
     }
 }
