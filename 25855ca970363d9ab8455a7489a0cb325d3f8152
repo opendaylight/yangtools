@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_63943437",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/AbstractJSONCodec.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-27T09:46:21Z",
+      "side": 1,
+      "message": "either lose this \u0027else\u0027...",
+      "revId": "25855ca970363d9ab8455a7489a0cb325d3f8152",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_039bf067",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/AbstractJSONCodec.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-27T09:46:21Z",
+      "side": 1,
+      "message": "or put this into an else block",
+      "revId": "25855ca970363d9ab8455a7489a0cb325d3f8152",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_239e2c57",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONCodec.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-27T09:46:21Z",
+      "side": 1,
+      "message": "please provide a follow-up patch",
+      "revId": "25855ca970363d9ab8455a7489a0cb325d3f8152",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_c3a428a8",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONCodecFactory.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-27T09:46:21Z",
+      "side": 1,
+      "message": "log a warning, or at least a debug?",
+      "revId": "25855ca970363d9ab8455a7489a0cb325d3f8152",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_c396684c",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonWriterFactory.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-27T09:46:21Z",
+      "side": 1,
+      "message": "wrong year",
+      "revId": "25855ca970363d9ab8455a7489a0cb325d3f8152",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_e3912453",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonWriterFactory.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-27T09:46:21Z",
+      "side": 1,
+      "message": "utility class? should be final with private constructor",
+      "revId": "25855ca970363d9ab8455a7489a0cb325d3f8152",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_e378442d",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonWriterFactory.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-01-27T09:46:21Z",
+      "side": 1,
+      "message": "useless wrapper",
+      "revId": "25855ca970363d9ab8455a7489a0cb325d3f8152",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
