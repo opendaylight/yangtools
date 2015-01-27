@@ -1,82 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- vi: set et smarttab sw=4 tabstop=4: -->
+<!--
+ Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+
+ This program and the accompanying materials are made available under the
+ terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ and is available at http://www.eclipse.org/legal/epl-v10.html
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <parent>
+    <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>yangtools-parent</artifactId>
         <version>0.7.0-SNAPSHOT</version>
         <relativePath>../common/parent</relativePath>
-  </parent>
-  <modelVersion>4.0.0</modelVersion>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.opendaylight.yangtools</groupId>
-  <artifactId>benchmarks</artifactId>
+    <groupId>org.opendaylight.yangtools</groupId>
+    <artifactId>benchmarks</artifactId>
 
-  <properties>
-    <yangtools.version>0.7.0-SNAPSHOT</yangtools.version>
-    <yang.maven.plugin.version>0.7.0-SNAPSHOT</yang.maven.plugin.version>
-    <java.source.version>1.7</java.source.version>
-    <java.target.version>1.7</java.target.version>
-    <jmh.version>0.9.7</jmh.version>
-  </properties>
+    <properties>
+        <yangtools.version>0.7.0-SNAPSHOT</yangtools.version>
+        <yang.maven.plugin.version>0.7.0-SNAPSHOT</yang.maven.plugin.version>
+        <java.source.version>1.7</java.source.version>
+        <java.target.version>1.7</java.target.version>
+        <jmh.version>0.9.7</jmh.version>
+    </properties>
 
-  <dependencies>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>yang-data-impl</artifactId>
-      <version>${yangtools.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>yang-parser-impl</artifactId>
-      <version>${yangtools.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openjdk.jmh</groupId>
-      <artifactId>jmh-core</artifactId>
-      <version>${jmh.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.openjdk.jmh</groupId>
-      <artifactId>jmh-generator-annprocess</artifactId>
-      <version>${jmh.version}</version>
-    </dependency>
-  </dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>yang-data-impl</artifactId>
+            <version>${yangtools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>yang-parser-impl</artifactId>
+            <version>${yangtools.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <version>${jmh.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>${jmh.version}</version>
+        </dependency>
+    </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>${java.source.version}</source>
-          <target>${java.source.version}</target>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <configuration>
-          <classpathScope>test</classpathScope>
-          <executable>java</executable>
-          <arguments>
-            <argument>-classpath</argument>
-            <classpath/>
-            <argument>org.openjdk.jmh.Main</argument>
-            <argument>.*</argument>
-          </arguments>
-        </configuration>
-        <executions>
-          <execution>
-            <id>run-benchmarks</id>
-            <phase>integration-test</phase>
-            <goals>
-              <goal>exec</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>${java.source.version}</source>
+                    <target>${java.source.version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <configuration>
+                    <classpathScope>test</classpathScope>
+                    <executable>java</executable>
+                    <arguments>
+                        <argument>-classpath</argument>
+                        <classpath/>
+                        <argument>org.openjdk.jmh.Main</argument>
+                        <argument>.*</argument>
+                    </arguments>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>run-benchmarks</id>
+                        <phase>integration-test</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
