@@ -7,11 +7,8 @@
 package org.opendaylight.yangtools.yang.parser.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.fillAugmentTarget;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findBaseIdentity;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findModuleFromContext;
-import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findSchemaNode;
-import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findSchemaNodeInModule;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.processAugmentation;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.TypeUtils.resolveType;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.TypeUtils.resolveTypeUnion;
@@ -61,7 +58,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
-import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationTargetBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
@@ -709,8 +705,9 @@ public final class YangParserImpl implements YangContextParser {
         resolveDirtyNodes(modules);
         resolveAugmentsTargetPath(modules);
         resolveUsesTargetGrouping(modules);
-        resolveUsesForGroupings(modules);
-        resolveUsesForNodes(modules);
+        UsesNodeExpander usesExpander = new UsesNodeExpander(modules);
+        resolveUsesForGroupings(modules,usesExpander);
+        resolveUsesForNodes(modules,usesExpander);
         resolveAugments(modules);
         resolveIdentities(modules);
         checkChoiceCasesForDuplicityQNames(modules);
@@ -818,7 +815,7 @@ public final class YangParserImpl implements YangContextParser {
         }
     }
 
-    private SchemaPath findUsesAugmentTargetNodePath(DataNodeContainerBuilder usesParent,
+    static SchemaPath findUsesAugmentTargetNodePath(DataNodeContainerBuilder usesParent,
             AugmentationSchemaBuilder augment) {
         QName parentQName = usesParent.getQName();
         final QNameModule qnm;
@@ -920,66 +917,6 @@ public final class YangParserImpl implements YangContextParser {
                 }
             }
         }
-    }
-
-    /**
-     * Perform augmentation defined under uses statement.
-     *
-     * @param augment
-     *            augment to resolve
-     * @param module
-     *            current module
-     * @param modules
-     *            all loaded modules
-     * @return true if augment process succeed
-     */
-    private boolean resolveUsesAugment(final AugmentationSchemaBuilder augment, final ModuleBuilder module,
-            final Map<URI, TreeMap<Date, ModuleBuilder>> modules) {
-        if (augment.isResolved()) {
-            return true;
-        }
-
-        UsesNodeBuilder usesNode = (UsesNodeBuilder) augment.getParent();
-        DataNodeContainerBuilder parentNode = usesNode.getParent();
-        Optional<SchemaNodeBuilder> potentialTargetNode;
-        SchemaPath resolvedTargetPath = findUsesAugmentTargetNodePath(parentNode, augment);
-        if (parentNode instanceof ModuleBuilder && resolvedTargetPath.isAbsolute()) {
-            // Uses is directly used in module body, we lookup
-            // We lookup in data namespace to find correct augmentation target
-            potentialTargetNode = findSchemaNodeInModule(resolvedTargetPath, (ModuleBuilder) parentNode);
-        } else {
-            // Uses is used in local context (be it data namespace or grouping
-            // namespace,
-            // since all nodes via uses are imported to localName, it is safe to
-            // to proceed only with local names.
-            //
-            // Conflicting elements in other namespaces are still not present
-            // since resolveUsesAugment occurs before augmenting from external
-            // modules.
-            potentialTargetNode = Optional.<SchemaNodeBuilder> fromNullable(findSchemaNode(augment.getTargetPath()
-                    .getPathFromRoot(), (SchemaNodeBuilder) parentNode));
-        }
-
-        if (potentialTargetNode.isPresent()) {
-            SchemaNodeBuilder targetNode = potentialTargetNode.get();
-            if (targetNode instanceof AugmentationTargetBuilder) {
-                fillAugmentTarget(augment, targetNode);
-                ((AugmentationTargetBuilder) targetNode).addAugmentation(augment);
-                augment.setResolved(true);
-                return true;
-            } else {
-                LOG.warn(
-                        "Error in module {} at line {}: Unsupported augment target: {}. Augmentation process skipped.",
-                        module.getName(), augment.getLine(), potentialTargetNode);
-                augment.setResolved(true);
-                augment.setUnsupportedTarget(true);
-                return true;
-            }
-        } else {
-            throw new YangParseException(module.getName(), augment.getLine(), String.format(
-                    "Failed to resolve augment in uses. Invalid augment target path: %s", augment.getTargetPath()));
-        }
-
     }
 
     /**
@@ -1096,8 +1033,9 @@ public final class YangParserImpl implements YangContextParser {
      *
      * @param modules
      *            all loaded modules
+     * @param usesExpander
      */
-    private void resolveUsesForGroupings(final Map<URI, TreeMap<Date, ModuleBuilder>> modules) {
+    private void resolveUsesForGroupings(final Map<URI, TreeMap<Date, ModuleBuilder>> modules, UsesNodeExpander usesExpander) {
         final Set<GroupingBuilder> allGroupings = new HashSet<>();
         for (Map.Entry<URI, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
@@ -1110,7 +1048,7 @@ public final class YangParserImpl implements YangContextParser {
             List<UsesNodeBuilder> usesNodes = new ArrayList<>(GroupingSort.getAllUsesNodes(gb));
             Collections.sort(usesNodes, new GroupingUtils.UsesComparator());
             for (UsesNodeBuilder usesNode : usesNodes) {
-                resolveUses(usesNode, modules);
+                usesExpander.expand(usesNode, usesNode.getParent());
             }
         }
     }
@@ -1120,77 +1058,19 @@ public final class YangParserImpl implements YangContextParser {
      *
      * @param modules
      *            all loaded modules
+     * @param usesExpander
      */
-    private void resolveUsesForNodes(final Map<URI, TreeMap<Date, ModuleBuilder>> modules) {
+    private void resolveUsesForNodes(final Map<URI, TreeMap<Date, ModuleBuilder>> modules, UsesNodeExpander usesExpander) {
         for (Map.Entry<URI, TreeMap<Date, ModuleBuilder>> entry : modules.entrySet()) {
             for (Map.Entry<Date, ModuleBuilder> inner : entry.getValue().entrySet()) {
                 ModuleBuilder module = inner.getValue();
                 List<UsesNodeBuilder> usesNodes = module.getAllUsesNodes();
                 Collections.sort(usesNodes, new GroupingUtils.UsesComparator());
                 for (UsesNodeBuilder usesNode : usesNodes) {
-                    resolveUses(usesNode, modules);
+                    usesExpander.expand(usesNode, usesNode.getParent());
                 }
             }
         }
-    }
-
-    /**
-     * Find target grouping and copy its child nodes to current location with
-     * new namespace.
-     *
-     * @param usesNode
-     *            uses node to resolve
-     * @param modules
-     *            all loaded modules
-     */
-    private void resolveUses(final UsesNodeBuilder usesNode, final Map<URI, TreeMap<Date, ModuleBuilder>> modules) {
-        if (!usesNode.isResolved()) {
-            DataNodeContainerBuilder parent = usesNode.getParent();
-            ModuleBuilder module = BuilderUtils.getParentModule(parent);
-            GroupingBuilder target = GroupingUtils.getTargetGroupingFromModules(usesNode, modules, module);
-
-            int index = nodeAfterUsesIndex(usesNode);
-            List<DataSchemaNodeBuilder> targetNodes = target.instantiateChildNodes(parent);
-            for (DataSchemaNodeBuilder targetNode : targetNodes) {
-                parent.addChildNode(index++, targetNode);
-            }
-            parent.getTypeDefinitionBuilders().addAll(target.instantiateTypedefs(parent));
-            parent.getGroupingBuilders().addAll(target.instantiateGroupings(parent));
-            parent.getUnknownNodes().addAll(target.instantiateUnknownNodes(parent));
-            usesNode.setResolved(true);
-            for (AugmentationSchemaBuilder augment : usesNode.getAugmentations()) {
-                resolveUsesAugment(augment, module, modules);
-            }
-
-            GroupingUtils.performRefine(usesNode);
-        }
-    }
-
-    private int nodeAfterUsesIndex(final UsesNodeBuilder usesNode) {
-        DataNodeContainerBuilder parent = usesNode.getParent();
-        int usesLine = usesNode.getLine();
-
-        List<DataSchemaNodeBuilder> childNodes = parent.getChildNodeBuilders();
-        if (childNodes.isEmpty()) {
-            return 0;
-        }
-
-        DataSchemaNodeBuilder nextNodeAfterUses = null;
-        for (DataSchemaNodeBuilder childNode : childNodes) {
-            if (!(childNode.isAddedByUses()) && !(childNode.isAugmenting())) {
-                if (childNode.getLine() > usesLine) {
-                    nextNodeAfterUses = childNode;
-                    break;
-                }
-            }
-        }
-
-        // uses is declared after child nodes
-        if (nextNodeAfterUses == null) {
-            return childNodes.size();
-        }
-
-        return parent.getChildNodeBuilders().indexOf(nextNodeAfterUses);
     }
 
     /**
