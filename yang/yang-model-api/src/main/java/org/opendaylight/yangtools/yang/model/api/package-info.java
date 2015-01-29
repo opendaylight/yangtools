@@ -7,9 +7,26 @@
  */
 
 /**
- * Definition of structures and DOM Like API of processed YANG schema
+ * Definition of structures and DOM like API of effected YANG schema
  *
- * <h3>YANG Statement mapping</h3>
+ * <p>
+ * This package is structured into following logical units:
+ * <dl>
+ * <dt>YANG Meta model</dt>
+ * <dd>Meta model of YANG, which defines basic concepts and building blocks of YANG models
+ * such as {@link org.opendaylight.yangtools.yang.model.api.meta.Statement}.</dd>
+ * <dt>YANG Statement model</dt>
+ * <dd>Concrete java model of YANG statements, which defines basic relationship between statements
+ * and represents these statements.</dd>
+ *
+ * <dt>YANG Effective model</dt>
+ * <dd>Effective model of processed YANG models, which represents semantic interpretation
+ * of YANG models and provides convenience views for interpreting models.
+ * </dd>
+ *
+ *
+ * <h2>YANG Effective model</h2>
+ * <h3>Effective model statement mapping</h3>
  *
  * <dl>
  * <dt>anyxml
