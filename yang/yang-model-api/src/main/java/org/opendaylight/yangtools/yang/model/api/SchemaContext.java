@@ -92,7 +92,7 @@ public interface SchemaContext extends ContainerSchemaNode {
 
     /**
      *
-     * Returns module instance (from the context) with concrete namespace.
+     * Returns module instance (from the context) with concret/e namespace.
      *
      * @param namespace
      *            URI instance with specified namespace
