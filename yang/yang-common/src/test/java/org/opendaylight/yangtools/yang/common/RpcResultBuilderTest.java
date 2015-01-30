@@ -10,6 +10,10 @@ package org.opendaylight.yangtools.yang.common;
 
 import static org.junit.Assert.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -105,6 +109,37 @@ public class RpcResultBuilderTest {
                         "message", "my-app-tag", "my-info", cause );
         verifyRpcError( result2, 1, ErrorSeverity.ERROR, ErrorType.PROTOCOL, "operation-failed",
                         "error message", null, null, null );
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testSerialization() throws Exception {
+        RpcResult<String> result = RpcResultBuilder.<String>success().withResult( "foo" ).build();
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutputStream out = new ObjectOutputStream(bos);
+        out.writeObject(result);
+
+        ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
+        RpcResult<String> clone = (RpcResult<String>) in.readObject();
+
+        verifyRpcResult(clone, true, "foo");
+
+        Throwable cause = new Throwable( "mock cause" );
+        result = RpcResultBuilder.<String>failed()
+                .withError( ErrorType.RPC, "in-use", "error message", "my-app-tag", "my-info", cause )
+                .build();
+
+        bos = new ByteArrayOutputStream();
+        out = new ObjectOutputStream(bos);
+        out.writeObject(result);
+
+        in = new ObjectInputStream(new ByteArrayInputStream(bos.toByteArray()));
+        clone = (RpcResult<String>) in.readObject();
+
+        verifyRpcResult(clone, false, null);
+        verifyRpcError( result, 0, ErrorSeverity.ERROR, ErrorType.RPC, "in-use",
+                "error message", "my-app-tag", "my-info", cause );
     }
 
     void verifyRpcError( RpcResult<?> result, int errorIndex, ErrorSeverity expSeverity,
