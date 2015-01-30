@@ -11,8 +11,11 @@ package org.opendaylight.yangtools.yang.common;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
+
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
+
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.RpcError.ErrorSeverity;
 import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
@@ -26,9 +29,10 @@ import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
  */
 public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
 
-    private static class RpcResultImpl<T> implements RpcResult<T> {
+    private static class RpcResultImpl<T> implements RpcResult<T>, Serializable {
+		private static final long serialVersionUID = 1L;
 
-        private final Collection<RpcError> errors;
+		private final Collection<RpcError> errors;
         private final T result;
         private final boolean successful;
 
@@ -61,9 +65,10 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
         }
     }
 
-    private static class RpcErrorImpl implements RpcError {
+    private static class RpcErrorImpl implements RpcError, Serializable {
+		private static final long serialVersionUID = 1L;
 
-        private final String applicationTag;
+		private final String applicationTag;
         private final String tag;
         private final String info;
         private final ErrorSeverity severity;
