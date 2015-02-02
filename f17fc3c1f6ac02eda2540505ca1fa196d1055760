@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "7a96c907_b5e82be3",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/FilteringSchemaContextProxy.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-02-02T09:41:03Z",
+      "side": 1,
+      "message": "move to ModuleId class",
+      "revId": "f17fc3c1f6ac02eda2540505ca1fa196d1055760",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_352e5b44",
         "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/FilteringSchemaContextProxy.java",
         "patchSetId": 2
@@ -30,6 +47,23 @@
       "writtenOn": "2015-02-02T09:11:19Z",
       "side": 1,
       "message": "The expression can be simplified to rootModules !\u003d null",
+      "revId": "f17fc3c1f6ac02eda2540505ca1fa196d1055760",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_f5deb33e",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/FilteringSchemaContextProxy.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-02-02T09:41:03Z",
+      "side": 1,
+      "message": "remove, we can deal with empty collections and do not care",
       "revId": "f17fc3c1f6ac02eda2540505ca1fa196d1055760",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
