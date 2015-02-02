@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -20,8 +22,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-
-import static com.google.common.base.Preconditions.checkArgument;
 
 abstract class ValueNodeModificationStrategy<T extends DataSchemaNode> extends SchemaAwareApplyOperation {
 
@@ -37,6 +37,12 @@ abstract class ValueNodeModificationStrategy<T extends DataSchemaNode> extends S
     @Override
     protected void verifyWrittenStructure(final NormalizedNode<?, ?> writtenValue) {
         checkArgument(nodeClass.isInstance(writtenValue), "Node should must be of type %s", nodeClass);
+        if (nodeClass.equals(LeafNode.class)) {
+            ConstraintsValidator.validate(((LeafSchemaNode) schema).getType(), writtenValue.getValue());
+        } else {
+            ConstraintsValidator.validate(((LeafListSchemaNode) schema).getType(), writtenValue.getValue());
+        }
+
     }
 
     @Override
@@ -47,39 +53,39 @@ abstract class ValueNodeModificationStrategy<T extends DataSchemaNode> extends S
 
     @Override
     protected TreeNode applySubtreeChange(final ModifiedNode modification,
-            final TreeNode currentMeta, final Version version) {
+                                          final TreeNode currentMeta, final Version version) {
         throw new UnsupportedOperationException("Node " + schema.getPath()
                 + "is leaf type node. Subtree change is not allowed.");
     }
 
     @Override
     protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
-            final Version version) {
+                                  final Version version) {
         // Just overwrite whatever was there
         return applyWrite(modification, null, version);
     }
 
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification,
-            final Optional<TreeNode> currentMeta, final Version version) {
+                                  final Optional<TreeNode> currentMeta, final Version version) {
         return TreeNodeFactory.createTreeNodeRecursively(modification.getWrittenValue(), version);
     }
 
     @Override
     protected void checkSubtreeModificationApplicable(final YangInstanceIdentifier path, final NodeModification modification,
-            final Optional<TreeNode> current) throws IncorrectDataStructureException {
+                                                      final Optional<TreeNode> current) throws IncorrectDataStructureException {
         throw new IncorrectDataStructureException(path, "Subtree modification is not allowed.");
     }
 
     public static class LeafSetEntryModificationStrategy extends ValueNodeModificationStrategy<LeafListSchemaNode> {
-        @SuppressWarnings({ "unchecked", "rawtypes" })
+        @SuppressWarnings({"unchecked", "rawtypes"})
         protected LeafSetEntryModificationStrategy(final LeafListSchemaNode schema) {
             super(schema, (Class) LeafSetEntryNode.class);
         }
     }
 
     public static class LeafModificationStrategy extends ValueNodeModificationStrategy<LeafSchemaNode> {
-        @SuppressWarnings({ "unchecked", "rawtypes" })
+        @SuppressWarnings({"unchecked", "rawtypes"})
         protected LeafModificationStrategy(final LeafSchemaNode schema) {
             super(schema, (Class) LeafNode.class);
         }
