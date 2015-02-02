@@ -14,6 +14,7 @@ import java.util.Collection;
  *
  * @param <T> the result value type
  */
+@Deprecated
 public interface RpcResult<T> {
 
     /**
