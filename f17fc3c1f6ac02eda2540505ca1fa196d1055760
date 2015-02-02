@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "7a96c907_352e5b44",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/FilteringSchemaContextProxy.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-02-02T09:29:43Z",
+      "side": 1,
+      "message": "redo,\nmove to local variable",
+      "revId": "f17fc3c1f6ac02eda2540505ca1fa196d1055760",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_1546bf23",
         "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/FilteringSchemaContextProxy.java",
         "patchSetId": 2
@@ -47,6 +64,23 @@
       "writtenOn": "2015-02-02T09:11:19Z",
       "side": 1,
       "message": "Useless condition",
+      "revId": "f17fc3c1f6ac02eda2540505ca1fa196d1055760",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_5531a7a0",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/FilteringSchemaContextProxy.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-02-02T09:29:43Z",
+      "side": 1,
+      "message": "mark as static if possible.",
       "revId": "f17fc3c1f6ac02eda2540505ca1fa196d1055760",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -138,6 +172,23 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_95164ff0",
+        "filename": "yang/yang-model-util/src/test/java/org/opendaylight/yangtools/yang/model/util/SchemaContextProxyTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-02-02T09:29:43Z",
+      "side": 1,
+      "message": "change to constants",
+      "revId": "f17fc3c1f6ac02eda2540505ca1fa196d1055760",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_35073bcc",
         "filename": "yang/yang-model-util/src/test/java/org/opendaylight/yangtools/yang/model/util/SchemaContextProxyTest.java",
         "patchSetId": 2
@@ -149,6 +200,23 @@
       "writtenOn": "2015-02-02T09:11:19Z",
       "side": 1,
       "message": "is this collection necessary ? should not be\n\nalso why is it started with a capital letter ?",
+      "revId": "f17fc3c1f6ac02eda2540505ca1fa196d1055760",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_f5279362",
+        "filename": "yang/yang-model-util/src/test/java/org/opendaylight/yangtools/yang/model/util/SchemaContextProxyTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-02-02T09:29:43Z",
+      "side": 1,
+      "message": "useless reference",
       "revId": "f17fc3c1f6ac02eda2540505ca1fa196d1055760",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
