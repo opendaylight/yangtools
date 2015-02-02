@@ -12,6 +12,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+// FIXME: rename and provide cleanup method
 public final class SimpleDateFormatUtil {
 
     /**
