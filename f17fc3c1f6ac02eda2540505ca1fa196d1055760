@@ -1,0 +1,157 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_1546bf23",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/FilteringSchemaContextProxy.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-02-02T09:11:19Z",
+      "side": 1,
+      "message": "The expression can be simplified to rootModules !\u003d null",
+      "revId": "f17fc3c1f6ac02eda2540505ca1fa196d1055760",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_d547f71b",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/FilteringSchemaContextProxy.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-02-02T09:11:19Z",
+      "side": 1,
+      "message": "The condition is useless, if the rootModules are empty, then the filteredModuleBuilder will be empty but no failure should occur. Remove the condition.",
+      "revId": "f17fc3c1f6ac02eda2540505ca1fa196d1055760",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_755623d4",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/FilteringSchemaContextProxy.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 93,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-02-02T09:11:19Z",
+      "side": 1,
+      "message": "Useless condition",
+      "revId": "f17fc3c1f6ac02eda2540505ca1fa196d1055760",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_5563e7b0",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/FilteringSchemaContextProxy.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 150,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-02-02T09:11:19Z",
+      "side": 1,
+      "message": "the whole block that initializes the revision data can be simplified to:\n\nDate revisionDate \u003d moduleImport.getRevision() \u003d\u003d null ? etLatestRevision(nameToModulesAll.get(moduleImport.getModuleName\n())) : moduleImport.getRevision();",
+      "revId": "f17fc3c1f6ac02eda2540505ca1fa196d1055760",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_f559d3fe",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/FilteringSchemaContextProxy.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-02-02T09:11:19Z",
+      "side": 1,
+      "message": "Please remove and rely on properly built sorted multiset.",
+      "revId": "f17fc3c1f6ac02eda2540505ca1fa196d1055760",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_155d5fe9",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/FilteringSchemaContextProxy.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 197,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-02-02T09:11:19Z",
+      "side": 1,
+      "message": "why is this public ?",
+      "revId": "f17fc3c1f6ac02eda2540505ca1fa196d1055760",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_d56e1796",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/FilteringSchemaContextProxy.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-02-02T09:11:19Z",
+      "side": 1,
+      "message": "This could be simplified to a one liner.\n\nIf the additionalModules were a Set and you built a ModuleId from the module parameter, you could do additionalModules.contains(moduleId)",
+      "revId": "f17fc3c1f6ac02eda2540505ca1fa196d1055760",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_756dc397",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/FilteringSchemaContextProxy.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 221,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-02-02T09:11:19Z",
+      "side": 1,
+      "message": "this expression could also be simplified ... if you built a moduleId from the input module, you could do just a simple equals method call..\n\nnew Constructor for ModuleId with a single Module parameter would be suitable here.",
+      "revId": "f17fc3c1f6ac02eda2540505ca1fa196d1055760",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_35073bcc",
+        "filename": "yang/yang-model-util/src/test/java/org/opendaylight/yangtools/yang/model/util/SchemaContextProxyTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-02-02T09:11:19Z",
+      "side": 1,
+      "message": "is this collection necessary ? should not be\n\nalso why is it started with a capital letter ?",
+      "revId": "f17fc3c1f6ac02eda2540505ca1fa196d1055760",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
