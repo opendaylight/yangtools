@@ -1,0 +1,80 @@
+module val-constraints-validation-test-model  {
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:val-constraints-validation-test-model";
+    prefix "val-constraints-validation";
+
+    revision "2015-02-02" {
+        description "Initial revision.";
+    }
+
+    typedef derived-string-type {
+        type string {
+            length 1..5;
+        }
+    }
+
+    typedef double-derived-string-type {
+        type derived-string-type {
+            pattern "[0-9]*";
+        }
+    }
+
+    container master-container {
+        leaf range-int8 {
+            type int8 {
+                range 1..5;
+            }
+        }
+
+        leaf range-uint64 {
+            type uint64 {
+            }
+        }
+
+        leaf range-decimal {
+            type decimal64 {
+                fraction-digits 3;
+                range min..789.124;
+            }
+        }
+
+        leaf regex-string {
+            type string {
+                pattern "[0-9a-fA-F]*";
+            }
+        }
+
+        leaf length-string {
+            type string {
+                length 3..11;
+            }
+        }
+
+        leaf length-binary {
+            type binary {
+                length 2..3;
+            }
+        }
+
+        leaf derived-string {
+            type double-derived-string-type;
+        }
+
+        leaf two-type-union {
+            type union {
+                type derived-string-type;
+                type int8;
+            }
+        }
+
+        leaf enum-test-leaf {
+            type enumeration {
+                enum one;
+                enum two;
+                enum three {
+                    value 3;
+                }
+            }
+        }
+    }
+}
