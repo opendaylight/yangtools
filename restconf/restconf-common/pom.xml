@@ -14,7 +14,7 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>restconf-parent</artifactId>
-        <version>0.6.4-SNAPSHOT</version>
+        <version>0.6.4-Helium-SR2</version>
     </parent>
 
     <artifactId>restconf-common</artifactId>
