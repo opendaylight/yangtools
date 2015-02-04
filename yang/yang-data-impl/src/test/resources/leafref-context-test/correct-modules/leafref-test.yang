@@ -1,0 +1,152 @@
+module leafref-test {
+    namespace "pk.test";
+    prefix tst;
+
+    import import-mod { prefix imp; revision-date 2014-10-07; }
+
+    revision 1999-09-09 {
+        description
+                "Yang initial revision";
+    }
+
+    container odl-contributor {
+        list contributor {
+            key "login";
+            leaf login {
+                type string;
+            }
+            leaf contributor-name {
+                type string;
+            }
+            leaf odl-project-name {
+                type leafref {
+                    path "/odl-project/project/name";
+                }
+            }
+        }
+        list noleafref-contributor {
+            leaf foo {
+                type string;
+            }
+        }
+    }
+
+    container odl-project {
+        list project {
+            key "name";
+            leaf name {
+                type string;
+            }
+            leaf project-lead {
+                type leafref {
+                    path "../../../tst:odl-contributor[imp:foo=current()/bar]/contributor[tst:odl-project-name
+                                        = current()/../imp:name][odl-project-name2 = current()/../../imp:name/tst:name2][imp:odl-project-name3
+                                        = current()/../../imp:name/imp:name2]/tst:login";
+                }
+            }
+            leaf project-lead2 {
+                type leafref {
+                    path "/odl-contributor[foo=current()/bar]/contributor[odl-project-name
+                                        = current()/../name][odl-project-name2 = current()/../../name/name2][odl-project-name3
+                                        = current()/../../name/name2]/login";
+                }
+            }
+
+            choice ch1 {
+                case c1 {
+                    choice ch2 {
+                        case c1 {
+                            leaf l1 {
+                                type leafref {
+                                    path "../../con1/l1";
+                                }
+                            }
+                        }
+                        case c2 {
+                        }
+                    }
+                }
+                case c2 {
+                }
+            }
+        }
+        list noleafref-project {
+            leaf foo {
+                type string;
+            }
+        }
+        container con1 {
+            leaf l1 {
+                type empty;
+            }
+        }
+    }
+
+    container con1 {
+        container con2 {
+            container con3 {
+                leaf l1 {
+                    type leafref {
+                        path "/odl-project/project/name";
+                    }
+                }
+                leaf l2 {
+                    type leafref {
+                        path "/odl-project/project/name";
+                    }
+                }
+                leaf l3-noleafref {
+                    type int16;
+                }
+            }
+            leaf l4 {
+                type leafref {
+                    path "/odl-project/project/name";
+                }
+            }
+            leaf l5-noleafref {
+                type int16;
+            }
+        }
+        leaf l6 {
+            type leafref {
+                path "/odl-project/project/name";
+            }
+        }
+        leaf l7-noleafref {
+            type int16;
+        }
+    }
+
+    leaf l8 {
+        type leafref {
+            path "/odl-project/project/name";
+        }
+    }
+
+    container no-leafrefcontainer {
+        list no-leafreflist {
+            leaf bar {
+                type string;
+            }
+        }
+        container no-leafrefcontainer2 {
+            leaf baz {
+                type string;
+            }
+        }
+    }
+
+    container no-leafrefcontainer2 {
+        list no-leafreflist {
+            leaf bar {
+                type string;
+            }
+        }
+        container no-leafrefcontainer2 {
+            leaf baz {
+                type string;
+            }
+        }
+    }
+}

@@ -1,0 +1,83 @@
+module leafref-test2 {
+    namespace "gz.test";
+    prefix "main";
+
+    revision 2015-02-13 {
+        description "Initial revision";
+    }
+
+    leaf leaf1 {
+        type int16;
+    }
+
+    leaf ref1 {
+        type leafref {
+            path "../leaf1";
+        }
+    }
+
+    typedef low_int {
+        type int8 {
+            range 1..100;
+        }
+    }
+
+    container cont1 {
+
+        list list1 {
+            leaf name {
+                type string;
+            }
+            leaf id {
+                type int32;
+            }
+            leaf value {
+                type low_int;
+            }
+            leaf external {
+                type leafref {
+                    path "../../../cont2/value";
+                }
+            }
+        }
+    }
+
+    container cont2 {
+        leaf value {
+            type decimal64 {
+                fraction-digits 4;
+            }
+        }
+    }
+
+    container cont3 {
+        container cont4 {
+            leaf l1 {
+                type leafref {
+                    path "/cont1/list1/name";
+                }
+            }
+            leaf l2 {
+                type leafref {
+                    path "../../../cont1/list1/name";
+                }
+            }
+        }
+        leaf l3 {
+            type leafref {
+                path "/cont1/list1/name";
+            }
+        }
+        leaf l4 {
+            type int32;
+        }
+    }
+
+    container cont5 {
+        leaf l5 {
+            type leafref {
+                path "/cont1/list1/name";
+            }
+        }
+    }
+}

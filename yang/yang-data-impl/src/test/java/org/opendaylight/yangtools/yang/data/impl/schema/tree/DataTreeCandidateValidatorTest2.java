@@ -1,0 +1,365 @@
+/**
+ * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.yang.data.impl.schema.tree;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Set;
+import org.apache.log4j.BasicConfigurator;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.opendaylight.yangtools.leafrefcontext.api.LeafRefContext;
+import org.opendaylight.yangtools.leafrefcontext.builder.LeafRefContextTreeBuilder;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
+import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.tree.validation.DataTreeCandidateValidator;
+import org.opendaylight.yangtools.yang.data.impl.schema.tree.validation.LeafRefDataValidationFailedException;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.leafref.parser.LeafRefYangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public class DataTreeCandidateValidatorTest2 {
+
+    private static SchemaContext context;
+    private static Module mainModule;
+    private static QNameModule rootModuleQname;
+    private static LeafRefContext rootLeafRefContext;
+    public static TipProducingDataTree inMemoryDataTree;
+
+    private static QName chips;
+    private static QName chip;
+    private static QName devType;
+    private static QName chipDesc;
+
+    private static QName devices;
+    private static QName device;
+    private static QName typeChoice;
+    private static QName typeText;
+    private static QName devDesc;
+    private static QName sn;
+    private static QName defaultIp;
+
+    private static QName deviceTypeStr;
+    private static QName deviceType;
+    private static QName type;
+    private static QName desc;
+
+    private static final Logger LOG = LoggerFactory.getLogger("");
+    private static final String NEW_LINE = System.getProperty("line.separator");
+
+    static {
+        BasicConfigurator.configure();
+    }
+
+    @BeforeClass
+    public static void init() throws URISyntaxException, IOException,
+            YangSyntaxErrorException, LeafRefYangSyntaxErrorException {
+
+        initSchemaContext();
+        initLeafRefContext();
+        initQnames();
+        initDataTree();
+    }
+
+    @Test
+    public void dataTreeCanditateValidationTest2() {
+
+        writeDevices();
+    }
+
+    private static void writeDevices() {
+
+        ContainerSchemaNode devicesContSchemaNode = (ContainerSchemaNode) mainModule
+                .getDataChildByName(devices);
+
+        ContainerNode devicesContainer = createDevicesContainer(devicesContSchemaNode);
+
+        YangInstanceIdentifier devicesPath = YangInstanceIdentifier.of(devices);
+        DataTreeModification writeModification = inMemoryDataTree
+                .takeSnapshot().newModification();
+        writeModification.write(devicesPath, devicesContainer);
+
+        DataTreeCandidate writeDevicesCandidate = inMemoryDataTree
+                .prepare(writeModification);
+
+        LOG.debug("*************************");
+        LOG.debug("Before writeDevices: ");
+        LOG.debug("*************************");
+        LOG.debug(inMemoryDataTree.toString());
+
+        boolean exception = false;
+        try {
+            new DataTreeCandidateValidator().validateLeafRefs(
+                    writeDevicesCandidate, rootLeafRefContext);
+        } catch (LeafRefDataValidationFailedException e) {
+            LOG.debug("All validation errors:" + NEW_LINE + e.getMessage());
+
+            assertEquals(4, e.getValidationsErrorsCount());
+            exception = true;
+        }
+
+        assertTrue(exception);
+
+        inMemoryDataTree.commit(writeDevicesCandidate);
+
+        LOG.debug("*************************");
+        LOG.debug("After write: ");
+        LOG.debug("*************************");
+        LOG.debug(inMemoryDataTree.toString());
+    }
+
+    private static void initQnames() {
+
+        chips = QName.create(rootModuleQname, "chips");
+        chip = QName.create(rootModuleQname, "chip");
+        devType = QName.create(rootModuleQname, "dev_type");
+        chipDesc = QName.create(rootModuleQname, "chip_desc");
+
+        devices = QName.create(rootModuleQname, "devices");
+        device = QName.create(rootModuleQname, "device");
+        typeText = QName.create(rootModuleQname, "type_text");
+        devDesc = QName.create(rootModuleQname, "dev_desc");
+        sn = QName.create(rootModuleQname, "sn");
+        defaultIp = QName.create(rootModuleQname, "default_ip");
+
+        deviceTypeStr = QName.create(rootModuleQname, "device_types");
+        deviceType = QName.create(rootModuleQname, "device_type");
+        type = QName.create(rootModuleQname, "type");
+        desc = QName.create(rootModuleQname, "desc");
+    }
+
+    private static void initSchemaContext() throws URISyntaxException,
+            IOException, YangSyntaxErrorException {
+
+        File resourceFile = new File(DataTreeCandidateValidatorTest.class
+                .getResource("/leafref-validation/leafref-validation2.yang")
+                .toURI());
+        File resourceDir = resourceFile.getParentFile();
+
+        YangParserImpl parser = YangParserImpl.getInstance();
+        context = parser.parseFile(resourceFile, resourceDir);
+
+        Set<Module> modules = context.getModules();
+        for (Module module : modules) {
+            if (module.getName().equals("leafref-validation2")) {
+                mainModule = module;
+            }
+        }
+
+        rootModuleQname = mainModule.getQNameModule();
+    }
+
+    private static void initDataTree() {
+
+        inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create();
+        inMemoryDataTree.setSchemaContext(context);
+
+        DataTreeModification initialDataTreeModification = inMemoryDataTree
+                .takeSnapshot().newModification();
+
+        ContainerSchemaNode chipsListContSchemaNode = (ContainerSchemaNode) mainModule
+                .getDataChildByName(chips);
+        ContainerNode chipsContainer = createChipsContainer(chipsListContSchemaNode);
+        YangInstanceIdentifier path1 = YangInstanceIdentifier.of(chips);
+        initialDataTreeModification.write(path1, chipsContainer);
+
+        ContainerSchemaNode devTypesListContSchemaNode = (ContainerSchemaNode) mainModule
+                .getDataChildByName(deviceTypeStr);
+        ContainerNode deviceTypesContainer = createDevTypeStrContainer(devTypesListContSchemaNode);
+        YangInstanceIdentifier path2 = YangInstanceIdentifier.of(deviceTypeStr);
+        initialDataTreeModification.write(path2, deviceTypesContainer);
+
+        DataTreeCandidate writeChipsCandidate = inMemoryDataTree
+                .prepare(initialDataTreeModification);
+
+        inMemoryDataTree.commit(writeChipsCandidate);
+
+        System.out.println(inMemoryDataTree.toString());
+    }
+
+    private static void initLeafRefContext() throws IOException,
+            LeafRefYangSyntaxErrorException {
+        LeafRefContextTreeBuilder leafRefContextTreeBuilder = new LeafRefContextTreeBuilder(
+                context);
+
+        rootLeafRefContext = leafRefContextTreeBuilder
+                .buildLeafRefContextTree();
+    }
+
+    private static ContainerNode createDevTypeStrContainer(
+            ContainerSchemaNode container) {
+
+        ListSchemaNode devTypeListSchemaNode = (ListSchemaNode) container
+                .getDataChildByName(deviceType);
+
+        DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> devTypeContainerBldr = Builders
+                .containerBuilder(container);
+
+        MapNode devTypeMap = createDevTypeList(devTypeListSchemaNode);
+        devTypeContainerBldr.addChild(devTypeMap);
+
+        return devTypeContainerBldr.build();
+    }
+
+    private static MapNode createDevTypeList(
+            ListSchemaNode devTypeListSchemaNode) {
+
+        CollectionNodeBuilder<MapEntryNode, MapNode> devTypeMapBldr = Builders
+                .mapBuilder(devTypeListSchemaNode);
+
+        devTypeMapBldr.addChild(createDevTypeListEntry("dev_type_1",
+                "typedesc1", devTypeListSchemaNode));
+        devTypeMapBldr.addChild(createDevTypeListEntry("dev_type_2",
+                "typedesc2", devTypeListSchemaNode));
+        devTypeMapBldr.addChild(createDevTypeListEntry("dev_type_3",
+                "typedesc3", devTypeListSchemaNode));
+
+        return devTypeMapBldr.build();
+    }
+
+    private static MapEntryNode createDevTypeListEntry(String typeVal,
+            String descVal, ListSchemaNode devTypeListSchemaNode) {
+
+        LeafNode<String> typeLeaf = ImmutableNodes.leafNode(type, typeVal);
+        LeafNode<String> descLeaf = ImmutableNodes.leafNode(desc, descVal);
+
+        DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> devTypeMapEntryBldr = Builders
+                .mapEntryBuilder(devTypeListSchemaNode);
+
+        devTypeMapEntryBldr.addChild(typeLeaf);
+        devTypeMapEntryBldr.addChild(descLeaf);
+
+        return devTypeMapEntryBldr.build();
+    }
+
+    private static ContainerNode createChipsContainer(
+            ContainerSchemaNode container) {
+
+        ListSchemaNode chipsListSchemaNode = (ListSchemaNode) container
+                .getDataChildByName(chip);
+
+        DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> chipsContainerBldr = Builders
+                .containerBuilder(container);
+
+        MapNode chipsMap = createChipsList(chipsListSchemaNode);
+        chipsContainerBldr.addChild(chipsMap);
+
+        return chipsContainerBldr.build();
+    }
+
+    private static MapNode createChipsList(ListSchemaNode chipsListSchemaNode) {
+
+        CollectionNodeBuilder<MapEntryNode, MapNode> chipsMapBldr = Builders
+                .mapBuilder(chipsListSchemaNode);
+
+        chipsMapBldr.addChild(createChipsListEntry("dev_type_1", "desc1",
+                chipsListSchemaNode));
+        chipsMapBldr.addChild(createChipsListEntry("dev_type_2", "desc2",
+                chipsListSchemaNode));
+
+        return chipsMapBldr.build();
+    }
+
+    private static MapEntryNode createChipsListEntry(String devTypeVal,
+            String chipDescVal, ListSchemaNode chipsListSchemaNode) {
+
+        LeafNode<String> devTypeLeaf = ImmutableNodes.leafNode(devType,
+                devTypeVal);
+        LeafNode<String> chipDescLeaf = ImmutableNodes.leafNode(chipDesc,
+                chipDescVal);
+
+        DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> chipsMapEntryBldr = Builders
+                .mapEntryBuilder(chipsListSchemaNode);
+
+        chipsMapEntryBldr.addChild(devTypeLeaf);
+        chipsMapEntryBldr.addChild(chipDescLeaf);
+
+        return chipsMapEntryBldr.build();
+    }
+
+    private static ContainerNode createDevicesContainer(
+            ContainerSchemaNode container) {
+
+        ListSchemaNode devicesListSchemaNode = (ListSchemaNode) container
+                .getDataChildByName(device);
+
+        DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> devicesContainerBldr = Builders
+                .containerBuilder(container);
+
+        MapNode devicesMap = createDeviceList(devicesListSchemaNode);
+        devicesContainerBldr.addChild(devicesMap);
+
+        return devicesContainerBldr.build();
+    }
+
+    private static MapNode createDeviceList(ListSchemaNode deviceListSchemaNode) {
+
+        CollectionNodeBuilder<MapEntryNode, MapNode> devicesMapBldr = Builders
+                .mapBuilder(deviceListSchemaNode);
+
+        devicesMapBldr.addChild(createDeviceListEntry("dev_type_1",
+                "typedesc1", 123456, "192.168.0.1", deviceListSchemaNode));
+        devicesMapBldr.addChild(createDeviceListEntry("dev_type_2",
+                "typedesc2", 123457, "192.168.0.1", deviceListSchemaNode));
+        devicesMapBldr.addChild(createDeviceListEntry("dev_type_2",
+                "typedesc3", 123457, "192.168.0.1", deviceListSchemaNode));
+        devicesMapBldr.addChild(createDeviceListEntry("dev_type_1",
+                "typedesc2", 123458, "192.168.0.1", deviceListSchemaNode));
+        devicesMapBldr.addChild(createDeviceListEntry("unknown", "unknown",
+                123457, "192.168.0.1", deviceListSchemaNode));
+
+        return devicesMapBldr.build();
+    }
+
+    private static MapEntryNode createDeviceListEntry(String typeTextVal,
+            String descVal, int snVal, String defaultIpVal,
+            ListSchemaNode devicesListSchemaNode) {
+
+        LeafNode<String> typeTextLeaf = ImmutableNodes.leafNode(typeText,
+                typeTextVal);
+        LeafNode<String> descLeaf = ImmutableNodes.leafNode(devDesc, descVal);
+        LeafNode<Integer> snValLeaf = ImmutableNodes.leafNode(sn, snVal);
+        LeafNode<String> defaultIpLeaf = ImmutableNodes.leafNode(defaultIp,
+                defaultIpVal);
+
+        DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> devicesMapEntryBldr = Builders
+                .mapEntryBuilder(devicesListSchemaNode);
+
+        devicesMapEntryBldr.addChild(typeTextLeaf);
+        devicesMapEntryBldr.addChild(descLeaf);
+        devicesMapEntryBldr.addChild(snValLeaf);
+        devicesMapEntryBldr.addChild(defaultIpLeaf);
+
+        return devicesMapEntryBldr.build();
+    }
+}
