@@ -44,7 +44,7 @@ import org.opendaylight.yangtools.objcache.ObjectCacheFactory;
  *
  *
  */
-public final class QName implements Immutable, Serializable, Comparable<QName> {
+public class QName implements Immutable, Serializable, Comparable<QName> {
     private static final ObjectCache CACHE = ObjectCacheFactory.getObjectCache(QName.class);
     private static final long serialVersionUID = 5398411242927766414L;
 
