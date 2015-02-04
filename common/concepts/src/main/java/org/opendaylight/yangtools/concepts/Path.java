@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.concepts;
 
+import javax.annotation.Nonnull;
+
 /**
  * Conceptual representation of a logical path in a tree-like structure, similar to a
  * {@link java.nio.file.Path}, but more general in terms of what objects it can be applied to.
@@ -23,5 +25,5 @@ public interface Path<P extends Path<P>> {
      * @param other Other path, may not be null.
      * @return True if this path contains the other.
      */
-    boolean contains(P other);
+    boolean contains(@Nonnull P other);
 }
