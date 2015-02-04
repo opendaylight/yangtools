@@ -1,0 +1,150 @@
+module leafref-validation {
+    namespace "leafref.validation";
+    prefix val;
+
+    leaf l1 {
+        type leafref {
+            path "../l2";
+        }
+    }
+
+    leaf l2 {
+        type string;
+    }
+
+    container odl-contributor {
+        list contributor {
+            key "login";
+            leaf login {
+                type string;
+            }
+            leaf contributor-name {
+                type string;
+            }
+            leaf odl-group-id {
+                type string;
+            }
+            leaf odl-project-name {
+                type leafref {
+                    path "../../../odl-project/project/name";
+                }
+            }
+            leaf odl-project-desc {
+                type leafref {
+                    path "/odl-project/project[name = current()/../odl-project-name]/desc";
+                }
+                // type string;                                    
+            }
+        }
+        list noleafref-contributor {
+            leaf foo {
+                type string;
+            }
+        }
+    }
+
+    container odl-project {
+        list project {
+            key "name";
+            leaf name {
+                type string;
+            }
+            leaf desc {
+                type string;
+            }
+            leaf project-lead {
+                type leafref {
+                    path "../../../odl-contributor/contributor/login";
+                }
+            }
+            leaf project-owner {
+                type leafref {
+                    path "/odl-contributor/contributor/login";
+                }
+            }
+        }
+
+        choice ch1 {
+            case c1 {
+                choice ch2 {
+                    case c1 {
+                        list list-in-choice {
+                            key "list-in-choice-key";
+                            leaf list-in-choice-key {
+                                type string;
+                            }
+                            leaf leafref-in-choice {
+                                type leafref {
+                                    path "../../con1/l1";
+                                }
+                            }
+                            leaf leafref-in-choice-to-choice {
+                                type leafref {
+                                    path "../../con3/list3-in-choice/l3";
+                                }
+                            }
+                        }
+                    }
+                    case c2 {
+                    }
+                }
+            }
+            case c2 {
+            }
+        }
+
+        list noleafref-project {
+            leaf foo {
+                type string;
+            }
+        }
+        container con1 {
+            leaf l1 {
+                type string;
+            }
+        }
+
+        container con3 {
+            choice choice-in-con3 {
+                case one {
+                    list list3-in-choice {
+                        key "k";
+                        leaf k {
+                            type string;
+                        }
+                        leaf-list l3 {
+                            type string;
+                        }
+                    }
+                }
+                case two {
+                    list list3-in-choice-2 {
+                        key "l3-2";
+                        leaf l3-2 {
+                            type string;
+                        }
+                    }
+                }
+            }
+        }
+
+        leaf-list leafref-leaf-list {
+            type leafref {
+                path "../con3/list3-in-choice/k";
+            }
+        }
+    }
+
+    container no-leafrefcontainer {
+        list no-leafreflist {
+            leaf bar {
+                type string;
+            }
+        }
+        container no-leafrefcontainer2 {
+            leaf baz {
+                type string;
+            }
+        }
+    }
+}
