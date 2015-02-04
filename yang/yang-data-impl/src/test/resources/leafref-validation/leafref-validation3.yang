@@ -1,0 +1,70 @@
+module leafref-validation3 {
+    namespace "leafref.validation3";
+    prefix val3;
+
+    container device_types {
+        list device_type {
+            key "type1 type2 type3";
+            leaf type1 {
+                type string;
+            }
+            leaf type2 {
+                type string;
+            }
+            leaf type3 {
+                type string;
+            }
+            leaf desc {
+                type string;
+            }
+        }
+    }
+
+    container devices {
+        list device {
+            key "type_text1 sn";
+            unique "sn";
+            leaf type_text1 {
+                type leafref {
+                    path "/device_types/device_type/type1";
+                }
+            }
+            leaf type_text2 {
+                type leafref {
+                    path "/device_types/device_type/type2";
+                }
+            }
+            leaf type_text3 {
+                type leafref {
+                    path "/device_types/device_type/type3";
+                }
+            }
+            leaf dev_desc {
+                type leafref {
+                    path "/device_types/device_type[type1 = current()/../type_text1][type2
+                                        = current()/../type_text2][type3 = current()/../type_text3]/desc";
+                }
+            }
+            leaf sn {
+                type int32;
+            }
+            leaf default_ip {
+                type string;
+            }
+        }
+    }
+
+    container chips {
+        list chip {
+            key "dev_type";
+            leaf dev_type {
+                type leafref {
+                    path "/devices/device/type_text";
+                }
+            }
+            leaf chip_desc {
+                type string;
+            }
+        }
+    }
+}

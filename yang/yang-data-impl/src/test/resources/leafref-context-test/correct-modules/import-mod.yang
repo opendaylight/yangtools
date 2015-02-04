@@ -1,0 +1,10 @@
+module import-mod {
+    namespace "pk.import";
+    prefix imp;
+
+    revision 2014-10-07 {
+        description
+                "Yang initial revision";
+    }
+
+}
