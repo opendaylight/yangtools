@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import com.google.common.annotations.VisibleForTesting;
+
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
