@@ -34,7 +34,7 @@ public interface Statement<F extends Statement<F>> extends Immutable, StatementS
     * @return Collection of statements, which were explicitly declared in
     *         source of model.
     */
-   Collection<? extends Statement<?>> getEffectiveChildStatements();
+   Iterable<? extends Statement<?>> getEffectiveChildStatements();
 
     /**
      * Returns this instance
