@@ -31,6 +31,5 @@
         <module>ietf-topology-l3-unicast-igp</module>
         <module>ietf-topology-ospf</module>
         <module>ietf-restconf</module>
-        <!--module>ietf-netconf</module -->
     </modules>
 </project>
