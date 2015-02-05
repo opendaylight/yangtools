@@ -7,35 +7,48 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import java.lang.reflect.InvocationTargetException;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
 import org.opendaylight.yangtools.concepts.Codec;
 
 final class UnionValueOptionContext {
+    private static final Lookup LOOKUP = MethodHandles.publicLookup();
+    private static final MethodType OBJECT_TYPE = MethodType.methodType(Object.class, Object.class);
+    private final Class<?> bindingType;
+    // FIXME: migrate to invocation
+    private final MethodHandle getter;
+    private final Codec<Object,Object> codec;
 
-    final Method getter;
-    final Class<?> bindingType;
-    final Codec<Object,Object> codec;
+    UnionValueOptionContext(final Class<?> valueType, final Method getter, final Codec<Object, Object> codec) {
+        this.bindingType = Preconditions.checkNotNull(valueType);
+        this.codec = Preconditions.checkNotNull(codec);
 
-    UnionValueOptionContext(final Class<?> valueType,final Method getter, final Codec<Object, Object> codec) {
-        this.getter = getter;
-        this.bindingType = valueType;
-        this.codec = codec;
-    }
-
-    public Object serialize(final Object input) {
-        Object baValue = getValueFrom(input);
-        if(baValue != null) {
-            return codec.serialize(baValue);
-        }
-        return null;
-    }
-
-    public Object getValueFrom(final Object input) {
         try {
-            return getter.invoke(input);
-        } catch (IllegalAccessException  | InvocationTargetException e) {
-            throw new IllegalStateException(e);
+            this.getter = LOOKUP.unreflect(getter).asType(OBJECT_TYPE);
+        } catch (IllegalAccessException e) {
+            throw new IllegalStateException("Failed to access method " + getter, e);
+        }
+    }
+
+    Object serialize(final Object input) {
+        final Object baValue = getValueFrom(input);
+        if (baValue == null) {
+            return null;
+        }
+
+        return codec.serialize(baValue);
+    }
+
+    Object getValueFrom(final Object input) {
+        try {
+            return getter.invokeExact(input);
+        } catch (Throwable e) {
+            throw Throwables.propagate(e);
         }
     }
 
@@ -49,13 +62,11 @@ final class UnionValueOptionContext {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
+        if (!(obj instanceof UnionValueOptionContext)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        UnionValueOptionContext other = (UnionValueOptionContext) obj;
+
+        final UnionValueOptionContext other = (UnionValueOptionContext) obj;
         return bindingType.equals(other.bindingType);
     }
 }

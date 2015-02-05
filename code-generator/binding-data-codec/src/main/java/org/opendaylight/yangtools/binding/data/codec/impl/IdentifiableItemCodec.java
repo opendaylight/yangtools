@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -23,16 +26,25 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> {
+    private static final Lookup LOOKUP = MethodHandles.publicLookup();
+    private final MethodHandle ctor;
+    private final MethodHandle ctorInvoker;
     private final Map<QName, ValueContext> keyValueContexts;
     private final ListSchemaNode schema;
-    private final Constructor<? extends Identifier<?>> constructor;
     private final Class<?> identifiable;
 
     public IdentifiableItemCodec(final ListSchemaNode schema, final Class<? extends Identifier<?>> keyClass,
             final Class<?> identifiable, final Map<QName, ValueContext> keyValueContexts) {
         this.schema = schema;
         this.identifiable = identifiable;
-        this.constructor = getConstructor(keyClass);
+
+        try {
+            ctor = LOOKUP.unreflectConstructor(getConstructor(keyClass));
+        } catch (IllegalAccessException e) {
+            throw new IllegalArgumentException("Missing construct in class " + keyClass);
+        }
+        final MethodHandle inv = MethodHandles.spreadInvoker(ctor.type(), 0);
+        this.ctorInvoker = inv.asType(inv.type().changeReturnType(Identifier.class));
 
         /*
          * We need to re-index to make sure we instantiate nodes in the order in which
@@ -56,9 +68,9 @@ final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates,
 
         final Identifier<?> identifier;
         try {
-            identifier = constructor.newInstance(bindingValues.toArray());
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            throw new IllegalStateException(String.format("Failed to instantiate key class %s", constructor.getDeclaringClass()), e);
+            identifier = (Identifier<?>) ctorInvoker.invokeExact(ctor, bindingValues.toArray());
+        } catch (Throwable e) {
+            throw Throwables.propagate(e);
         }
 
         @SuppressWarnings({ "rawtypes", "unchecked" })
