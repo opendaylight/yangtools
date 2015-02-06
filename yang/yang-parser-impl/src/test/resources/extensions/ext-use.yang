@@ -49,5 +49,6 @@ module ext-use {
             ext:simple-ext-w-arg "value:test";
             type string;
         }
+        ext:module-scope-private;
     }
 }

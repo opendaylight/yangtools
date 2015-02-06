@@ -5,6 +5,7 @@ module network-topology  {
     prefix "nt";
 
     import ietf-inet-types { prefix "inet"; revision-date 2010-09-24; }
+    import restconf-doc-ext { prefix "restconf-ext"; }
 
     organization "TBD";
 
@@ -297,6 +298,8 @@ module network-topology  {
                     key "tp-id";
                     uses tp-attributes;
                 }
+                restconf-ext:children-scope-private;
+
             }
 
             list link {
@@ -328,6 +331,7 @@ module network-topology  {
                 must "boolean(../node/termination-point[./destination/dest-tp])";
                     // Constraint: The destination termination point must be contained
                     // in the destination node
+                restconf-ext:children-scope-private;
             }
         }
     }

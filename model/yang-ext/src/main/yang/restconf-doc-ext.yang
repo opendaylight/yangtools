@@ -1,24 +1,24 @@
-module ext-typedef {
+module restconf-doc-ext {
     yang-version 1;
     namespace "urn:simple.extension.typedefs";
-    prefix "ext";
+    prefix "restconf-ext";
 
     organization "opendaylight";
     contact "http://www.opendaylight.org/";
 
-    description "Model for testing and resolving of extension typedefs.";
+    description "Model rest conf extension typedefs.";
 
-    revision "2014-08-07" {
+    revision "2015-01-27" {
         reference "Initial revision.";
-    }
-
-    extension simple-ext-w-arg {
-        argument "ext-arg";
-        description "Extension with single argument definition.";
     }
 
     extension module-scope-private {
         description "Presence of this extension keyword indicates that this module should be hidden from restconf documentation. Thus marking it private.";
     }
+    
+    extension children-scope-private {
+        description "Presence of this extension keyword indicates that the children of this node should be hidden from restconf documentation. Thus marking it private.";
+    }
+
 
 }
