@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -20,6 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModifiedNodeDoesNotExistException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.MutableTreeNode;
@@ -75,7 +77,7 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
 
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification,
-            final Optional<TreeNode> currentMeta, final Version version) {
+                                  final Optional<TreeNode> currentMeta, final Version version) {
         final NormalizedNode<?, ?> newValue = modification.getWrittenValue();
         final TreeNode newValueMeta = TreeNodeFactory.createTreeNode(newValue, version);
 
@@ -112,15 +114,15 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
      * Applies write/remove diff operation for each modification child in modification subtree.
      * Operation also sets the Data tree references for each Tree Node (Index Node) in meta (MutableTreeNode) structure.
      *
-     * @param meta MutableTreeNode (IndexTreeNode)
-     * @param data DataBuilder
-     * @param nodeVersion Version of TreeNode
+     * @param meta          MutableTreeNode (IndexTreeNode)
+     * @param data          DataBuilder
+     * @param nodeVersion   Version of TreeNode
      * @param modifications modification operations to apply
      * @return Sealed immutable copy of TreeNode structure with all Data Node references set.
      */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private TreeNode mutateChildren(final MutableTreeNode meta, final NormalizedNodeContainerBuilder data,
-            final Version nodeVersion, final Iterable<ModifiedNode> modifications) {
+                                    final Version nodeVersion, final Iterable<ModifiedNode> modifications) {
 
         for (ModifiedNode mod : modifications) {
             final YangInstanceIdentifier.PathArgument id = mod.getIdentifier();
@@ -143,14 +145,14 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
 
     @Override
     protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
-            final Version version) {
+                                  final Version version) {
         // For Node Containers - merge is same as subtree change - we only replace children.
         return applySubtreeChange(modification, currentMeta, version);
     }
 
     @Override
     public TreeNode applySubtreeChange(final ModifiedNode modification,
-            final TreeNode currentMeta, final Version version) {
+                                       final TreeNode currentMeta, final Version version) {
         final MutableTreeNode newMeta = currentMeta.mutable();
         newMeta.setSubtreeVersion(version);
 
@@ -172,13 +174,33 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
 
     @Override
     protected void checkSubtreeModificationApplicable(final YangInstanceIdentifier path, final NodeModification modification,
-            final Optional<TreeNode> current) throws DataValidationFailedException {
+                                                      final Optional<TreeNode> current) throws DataValidationFailedException {
         if (!modification.getOriginal().isPresent() && !current.isPresent()) {
             throw new ModifiedNodeDoesNotExistException(path, String.format("Node %s does not exist. Cannot apply modification to its children.", path));
         }
 
         SchemaAwareApplyOperation.checkConflicting(path, current.isPresent(), "Node was deleted by other transaction.");
         checkChildPreconditions(path, modification, current);
+    }
+
+    @Override
+    protected void checkWriteApplicable(final YangInstanceIdentifier path, final NodeModification modification,
+                                        final Optional<TreeNode> current) throws DataValidationFailedException {
+        Optional<TreeNode> original = modification.getOriginal();
+        if (original.isPresent() && current.isPresent()) {
+            checkNotConflicting(path, original.get(), current.get());
+        } else if(original.isPresent()) {
+            throw new ConflictingModificationAppliedException(path,"Node was deleted by other transaction.");
+        } else if(current.isPresent()) {
+            throw new ConflictingModificationAppliedException(path,"Node was created by other transaction.");
+        }
+        for (NodeModification childMod : modification.getChildren()) {
+            final YangInstanceIdentifier.PathArgument childId = childMod.getIdentifier();
+            final Optional<TreeNode> childMeta = current.isPresent() ? current.get().getChild(childId) : Optional.<TreeNode>absent();
+
+            YangInstanceIdentifier childPath = path.node(childId);
+            resolveChildOperation(childId).checkApplicable(childPath, childMod, childMeta);
+        }
     }
 
     private void checkChildPreconditions(final YangInstanceIdentifier path, final NodeModification modification, final Optional<TreeNode> current) throws DataValidationFailedException {
@@ -194,14 +216,41 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
 
     @Override
     protected void checkMergeApplicable(final YangInstanceIdentifier path, final NodeModification modification,
-            final Optional<TreeNode> current) throws DataValidationFailedException {
-        if(current.isPresent()) {
-            checkChildPreconditions(path, modification,current);
+                                        final Optional<TreeNode> current) throws DataValidationFailedException {
+        if (current.isPresent()) {
+            checkChildPreconditions(path, modification, current);
         }
     }
 
     @SuppressWarnings("rawtypes")
     protected abstract NormalizedNodeContainerBuilder createBuilder(NormalizedNode<?, ?> original);
+
+    public static abstract class ListStructureModificationStrategy<T extends DataSchemaNode> extends NormalizedNodeContainerModificationStrategy {
+        protected T schema;
+
+        protected ListStructureModificationStrategy(T schema, Class<? extends NormalizedNode<?, ?>> nodeClass) {
+            super(nodeClass);
+            this.schema = schema;
+        }
+
+        @Override
+        protected void checkSubtreeModificationApplicable(YangInstanceIdentifier path, NodeModification modification, Optional<TreeNode> current) throws DataValidationFailedException {
+            super.checkSubtreeModificationApplicable(path, modification, current);
+            ListConstraintsValidator.checkMinMaxElements(path, schema, (ModifiedNode) modification, current);
+        }
+
+        @Override
+        protected void checkWriteApplicable(YangInstanceIdentifier path, NodeModification modification, Optional<TreeNode> current) throws DataValidationFailedException {
+            super.checkWriteApplicable(path, modification, current);
+            ListConstraintsValidator.checkMinMaxElements(path, schema, (ModifiedNode) modification, current);
+        }
+
+        @Override
+        protected void checkMergeApplicable(YangInstanceIdentifier path, NodeModification modification, Optional<TreeNode> current) throws DataValidationFailedException {
+            super.checkMergeApplicable(path, modification, current);
+            ListConstraintsValidator.checkMinMaxElements(path, schema, (ModifiedNode) modification, current);
+        }
+    }
 
     public static class ChoiceModificationStrategy extends NormalizedNodeContainerModificationStrategy {
 
@@ -233,14 +282,14 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
         }
     }
 
-    public static class OrderedLeafSetModificationStrategy extends NormalizedNodeContainerModificationStrategy {
+    public static class OrderedLeafSetModificationStrategy extends ListStructureModificationStrategy<LeafListSchemaNode> {
 
         private final Optional<ModificationApplyOperation> entryStrategy;
 
-        @SuppressWarnings({ "unchecked", "rawtypes" })
+        @SuppressWarnings({"unchecked", "rawtypes"})
         protected OrderedLeafSetModificationStrategy(final LeafListSchemaNode schema) {
-            super((Class) LeafSetNode.class);
-            entryStrategy = Optional.<ModificationApplyOperation> of(new ValueNodeModificationStrategy.LeafSetEntryModificationStrategy(schema));
+            super(schema, (Class) LeafSetNode.class);
+            entryStrategy = Optional.<ModificationApplyOperation>of(new ValueNodeModificationStrategy.LeafSetEntryModificationStrategy(schema));
         }
 
         @Override
@@ -264,18 +313,13 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
         }
     }
 
-    public static class OrderedMapModificationStrategy extends NormalizedNodeContainerModificationStrategy {
+    public static class OrderedMapModificationStrategy extends ListStructureModificationStrategy<ListSchemaNode> {
 
         private final Optional<ModificationApplyOperation> entryStrategy;
 
         protected OrderedMapModificationStrategy(final ListSchemaNode schema) {
-            super(OrderedMapNode.class);
-            entryStrategy = Optional.<ModificationApplyOperation> of(new DataNodeContainerModificationStrategy.ListEntryModificationStrategy(schema));
-        }
-
-        @Override
-        boolean isOrdered() {
-            return true;
+            super(schema, OrderedMapNode.class);
+            entryStrategy = Optional.<ModificationApplyOperation>of(new DataNodeContainerModificationStrategy.ListEntryModificationStrategy(schema));
         }
 
         @SuppressWarnings("rawtypes")
@@ -299,14 +343,14 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
         }
     }
 
-    public static class UnorderedLeafSetModificationStrategy extends NormalizedNodeContainerModificationStrategy {
+    public static class UnorderedLeafSetModificationStrategy extends ListStructureModificationStrategy<LeafListSchemaNode> {
 
         private final Optional<ModificationApplyOperation> entryStrategy;
 
-        @SuppressWarnings({ "unchecked", "rawtypes" })
+        @SuppressWarnings({"unchecked", "rawtypes"})
         protected UnorderedLeafSetModificationStrategy(final LeafListSchemaNode schema) {
-            super((Class) LeafSetNode.class);
-            entryStrategy = Optional.<ModificationApplyOperation> of(new ValueNodeModificationStrategy.LeafSetEntryModificationStrategy(schema));
+            super(schema, (Class) LeafSetNode.class);
+            entryStrategy = Optional.<ModificationApplyOperation>of(new ValueNodeModificationStrategy.LeafSetEntryModificationStrategy(schema));
         }
 
         @SuppressWarnings("rawtypes")
@@ -325,13 +369,13 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
         }
     }
 
-    public static class UnorderedMapModificationStrategy extends NormalizedNodeContainerModificationStrategy {
+    public static class UnorderedMapModificationStrategy extends ListStructureModificationStrategy<ListSchemaNode> {
 
         private final Optional<ModificationApplyOperation> entryStrategy;
 
         protected UnorderedMapModificationStrategy(final ListSchemaNode schema) {
-            super(MapNode.class);
-            entryStrategy = Optional.<ModificationApplyOperation> of(new DataNodeContainerModificationStrategy.ListEntryModificationStrategy(schema));
+            super(schema, MapNode.class);
+            entryStrategy = Optional.<ModificationApplyOperation>of(new DataNodeContainerModificationStrategy.ListEntryModificationStrategy(schema));
         }
 
         @SuppressWarnings("rawtypes")

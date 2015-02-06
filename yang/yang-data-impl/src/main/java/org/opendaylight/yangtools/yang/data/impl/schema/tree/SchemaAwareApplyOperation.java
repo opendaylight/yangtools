@@ -97,7 +97,7 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
         }
     }
 
-    private static final void checkNotConflicting(final YangInstanceIdentifier path, final TreeNode original, final TreeNode current) throws ConflictingModificationAppliedException {
+    protected static final void checkNotConflicting(final YangInstanceIdentifier path, final TreeNode original, final TreeNode current) throws ConflictingModificationAppliedException {
         checkConflicting(path, original.getVersion().equals(current.getVersion()),
                 "Node was replaced by other transaction.");
         checkConflicting(path, original.getSubtreeVersion().equals(current.getSubtreeVersion()),
