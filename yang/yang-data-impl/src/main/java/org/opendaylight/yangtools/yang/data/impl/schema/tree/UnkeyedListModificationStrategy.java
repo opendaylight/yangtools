@@ -14,7 +14,10 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.IncorrectDataStructureException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
@@ -26,9 +29,11 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
 
     private final Optional<ModificationApplyOperation> entryStrategy;
+    private final ListSchemaNode schema;
 
     protected UnkeyedListModificationStrategy(final ListSchemaNode schema) {
         entryStrategy = Optional.<ModificationApplyOperation> of(new DataNodeContainerModificationStrategy.UnkeyedListItemModificationStrategy(schema));
+        this.schema = schema;
     }
 
     @Override
@@ -129,5 +134,47 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
     protected void checkSubtreeModificationApplicable(final YangInstanceIdentifier path, final NodeModification modification,
             final Optional<TreeNode> current) throws IncorrectDataStructureException {
         throw new IncorrectDataStructureException(path, "Subtree modification is not allowed.");
+    }
+
+    @Override
+    protected void checkMergeApplicable(YangInstanceIdentifier path, NodeModification modification, Optional<TreeNode> current) throws DataValidationFailedException {
+        super.checkMergeApplicable(path, modification, current);
+        checkMinMaxElements(path, schema, (ModifiedNode) modification, current);
+
+    }
+
+    @Override
+    protected void checkWriteApplicable(YangInstanceIdentifier path, NodeModification modification, Optional<TreeNode> current) throws DataValidationFailedException {
+        super.checkWriteApplicable(path, modification, current);
+        checkMinMaxElements(path, schema, (ModifiedNode) modification, current);
+    }
+
+    private void checkMinMaxElements(YangInstanceIdentifier path, ListSchemaNode schema, ModifiedNode modification,
+                                     Optional<TreeNode> current) throws DataValidationFailedException {
+        int childrenAfter = ((UnkeyedListNode) modification.getWrittenValue()).getSize();
+        for (ModifiedNode modChild : modification.getChildren()) {
+            if (modChild.getType().equals(ModificationType.WRITE) ||
+                    (modChild.getType().equals(ModificationType.MERGE) && !current.isPresent())) {
+                childrenAfter++;
+            } else if (modChild.getType().equals(ModificationType.DELETE)) {
+                childrenAfter--;
+            }
+        }
+
+        int childrenBefore = current.isPresent() ?
+                ((UnkeyedListNode) current.get().getData()).getSize() : 0;
+        final int childrenTotal = childrenBefore + childrenAfter;
+
+        // TODO: remove this null checks when Bug 2685 is fixed
+        final int minElements = schema.getConstraints().getMinElements() != null ?
+                schema.getConstraints().getMinElements() : 0;
+        final int maxElements = schema.getConstraints().getMaxElements() != null ?
+                schema.getConstraints().getMaxElements() : Integer.MAX_VALUE;
+
+        if (minElements > childrenTotal || maxElements < childrenTotal) {
+            throw new DataValidationFailedException(path, "Number of elements '" + (childrenAfter + childrenBefore)
+                    + "' of '" + schema.getQName().getLocalName() + "' is not in allowed range <" + minElements +
+                    ", " + maxElements + ">.");
+        }
     }
 }
