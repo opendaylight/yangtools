@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -20,6 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModifiedNodeDoesNotExistException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
@@ -32,6 +34,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLe
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -180,6 +183,51 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
         checkChildPreconditions(path, modification, current);
     }
 
+    private static <T extends DataSchemaNode> void checkMinMaxElements(T schema, ModifiedNode modification,
+                                                                       Optional<TreeNode> current) {
+        int numOfChildrenAfterMod = 0;
+        if (modification.getWrittenValue() != null) {
+            Iterable children = ((NormalizedNodeContainer) modification.getWrittenValue()).getValue();
+            numOfChildrenAfterMod = Iterables.size(children);
+        }
+        for (ModifiedNode modChild : modification.getChildren()) {
+            if (modChild.getType().equals(ModificationType.WRITE) ||
+                    (modChild.getType().equals(ModificationType.MERGE) && !modChild.getOriginal().isPresent())) {
+                numOfChildrenAfterMod++;
+            } else if (modChild.getType().equals(ModificationType.DELETE)) {
+                numOfChildrenAfterMod--;
+            }
+        }
+        int numOfChildrenBeforeMod;
+        if (current.isPresent()) {
+            numOfChildrenBeforeMod = Iterables.size(((NormalizedNodeContainer) current.get().getData()).getValue());
+        } else {
+            numOfChildrenBeforeMod = 0;
+        }
+        final int totalChildrenAfterCommit = numOfChildrenBeforeMod + numOfChildrenAfterMod;
+
+        final int minElements = schema.getConstraints().getMinElements() != null ?
+                schema.getConstraints().getMinElements() : 0;
+        final int maxElements = schema.getConstraints().getMaxElements() != null ?
+                schema.getConstraints().getMaxElements() : Integer.MAX_VALUE;
+        if (minElements > totalChildrenAfterCommit || maxElements < totalChildrenAfterCommit) {
+            throw new DataValidationException("Number of elements '" + (numOfChildrenAfterMod+numOfChildrenBeforeMod)
+                    +  "' is not in range <" + minElements + ", " + maxElements + ">.");
+        }
+    }
+
+    @Override
+    protected void checkWriteApplicable(final YangInstanceIdentifier path, final NodeModification modification,
+                                        final Optional<TreeNode> current) throws DataValidationFailedException {
+        for (NodeModification childMod : modification.getChildren()) {
+            final YangInstanceIdentifier.PathArgument childId = childMod.getIdentifier();
+            final Optional<TreeNode> childMeta = current.isPresent() ? current.get().getChild(childId) : Optional.<TreeNode>absent();
+
+            YangInstanceIdentifier childPath = path.node(childId);
+            resolveChildOperation(childId).checkApplicable(childPath, childMod, childMeta);
+        }
+    }
+
     private void checkChildPreconditions(final YangInstanceIdentifier path, final NodeModification modification, final Optional<TreeNode> current) throws DataValidationFailedException {
         final TreeNode currentMeta = current.get();
         for (NodeModification childMod : modification.getChildren()) {
@@ -235,11 +283,13 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
     public static class OrderedLeafSetModificationStrategy extends NormalizedNodeContainerModificationStrategy {
 
         private final Optional<ModificationApplyOperation> entryStrategy;
+        private final LeafListSchemaNode schema;
 
         @SuppressWarnings({ "unchecked", "rawtypes" })
         protected OrderedLeafSetModificationStrategy(final LeafListSchemaNode schema) {
             super((Class) LeafSetNode.class);
             entryStrategy = Optional.<ModificationApplyOperation> of(new ValueNodeModificationStrategy.LeafSetEntryModificationStrategy(schema));
+            this.schema = schema;
         }
 
         @Override
@@ -261,20 +311,29 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
             }
             return Optional.absent();
         }
+
+        @Override
+        protected void checkSubtreeModificationApplicable(YangInstanceIdentifier path, NodeModification modification, Optional<TreeNode> current) throws DataValidationFailedException {
+            super.checkSubtreeModificationApplicable(path, modification, current);
+            checkMinMaxElements(schema, (ModifiedNode) modification, current);
+        }
+
+        @Override
+        protected void checkWriteApplicable(YangInstanceIdentifier path, NodeModification modification, Optional<TreeNode> current) throws DataValidationFailedException {
+            super.checkWriteApplicable(path, modification, current);
+            checkMinMaxElements(schema, (ModifiedNode) modification, current);
+        }
     }
 
     public static class OrderedMapModificationStrategy extends NormalizedNodeContainerModificationStrategy {
 
         private final Optional<ModificationApplyOperation> entryStrategy;
+        private final ListSchemaNode schema;
 
         protected OrderedMapModificationStrategy(final ListSchemaNode schema) {
             super(OrderedMapNode.class);
             entryStrategy = Optional.<ModificationApplyOperation> of(new DataNodeContainerModificationStrategy.ListEntryModificationStrategy(schema));
-        }
-
-        @Override
-        boolean isOrdered() {
-            return true;
+            this.schema = schema;
         }
 
         @SuppressWarnings("rawtypes")
@@ -293,6 +352,18 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
         }
 
         @Override
+        protected void checkSubtreeModificationApplicable(YangInstanceIdentifier path, NodeModification modification, Optional<TreeNode> current) throws DataValidationFailedException {
+            super.checkSubtreeModificationApplicable(path, modification, current);
+            checkMinMaxElements(schema, (ModifiedNode) modification, current);
+        }
+
+        @Override
+        protected void checkWriteApplicable(YangInstanceIdentifier path, NodeModification modification, Optional<TreeNode> current) throws DataValidationFailedException {
+            super.checkWriteApplicable(path, modification, current);
+            checkMinMaxElements(schema, (ModifiedNode) modification, current);
+        }
+
+        @Override
         public String toString() {
             return "OrderedMapModificationStrategy [entry=" + entryStrategy + "]";
         }
@@ -301,11 +372,13 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
     public static class UnorderedLeafSetModificationStrategy extends NormalizedNodeContainerModificationStrategy {
 
         private final Optional<ModificationApplyOperation> entryStrategy;
+        private final LeafListSchemaNode schema;
 
         @SuppressWarnings({ "unchecked", "rawtypes" })
         protected UnorderedLeafSetModificationStrategy(final LeafListSchemaNode schema) {
             super((Class) LeafSetNode.class);
             entryStrategy = Optional.<ModificationApplyOperation> of(new ValueNodeModificationStrategy.LeafSetEntryModificationStrategy(schema));
+            this.schema = schema;
         }
 
         @SuppressWarnings("rawtypes")
@@ -322,15 +395,29 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
             }
             return Optional.absent();
         }
+
+        @Override
+        protected void checkSubtreeModificationApplicable(YangInstanceIdentifier path, NodeModification modification, Optional<TreeNode> current) throws DataValidationFailedException {
+            super.checkSubtreeModificationApplicable(path, modification, current);
+            checkMinMaxElements(schema, (ModifiedNode) modification, current);
+        }
+
+        @Override
+        protected void checkWriteApplicable(YangInstanceIdentifier path, NodeModification modification, Optional<TreeNode> current) throws DataValidationFailedException {
+            super.checkWriteApplicable(path, modification, current);
+            checkMinMaxElements(schema, (ModifiedNode) modification, current);
+        }
     }
 
     public static class UnorderedMapModificationStrategy extends NormalizedNodeContainerModificationStrategy {
 
         private final Optional<ModificationApplyOperation> entryStrategy;
+        private final ListSchemaNode schema;
 
         protected UnorderedMapModificationStrategy(final ListSchemaNode schema) {
             super(MapNode.class);
             entryStrategy = Optional.<ModificationApplyOperation> of(new DataNodeContainerModificationStrategy.ListEntryModificationStrategy(schema));
+            this.schema = schema;
         }
 
         @SuppressWarnings("rawtypes")
@@ -346,6 +433,18 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
                 return entryStrategy;
             }
             return Optional.absent();
+        }
+
+        @Override
+        protected void checkSubtreeModificationApplicable(YangInstanceIdentifier path, NodeModification modification, Optional<TreeNode> current) throws DataValidationFailedException {
+            super.checkSubtreeModificationApplicable(path, modification, current);
+            checkMinMaxElements(schema, (ModifiedNode) modification, current);
+        }
+
+        @Override
+        protected void checkWriteApplicable(YangInstanceIdentifier path, NodeModification modification, Optional<TreeNode> current) throws DataValidationFailedException {
+            super.checkWriteApplicable(path, modification, current);
+            checkMinMaxElements(schema, (ModifiedNode) modification, current);
         }
 
         @Override
