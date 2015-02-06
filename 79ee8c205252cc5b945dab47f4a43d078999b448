@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_19302a00",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/leafref/parser/LeafRefPathParserImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-06T08:20:48Z",
+      "side": 1,
+      "message": "Leafref path is different from schema path, could you please introduce new type LeafrefPath?",
+      "range": {
+        "startLine": 37,
+        "startChar": 0,
+        "endLine": 37,
+        "endChar": 102
+      },
+      "revId": "79ee8c205252cc5b945dab47f4a43d078999b448",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_b93fb6d5",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/leafrefcontext/LeafRefContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-06T08:20:48Z",
+      "side": 1,
+      "message": "Could be split out read-only methods from mutation methods?",
+      "range": {
+        "startLine": 26,
+        "startChar": 3,
+        "endLine": 26,
+        "endChar": 56
+      },
+      "revId": "79ee8c205252cc5b945dab47f4a43d078999b448",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_5926b2cf",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/leafrefcontext/LeafRefContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-06T08:20:48Z",
+      "side": 1,
+      "message": "This is representation of leaf-ref path or this is schema path of target node?",
+      "range": {
+        "startLine": 48,
+        "startChar": 4,
+        "endLine": 48,
+        "endChar": 39
+      },
+      "revId": "79ee8c205252cc5b945dab47f4a43d078999b448",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_d9196289",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/leafrefcontext/PathPredicate.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-06T08:20:48Z",
+      "side": 1,
+      "message": "Please make this immutable",
+      "range": {
+        "startLine": 14,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 28
+      },
+      "revId": "79ee8c205252cc5b945dab47f4a43d078999b448",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
