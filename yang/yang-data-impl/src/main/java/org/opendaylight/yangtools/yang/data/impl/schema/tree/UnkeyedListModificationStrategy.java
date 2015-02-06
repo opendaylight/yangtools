@@ -8,12 +8,15 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.IncorrectDataStructureException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
@@ -26,9 +29,12 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
 
     private final Optional<ModificationApplyOperation> entryStrategy;
+    private final ListSchemaNode schema;
 
     protected UnkeyedListModificationStrategy(final ListSchemaNode schema) {
-        entryStrategy = Optional.<ModificationApplyOperation> of(new DataNodeContainerModificationStrategy.UnkeyedListItemModificationStrategy(schema));
+        this.schema = Preconditions.checkNotNull(schema);
+        this.entryStrategy = Optional.<ModificationApplyOperation> of(
+                new DataNodeContainerModificationStrategy.UnkeyedListItemModificationStrategy(schema));
     }
 
     @Override
@@ -129,5 +135,18 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
     protected void checkSubtreeModificationApplicable(final YangInstanceIdentifier path, final NodeModification modification,
             final Optional<TreeNode> current) throws IncorrectDataStructureException {
         throw new IncorrectDataStructureException(path, "Subtree modification is not allowed.");
+    }
+
+    @Override
+    protected void checkMergeApplicable(YangInstanceIdentifier path, NodeModification modification, Optional<TreeNode> current) throws DataValidationFailedException {
+        super.checkMergeApplicable(path, modification, current);
+        ListConstraintsValidator.checkMinMaxElements(path, schema, (ModifiedNode) modification, current);
+
+    }
+
+    @Override
+    protected void checkWriteApplicable(YangInstanceIdentifier path, NodeModification modification, Optional<TreeNode> current) throws DataValidationFailedException {
+        super.checkWriteApplicable(path, modification, current);
+        ListConstraintsValidator.checkMinMaxElements(path, schema, (ModifiedNode) modification, current);
     }
 }
