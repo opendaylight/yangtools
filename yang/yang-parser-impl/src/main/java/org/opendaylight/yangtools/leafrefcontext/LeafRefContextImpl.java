@@ -8,6 +8,9 @@
 package org.opendaylight.yangtools.leafrefcontext;
 
 
+import org.opendaylight.yangtools.yang.common.QNameModule;
+
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import java.util.HashMap;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -21,6 +24,7 @@ public class LeafRefContextImpl implements LeafRefContext {
     private SchemaContext schemaContext;
 
     private LeafRefPath leafRefTargetPath = null;
+    private LeafRefPath absoluteLeafRefTargetPath = null;
     private String leafRefTargetPathString = "";
 
     private boolean isReferencedBy = false;
@@ -29,6 +33,7 @@ public class LeafRefContextImpl implements LeafRefContext {
     private LeafRefContext parent;
     private Map<QName, LeafRefContext> referencingChilds = new HashMap<QName, LeafRefContext>();
     private Map<QName, LeafRefContext> referencedByChilds = new HashMap<QName, LeafRefContext>();
+    private Map<QName, LeafRefContext> referencedByLeafRefCtx = new HashMap<QName, LeafRefContext>();
 
 
     public LeafRefContextImpl(QName currentNodeQName, SchemaPath currentNodePath, SchemaContext schemaContext, LeafRefContext parent) {
@@ -39,7 +44,7 @@ public class LeafRefContextImpl implements LeafRefContext {
     }
 
     @Override
-    public boolean hasLeafRefContext() {
+    public boolean hasLeafRefContextChild() {
         return hasReferencedByChild() || hasReferencingChild();
     }
 
@@ -161,6 +166,46 @@ public class LeafRefContextImpl implements LeafRefContext {
     @Override
     public void setParent(LeafRefContext parent) {
         this.parent = parent;
+    }
+
+    @Override
+    public LeafRefPath getAbsoluteLeafRefTargetPath() {
+
+        if (absoluteLeafRefTargetPath == null) {
+            if (leafRefTargetPath.isAbsolute()) {
+                absoluteLeafRefTargetPath = leafRefTargetPath;
+            } else {
+                absoluteLeafRefTargetPath = LeafRefUtils
+                        .createAbsoluteLeafRefPath(leafRefTargetPath,
+                                currentNodePath, getLeafRefContextModule());
+            }
+        }
+
+        return absoluteLeafRefTargetPath;
+    }
+
+    @Override
+    public Module getLeafRefContextModule() {
+        QNameModule qnameModule = currentNodeQName.getModule();
+
+        return schemaContext.findModuleByNamespaceAndRevision(
+                qnameModule.getNamespace(), qnameModule.getRevision());
+    }
+
+
+    @Override
+    public void addReferencedByLeafRefCtx(QName qname, LeafRefContext leafRef) {
+        referencedByLeafRefCtx.put(qname, leafRef);
+    }
+
+    @Override
+    public LeafRefContext getReferencedByLeafRefCtxByName(QName qname) {
+        return referencedByLeafRefCtx.get(qname);
+    }
+
+    @Override
+    public Map<QName, LeafRefContext> getAllReferencedByLeafRefCtxs() {
+        return referencedByLeafRefCtx;
     }
 
 }

@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.leafrefcontext;
 
+import org.opendaylight.yangtools.yang.model.api.Module;
+
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import java.util.Map;
@@ -15,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public interface LeafRefContext {
 
-    public boolean hasLeafRefContext();
+    public boolean hasLeafRefContextChild();
 
     public boolean hasReferencedByChild();
 
@@ -64,4 +66,14 @@ public interface LeafRefContext {
     public LeafRefContext getParent();
 
     public void setParent(LeafRefContext leafRefContext);
+
+    public LeafRefPath getAbsoluteLeafRefTargetPath();
+
+    public Module getLeafRefContextModule();
+
+    public void addReferencedByLeafRefCtx(QName qname, LeafRefContext leafRef);
+
+    public LeafRefContext getReferencedByLeafRefCtxByName(QName qname);
+
+    public Map<QName, LeafRefContext> getAllReferencedByLeafRefCtxs();
 }

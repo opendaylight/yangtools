@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.leafrefcontext;
 
+import org.opendaylight.yangtools.yang.common.QName;
+
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import java.util.LinkedList;
 
@@ -52,6 +54,26 @@ public class QNameWithPredicate {
 
     public void setLocalName(String localName) {
         this.localName = localName;
+    }
+
+    //FIXME: check also predicates ...
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof QNameWithPredicate)) {
+            return false;
+        }
+        final QNameWithPredicate other = (QNameWithPredicate) obj;
+        if (localName == null) {
+            if (other.localName != null) {
+                return false;
+            }
+        } else if (!localName.equals(other.localName)) {
+            return false;
+        }
+        return moduleQname.equals(other.moduleQname);
     }
 
     @Override
