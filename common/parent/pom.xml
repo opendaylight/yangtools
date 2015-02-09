@@ -543,39 +543,4 @@
             </plugin>
         </plugins>
     </reporting>
-
-
-    <!-- Note: we can not use variables for these URLs because we need to
-         be able to download the parent pom from the repository the first
-         time we go to use it (since it is in a different project).
-         To override the settings, use the "mirror" section of the
-         settings.xml. See http://maven.apache.org/settings.html -->
-    <repositories>
-        <!-- OpenDayLight Repo Mirror -->
-        <repository>
-            <id>opendaylight-mirror</id>
-            <name>opendaylight-mirror</name>
-            <url>http://nexus.opendaylight.org/content/groups/public/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </releases>
-        </repository>
-
-        <!-- OpenDayLight Snapshot artifact -->
-        <repository>
-            <id>opendaylight-snapshot</id>
-            <name>opendaylight-snapshot</name>
-            <url>http://nexus.opendaylight.org/content/repositories/opendaylight.snapshot/</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
-    </repositories>
 </project>
