@@ -5,13 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.leafrefcontext;
+package org.opendaylight.yangtools.leafrefcontext.api;
 
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.concepts.Immutable;
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Objects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import java.util.Arrays;

@@ -5,9 +5,15 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.leafrefcontext;
+package org.opendaylight.yangtools.leafrefcontext.impl;
 
 
+import org.opendaylight.yangtools.leafrefcontext.builder.LeafRefContextBuilder;
+import org.opendaylight.yangtools.leafrefcontext.api.LeafRefPath;
+import org.opendaylight.yangtools.leafrefcontext.api.LeafRefContext;
+import org.opendaylight.yangtools.leafrefcontext.utils.LeafRefUtils;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import java.util.HashMap;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -19,27 +25,43 @@ public class LeafRefContextImpl implements LeafRefContext {
     private QName currentNodeQName;
     private SchemaPath currentNodePath;
     private SchemaContext schemaContext;
+    private Module module;
 
     private LeafRefPath leafRefTargetPath = null;
+    private LeafRefPath absoluteLeafRefTargetPath = null;
     private String leafRefTargetPathString = "";
 
     private boolean isReferencedBy = false;
     private boolean isReferencing = false;
 
-    private LeafRefContext parent;
     private Map<QName, LeafRefContext> referencingChilds = new HashMap<QName, LeafRefContext>();
     private Map<QName, LeafRefContext> referencedByChilds = new HashMap<QName, LeafRefContext>();
+    private Map<QName, LeafRefContext> referencedByLeafRefCtx = new HashMap<QName, LeafRefContext>();
 
 
-    public LeafRefContextImpl(QName currentNodeQName, SchemaPath currentNodePath, SchemaContext schemaContext, LeafRefContext parent) {
+    public LeafRefContextImpl(QName currentNodeQName, SchemaPath currentNodePath, SchemaContext schemaContext) {
         this.currentNodeQName = currentNodeQName;
         this.currentNodePath = currentNodePath;
         this.schemaContext = schemaContext;
-        this.parent = parent;
+    }
+
+    public LeafRefContextImpl(LeafRefContextBuilder leafRefContextBuilder) {
+        this.currentNodeQName = leafRefContextBuilder.getCurrentNodeQName();
+        this.currentNodePath = leafRefContextBuilder.getCurrentNodePath();
+        this.schemaContext = leafRefContextBuilder.getSchemaContext();
+        this.leafRefTargetPath = leafRefContextBuilder.getLeafRefTargetPath();
+        this.absoluteLeafRefTargetPath = leafRefContextBuilder.getAbsoluteLeafRefTargetPath();
+        this.leafRefTargetPathString = leafRefContextBuilder.getLeafRefTargetPathString();
+        this.isReferencedBy = leafRefContextBuilder.isReferencedBy();
+        this.isReferencing = leafRefContextBuilder.isReferencing();
+        this.referencingChilds = leafRefContextBuilder.getReferencingChilds();
+        this.referencedByChilds = leafRefContextBuilder.getReferencedByChilds();
+        this.referencedByLeafRefCtx = leafRefContextBuilder.getAllReferencedByLeafRefCtxs();
+        this.module = leafRefContextBuilder.getLeafRefContextModule();
     }
 
     @Override
-    public boolean hasLeafRefContext() {
+    public boolean hasLeafRefContextChild() {
         return hasReferencedByChild() || hasReferencingChild();
     }
 
@@ -59,23 +81,8 @@ public class LeafRefContextImpl implements LeafRefContext {
     }
 
     @Override
-    public void setReferencedBy(boolean isReferencedBy) {
-        this.isReferencedBy = isReferencedBy;
-    }
-
-    @Override
     public boolean isReferencing() {
         return isReferencing;
-    }
-
-    @Override
-    public void setReferencing(boolean isReferencing) {
-        this.isReferencing = isReferencing;
-    }
-
-    @Override
-    public void addReferencingChild(LeafRefContext child, QName childQName) {
-        referencingChilds.put(childQName, child);
     }
 
     @Override
@@ -86,11 +93,6 @@ public class LeafRefContextImpl implements LeafRefContext {
     @Override
     public Map<QName, LeafRefContext> getReferencingChilds() {
         return referencingChilds;
-    }
-
-    @Override
-    public void addReferencedByChild(LeafRefContext child, QName childQName) {
-        referencedByChilds.put(childQName, child);
     }
 
     @Override
@@ -109,18 +111,8 @@ public class LeafRefContextImpl implements LeafRefContext {
     }
 
     @Override
-    public void setCurrentNodePath(SchemaPath currentNodePath) {
-        this.currentNodePath = currentNodePath;
-    }
-
-    @Override
     public LeafRefPath getLeafRefTargetPath() {
         return leafRefTargetPath;
-    }
-
-    @Override
-    public void setLeafRefTargetPath(LeafRefPath leafRefPath) {
-        this.leafRefTargetPath = leafRefPath;
     }
 
     @Override
@@ -129,18 +121,8 @@ public class LeafRefContextImpl implements LeafRefContext {
     }
 
     @Override
-    public void setLeafRefTargetPathString(String leafRefPathString) {
-        this.leafRefTargetPathString = leafRefPathString;
-    }
-
-    @Override
     public QName getCurrentNodeQName() {
         return currentNodeQName;
-    }
-
-    @Override
-    public void setCurrentNodeQName(QName currentNodeQName) {
-        this.currentNodeQName = currentNodeQName;
     }
 
     @Override
@@ -149,18 +131,23 @@ public class LeafRefContextImpl implements LeafRefContext {
     }
 
     @Override
-    public void setSchemaContext(SchemaContext schemaContext) {
-        this.schemaContext = schemaContext;
+    public LeafRefPath getAbsoluteLeafRefTargetPath() {
+        return absoluteLeafRefTargetPath;
     }
 
     @Override
-    public LeafRefContext getParent() {
-        return parent;
+    public Module getLeafRefContextModule() {
+        return module;
     }
 
     @Override
-    public void setParent(LeafRefContext parent) {
-        this.parent = parent;
+    public LeafRefContext getReferencedByLeafRefCtxByName(QName qname) {
+        return referencedByLeafRefCtx.get(qname);
+    }
+
+    @Override
+    public Map<QName, LeafRefContext> getAllReferencedByLeafRefCtxs() {
+        return referencedByLeafRefCtx;
     }
 
 }

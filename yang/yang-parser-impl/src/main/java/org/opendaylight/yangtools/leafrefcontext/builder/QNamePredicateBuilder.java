@@ -5,24 +5,26 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.leafrefcontext;
+package org.opendaylight.yangtools.leafrefcontext.builder;
 
+import org.opendaylight.yangtools.leafrefcontext.impl.QNamePredicateImpl;
+
+import org.opendaylight.yangtools.leafrefcontext.api.LeafRefPath;
+import org.opendaylight.yangtools.leafrefcontext.api.QNamePredicate;
+import org.opendaylight.yangtools.leafrefcontext.api.QNameWithPredicate;
 import org.opendaylight.yangtools.yang.common.QName;
 
-public class QNamePredicate {
+public class QNamePredicateBuilder {
 
     private QName identifier;
-    private LeafRefPath identifierPath;
     private LeafRefPath pathKeyExpression;
 
-    public QNamePredicate(){
-
+    public QNamePredicateBuilder(){
     }
 
-    public QNamePredicate(QName identifier, LeafRefPath pathKeyExpression, LeafRefPath identifierPath) {
+    public QNamePredicateBuilder(QName identifier, LeafRefPath pathKeyExpression) {
         this.identifier = identifier;
         this.pathKeyExpression = pathKeyExpression;
-        this.identifierPath = identifierPath;
     }
 
     public QName getIdentifier() {
@@ -41,12 +43,8 @@ public class QNamePredicate {
         this.pathKeyExpression = pathKeyExpression;
     }
 
-    public LeafRefPath getIdentifierPath() {
-        return identifierPath;
-    }
-
-    public void setIdentifierPath(LeafRefPath identifierPath) {
-        this.identifierPath = identifierPath;
+    public QNamePredicate build(){
+        return new QNamePredicateImpl(identifier,pathKeyExpression);
     }
 
     @Override
@@ -66,5 +64,4 @@ public class QNamePredicate {
         sb.append("]");
         return sb.toString();
     }
-
 }

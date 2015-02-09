@@ -5,54 +5,66 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.leafrefcontext;
+package org.opendaylight.yangtools.leafrefcontext.impl;
 
+import org.opendaylight.yangtools.leafrefcontext.api.QNamePredicate;
+import org.opendaylight.yangtools.leafrefcontext.api.QNameWithPredicate;
+
+import java.io.Serializable;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import java.util.LinkedList;
 
-public class QNameWithPredicate {
+public class QNameWithPredicateImpl implements Immutable, Serializable, QNameWithPredicate {
 
-    public static final QNameWithPredicate UP_PARENT = new QNameWithPredicate(null, "..");
+    private static final long serialVersionUID = 1L;
 
     private LinkedList<QNamePredicate> qnamePredicates;
     private QNameModule moduleQname;
     private String localName;
 
 
-    private QNameWithPredicate(QNameModule moduleQname, String localName) {
+    public QNameWithPredicateImpl(QNameModule moduleQname, String localName, LinkedList<QNamePredicate> qnamePredicates) {
         this.moduleQname = moduleQname;
         this.localName = localName;
-        this.qnamePredicates = new LinkedList<QNamePredicate>();
+        this.qnamePredicates = qnamePredicates;
     }
 
-
-    public static QNameWithPredicate create(QNameModule moduleQname, String localName) {
-        return new QNameWithPredicate(moduleQname,localName);
-    }
-
+    @Override
     public LinkedList<QNamePredicate> getQNamePredicates() {
         return qnamePredicates;
     }
 
-    public void addQNamePredicate(QNamePredicate qnamePredicate) {
-        qnamePredicates.add(qnamePredicate);
-    }
-
+    @Override
     public QNameModule getModuleQname() {
         return moduleQname;
     }
 
-    public void setModuleQname(QNameModule moduleQname) {
-        this.moduleQname = moduleQname;
-    }
-
+    @Override
     public String getLocalName() {
         return localName;
     }
 
-    public void setLocalName(String localName) {
-        this.localName = localName;
+    //FIXME: check also predicates ...
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof QNameWithPredicateImpl)) {
+            return false;
+        }
+        final QNameWithPredicateImpl other = (QNameWithPredicateImpl) obj;
+        if (localName == null) {
+            if (other.localName != null) {
+                return false;
+            }
+        } else if (!localName.equals(other.localName)) {
+            return false;
+        }
+        return moduleQname.equals(other.moduleQname);
     }
+
 
     @Override
     public String toString() {

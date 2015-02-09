@@ -7,22 +7,15 @@
  */
 package org.opendaylight.yangtools.leafref.parser;
 
-import java.util.Date;
+import org.opendaylight.yangtools.leafrefcontext.api.LeafRefPath;
 
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.leafrefcontext.QNamePredicate;
-import org.opendaylight.yangtools.leafrefcontext.LeafRefPath;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import java.util.Set;
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.api.Module;
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+import java.net.URI;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.net.URI;
-import org.opendaylight.yangtools.leafrefcontext.QNameWithPredicate;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import java.util.Set;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -41,6 +34,15 @@ import org.opendaylight.yangtools.antlrv4.code.gen.LeafRefPathParser.PrefixConte
 import org.opendaylight.yangtools.antlrv4.code.gen.LeafRefPathParser.Rel_path_keyexprContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.LeafRefPathParser.Relative_pathContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.LeafRefPathParserListener;
+import org.opendaylight.yangtools.leafrefcontext.api.QNameWithPredicate;
+import org.opendaylight.yangtools.leafrefcontext.builder.QNamePredicateBuilder;
+import org.opendaylight.yangtools.leafrefcontext.builder.QNameWithPredicateBuilder;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 
 
 
@@ -50,15 +52,21 @@ public final class LeafRefPathParserListenerImpl implements LeafRefPathParserLis
     private Module module;
     private LeafRefPath leafRefPath;
     private boolean relativePath=false;
-    private QNameWithPredicate currentLeafRefPathQName;
-    private QNameWithPredicate currentPredicatePathQName;
-    private QNamePredicate currentPredicate;
+    private QNameWithPredicateBuilder currentLeafRefPathQName;
+    private QNamePredicateBuilder currentPredicate;
     private QNameModule currentQnameModule;
     private String currentQNameLocalName;
-    private LinkedList<QNameWithPredicate> leafRefPathQnameList;
-    private LinkedList<QNameWithPredicate> predicatePathKeyQnameList;
-    private SchemaNode node;
+    private LinkedList<QNameWithPredicateBuilder> leafRefPathQnameList;
+    private LinkedList<QNameWithPredicateBuilder> predicatePathKeyQnameList;
+    private SchemaNode node; //FIXME use for identifier path completion
     private ParsingState currentParsingState;
+
+    Function<QNameWithPredicateBuilder, QNameWithPredicate> build = new Function<QNameWithPredicateBuilder, QNameWithPredicate>() {
+        @Override
+        public QNameWithPredicate apply(QNameWithPredicateBuilder builder) {
+           return builder.build();
+        }
+     };
 
     private enum ParsingState {
         LEAF_REF_PATH, PATH_PREDICATE, PREDICATE_PATH_EQUALITY_EXPR, PATH_KEY_EXPR
@@ -68,7 +76,7 @@ public final class LeafRefPathParserListenerImpl implements LeafRefPathParserLis
     public LeafRefPathParserListenerImpl(SchemaContext schemaContext, Module currentModule, SchemaNode currentNode) {
        this.schemaContext = schemaContext;
        this.module = currentModule;
-       this.leafRefPathQnameList = new LinkedList<QNameWithPredicate>();
+       this.leafRefPathQnameList = new LinkedList<QNameWithPredicateBuilder>();
        this.node=currentNode;
        this.currentParsingState = ParsingState.LEAF_REF_PATH;
     }
@@ -135,14 +143,14 @@ public final class LeafRefPathParserListenerImpl implements LeafRefPathParserLis
     @Override
     public void enterPath_predicate(Path_predicateContext ctx) {
         currentParsingState=ParsingState.PATH_PREDICATE;
-        currentPredicate = new QNamePredicate();
+        currentPredicate = new QNamePredicateBuilder();
     }
 
 
     @Override
     public void exitPath_predicate(Path_predicateContext ctx) {
 
-        currentLeafRefPathQName.addQNamePredicate(currentPredicate);
+        currentLeafRefPathQName.addQNamePredicate(currentPredicate.build());
         currentPredicate = null;
 
         currentParsingState=ParsingState.LEAF_REF_PATH;
@@ -153,10 +161,10 @@ public final class LeafRefPathParserListenerImpl implements LeafRefPathParserLis
     public void enterRel_path_keyexpr(Rel_path_keyexprContext ctx) {
         currentParsingState=ParsingState.PATH_KEY_EXPR;
 
-        predicatePathKeyQnameList = new LinkedList<QNameWithPredicate>();
+        predicatePathKeyQnameList = new LinkedList<QNameWithPredicateBuilder>();
         List<TerminalNode> dots = ctx.DOTS();
         for (TerminalNode parent : dots) {
-            predicatePathKeyQnameList.add(QNameWithPredicate.UP_PARENT);
+            predicatePathKeyQnameList.add(QNameWithPredicateBuilder.UP_PARENT_BUILDER);
         }
     }
 
@@ -164,7 +172,7 @@ public final class LeafRefPathParserListenerImpl implements LeafRefPathParserLis
     @Override
     public void exitRel_path_keyexpr(Rel_path_keyexprContext ctx) {
 
-        LeafRefPath pathKeyExpression = LeafRefPath.create(predicatePathKeyQnameList, false);
+        LeafRefPath pathKeyExpression = LeafRefPath.create(Lists.transform(predicatePathKeyQnameList,build), false);
         currentPredicate.setPathKeyExpression(pathKeyExpression);
 
         currentParsingState=ParsingState.PREDICATE_PATH_EQUALITY_EXPR;
@@ -192,7 +200,7 @@ public final class LeafRefPathParserListenerImpl implements LeafRefPathParserLis
         relativePath = true;
         List<TerminalNode> dots = ctx.DOTS();
         for (TerminalNode parent : dots) {
-            leafRefPathQnameList.add(QNameWithPredicate.UP_PARENT);
+            leafRefPathQnameList.add(QNameWithPredicateBuilder.UP_PARENT_BUILDER);
         }
 
     }
@@ -286,7 +294,7 @@ public final class LeafRefPathParserListenerImpl implements LeafRefPathParserLis
 
     @Override
     public void exitPath_arg(Path_argContext ctx) {
-        leafRefPath = LeafRefPath.create(leafRefPathQnameList, !relativePath);
+        leafRefPath = LeafRefPath.create(Lists.transform(leafRefPathQnameList,build), !relativePath);
     }
 
 
@@ -322,14 +330,14 @@ public final class LeafRefPathParserListenerImpl implements LeafRefPathParserLis
             currentPredicate.setIdentifier(qname);
         } else {
 
-            QNameWithPredicate qname = QNameWithPredicate.create(
+            QNameWithPredicateBuilder qnameBuilder = new QNameWithPredicateBuilder(
                     currentQnameModule, currentQNameLocalName);
 
             if (currentParsingState == ParsingState.PATH_KEY_EXPR) {
-                predicatePathKeyQnameList.add(qname);
+                predicatePathKeyQnameList.add(qnameBuilder);
             } else if (currentParsingState == ParsingState.LEAF_REF_PATH) {
-                currentLeafRefPathQName = qname;
-                leafRefPathQnameList.add(qname);
+                currentLeafRefPathQName = qnameBuilder;
+                leafRefPathQnameList.add(qnameBuilder);
             }
         }
         currentQnameModule = null;

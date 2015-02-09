@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.leafref.parser;
 
-import org.opendaylight.yangtools.leafrefcontext.LeafRefPath;
+import org.opendaylight.yangtools.leafrefcontext.api.LeafRefPath;
 
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
