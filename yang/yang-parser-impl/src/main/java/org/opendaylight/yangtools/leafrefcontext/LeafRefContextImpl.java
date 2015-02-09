@@ -8,6 +8,9 @@
 package org.opendaylight.yangtools.leafrefcontext;
 
 
+import org.opendaylight.yangtools.yang.common.QNameModule;
+
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import java.util.HashMap;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -21,6 +24,7 @@ public class LeafRefContextImpl implements LeafRefContext {
     private SchemaContext schemaContext;
 
     private LeafRefPath leafRefTargetPath = null;
+    private LeafRefPath absoluteLeafRefTargetPath = null;
     private String leafRefTargetPathString = "";
 
     private boolean isReferencedBy = false;
@@ -161,6 +165,28 @@ public class LeafRefContextImpl implements LeafRefContext {
     @Override
     public void setParent(LeafRefContext parent) {
         this.parent = parent;
+    }
+
+    public LeafRefPath getAbsoluteLeafRefTargetPath() {
+
+        if (absoluteLeafRefTargetPath == null) {
+            if (leafRefTargetPath.isAbsolute()) {
+                absoluteLeafRefTargetPath = leafRefTargetPath;
+            } else {
+                absoluteLeafRefTargetPath = LeafRefUtils
+                        .transformToAbsoluteLeafRefPath(leafRefTargetPath,
+                                currentNodePath);
+            }
+        }
+
+        return absoluteLeafRefTargetPath;
+    }
+
+    public Module getLeafRefContextModule() {
+        QNameModule qnameModule = currentNodeQName.getModule();
+
+        return schemaContext.findModuleByNamespaceAndRevision(
+                qnameModule.getNamespace(), qnameModule.getRevision());
     }
 
 }
