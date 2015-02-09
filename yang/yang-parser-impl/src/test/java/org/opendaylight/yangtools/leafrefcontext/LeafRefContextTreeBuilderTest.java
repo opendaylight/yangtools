@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.leafrefcontext;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -25,25 +26,26 @@ public class LeafRefContextTreeBuilderTest {
 
     @Test
     public void buildLeafRefContextTreeTest() throws URISyntaxException, IOException, YangSyntaxErrorException {
-        File resourceFile = new File(getClass().getResource("/leafref-context-test/correct-modules/leafref-test.yang")
+        File resourceFile = new File(getClass().getResource(
+                "/leafref-context-test/correct-modules/leafref-test.yang")
                 .toURI());
         File resourceDir = resourceFile.getParentFile();
 
         YangParserImpl parser = YangParserImpl.getInstance();
         SchemaContext context = parser.parseFile(resourceFile, resourceDir);
 
-       LeafRefContextTreeBuilder leafRefContextTreeBuilder = new LeafRefContextTreeBuilder(context);
+        LeafRefContextTreeBuilder leafRefContextTreeBuilder = new LeafRefContextTreeBuilder(
+                context);
 
-       LeafRefContext rootLeafRefContext = leafRefContextTreeBuilder.buildLeafRefContextTree();
+        LeafRefContext rootLeafRefContext = leafRefContextTreeBuilder
+                .buildLeafRefContextTree();
 
+        System.out.println(rootLeafRefContext.getCurrentNodeQName());
 
-       System.out.println(rootLeafRefContext.getCurrentNodeQName());
-
-
-       QNameModule imp = null;
-       QNameModule tst = null;
-       Set<Module> modules = context.getModules();
-       for (Module module : modules) {
+        QNameModule imp = null;
+        QNameModule tst = null;
+        Set<Module> modules = context.getModules();
+        for (Module module : modules) {
             if (module.getName().equals("import-mod")) {
                 imp = module.getQNameModule();
             }
@@ -52,33 +54,78 @@ public class LeafRefContextTreeBuilderTest {
             }
         }
 
-       QName q1 = QName.create(tst,"odl-project");
-       QName q2 = QName.create(tst,"project");
-       QName q3 = QName.create(tst,"project-lead");
-       QName q4 = QName.create(tst,"project-lead2");
+        QName q1 = QName.create(tst, "odl-project");
+        QName q2 = QName.create(tst, "project");
+        QName q3 = QName.create(tst, "project-lead");
+        QName q4 = QName.create(tst, "project-lead2");
 
-       LeafRefContext leafRefCtx = rootLeafRefContext.getReferencingChildByName(q1).getReferencingChildByName(q2).getReferencingChildByName(q3);
+        LeafRefContext leafRefCtx = rootLeafRefContext
+                .getReferencingChildByName(q1).getReferencingChildByName(q2)
+                .getReferencingChildByName(q3);
 
-       System.out.println();
-       System.out.println("******* Test 1 ************");
-       System.out.println("Original definition string:");
-       System.out.println(leafRefCtx.getLeafRefTargetPathString());
+        assertTrue(leafRefCtx.isReferencing());
 
-       System.out.println("Parsed leafref path:");
-       System.out.println(leafRefCtx.getLeafRefTargetPath().toString());
+        System.out.println();
+        System.out.println("******* Test 1 ************");
+        System.out.println("Original definition string:");
+        System.out.println(leafRefCtx.getLeafRefTargetPathString());
+        System.out.println("Parsed leafref path:");
+        System.out.println(leafRefCtx.getLeafRefTargetPath().toString());
+        System.out.println("Absolute leafref path:");
+        System.out
+                .println(leafRefCtx.getAbsoluteLeafRefTargetPath().toString());
+
+        LeafRefContext leafRefCtx2 = rootLeafRefContext
+                .getReferencingChildByName(q1).getReferencingChildByName(q2)
+                .getReferencingChildByName(q4);
+
+        assertTrue(leafRefCtx2.isReferencing());
+
+        System.out.println();
+        System.out.println("******* Test 2 ************");
+        System.out.println("Original definition string2:");
+        System.out.println(leafRefCtx2.getLeafRefTargetPathString());
+        System.out.println("Parsed leafref path2:");
+        System.out.println(leafRefCtx2.getLeafRefTargetPath().toString());
+        System.out.println("Absolute leafref path2:");
+        System.out.println(leafRefCtx2.getAbsoluteLeafRefTargetPath()
+                .toString());
+        System.out.println();
 
 
-       LeafRefContext leafRefCtx2 = rootLeafRefContext.getReferencingChildByName(q1).getReferencingChildByName(q2).getReferencingChildByName(q4);
 
-       System.out.println();
-       System.out.println("******* Test 2 ************");
-       System.out.println("Original definition string2:");
-       System.out.println(leafRefCtx2.getLeafRefTargetPathString());
+        QName q5 = QName.create(tst, "ch1");
+        QName q6 = QName.create(tst, "c1");
+        QName q7 = QName.create(tst, "ch2");
+        QName q8 = QName.create(tst, "l1");
+        LeafRefContext leafRefCtx3 = rootLeafRefContext
+                .getReferencingChildByName(q1).getReferencingChildByName(q2)
+                .getReferencingChildByName(q5).getReferencingChildByName(q6)
+                .getReferencingChildByName(q7).getReferencingChildByName(q6).getReferencingChildByName(q8);
 
-       System.out.println("Parsed leafref path2:");
-       System.out.println(leafRefCtx2.getLeafRefTargetPath().toString());
-       System.out.println();
+        assertTrue(leafRefCtx3.isReferencing());
 
+        System.out.println();
+        System.out.println("******* Test 3 ************");
+        System.out.println("Original definition string2:");
+        System.out.println(leafRefCtx3.getLeafRefTargetPathString());
+        System.out.println("Parsed leafref path2:");
+        System.out.println(leafRefCtx3.getLeafRefTargetPath().toString());
+        System.out.println("Absolute leafref path2:");
+        System.out.println(leafRefCtx3.getAbsoluteLeafRefTargetPath()
+                .toString());
+        System.out.println();
+
+
+        QName q9 = QName.create(tst, "odl-project");
+        QName q10 = QName.create(tst, "project");
+        QName q11 = QName.create(tst, "name");
+
+        LeafRefContext leafRefCtx4 = rootLeafRefContext
+                .getReferencedByChildByName(q9).getReferencedByChildByName(q10).getReferencedByChildByName(q11);
+
+        assertTrue(leafRefCtx4.isReferencedBy());
+        assertEquals(6,leafRefCtx4.getReferencedByLeafRefCtx().size());
     }
 
     @Test(expected=LeafRefPathSyntaxErrorException.class)

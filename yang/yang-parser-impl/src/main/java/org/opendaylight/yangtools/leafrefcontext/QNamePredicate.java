@@ -12,8 +12,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 public class QNamePredicate {
 
     private QName identifier;
-    private LeafRefPath identifierPath;
     private LeafRefPath pathKeyExpression;
+
+    private LeafRefPath absoluteIdentifierPath;
+    private LeafRefPath absolutePathKeyExpression;
 
     public QNamePredicate(){
 
@@ -22,7 +24,7 @@ public class QNamePredicate {
     public QNamePredicate(QName identifier, LeafRefPath pathKeyExpression, LeafRefPath identifierPath) {
         this.identifier = identifier;
         this.pathKeyExpression = pathKeyExpression;
-        this.identifierPath = identifierPath;
+        this.absoluteIdentifierPath = identifierPath;
     }
 
     public QName getIdentifier() {
@@ -41,12 +43,20 @@ public class QNamePredicate {
         this.pathKeyExpression = pathKeyExpression;
     }
 
-    public LeafRefPath getIdentifierPath() {
-        return identifierPath;
+    public LeafRefPath getAbsoluteIdentifierPath() {
+        return absoluteIdentifierPath;
     }
 
-    public void setIdentifierPath(LeafRefPath identifierPath) {
-        this.identifierPath = identifierPath;
+    public void setAbsoluteIdentifierPath(LeafRefPath absoluteIdentifierPath) {
+        this.absoluteIdentifierPath = absoluteIdentifierPath;
+    }
+
+    public LeafRefPath getAbsolutePathKeyExpression() {
+        return absolutePathKeyExpression;
+    }
+
+    public void setAbsolutePathKeyExpression(LeafRefPath absolutePathKeyExpression) {
+        this.absolutePathKeyExpression = absolutePathKeyExpression;
     }
 
     @Override
