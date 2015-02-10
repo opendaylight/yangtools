@@ -27,6 +27,18 @@
         <salGeneratorPath>src/main/yang-gen-sal</salGeneratorPath>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>yangtools-artifacts</artifactId>
+                <version>${yangtools.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <profiles>
         <profile>
             <activation>
@@ -34,17 +46,6 @@
                     <exists>src/main/yang</exists>
                 </file>
             </activation>
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.opendaylight.yangtools</groupId>
-                        <artifactId>yangtools-artifacts</artifactId>
-                        <version>${yangtools.version}</version>
-                        <type>pom</type>
-                        <scope>import</scope>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
             <dependencies>
               <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
