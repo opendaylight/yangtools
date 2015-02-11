@@ -1,0 +1,154 @@
+/*
+ * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.yang.parser.spi.meta;
+
+import com.google.common.base.Supplier;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+
+
+/**
+ * Builder for effective model inference action.
+ *
+ * Model inference action is core principle of transforming
+ * declared model into effective model.
+ *
+ * Since YANG allows forward references, some inference actions
+ * needs to be taken at later point, where reference is actually
+ * resolved. Referenced objects are not retrieved directly
+ * but are represented as {@link Prereq} (prerequisite) for
+ * inference action to be taken.
+ *
+ * Some existing YANG statements are more complex and also object,
+ * for which effective model may be infered is also represented
+ * as {@link Prereq} which once, when reference is available
+ * will contain target context, which may be used for inference
+ * action.
+ *
+ * <h2>Implementing inference action</h2>
+ *
+ * Effective inference action could always be splitted into two
+ * separete tasks:
+ * <ol>
+ * <li>Declaration of inference action and its prerequisites</li>
+ * <li>Execution of inference action</li>
+ * </ol>
+ * In order to declare inference action following steps needs
+ * to be taken:
+ *
+ * <ol>
+ * <li>Use {@link StmtContext.Mutable#newInferenceAction()} to obtain
+ * {@link ModelInferenceActionBuilder}.
+ * <li>Use builder to specify concrete prerequisites of inference action
+ * (other statements, values from identifier namespaces)
+ * <li>Use builder to specify concrete set of nodes (or forward references to nodes)
+ * which will inference action mutate.
+ * <li>Use {@link #apply(InferenceAction)} with {@link InferenceAction} implementation
+ * to register inference action.
+ * </ol>
+ *
+ * Action will be executed when:
+ * <ul>
+ * <li> {@link InferenceAction#apply()} - all prerequisites (and declared forward references) are met,
+ * action could dereference them and start applying changes.
+ * </li>
+ * <li>{@link InferenceAction#preconditionsWasNotMet(Iterable)} - semantic parser finished all other satisfied
+ * inference actions and some of declared prerequisites was still not met.
+ * </li>
+ * </ul>
+ *
+ * TODO: Insert real word example
+ *
+ * <h2>Design notes</h2>
+ * {@link java.lang.Future} seems as viable and more standard
+ * alternative to {@link Prereq}, but futures also carries
+ * promise that resolution of it is carried in other
+ * thread, which will actually put additional constraints on
+ * semantic parser.
+ *
+ * Also listening on multiple futures is costly, so we opted
+ * out of future and designed API, which later may introduce
+ * futures.
+ *
+ */
+public interface ModelInferenceActionBuilder {
+
+    public interface Prereq<T> extends Supplier<T> {
+
+        /**
+         *
+         * Returns associated prerequisite once it is resolved.
+         *
+         * @return associated prerequisite once it is resolved.
+         *
+         */
+        @Override
+        public T get();
+
+        boolean isDone();
+
+    }
+
+    /**
+     * User-defined inference action.
+     *
+     */
+    public interface InferenceAction {
+
+        /**
+         * Invoked once all prerequisites were met and forward references
+         * were resolved and inference action should be applied.
+         *
+         * Implementors may do necessary changes to mutable objects
+         * which were declared.
+         *
+         * @throws InferenceException If inference action can not be processed.
+         *      Note that this exception be used for user to debug YANG sources,
+         *      so should provide helpful context to fix issue in sources.
+         */
+        void apply() throws InferenceException;
+
+        /**
+         * Invoked once one of prerequisites was not met,
+         * even after all other satifiable inference actions were processed.
+         *
+         * Implementors MUST throw {@link InferenceException} if semantic processing
+         * of model should be stopped and failed.
+         *
+         * List of failed prerequisites should be used to select right message / error
+         * type to debug problem in YANG sources.
+         *
+         * @throws InferenceException If inference action can not be processed.
+         *      Note that this exception be used for user to debug YANG sources,
+         *      so should provide helpful context to fix issue in sources.
+         */
+        void preconditionsWasNotMet(Iterable<Prereq<?>> failed) throws InferenceException;
+    }
+
+    <D extends DeclaredStatement<?>> Prereq<D> requiresDeclared(StmtContext<?,? extends D,?> context);
+
+    <K,D extends DeclaredStatement<?>,N extends StatementNamespace<? super K, D, ?>> Prereq<D> requiresDeclared(StmtContext<?,?,?> context,Class<N> namespace, K key);
+
+    <K,D extends DeclaredStatement<?>,N extends StatementNamespace<? super K, D, ?>> Prereq<StmtContext<?,D,?>> requiresDeclaredCtx(StmtContext<?,?,?> context,Class<N> namespace, K key);
+
+    <E extends EffectiveStatement<?,?>> Prereq<E> requiresEffective(StmtContext<?,?,? extends E> stmt);
+
+    <K,E extends EffectiveStatement<?,?>,N extends StatementNamespace<? super K, ?, E>> Prereq<E> requiresEffective(StmtContext<?,?,?> context,Class<N> namespace, K key);
+
+    <K,E extends EffectiveStatement<?,?>,N extends StatementNamespace<? super K, ?, E>> Prereq<StmtContext<?,?,E>> requiresEffectiveCtx(StmtContext<?,?,?> context,Class<N> namespace, K key);
+
+    <N extends IdentifierNamespace<? ,?>> Prereq<Mutable<?,?,?>> mutatesNamespace(Mutable<?,?, ?> ctx, Class<N> namespace);
+
+    <T extends Mutable<?,?,?>> Prereq<T> mutatesEffectiveCtx(T stmt);
+
+    <K,E extends EffectiveStatement<?,?>,N extends StatementNamespace<? super K, ?, ? extends E>> Prereq<Mutable<?,?,E>> mutatesEffectiveCtx(StmtContext<?,?,?> context,Class<N> namespace, K key);
+
+    void apply(InferenceAction action);
+}
