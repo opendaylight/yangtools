@@ -13,6 +13,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -543,6 +545,43 @@ public class GroupingTest {
 
         // TEST getOriginal from grouping-X
         assertEquals(gy.getDataChildByName("leaf-grouping-Y"),SchemaNodeUtils.getRootOriginalIfPossible( gx.getDataChildByName("leaf-grouping-Y")));
+    }
+
+    @Test
+    public void testAddedByUsesLeafTypeQName() throws IOException,
+            URISyntaxException {
+
+        Set<Module> loadModules = TestUtils.loadModules(getClass().getResource(
+                "/added-by-uses-leaf-test").toURI());
+
+        assertEquals(2, loadModules.size());
+
+        Module foo = null;
+        Module imp = null;
+        for (Module module : loadModules) {
+            if (module.getName().equals("foo")) {
+                foo = module;
+            }
+            if (module.getName().equals("import-module")) {
+                imp = module;
+            }
+        }
+
+        LeafSchemaNode leaf = (LeafSchemaNode) ((ContainerSchemaNode) foo
+                .getDataChildByName("my-container"))
+                .getDataChildByName("my-leaf");
+
+        TypeDefinition impType = null;
+        Set<TypeDefinition<?>> typeDefinitions = imp.getTypeDefinitions();
+        for (TypeDefinition<?> typeDefinition : typeDefinitions) {
+            if (typeDefinition.getQName().getLocalName().equals("imp-type")) {
+                impType = typeDefinition;
+                break;
+            }
+        }
+
+        assertEquals(leaf.getType().getQName(), impType.getQName());
+
     }
 
 }

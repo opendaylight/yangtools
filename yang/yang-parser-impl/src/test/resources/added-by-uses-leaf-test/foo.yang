@@ -1,0 +1,20 @@
+module foo {
+    prefix foo;
+    namespace "namespace-foo";
+
+    import import-module { prefix imp; revision-date 1970-01-02; } 
+    
+    grouping grp {
+        leaf my-leaf {
+            type imp:imp-type;
+        }
+        
+    }
+    
+    container my-container {
+        uses grp;
+        uses imp:imp_grp;
+    }
+    
+}
+

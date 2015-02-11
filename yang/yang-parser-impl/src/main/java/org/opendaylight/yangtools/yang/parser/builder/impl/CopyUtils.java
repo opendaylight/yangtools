@@ -202,7 +202,7 @@ public final class CopyUtils {
         }
 
         if (old.getType() == null) {
-            copy.setTypedef(copy(old.getTypedef(), copy, updateQName));
+            copy.setTypedef(old.getTypedef());
         } else {
             copy.setType(old.getType());
         }
@@ -235,7 +235,7 @@ public final class CopyUtils {
         }
 
         if (old.getType() == null) {
-            copy.setTypedef(copy(old.getTypedef(), copy, updateQName));
+            copy.setTypedef(old.getTypedef());
         } else {
             copy.setType(old.getType());
         }

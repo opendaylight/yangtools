@@ -1,0 +1,35 @@
+module import-module {
+    prefix imp;
+    namespace "import-module";
+
+    revision 1970-01-02 {
+        description "Initial revision.";
+    }
+
+    typedef imp-type {
+        type string {
+            length "0..100";
+        }
+    }
+
+    grouping imp_grp {
+        
+        typedef grp-type {
+            type string {
+                length "20..30";
+            }
+        }
+
+        leaf my-leaf2 {
+            type grp-type;
+        }
+        
+        leaf union-leaf {
+            type union {
+                type int16;
+                type string;
+            }
+        }
+    }
+}
+
