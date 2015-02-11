@@ -20,20 +20,6 @@
     <!-- yang-common dependency added here only for purpose of 'artifact version 
         check' test: version of yang-common artifact has to be different than one defined 
         in yang-maven-plugin to make test pass -->
-    <repositories>
-        <repository>
-            <id>opendaylight-mirror</id>
-            <name>opendaylight-mirror</name>
-            <url>http://nexus.opendaylight.org/content/groups/public/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <releases>
-                <enabled>true</enabled>
-                <updatePolicy>never</updatePolicy>
-            </releases>
-        </repository>
-    </repositories>
     <dependencies>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
