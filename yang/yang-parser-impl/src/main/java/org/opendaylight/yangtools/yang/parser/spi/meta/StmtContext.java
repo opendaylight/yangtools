@@ -1,0 +1,65 @@
+package org.opendaylight.yangtools.yang.parser.spi.meta;
+
+import java.util.Collection;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
+
+
+public interface StmtContext<A,D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
+
+
+    StatementSource getStatementSource();
+
+    StatementSourceReference getSourceReference();
+
+    @Nonnull StatementDefinition getPublicDefinition();
+
+    StmtContext<?,?,?> getParentContext();
+
+    @Nullable String rawStatementArgument();
+
+    @Nullable A getStatementArgument();
+
+    @Nonnull <K,V,N extends IdentifierNamespace<K, V>> V getFromNamespace(Class<N> type, K key) throws NamespaceNotAvailableException;
+
+    Collection<? extends StmtContext<?,?,?>> getDeclaredSubstatements();
+
+    @Nonnull <ST extends DeclaredStatement<?>> ST firstDeclaredRequired(Class<ST> prefix);
+
+    @Nullable <ST extends DeclaredStatement<?>> ST firstDeclaredOptional(Class<ST> prefix);
+
+
+    StmtContext<?,?,?> getRootContext();
+
+    D buildDeclared();
+
+    E buildEffective();
+
+    interface Mutable<A,D extends DeclaredStatement<A>,E extends EffectiveStatement<A, D>> extends StmtContext<A,D,E> {
+
+        @Override
+        StmtContext.Mutable<?,?,?> getParentContext();
+
+        <K,V,VT extends V,N extends IdentifierNamespace<K, V>> void addToNamespace(Class<N> type, K key, VT value) throws NamespaceNotAvailableException;
+
+        @Override
+        StmtContext.Mutable<?,?,?> getRootContext();
+
+        ModelInferenceActionBuilder newInferenceAction();
+
+    }
+
+
+
+
+
+
+
+
+}
