@@ -1,0 +1,174 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_a4c9bb5a",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/YangConstants.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-12T21:53:03Z",
+      "side": 1,
+      "message": "Do we want to support 6020bis in this class or not? If so, the constants below should reflect RFC6020 in their name. If not, the name should be RFC6020Constants",
+      "revId": "b2389b744b28f3c401eeef0039685d16a6f4b010",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_84a59fa3",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/YangConstants.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-12T21:53:03Z",
+      "side": 1,
+      "message": "final with private constructor",
+      "revId": "b2389b744b28f3c401eeef0039685d16a6f4b010",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_04b98fcb",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/YangConstants.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-12T21:53:03Z",
+      "side": 1,
+      "message": "cached instance is appropriate",
+      "revId": "b2389b744b28f3c401eeef0039685d16a6f4b010",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_c4ae4781",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/meta/DeclaredStatement.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-12T21:53:03Z",
+      "side": 1,
+      "message": "year",
+      "revId": "b2389b744b28f3c401eeef0039685d16a6f4b010",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_e4b343e7",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/meta/DeclaredStatement.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-12T21:53:03Z",
+      "side": 1,
+      "message": "missing javadoc",
+      "revId": "b2389b744b28f3c401eeef0039685d16a6f4b010",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_84ccbf6b",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/meta/DeclaredStatement.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-12T21:53:03Z",
+      "side": 1,
+      "message": "Collection, not Iterable, for size(), which can be used to size downstream collections",
+      "revId": "b2389b744b28f3c401eeef0039685d16a6f4b010",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_84d35f03",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/meta/EffectiveStatement.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-12T21:53:03Z",
+      "side": 1,
+      "message": "argument can be null?",
+      "revId": "b2389b744b28f3c401eeef0039685d16a6f4b010",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_04e0afcb",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/meta/EffectiveStatement.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 78,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-12T21:53:03Z",
+      "side": 1,
+      "message": "public is implied\nuse a collection?",
+      "revId": "b2389b744b28f3c401eeef0039685d16a6f4b010",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_a4d0dbf6",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/meta/IdentifierNamespace.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-12T21:53:03Z",
+      "side": 1,
+      "message": "argument @Nonnull, plus javadoc..",
+      "revId": "b2389b744b28f3c401eeef0039685d16a6f4b010",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_64d653f3",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/meta/StatementSource.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-12T21:53:03Z",
+      "side": 1,
+      "message": "missing javadoc",
+      "revId": "b2389b744b28f3c401eeef0039685d16a6f4b010",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
