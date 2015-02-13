@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_5f1be4c9",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/SchemaTracker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-13T09:27:18Z",
+      "side": 1,
+      "message": "This seems incorrect to me... we are trying to find grouping from schema context on each and every level,\nwhich means following model:\n\ngrouping foo {\n\n}\n\ncontainer bar {\n    leaf baz {\n\n    }\n}\n\nwill enter grouping foo for incorrect Schema Path /bar/foo\n\nSame happens for notification before.\n\nIterator based walking will be probably better for this,\nsince you can handle first item outside while cycle.",
+      "range": {
+        "startLine": 63,
+        "startChar": 20,
+        "endLine": 63,
+        "endChar": 86
+      },
+      "revId": "df786de8bd21e41c38cb59d398c9856038e47dfe",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
