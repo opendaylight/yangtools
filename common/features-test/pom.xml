@@ -21,6 +21,17 @@
    <properties>
       <pax.exam.version>3.5.0</pax.exam.version>
    </properties>
+
+   <!-- Migrated to odlparent -->
+   <distributionManagement>
+     <relocation>
+       <groupId>org.opendaylight.odlparent</groupId>
+       <artifactId>features-test</artifactId>
+       <version>1.5.0-SNAPSHOT</version>
+       <message>This artifact has been migrated to odlparent and will be removed in Lithium release</message>
+     </relocation>
+   </distributionManagement>
+
    <dependencies>
      <!-- Dependencies for pax exam karaf container -->
 
