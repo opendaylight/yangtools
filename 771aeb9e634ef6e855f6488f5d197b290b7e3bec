@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_9c2897e3",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/source/SourceException.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-13T18:09:42Z",
+      "side": 1,
+      "message": "inconsistent with above constructor w.r.t checkNotNull",
+      "revId": "771aeb9e634ef6e855f6488f5d197b290b7e3bec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_7c1b4bca",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/source/StatementSourceReference.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-13T18:09:42Z",
+      "side": 1,
+      "message": "a comment about this declaration forcing implementation to actually define a toString() would be useful.",
+      "revId": "771aeb9e634ef6e855f6488f5d197b290b7e3bec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
