@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -58,6 +59,10 @@ public final class SchemaTracker {
             if(current instanceof DataNodeContainer) {
                 child = ((DataNodeContainer) current).getDataChildByName(qname);
 
+                if (child == null && current instanceof SchemaContext) {
+                    child = tryFindGroupings((SchemaContext) current, qname).orNull();
+                }
+
                 if(child == null && current instanceof SchemaContext) {
                     child = tryFindNotification((SchemaContext) current, qname)
                             .orNull();
@@ -70,7 +75,11 @@ public final class SchemaTracker {
             current = child;
         }
         Preconditions.checkArgument(current instanceof DataNodeContainer,"Schema path must point to container or list. Supplied path %s pointed to: %s",path,current);
-        this.root = (DataNodeContainer) current;
+        root = (DataNodeContainer) current;
+    }
+
+    private Optional<SchemaNode> tryFindGroupings(final SchemaContext ctx, final QName qname) {
+        return Optional.<SchemaNode> fromNullable(Iterables.find(ctx.getGroupings(), new SchemaNodePredicate(qname), null));
     }
 
     private Optional<SchemaNode> tryFindNotification(final SchemaContext ctx, final QName qname) {
@@ -113,12 +122,16 @@ public final class SchemaTracker {
         if(parent instanceof DataNodeContainer) {
             schema = ((DataNodeContainer)parent).getDataChildByName(qname);
 
+            if(schema == null && parent instanceof GroupingDefinition) {
+                schema = ((GroupingDefinition) parent);
+            }
+
             if(schema == null && parent instanceof NotificationDefinition) {
                 schema = ((NotificationDefinition) parent);
             }
         } else if(parent instanceof ChoiceNode) {
-            for(ChoiceCaseNode caze : ((ChoiceNode) parent).getCases()) {
-                DataSchemaNode potential = caze.getDataChildByName(qname);
+            for(final ChoiceCaseNode caze : ((ChoiceNode) parent).getCases()) {
+                final DataSchemaNode potential = caze.getDataChildByName(qname);
                 if(potential != null) {
                     schema = potential;
                     break;
@@ -193,11 +206,11 @@ public final class SchemaTracker {
         Preconditions.checkArgument(parent instanceof AugmentationTarget, "Augmentation not allowed under %s", parent);
         Preconditions.checkArgument(parent instanceof DataNodeContainer, "Augmentation allowed only in DataNodeContainer",parent);
         final AugmentationSchema schema = SchemaUtils.findSchemaForAugment((AugmentationTarget) parent, identifier.getPossibleChildNames());
-        HashSet<DataSchemaNode> realChildSchemas = new HashSet<>();
-        for(DataSchemaNode child : schema.getChildNodes()) {
+        final HashSet<DataSchemaNode> realChildSchemas = new HashSet<>();
+        for(final DataSchemaNode child : schema.getChildNodes()) {
             realChildSchemas.add(((DataNodeContainer) parent).getDataChildByName(child.getQName()));
         }
-        AugmentationSchema resolvedSchema = new AugmentationSchemaProxy(schema, realChildSchemas);
+        final AugmentationSchema resolvedSchema = new AugmentationSchemaProxy(schema, realChildSchemas);
         schemaStack.push(resolvedSchema);
         return resolvedSchema;
     }
