@@ -20,13 +20,13 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
-import com.google.common.io.InputSupplier;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
@@ -223,16 +223,16 @@ public class SharedSchemaRepositoryTest {
         sharedSchemaRepository.registerSchemaSourceListener(listener);
 
         final File test = new File(storageDir, "test.yang");
-        Files.copy(new StringSupplier("content-test"), test);
+        Files.write("content-test", test, Charsets.UTF_8);
 
         final File test2 = new File(storageDir, "test@2012-12-12.yang");
-        Files.copy(new StringSupplier("content-test-2012"), test2);
+        Files.write("content-test-2012", test2, Charsets.UTF_8);
 
         final File test3 = new File(storageDir, "test@2013-12-12.yang");
-        Files.copy(new StringSupplier("content-test-2013"), test3);
+        Files.write("content-test-2013", test3, Charsets.UTF_8);
 
         final File test4 = new File(storageDir, "module@2010-12-12.yang");
-        Files.copy(new StringSupplier("content-module-2010"), test4);
+        Files.write("content-module-2010", test4, Charsets.UTF_8);
 
 
         final FilesystemSchemaSourceCache<YangTextSchemaSource> cache = new FilesystemSchemaSourceCache<>(sharedSchemaRepository, YangTextSchemaSource.class, storageDir);
@@ -328,18 +328,5 @@ public class SharedSchemaRepositoryTest {
         final ResourceYangSource yangSource = new ResourceYangSource(resourceName);
         final CheckedFuture<ASTSchemaSource, SchemaSourceException> aSTSchemaSource = TextToASTTransformer.TRANSFORMATION.apply(yangSource);
         return SettableSchemaProvider.createImmediate(aSTSchemaSource.get(), ASTSchemaSource.class);
-    }
-
-    private class StringSupplier implements InputSupplier<InputStream> {
-        private final String s;
-
-        public StringSupplier(final String s) {
-            this.s = s;
-        }
-
-        @Override
-        public InputStream getInput() throws IOException {
-            return IOUtils.toInputStream(s);
-        }
     }
 }

@@ -201,8 +201,7 @@ public class QueuedNotificationManagerTest {
             notifications[i-1] = Integer.valueOf( i );
         }
 
-        Stopwatch stopWatch = new Stopwatch();
-        stopWatch.start();
+        Stopwatch stopWatch = Stopwatch.createStarted();
 
         List<TestListener<Integer>> listeners = Lists.newArrayList();
         for( int i = 1; i <= nListeners; i++ ) {
