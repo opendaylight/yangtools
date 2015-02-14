@@ -8,8 +8,7 @@ package org.opendaylight.yangtools.yang.parser.util;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Charsets;
-import com.google.common.io.CharStreams;
-import com.google.common.io.InputSupplier;
+import com.google.common.io.ByteSource;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
 
@@ -48,13 +47,12 @@ public final class TextToASTTransformer extends SchemaSourceTransformer<YangText
                 LOG.debug("Model {} validated successfully", input);
 
                 // Backwards compatibility
-                final String text = CharStreams.toString(
-                        CharStreams.newReaderSupplier(new InputSupplier<InputStream>() {
-                            @Override
-                            public InputStream getInput() throws IOException {
-                                return input.openStream();
-                            }
-                        }, Charsets.UTF_8));
+                final String text = new ByteSource() {
+                    @Override
+                    public InputStream openStream() throws IOException {
+                        return input.openStream();
+                    }
+                }.asCharSource(Charsets.UTF_8).read();
 
                 return Futures.immediateCheckedFuture(ASTSchemaSource.create(input.getIdentifier().getName(), ctx, text));
             }

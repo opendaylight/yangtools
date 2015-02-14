@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.impl;
 import static org.junit.Assert.assertEquals;
 import com.google.common.io.ByteSource;
 import com.google.common.io.ByteStreams;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -87,7 +88,12 @@ final class TestUtils {
 
         final byte[] streamContent = ByteStreams.toByteArray(stream);
 
-        ByteSource source = ByteStreams.asByteSource(streamContent);
+        ByteSource source = new ByteSource() {
+            @Override
+            public InputStream openStream() throws IOException {
+                return new ByteArrayInputStream(streamContent);
+            }
+        };
 
         final Collection<ByteSource> sources = Collections.singletonList(source);
         SchemaContext ctx = parser.parseSources(sources, context);

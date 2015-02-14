@@ -108,8 +108,7 @@ public class ThreadPoolExecutorTest {
         final ConcurrentMap<Thread, AtomicLong> taskCountPerThread = new ConcurrentHashMap<>();
         final AtomicReference<AssertionError> threadError = new AtomicReference<>();
 
-        Stopwatch stopWatch = new Stopwatch();
-        stopWatch.start();
+        Stopwatch stopWatch = Stopwatch.createStarted();
 
         new Thread() {
             @Override
