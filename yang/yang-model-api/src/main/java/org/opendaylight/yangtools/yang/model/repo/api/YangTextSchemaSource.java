@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
@@ -57,7 +57,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements SchemaS
 
     @Override
     public final String toString() {
-        return addToStringAttributes(Objects.toStringHelper(this).add("identifier", identifier)).toString();
+        return addToStringAttributes(MoreObjects.toStringHelper(this).add("identifier", identifier)).toString();
     }
 
     /**

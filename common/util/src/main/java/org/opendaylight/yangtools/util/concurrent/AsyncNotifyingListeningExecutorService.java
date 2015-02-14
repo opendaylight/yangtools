@@ -16,8 +16,8 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nullable;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.AbstractListeningExecutorService;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -144,7 +144,7 @@ public class AsyncNotifyingListeningExecutorService extends AbstractListeningExe
 
     @Override
     public final String toString(){
-        return addToStringAttributes( Objects.toStringHelper( this )
+        return addToStringAttributes( MoreObjects.toStringHelper( this )
                 .add( "delegate", delegate ) ).toString();
     }
 }
