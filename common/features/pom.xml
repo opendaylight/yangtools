@@ -19,6 +19,7 @@
     <artifactId>features-yangtools</artifactId>
     <packaging>jar</packaging>
 
+    <!-- FIXME: remove this once we have eradicated xtend from odlparent -->
     <properties>
         <xtend.version>2.7.3</xtend.version>
     </properties>
