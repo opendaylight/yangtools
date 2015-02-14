@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 
-import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.MoreObjects.ToStringHelper;
 
 public abstract class AbstractImmutableDataContainerAttrNode<K extends YangInstanceIdentifier.PathArgument>
         extends AbstractImmutableDataContainerNode<K>

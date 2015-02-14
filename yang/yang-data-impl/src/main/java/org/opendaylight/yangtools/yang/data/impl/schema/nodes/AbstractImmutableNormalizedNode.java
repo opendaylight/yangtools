@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
 
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -35,7 +35,7 @@ public abstract class AbstractImmutableNormalizedNode<K extends YangInstanceIden
 
     @Override
     public final String toString() {
-        return addToStringAttributes(Objects.toStringHelper(this)).toString();
+        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
     }
 
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {

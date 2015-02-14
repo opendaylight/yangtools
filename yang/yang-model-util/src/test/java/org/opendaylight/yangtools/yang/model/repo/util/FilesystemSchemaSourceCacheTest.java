@@ -18,10 +18,9 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.collect.Collections2;
 import com.google.common.io.Files;
@@ -152,7 +151,7 @@ public class FilesystemSchemaSourceCacheTest {
         }
 
         @Override
-        protected Objects.ToStringHelper addToStringAttributes(final Objects.ToStringHelper toStringHelper) {
+        protected MoreObjects.ToStringHelper addToStringAttributes(final MoreObjects.ToStringHelper toStringHelper) {
             return toStringHelper;
         }
 

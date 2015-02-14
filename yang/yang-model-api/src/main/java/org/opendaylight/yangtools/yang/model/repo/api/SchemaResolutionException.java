@@ -8,17 +8,14 @@
 package org.opendaylight.yangtools.yang.model.repo.api;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
-
 import java.util.Collection;
 import java.util.Collections;
-
 import javax.annotation.Nonnull;
-
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 
 /**
@@ -74,7 +71,7 @@ public class SchemaResolutionException extends SchemaSourceException {
 
     @Override
     public final String toString() {
-        return addToStringAttributes(Objects.toStringHelper(this).add("unsatisfiedImports", unsatisfiedImports)).toString();
+        return addToStringAttributes(MoreObjects.toStringHelper(this).add("unsatisfiedImports", unsatisfiedImports)).toString();
     }
 
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {

@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.Collections;
@@ -127,6 +127,6 @@ final class InMemoryDataTree implements DataTree {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("object", super.toString()).add("state", state).toString();
+        return MoreObjects.toStringHelper(this).add("object", super.toString()).add("state", state).toString();
     }
 }

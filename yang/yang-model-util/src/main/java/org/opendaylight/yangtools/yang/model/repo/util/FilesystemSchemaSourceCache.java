@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.repo.util;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -264,7 +264,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
             return new YangTextSchemaSource(sourceIdentifier) {
 
                 @Override
-                protected Objects.ToStringHelper addToStringAttributes(final Objects.ToStringHelper toStringHelper) {
+                protected MoreObjects.ToStringHelper addToStringAttributes(final MoreObjects.ToStringHelper toStringHelper) {
                     return toStringHelper;
                 }
 

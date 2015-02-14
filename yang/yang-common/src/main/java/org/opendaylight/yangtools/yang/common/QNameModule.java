@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -165,6 +165,6 @@ public final class QNameModule implements Immutable, Serializable {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).omitNullValues().add("ns", getNamespace()).add("rev", getFormattedRevision()).toString();
+        return MoreObjects.toStringHelper(this).omitNullValues().add("ns", getNamespace()).add("rev", getFormattedRevision()).toString();
     }
 }
