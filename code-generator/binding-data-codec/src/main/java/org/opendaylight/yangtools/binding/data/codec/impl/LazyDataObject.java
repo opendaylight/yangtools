@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
@@ -166,7 +167,7 @@ class LazyDataObject implements InvocationHandler, AugmentationReader {
     }
 
     public String bindingToString() {
-        final ToStringHelper helper = com.google.common.base.Objects.toStringHelper(context.bindingClass()).omitNullValues();
+        final ToStringHelper helper = MoreObjects.toStringHelper(context.bindingClass()).omitNullValues();
 
         for (final Method m :context.getHashCodeAndEqualsMethods()) {
             helper.add(m.getName(), getBindingData(m));

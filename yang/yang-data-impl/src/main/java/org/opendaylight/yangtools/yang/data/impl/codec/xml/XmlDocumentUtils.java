@@ -8,9 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import static com.google.common.base.Preconditions.checkState;
-
 import com.google.common.base.Function;
-import com.google.common.base.Objects;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
@@ -22,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import javax.activation.UnsupportedDataTypeException;
 import javax.annotation.Nonnull;
@@ -320,7 +319,7 @@ public final class XmlDocumentUtils {
     }
 
     private static void checkQName(final Element xmlElement, final QName qName) {
-        checkState(Objects.equal(xmlElement.getNamespaceURI(), qName.getNamespace().toString()),  "Not equal: %s to: %s for: %s and: %s", qName.getNamespace(), xmlElement.getNamespaceURI(), qName, xmlElement);
+        checkState(Objects.equals(xmlElement.getNamespaceURI(), qName.getNamespace().toString()),  "Not equal: %s to: %s for: %s and: %s", qName.getNamespace(), xmlElement.getNamespaceURI(), qName, xmlElement);
         checkState(qName.getLocalName().equals(xmlElement.getLocalName()), "Not equal: %s to: %s for: %s and: %s", qName.getLocalName(), xmlElement.getLocalName(), qName, xmlElement);
     }
 

@@ -8,16 +8,12 @@
 
 package org.opendaylight.yangtools.yang.common;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.opendaylight.yangtools.yang.common.RpcError;
-import org.opendaylight.yangtools.yang.common.RpcResultBuilder;
-import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
-
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import java.util.Arrays;
+import java.util.List;
+import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
 
 /**
  * A general base exception for an operation failure.
@@ -74,7 +70,7 @@ public class OperationFailedException extends Exception {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper( this ).add( "message", getMessage() )
+        return MoreObjects.toStringHelper( this ).add( "message", getMessage() )
                 .add( "errorList", errorList ).toString();
     }
 }

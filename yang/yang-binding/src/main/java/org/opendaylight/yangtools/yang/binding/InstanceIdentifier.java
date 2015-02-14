@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
@@ -172,7 +172,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
 
     @Override
     public final String toString() {
-        return addToStringAttributes(Objects.toStringHelper(this)).toString();
+        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
     }
 
     /**
@@ -666,6 +666,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
          *
          * @return
          */
+        @Override
         InstanceIdentifier<T> build();
 
         /*

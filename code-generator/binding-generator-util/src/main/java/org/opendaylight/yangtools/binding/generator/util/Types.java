@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.generator.util;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
