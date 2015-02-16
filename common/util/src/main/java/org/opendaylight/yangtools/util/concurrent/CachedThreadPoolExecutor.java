@@ -14,8 +14,8 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
@@ -102,7 +102,7 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
 
     @Override
     public final String toString() {
-        return addToStringAttributes( Objects.toStringHelper( this )
+        return addToStringAttributes( MoreObjects.toStringHelper( this )
                 .add( "Thread Prefix", threadPrefix )
                 .add( "Current Thread Pool Size", getPoolSize() )
                 .add( "Largest Thread Pool Size", getLargestPoolSize() )

@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
-import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;

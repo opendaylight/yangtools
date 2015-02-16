@@ -8,7 +8,7 @@
 
 package org.opendaylight.yangtools.yang.parser.repo;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +24,7 @@ final class ResourceYangSource extends YangTextSchemaSource {
     }
 
     @Override
-    protected Objects.ToStringHelper addToStringAttributes(final Objects.ToStringHelper toStringHelper) {
+    protected MoreObjects.ToStringHelper addToStringAttributes(final MoreObjects.ToStringHelper toStringHelper) {
         return toStringHelper.add("resource", resourceName);
     }
 
