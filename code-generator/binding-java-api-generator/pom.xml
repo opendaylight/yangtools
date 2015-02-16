@@ -86,8 +86,24 @@
         </dependency>
         <dependency>
             <groupId>org.codehaus.plexus</groupId>
-            <artifactId>plexus-slf4j-logging</artifactId>
+            <artifactId>plexus-container-default</artifactId>
+            <version>1.5.5</version>
+            <exclusions>
+                <!-- plexus-build-api pulls in version 1.5.8, while this pulls in either
+                     1.4.5 or 3.0.20 (for 1.5.6). Opt for just excluding that dependency
+                     as we're just using the DefaultBuildContext and nothing more. -->
+                <exclusion>
+                    <groupId>org.codehaus.plexus</groupId>
+                    <artifactId>plexus-utils</artifactId>
+                </exclusion>
+                <!-- google collections conflicts with Guava libraries -->
+                <exclusion>
+                    <groupId>com.google.collections</groupId>
+                    <artifactId>google-collections</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
