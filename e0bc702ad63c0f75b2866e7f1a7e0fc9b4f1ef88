@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_f038da3e",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/InferenceException.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-16T09:04:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_dc585f8c",
+      "revId": "e0bc702ad63c0f75b2866e7f1a7e0fc9b4f1ef88",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_fc5d1b7a",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/ModelInferenceActionBuilder.java",
         "patchSetId": 6
@@ -30,6 +48,24 @@
       "writtenOn": "2015-02-13T18:20:02Z",
       "side": 1,
       "message": "Prerequisite?",
+      "revId": "e0bc702ad63c0f75b2866e7f1a7e0fc9b4f1ef88",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_b03ed226",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/ModelInferenceActionBuilder.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-16T09:04:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_fc5d1b7a",
       "revId": "e0bc702ad63c0f75b2866e7f1a7e0fc9b4f1ef88",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_50474ebc",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/NamespaceNotAvailableException.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-16T09:04:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_bc53136a",
+      "revId": "e0bc702ad63c0f75b2866e7f1a7e0fc9b4f1ef88",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_5c4c4fc8",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/NamespaceNotAvailableException.java",
         "patchSetId": 6
@@ -70,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_7044cab6",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/NamespaceNotAvailableException.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-16T09:04:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_5c4c4fc8",
+      "revId": "e0bc702ad63c0f75b2866e7f1a7e0fc9b4f1ef88",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_fcd43bbe",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StatementSupport.java",
         "patchSetId": 6
@@ -81,6 +153,24 @@
       "writtenOn": "2015-02-13T18:20:02Z",
       "side": 1,
       "message": "empty, public, without @Override ... why?",
+      "revId": "e0bc702ad63c0f75b2866e7f1a7e0fc9b4f1ef88",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_d00a7e78",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StatementSupport.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-16T09:04:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_fcd43bbe",
       "revId": "e0bc702ad63c0f75b2866e7f1a7e0fc9b4f1ef88",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
