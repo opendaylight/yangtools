@@ -13,14 +13,12 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.wadl.generator.WadlRestconfGenerator;
-import org.opendaylight.yangtools.yang2sources.spi.CodeGenerator;
+import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
 
-public class WadlGenerator implements CodeGenerator {
+public class WadlGenerator implements BasicCodeGenerator {
     
     @Override
     public Collection<File> generateSources(SchemaContext context, File outputDir, Set<Module> currentModules)
@@ -28,6 +26,7 @@ public class WadlGenerator implements CodeGenerator {
         
         final File outputBaseDir;
         if (outputDir == null) {
+            // FIXME: this hard-codes the destination
             outputBaseDir = new File("target" + File.separator + "generated-sources" + File.separator
                     + "maven-sal-api-gen" + File.separator + "wadl");
         } else {
@@ -36,12 +35,6 @@ public class WadlGenerator implements CodeGenerator {
 
         final WadlRestconfGenerator generator = new WadlRestconfGenerator(outputBaseDir);
         return generator.generate(context, currentModules);
-    }
-
-    @Override
-    public void setLog(Log log) {
-        // TODO Auto-generated method stub
-        
     }
 
     @Override
@@ -55,11 +48,4 @@ public class WadlGenerator implements CodeGenerator {
         // TODO Auto-generated method stub
         
     }
-
-    @Override
-    public void setMavenProject(MavenProject project) {
-        // TODO Auto-generated method stub
-        
-    }
-
 }

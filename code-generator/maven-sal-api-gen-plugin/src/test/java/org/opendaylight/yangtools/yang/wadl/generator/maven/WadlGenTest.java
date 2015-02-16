@@ -25,7 +25,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
-import org.opendaylight.yangtools.yang2sources.spi.CodeGenerator;
+import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
 
 public class WadlGenTest {
     public static final String FS = File.separator;
@@ -54,7 +54,7 @@ public class WadlGenTest {
         final List<File> sourceFiles = getSourceFiles("/wadl-gen");
         final Set<Module> modulesToBuild = parser.parseYangModels(sourceFiles);
         final SchemaContext context = parser.resolveSchemaContext(modulesToBuild);
-        final CodeGenerator generator = new WadlGenerator();
+        final BasicCodeGenerator generator = new WadlGenerator();
         Collection<File> generatedWadlFiles = generator.generateSources(context, GENERATOR_OUTPUT_DIR, modulesToBuild);
         assertEquals(3, generatedWadlFiles.size());
     }

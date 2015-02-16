@@ -32,8 +32,10 @@ import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.ContextHolder;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.YangsInZipsResult;
+import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
 import org.opendaylight.yangtools.yang2sources.spi.BuildContextAware;
-import org.opendaylight.yangtools.yang2sources.spi.CodeGenerator;
+import org.opendaylight.yangtools.yang2sources.spi.MavenLogAware;
+import org.opendaylight.yangtools.yang2sources.spi.MavenProjectAware;
 import org.sonatype.plexus.build.incremental.BuildContext;
 import org.sonatype.plexus.build.incremental.DefaultBuildContext;
 
@@ -267,7 +269,7 @@ class YangToSourcesProcessor {
 
         codeGeneratorCfg.check();
 
-        CodeGenerator g = Util.getInstance(codeGeneratorCfg.getCodeGeneratorClass(), CodeGenerator.class);
+        BasicCodeGenerator g = Util.getInstance(codeGeneratorCfg.getCodeGeneratorClass(), BasicCodeGenerator.class);
         log.info(Util.message("Code generator instantiated from %s", LOG_PREFIX,
                 codeGeneratorCfg.getCodeGeneratorClass()));
 
@@ -284,11 +286,15 @@ class YangToSourcesProcessor {
         log.debug(Util.message("Additional configuration picked up for : %s: %s", LOG_PREFIX,
                 codeGeneratorCfg.getCodeGeneratorClass(), codeGeneratorCfg.getAdditionalConfiguration()));
 
+        if (g instanceof MavenLogAware) {
+            ((MavenLogAware)g).setLog(log);
+        }
         if (g instanceof BuildContextAware) {
             ((BuildContextAware)g).setBuildContext(buildContext);
         }
-        g.setLog(log);
-        g.setMavenProject(project);
+        if (g instanceof MavenProjectAware) {
+            ((MavenProjectAware)g).setMavenProject(project);
+        }
         g.setAdditionalConfig(codeGeneratorCfg.getAdditionalConfiguration());
         File resourceBaseDir = codeGeneratorCfg.getResourceBaseDir(project);
 
