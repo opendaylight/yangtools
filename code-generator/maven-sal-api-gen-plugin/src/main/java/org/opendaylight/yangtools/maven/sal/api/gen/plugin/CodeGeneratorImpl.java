@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
@@ -35,19 +34,19 @@ import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
 import org.opendaylight.yangtools.yang2sources.spi.BuildContextAware;
-import org.opendaylight.yangtools.yang2sources.spi.CodeGenerator;
+import org.opendaylight.yangtools.yang2sources.spi.MavenProjectAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
-public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware {
+public final class CodeGeneratorImpl implements BasicCodeGenerator, BuildContextAware, MavenProjectAware {
+    private static final Logger logger = LoggerFactory.getLogger(CodeGeneratorImpl.class);
     private static final String FS = File.separator;
     private BuildContext buildContext;
     private File projectBaseDir;
     private Map<String, String> additionalConfig;
-
-    private static final Logger logger = LoggerFactory.getLogger(CodeGeneratorImpl.class);
     private MavenProject mavenProject;
     private File resourceBaseDir;
 
@@ -122,10 +121,6 @@ public final class CodeGeneratorImpl implements CodeGenerator, BuildContextAware
     private static void setOutputBaseDirAsSourceFolder(final File outputBaseDir, final MavenProject mavenProject) {
         Preconditions.checkNotNull(mavenProject, "Maven project needs to be set in this phase");
         mavenProject.addCompileSourceRoot(outputBaseDir.getPath());
-    }
-
-    @Override
-    public void setLog(final Log log) {
     }
 
     @Override

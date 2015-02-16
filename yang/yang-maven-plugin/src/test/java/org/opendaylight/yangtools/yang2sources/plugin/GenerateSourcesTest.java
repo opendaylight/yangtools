@@ -37,7 +37,9 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.YangProvider;
-import org.opendaylight.yangtools.yang2sources.spi.CodeGenerator;
+import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
+import org.opendaylight.yangtools.yang2sources.spi.MavenLogAware;
+import org.opendaylight.yangtools.yang2sources.spi.MavenProjectAware;
 
 public class GenerateSourcesTest {
 
@@ -81,7 +83,7 @@ public class GenerateSourcesTest {
                 + "generated-sources" + File.separator + "spi"));
     }
 
-    public static class GeneratorMock implements CodeGenerator {
+    public static class GeneratorMock implements BasicCodeGenerator, MavenLogAware, MavenProjectAware {
 
         private static int called = 0;
         private static File outputDir;
