@@ -13,25 +13,17 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.unified.doc.generator.GeneratorImpl;
-import org.opendaylight.yangtools.yang2sources.spi.CodeGenerator;
+import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
 
-public class DocumentationGeneratorImpl extends GeneratorImpl implements CodeGenerator {
+public class DocumentationGeneratorImpl extends GeneratorImpl implements BasicCodeGenerator {
 
     @Override
     public Collection<File> generateSources(SchemaContext arg0, File arg1, Set<Module> arg2) throws IOException {
         // TODO Auto-generated method stub
          return generate(arg0, arg1, arg2);
-    }
-
-    @Override
-    public void setLog(Log log) {
-        // use maven logging if necessary
-
     }
 
     @Override
@@ -42,10 +34,5 @@ public class DocumentationGeneratorImpl extends GeneratorImpl implements CodeGen
     @Override
     public void setResourceBaseDir(File resourceBaseDir) {
         // no resource processing necessary
-    }
-
-    @Override
-    public void setMavenProject(MavenProject project) {
-        // no additional information needed
     }
 }
