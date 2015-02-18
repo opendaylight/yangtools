@@ -126,19 +126,10 @@ final class Util {
     private static Class<?> resolveClass(String codeGeneratorClass, Class<?> baseType) throws ClassNotFoundException {
         Class<?> clazz = Class.forName(codeGeneratorClass);
 
-        if (!isImplemented(baseType, clazz)) {
+        if (!baseType.isAssignableFrom(clazz)) {
             throw new IllegalArgumentException("Code generator " + clazz + " has to implement " + baseType);
         }
         return clazz;
-    }
-
-    private static boolean isImplemented(Class<?> expectedIface, Class<?> byClazz) {
-        for (Class<?> iface : byClazz.getInterfaces()) {
-            if (iface.equals(expectedIface)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     static String message(String message, String logPrefix, Object... args) {
