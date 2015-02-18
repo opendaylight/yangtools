@@ -7,17 +7,17 @@
  */
 package org.opendaylight.yangtools.leafrefcontext.utils;
 
-import org.opendaylight.yangtools.leafrefcontext.api.LeafRefContext;
-
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Iterator;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.leafrefcontext.api.LeafRefContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public class LeafRefContextUtils {
 
@@ -79,22 +79,42 @@ public class LeafRefContextUtils {
 
 
     public static boolean isLeafRef(SchemaNode node, LeafRefContext root) {
+
+    	if((node == null) || (root == null)) return false;
+
         LeafRefContext leafRefReferencingContext = getLeafRefReferencingContext(node, root);
+        if(leafRefReferencingContext == null) return false;
+
         return leafRefReferencingContext.isReferencing();
     }
 
     public static boolean hasLeafRefChild(SchemaNode node, LeafRefContext root) {
+
+    	if((node == null) || (root == null)) return false;
+
         LeafRefContext leafRefReferencingContext = getLeafRefReferencingContext(node, root);
+        if (leafRefReferencingContext == null) return false;
+
         return leafRefReferencingContext.hasReferencingChild();
     }
 
     public static boolean isReferencedByLeafRef(SchemaNode node, LeafRefContext root) {
+
+    	if((node == null) || (root == null)) return false;
+
         LeafRefContext leafRefReferencedByContext = getLeafRefReferencedByContext(node, root);
+        if (leafRefReferencedByContext == null) return false;
+
         return leafRefReferencedByContext.isReferencedBy();
     }
 
     public static boolean hasChildReferencedByLeafRef(SchemaNode node, LeafRefContext root) {
+
+    	if((node == null) || (root == null)) return false;
+
         LeafRefContext leafRefReferencedByContext = getLeafRefReferencedByContext(node, root);
+        if (leafRefReferencedByContext == null) return false;
+
         return leafRefReferencedByContext.hasReferencedByChild();
     }
 
@@ -196,7 +216,11 @@ public class LeafRefContextUtils {
     }
 
     public static Map<QName, LeafRefContext> getAllLeafRefsReferencingThisNode(Iterable<QName> pathFromRoot, LeafRefContext root){
+
         LeafRefContext leafRefReferencedByContext = getLeafRefReferencedByContext(pathFromRoot, root);
+
+        if (leafRefReferencedByContext == null) return new HashMap<QName, LeafRefContext>();
+
         return leafRefReferencedByContext.getAllReferencedByLeafRefCtxs();
     }
 
