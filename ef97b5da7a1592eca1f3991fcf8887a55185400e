@@ -1,0 +1,208 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_dc537469",
+        "filename": "yang/yang-model-export/pom.xml",
+        "patchSetId": 2
+      },
+      "lineNbr": 4,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-18T09:09:06Z",
+      "side": 1,
+      "message": "wrong year",
+      "revId": "ef97b5da7a1592eca1f3991fcf8887a55185400e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_7c4ca0c8",
+        "filename": "yang/yang-model-export/src/main/java/org/opendaylight/yangtools/yang/model/export/ExtensionStatement.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-18T09:09:06Z",
+      "side": 1,
+      "message": "use the ternary operator",
+      "revId": "ef97b5da7a1592eca1f3991fcf8887a55185400e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_9c496cb9",
+        "filename": "yang/yang-model-export/src/main/java/org/opendaylight/yangtools/yang/model/export/NormalizatedDerivedType.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-18T09:09:06Z",
+      "side": 1,
+      "message": "can these be null?",
+      "revId": "ef97b5da7a1592eca1f3991fcf8887a55185400e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_3cca981b",
+        "filename": "yang/yang-model-export/src/main/java/org/opendaylight/yangtools/yang/model/export/NormalizatedDerivedType.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-18T09:09:06Z",
+      "side": 1,
+      "message": "missing javadoc",
+      "revId": "ef97b5da7a1592eca1f3991fcf8887a55185400e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_5ccf642a",
+        "filename": "yang/yang-model-export/src/main/java/org/opendaylight/yangtools/yang/model/export/NormalizatedDerivedType.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-18T09:09:06Z",
+      "side": 1,
+      "message": "static subclasses need to be split out",
+      "revId": "ef97b5da7a1592eca1f3991fcf8887a55185400e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_fccf5027",
+        "filename": "yang/yang-model-export/src/main/java/org/opendaylight/yangtools/yang/model/export/SchemaContextEmitter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 73,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-18T09:09:06Z",
+      "side": 1,
+      "message": "remove",
+      "revId": "ef97b5da7a1592eca1f3991fcf8887a55185400e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_1cd55cb8",
+        "filename": "yang/yang-model-export/src/main/java/org/opendaylight/yangtools/yang/model/export/SchemaContextEmitter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-18T09:09:06Z",
+      "side": 1,
+      "message": "can any of these be null?",
+      "revId": "ef97b5da7a1592eca1f3991fcf8887a55185400e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_bcdd48e2",
+        "filename": "yang/yang-model-export/src/main/java/org/opendaylight/yangtools/yang/model/export/SchemaToStatementWriterAdaptor.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-18T09:09:06Z",
+      "side": 1,
+      "message": "private field",
+      "revId": "ef97b5da7a1592eca1f3991fcf8887a55185400e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_dcda94e7",
+        "filename": "yang/yang-model-export/src/main/java/org/opendaylight/yangtools/yang/model/export/SingleModuleYinStatementWriter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-18T09:09:06Z",
+      "side": 1,
+      "message": "all fields must be private",
+      "revId": "ef97b5da7a1592eca1f3991fcf8887a55185400e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_9ce08c97",
+        "filename": "yang/yang-model-export/src/main/java/org/opendaylight/yangtools/yang/model/export/YangConstants.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-18T09:09:06Z",
+      "side": 1,
+      "message": "there already is a class there, which holds precisely these",
+      "revId": "ef97b5da7a1592eca1f3991fcf8887a55185400e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_3cf1386b",
+        "filename": "yang/yang-model-export/src/main/java/org/opendaylight/yangtools/yang/model/export/YinExportUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-18T09:09:06Z",
+      "side": 1,
+      "message": "utility class: final with a private constructor.",
+      "revId": "ef97b5da7a1592eca1f3991fcf8887a55185400e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_bc04684a",
+        "filename": "yang/yang-model-export/src/test/java/org/opendaylight/yangtools/yang/model/export/test/SimpleModuleTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-18T09:09:06Z",
+      "side": 1,
+      "message": "user ExceptionInInitializerError for this",
+      "revId": "ef97b5da7a1592eca1f3991fcf8887a55185400e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
