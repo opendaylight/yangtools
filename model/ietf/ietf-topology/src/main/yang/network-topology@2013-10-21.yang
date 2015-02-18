@@ -165,7 +165,10 @@ module network-topology  {
                 to provide room for augmentations, e.g. for
                 statistics or priorization information associated with
                 supporting nodes.";
-            key "node-ref";
+            key "topology-ref node-ref";
+            leaf topology-ref {
+                type topology-ref;
+            }
             leaf node-ref {
                 type node-ref;
             }
