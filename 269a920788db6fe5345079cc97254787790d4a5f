@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_520c283b",
+        "filename": "model/ietf/ietf-topology/src/main/yang/network-topology@2013-10-21.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-19T18:41:49Z",
+      "side": 1,
+      "message": "please add a comment about the fact this is not what is published in the draft",
+      "revId": "269a920788db6fe5345079cc97254787790d4a5f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
