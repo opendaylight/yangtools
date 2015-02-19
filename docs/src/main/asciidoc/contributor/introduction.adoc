@@ -1,0 +1,13 @@
+= Contributor Guide
+
+== Architecture
+
+== Design
+
+=== Design considerations
+
+=== Design decisions
+
+== Common concepts
+
+== Recomendations
