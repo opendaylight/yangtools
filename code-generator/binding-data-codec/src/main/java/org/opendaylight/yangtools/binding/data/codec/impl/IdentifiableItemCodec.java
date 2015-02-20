@@ -18,6 +18,9 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.List;
+import java.util.Comparator;
+import java.util.Collections;
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
@@ -60,8 +63,16 @@ final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates,
     @Override
     public IdentifiableItem<?, ?> deserialize(final NodeIdentifierWithPredicates input) {
         final Collection<QName> keys = schema.getKeyDefinition();
+
+        List<QName> sortedKeys = new ArrayList(keys);
+        Collections.sort(sortedKeys, new Comparator<QName>() {
+            public int compare(QName q1, QName q2) {
+                return q1.getLocalName().compareToIgnoreCase(q2.getLocalName());
+            }
+        });
+
         final ArrayList<Object> bindingValues = new ArrayList<>(keys.size());
-        for (final QName key : keys) {
+        for (final QName key : sortedKeys) {
             final Object yangValue = input.getKeyValues().get(key);
             bindingValues.add(keyValueContexts.get(key).deserialize(yangValue));
         }
