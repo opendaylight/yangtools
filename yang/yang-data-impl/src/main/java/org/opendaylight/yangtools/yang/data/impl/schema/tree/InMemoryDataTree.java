@@ -54,7 +54,6 @@ final class InMemoryDataTree implements DataTree {
     public synchronized void setSchemaContext(final SchemaContext newSchemaContext) {
         Preconditions.checkNotNull(newSchemaContext);
 
-        LOG.info("Attempting to install schema contexts");
         LOG.debug("Following schema contexts will be attempted {}", newSchemaContext);
 
         final SchemaAwareApplyOperation operation = SchemaAwareApplyOperation.from(newSchemaContext);
