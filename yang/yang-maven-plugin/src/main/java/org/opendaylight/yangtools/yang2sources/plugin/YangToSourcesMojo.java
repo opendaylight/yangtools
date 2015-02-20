@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.spi.CodeGenerator;
-import org.slf4j.impl.StaticLoggerBinder;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -105,9 +104,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        StaticLoggerBinder.getSingleton().setMavenLog(this.getLog());
-
-        Util.checkClasspath(project, repoSystem, localRepository, remoteRepos, getLog());
+        Util.checkClasspath(project, repoSystem, localRepository, remoteRepos);
 
         if (yangToSourcesProcessor == null) {
             List<CodeGeneratorArg> codeGeneratorArgs = processCodeGenerators(codeGenerators);

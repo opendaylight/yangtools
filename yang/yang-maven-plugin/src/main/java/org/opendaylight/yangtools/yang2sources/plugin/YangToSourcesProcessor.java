@@ -36,6 +36,8 @@ import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
 import org.opendaylight.yangtools.yang2sources.spi.BuildContextAware;
 import org.opendaylight.yangtools.yang2sources.spi.MavenLogAware;
 import org.opendaylight.yangtools.yang2sources.spi.MavenProjectAware;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonatype.plexus.build.incremental.BuildContext;
 import org.sonatype.plexus.build.incremental.DefaultBuildContext;
 
@@ -43,6 +45,7 @@ class YangToSourcesProcessor {
     static final String LOG_PREFIX = "yang-to-sources:";
     static final String META_INF_YANG_STRING = "META-INF" + File.separator + "yang";
     static final String META_INF_YANG_STRING_JAR = "META-INF" + "/" + "yang";
+    private static final Logger LOG = LoggerFactory.getLogger(YangToSourcesProcessor.class);
 
     private final Log log;
     private final File yangFilesRootDir;
@@ -54,13 +57,13 @@ class YangToSourcesProcessor {
     private final YangProvider yangProvider;
 
     @VisibleForTesting
-    YangToSourcesProcessor(Log log, File yangFilesRootDir, File[] excludedFiles, List<CodeGeneratorArg> codeGenerators,
-            MavenProject project, boolean inspectDependencies, YangProvider yangProvider) {
+    YangToSourcesProcessor(final Log log, final File yangFilesRootDir, final File[] excludedFiles, final List<CodeGeneratorArg> codeGenerators,
+            final MavenProject project, final boolean inspectDependencies, final YangProvider yangProvider) {
         this(new DefaultBuildContext(), log, yangFilesRootDir, excludedFiles, codeGenerators, project, inspectDependencies, yangProvider);
     }
 
-    private YangToSourcesProcessor(BuildContext buildContext,  Log log, File yangFilesRootDir, File[] excludedFiles,
-            List<CodeGeneratorArg> codeGenerators, MavenProject project, boolean inspectDependencies, YangProvider yangProvider) {
+    private YangToSourcesProcessor(final BuildContext buildContext,  final Log log, final File yangFilesRootDir, final File[] excludedFiles,
+            final List<CodeGeneratorArg> codeGenerators, final MavenProject project, final boolean inspectDependencies, final YangProvider yangProvider) {
         this.buildContext = Util.checkNotNull(buildContext, "buildContext");
         this.log = Util.checkNotNull(log, "log");
         this.yangFilesRootDir = Util.checkNotNull(yangFilesRootDir, "yangFilesRootDir");
@@ -75,8 +78,8 @@ class YangToSourcesProcessor {
         this.yangProvider = yangProvider;
     }
 
-    YangToSourcesProcessor(BuildContext buildContext, Log log, File yangFilesRootDir, File[] excludedFiles, List<CodeGeneratorArg> codeGenerators,
-            MavenProject project, boolean inspectDependencies) {
+    YangToSourcesProcessor(final BuildContext buildContext, final Log log, final File yangFilesRootDir, final File[] excludedFiles, final List<CodeGeneratorArg> codeGenerators,
+            final MavenProject project, final boolean inspectDependencies) {
         this(log, yangFilesRootDir, excludedFiles, codeGenerators, project, inspectDependencies, new YangProvider());
     }
 
@@ -182,7 +185,7 @@ class YangToSourcesProcessor {
 
     static class YangProvider {
 
-        void addYangsToMetaInf(Log log, MavenProject project, File yangFilesRootDir, File[] excludedFiles)
+        void addYangsToMetaInf(final Log log, final MavenProject project, final File yangFilesRootDir, final File[] excludedFiles)
                 throws MojoFailureException {
 
             // copy project's src/main/yang/*.yang to target/generated-sources/yang/META-INF/yang/*.yang
@@ -200,8 +203,8 @@ class YangToSourcesProcessor {
             }
         }
 
-        private void addYangsToMetaInf(Log log, MavenProject project, File yangFilesRootDir,
-                File[] excludedFiles, File generatedYangDir)
+        private void addYangsToMetaInf(final Log log, final MavenProject project, final File yangFilesRootDir,
+                final File[] excludedFiles, final File generatedYangDir)
                 throws MojoFailureException {
 
             File withMetaInf = new File(generatedYangDir, META_INF_YANG_STRING);
@@ -223,7 +226,7 @@ class YangToSourcesProcessor {
                     META_INF_YANG_STRING_JAR));
         }
 
-        private static void setResource(File targetYangDir, MavenProject project) {
+        private static void setResource(final File targetYangDir, final MavenProject project) {
             Resource res = new Resource();
             res.setDirectory(targetYangDir.getPath());
             project.addResource(res);
@@ -233,7 +236,7 @@ class YangToSourcesProcessor {
     /**
      * Call generate on every generator from plugin configuration
      */
-    private void generateSources(ContextHolder context) throws MojoFailureException {
+    private void generateSources(final ContextHolder context) throws MojoFailureException {
         if (codeGenerators.size() == 0) {
             log.warn(Util.message("No code generators provided", LOG_PREFIX));
             return;
@@ -264,7 +267,7 @@ class YangToSourcesProcessor {
     /**
      * Instantiate generator from class and call required method
      */
-    private void generateSourcesWithOneGenerator(ContextHolder context, CodeGeneratorArg codeGeneratorCfg)
+    private void generateSourcesWithOneGenerator(final ContextHolder context, final CodeGeneratorArg codeGeneratorCfg)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
 
         codeGeneratorCfg.check();
@@ -275,11 +278,10 @@ class YangToSourcesProcessor {
 
         File outputDir = codeGeneratorCfg.getOutputBaseDir(project);
 
-        if (outputDir != null) {
-          project.addCompileSourceRoot(outputDir.getAbsolutePath());
-        } else {
-          throw new NullPointerException("outputBaseDir is null. Please provide a valid outputBaseDir value in the pom.xml");
+        if (outputDir == null) {
+            throw new NullPointerException("outputBaseDir is null. Please provide a valid outputBaseDir value in the pom.xml");
         }
+        project.addCompileSourceRoot(outputDir.getAbsolutePath());
 
         log.info(Util.message("Sources will be generated to %s", LOG_PREFIX, outputDir));
         log.debug(Util.message("Project root dir is %s", LOG_PREFIX, project.getBasedir()));
