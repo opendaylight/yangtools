@@ -8,14 +8,17 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.opendaylight.yangtools.concepts.Codec;
@@ -26,12 +29,19 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> {
+    private static final Comparator<QName> KEYARG_COMPARATOR = new Comparator<QName>() {
+        @Override
+        public int compare(final QName q1, final QName q2) {
+            return q1.getLocalName().compareToIgnoreCase(q2.getLocalName());
+        }
+    };
     private static final Lookup LOOKUP = MethodHandles.publicLookup();
-    private final MethodHandle ctor;
-    private final MethodHandle ctorInvoker;
     private final Map<QName, ValueContext> keyValueContexts;
+    private final List<QName> keysInBindingOrder;
     private final ListSchemaNode schema;
     private final Class<?> identifiable;
+    private final MethodHandle ctorInvoker;
+    private final MethodHandle ctor;
 
     public IdentifiableItemCodec(final ListSchemaNode schema, final Class<? extends Identifier<?>> keyClass,
             final Class<?> identifiable, final Map<QName, ValueContext> keyValueContexts) {
@@ -55,13 +65,38 @@ final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates,
             keys.put(qname, keyValueContexts.get(qname));
         }
         this.keyValueContexts = ImmutableMap.copyOf(keys);
+
+        /*
+         * When instantiating binding objects we need to specify constructor arguments
+         * in alphabetic order. We play a couple of tricks here to optimize CPU/memory
+         * trade-offs.
+         *
+         * We do not have to perform a sort if the source collection has less than two
+         * elements.
+
+         * We always perform an ImmutableList.copyOf(), as that will turn into a no-op
+         * if the source is already immutable. It will also produce optimized implementations
+         * for empty and singleton collections.
+         *
+         * BUG-2755: remove this if order is made declaration-order-dependent
+         */
+        final List<QName> unsortedKeys = schema.getKeyDefinition();
+        final List<QName> sortedKeys;
+        if (unsortedKeys.size() > 1) {
+            final List<QName> tmp = new ArrayList<>(unsortedKeys);
+            Collections.sort(tmp, KEYARG_COMPARATOR);
+            sortedKeys = tmp;
+        } else {
+            sortedKeys = unsortedKeys;
+        }
+
+        this.keysInBindingOrder = ImmutableList.copyOf(sortedKeys);
     }
 
     @Override
     public IdentifiableItem<?, ?> deserialize(final NodeIdentifierWithPredicates input) {
-        final Collection<QName> keys = schema.getKeyDefinition();
-        final ArrayList<Object> bindingValues = new ArrayList<>(keys.size());
-        for (final QName key : keys) {
+        final ArrayList<Object> bindingValues = new ArrayList<>(keysInBindingOrder.size());
+        for (final QName key : keysInBindingOrder) {
             final Object yangValue = input.getKeyValues().get(key);
             bindingValues.add(keyValueContexts.get(key).deserialize(yangValue));
         }
