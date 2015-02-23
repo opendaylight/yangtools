@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_076ad8b2",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/NormalizedNodeContainer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 2470
+      },
+      "writtenOn": "2015-02-23T14:21:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_7506ee87",
+      "revId": "2fad13e8d170a22772c538d14a5cbd5bbf216c92",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_cc3177ee",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/NormalizedNodeContainerModificationStrategy.java",
         "patchSetId": 5
@@ -30,6 +48,24 @@
       "writtenOn": "2015-02-23T08:40:17Z",
       "side": 1,
       "message": "switch (modChild.getType())",
+      "revId": "2fad13e8d170a22772c538d14a5cbd5bbf216c92",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_e75c8c1b",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/NormalizedNodeContainerModificationStrategy.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 2470
+      },
+      "writtenOn": "2015-02-23T14:21:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_cc3177ee",
       "revId": "2fad13e8d170a22772c538d14a5cbd5bbf216c92",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -59,6 +95,30 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_2767d4ea",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/NormalizedNodeContainerModificationStrategy.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 2470
+      },
+      "writtenOn": "2015-02-23T14:21:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_0c43df42",
+      "range": {
+        "startLine": 209,
+        "startChar": 8,
+        "endLine": 209,
+        "endChar": 9
+      },
+      "revId": "2fad13e8d170a22772c538d14a5cbd5bbf216c92",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_ec2eb38b",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/NormalizedNodeContainerModificationStrategy.java",
         "patchSetId": 5
@@ -70,6 +130,24 @@
       "writtenOn": "2015-02-23T08:40:17Z",
       "side": 1,
       "message": "String.format() to make the string readable",
+      "revId": "2fad13e8d170a22772c538d14a5cbd5bbf216c92",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_c75f100e",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/NormalizedNodeContainerModificationStrategy.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 2470
+      },
+      "writtenOn": "2015-02-23T14:21:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_ec2eb38b",
       "revId": "2fad13e8d170a22772c538d14a5cbd5bbf216c92",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -110,6 +188,24 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_879d88be",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/UnkeyedListModificationStrategy.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 2470
+      },
+      "writtenOn": "2015-02-23T14:21:46Z",
+      "side": 1,
+      "message": "Added @Nonnull annotation. I believe schema is checked for null before every SchemaAwareApplyOperation.from call.",
+      "parentUuid": "7a96c907_2c401b33",
+      "revId": "2fad13e8d170a22772c538d14a5cbd5bbf216c92",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_cc48975e",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/UnkeyedListModificationStrategy.java",
         "patchSetId": 5
@@ -127,6 +223,24 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_a7a204fb",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/UnkeyedListModificationStrategy.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 2470
+      },
+      "writtenOn": "2015-02-23T14:21:46Z",
+      "side": 1,
+      "message": "Moved validation to separate class.",
+      "parentUuid": "7a96c907_cc48975e",
+      "revId": "2fad13e8d170a22772c538d14a5cbd5bbf216c92",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_ec455343",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/UnkeyedListModificationStrategy.java",
         "patchSetId": 5
@@ -138,6 +252,24 @@
       "writtenOn": "2015-02-23T08:40:17Z",
       "side": 1,
       "message": "same as before: check for constraints before doing any actual work",
+      "revId": "2fad13e8d170a22772c538d14a5cbd5bbf216c92",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_47a30000",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/UnkeyedListModificationStrategy.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 2470
+      },
+      "writtenOn": "2015-02-23T14:21:46Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_ec455343",
       "revId": "2fad13e8d170a22772c538d14a5cbd5bbf216c92",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
