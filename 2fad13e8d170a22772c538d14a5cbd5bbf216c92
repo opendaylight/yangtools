@@ -1,0 +1,146 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_7506ee87",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/NormalizedNodeContainer.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-23T08:40:17Z",
+      "side": 1,
+      "message": "remove new empty lines",
+      "revId": "2fad13e8d170a22772c538d14a5cbd5bbf216c92",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_cc3177ee",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/NormalizedNodeContainerModificationStrategy.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 196,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-23T08:40:17Z",
+      "side": 1,
+      "message": "switch (modChild.getType())",
+      "revId": "2fad13e8d170a22772c538d14a5cbd5bbf216c92",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_0c43df42",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/NormalizedNodeContainerModificationStrategy.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 209,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-23T08:40:17Z",
+      "side": 1,
+      "message": "move these checks up: if the list is unconstrained we must skip all checks for performance reasons.",
+      "range": {
+        "startLine": 209,
+        "startChar": 8,
+        "endLine": 209,
+        "endChar": 9
+      },
+      "revId": "2fad13e8d170a22772c538d14a5cbd5bbf216c92",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_ec2eb38b",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/NormalizedNodeContainerModificationStrategy.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-23T08:40:17Z",
+      "side": 1,
+      "message": "String.format() to make the string readable",
+      "revId": "2fad13e8d170a22772c538d14a5cbd5bbf216c92",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_8c4fef6a",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/NormalizedNodeContainerModificationStrategy.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 227,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-23T08:40:17Z",
+      "side": 1,
+      "message": "if (",
+      "revId": "2fad13e8d170a22772c538d14a5cbd5bbf216c92",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_2c401b33",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/UnkeyedListModificationStrategy.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-23T08:40:17Z",
+      "side": 1,
+      "message": "can it be null?",
+      "revId": "2fad13e8d170a22772c538d14a5cbd5bbf216c92",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_cc48975e",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/UnkeyedListModificationStrategy.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-23T08:40:17Z",
+      "side": 1,
+      "message": "looks like duplicated code",
+      "revId": "2fad13e8d170a22772c538d14a5cbd5bbf216c92",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_ec455343",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/UnkeyedListModificationStrategy.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-23T08:40:17Z",
+      "side": 1,
+      "message": "same as before: check for constraints before doing any actual work",
+      "revId": "2fad13e8d170a22772c538d14a5cbd5bbf216c92",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
