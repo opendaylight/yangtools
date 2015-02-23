@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_ecdf93d4",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/AbstractDeclaredStatement.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-23T12:27:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_a83c1ec9",
+      "revId": "113d11f9bb1a75a01ca8809c186009a81a05c148",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_48079a19",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/ModelProcessingPhase.java",
         "patchSetId": 10
@@ -30,6 +48,24 @@
       "writtenOn": "2015-02-19T11:31:58Z",
       "side": 1,
       "message": "final?",
+      "revId": "113d11f9bb1a75a01ca8809c186009a81a05c148",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_acf50b58",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/ModelProcessingPhase.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-23T12:27:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_48079a19",
       "revId": "113d11f9bb1a75a01ca8809c186009a81a05c148",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_ccf9774f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/NamespaceToModule.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-23T12:27:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_e8078616",
+      "revId": "113d11f9bb1a75a01ca8809c186009a81a05c148",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_080d1237",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/ReactorException.java",
         "patchSetId": 10
@@ -64,6 +118,24 @@
       "writtenOn": "2015-02-19T11:31:58Z",
       "side": 1,
       "message": "copyright header",
+      "revId": "113d11f9bb1a75a01ca8809c186009a81a05c148",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_8c97efeb",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/ReactorException.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-23T12:27:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_080d1237",
       "revId": "113d11f9bb1a75a01ca8809c186009a81a05c148",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_ac9c2b10",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/ReactorException.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-23T12:27:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_a815fe40",
+      "revId": "113d11f9bb1a75a01ca8809c186009a81a05c148",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_c812ca56",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/ReactorException.java",
         "patchSetId": 10
@@ -98,6 +188,24 @@
       "writtenOn": "2015-02-19T11:31:58Z",
       "side": 1,
       "message": "final ?",
+      "revId": "113d11f9bb1a75a01ca8809c186009a81a05c148",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_4c9d6709",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/ReactorException.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-23T12:27:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_c812ca56",
       "revId": "113d11f9bb1a75a01ca8809c186009a81a05c148",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_6ca2a34c",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/ReactorException.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-23T12:27:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_681b7673",
+      "revId": "113d11f9bb1a75a01ca8809c186009a81a05c148",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_88184276",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StatementSupportBundle.java",
         "patchSetId": 10
@@ -132,6 +258,24 @@
       "writtenOn": "2015-02-19T11:31:58Z",
       "side": 1,
       "message": "\u0027static final\u0027",
+      "revId": "113d11f9bb1a75a01ca8809c186009a81a05c148",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_0c8bdfc3",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StatementSupportBundle.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-23T12:27:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_88184276",
       "revId": "113d11f9bb1a75a01ca8809c186009a81a05c148",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -172,6 +316,24 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_cc9097ef",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-23T12:27:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_882fe287",
+      "revId": "113d11f9bb1a75a01ca8809c186009a81a05c148",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_c8396ad8",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
         "patchSetId": 10
@@ -183,6 +345,24 @@
       "writtenOn": "2015-02-19T11:31:58Z",
       "side": 1,
       "message": "final with a private constructor",
+      "revId": "113d11f9bb1a75a01ca8809c186009a81a05c148",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_ec8d53d4",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-23T12:27:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_c8396ad8",
       "revId": "113d11f9bb1a75a01ca8809c186009a81a05c148",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
