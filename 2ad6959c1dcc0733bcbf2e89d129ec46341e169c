@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_e77b2cbc",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/UsesStatementImpl.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-23T20:34:57Z",
+      "side": 1,
+      "message": "now merge the declarations and initializations?",
+      "revId": "2ad6959c1dcc0733bcbf2e89d129ec46341e169c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
