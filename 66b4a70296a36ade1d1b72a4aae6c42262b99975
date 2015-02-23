@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_077978c7",
+        "filename": "yang/yang-model-export/src/main/java/org/opendaylight/yangtools/yang/model/export/SingleModuleYinStatementWriter.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-23T20:30:08Z",
+      "side": 1,
+      "message": "lost newline",
+      "revId": "66b4a70296a36ade1d1b72a4aae6c42262b99975",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
