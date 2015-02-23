@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_4c39e7f0",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/ExtensionNamespace.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-23T13:32:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_0d452416",
+      "revId": "65e25c3b00395ff876658a31cc800283b9fe3d11",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_48555af9",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/ImportStatementDefinition.java",
         "patchSetId": 8
@@ -30,6 +48,24 @@
       "writtenOn": "2015-02-19T11:39:21Z",
       "side": 1,
       "message": "space before !",
+      "revId": "65e25c3b00395ff876658a31cc800283b9fe3d11",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_8c65af1f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/ImportStatementDefinition.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 96,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-23T13:32:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_48555af9",
       "revId": "65e25c3b00395ff876658a31cc800283b9fe3d11",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_ac6aebeb",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/ImportStatementDefinition.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-23T13:32:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_e85546fa",
+      "revId": "65e25c3b00395ff876658a31cc800283b9fe3d11",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_085bd22e",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/ModuleStatementImpl.java",
         "patchSetId": 8
@@ -64,6 +118,24 @@
       "writtenOn": "2015-02-19T11:39:21Z",
       "side": 1,
       "message": "how is this initialized?",
+      "revId": "65e25c3b00395ff876658a31cc800283b9fe3d11",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_4c6b27f1",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/ModuleStatementImpl.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-23T13:32:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_085bd22e",
       "revId": "65e25c3b00395ff876658a31cc800283b9fe3d11",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_0c799fc7",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/PrefixStatementImpl.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-23T13:32:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_a843be40",
+      "revId": "65e25c3b00395ff876658a31cc800283b9fe3d11",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_6849365f",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/UsesStatementImpl.java",
         "patchSetId": 8
@@ -98,6 +188,24 @@
       "writtenOn": "2015-02-19T11:39:21Z",
       "side": 1,
       "message": "move down to initialization",
+      "revId": "65e25c3b00395ff876658a31cc800283b9fe3d11",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_2c76dbd7",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/UsesStatementImpl.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-02-23T13:32:11Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_6849365f",
       "revId": "65e25c3b00395ff876658a31cc800283b9fe3d11",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
