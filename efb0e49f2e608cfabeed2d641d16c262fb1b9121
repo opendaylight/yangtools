@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_0fa98e8f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/ModifierImpl.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 339,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-24T15:13:24Z",
+      "side": 1,
+      "message": "should this be final? can it be null?",
+      "range": {
+        "startLine": 339,
+        "startChar": 0,
+        "endLine": 339,
+        "endChar": 8
+      },
+      "revId": "efb0e49f2e608cfabeed2d641d16c262fb1b9121",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_cf96464c",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/YangInferencePipeline.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-02-24T15:13:24Z",
+      "side": 1,
+      "message": "... should be final",
+      "revId": "efb0e49f2e608cfabeed2d641d16c262fb1b9121",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
