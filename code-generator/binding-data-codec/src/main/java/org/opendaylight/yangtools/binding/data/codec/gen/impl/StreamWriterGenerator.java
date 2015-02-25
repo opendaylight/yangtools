@@ -64,7 +64,7 @@ public class StreamWriterGenerator extends AbstractStreamWriterGenerator {
     @Override
     protected DataObjectSerializerSource generateContainerSerializer(final GeneratedType type, final ContainerSchemaNode node) {
 
-        return new AugmentableDataNodeContainerEmmiterSource(this, type, node) {
+        return new AugmentableDataNodeContainerEmitterSource(this, type, node) {
             @Override
             public CharSequence emitStartEvent() {
                 return startContainerNode(classReference(type), getChildSizeFromSchema(node));
@@ -75,7 +75,7 @@ public class StreamWriterGenerator extends AbstractStreamWriterGenerator {
     @Override
     protected DataObjectSerializerSource generateNotificationSerializer(final GeneratedType type, final NotificationDefinition node) {
 
-        return new AugmentableDataNodeContainerEmmiterSource(this, type, node) {
+        return new AugmentableDataNodeContainerEmitterSource(this, type, node) {
             @Override
             public CharSequence emitStartEvent() {
                 return startContainerNode(classReference(type), getChildSizeFromSchema(node));
@@ -85,7 +85,7 @@ public class StreamWriterGenerator extends AbstractStreamWriterGenerator {
 
     @Override
     protected DataObjectSerializerSource generateCaseSerializer(final GeneratedType type, final ChoiceCaseNode node) {
-        return new AugmentableDataNodeContainerEmmiterSource(this, type, node) {
+        return new AugmentableDataNodeContainerEmitterSource(this, type, node) {
             @Override
             public CharSequence emitStartEvent() {
                 return startCaseNode(classReference(type),getChildSizeFromSchema(node));
@@ -95,7 +95,7 @@ public class StreamWriterGenerator extends AbstractStreamWriterGenerator {
 
     @Override
     protected DataObjectSerializerSource generateUnkeyedListEntrySerializer(final GeneratedType type, final ListSchemaNode node) {
-        return new AugmentableDataNodeContainerEmmiterSource(this, type, node) {
+        return new AugmentableDataNodeContainerEmitterSource(this, type, node) {
 
             @Override
             public CharSequence emitStartEvent() {
@@ -117,7 +117,7 @@ public class StreamWriterGenerator extends AbstractStreamWriterGenerator {
 
     @Override
     protected DataObjectSerializerSource generateMapEntrySerializer(final GeneratedType type, final ListSchemaNode node) {
-        return new AugmentableDataNodeContainerEmmiterSource(this, type, node) {
+        return new AugmentableDataNodeContainerEmitterSource(this, type, node) {
             @Override
             public CharSequence emitStartEvent() {
                 return startMapEntryNode(invoke(INPUT, "getKey"), getChildSizeFromSchema(node));
