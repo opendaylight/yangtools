@@ -95,15 +95,17 @@ final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates,
 
     @Override
     public IdentifiableItem<?, ?> deserialize(final NodeIdentifierWithPredicates input) {
-        final ArrayList<Object> bindingValues = new ArrayList<>(keysInBindingOrder.size());
+        final Object[] bindingValues = new Object[keysInBindingOrder.size()];
+        int offset = 0;
+
         for (final QName key : keysInBindingOrder) {
             final Object yangValue = input.getKeyValues().get(key);
-            bindingValues.add(keyValueContexts.get(key).deserialize(yangValue));
+            bindingValues[offset++] = keyValueContexts.get(key).deserialize(yangValue);
         }
 
         final Identifier<?> identifier;
         try {
-            identifier = (Identifier<?>) ctorInvoker.invokeExact(ctor, bindingValues.toArray());
+            identifier = (Identifier<?>) ctorInvoker.invokeExact(ctor, bindingValues);
         } catch (Throwable e) {
             throw Throwables.propagate(e);
         }
