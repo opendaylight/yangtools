@@ -63,14 +63,14 @@ abstract class ValueTypeCodec implements Codec<Object, Object> {
     public static final SchemaUnawareCodec EMPTY_CODEC = new SchemaUnawareCodec() {
 
         @Override
-        public Object serialize(Object arg0) {
+        public Object serialize(final Object arg0) {
             // Empty type has null value in NormalizedNode and Composite Node
             // representation
             return null;
         }
 
         @Override
-        public Object deserialize(Object arg0) {
+        public Object deserialize(final Object arg0) {
             /* Empty type has boolean.TRUE representation in Binding-aware world
             *  otherwise it is null / false.
             *  So when codec is triggered, empty leaf is present, that means we
@@ -83,7 +83,7 @@ abstract class ValueTypeCodec implements Codec<Object, Object> {
     private static final Callable<? extends SchemaUnawareCodec> EMPTY_LOADER = new Callable<SchemaUnawareCodec>() {
 
         @Override
-        public SchemaUnawareCodec call() throws Exception {
+        public SchemaUnawareCodec call() {
             return EMPTY_CODEC;
         }
     };
