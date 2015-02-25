@@ -8,14 +8,12 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.collect.ImmutableSet;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Callable;
-
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -24,8 +22,8 @@ import org.opendaylight.yangtools.yang.model.util.UnionType;
 
 final class UnionTypeCodec extends ReflectionBasedCodec {
 
-    private Constructor<?> charConstructor;
-    private ImmutableSet<UnionValueOptionContext> typeCodecs;
+    private final ImmutableSet<UnionValueOptionContext> typeCodecs;
+    private final Constructor<?> charConstructor;
 
     private UnionTypeCodec(final Class<?> unionCls,final Set<UnionValueOptionContext> codecs) {
         super(unionCls);
@@ -37,7 +35,7 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
         }
     }
 
-    static final Callable<UnionTypeCodec> loader(final Class<?> unionCls, final UnionTypeDefinition unionType) {
+    static Callable<UnionTypeCodec> loader(final Class<?> unionCls, final UnionTypeDefinition unionType) {
         return new Callable<UnionTypeCodec>() {
             @Override
             public UnionTypeCodec call() throws NoSuchMethodException, SecurityException {
@@ -54,7 +52,7 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
         };
     }
 
-    private static Codec<Object, Object> getCodecForType(Class valueType, TypeDefinition subtype) {
+    private static Codec<Object, Object> getCodecForType(final Class<?> valueType, final TypeDefinition<?> subtype) {
         if (subtype.getBaseType() instanceof UnionType) {
             try {
                 return UnionTypeCodec.loader(valueType, (UnionType) subtype.getBaseType()).call();
@@ -77,10 +75,10 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
 
     @Override
     public Object serialize(final Object input) {
-        if(input != null) {
-            for(UnionValueOptionContext valCtx : typeCodecs) {
+        if (input != null) {
+            for (UnionValueOptionContext valCtx : typeCodecs) {
                 Object domValue = valCtx.serialize(input);
-                if(domValue != null) {
+                if (domValue != null) {
                     return domValue;
                 }
             }

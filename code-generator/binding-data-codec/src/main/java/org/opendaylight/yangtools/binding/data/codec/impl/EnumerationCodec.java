@@ -17,15 +17,14 @@ import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
-class EnumerationCodec extends ReflectionBasedCodec implements SchemaUnawareCodec {
+final class EnumerationCodec extends ReflectionBasedCodec implements SchemaUnawareCodec {
 
-    ImmutableBiMap<String, Enum<?>> yangValueToBinding;
+    private final ImmutableBiMap<String, Enum<?>> yangValueToBinding;
 
     public EnumerationCodec(final Class<? extends Enum<?>> enumeration, final Map<String, Enum<?>> schema) {
         super(enumeration);
         yangValueToBinding = ImmutableBiMap.copyOf(schema);
     }
-
 
     static Callable<EnumerationCodec> loader(final Class<?> returnType,
             final EnumTypeDefinition enumSchema) {
@@ -50,7 +49,6 @@ class EnumerationCodec extends ReflectionBasedCodec implements SchemaUnawareCode
             }
         };
     }
-
 
     @Override
     public Object deserialize(final Object input) {
