@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSortedMap;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -19,7 +18,6 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
-
 import org.opendaylight.yangtools.binding.data.codec.impl.ValueTypeCodec.SchemaUnawareCodec;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -84,12 +82,7 @@ class BitsCodec extends ReflectionBasedCodec implements SchemaUnawareCodec {
          * for construction of bits object.
          */
         for (String value : valueGetters.keySet()) {
-            if (casted.contains(value)) {
-                args[currentArg] = Boolean.TRUE;
-            } else {
-                args[currentArg] = Boolean.FALSE;
-            }
-            currentArg++;
+            args[currentArg++] = casted.contains(value);
         }
 
         try {
