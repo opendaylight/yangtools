@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-class DataContainerCodecPrototype<T> implements NodeContextSupplier {
+final class DataContainerCodecPrototype<T> implements NodeContextSupplier {
 
     private final T schema;
     private final QNameModule namespace;
