@@ -18,17 +18,25 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  * It holds the base namespace and can never be removed from the stack.
  */
 final class JSONStreamWriterRootContext extends JSONStreamWriterURIContext {
-    JSONStreamWriterRootContext(final URI namespace) {
+
+    private final boolean exclusive;
+
+    JSONStreamWriterRootContext(final URI namespace, boolean exclusive) {
         super(null, namespace);
+        this.exclusive = exclusive;
     }
 
     @Override
     protected void emitStart(final SchemaContext schema, final JsonWriter writer) throws IOException {
-        writer.beginObject();
+        if(exclusive) {
+            writer.beginObject();
+        }
     }
 
     @Override
     protected void emitEnd(final JsonWriter writer) throws IOException {
-        writer.endObject();
+        if(exclusive) {
+            writer.endObject();
+        }
     }
 }
