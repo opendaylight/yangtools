@@ -7,28 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import com.google.gson.stream.JsonWriter;
-import java.io.IOException;
 import java.net.URI;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 
 /**
  * The root node of a particular {@link JSONNormalizedNodeStreamWriter} instance.
  * It holds the base namespace and can never be removed from the stack.
  */
-final class JSONStreamWriterRootContext extends JSONStreamWriterURIContext {
+abstract class JSONStreamWriterRootContext extends JSONStreamWriterURIContext {
+
     JSONStreamWriterRootContext(final URI namespace) {
         super(null, namespace);
     }
 
-    @Override
-    protected void emitStart(final SchemaContext schema, final JsonWriter writer) throws IOException {
-        writer.beginObject();
-    }
-
-    @Override
-    protected void emitEnd(final JsonWriter writer) throws IOException {
-        writer.endObject();
-    }
 }

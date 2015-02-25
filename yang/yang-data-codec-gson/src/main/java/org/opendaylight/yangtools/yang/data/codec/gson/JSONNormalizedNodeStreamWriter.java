@@ -42,15 +42,18 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
     private final JsonWriter writer;
     private JSONStreamWriterContext context;
 
-    private JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final SchemaPath path, final URI initialNs, JsonWriter JsonWriter) {
-        this.writer = JsonWriter;
+    private JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final SchemaPath path, JsonWriter JsonWriter, JSONStreamWriterRootContext rootContext) {
+        this.writer = Preconditions.checkNotNull(JsonWriter);
         this.codecs = Preconditions.checkNotNull(codecFactory);
         this.tracker = SchemaTracker.create(codecFactory.getSchemaContext(), path);
-        this.context = new JSONStreamWriterRootContext(initialNs);
+        this.context = Preconditions.checkNotNull(rootContext);
     }
 
     /**
      * Create a new stream writer, which writes to the specified {@link Writer}.
+     *
+     * This instance of writer can be used only to emit one top level element,
+     * therwise it will produce incorrect JSON.
      *
      * @param schemaContext Schema context
      * @param writer Output writer
@@ -62,6 +65,9 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
 
     /**
      * Create a new stream writer, which writes to the specified {@link Writer}.
+     *
+     * This instance of writer can be used only to emit one top level element,
+     * therwise it will produce incorrect JSON.
      *
      * @param schemaContext Schema context
      * @param path Root schemapath
@@ -75,6 +81,9 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
     /**
      * Create a new stream writer, which writes to the specified {@link Writer}.
      *
+     * This instance of writer can be used only to emit one top level element,
+     * therwise it will produce incorrect JSON.
+     *
      * @param schemaContext Schema context
      * @param path Root schemapath
      * @param writer Output writer
@@ -83,11 +92,14 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      */
     public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final SchemaPath path,
             final URI initialNs, final Writer writer) {
-        return create(JSONCodecFactory.create(schemaContext), path, initialNs, JsonWriterFactory.createJsonWriter(writer));
+        return createExclusiveWriter(JSONCodecFactory.create(schemaContext), path, initialNs, JsonWriterFactory.createJsonWriter(writer));
     }
 
     /**
      * Create a new stream writer, which writes to the specified output stream.
+     *
+     * This instance of writer can be used only to emit one top level element,
+     * therwise it will produce incorrect JSON.
      *
      * @param schemaContext Schema context
      * @param writer Output writer
@@ -95,12 +107,15 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * @return A stream writer instance
      */
     public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final Writer writer, final int indentSize) {
-        return create(JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, null,JsonWriterFactory.createJsonWriter(writer, indentSize));
+        return createExclusiveWriter(JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, null,JsonWriterFactory.createJsonWriter(writer, indentSize));
     }
 
     /**
      * Create a new stream writer, which writes to the specified output stream. The codec factory
      * can be reused between multiple writers.
+     *
+     * This instance of writer can be used only to emit one top level element,
+     * therwise it will produce incorrect JSON.
      *
      * @param codecFactory JSON codec factory
      * @param writer Output writer
@@ -108,11 +123,14 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * @return A stream writer instance
      */
     public static NormalizedNodeStreamWriter create(final JSONCodecFactory codecFactory, final Writer writer, final int indentSize) {
-        return create(codecFactory, SchemaPath.ROOT, null, JsonWriterFactory.createJsonWriter(writer,indentSize));
+        return createExclusiveWriter(codecFactory, SchemaPath.ROOT, null, JsonWriterFactory.createJsonWriter(writer,indentSize));
     }
 
     /**
      * Create a new stream writer, which writes to the specified output stream.
+     *
+     * This instance of writer can be used only to emit one top level element,
+     * therwise it will produce incorrect JSON.
      *
      * @param schemaContext Schema context
      * @param path Schema Path
@@ -122,12 +140,19 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      */
     public static NormalizedNodeStreamWriter create(SchemaContext schemaContext, SchemaPath path, URI initialNs,
             JsonWriter jsonWriter) {
-        return create(JSONCodecFactory.create(schemaContext), path, initialNs, jsonWriter);
+        return createExclusiveWriter(JSONCodecFactory.create(schemaContext), path, initialNs, jsonWriter);
     }
 
     /**
-     * Create a new stream writer, which writes to the specified output stream. The codec factory
-     * can be reused between multiple writers.
+     * Create a new stream writer, which writes to the specified output stream.
+     *
+     * The codec factory can be reused between multiple writers.
+     *
+     * Returned writer is exclusive user of JsonWriter, which means it will start
+     * top-level JSON element and ends it.
+     *
+     * This instance of writer can be used only to emit one top level element,
+     * therwise it will produce incorrect JSON.
      *
      * @param codecFactory JSON codec factory
      * @param path Schema Path
@@ -135,8 +160,28 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * @param jsonWriter JsonWriter
      * @return A stream writer instance
      */
-    public static NormalizedNodeStreamWriter create(JSONCodecFactory codecFactory, SchemaPath path, URI initialNs, JsonWriter jsonWriter) {
-        return new JSONNormalizedNodeStreamWriter(codecFactory, path, initialNs, jsonWriter);
+    public static NormalizedNodeStreamWriter createExclusiveWriter(JSONCodecFactory codecFactory, SchemaPath path, URI initialNs, JsonWriter jsonWriter) {
+        return new JSONNormalizedNodeStreamWriter(codecFactory, path, jsonWriter, new JSONStreamWriterExclusiveRootContext(initialNs));
+    }
+
+    /**
+     * Create a new stream writer, which writes to the specified output stream.
+     *
+     * The codec factory can be reused between multiple writers.
+     *
+     * Returned writer can be used emit multiple top level element,
+     * but does not start / close parent JSON object, which must be done
+     * by user providing {@code jsonWriter} instance in order for
+     * JSON to be valid.
+     *
+     * @param codecFactory JSON codec factory
+     * @param path Schema Path
+     * @param initialNs Initial namespace
+     * @param jsonWriter JsonWriter
+     * @return A stream writer instance
+     */
+    public static NormalizedNodeStreamWriter createNestedWriter(JSONCodecFactory codecFactory, SchemaPath path, URI initialNs, JsonWriter jsonWriter) {
+        return new JSONNormalizedNodeStreamWriter(codecFactory, path, jsonWriter, new JSONStreamWriterSharedRootContext(initialNs));
     }
 
     @Override
@@ -238,6 +283,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
     public void endNode() throws IOException {
         tracker.endNode();
         context = context.endNode(codecs.getSchemaContext(), writer);
+
         if(context instanceof JSONStreamWriterRootContext) {
             context.emitEnd(writer);
         }
