@@ -11,13 +11,13 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -141,8 +141,12 @@ final class ChoiceNodeCodecContext extends DataContainerCodecContext<ChoiceNode>
         return caze.get().dataFromNormalizedNode(data);
     }
 
-    public DataContainerCodecContext<?> getCazeByChildClass(final Class<? extends DataObject> type) {
-        return byCaseChildClass.get(type).get();
+    public @Nullable DataContainerCodecContext<?> getCazeByChildClass(final @Nonnull Class<? extends DataObject> type) {
+        final DataContainerCodecPrototype<?> protoCtx = byCaseChildClass.get(type);
+        if(protoCtx != null) {
+            return protoCtx.get();
+        }
+        return null;
     }
 
 }

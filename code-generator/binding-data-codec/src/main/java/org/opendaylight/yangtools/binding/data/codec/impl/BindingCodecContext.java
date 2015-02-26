@@ -116,6 +116,7 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
         DataContainerCodecContext<?> currentNode = root;
         for (final InstanceIdentifier.PathArgument bindingArg : binding.getPathArguments()) {
             currentNode = currentNode.getIdentifierChild(bindingArg, builder);
+            Preconditions.checkArgument(currentNode != null, "Supplied Instance Identifier %s is not valid.",binding);
         }
         return currentNode;
     }
@@ -130,6 +131,7 @@ final class BindingCodecContext implements CodecContextFactory, Immutable {
      * @param bindingArguments Collection for traversed path arguments
      * @return Codec for target node, or @null if the node does not have a
      *         binding representation (choice, case, leaf).
+     *
      */
     @Nullable NodeCodecContext getCodecContextNode(final @Nonnull YangInstanceIdentifier dom,
             final @Nonnull Collection<InstanceIdentifier.PathArgument> bindingArguments) {
