@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -51,17 +52,19 @@ public class DataValidationException extends RuntimeException {
     }
 
     public static void checkListKey(final DataContainerChild<?, ?> childNode, final Map<QName, Object> keyValues, final QName keyQName,
-            final YangInstanceIdentifier.NodeIdentifierWithPredicates nodeId) {
+            final NodeIdentifierWithPredicates nodeId) {
         checkListKey(childNode, keyQName, nodeId);
 
         final Object expected = nodeId.getKeyValues().get(keyQName);
         final Object actual = childNode.getValue();
-        if (!Objects.equals(expected, actual)) {
+
+        // Objects.equals() does not deal with arrays, but is faster
+        if (!Objects.equals(expected, actual) && !Objects.deepEquals(expected, actual)) {
             throw new IllegalListKeyException(keyQName, nodeId, actual, expected);
         }
     }
 
-    public static void checkListKey(final DataContainerChild<?, ?> childNode, final QName keyQName, final YangInstanceIdentifier.NodeIdentifierWithPredicates nodeId) {
+    public static void checkListKey(final DataContainerChild<?, ?> childNode, final QName keyQName, final NodeIdentifierWithPredicates nodeId) {
         if (childNode == null) {
             throw new IllegalListKeyException(keyQName, nodeId);
         }
@@ -89,11 +92,11 @@ public class DataValidationException extends RuntimeException {
     private static final class IllegalListKeyException extends DataValidationException {
         private static final long serialVersionUID = 1L;
 
-        private IllegalListKeyException(final QName keyQName, final YangInstanceIdentifier.NodeIdentifierWithPredicates id) {
+        private IllegalListKeyException(final QName keyQName, final NodeIdentifierWithPredicates id) {
             super(String.format("Key value not present for key: %s, in: %s", keyQName, id));
         }
 
-        private IllegalListKeyException(final QName keyQName, final YangInstanceIdentifier.NodeIdentifierWithPredicates id, final Object actualValue, final Object expectedValue) {
+        private IllegalListKeyException(final QName keyQName, final NodeIdentifierWithPredicates id, final Object actualValue, final Object expectedValue) {
             super(String.format("Illegal value for key: %s, in: %s, actual value: %s, expected value from key: %s", keyQName, id, actualValue, expectedValue));
         }
     }
