@@ -56,7 +56,9 @@ public class DataValidationException extends RuntimeException {
 
         final Object expected = nodeId.getKeyValues().get(keyQName);
         final Object actual = childNode.getValue();
-        if (!Objects.equals(expected, actual)) {
+
+        // Objects.equals() does not deal with arrays
+        if (!Objects.deepEquals(expected, actual)) {
             throw new IllegalListKeyException(keyQName, nodeId, actual, expected);
         }
     }
