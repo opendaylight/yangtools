@@ -97,15 +97,15 @@ abstract class DataContainerCodecContext<T> extends NodeCodecContext {
     protected abstract DataContainerCodecContext<?> getStreamChild(final Class<?> childClass) throws IllegalArgumentException;
 
     /**
-    *
-    * Returns child context as if it was walked by
-    * {@link BindingStreamEventWriter}. This means that to enter case, one
-    * must issue getChild(ChoiceClass).getChild(CaseClass).
-    *
-    * @param childClass
-    * @return Context of child or Optional absent is supplied class is not applicable in context.
-    */
-   protected abstract Optional<DataContainerCodecContext<?>> getPossibleStreamChild(final Class<?> childClass);
+     *
+     * Returns child context as if it was walked by
+     * {@link BindingStreamEventWriter}. This means that to enter case, one
+     * must issue getChild(ChoiceClass).getChild(CaseClass).
+     *
+     * @param childClass
+     * @return Context of child or Optional absent is supplied class is not applicable in context.
+     */
+    protected abstract Optional<DataContainerCodecContext<?>> getPossibleStreamChild(final Class<?> childClass);
 
     @Override
     public String toString() {

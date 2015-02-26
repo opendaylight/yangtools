@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.data.codec.gen.impl;
 
 import com.google.common.base.Preconditions;
-
 import org.opendaylight.yangtools.binding.data.codec.gen.spi.AbstractSource;
 import org.opendaylight.yangtools.sal.binding.generator.api.ClassLoadingStrategy;
 import org.opendaylight.yangtools.sal.binding.generator.impl.GeneratedClassLoadingStrategy;
@@ -68,7 +67,6 @@ abstract class DataObjectSerializerSource extends AbstractSource {
 
     protected final CharSequence leafSetEntryNode(final CharSequence value) {
         return invoke(STREAM, "leafSetEntryNode", value);
-
     }
 
     protected final CharSequence startContainerNode(final CharSequence type, final CharSequence expected) {
@@ -76,7 +74,7 @@ abstract class DataObjectSerializerSource extends AbstractSource {
     }
 
     protected final  CharSequence escape(final String localName) {
-        return '"'+localName+'"';
+        return '"' + localName + '"';
     }
 
     protected final CharSequence startUnkeyedList(final CharSequence type, final CharSequence expected) {
@@ -113,7 +111,6 @@ abstract class DataObjectSerializerSource extends AbstractSource {
         return invoke(STREAM, "startCase", (localName),expected);
     }
 
-
     protected final CharSequence anyxmlNode(final String name, final String value) throws IllegalArgumentException {
         return invoke(STREAM, "anyxmlNode", escape(name),name);
     }
@@ -123,11 +120,11 @@ abstract class DataObjectSerializerSource extends AbstractSource {
     }
 
     protected final CharSequence forEach(final String iterable,final Type valueType,final CharSequence body) {
-        return forEach(iterable,ITERATOR,valueType.getFullyQualifiedName(),CURRENT,body);
+        return forEach(iterable, ITERATOR, valueType.getFullyQualifiedName(), CURRENT, body);
     }
 
     protected final CharSequence classReference(final Type type) {
-        return new StringBuilder().append(type.getFullyQualifiedName()).append(".class");
+        return type.getFullyQualifiedName() + ".class";
     }
 
     protected final CharSequence staticInvokeEmitter(final Type childType, final String name) {

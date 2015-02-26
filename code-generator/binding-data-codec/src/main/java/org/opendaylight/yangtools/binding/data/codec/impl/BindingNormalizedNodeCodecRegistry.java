@@ -53,7 +53,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
 
     private final DataObjectSerializerGenerator generator;
     private final LoadingCache<Class<? extends DataObject>, DataObjectSerializer> serializers;
-    private BindingCodecContext codecContext;
+    private volatile BindingCodecContext codecContext;
 
     public BindingNormalizedNodeCodecRegistry(final DataObjectSerializerGenerator generator) {
         this.generator = Preconditions.checkNotNull(generator);
@@ -213,13 +213,11 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         return codecContext.newNotificationWriter(notification, streamWriter);
     }
 
-
     @Override
     public BindingStreamEventWriter newRpcWriter(final Class<? extends DataContainer> rpcInputOrOutput,
             final NormalizedNodeStreamWriter streamWriter) {
         return codecContext.newRpcWriter(rpcInputOrOutput,streamWriter);
     }
-
 
     public <T extends DataObject> Function<Optional<NormalizedNode<?, ?>>, Optional<T>>  deserializeFunction(final InstanceIdentifier<T> path) {
         final DataObjectCodecContext<?> ctx = (DataObjectCodecContext<?>) codecContext.getCodecContextNode(path, null);
@@ -227,26 +225,24 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
     }
 
 
-    private static class DeserializeFunction<T> implements Function<Optional<NormalizedNode<?, ?>>, Optional<T>> {
+    private static final class DeserializeFunction<T> implements Function<Optional<NormalizedNode<?, ?>>, Optional<T>> {
         private final DataObjectCodecContext<?> ctx;
 
-        public DeserializeFunction(final DataObjectCodecContext<?> ctx) {
-            super();
+        DeserializeFunction(final DataObjectCodecContext<?> ctx) {
             this.ctx = ctx;
         }
 
         @SuppressWarnings("unchecked")
         @Override
         public Optional<T> apply(final Optional<NormalizedNode<?, ?>> input) {
-            if(input.isPresent()) {
+            if (input.isPresent()) {
                 return Optional.of((T) ctx.dataFromNormalizedNode(input.get()));
             }
             return Optional.absent();
         }
     }
 
-    private class GeneratorLoader extends CacheLoader<Class<? extends DataContainer>, DataObjectSerializer> {
-
+    private final class GeneratorLoader extends CacheLoader<Class<? extends DataContainer>, DataObjectSerializer> {
         @Override
         public DataObjectSerializer load(final Class<? extends DataContainer> key) throws Exception {
             final DataObjectSerializerImplementation prototype = generator.getSerializer(key);
@@ -254,9 +250,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         }
     }
 
-    private class DataObjectSerializerProxy implements DataObjectSerializer,
-            Delegator<DataObjectSerializerImplementation> {
-
+    private final class DataObjectSerializerProxy implements DataObjectSerializer, Delegator<DataObjectSerializerImplementation> {
         private final DataObjectSerializerImplementation delegate;
 
         DataObjectSerializerProxy(final DataObjectSerializerImplementation delegate) {

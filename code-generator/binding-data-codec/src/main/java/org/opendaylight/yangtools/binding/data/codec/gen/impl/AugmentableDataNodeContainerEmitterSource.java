@@ -11,10 +11,10 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializerImplementation;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 
-abstract class AugmentableDataNodeContainerEmmiterSource extends DataNodeContainerSerializerSource {
+abstract class AugmentableDataNodeContainerEmitterSource extends DataNodeContainerSerializerSource {
     private static final String AUGMENTABLE_SERIALIZER = "AUGMENTABLE_SERIALIZER";
 
-    public AugmentableDataNodeContainerEmmiterSource(final AbstractStreamWriterGenerator generator, final GeneratedType type, final DataNodeContainer node) {
+    public AugmentableDataNodeContainerEmitterSource(final AbstractStreamWriterGenerator generator, final GeneratedType type, final DataNodeContainer node) {
         super(generator, type, node);
         /*
          * Eventhough intuition says the serializer could reference the generator directly,
