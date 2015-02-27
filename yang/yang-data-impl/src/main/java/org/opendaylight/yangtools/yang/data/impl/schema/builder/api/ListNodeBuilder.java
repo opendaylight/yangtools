@@ -7,9 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.api;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
@@ -22,7 +21,7 @@ public interface ListNodeBuilder<T, V>
     ListNodeBuilder<T, V> withNodeIdentifier(YangInstanceIdentifier.NodeIdentifier nodeIdentifier);
 
     @Override
-    ListNodeBuilder<T, V> withValue(List<LeafSetEntryNode<T>> value);
+    ListNodeBuilder<T, V> withValue(Collection<LeafSetEntryNode<T>> value);
 
     @Override
     ListNodeBuilder<T, V> withChild(LeafSetEntryNode<T> child);

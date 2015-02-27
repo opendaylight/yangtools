@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.MapAdaptor;
@@ -70,7 +70,7 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, MapNode> withValue(final List<MapEntryNode> value) {
+    public CollectionNodeBuilder<MapEntryNode, MapNode> withValue(final Collection<MapEntryNode> value) {
         // TODO replace or putAll ?
         for (final MapEntryNode mapEntryNode : value) {
             withChild(mapEntryNode);

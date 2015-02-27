@@ -8,10 +8,9 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import com.google.common.base.Preconditions;
-import java.io.IOException;
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Deque;
-import java.util.List;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -263,7 +262,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         }
 
         @Override
-        public NormalizedNodeContainerBuilder withValue(final List value) {
+        public NormalizedNodeContainerBuilder withValue(final Collection value) {
             throw new UnsupportedOperationException();
         }
 
@@ -286,9 +285,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @Override
-    public void close() throws IOException {
-        // TODO Auto-generated method stub
-
+    public void close() {
+        // no-op
     }
-
 }

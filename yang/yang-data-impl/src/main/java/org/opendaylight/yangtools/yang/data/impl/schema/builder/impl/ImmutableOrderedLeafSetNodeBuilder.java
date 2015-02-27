@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.Iterables;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -23,9 +24,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.OrderedLeafSetNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedNode;
-
-import com.google.common.base.Optional;
-import com.google.common.collect.Iterables;
 
 public class ImmutableOrderedLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSetEntryNode<T>> {
 
@@ -91,14 +89,13 @@ public class ImmutableOrderedLeafSetNodeBuilder<T> implements ListNodeBuilder<T,
     }
 
     @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withValue(final List<LeafSetEntryNode<T>> value) {
+    public ListNodeBuilder<T, LeafSetEntryNode<T>> withValue(final Collection<LeafSetEntryNode<T>> value) {
         checkDirty();
         for (final LeafSetEntryNode<T> leafSetEntry : value) {
             withChild(leafSetEntry);
         }
         return this;
     }
-
 
     @Override
     public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(final T value, final Map<QName, String> attributes) {
