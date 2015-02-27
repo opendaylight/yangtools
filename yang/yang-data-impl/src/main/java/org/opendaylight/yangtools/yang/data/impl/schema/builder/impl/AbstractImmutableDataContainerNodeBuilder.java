@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -86,7 +86,7 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends YangInstanceI
     }
 
     @Override
-    public DataContainerNodeBuilder<I, R> withValue(final List<DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>> value) {
+    public DataContainerNodeBuilder<I, R> withValue(final Collection<DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>> value) {
         // TODO Replace or putAll ?
         for (final DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild : value) {
             withChild(dataContainerChild);
