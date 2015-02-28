@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.List;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -39,8 +38,8 @@ class ListNodeCodecContext extends DataObjectCodecContext<ListSchemaNode> {
     }
 
     private List<DataObject> fromMap(final MapNode nodes) {
-        List<DataObject> ret = new ArrayList<>(Iterables.size(nodes.getValue()));
-        for(MapEntryNode node : nodes.getValue()) {
+        List<DataObject> ret = new ArrayList<>(nodes.getValue().size());
+        for (MapEntryNode node : nodes.getValue()) {
             ret.add(fromMapEntry(node));
         }
         return ret;
@@ -56,7 +55,7 @@ class ListNodeCodecContext extends DataObjectCodecContext<ListSchemaNode> {
 
     private List<DataObject> fromUnkeyedList(final UnkeyedListNode nodes) {
         // FIXME: Could be this lazy transformed list?
-        List<DataObject> ret = new ArrayList<>(Iterables.size(nodes.getValue()));
+        List<DataObject> ret = new ArrayList<>(nodes.getValue().size());
         for (UnkeyedListEntryNode node : nodes.getValue()) {
             ret.add(fromUnkeyedListEntry(node));
         }
