@@ -36,7 +36,7 @@ public final class LazyCollections {
         case 0:
             return Collections.singletonList(obj);
         case 1:
-            ret = new ArrayList<>();
+            ret = new ArrayList<>(2);
             ret.addAll(list);
             break;
         default:
