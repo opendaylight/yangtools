@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializ
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
@@ -26,14 +27,14 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  * @param <O>
  *            entry node type which is inside containing (N) type
  */
-public abstract class ListNodeBaseSerializer<E, N extends DataContainerChild<NodeIdentifier, Iterable<O>>, O extends DataContainerNode<?>>
+public abstract class ListNodeBaseSerializer<E, N extends DataContainerChild<NodeIdentifier, Collection<O>>, O extends DataContainerNode<?>>
         implements FromNormalizedNodeSerializer<E, N, ListSchemaNode> {
 
     @Override
     public final Iterable<E> serialize(final ListSchemaNode schema, final N node) {
         return Iterables.concat(Iterables.transform(node.getValue(), new Function<O, Iterable<E>>() {
             @Override
-            public Iterable<E> apply(O input) {
+            public Iterable<E> apply(final O input) {
                 final Iterable<E> serializedChild = getListEntryNodeSerializer().serialize(schema, input);
                 final int size = Iterables.size(serializedChild);
 

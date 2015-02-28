@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
@@ -16,7 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  *
  * @param <V> child type
  */
-public interface OrderedNodeContainer<V extends NormalizedNode<?, ?>> extends MixinNode, NormalizedNode<NodeIdentifier, Iterable<V>> {
+public interface OrderedNodeContainer<V extends NormalizedNode<?, ?>> extends MixinNode, NormalizedNode<NodeIdentifier, Collection<V>> {
 
     /**
      * Returns child node by position

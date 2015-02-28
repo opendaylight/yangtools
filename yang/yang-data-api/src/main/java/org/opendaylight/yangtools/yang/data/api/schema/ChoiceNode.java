@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
@@ -25,6 +26,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 public interface ChoiceNode extends //
         MixinNode, //
         DataContainerNode<NodeIdentifier>,
-        DataContainerChild<NodeIdentifier, Iterable<DataContainerChild<? extends PathArgument, ?>>> {
+        DataContainerChild<NodeIdentifier, Collection<DataContainerChild<? extends PathArgument, ?>>> {
 
 }
