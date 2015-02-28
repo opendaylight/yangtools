@@ -7,12 +7,10 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import com.google.common.collect.Iterables;
-
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
@@ -47,8 +45,8 @@ final class LeafNodeCodecContext extends NodeCodecContext implements NodeContext
         if (normalizedNode instanceof LeafNode<?>) {
             return valueCodec.deserialize(normalizedNode.getValue());
         } else if(normalizedNode instanceof LeafSetNode<?>) {
-            Iterable<LeafSetEntryNode<Object>> domValues = ((LeafSetNode<Object>) normalizedNode).getValue();
-            List<Object> result = new ArrayList<>(Iterables.size(domValues));
+            Collection<LeafSetEntryNode<Object>> domValues = ((LeafSetNode<Object>) normalizedNode).getValue();
+            List<Object> result = new ArrayList<>(domValues.size());
             for (LeafSetEntryNode<Object> valueNode : domValues) {
                 result.add(valueCodec.deserialize(valueNode.getValue()));
             }
