@@ -152,8 +152,7 @@ public class ImmutableOrderedLeafSetNodeBuilder<T> implements ListNodeBuilder<T,
 
         @Override
         public int getSize() {
-            // TODO Auto-generated method stub
-            return 0;
+            return children.size();
         }
 
 		@Override
