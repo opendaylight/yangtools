@@ -12,9 +12,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 /**
  *
  * Normalized Node container which preserves user supplied ordering
- * and allows addressing of child elements by positiion.
+ * and allows addressing of child elements by position.
  *
- * @param <V>
+ * @param <V> child type
  */
 public interface OrderedNodeContainer<V extends NormalizedNode<?, ?>> extends MixinNode, NormalizedNode<NodeIdentifier, Iterable<V>> {
 

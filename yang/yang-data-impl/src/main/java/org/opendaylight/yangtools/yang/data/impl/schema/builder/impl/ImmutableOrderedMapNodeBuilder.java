@@ -144,7 +144,7 @@ public class ImmutableOrderedMapNodeBuilder implements CollectionNodeBuilder<Map
 
         @Override
         public MapEntryNode getChild(final int position) {
-            return Iterables.get(getValue(), position);
+            return Iterables.get(children.values(), position);
         }
 
         @Override

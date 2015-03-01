@@ -127,7 +127,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
 
         @Override
         public UnkeyedListEntryNode getChild(final int position) {
-            return null;
+            throw new IndexOutOfBoundsException();
         }
 
         @Override
