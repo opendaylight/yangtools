@@ -9,10 +9,11 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import java.net.URI;
 import java.util.Map;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.util.AbstractStringInstanceIdentifierCodec;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 
+@Deprecated
 final class RandomPrefixInstanceIdentifierSerializer extends AbstractStringInstanceIdentifierCodec {
     private final RandomPrefix prefixes = new RandomPrefix();
 
@@ -28,6 +29,11 @@ final class RandomPrefixInstanceIdentifierSerializer extends AbstractStringInsta
     @Override
     protected QName createQName(final String prefix, final String localName) {
         throw new UnsupportedOperationException("Not implemented");
+    }
+
+    @Override
+    protected DataSchemaContextTree getDataContextTree() {
+        return null;
     }
 
 }

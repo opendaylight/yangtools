@@ -24,6 +24,7 @@ public final class InstanceIdentifierForXmlCodec {
         return codec.deserialize(element.getTextContent().trim());
     }
 
+    @Deprecated
     public static Element serialize(final YangInstanceIdentifier id, final Element element) {
         final RandomPrefixInstanceIdentifierSerializer codec = new RandomPrefixInstanceIdentifierSerializer();
         final String str = codec.serialize(id);
