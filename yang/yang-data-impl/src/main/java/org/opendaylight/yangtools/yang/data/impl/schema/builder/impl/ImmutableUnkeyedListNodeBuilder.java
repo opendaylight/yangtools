@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -78,7 +79,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
     }
 
     @Override
-    public CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> withValue(final List<UnkeyedListEntryNode> value) {
+    public CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> withValue(final Collection<UnkeyedListEntryNode> value) {
         // TODO replace or putAll ?
         for (final UnkeyedListEntryNode UnkeyedListEntryNode : value) {
             withChild(UnkeyedListEntryNode);

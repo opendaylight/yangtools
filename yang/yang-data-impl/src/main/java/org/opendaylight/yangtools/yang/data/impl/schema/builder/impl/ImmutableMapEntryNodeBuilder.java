@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -70,7 +70,7 @@ public class ImmutableMapEntryNodeBuilder extends AbstractImmutableDataContainer
 
 
     @Override
-    public DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> withValue(final List<DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>> value) {
+    public DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> withValue(final Collection<DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>> value) {
         fillQnames(value, childrenQNamesToPaths);
         return super.withValue(value);
     }
