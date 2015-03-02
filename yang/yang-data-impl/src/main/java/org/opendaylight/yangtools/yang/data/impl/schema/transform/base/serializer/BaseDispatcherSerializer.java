@@ -7,21 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializer;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.FromNormalizedNodeSerializer;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.AugmentationSchemaProxy;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
+import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
 /**
  * Abstract(base) Serializer for DataContainerNodes e.g. ContainerNode, AugmentationNode.
@@ -78,7 +76,7 @@ public abstract class BaseDispatcherSerializer<E, N extends DataContainerNode<?>
 
                 AugmentationSchema augSchema = getAugmentedCase(schema, (AugmentationNode) choiceChild);
                 Set<DataSchemaNode> realChildSchemas = getRealSchemasForAugment(schema, augSchema);
-                childSchema = new AugmentationSchemaProxy(augSchema, realChildSchemas);
+                childSchema = new EffectiveAugmentationSchema(augSchema, realChildSchemas);
 
             } else {
                 childSchema = getSchemaForChild(schema, choiceChild);

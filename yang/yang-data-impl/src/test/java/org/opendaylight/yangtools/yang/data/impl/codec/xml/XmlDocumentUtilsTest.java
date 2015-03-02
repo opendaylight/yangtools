@@ -54,7 +54,9 @@ public class XmlDocumentUtilsTest {
 
     public static final String XML_CONTENT = "<input xmlns=\"urn:opendaylight:controller:rpc:test\">\n" +
             "<a>value</a>\n" +
-            "<ref xmlns:ltha=\"urn:opendaylight:controller:rpc:test\">/ltha:cont/ltha:l[ltha:id='id']</ref>\n" +
+            "<ref xmlns:ltha=\"urn:opendaylight:controller:rpc:test\">"+
+            "/ltha:cont/ltha:l[  ltha:id='id/foo/bar'  ]"+
+            "</ref>\n" +
             "</input>";
 
     public static final String RPC_REPLY = "<rpc-reply xmlns=\"urn:ietf:params:xml:ns:netconf:base:1.0\" message-id=\"m-1\">\n" +
