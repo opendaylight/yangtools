@@ -1,0 +1,52 @@
+module leafref-validation2 {
+    namespace "leafref.validation2";
+    prefix val2;
+
+    container device_types {
+        list device_type {
+            key "type";
+            leaf type {
+                type string;
+            }
+            leaf desc {
+                type string;
+            }
+        }
+    }
+
+    container devices {
+        list device {
+            key "type_text sn";
+            leaf type_text {
+                type leafref {
+                    path "/device_types/device_type/type";
+                }
+            }
+            leaf dev_desc {
+                type leafref {
+                    path "/device_types/device_type[type = current()/../type_text]/desc";
+                }
+            }
+            leaf sn {
+                type int32;
+            }
+            leaf default_ip {
+                type string;
+            }
+        }
+    }
+
+    container chips {
+        list chip {
+            key "dev_type";
+            leaf dev_type {
+                type leafref {
+                    path "/devices/device/type_text";
+                }
+            }
+            leaf chip_desc {
+                type string;
+            }
+        }
+    }
+}
