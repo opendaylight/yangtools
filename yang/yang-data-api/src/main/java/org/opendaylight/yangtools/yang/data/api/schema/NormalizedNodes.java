@@ -38,16 +38,31 @@ public final class NormalizedNodes {
         }
     }
 
-    public static Optional<NormalizedNode<?, ?>> findNode(final NormalizedNode<?, ?> tree, final YangInstanceIdentifier path) {
-        checkNotNull(tree, "Tree must not be null");
-        checkNotNull(path, "Path must not be null");
+    public static Optional<NormalizedNode<?, ?>> findNode(final Optional<NormalizedNode<?, ?>> parent, final Iterable<PathArgument> relativePath) {
+        checkNotNull(parent, "Parent must not be null");
+        checkNotNull(relativePath, "Relative path must not be null");
 
-        Optional<NormalizedNode<?, ?>> currentNode = Optional.<NormalizedNode<?, ?>> of(tree);
-        final Iterator<PathArgument> pathIterator = path.getPathArguments().iterator();
+        Optional<NormalizedNode<?, ?>> currentNode = parent;
+        final Iterator<PathArgument> pathIterator = relativePath.iterator();
         while (currentNode.isPresent() && pathIterator.hasNext()) {
             currentNode = getDirectChild(currentNode.get(), pathIterator.next());
         }
         return currentNode;
+    }
+
+    public static Optional<NormalizedNode<?, ?>> findNode(final Optional<NormalizedNode<?, ?>> parent, final PathArgument... relativePath) {
+        return findNode(parent, relativePath);
+    }
+
+    public static Optional<NormalizedNode<?, ?>> findNode(final NormalizedNode<?, ?> parent, final PathArgument... relativePath) {
+        return findNode(Optional.<NormalizedNode<?, ?>>of(parent), relativePath);
+    }
+
+    public static Optional<NormalizedNode<?, ?>> findNode(final NormalizedNode<?, ?> tree, final YangInstanceIdentifier path) {
+        checkNotNull(tree, "Tree must not be null");
+        checkNotNull(path, "Path must not be null");
+
+        return findNode(Optional.<NormalizedNode<?, ?>>of(tree), path.getPathArguments());
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
