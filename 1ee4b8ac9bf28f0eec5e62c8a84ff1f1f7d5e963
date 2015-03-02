@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a96c907_8744971b",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 2164,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-03-02T14:36:49Z",
+      "side": 1,
+      "message": "Since we already migrated to Guava 18, please use Guava Escaper instead of regular expressions, since that utility contains proper and faster utilities for escaping.",
+      "range": {
+        "startLine": 2164,
+        "startChar": 7,
+        "endLine": 2164,
+        "endChar": 83
+      },
+      "revId": "1ee4b8ac9bf28f0eec5e62c8a84ff1f1f7d5e963",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
