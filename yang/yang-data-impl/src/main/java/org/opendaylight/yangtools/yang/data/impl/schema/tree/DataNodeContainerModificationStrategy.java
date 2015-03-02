@@ -9,10 +9,14 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
@@ -25,19 +29,13 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAu
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.AugmentationSchemaProxy;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
+import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
 /**
  * Base strategy for applying changes to a ContainerNode, irrespective of its
@@ -106,13 +104,12 @@ abstract class DataNodeContainerModificationStrategy<T extends DataNodeContainer
             return ImmutableAugmentationNodeBuilder.create((AugmentationNode) original);
         }
 
-
         private static AugmentationSchema createAugmentProxy(final AugmentationSchema schema, final DataNodeContainer resolved) {
             Set<DataSchemaNode> realChildSchemas = new HashSet<>();
             for(DataSchemaNode augChild : schema.getChildNodes()) {
                 realChildSchemas.add(resolved.getDataChildByName(augChild.getQName()));
             }
-            return new AugmentationSchemaProxy(schema, realChildSchemas);
+            return new EffectiveAugmentationSchema(schema, realChildSchemas);
         }
     }
 

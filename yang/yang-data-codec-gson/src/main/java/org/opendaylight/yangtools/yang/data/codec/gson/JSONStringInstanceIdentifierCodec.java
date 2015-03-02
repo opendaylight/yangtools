@@ -13,14 +13,17 @@ import java.io.IOException;
 import java.net.URI;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringInstanceIdentifierCodec;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 final class JSONStringInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec implements JSONCodec<YangInstanceIdentifier> {
     private final SchemaContext context;
+    private final DataSchemaContextTree dataContextTree;
 
     JSONStringInstanceIdentifierCodec(final SchemaContext context) {
         this.context = Preconditions.checkNotNull(context);
+        this.dataContextTree = DataSchemaContextTree.from(context);
     }
 
     @Override
@@ -32,6 +35,11 @@ final class JSONStringInstanceIdentifierCodec extends AbstractModuleStringInstan
     protected String prefixForNamespace(final URI namespace) {
         final Module module = context.findModuleByNamespaceAndRevision(namespace, null);
         return module == null ? null : module.getName();
+    }
+
+    @Override
+    protected DataSchemaContextTree getDataContextTree() {
+        return dataContextTree;
     }
 
     @Override
