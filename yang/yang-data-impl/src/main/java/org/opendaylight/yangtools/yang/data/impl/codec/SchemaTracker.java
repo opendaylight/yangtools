@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.AugmentationSchemaProxy;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
@@ -40,6 +39,7 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -249,7 +249,7 @@ public final class SchemaTracker {
         for(final DataSchemaNode child : schema.getChildNodes()) {
             realChildSchemas.add(((DataNodeContainer) parent).getDataChildByName(child.getQName()));
         }
-        final AugmentationSchema resolvedSchema = new AugmentationSchemaProxy(schema, realChildSchemas);
+        final AugmentationSchema resolvedSchema = new EffectiveAugmentationSchema(schema, realChildSchemas);
         schemaStack.push(resolvedSchema);
         return resolvedSchema;
     }

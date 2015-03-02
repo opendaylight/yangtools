@@ -9,12 +9,13 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import java.util.HashMap;
+import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.InstanceIdentifierBuilder;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -37,9 +38,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class TestingNormalizedNodeStructuresCreator {
 
@@ -215,10 +213,11 @@ public class TestingNormalizedNodeStructuresCreator {
     }
 
     private static Object lf112Value() {
-        InstanceIdentifierBuilder builder = YangInstanceIdentifier.builder();
-        builder.node(QName.create("ns:complex:json", "2014-08-11", "cont1"));
-        builder.node(QName.create("ns:complex:json", "2014-08-11", "lflst11"));
-        return builder.build();
+        return YangInstanceIdentifier.create(
+                new NodeIdentifier(QName.create("ns:complex:json", "2014-08-11", "cont1")),
+                new NodeIdentifier(QName.create("ns:complex:json", "2014-08-11", "lflst11")),
+                new NodeWithValue(QName.create("ns:complex:json", "2014-08-11", "lflst11"),"foo")
+        );
     }
 
     private static DataContainerChild<? extends PathArgument, ?> childLflst11() {
@@ -270,7 +269,7 @@ public class TestingNormalizedNodeStructuresCreator {
     public static NormalizedNode<?, ?> leafNodeInContainer() {
         LeafNode<Object> lf11 = Builders.leafBuilder()
                 .withNodeIdentifier(new NodeIdentifier(QName.create("ns:complex:json", "2014-08-11", "lf11")))
-                .withValue((int) 453).build();
+                .withValue(453).build();
         return cont1Node(lf11);
     }
 
