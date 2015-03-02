@@ -116,14 +116,14 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         return withoutChild(key);
     }
 
-    protected static final class EmptyImmutableUnkeyedListNode extends AbstractImmutableNormalizedNode<YangInstanceIdentifier.NodeIdentifier, Iterable<UnkeyedListEntryNode>> implements Immutable, UnkeyedListNode {
+    protected static final class EmptyImmutableUnkeyedListNode extends AbstractImmutableNormalizedNode<YangInstanceIdentifier.NodeIdentifier, Collection<UnkeyedListEntryNode>> implements Immutable, UnkeyedListNode {
         protected EmptyImmutableUnkeyedListNode(final NodeIdentifier nodeIdentifier) {
             super(nodeIdentifier);
         }
 
         @Override
-        public Iterable<UnkeyedListEntryNode> getValue() {
-            return Collections.emptyList();
+        public Collection<UnkeyedListEntryNode> getValue() {
+            return Collections.emptySet();
         }
 
         @Override
@@ -148,7 +148,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
     }
 
     protected static final class ImmutableUnkeyedListNode extends
-            AbstractImmutableNormalizedValueNode<YangInstanceIdentifier.NodeIdentifier, Iterable<UnkeyedListEntryNode>>
+            AbstractImmutableNormalizedValueNode<YangInstanceIdentifier.NodeIdentifier, Collection<UnkeyedListEntryNode>>
             implements Immutable, UnkeyedListNode {
 
         private final ImmutableList<UnkeyedListEntryNode> children;

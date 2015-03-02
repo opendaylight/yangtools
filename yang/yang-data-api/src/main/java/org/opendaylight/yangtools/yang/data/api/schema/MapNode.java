@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 
@@ -21,7 +22,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  */
 public interface MapNode extends //
         MixinNode,
-        DataContainerChild<NodeIdentifier, Iterable<MapEntryNode>>,
+        DataContainerChild<NodeIdentifier, Collection<MapEntryNode>>,
         NormalizedNodeContainer<NodeIdentifier, NodeIdentifierWithPredicates, MapEntryNode> {
 
 }

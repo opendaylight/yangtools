@@ -7,21 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
  * Data subtree with cardinality 0..1 in the context of parent node
- * 
+ *
  * Node which does not have value but contains valid {@link DataContainerChild} nodes.
- * 
+ *
  * Schema of this node is described by instance of {@link org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode}.
- * 
+ *
  */
 public interface ContainerNode extends //
         AttributesContainer,
         DataContainerNode<NodeIdentifier>,
-        DataContainerChild<NodeIdentifier, Iterable<DataContainerChild<? extends PathArgument, ?>>> {
+        DataContainerChild<NodeIdentifier, Collection<DataContainerChild<? extends PathArgument, ?>>> {
 
 }

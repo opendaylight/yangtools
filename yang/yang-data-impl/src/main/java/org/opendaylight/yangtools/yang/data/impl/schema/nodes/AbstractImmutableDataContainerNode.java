@@ -8,13 +8,14 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
 import com.google.common.base.Optional;
+import java.util.Collection;
 import java.util.Map;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 
-public abstract class AbstractImmutableDataContainerNode<K extends PathArgument> extends AbstractImmutableNormalizedNode<K, Iterable<DataContainerChild<? extends PathArgument, ?>>> implements Immutable, DataContainerNode<K> {
+public abstract class AbstractImmutableDataContainerNode<K extends PathArgument> extends AbstractImmutableNormalizedNode<K, Collection<DataContainerChild<? extends PathArgument, ?>>> implements Immutable, DataContainerNode<K> {
     private final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children;
 
     public AbstractImmutableDataContainerNode(
@@ -30,7 +31,7 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
     }
 
     @Override
-    public final Iterable<DataContainerChild<? extends PathArgument, ?>> getValue() {
+    public final Collection<DataContainerChild<? extends PathArgument, ?>> getValue() {
         return children.values();
     }
 

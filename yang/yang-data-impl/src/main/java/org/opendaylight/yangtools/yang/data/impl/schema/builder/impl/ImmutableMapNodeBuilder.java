@@ -8,12 +8,12 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.MapAdaptor;
+import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -103,7 +103,7 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
         return withoutChild(key);
     }
 
-    protected static final class ImmutableMapNode extends AbstractImmutableNormalizedNode<YangInstanceIdentifier.NodeIdentifier, Iterable<MapEntryNode>> implements Immutable,MapNode {
+    protected static final class ImmutableMapNode extends AbstractImmutableNormalizedNode<YangInstanceIdentifier.NodeIdentifier, Collection<MapEntryNode>> implements Immutable,MapNode {
 
         private final Map<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> children;
 
@@ -119,8 +119,8 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
         }
 
         @Override
-        public Iterable<MapEntryNode> getValue() {
-            return Iterables.unmodifiableIterable(children.values());
+        public Collection<MapEntryNode> getValue() {
+            return UnmodifiableCollection.create(children.values());
         }
 
         @Override

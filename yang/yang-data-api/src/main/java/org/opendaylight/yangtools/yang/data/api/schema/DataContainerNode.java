@@ -6,6 +6,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
@@ -42,5 +43,5 @@ public interface DataContainerNode<K extends PathArgument> extends //
      * @return Iteration of all child nodes
      */
     @Override
-    Iterable<DataContainerChild<? extends PathArgument, ?>> getValue();
+    Collection<DataContainerChild<? extends PathArgument, ?>> getValue();
 }

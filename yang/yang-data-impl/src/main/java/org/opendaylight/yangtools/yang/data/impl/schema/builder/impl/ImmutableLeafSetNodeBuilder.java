@@ -8,13 +8,13 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.MapAdaptor;
+import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -108,14 +108,14 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
     }
 
     protected final static class ImmutableLeafSetNode<T> extends
-            AbstractImmutableNormalizedValueNode<YangInstanceIdentifier.NodeIdentifier, Iterable<LeafSetEntryNode<T>>> implements
+            AbstractImmutableNormalizedValueNode<YangInstanceIdentifier.NodeIdentifier, Collection<LeafSetEntryNode<T>>> implements
             Immutable, LeafSetNode<T> {
 
         private final Map<YangInstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> children;
 
         ImmutableLeafSetNode(final YangInstanceIdentifier.NodeIdentifier nodeIdentifier,
                 final Map<YangInstanceIdentifier.NodeWithValue, LeafSetEntryNode<T>> children) {
-            super(nodeIdentifier, Iterables.unmodifiableIterable(children.values()));
+            super(nodeIdentifier, UnmodifiableCollection.create(children.values()));
             this.children = children;
         }
 
