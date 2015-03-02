@@ -8,9 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import java.util.Map;
-
 import javax.annotation.Nonnull;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -42,6 +40,11 @@ public final class XmlUtils {
         return superType;
     }
 
+    /**
+     *
+     * @deprecated Use {@link RandomPrefixInstanceIdentifierSerializer} instead.
+     */
+    @Deprecated
     static String encodeIdentifier(final RandomPrefix prefixes, final YangInstanceIdentifier id) {
         StringBuilder textContent = new StringBuilder();
         for (PathArgument pathArgument : id.getPathArguments()) {

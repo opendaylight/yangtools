@@ -7,108 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableMap;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
 /**
  * Proxy for AugmentationSchema. Child node schemas are replaced with actual schemas from parent.
+ *
+ * @deprecated Replaced with {@link EffectiveAugmentationSchema}.
  */
-public final class AugmentationSchemaProxy implements AugmentationSchema {
-    private final AugmentationSchema delegate;
-    private final Set<DataSchemaNode> realChildSchemas;
-    private final Map<QName, DataSchemaNode> mappedChildSchemas;
+@Deprecated
+public final class AugmentationSchemaProxy extends EffectiveAugmentationSchema {
+
 
     public AugmentationSchemaProxy(final AugmentationSchema augmentSchema, final Set<DataSchemaNode> realChildSchemas) {
-        this.delegate = augmentSchema;
-        this.realChildSchemas = realChildSchemas;
-
-        final Map<QName, DataSchemaNode> m = new HashMap<>(realChildSchemas.size());
-        for (DataSchemaNode realChildSchema : realChildSchemas) {
-            m.put(realChildSchema.getQName(), realChildSchema);
-        }
-
-        this.mappedChildSchemas = ImmutableMap.copyOf(m);
+       super(augmentSchema,realChildSchemas);
     }
 
-    @Override
-    public RevisionAwareXPath getWhenCondition() {
-        return delegate.getWhenCondition();
-    }
-
-    @Override
-    public String getDescription() {
-        return delegate.getDescription();
-    }
-
-    @Override
-    public String getReference() {
-        return delegate.getReference();
-    }
-
-    @Override
-    public Status getStatus() {
-        return delegate.getStatus();
-    }
-
-    @Override
-    public SchemaPath getTargetPath() {
-        return delegate.getTargetPath();
-    }
-
-    @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return delegate.getUnknownSchemaNodes();
-    }
-
-    @Override
-    public Set<TypeDefinition<?>> getTypeDefinitions() {
-        return delegate.getTypeDefinitions();
-    }
-
-    @Override
-    public Set<DataSchemaNode> getChildNodes() {
-        return realChildSchemas;
-    }
-
-    @Override
-    public Set<GroupingDefinition> getGroupings() {
-        return delegate.getGroupings();
-    }
-
-    @Override
-    public DataSchemaNode getDataChildByName(final QName name) {
-        return mappedChildSchemas.get(name);
-    }
-
-    @Override
-    public DataSchemaNode getDataChildByName(final String name) {
-        // Unused
-        throw new UnsupportedOperationException("Unable to retrieve child node by name");
-    }
-
-    @Override
-    public Set<UsesNode> getUses() {
-        return delegate.getUses();
-    }
-
-    @Override
-    public Optional<AugmentationSchema> getOriginalDefinition() {
-        return delegate.getOriginalDefinition();
-    }
 }
