@@ -95,20 +95,17 @@ public class XmlStreamUtils {
      * @param writer XML Stream writer
      * @param id InstanceIdentifier
      * @throws XMLStreamException
+     *
+     * @deprecated Use {@link #writeInstanceIdentifier(XMLStreamWriter, YangInstanceIdentifier)} instead.
      */
+    @Deprecated
     public static void write(final @Nonnull XMLStreamWriter writer, final @Nonnull YangInstanceIdentifier id) throws XMLStreamException {
         Preconditions.checkNotNull(writer, "Writer may not be null");
         Preconditions.checkNotNull(id, "Variable should contain instance of instance identifier and can't be null");
 
         final RandomPrefix prefixes = new RandomPrefix();
         final String str = XmlUtils.encodeIdentifier(prefixes, id);
-
-        for (Entry<URI, String> e: prefixes.getPrefixes()) {
-            final String ns = e.getKey().toString();
-            final String p = e.getValue();
-
-            writer.writeNamespace(p, ns);
-        }
+        writeNamespaceDeclarations(writer,prefixes.getPrefixes());
         writer.writeCharacters(str);
     }
 
@@ -351,12 +348,32 @@ public class XmlStreamUtils {
         }
     }
 
-    private static void write(final @Nonnull XMLStreamWriter writer, final @Nonnull InstanceIdentifierTypeDefinition type, final @Nonnull Object value) throws XMLStreamException {
+    private void write(final @Nonnull XMLStreamWriter writer, final @Nonnull InstanceIdentifierTypeDefinition type, final @Nonnull Object value) throws XMLStreamException {
         if (value instanceof YangInstanceIdentifier) {
-            write(writer, (YangInstanceIdentifier)value);
+            writeInstanceIdentifier(writer, (YangInstanceIdentifier)value);
         } else {
             LOG.warn("Value of {}:{} is not an InstanceIdentifier but {}", type.getQName().getNamespace(), type.getQName().getLocalName(), value.getClass());
             writer.writeCharacters(String.valueOf(value));
+        }
+    }
+
+    public void writeInstanceIdentifier(XMLStreamWriter writer, YangInstanceIdentifier value) throws XMLStreamException {
+        if(schemaContext.isPresent()) {
+            RandomPrefixInstanceIdentifierSerializer iiCodec = new RandomPrefixInstanceIdentifierSerializer(schemaContext.get());
+            String serializedValue = iiCodec.serialize(value);
+            writeNamespaceDeclarations(writer,iiCodec.getPrefixes());
+            writer.writeCharacters(serializedValue);
+        } else {
+            LOG.warn("Schema context not present in {}, serializing {} without schema.",this,value);
+            write(writer,value);
+        }
+    }
+
+    private static void writeNamespaceDeclarations(XMLStreamWriter writer, Iterable<Entry<URI, String>> prefixes) throws XMLStreamException {
+        for (Entry<URI, String> e: prefixes) {
+            final String ns = e.getKey().toString();
+            final String p = e.getValue();
+            writer.writeNamespace(p, ns);
         }
     }
 

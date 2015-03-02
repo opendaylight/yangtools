@@ -8,11 +8,10 @@
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import com.google.common.base.Preconditions;
-
 import java.net.URI;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.util.AbstractStringInstanceIdentifierCodec;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.w3c.dom.Element;
@@ -20,10 +19,12 @@ import org.w3c.dom.Element;
 final class ElementInstanceIdentifierParser extends AbstractStringInstanceIdentifierCodec {
     private final SchemaContext schema;
     private final Element element;
+    private final DataSchemaContextTree dataContextTree;
 
     ElementInstanceIdentifierParser(final SchemaContext schema, final Element element) {
         this.element = Preconditions.checkNotNull(element);
         this.schema = Preconditions.checkNotNull(schema);
+        this.dataContextTree = DataSchemaContextTree.from(schema);
     }
 
     @Override
@@ -40,6 +41,11 @@ final class ElementInstanceIdentifierParser extends AbstractStringInstanceIdenti
         final Module module = schema.findModuleByNamespaceAndRevision(ns, null);
         Preconditions.checkArgument(module != null, "Namespace %s is not owned by a module", ns);
         return QName.create(module.getQNameModule(), localName);
+    }
+
+    @Override
+    protected DataSchemaContextTree getDataContextTree() {
+        return dataContextTree;
     }
 
 }

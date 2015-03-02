@@ -21,10 +21,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.AttributesBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.AugmentationSchemaProxy;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
 /**
  * Abstract(base) Parser for DataContainerNodes e.g. ContainerNode, AugmentationNode.
@@ -135,7 +135,7 @@ public abstract class BaseDispatcherParser<E, N extends DataContainerNode<?>, S>
 
         for (AugmentationSchema augmentSchema : augmentsToElements.keySet()) {
             Set<DataSchemaNode> realChildSchemas = getRealSchemasForAugment(schema, augmentSchema);
-            AugmentationSchemaProxy augSchemaProxy = new AugmentationSchemaProxy(augmentSchema, realChildSchemas);
+            EffectiveAugmentationSchema augSchemaProxy = new EffectiveAugmentationSchema(augmentSchema, realChildSchemas);
             containerBuilder.withChild(getDispatcher().dispatchChildElement(augSchemaProxy, augmentsToElements.get(augmentSchema)));
         }
 
