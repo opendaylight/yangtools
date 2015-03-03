@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -65,21 +66,37 @@ public final class SchemaTracker {
 
                 if(child == null && current instanceof SchemaContext) {
                     child = tryFindNotification((SchemaContext) current, qname)
-                            .orNull();
+                            .or(tryFindRpc(((SchemaContext) current), qname)).orNull();
                 }
             } else if (current instanceof ChoiceNode) {
                 child = ((ChoiceNode) current).getCaseNodeByName(qname);
+            } else if (current instanceof RpcDefinition) {
+                switch (qname.getLocalName()) {
+                    case "input":
+                        child = ((RpcDefinition) current).getInput();
+                        break;
+                    case "output":
+                        child = ((RpcDefinition) current).getOutput();
+                        break;
+                    default:
+                        child = null;
+                        break;
+                }
             } else {
                 throw new IllegalArgumentException(String.format("Schema node %s does not allow children.", current));
             }
             current = child;
         }
-        Preconditions.checkArgument(current instanceof DataNodeContainer,"Schema path must point to container or list. Supplied path %s pointed to: %s",path,current);
+        Preconditions.checkArgument(current instanceof DataNodeContainer,"Schema path must point to container or list or an rpc input/output. Supplied path %s pointed to: %s",path,current);
         root = (DataNodeContainer) current;
     }
 
     private Optional<SchemaNode> tryFindGroupings(final SchemaContext ctx, final QName qname) {
         return Optional.<SchemaNode> fromNullable(Iterables.find(ctx.getGroupings(), new SchemaNodePredicate(qname), null));
+    }
+
+    private Optional<SchemaNode> tryFindRpc(final SchemaContext ctx, final QName qname) {
+        return Optional.<SchemaNode>fromNullable(Iterables.find(ctx.getOperations(), new SchemaNodePredicate(qname), null));
     }
 
     private Optional<SchemaNode> tryFindNotification(final SchemaContext ctx, final QName qname) {
