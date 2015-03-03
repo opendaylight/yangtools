@@ -43,11 +43,13 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
     private final UnkeyedListEntryNodeDomParser unkeyedListEntryNodeParser;
     private final UnkeyedListNodeDomParser unkeyedListNodeParser;
     private final OrderedListNodeDomParser orderedListNodeParser;
+    private final AnyXmlDomParser anyXmlNodeParser;
 
     private DomToNormalizedNodeParserFactory(final XmlCodecProvider codecProvider) {
         leafNodeParser = new LeafNodeDomParser(codecProvider);
         leafSetEntryNodeParser = new LeafSetEntryNodeDomParser(codecProvider);
         leafSetNodeParser = new LeafSetNodeDomParser(leafSetEntryNodeParser);
+        anyXmlNodeParser = new AnyXmlDomParser();
 
         final NodeParserDispatcher<Element> dispatcher = new NodeParserDispatcher.BaseNodeParserDispatcher<Element>(this) {
 
@@ -124,6 +126,6 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
 
     @Override
     public ToNormalizedNodeParser<Element, AnyXmlNode, AnyXmlSchemaNode> getAnyXmlNodeParser() {
-        throw new UnsupportedOperationException();
+        return anyXmlNodeParser;
     }
 }
