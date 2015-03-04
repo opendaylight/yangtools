@@ -9,25 +9,29 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
-
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.XMLConstants;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.dom.DOMResult;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
+import org.opendaylight.yangtools.yang.data.impl.codec.xml.InstanceIdentifierForXmlCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlStreamUtils;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlUtils;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -110,5 +114,27 @@ public final class DomUtils {
             attributes.put(qName, node.getNodeValue());
         }
         return attributes;
+    }
+
+    public static Object parseXmlValue(final Element xml, final XmlCodecProvider codecProvider, final DataSchemaNode schema, final TypeDefinition<?> type, final SchemaContext schemaCtx) {
+        TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(type);
+        if (baseType instanceof LeafrefTypeDefinition) {
+            final LeafrefTypeDefinition leafrefTypeDefinition = (LeafrefTypeDefinition) baseType;
+            baseType = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypeDefinition, schemaCtx, schema);
+        }
+
+        String text = xml.getTextContent();
+        text = text.trim();
+        final Object value;
+
+        if (baseType instanceof InstanceIdentifierType) {
+            value = InstanceIdentifierForXmlCodec.deserialize(xml, schemaCtx);
+        } else if (baseType instanceof IdentityrefTypeDefinition) {
+            value = InstanceIdentifierForXmlCodec.toIdentity(text, xml, schemaCtx);
+        } else {
+            value = parseXmlValue(xml, codecProvider, type);
+        }
+
+        return value;
     }
 }

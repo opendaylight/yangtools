@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.w3c.dom.Element;
 
 public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeParserFactory<Element> {
@@ -45,9 +46,9 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
     private final OrderedListNodeDomParser orderedListNodeParser;
     private final AnyXmlDomParser anyXmlNodeParser;
 
-    private DomToNormalizedNodeParserFactory(final XmlCodecProvider codecProvider) {
-        leafNodeParser = new LeafNodeDomParser(codecProvider);
-        leafSetEntryNodeParser = new LeafSetEntryNodeDomParser(codecProvider);
+    private DomToNormalizedNodeParserFactory(final XmlCodecProvider codecProvider, final SchemaContext schema) {
+        leafNodeParser = new LeafNodeDomParser(codecProvider, schema);
+        leafSetEntryNodeParser = new LeafSetEntryNodeDomParser(codecProvider, schema);
         leafSetNodeParser = new LeafSetNodeDomParser(leafSetEntryNodeParser);
         anyXmlNodeParser = new AnyXmlDomParser();
 
@@ -65,8 +66,8 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
         augmentationNodeParser = new AugmentationNodeDomParser(dispatcher);
     }
 
-    public static DomToNormalizedNodeParserFactory getInstance(final XmlCodecProvider codecProvider) {
-        return new DomToNormalizedNodeParserFactory(codecProvider);
+    public static DomToNormalizedNodeParserFactory getInstance(final XmlCodecProvider codecProvider, final SchemaContext schema) {
+        return new DomToNormalizedNodeParserFactory(codecProvider, schema);
     }
 
     @Override

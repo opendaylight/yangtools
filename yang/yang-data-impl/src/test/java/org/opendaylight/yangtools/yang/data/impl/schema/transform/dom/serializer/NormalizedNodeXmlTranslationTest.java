@@ -13,7 +13,6 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -27,7 +26,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -38,7 +36,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
+import org.custommonkey.xmlunit.DetailedDiff;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
@@ -73,6 +71,7 @@ import org.xml.sax.SAXException;
 @RunWith(Parameterized.class)
 public class NormalizedNodeXmlTranslationTest {
     private static final Logger logger = LoggerFactory.getLogger(NormalizedNodeXmlTranslationTest.class);
+    private final SchemaContext schema;
 
     @Parameterized.Parameters()
     public static Collection<Object[]> data() {
@@ -92,26 +91,26 @@ public class NormalizedNodeXmlTranslationTest {
     static {
         try {
             revision = new SimpleDateFormat("yyyy-MM-dd").parse("2014-03-13");
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             throw new RuntimeException(e);
         }
     }
 
     private static ContainerNode withAttributes() {
-        DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> b = Builders.containerBuilder();
+        final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> b = Builders.containerBuilder();
         b.withNodeIdentifier(getNodeIdentifier("container"));
 
-        CollectionNodeBuilder<MapEntryNode, MapNode> listBuilder = Builders.mapBuilder().withNodeIdentifier(
+        final CollectionNodeBuilder<MapEntryNode, MapNode> listBuilder = Builders.mapBuilder().withNodeIdentifier(
                 getNodeIdentifier("list"));
 
-        Map<QName, Object> predicates = Maps.newHashMap();
+        final Map<QName, Object> predicates = Maps.newHashMap();
         predicates.put(getNodeIdentifier("uint32InList").getNodeType(), 3L);
 
-        DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> list1Builder = Builders
+        final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> list1Builder = Builders
                 .mapEntryBuilder().withNodeIdentifier(
                         new YangInstanceIdentifier.NodeIdentifierWithPredicates(getNodeIdentifier("list").getNodeType(),
                                 predicates));
-        NormalizedNodeBuilder<YangInstanceIdentifier.NodeIdentifier,Object,LeafNode<Object>> uint32InListBuilder
+        final NormalizedNodeBuilder<YangInstanceIdentifier.NodeIdentifier,Object,LeafNode<Object>> uint32InListBuilder
         = Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("uint32InList"));
 
         list1Builder.withChild(uint32InListBuilder.withValue(3L).build());
@@ -119,15 +118,15 @@ public class NormalizedNodeXmlTranslationTest {
         listBuilder.withChild(list1Builder.build());
         b.withChild(listBuilder.build());
 
-        NormalizedNodeBuilder<YangInstanceIdentifier.NodeIdentifier, Object, LeafNode<Object>> booleanBuilder
+        final NormalizedNodeBuilder<YangInstanceIdentifier.NodeIdentifier, Object, LeafNode<Object>> booleanBuilder
         = Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("boolean"));
         booleanBuilder.withValue(false);
         b.withChild(booleanBuilder.build());
 
-        ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafListBuilder
+        final ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafListBuilder
         = Builders.leafSetBuilder().withNodeIdentifier(getNodeIdentifier("leafList"));
 
-        NormalizedNodeBuilder<YangInstanceIdentifier.NodeWithValue, Object, LeafSetEntryNode<Object>> leafList1Builder
+        final NormalizedNodeBuilder<YangInstanceIdentifier.NodeWithValue, Object, LeafSetEntryNode<Object>> leafList1Builder
         = Builders.leafSetEntryBuilder().withNodeIdentifier(new YangInstanceIdentifier.NodeWithValue(getNodeIdentifier("leafList").getNodeType(), "a"));
 
         leafList1Builder.withValue("a");
@@ -140,7 +139,7 @@ public class NormalizedNodeXmlTranslationTest {
 
     private static ContainerNode augmentChoiceHell() {
 
-        DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> b = Builders.containerBuilder();
+        final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> b = Builders.containerBuilder();
         b.withNodeIdentifier(getNodeIdentifier("container"));
 
         b.withChild(
@@ -190,9 +189,9 @@ public class NormalizedNodeXmlTranslationTest {
     }
 
     public static YangInstanceIdentifier.AugmentationIdentifier getAugmentIdentifier(final String... childNames) {
-        Set<QName> qn = Sets.newHashSet();
+        final Set<QName> qn = Sets.newHashSet();
 
-        for (String childName : childNames) {
+        for (final String childName : childNames) {
             qn.add(getNodeIdentifier(childName).getNodeType());
         }
 
@@ -200,7 +199,7 @@ public class NormalizedNodeXmlTranslationTest {
     }
 
     public NormalizedNodeXmlTranslationTest(final String yangPath, final String xmlPath, final ContainerNode expectedNode) {
-        SchemaContext schema = parseTestSchema(yangPath);
+        schema = parseTestSchema(yangPath);
         this.xmlPath = xmlPath;
         this.containerNode = (ContainerSchemaNode) NormalizedDataBuilderTest.getSchemaNode(schema, "test", "container");
         this.expectedNode = expectedNode;
@@ -212,8 +211,8 @@ public class NormalizedNodeXmlTranslationTest {
 
 
     SchemaContext parseTestSchema(final String... yangPath) {
-        YangParserImpl yangParserImpl = new YangParserImpl();
-        Set<Module> modules = yangParserImpl.parseYangModelsFromStreams(getTestYangs(yangPath));
+        final YangParserImpl yangParserImpl = new YangParserImpl();
+        final Set<Module> modules = yangParserImpl.parseYangModelsFromStreams(getTestYangs(yangPath));
         return yangParserImpl.resolveSchemaContext(modules);
     }
 
@@ -223,7 +222,7 @@ public class NormalizedNodeXmlTranslationTest {
                 new Function<String, InputStream>() {
             @Override
             public InputStream apply(final String input) {
-                InputStream resourceAsStream = NormalizedDataBuilderTest.class.getResourceAsStream(input);
+                final InputStream resourceAsStream = NormalizedDataBuilderTest.class.getResourceAsStream(input);
                 Preconditions.checkNotNull(resourceAsStream, "File %s was null", resourceAsStream);
                 return resourceAsStream;
             }
@@ -232,36 +231,45 @@ public class NormalizedNodeXmlTranslationTest {
 
     @Test
     public void testTranslation() throws Exception {
-        Document doc = loadDocument(xmlPath);
+        final Document doc = loadDocument(xmlPath);
 
-        ContainerNode built =
-                DomToNormalizedNodeParserFactory.getInstance(DomUtils.defaultValueCodecProvider()).getContainerNodeParser().parse(
+        final ContainerNode built =
+                DomToNormalizedNodeParserFactory.getInstance(DomUtils.defaultValueCodecProvider(), schema).getContainerNodeParser().parse(
                         Collections.singletonList(doc.getDocumentElement()), containerNode);
 
         if (expectedNode != null) {
             org.junit.Assert.assertEquals(expectedNode, built);
         }
 
+        System.err.println(built);
         logger.info("{}", built);
 
-        Iterable<Element> els = DomFromNormalizedNodeSerializerFactory.getInstance(XmlDocumentUtils.getDocument(), DomUtils.defaultValueCodecProvider())
+        final Iterable<Element> els = DomFromNormalizedNodeSerializerFactory.getInstance(XmlDocumentUtils.getDocument(), DomUtils.defaultValueCodecProvider())
                 .getContainerNodeSerializer().serialize(containerNode, built);
 
-        Element el = els.iterator().next();
+        final Element el = els.iterator().next();
 
         XMLUnit.setIgnoreWhitespace(true);
         XMLUnit.setIgnoreComments(true);
+        XMLUnit.setIgnoreAttributeOrder(true);
+
 
         System.err.println(toString(doc.getDocumentElement()));
         System.err.println(toString(el));
 
-        boolean diff = new Diff(XMLUnit.buildControlDocument(toString(doc.getDocumentElement())), XMLUnit.buildTestDocument(toString(el))).similar();
+        final Diff diff = new Diff(XMLUnit.buildControlDocument(toString(doc.getDocumentElement())), XMLUnit.buildTestDocument(toString(el)));
+        DetailedDiff dd = new DetailedDiff(diff);
+
+        // FIXME the comparison cannot be performed, since the qualifiers supplied by XMlUnit do not work correctly in this case
+        // We need to implement custom qualifier so that the element ordering does not mess the DIFF
+//        dd.overrideElementQualifier(new ElementNameAndAttributeQualifier());
+//        assertTrue(dd.toString(), dd.similar());
     }
 
     private Document loadDocument(final String xmlPath) throws Exception {
-        InputStream resourceAsStream = NormalizedDataBuilderTest.class.getResourceAsStream(xmlPath);
+        final InputStream resourceAsStream = NormalizedDataBuilderTest.class.getResourceAsStream(xmlPath);
 
-        Document currentConfigElement = readXmlToDocument(resourceAsStream);
+        final Document currentConfigElement = readXmlToDocument(resourceAsStream);
         Preconditions.checkNotNull(currentConfigElement);
         return currentConfigElement;
     }
@@ -269,7 +277,7 @@ public class NormalizedNodeXmlTranslationTest {
     private static final DocumentBuilderFactory BUILDERFACTORY;
 
     static {
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setCoalescing(true);
         factory.setIgnoringElementContentWhitespace(true);
@@ -278,13 +286,13 @@ public class NormalizedNodeXmlTranslationTest {
     }
 
     private Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {
-        DocumentBuilder dBuilder;
+        final DocumentBuilder dBuilder;
         try {
             dBuilder = BUILDERFACTORY.newDocumentBuilder();
-        } catch (ParserConfigurationException e) {
+        } catch (final ParserConfigurationException e) {
             throw new RuntimeException("Failed to parse XML document", e);
         }
-        Document doc = dBuilder.parse(xmlContent);
+        final Document doc = dBuilder.parse(xmlContent);
 
         doc.getDocumentElement().normalize();
         return doc;
@@ -292,11 +300,11 @@ public class NormalizedNodeXmlTranslationTest {
 
     public static String toString(final Element xml) {
         try {
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            final Transformer transformer = TransformerFactory.newInstance().newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
-            StreamResult result = new StreamResult(new StringWriter());
-            DOMSource source = new DOMSource(xml);
+            final StreamResult result = new StreamResult(new StringWriter());
+            final DOMSource source = new DOMSource(xml);
             transformer.transform(source, result);
 
             return result.getWriter().toString();

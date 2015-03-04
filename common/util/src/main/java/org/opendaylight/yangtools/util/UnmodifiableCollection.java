@@ -132,4 +132,11 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
     public void clear() {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("UnmodifiableCollection{");
+        sb.append(delegate);
+        return sb.toString();
+    }
 }
