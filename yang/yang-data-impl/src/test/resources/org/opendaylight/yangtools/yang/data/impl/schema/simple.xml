@@ -11,6 +11,9 @@
         <containerInList name="inContainer">
             <uint32>32</uint32>
             <uint16>16</uint16>
+            <identityr xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:test">prefix:b</identityr>
+            <uint16-ref>16</uint16-ref>
+            <instance-id xmlns:prefix="urn:opendaylight:params:xml:ns:yang:controller:test">/prefix:container/prefix:list[prefix:uint32InList="1"]</instance-id>
         </containerInList>
         <stringAugmentedToList>augmentInList</stringAugmentedToList>
         <stringAugmentedToListInCase1>augmentInListCase1</stringAugmentedToListInCase1>

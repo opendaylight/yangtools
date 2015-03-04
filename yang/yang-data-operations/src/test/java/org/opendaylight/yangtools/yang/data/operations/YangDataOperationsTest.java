@@ -72,6 +72,7 @@ public class YangDataOperationsTest {
     protected final Optional<ContainerNode> currentConfig;
     protected final Optional<ContainerNode> modification;
     protected final ModifyAction modifyAction;
+    private final SchemaContext schema;
 
     @Parameterized.Parameters()
     public static Collection<Object[]> data() {
@@ -98,7 +99,7 @@ public class YangDataOperationsTest {
     }
 
     public YangDataOperationsTest(final String testDir) throws Exception {
-        SchemaContext schema = parseTestSchema();
+        schema = parseTestSchema();
         containerNode = (ContainerSchemaNode) getSchemaNode(schema, "test", "container");
         this.testDirName = testDir;
 
@@ -177,7 +178,7 @@ public class YangDataOperationsTest {
         Document currentConfigElement = readXmlToDocument(resourceAsStream);
         Preconditions.checkNotNull(currentConfigElement);
 
-        return Optional.of(DomToNormalizedNodeParserFactory.getInstance(DomUtils.defaultValueCodecProvider()).getContainerNodeParser().parse(
+        return Optional.of(DomToNormalizedNodeParserFactory.getInstance(DomUtils.defaultValueCodecProvider(), schema).getContainerNodeParser().parse(
                 Collections.singletonList(currentConfigElement.getDocumentElement()), containerNode));
     }
 

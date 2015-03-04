@@ -11,6 +11,12 @@ module test {
             "Initial revision";
     }
 
+    identity a {}
+
+    identity b {
+        base "test:a";
+    }
+
     grouping listGroup {
         list list {
             key "uint32InList";
@@ -25,6 +31,22 @@ module test {
                 }
                 leaf uint16 {
                     type uint16;
+                }
+
+                leaf identityr {
+                    type identityref {
+                        base "test:a";
+                     }
+                }
+
+                leaf uint16-ref {
+                    type leafref {
+                        path "../uint16";
+                     }
+                }
+
+                leaf instance-id {
+                    type instance-identifier;
                 }
             }
         }

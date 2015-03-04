@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.LeafSetEntryNodeBaseParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.w3c.dom.Element;
 
 import com.google.common.base.Preconditions;
@@ -21,14 +22,16 @@ import com.google.common.base.Preconditions;
 final class LeafSetEntryNodeDomParser extends LeafSetEntryNodeBaseParser<Element> {
 
     private final XmlCodecProvider codecProvider;
+    private final SchemaContext ctx;
 
-    LeafSetEntryNodeDomParser(XmlCodecProvider codecProvider) {
+    LeafSetEntryNodeDomParser(XmlCodecProvider codecProvider, final SchemaContext schema) {
+        ctx = schema;
         this.codecProvider = Preconditions.checkNotNull(codecProvider);
     }
 
     @Override
     protected Object parseLeafListEntry(Element xmlElement, LeafListSchemaNode schema) {
-        return DomUtils.parseXmlValue(xmlElement, codecProvider, schema.getType());
+        return DomUtils.parseXmlValue(xmlElement, codecProvider, schema, schema.getType(), ctx);
     }
 
     @Override
