@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.binding.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -20,6 +21,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -44,6 +46,7 @@ import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,8 +62,6 @@ public class BindingReflections {
             .expireAfterAccess(EXPIRATION_TIME, TimeUnit.SECONDS) //
             .build(new ClassToQNameLoader());
 
-
-
     private BindingReflections() {
         throw new UnsupportedOperationException("Utility class.");
     }
@@ -68,8 +69,8 @@ public class BindingReflections {
     /**
      * Find augmentation target class from concrete Augmentation class
      *
-     * This method uses first generic argument of
-     * implemented {@link Augmentation} interface.
+     * This method uses first generic argument of implemented
+     * {@link Augmentation} interface.
      *
      * @param augmentation
      *            {@link Augmentation} subclass for which we want to determine
@@ -85,8 +86,8 @@ public class BindingReflections {
     /**
      * Find data hierarchy parent from concrete Data class
      *
-     * This method uses first generic argument of
-     * implemented {@link ChildOf} interface.
+     * This method uses first generic argument of implemented {@link ChildOf}
+     * interface.
      *
      * @param childClass
      *            child class for which we want to find the parent class.
@@ -100,7 +101,8 @@ public class BindingReflections {
      * Find data hierarchy parent from concrete Data class
      *
      * This method is shorthand which gets DataObject class by invoking
-     * {@link DataObject#getImplementedInterface()} and uses {@link #findHierarchicalParent(Class)}.
+     * {@link DataObject#getImplementedInterface()} and uses
+     * {@link #findHierarchicalParent(Class)}.
      *
      * @param child
      *            Child object for which the parent needs to be located.
@@ -133,7 +135,8 @@ public class BindingReflections {
      *
      *
      *
-     * @param possibleMethod Method to check
+     * @param possibleMethod
+     *            Method to check
      * @return true if method is RPC invocation, false otherwise.
      */
     public static boolean isRpcMethod(final Method possibleMethod) {
@@ -146,9 +149,10 @@ public class BindingReflections {
      *
      * Extracts Output class for RPC method
      *
-     * @param targetMethod method to scan
-     * @return Optional.absent() if result type could not be get,
-     *         or return type is Void.
+     * @param targetMethod
+     *            method to scan
+     * @return Optional.absent() if result type could not be get, or return type
+     *         is Void.
      */
     @SuppressWarnings("rawtypes")
     public static Optional<Class<?>> resolveRpcOutputClass(final Method targetMethod) {
@@ -166,7 +170,8 @@ public class BindingReflections {
      *
      * Extracts input class for RPC method
      *
-     * @param targetMethod method to scan
+     * @param targetMethod
+     *            method to scan
      * @return Optional.absent() if rpc has no input, Rpc input type otherwise.
      */
     @SuppressWarnings("unchecked")
@@ -215,7 +220,8 @@ public class BindingReflections {
     /**
      * Returns root package name for suplied package.
      *
-     * @param pkg Package for which find model root package.
+     * @param pkg
+     *            Package for which find model root package.
      * @return Package of model root.
      */
     public static String getModelRootPackageName(final Package pkg) {
@@ -225,7 +231,8 @@ public class BindingReflections {
     /**
      * Returns root package name for supplied package name.
      *
-     * @param name Package for which find model root package.
+     * @param name
+     *            Package for which find model root package.
      * @return Package of model root.
      */
     public static String getModelRootPackageName(final String name) {
@@ -238,12 +245,30 @@ public class BindingReflections {
         return match.group(0);
     }
 
+    public static final QNameModule getQNameModule(Class<?> clz) {
+        if(DataContainer.class.isAssignableFrom(clz) || BaseIdentity.class.isAssignableFrom(clz)) {
+            return findQName(clz).getModule();
+        }
+        try {
+            YangModuleInfo modInfo = BindingReflections.getModuleInfo(clz);
+            return getQNameModule(modInfo);
+        } catch (Exception e) {
+            throw new IllegalStateException("Unable to get QName of defining model.", e);
+        }
+    }
+
+    public static final QNameModule getQNameModule(YangModuleInfo modInfo) {
+        return QNameModule.create(URI.create(modInfo.getNamespace()), QName.parseRevision(modInfo.getRevision()));
+    }
+
     /**
      *
-     * Returns instance of {@link YangModuleInfo} of declaring model for specific class.
+     * Returns instance of {@link YangModuleInfo} of declaring model for
+     * specific class.
      *
      * @param cls
-     * @return Instance of {@link YangModuleInfo} associated with model, from which this class was derived.
+     * @return Instance of {@link YangModuleInfo} associated with model, from
+     *         which this class was derived.
      * @throws Exception
      */
     public static YangModuleInfo getModuleInfo(final Class<?> cls) throws Exception {
@@ -268,7 +293,8 @@ public class BindingReflections {
      *
      * Check if supplied class is derived from YANG model.
      *
-     * @param cls Class to check
+     * @param cls
+     *            Class to check
      * @return true if class is derived from YANG model.
      */
     public static boolean isBindingClass(final Class<?> cls) {
@@ -305,7 +331,7 @@ public class BindingReflections {
      * @return
      */
     public static boolean isNotification(final Class<?> potentialNotification) {
-        checkArgument(potentialNotification != null,"potentialNotification must not be null.");
+        checkArgument(potentialNotification != null, "potentialNotification must not be null.");
         return Notification.class.isAssignableFrom(potentialNotification);
     }
 
@@ -323,21 +349,24 @@ public class BindingReflections {
     }
 
     /**
-    *
-    * Loads {@link YangModuleInfo} infos available on supplied classloader.
-    *
-    * {@link YangModuleInfo} are discovered using {@link ServiceLoader}
-    * for {@link YangModelBindingProvider}. {@link YangModelBindingProvider}
-    * are simple classes which holds only pointers to actual instance
-    * {@link YangModuleInfo}.
-    *
-    * When {@link YangModuleInfo} is available, all dependencies are recursivelly collected
-    * into returning set by collecting results of {@link YangModuleInfo#getImportedModules()}.
-    *
-    *
-    * @param loader Classloader for which {@link YangModuleInfo} should be retrieved.
-    * @return Set of {@link YangModuleInfo} available for supplied classloader.
-    */
+     *
+     * Loads {@link YangModuleInfo} infos available on supplied classloader.
+     *
+     * {@link YangModuleInfo} are discovered using {@link ServiceLoader} for
+     * {@link YangModelBindingProvider}. {@link YangModelBindingProvider} are
+     * simple classes which holds only pointers to actual instance
+     * {@link YangModuleInfo}.
+     *
+     * When {@link YangModuleInfo} is available, all dependencies are
+     * recursivelly collected into returning set by collecting results of
+     * {@link YangModuleInfo#getImportedModules()}.
+     *
+     *
+     * @param loader
+     *            Classloader for which {@link YangModuleInfo} should be
+     *            retrieved.
+     * @return Set of {@link YangModuleInfo} available for supplied classloader.
+     */
     public static ImmutableSet<YangModuleInfo> loadModuleInfos(final ClassLoader loader) {
         Builder<YangModuleInfo> moduleInfoSet = ImmutableSet.<YangModuleInfo> builder();
         ServiceLoader<YangModelBindingProvider> serviceLoader = ServiceLoader.load(YangModelBindingProvider.class,
@@ -362,7 +391,8 @@ public class BindingReflections {
      *
      * Checks if supplied class represents RPC Input / RPC Output.
      *
-     * @param targetType Class to be checked
+     * @param targetType
+     *            Class to be checked
      * @return true if class represents RPC Input or RPC Output class.
      */
     public static boolean isRpcType(final Class<? extends DataObject> targetType) {
@@ -374,9 +404,11 @@ public class BindingReflections {
 
     /**
      *
-     * Scans supplied class and returns an iterable of all data children classes.
+     * Scans supplied class and returns an iterable of all data children
+     * classes.
      *
-     * @param type YANG Modeled Entity derived from DataContainer
+     * @param type
+     *            YANG Modeled Entity derived from DataContainer
      * @return Iterable of all data children, which have YANG modeled entity
      */
     @SuppressWarnings("unchecked")
@@ -394,24 +426,26 @@ public class BindingReflections {
     }
 
     /**
-    *
-    * Scans supplied class and returns an iterable of all data children classes.
-    *
-    * @param type YANG Modeled Entity derived from DataContainer
-    * @return Iterable of all data children, which have YANG modeled entity
-    */
-   public static Map<Class<?>,Method> getChildrenClassToMethod(final Class<?> type) {
-       checkArgument(type != null, "Target type must not be null");
-       checkArgument(DataContainer.class.isAssignableFrom(type), "Supplied type must be derived from DataContainer");
-       Map<Class<?>,Method> ret = new HashMap<>();
-       for (Method method : type.getMethods()) {
-           Optional<Class<? extends DataContainer>> entity = getYangModeledReturnType(method);
-           if (entity.isPresent()) {
-               ret.put(entity.get(),method);
-           }
-       }
-       return ret;
-   }
+     *
+     * Scans supplied class and returns an iterable of all data children
+     * classes.
+     *
+     * @param type
+     *            YANG Modeled Entity derived from DataContainer
+     * @return Iterable of all data children, which have YANG modeled entity
+     */
+    public static Map<Class<?>, Method> getChildrenClassToMethod(final Class<?> type) {
+        checkArgument(type != null, "Target type must not be null");
+        checkArgument(DataContainer.class.isAssignableFrom(type), "Supplied type must be derived from DataContainer");
+        Map<Class<?>, Method> ret = new HashMap<>();
+        for (Method method : type.getMethods()) {
+            Optional<Class<? extends DataContainer>> entity = getYangModeledReturnType(method);
+            if (entity.isPresent()) {
+                ret.put(entity.get(), method);
+            }
+        }
+        return ret;
+    }
 
     @SuppressWarnings("unchecked")
     private static Optional<Class<? extends DataContainer>> getYangModeledReturnType(final Method method) {
@@ -444,10 +478,9 @@ public class BindingReflections {
             } catch (Exception e) {
                 /*
                  *
-                 * It is safe to log this this exception on debug, since
-                 * this method should not fail. Only failures are possible if
-                 * the runtime / backing.
-                 *
+                 * It is safe to log this this exception on debug, since this
+                 * method should not fail. Only failures are possible if the
+                 * runtime / backing.
                  */
                 LOG.debug("Unable to find YANG modeled return type for {}", method, e);
             }
@@ -467,10 +500,12 @@ public class BindingReflections {
      *
      * Tries to resolve QName for supplied class.
      *
-     * Looks up for static field with name from constant {@link BindingMapping#QNAME_STATIC_FIELD_NAME}
-     * and returns value if present.
+     * Looks up for static field with name from constant
+     * {@link BindingMapping#QNAME_STATIC_FIELD_NAME} and returns value if
+     * present.
      *
-     * If field is not present uses {@link #computeQName(Class)} to compute QName for missing types.
+     * If field is not present uses {@link #computeQName(Class)} to compute
+     * QName for missing types.
      *
      * @param key
      * @return
@@ -489,12 +524,11 @@ public class BindingReflections {
         } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
             /*
              *
-             * It is safe to log this this exception on debug, since
-             * this method should not fail. Only failures are possible if
-             * the runtime / backing.
-             *
+             * It is safe to log this this exception on debug, since this method
+             * should not fail. Only failures are possible if the runtime /
+             * backing.
              */
-            LOG.debug("Unexpected exception during extracting QName for {}",key,e);
+            LOG.debug("Unexpected exception during extracting QName for {}", key, e);
         }
         return Optional.absent();
     }
@@ -502,76 +536,78 @@ public class BindingReflections {
     /**
      * Computes QName for supplied class
      *
-     * Namespace and revision are same as {@link YangModuleInfo}
-     * associated with supplied class.
+     * Namespace and revision are same as {@link YangModuleInfo} associated with
+     * supplied class.
      * <p>
      * If class is
      * <ul>
-     *  <li>rpc input: local name is "input".
-     *  <li>rpc output: local name is "output".
-     *  <li>augmentation: local name is "module name".
+     * <li>rpc input: local name is "input".
+     * <li>rpc output: local name is "output".
+     * <li>augmentation: local name is "module name".
      * </ul>
      *
-     * There is also fallback, if it is not possible to compute QName
-     * using following algorithm returns module QName.
+     * There is also fallback, if it is not possible to compute QName using
+     * following algorithm returns module QName.
      *
-     * FIXME: Extend this algorithm to also provide QName for YANG modeled simple types.
+     * FIXME: Extend this algorithm to also provide QName for YANG modeled
+     * simple types.
      *
-     * @throws IllegalStateException If YangModuleInfo could not be resolved
-     * @throws IllegalArgumentException If supplied class was not derived from YANG model.
+     * @throws IllegalStateException
+     *             If YangModuleInfo could not be resolved
+     * @throws IllegalArgumentException
+     *             If supplied class was not derived from YANG model.
      *
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private static QName computeQName(final Class key) {
-        if(isBindingClass(key)) {
+        if (isBindingClass(key)) {
             YangModuleInfo moduleInfo;
             try {
                 moduleInfo = getModuleInfo(key);
             } catch (Exception e) {
-                throw new IllegalStateException("Unable to get QName for " + key + ". YangModuleInfo was not found.",e);
+                throw new IllegalStateException("Unable to get QName for " + key + ". YangModuleInfo was not found.", e);
             }
             final QName module = getModuleQName(moduleInfo);
             if (Augmentation.class.isAssignableFrom(key)) {
                 return module;
-            } else if(isRpcType(key)) {
+            } else if (isRpcType(key)) {
                 final String className = key.getSimpleName();
-                if(className.endsWith(BindingMapping.RPC_OUTPUT_SUFFIX)) {
-                    return QName.create(module,"output");
+                if (className.endsWith(BindingMapping.RPC_OUTPUT_SUFFIX)) {
+                    return QName.create(module, "output");
                 } else {
-                    return QName.create(module,"input");
+                    return QName.create(module, "input");
                 }
             }
             /*
-             *  Fallback for Binding types which fo not have QNAME
-             *  field
+             * Fallback for Binding types which fo not have QNAME field
              */
             return module;
         } else {
-            throw new IllegalArgumentException("Supplied class "+key+"is not derived from YANG.");
+            throw new IllegalArgumentException("Supplied class " + key + "is not derived from YANG.");
         }
     }
 
     /**
      * Given a {@link YangModuleInfo}, create a QName representing it. The QName
-     * is formed by reusing the module's namespace and revision using the module's
-     * name as the QName's local name.
+     * is formed by reusing the module's namespace and revision using the
+     * module's name as the QName's local name.
      *
-     * @param moduleInfo module information
+     * @param moduleInfo
+     *            module information
      * @return QName representing the module
      */
     public static QName getModuleQName(final YangModuleInfo moduleInfo) {
         checkArgument(moduleInfo != null, "moduleInfo must not be null.");
-        return QName.create(moduleInfo.getNamespace(), moduleInfo.getRevision(),
-                moduleInfo.getName());
+        return QName.create(moduleInfo.getNamespace(), moduleInfo.getRevision(), moduleInfo.getName());
     }
 
     /**
      * Extracts augmentation from Binding DTO field using reflection
      *
-     * @param input Instance of DataObject which is augmentable and
-     *      may contain augmentation
-     * @return Map of augmentations if read was successful, otherwise
-     *      empty map.
+     * @param input
+     *            Instance of DataObject which is augmentable and may contain
+     *            augmentation
+     * @return Map of augmentations if read was successful, otherwise empty map.
      */
     public static Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Augmentable<?> input) {
         return AugmentationFieldGetter.getGetter(input.getClass()).getAugmentations(input);
@@ -579,46 +615,55 @@ public class BindingReflections {
 
     /**
      *
-     * Determines if two augmentation classes or case classes represents same data.
+     * Determines if two augmentation classes or case classes represents same
+     * data.
      * <p>
      * Two augmentations or cases could be substituted only if and if:
      * <ul>
      * <li>Both implements same interfaces</li>
      * <li>Both have same children</li>
-     * <li>If augmentations: Both have same augmentation target class. Target class was generated for data node in grouping.</li>
-     * <li>If cases: Both are from same choice. Choice class was generated for data node in grouping.</li>
+     * <li>If augmentations: Both have same augmentation target class. Target
+     * class was generated for data node in grouping.</li>
+     * <li>If cases: Both are from same choice. Choice class was generated for
+     * data node in grouping.</li>
      * </ul>
      * <p>
-     * <b>Explanation:</b> Binding Specification reuses classes generated for groupings as part of normal data tree,
-     * this classes from grouping could be used at various locations and user may not be aware of it
-     * and may use incorrect case or augmentation in particular subtree (via copy constructors, etc).
+     * <b>Explanation:</b> Binding Specification reuses classes generated for
+     * groupings as part of normal data tree, this classes from grouping could
+     * be used at various locations and user may not be aware of it and may use
+     * incorrect case or augmentation in particular subtree (via copy
+     * constructors, etc).
      *
-     * @param potential Class which is potential substition
-     * @param target Class which should be used at particular subtree
+     * @param potential
+     *            Class which is potential substition
+     * @param target
+     *            Class which should be used at particular subtree
      * @return true if and only if classes represents same data.
      */
-    @SuppressWarnings({"rawtypes","unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public static boolean isSubstitutionFor(final Class potential, final Class target) {
         HashSet<Class> subImplemented = Sets.newHashSet(potential.getInterfaces());
         HashSet<Class> targetImplemented = Sets.newHashSet(target.getInterfaces());
-        if(!subImplemented.equals(targetImplemented)) {
+        if (!subImplemented.equals(targetImplemented)) {
             return false;
         }
-        if(Augmentation.class.isAssignableFrom(potential)
-                && !BindingReflections.findAugmentationTarget(potential).equals(BindingReflections.findAugmentationTarget(target))) {
-                return false;
+        if (Augmentation.class.isAssignableFrom(potential)
+                && !BindingReflections.findAugmentationTarget(potential).equals(
+                        BindingReflections.findAugmentationTarget(target))) {
+            return false;
         }
-        for(Method potentialMethod : potential.getMethods()) {
+        for (Method potentialMethod : potential.getMethods()) {
             try {
                 Method targetMethod = target.getMethod(potentialMethod.getName(), potentialMethod.getParameterTypes());
-                if(!potentialMethod.getReturnType().equals(targetMethod.getReturnType())) {
+                if (!potentialMethod.getReturnType().equals(targetMethod.getReturnType())) {
                     return false;
                 }
             } catch (NoSuchMethodException e) {
-                // Counterpart method is missing, so classes could not be substituted.
+                // Counterpart method is missing, so classes could not be
+                // substituted.
                 return false;
             } catch (SecurityException e) {
-                throw new IllegalStateException("Could not compare methods",e);
+                throw new IllegalStateException("Could not compare methods", e);
             }
         }
         return true;
