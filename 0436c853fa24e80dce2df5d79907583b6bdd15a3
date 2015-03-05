@@ -1,0 +1,129 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_111ddc0f",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONStringInstanceIdentifierCodec.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-05T18:56:34Z",
+      "side": 1,
+      "message": "looks like it should be final",
+      "revId": "0436c853fa24e80dce2df5d79907583b6bdd15a3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b1198824",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/InstanceIdentifierForXmlCodec.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-05T18:56:34Z",
+      "side": 1,
+      "message": "add pointer to replacement",
+      "revId": "0436c853fa24e80dce2df5d79907583b6bdd15a3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_71d30039",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/AbstractStringInstanceIdentifierCodec.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-05T18:56:34Z",
+      "side": 1,
+      "message": "please add some javadoc",
+      "revId": "0436c853fa24e80dce2df5d79907583b6bdd15a3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_91d80c55",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/DataSchemaContextNode.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-05T18:56:34Z",
+      "side": 1,
+      "message": "javadoc needed",
+      "revId": "0436c853fa24e80dce2df5d79907583b6bdd15a3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_51e28404",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/DataSchemaContextNode.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-05T18:56:34Z",
+      "side": 1,
+      "message": "FIXME what? :)",
+      "range": {
+        "startLine": 80,
+        "startChar": 12,
+        "endLine": 80,
+        "endChar": 13
+      },
+      "revId": "0436c853fa24e80dce2df5d79907583b6bdd15a3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f1e63016",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/DataSchemaContextNode.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-05T18:56:34Z",
+      "side": 1,
+      "message": "split static classes out, please",
+      "revId": "0436c853fa24e80dce2df5d79907583b6bdd15a3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_11e4fc0b",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/DataSchemaContextTree.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-05T18:56:34Z",
+      "side": 1,
+      "message": "javadoc",
+      "revId": "0436c853fa24e80dce2df5d79907583b6bdd15a3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
