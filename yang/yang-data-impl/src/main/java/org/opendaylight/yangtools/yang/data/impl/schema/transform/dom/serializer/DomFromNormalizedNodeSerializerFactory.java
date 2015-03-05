@@ -30,6 +30,8 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+// TODO Is this used anywhere ? it is replaced by the NormalizedNode stream writer, COuld this be removed ?
+
 public final class DomFromNormalizedNodeSerializerFactory implements FromNormalizedNodeSerializerFactory<Element> {
     private final ContainerNodeDomSerializer containerSerializer;
     private final ChoiceNodeDomSerializer choiceSerializer;
