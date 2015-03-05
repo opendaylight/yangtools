@@ -15,6 +15,7 @@ public class AnyXmlNodeCnSnSerializer extends AnyXmlNodeBaseSerializer<Node<?>> 
 
     @Override
     protected Node<?> serializeAnyXml(AnyXmlNode node) {
-        return node.getValue();
+        // This should be removed along with composite nodes
+        return null;
     }
 }

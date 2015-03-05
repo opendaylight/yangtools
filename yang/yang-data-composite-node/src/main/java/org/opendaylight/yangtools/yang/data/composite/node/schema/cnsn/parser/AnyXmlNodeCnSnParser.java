@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.composite.node.schema.cnsn.parser;
 
+import javax.xml.transform.dom.DOMSource;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.AnyXmlNodeBaseParser;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
@@ -18,7 +19,8 @@ public class AnyXmlNodeCnSnParser extends AnyXmlNodeBaseParser<Node<?>> {
     }
 
     @Override
-    protected Node<?> parseAnyXml(Node<?> element, AnyXmlSchemaNode schema) {
-        return element;
+    protected DOMSource parseAnyXml(Node<?> element, AnyXmlSchemaNode schema) {
+        // This will be removed
+        return null;
     }
 }
