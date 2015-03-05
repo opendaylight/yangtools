@@ -5,22 +5,21 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.export;
+package org.opendaylight.yangtools.yang.model.util;
 
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 
-class DerivedIdentityref extends NormalizatedDerivedType<IdentityrefTypeDefinition> implements
+class DerivedIdentityrefType extends DerivedType<IdentityrefTypeDefinition> implements
         IdentityrefTypeDefinition {
 
-    public DerivedIdentityref(final ExtendedType definition) {
+    public DerivedIdentityrefType(final ExtendedType definition) {
         super(IdentityrefTypeDefinition.class, definition);
     }
 
     @Override
     IdentityrefTypeDefinition createDerived(final ExtendedType base) {
-        return new DerivedIdentityref(base);
+        return new DerivedIdentityrefType(base);
     }
 
     @Override

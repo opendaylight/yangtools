@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.export;
 
+import org.opendaylight.yangtools.yang.model.util.DerivedType;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -443,7 +445,7 @@ class SchemaContextEmitter {
 
     private void emitTypeBodyNodes(final TypeDefinition<?> typeDef) {
         if (typeDef instanceof ExtendedType) {
-            emitTypeBodyNodes(NormalizatedDerivedType.from((ExtendedType) typeDef));
+            emitTypeBodyNodes(DerivedType.from((ExtendedType) typeDef));
         } else if (typeDef instanceof UnsignedIntegerTypeDefinition) {
             emitUnsignedIntegerSpecification((UnsignedIntegerTypeDefinition) typeDef);
         } else if (typeDef instanceof IntegerTypeDefinition) {

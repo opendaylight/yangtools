@@ -5,21 +5,20 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.export;
+package org.opendaylight.yangtools.yang.model.util;
 
 import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 
-class DerivedEnum extends NormalizatedDerivedType<EnumTypeDefinition> implements EnumTypeDefinition {
+class DerivedEnumType extends DerivedType<EnumTypeDefinition> implements EnumTypeDefinition {
 
-    public DerivedEnum(final ExtendedType definition) {
+    public DerivedEnumType(final ExtendedType definition) {
         super(EnumTypeDefinition.class, definition);
     }
 
     @Override
     EnumTypeDefinition createDerived(final ExtendedType base) {
-        return new DerivedEnum(base);
+        return new DerivedEnumType(base);
     }
 
     @Override
