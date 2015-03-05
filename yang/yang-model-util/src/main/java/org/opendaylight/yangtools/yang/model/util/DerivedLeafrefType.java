@@ -5,21 +5,20 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.export;
+package org.opendaylight.yangtools.yang.model.util;
 
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 
-class DerivedLeafref extends NormalizatedDerivedType<LeafrefTypeDefinition> implements LeafrefTypeDefinition {
+class DerivedLeafrefType extends DerivedType<LeafrefTypeDefinition> implements LeafrefTypeDefinition {
 
-    public DerivedLeafref(final ExtendedType definition) {
+    public DerivedLeafrefType(final ExtendedType definition) {
         super(LeafrefTypeDefinition.class, definition);
     }
 
     @Override
     LeafrefTypeDefinition createDerived(final ExtendedType base) {
-        return new DerivedLeafref(base);
+        return new DerivedLeafrefType(base);
     }
 
     @Override

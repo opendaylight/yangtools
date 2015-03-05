@@ -5,21 +5,20 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.export;
+package org.opendaylight.yangtools.yang.model.util;
 
 import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 
-class DerivedBits extends NormalizatedDerivedType<BitsTypeDefinition> implements BitsTypeDefinition {
+class DerivedBitsType extends DerivedType<BitsTypeDefinition> implements BitsTypeDefinition {
 
-    public DerivedBits(final ExtendedType definition) {
+    public DerivedBitsType(final ExtendedType definition) {
         super(BitsTypeDefinition.class, definition);
     }
 
     @Override
     BitsTypeDefinition createDerived(final ExtendedType base) {
-        return new DerivedBits(base);
+        return new DerivedBitsType(base);
     }
 
     @Override

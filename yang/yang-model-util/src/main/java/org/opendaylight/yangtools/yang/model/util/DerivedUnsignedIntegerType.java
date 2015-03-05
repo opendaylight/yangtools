@@ -5,22 +5,22 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.export;
+package org.opendaylight.yangtools.yang.model.util;
 
 import java.util.List;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
-class DerivedInteger extends NormalizatedDerivedType<IntegerTypeDefinition> implements IntegerTypeDefinition {
+class DerivedUnsignedIntegerType extends DerivedType<UnsignedIntegerTypeDefinition> implements
+        UnsignedIntegerTypeDefinition {
 
-    public DerivedInteger(final ExtendedType definition) {
-        super(IntegerTypeDefinition.class, definition);
+    public DerivedUnsignedIntegerType(final ExtendedType definition) {
+        super(UnsignedIntegerTypeDefinition.class, definition);
     }
 
     @Override
-    IntegerTypeDefinition createDerived(final ExtendedType base) {
-        return new DerivedInteger(base);
+    UnsignedIntegerTypeDefinition createDerived(final ExtendedType base) {
+        return new DerivedUnsignedIntegerType(base);
     }
 
     @Override
