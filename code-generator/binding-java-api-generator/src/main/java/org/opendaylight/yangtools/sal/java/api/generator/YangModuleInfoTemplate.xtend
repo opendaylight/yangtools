@@ -20,7 +20,6 @@ import java.util.Map
 import java.util.Set
 import java.util.TreeMap
 
-import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil
 import org.opendaylight.yangtools.binding.generator.util.Types
 import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType
 import org.opendaylight.yangtools.sal.binding.model.api.Type
@@ -33,7 +32,6 @@ import com.google.common.collect.ImmutableSet
 import static org.opendaylight.yangtools.yang.binding.BindingMapping.*
 import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider
 import com.google.common.base.Preconditions
-import org.opendaylight.yangtools.yang.binding.BindingMapping
 
 class YangModuleInfoTemplate {
 
@@ -51,7 +49,7 @@ class YangModuleInfoTemplate {
         Preconditions.checkArgument(module != null, "Module must not be null.");
         this.module = module
         this.ctx = ctx
-        _packageName = BindingGeneratorUtil.moduleNamespaceToPackageName(module);
+        _packageName = getRootPackageName(module.getQNameModule());
         _modelBindingProviderName = '''«packageName».«MODEL_BINDING_PROVIDER_CLASS_NAME»''';
     }
 
@@ -114,15 +112,15 @@ class YangModuleInfoTemplate {
                                 «sorted.put(module.revision, module)»
                             «ENDIF»
                         «ENDFOR»
-                        set.add(«BindingGeneratorUtil.moduleNamespaceToPackageName(sorted.lastEntry().value)».«MODULE_INFO_CLASS_NAME».getInstance());
+                        set.add(«getRootPackageName(sorted.lastEntry().value.QNameModule)».«MODULE_INFO_CLASS_NAME».getInstance());
                     «ELSE»
-                        set.add(«BindingGeneratorUtil.moduleNamespaceToPackageName(ctx.findModuleByName(name, rev))».«MODULE_INFO_CLASS_NAME».getInstance());
+                        set.add(«getRootPackageName((ctx.findModuleByName(name, rev).QNameModule))».«MODULE_INFO_CLASS_NAME».getInstance());
                     «ENDIF»
                 «ENDFOR»
             «ENDIF»
             «IF !m.submodules.empty»
                 «FOR submodule : m.submodules»
-                    set.add(«BindingMapping.getClassName(submodule.name)»Info.getInstance());
+                    set.add(«getClassName(submodule.name)»Info.getInstance());
                 «ENDFOR»
             «ENDIF»
             «IF m.imports.empty && m.submodules.empty»
@@ -195,7 +193,7 @@ class YangModuleInfoTemplate {
     private def imports() ''' 
         «IF !importMap.empty»
             «FOR entry : importMap.entrySet»
-                «IF entry.value != BindingGeneratorUtil.moduleNamespaceToPackageName(module)»
+                «IF entry.value != getRootPackageName(module.QNameModule)»
                     import «entry.value».«entry.key»;
                 «ENDIF»
             «ENDFOR»
@@ -218,8 +216,7 @@ class YangModuleInfoTemplate {
             importMap.put(typeName, typePackageName);
         }
         if (type instanceof ParameterizedType) {
-            val ParameterizedType paramType = (type as ParameterizedType)
-            val Type[] params = paramType.getActualTypeArguments()
+            val Type[] params = type.getActualTypeArguments()
             if (params != null) {
                 for (Type param : params) {
                     putTypeIntoImports(param);
@@ -260,11 +257,10 @@ class YangModuleInfoTemplate {
 
     final def StringBuilder addActualTypeParameters(StringBuilder builder, Type type) {
         if (type instanceof ParameterizedType) {
-            val ParameterizedType pType = (type as ParameterizedType)
-            val Type[] pTypes = pType.getActualTypeArguments();
-            builder.append("<");
+            val Type[] pTypes = type.getActualTypeArguments();
+            builder.append('<');
             builder.append(getParameters(pTypes));
-            builder.append(">");
+            builder.append('>');
         }
         return builder;
     }
@@ -302,9 +298,9 @@ class YangModuleInfoTemplate {
 
     private def generateSubInfo(Module module) '''
         «FOR submodule : module.submodules»
-            private static final class «BindingMapping.getClassName(submodule.name)»Info implements «YangModuleInfo.importedName» {
+            private static final class «getClassName(submodule.name)»Info implements «YangModuleInfo.importedName» {
 
-                private static final «YangModuleInfo.importedName» INSTANCE = new «BindingMapping.getClassName(submodule.name)»Info();
+                private static final «YangModuleInfo.importedName» INSTANCE = new «getClassName(submodule.name)»Info();
 
                 private final «String.importedName» name = "«submodule.name»";
                 private final «String.importedName» namespace = "«submodule.namespace.toString»";
@@ -318,7 +314,7 @@ class YangModuleInfoTemplate {
                     return INSTANCE;
                 }
 
-                «classBody(submodule, BindingMapping.getClassName(submodule.name + "Info"))»
+                «classBody(submodule, getClassName(submodule.name + "Info"))»
             }
         «ENDFOR»
     '''

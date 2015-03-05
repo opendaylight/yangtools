@@ -121,12 +121,12 @@ class InterfaceTemplate extends BaseTemplate {
         «IF !enclosedGeneratedTypes.empty»
             «FOR innerClass : enclosedGeneratedTypes SEPARATOR "\n"»
                 «IF (innerClass instanceof GeneratedTransferObject)»
-                    «IF (innerClass as GeneratedTransferObject).unionType»
-                        «val unionTemplate = new UnionTemplate(innerClass as GeneratedTransferObject)»
+                    «IF innerClass.unionType»
+                        «val unionTemplate = new UnionTemplate(innerClass)»
                         «unionTemplate.generateAsInnerClass»
                         «this.importMap.putAll(unionTemplate.importMap)»
                     «ELSE»
-                        «val classTemplate = new ClassTemplate(innerClass as GeneratedTransferObject)»
+                        «val classTemplate = new ClassTemplate(innerClass)»
                         «classTemplate.generateAsInnerClass»
                         «this.importMap.putAll(classTemplate.importMap)»
                     «ENDIF»

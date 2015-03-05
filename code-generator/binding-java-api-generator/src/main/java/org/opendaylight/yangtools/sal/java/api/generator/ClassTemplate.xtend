@@ -189,7 +189,7 @@ class ClassTemplate extends BaseTemplate {
         «IF !enclosedGeneratedTypes.empty»
             «FOR innerClass : enclosedGeneratedTypes SEPARATOR "\n"»
                 «IF (innerClass instanceof GeneratedTransferObject)»
-                    «val classTemplate = new ClassTemplate(innerClass as GeneratedTransferObject)»
+                    «val classTemplate = new ClassTemplate(innerClass)»
                     «classTemplate.generateAsInnerClass»
 
                 «ENDIF»
@@ -464,12 +464,11 @@ class ClassTemplate extends BaseTemplate {
                 «IF c.name == TypeConstants.PATTERN_CONSTANT_NAME»
                     «val cValue = c.value»
                     «IF cValue instanceof List<?>»
-                        «val cValues = cValue as List<?>»
                         private static final «List.importedName»<«Pattern.importedName»> «Constants.MEMBER_PATTERN_LIST»;
                         public static final «List.importedName»<String> «TypeConstants.PATTERN_CONSTANT_NAME» = «ImmutableList.importedName».of(«
-                        FOR v : cValues SEPARATOR ", "»«
+                        FOR v : cValue SEPARATOR ", "»«
                             IF v instanceof String»"«
-                                v as String»"«
+                                v»"«
                             ENDIF»«
                         ENDFOR»);
 

@@ -277,14 +277,12 @@ class BuilderTemplate extends BaseTemplate {
      */
     def private Object generateConstructorFromIfc(Type impl) '''
         «IF (impl instanceof GeneratedType)»
-            «val implType = impl as GeneratedType»
-
-            «IF !(implType.methodDefinitions.empty)»
-                public «type.name»«BUILDER»(«implType.fullyQualifiedName» arg) {
-                    «printConstructorPropertySetter(implType)»
+            «IF !(impl.methodDefinitions.empty)»
+                public «type.name»«BUILDER»(«impl.fullyQualifiedName» arg) {
+                    «printConstructorPropertySetter(impl)»
                 }
             «ENDIF»
-            «FOR implTypeImplement : implType.implements»
+            «FOR implTypeImplement : impl.implements»
                 «generateConstructorFromIfc(implTypeImplement)»
             «ENDFOR»
         «ENDIF»
