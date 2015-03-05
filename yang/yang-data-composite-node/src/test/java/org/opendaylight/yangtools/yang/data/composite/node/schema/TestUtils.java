@@ -256,25 +256,25 @@ public class TestUtils {
                                                 .withNodeIdentifier(getNodeIdentifier(MODULE_AUGMENT, "lf31"))
                                                 .withValue("value in leaf in augment").build()).build()).build());
 
-        containerBuilder.withChild(Builders
-                .anyXmlBuilder()
-                .withNodeIdentifier(getNodeIdentifier("anxml-composite"))
-                .withValue(
-                        ImmutableCompositeNode
-                                .builder()
-                                .setQName(QName.create("simple:container:yang", "2013-11-12", "anxml-composite"))
-                                .add(NodeFactory.createImmutableSimpleNode(
-                                        QName.create("simple:container:yang", "2013-11-12", "anxml-cont"), null, null))
-                                .build()).build());
-
-        containerBuilder
-                .withChild(Builders
-                        .anyXmlBuilder()
-                        .withNodeIdentifier(getNodeIdentifier("anxml-simple"))
-                        .withValue(
-                                NodeFactory.createImmutableSimpleNode(
-                                        QName.create("simple:container:yang", "2013-11-12", "anxml-simple"), null, 43))
-                        .build());
+//        containerBuilder.withChild(Builders
+//                .anyXmlBuilder()
+//                .withNodeIdentifier(getNodeIdentifier("anxml-composite"))
+//                .withValue(
+//                        ImmutableCompositeNode
+//                                .builder()
+//                                .setQName(QName.create("simple:container:yang", "2013-11-12", "anxml-composite"))
+//                                .add(NodeFactory.createImmutableSimpleNode(
+//                                        QName.create("simple:container:yang", "2013-11-12", "anxml-cont"), null, null))
+//                                .build()).build());
+//
+//        containerBuilder
+//                .withChild(Builders
+//                        .anyXmlBuilder()
+//                        .withNodeIdentifier(getNodeIdentifier("anxml-simple"))
+//                        .withValue(
+//                                NodeFactory.createImmutableSimpleNode(
+//                                        QName.create("simple:container:yang", "2013-11-12", "anxml-simple"), null, 43))
+//                        .build());
 
         ContainerNode build = containerBuilder.build();
         return build;
