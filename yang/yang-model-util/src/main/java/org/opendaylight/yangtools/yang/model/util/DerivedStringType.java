@@ -5,23 +5,22 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.export;
+package org.opendaylight.yangtools.yang.model.util;
 
 import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 
-class DerivedString extends NormalizatedDerivedType<StringTypeDefinition> implements StringTypeDefinition {
+class DerivedStringType extends DerivedType<StringTypeDefinition> implements StringTypeDefinition {
 
-    public DerivedString(final ExtendedType definition) {
+    public DerivedStringType(final ExtendedType definition) {
         super(StringTypeDefinition.class, definition);
     }
 
     @Override
     StringTypeDefinition createDerived(final ExtendedType base) {
-        return new DerivedString(base);
+        return new DerivedStringType(base);
     }
 
     @Override

@@ -5,22 +5,21 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.export;
+package org.opendaylight.yangtools.yang.model.util;
 
 import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 
-class DerivedDecimal extends NormalizatedDerivedType<DecimalTypeDefinition> implements DecimalTypeDefinition {
+class DerivedDecimalType extends DerivedType<DecimalTypeDefinition> implements DecimalTypeDefinition {
 
-    public DerivedDecimal(final ExtendedType definition) {
+    public DerivedDecimalType(final ExtendedType definition) {
         super(DecimalTypeDefinition.class, definition);
     }
 
     @Override
     DecimalTypeDefinition createDerived(final ExtendedType base) {
-        return new DerivedDecimal(base);
+        return new DerivedDecimalType(base);
     }
 
     @Override

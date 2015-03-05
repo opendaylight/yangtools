@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.export;
+package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.Preconditions;
 import java.util.List;
@@ -26,7 +26,6 @@ import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 
 /**
  *
@@ -36,59 +35,64 @@ import org.opendaylight.yangtools.yang.model.util.ExtendedType;
  * preserving original implemented interface instead of {@link ExtendedType}
  * which does not preserve final type of data.
  *
- *  FIXME: Lithium: Should be move to yang-model-util package or deprecated
- * if linking parser is reworked to adhere to base type contract
  */
-abstract class NormalizatedDerivedType<T extends TypeDefinition<T>> implements TypeDefinition<T> {
+public abstract class DerivedType<T extends TypeDefinition<T>> implements TypeDefinition<T> {
 
     private final ExtendedType definition;
     private final Class<T> publicType;
 
-    NormalizatedDerivedType(final Class<T> publicType, final ExtendedType delegate) {
+    DerivedType(final Class<T> publicType, final ExtendedType delegate) {
         this.definition = Preconditions.checkNotNull(delegate);
         this.publicType = Preconditions.checkNotNull(publicType);
     }
 
-    static TypeDefinition<?> from(final ExtendedType type) {
+    public static TypeDefinition<?> from(TypeDefinition<?> type) {
+        if(type instanceof ExtendedType) {
+            return from((ExtendedType) type);
+        }
+        return type;
+    }
+
+    public static TypeDefinition<?> from(final ExtendedType type) {
         TypeDefinition<? extends TypeDefinition<?>> baseType = type;
         while (baseType.getBaseType() != null) {
             baseType = baseType.getBaseType();
         }
         if (baseType instanceof BinaryTypeDefinition) {
-            return new DerivedBinary(type);
+            return new DerivedBinaryType(type);
         }
         if (baseType instanceof BooleanTypeDefinition) {
-            return new DerivedBoolean(type);
+            return new DerivedBooleanType(type);
         }
         if (baseType instanceof DecimalTypeDefinition) {
-            return new DerivedDecimal(type);
+            return new DerivedDecimalType(type);
         }
         if (baseType instanceof IdentityrefTypeDefinition) {
-            return new DerivedIdentityref(type);
+            return new DerivedIdentityrefType(type);
         }
         if (baseType instanceof InstanceIdentifierTypeDefinition) {
-            return new DerivedInstanceIdentifier(type);
+            return new DerivedInstanceIdentifierType(type);
         }
         if (baseType instanceof IntegerTypeDefinition) {
-            return new DerivedInteger(type);
+            return new DerivedIntegerType(type);
         }
         if (baseType instanceof LeafrefTypeDefinition) {
-            return new DerivedLeafref(type);
+            return new DerivedLeafrefType(type);
         }
         if (baseType instanceof UnsignedIntegerTypeDefinition) {
-            return new DerivedUnsignedInteger(type);
+            return new DerivedUnsignedIntegerType(type);
         }
         if (baseType instanceof StringTypeDefinition) {
-            return new DerivedString(type);
+            return new DerivedStringType(type);
         }
         if(baseType instanceof UnionTypeDefinition) {
-            return new DerivedUnion(type);
+            return new DerivedUnionType(type);
         }
         if(baseType instanceof EnumTypeDefinition) {
-            return new DerivedEnum(type);
+            return new DerivedEnumType(type);
         }
         if(baseType instanceof BitsTypeDefinition) {
-            return new DerivedBits(type);
+            return new DerivedBitsType(type);
         }
         throw new IllegalArgumentException("Not supported base type of " + baseType.getClass());
     }
@@ -157,4 +161,6 @@ abstract class NormalizatedDerivedType<T extends TypeDefinition<T>> implements T
      * @return wrapper which implements proper subinterface of {@link TypeDefinition}.
      */
     abstract T createDerived(ExtendedType base);
+
+
 }
