@@ -29,12 +29,12 @@ class WadlRestconfGenerator {
 	
 	File path
 	static val BuildContext CTX = new DefaultBuildContext();
+	static val PATH_DELIMETER = '/'
 	var SchemaContext context;
 	var List<DataSchemaNode> configData;
 	var List<DataSchemaNode> operationalData;
 	var Module module;
 	var List<LeafSchemaNode> pathListParams;
-	val PATH_DELIMETER = "/"
 
 	new(File targetPath) {
 		if (!targetPath.exists) targetPath.mkdirs
@@ -156,8 +156,7 @@ class WadlRestconfGenerator {
 		var StringBuilder path = new StringBuilder
 		path.append(schemaNode.QName.localName)
 		if (schemaNode instanceof ListSchemaNode) {
-			val listKeys = (schemaNode as ListSchemaNode).keyDefinition
-			for (listKey : listKeys) {
+			for (listKey : schemaNode.keyDefinition) {
 				pathListParams.add((schemaNode as DataNodeContainer).getDataChildByName(listKey) as LeafSchemaNode)
 				path.append(PATH_DELIMETER)
 				path.append('{')
