@@ -5,19 +5,18 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.export;
+package org.opendaylight.yangtools.yang.model.util;
 
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 
-class DerivedBoolean extends NormalizatedDerivedType<BooleanTypeDefinition> implements BooleanTypeDefinition {
+class DerivedBooleanType extends DerivedType<BooleanTypeDefinition> implements BooleanTypeDefinition {
 
-    public DerivedBoolean(final ExtendedType definition) {
+    public DerivedBooleanType(final ExtendedType definition) {
         super(BooleanTypeDefinition.class, definition);
     }
 
     @Override
     BooleanTypeDefinition createDerived(final ExtendedType base) {
-        return new DerivedBoolean(base);
+        return new DerivedBooleanType(base);
     }
 }
