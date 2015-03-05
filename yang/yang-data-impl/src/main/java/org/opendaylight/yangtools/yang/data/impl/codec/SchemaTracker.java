@@ -147,17 +147,35 @@ public final class SchemaTracker {
                 schema = ((NotificationDefinition) parent);
             }
         } else if(parent instanceof ChoiceNode) {
-            for(final ChoiceCaseNode caze : ((ChoiceNode) parent).getCases()) {
-                final DataSchemaNode potential = caze.getDataChildByName(qname);
-                if(potential != null) {
-                    schema = potential;
-                    break;
-                }
-            }
+            schema = findChildInCases((ChoiceNode) parent, qname);
         } else {
             throw new IllegalStateException("Unsupported schema type "+ parent.getClass() +" on stack.");
         }
         Preconditions.checkArgument(schema != null, "Could not find schema for node %s in %s", qname, parent);
+        return schema;
+    }
+
+    private SchemaNode findChildInCases(final ChoiceNode parent, final QName qname) {
+        DataSchemaNode schema = null;
+        for(final ChoiceCaseNode caze : parent.getCases()) {
+            final DataSchemaNode potential = caze.getDataChildByName(qname);
+            if(potential != null) {
+                schema = potential;
+                break;
+            }
+        }
+        return schema;
+    }
+
+    private SchemaNode findCaseByChild(final ChoiceNode parent, final QName qname) {
+        DataSchemaNode schema = null;
+        for(final ChoiceCaseNode caze : parent.getCases()) {
+            final DataSchemaNode potential = caze.getDataChildByName(qname);
+            if(potential != null) {
+                schema = caze;
+                break;
+            }
+        }
         return schema;
     }
 
@@ -218,9 +236,13 @@ public final class SchemaTracker {
 
     public AugmentationSchema startAugmentationNode(final AugmentationIdentifier identifier) {
         LOG.debug("Enter augmentation {}", identifier);
-        final Object parent = getParent();
+        Object parent = getParent();
 
         Preconditions.checkArgument(parent instanceof AugmentationTarget, "Augmentation not allowed under %s", parent);
+        if(parent instanceof ChoiceNode) {
+            final QName name = Iterables.get(identifier.getPossibleChildNames(), 0);
+            parent = findCaseByChild((ChoiceNode) parent, name);
+        }
         Preconditions.checkArgument(parent instanceof DataNodeContainer, "Augmentation allowed only in DataNodeContainer",parent);
         final AugmentationSchema schema = SchemaUtils.findSchemaForAugment((AugmentationTarget) parent, identifier.getPossibleChildNames());
         final HashSet<DataSchemaNode> realChildSchemas = new HashSet<>();
