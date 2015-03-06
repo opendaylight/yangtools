@@ -29,9 +29,14 @@ final class LeafNodeDomParser extends LeafNodeBaseParser<Element> {
         this.codecProvider = Preconditions.checkNotNull(codecProvider);
     }
 
+    @Deprecated
+    LeafNodeDomParser(XmlCodecProvider codecProvider) {
+        this(codecProvider, null);
+    }
+
     @Override
     protected Object parseLeaf(Element xmlElement, LeafSchemaNode schema) {
-        return DomUtils.parseXmlValue(xmlElement, codecProvider, schema, schema.getType(), ctx);
+        return ctx == null ? DomUtils.parseXmlValue(xmlElement, codecProvider, schema.getType()) : DomUtils.parseXmlValue(xmlElement, codecProvider, schema, schema.getType(), ctx);
     }
 
     @Override

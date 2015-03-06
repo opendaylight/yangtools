@@ -29,9 +29,14 @@ final class LeafSetEntryNodeDomParser extends LeafSetEntryNodeBaseParser<Element
         this.codecProvider = Preconditions.checkNotNull(codecProvider);
     }
 
+    @Deprecated
+    public LeafSetEntryNodeDomParser(final XmlCodecProvider codecProvider) {
+        this(codecProvider, null);
+    }
+
     @Override
     protected Object parseLeafListEntry(Element xmlElement, LeafListSchemaNode schema) {
-        return DomUtils.parseXmlValue(xmlElement, codecProvider, schema, schema.getType(), ctx);
+        return ctx == null ? DomUtils.parseXmlValue(xmlElement, codecProvider, schema.getType()) : DomUtils.parseXmlValue(xmlElement, codecProvider, schema, schema.getType(), ctx);
     }
 
     @Override
