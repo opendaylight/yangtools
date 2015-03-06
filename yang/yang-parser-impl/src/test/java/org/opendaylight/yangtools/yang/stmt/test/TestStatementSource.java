@@ -3,7 +3,7 @@ package org.opendaylight.yangtools.yang.stmt.test;
 import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Import;
 import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Module;
 import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Namespace;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Prefix;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -69,13 +69,15 @@ class TestStatementSource implements StatementStreamSource {
 
     }
 
-    protected void extensions() {
-        // TODO Auto-generated method stub
+    protected void extensions() throws SourceException {
 
     }
 
-    protected void body() {
-
+    protected void body() throws SourceException {
+        stmt(Container).arg("MyContainer");
+            stmt(Container).arg("MyContainerInContainer");
+            end();
+        end();
     }
 
     TestStatementSource header() throws SourceException {

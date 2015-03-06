@@ -199,9 +199,10 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             break;
         case StatementDefinition:
             source.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes());
+            break;
         case FullDeclaration:
             source.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes());
-
+            break;
         default:
             break;
         }
