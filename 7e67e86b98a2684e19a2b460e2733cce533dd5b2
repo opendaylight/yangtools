@@ -1,0 +1,61 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_ecc9735b",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceSpecificContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 202,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2015-03-06T09:14:39Z",
+      "side": 1,
+      "message": "Fix of phases switching. Without added \"breaks;\" the method \"source.writefull\" starts also with current phase StatementDefinition instead of FullDeclaration and so container definition was not found in support bundles.",
+      "revId": "7e67e86b98a2684e19a2b460e2733cce533dd5b2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_acaccb8d",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2015-03-06T09:14:39Z",
+      "side": 1,
+      "message": "quick fix of null pointer exception when container stmts are processed, we should investigate this ...",
+      "revId": "7e67e86b98a2684e19a2b460e2733cce533dd5b2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_4c9e6758",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/YangInferencePipeline.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2015-03-06T09:14:39Z",
+      "side": 1,
+      "message": "please ignore this line",
+      "range": {
+        "startLine": 45,
+        "startChar": 12,
+        "endLine": 45,
+        "endChar": 58
+      },
+      "revId": "7e67e86b98a2684e19a2b460e2733cce533dd5b2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
