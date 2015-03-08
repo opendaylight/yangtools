@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_864d2b75",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/util/NotificationListenerInvoker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-08T20:46:26Z",
+      "side": 1,
+      "message": "final? can we use a public lookup?",
+      "revId": "1155272f036f945c2471d8da53ed676734d44744",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a652a711",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/util/RpcMethodInvoker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-08T20:46:26Z",
+      "side": 1,
+      "message": "final, can be public lookup?",
+      "revId": "1155272f036f945c2471d8da53ed676734d44744",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_46572303",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/util/RpcMethodInvoker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-08T20:46:26Z",
+      "side": 1,
+      "message": "protected",
+      "revId": "1155272f036f945c2471d8da53ed676734d44744",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_665c9f26",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/util/RpcMethodInvokerWithInput.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-08T20:46:26Z",
+      "side": 1,
+      "message": "\u0027static final\u0027",
+      "revId": "1155272f036f945c2471d8da53ed676734d44744",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_06411b39",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/util/RpcMethodInvokerWithoutInput.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 20,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-08T20:46:26Z",
+      "side": 1,
+      "message": "\u0027static final\u0027",
+      "revId": "1155272f036f945c2471d8da53ed676734d44744",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_263e97b9",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/util/RpcServiceInvoker.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 52,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-08T20:46:26Z",
+      "side": 1,
+      "message": "non-null, I assume",
+      "revId": "1155272f036f945c2471d8da53ed676734d44744",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
