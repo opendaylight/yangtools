@@ -373,14 +373,12 @@ class GeneratorImpl {
         // find recursively
         for(child : childNodes) {
             if(child instanceof ContainerSchemaNode) {
-                val contChild = child as ContainerSchemaNode
-                val foundChild = findNodeInChildNodes(findingNode, contChild.childNodes)
+                val foundChild = findNodeInChildNodes(findingNode, child.childNodes)
                 if (foundChild != null)
                     return foundChild;
             }
             else if(child instanceof ListSchemaNode) {
-                val listChild = child as ListSchemaNode
-                val foundChild = findNodeInChildNodes(findingNode, listChild.childNodes)
+                val foundChild = findNodeInChildNodes(findingNode, child.childNodes)
                 if (foundChild != null)
                     return foundChild;
             }
@@ -408,22 +406,22 @@ class GeneratorImpl {
         return
         '''
         «IF child instanceof ContainerSchemaNode»
-            «printContainerNode(child as ContainerSchemaNode)»
+            «printContainerNode(child)»
         «ENDIF»
         «IF child instanceof AnyXmlSchemaNode»
-            «printAnyXmlNode(child as AnyXmlSchemaNode)»
+            «printAnyXmlNode(child)»
         «ENDIF»
         «IF child instanceof LeafSchemaNode»
-            «printLeafNode(child as LeafSchemaNode)»
+            «printLeafNode(child)»
         «ENDIF»
         «IF child instanceof LeafListSchemaNode»
-            «printLeafListNode(child as LeafListSchemaNode)»
+            «printLeafListNode(child)»
         «ENDIF»
         «IF child instanceof ListSchemaNode»
-            «printListNode(child as ListSchemaNode)»
+            «printListNode(child)»
         «ENDIF»
         «IF child instanceof ChoiceNode»
-            «printChoiceNode(child as ChoiceNode)»
+            «printChoiceNode(child)»
         «ENDIF»
         '''
     }
@@ -846,36 +844,32 @@ class GeneratorImpl {
 
     def CharSequence printBaseInfo(SchemaNode node) {
         if(node instanceof LeafSchemaNode) {
-            val LeafSchemaNode leafNode = (node as LeafSchemaNode)
             return '''
                 «printInfo(node, "leaf")»
-                «listItem("type", typeAnchorLink(leafNode.type?.path, leafNode.type.QName.localName))»
-                «listItem("units", leafNode.units)»
-                «listItem("default", leafNode.^default)»
+                «listItem("type", typeAnchorLink(node.type?.path, node.type.QName.localName))»
+                «listItem("units", node.units)»
+                «listItem("default", node.^default)»
                 </ul>
             '''
         } else if(node instanceof LeafListSchemaNode) {
-            val LeafListSchemaNode leafListNode = (node as LeafListSchemaNode)
             return '''
                 «printInfo(node, "leaf-list")»
-                «listItem("type", leafListNode.type?.QName.localName)»
+                «listItem("type", node.type?.QName.localName)»
                 </ul>
             '''
         } else if(node instanceof ListSchemaNode) {
-            val ListSchemaNode listNode = (node as ListSchemaNode)
             return '''
                 «printInfo(node, "list")»
-                «FOR keyDef : listNode.keyDefinition»
+                «FOR keyDef : node.keyDefinition»
                     «listItem("key definition", keyDef.localName)»
                 «ENDFOR»
                 </ul>
             '''
         } else if(node instanceof ChoiceNode) {
-            val ChoiceNode choiceNode = (node as ChoiceNode)
             return '''
                 «printInfo(node, "choice")»
-                «listItem("default case", choiceNode.defaultCase)»
-                «FOR caseNode : choiceNode.cases»
+                «listItem("default case", node.defaultCase)»
+                «FOR caseNode : node.cases»
                     «caseNode.printSchemaNodeInfo»
                 «ENDFOR»
                 </ul>
@@ -915,9 +909,9 @@ class GeneratorImpl {
             «listItem("description", node.description)»
             «listItem("reference", node.reference)»
             «IF node instanceof DataSchemaNode»
-                «listItem("when condition", (node as DataSchemaNode).constraints.whenCondition?.toString)»
-                «listItem("min elements", (node as DataSchemaNode).constraints.minElements?.toString)»
-                «listItem("max elements", (node as DataSchemaNode).constraints.maxElements?.toString)»
+                «listItem("when condition", node.constraints.whenCondition?.toString)»
+                «listItem("min elements", node.constraints.minElements?.toString)»
+                «listItem("max elements", node.constraints.maxElements?.toString)»
             «ENDIF»
         '''
     }
@@ -1180,18 +1174,17 @@ class GeneratorImpl {
     def asRestconfPath(YangInstanceIdentifier identifier) {
         val it = new StringBuilder();
         append(currentModule.name)
-        append(":")
+        append(':')
         var previous = false;
         for(arg : identifier.pathArguments) {
-            if(previous) append("/")
+            if(previous) append('/')
             append(arg.nodeType.localName);
             previous = true;
             if(arg instanceof NodeIdentifierWithPredicates) {
-                val nodeIdentifier = arg as NodeIdentifierWithPredicates;
-                for(qname : nodeIdentifier.getKeyValues.keySet) {
+                for(qname : arg.getKeyValues.keySet) {
                     append("/{");
                     append(qname.localName)
-                    append("}")
+                    append('}')
                 }
             }
         }
@@ -1211,7 +1204,7 @@ class GeneratorImpl {
 
         for (name : path) {
             if (parent instanceof DataNodeContainer) {
-                var SchemaNode node = (parent as DataNodeContainer).getDataChildByName(name)
+                var SchemaNode node = parent.getDataChildByName(name)
                 if (node == null && (parent instanceof Module)) {
                     val notifications = (parent as Module).notifications;
                     for (notification : notifications) {
@@ -1449,7 +1442,7 @@ class GeneratorImpl {
             }
             if (node instanceof ChoiceNode) {
                 val List<DataSchemaNode> choiceCases = new ArrayList()
-                for (caseNode : (node as ChoiceNode).cases) {
+                for (caseNode : node.cases) {
                     choiceCases.add(caseNode)
                 }
                 collectChildNodes(choiceCases, destination)
