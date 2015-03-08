@@ -417,9 +417,9 @@ abstract class BaseTemplate {
     def getRestrictions(Type type) {
         var Restrictions restrictions = null
         if (type instanceof ConcreteType) {
-            restrictions = (type as ConcreteType).restrictions
+            restrictions = type.restrictions
         } else if (type instanceof GeneratedTransferObject) {
-            restrictions = (type as GeneratedTransferObject).restrictions
+            restrictions = type.restrictions
         }
         return restrictions
     }
