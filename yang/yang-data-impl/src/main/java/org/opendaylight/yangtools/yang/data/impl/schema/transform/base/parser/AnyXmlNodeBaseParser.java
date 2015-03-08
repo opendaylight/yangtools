@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
-import javax.xml.transform.dom.DOMSource;
+import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
@@ -31,9 +31,9 @@ public abstract class AnyXmlNodeBaseParser<E> implements
         Preconditions.checkArgument(size == 1, "Elements mapped to any-xml node illegal count: %s", size);
 
         final E e = elements.iterator().next();
-        DOMSource value = parseAnyXml(e, schema);
+        Node<?> value = parseAnyXml(e, schema);
 
-        NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> anyXmlBuilder = Builders.anyXmlBuilder(schema);
+        NormalizedNodeAttrBuilder<NodeIdentifier, Node<?>, AnyXmlNode> anyXmlBuilder = Builders.anyXmlBuilder(schema);
 
         return anyXmlBuilder.withValue(value).build();
     }
@@ -46,6 +46,6 @@ public abstract class AnyXmlNodeBaseParser<E> implements
      * @param schema schema for leaf
      * @return parsed element as an Object
      */
-    protected abstract DOMSource parseAnyXml(E element, AnyXmlSchemaNode schema);
+    protected abstract Node<?> parseAnyXml(E element, AnyXmlSchemaNode schema);
 
 }

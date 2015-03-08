@@ -1,13 +1,6 @@
 package org.opendaylight.yangtools.yang.data.composite.node.schema.parser;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Set;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
@@ -23,7 +16,13 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
-@Ignore
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Set;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 public class Bug2180Test {
     private Module simpleContainerModule;
     private Module bug2111TestModule;
