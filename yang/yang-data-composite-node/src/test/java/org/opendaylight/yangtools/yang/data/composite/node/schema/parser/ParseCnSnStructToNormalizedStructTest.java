@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.composite.node.schema.parser;
 
 import static org.junit.Assert.assertEquals;
 
-import org.junit.Ignore;
 import org.opendaylight.yangtools.yang.data.composite.node.schema.cnsn.parser.CnSnToNormalizedNodeParserFactory;
 
 
@@ -29,7 +28,6 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
-@Ignore
 public class ParseCnSnStructToNormalizedStructTest {
 
     private static DataSchemaNode resolvedDataSchemaNode;

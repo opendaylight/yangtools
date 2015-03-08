@@ -276,7 +276,6 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
 
         context.emittingChild(codecs.getSchemaContext(), writer);
         context.writeChildJsonIdentifier(codecs.getSchemaContext(), writer, name.getNodeType());
-        // FIXME this kind of serialization is incorrect since the value for AnyXml is now a DOMSource
         writer.value(String.valueOf(value));
     }
 

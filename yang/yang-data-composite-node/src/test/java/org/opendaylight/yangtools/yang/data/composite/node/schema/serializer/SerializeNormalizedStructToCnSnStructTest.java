@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.composite.node.schema.serializer;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.junit.Ignore;
 import org.opendaylight.yangtools.yang.data.composite.node.schema.cnsn.serializer.CnSnFromNormalizedNodeSerializerFactory;
 
 
@@ -29,7 +28,6 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
-@Ignore
 public class SerializeNormalizedStructToCnSnStructTest {
 
     private static DataSchemaNode resolvedDataSchemaNode;

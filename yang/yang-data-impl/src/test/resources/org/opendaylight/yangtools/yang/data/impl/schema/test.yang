@@ -48,8 +48,6 @@ module test {
                 leaf instance-id {
                     type instance-identifier;
                 }
-
-                anyxml anyX;
             }
         }
      }
