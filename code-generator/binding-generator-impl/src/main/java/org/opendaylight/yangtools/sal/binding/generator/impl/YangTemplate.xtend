@@ -55,34 +55,34 @@ class YangTemplate {
 
         '''
             «IF schemaNode instanceof DataSchemaNode»
-            «writeDataSchemaNode(schemaNode as DataSchemaNode)»
+            «writeDataSchemaNode(schemaNode)»
             «ENDIF»
             «IF schemaNode instanceof EnumTypeDefinition.EnumPair»
-            «writeEnumPair(schemaNode as EnumTypeDefinition.EnumPair)»
+            «writeEnumPair(schemaNode)»
             «ENDIF»
             «IF schemaNode instanceof ExtensionDefinition»
-            «writeExtension(schemaNode as ExtensionDefinition)»
+            «writeExtension(schemaNode)»
             «ENDIF»
             «IF schemaNode instanceof FeatureDefinition»
-            «writeFeature(schemaNode as FeatureDefinition)»
+            «writeFeature(schemaNode)»
             «ENDIF»
             «IF schemaNode instanceof GroupingDefinition»
-            «writeGroupingDef(schemaNode as GroupingDefinition)»
+            «writeGroupingDef(schemaNode)»
             «ENDIF»
             «IF schemaNode instanceof IdentitySchemaNode»
-            «writeIdentity(schemaNode as IdentitySchemaNode)»
+            «writeIdentity(schemaNode)»
             «ENDIF»
             «IF schemaNode instanceof NotificationDefinition»
-            «writeNotification(schemaNode as NotificationDefinition)»
+            «writeNotification(schemaNode)»
             «ENDIF»
             «IF schemaNode instanceof RpcDefinition»
-            «writeRPC(schemaNode as RpcDefinition)»
+            «writeRPC(schemaNode)»
             «ENDIF»
             «IF schemaNode instanceof TypeDefinition<?>»
-            «writeTypeDefinition(schemaNode as TypeDefinition<?>)»
+            «writeTypeDefinition(schemaNode)»
             «ENDIF»
             «IF schemaNode instanceof UnknownSchemaNode»
-            «writeUnknownSchemaNode(schemaNode as UnknownSchemaNode)»
+            «writeUnknownSchemaNode(schemaNode)»
             «ENDIF»
         '''
     }
@@ -94,7 +94,7 @@ class YangTemplate {
         '''
             «FOR node : nodes»
                 «IF node instanceof NotificationDefinition»
-                «writeNotification(node as NotificationDefinition)»
+                «writeNotification(node)»
                 «ELSEIF node instanceof RpcDefinition»
                 «writeRPC(node as RpcDefinition)»
                 «ENDIF»
@@ -371,7 +371,7 @@ class YangTemplate {
         '''
             refine «path.pathFromRoot.last» {
                 «IF schemaNode instanceof DataSchemaNode»
-                «writeDataSchemaNode(schemaNode as DataSchemaNode)»
+                «writeDataSchemaNode(schemaNode)»
                 «ENDIF»
             }
         '''
@@ -682,25 +682,25 @@ class YangTemplate {
     def static CharSequence writeDataSchemaNode(DataSchemaNode child) {
         '''
             «IF child instanceof ContainerSchemaNode»
-                «writeContSchemaNode(child as ContainerSchemaNode)»
+                «writeContSchemaNode(child)»
             «ENDIF»
             «IF child instanceof AnyXmlSchemaNode»
-                «writeAnyXmlSchemaNode(child as AnyXmlSchemaNode)»
+                «writeAnyXmlSchemaNode(child)»
             «ENDIF»
             «IF child instanceof LeafSchemaNode»
-                «writeLeafSchemaNode(child as LeafSchemaNode)»
+                «writeLeafSchemaNode(child)»
             «ENDIF»
             «IF child instanceof LeafListSchemaNode»
-                «writeLeafListSchemaNode(child as LeafListSchemaNode)»
+                «writeLeafListSchemaNode(child)»
             «ENDIF»
             «IF child instanceof ChoiceCaseNode»
-                «writeChoiceCaseNode(child as ChoiceCaseNode)»
+                «writeChoiceCaseNode(child)»
             «ENDIF»
             «IF child instanceof ChoiceNode»
-                «writeChoiceNode(child as ChoiceNode)»
+                «writeChoiceNode(child)»
             «ENDIF»
             «IF child instanceof ListSchemaNode»
-                «writeListSchemaNode(child as ListSchemaNode)»
+                «writeListSchemaNode(child)»
             «ENDIF»
         '''
     }
