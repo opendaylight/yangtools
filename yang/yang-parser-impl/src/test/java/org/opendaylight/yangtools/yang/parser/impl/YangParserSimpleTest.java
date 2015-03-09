@@ -97,7 +97,7 @@ public class YangParserSimpleTest {
         assertTrue(found2);
 
         assertTrue(constraints.isMandatory());
-        assertNull(constraints.getMinElements());
+        assertEquals(0, constraints.getMinElements().intValue());
         assertNull(constraints.getMaxElements());
     }
 
@@ -147,7 +147,7 @@ public class YangParserSimpleTest {
         assertTrue(found2);
 
         assertFalse(constraints.isMandatory());
-        assertNull(constraints.getMinElements());
+        assertEquals(0, constraints.getMinElements().intValue());
         assertNull(constraints.getMaxElements());
         assertTrue(nodes.isPresenceContainer());
 
