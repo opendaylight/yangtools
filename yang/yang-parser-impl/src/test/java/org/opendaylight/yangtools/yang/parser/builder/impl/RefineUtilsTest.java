@@ -91,8 +91,8 @@ public class RefineUtilsTest extends AbstractBuilderTest {
         RefineUtils.performRefine(listBuilder, refineBuilder);
         assertFalse(listBuilder.getConstraints().getMustDefinitions().isEmpty());
         assertEquals(listBuilder.getConstraints().getMustDefinitions().size(), 1);
-        assertNull(listBuilder.getConstraints().getMinElements());
-        assertNull(listBuilder.getConstraints().getMaxElements());
+        assertEquals(0, listBuilder.getConstraints().getMinElements().intValue());
+        assertEquals(Integer.MAX_VALUE, listBuilder.getConstraints().getMaxElements().intValue());
         assertFalse(listBuilder.getUnknownNodes().isEmpty());
         assertEquals(listBuilder.getUnknownNodes().get(0), unknownNodeBuilder);
     }
@@ -118,8 +118,8 @@ public class RefineUtilsTest extends AbstractBuilderTest {
 
         RefineUtils.performRefine(leafListBuilder, refineBuilder);
         assertTrue(leafListBuilder.getConstraints().getMustDefinitions().isEmpty());
-        assertNull(leafListBuilder.getConstraints().getMinElements());
-        assertNull(leafListBuilder.getConstraints().getMaxElements());
+        assertEquals(0, leafListBuilder.getConstraints().getMinElements().intValue());
+        assertEquals(Integer.MAX_VALUE, leafListBuilder.getConstraints().getMaxElements().intValue());
         assertFalse(leafListBuilder.getUnknownNodes().isEmpty());
         assertEquals(leafListBuilder.getUnknownNodes().get(0), unknownNodeBuilder);
 

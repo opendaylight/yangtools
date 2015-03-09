@@ -21,6 +21,9 @@ public final class ConstraintsBuilderImpl implements ConstraintsBuilder {
     private static final ConstraintDefinitionImpl EMPTY_CONSTRAINT = new ConstraintDefinitionImpl();
     private static final ConstraintDefinitionImpl EMPTY_MANDATORY_CONSTRAINT;
 
+    private static final int MIN_ELEMENTS_DEFAULT = 0;
+    private static final int MAX_ELEMENTS_DEFAULT = Integer.MAX_VALUE;
+
     static {
         ConstraintDefinitionImpl c = new ConstraintDefinitionImpl();
         c.setMandatory(true);
@@ -42,6 +45,8 @@ public final class ConstraintsBuilderImpl implements ConstraintsBuilder {
         this.moduleName = moduleName;
         this.line = line;
         mustDefinitions = new HashSet<>();
+        min = MIN_ELEMENTS_DEFAULT;
+        max = MAX_ELEMENTS_DEFAULT;
     }
 
     ConstraintsBuilderImpl(final ConstraintsBuilder b) {
