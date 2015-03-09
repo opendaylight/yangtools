@@ -24,8 +24,8 @@ public final class InstanceIdentifierForXmlCodec {
         return codec.deserialize(element.getTextContent().trim());
     }
 
-    public static Element serialize(final YangInstanceIdentifier id, final Element element) {
-        final RandomPrefixInstanceIdentifierSerializer codec = new RandomPrefixInstanceIdentifierSerializer();
+    public static Element serialize(final YangInstanceIdentifier id, final Element element, SchemaContext context) {
+        final RandomPrefixInstanceIdentifierSerializer codec = new RandomPrefixInstanceIdentifierSerializer(context);
         final String str = codec.serialize(id);
 
         for (Entry<URI, String> e : codec.getPrefixes()) {
@@ -33,6 +33,15 @@ public final class InstanceIdentifierForXmlCodec {
         }
         element.setTextContent(str);
         return element;
+    }
+
+    /**
+     *
+     * @deprecated USe {@link #serialize(YangInstanceIdentifier, Element, SchemaContext)} instead.
+     */
+    @Deprecated
+    public static Element serialize(final YangInstanceIdentifier id, final Element element) {
+        throw new UnsupportedOperationException("Not supported, due to buggy API contract.");
     }
 
     private static String getIdAndPrefixAsStr(final String pathPart) {
