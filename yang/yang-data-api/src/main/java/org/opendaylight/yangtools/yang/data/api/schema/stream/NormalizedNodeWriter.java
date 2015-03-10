@@ -245,7 +245,12 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
 
         @Override
         protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
-            getWriter().startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()));
+            final NormalizedNodeStreamWriter writer = getWriter();
+            if(writer instanceof NormalizedNodeStreamAttributeWriter) {
+                ((NormalizedNodeStreamAttributeWriter) writer).startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()), node.getAttributes());
+            } else {
+                writer.startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()));
+            }
 
             final Set<QName> qnames = node.getIdentifier().getKeyValues().keySet();
             // Write out all the key children
