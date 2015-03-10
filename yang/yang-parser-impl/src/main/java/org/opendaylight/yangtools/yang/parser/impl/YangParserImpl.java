@@ -15,7 +15,6 @@ import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.f
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.processAugmentation;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.TypeUtils.resolveType;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.TypeUtils.resolveTypeUnion;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBiMap;
@@ -47,7 +46,7 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.YangContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
@@ -1262,16 +1261,16 @@ public final class YangParserImpl implements YangContextParser {
             for (Map.Entry<Date, ModuleBuilder> childEntry : entry.getValue().entrySet()) {
                 final ModuleBuilder moduleBuilder = childEntry.getValue();
                 final Module module = moduleBuilder.build();
-                final List<ChoiceNode> allChoicesFromModule = getChoicesFrom(module);
+                final List<ChoiceSchemaNode> allChoicesFromModule = getChoicesFrom(module);
 
-                for (ChoiceNode choiceNode : allChoicesFromModule) {
+                for (ChoiceSchemaNode choiceNode : allChoicesFromModule) {
                     findDuplicityNodesIn(choiceNode, module, moduleBuilder, modules);
                 }
             }
         }
     }
 
-    private void findDuplicityNodesIn(final ChoiceNode choiceNode, final Module module, final ModuleBuilder moduleBuilder,
+    private void findDuplicityNodesIn(final ChoiceSchemaNode choiceNode, final Module module, final ModuleBuilder moduleBuilder,
             final Map<URI, TreeMap<Date, ModuleBuilder>> modules) {
         final Set<QName> duplicityTestSet = new HashSet<QName>();
 
@@ -1293,8 +1292,8 @@ public final class YangParserImpl implements YangContextParser {
         }
     }
 
-    private List<ChoiceNode> getChoicesFrom(final Module module) {
-        final List<ChoiceNode> allChoices = new ArrayList<ChoiceNode>();
+    private List<ChoiceSchemaNode> getChoicesFrom(final Module module) {
+        final List<ChoiceSchemaNode> allChoices = new ArrayList<ChoiceSchemaNode>();
 
         for (DataSchemaNode dataSchemaNode : module.getChildNodes()) {
             findChoicesIn(dataSchemaNode, allChoices);
@@ -1302,7 +1301,7 @@ public final class YangParserImpl implements YangContextParser {
         return allChoices;
     }
 
-    private void findChoicesIn(final SchemaNode schemaNode, final Collection<ChoiceNode> choiceNodes) {
+    private void findChoicesIn(final SchemaNode schemaNode, final Collection<ChoiceSchemaNode> choiceNodes) {
         if (schemaNode instanceof ContainerSchemaNode) {
             final ContainerSchemaNode contSchemaNode = (ContainerSchemaNode) schemaNode;
             for (DataSchemaNode dataSchemaNode : contSchemaNode.getChildNodes()) {
@@ -1313,8 +1312,8 @@ public final class YangParserImpl implements YangContextParser {
             for (DataSchemaNode dataSchemaNode : listSchemaNode.getChildNodes()) {
                 findChoicesIn(dataSchemaNode, choiceNodes);
             }
-        } else if (schemaNode instanceof ChoiceNode) {
-            choiceNodes.add((ChoiceNode) schemaNode);
+        } else if (schemaNode instanceof ChoiceSchemaNode) {
+            choiceNodes.add((ChoiceSchemaNode) schemaNode);
         }
     }
 

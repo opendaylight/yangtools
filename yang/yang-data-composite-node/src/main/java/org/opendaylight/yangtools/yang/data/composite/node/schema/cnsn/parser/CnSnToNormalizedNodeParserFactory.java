@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.composite.node.schema.cnsn.parser;
 import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
+import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
@@ -24,7 +25,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNo
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.NodeParserDispatcher;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -92,7 +93,7 @@ public class CnSnToNormalizedNodeParserFactory implements ToNormalizedNodeParser
     }
 
     @Override
-    public ToNormalizedNodeParser<Node<?>, org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode, ChoiceNode> getChoiceNodeParser() {
+    public ToNormalizedNodeParser<Node<?>, ChoiceNode, ChoiceSchemaNode> getChoiceNodeParser() {
         return choiceNodeCnSnParser;
     }
 

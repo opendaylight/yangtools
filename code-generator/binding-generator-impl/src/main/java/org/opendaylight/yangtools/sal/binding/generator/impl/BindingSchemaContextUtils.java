@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
@@ -90,8 +90,8 @@ public final class BindingSchemaContextUtils {
             final QName targetQName) {
 
         for (DataSchemaNode child : ctx.getChildNodes()) {
-            if (child instanceof ChoiceNode) {
-                DataNodeContainer potential = findInCases(((ChoiceNode) child), targetQName);
+            if (child instanceof ChoiceSchemaNode) {
+                DataNodeContainer potential = findInCases(((ChoiceSchemaNode) child), targetQName);
                 if (potential != null) {
                     return Optional.of(potential);
                 }
@@ -107,7 +107,7 @@ public final class BindingSchemaContextUtils {
         return Optional.absent();
     }
 
-    private static DataNodeContainer findInCases(final ChoiceNode choiceNode, final QName targetQName) {
+    private static DataNodeContainer findInCases(final ChoiceSchemaNode choiceNode, final QName targetQName) {
         for (ChoiceCaseNode caze : choiceNode.getCases()) {
             Optional<DataNodeContainer> potential = findDataNodeContainer(caze, targetQName);
             if (potential.isPresent()) {
@@ -165,24 +165,24 @@ public final class BindingSchemaContextUtils {
         return augmentations;
     }
 
-    public static Optional<ChoiceNode> findInstantiatedChoice(final DataNodeContainer parent, final Class<?> choiceClass) {
+    public static Optional<ChoiceSchemaNode> findInstantiatedChoice(final DataNodeContainer parent, final Class<?> choiceClass) {
         return findInstantiatedChoice(parent, BindingReflections.findQName(choiceClass));
     }
 
-    public static Optional<ChoiceNode> findInstantiatedChoice(final DataNodeContainer ctxNode, final QName choiceName) {
+    public static Optional<ChoiceSchemaNode> findInstantiatedChoice(final DataNodeContainer ctxNode, final QName choiceName) {
         DataSchemaNode potential = ctxNode.getDataChildByName(choiceName);
         if (potential == null) {
             potential = ctxNode.getDataChildByName(choiceName.getLocalName());
         }
 
-        if (potential instanceof ChoiceNode) {
-            return Optional.of((ChoiceNode) potential);
+        if (potential instanceof ChoiceSchemaNode) {
+            return Optional.of((ChoiceSchemaNode) potential);
         }
 
         return Optional.absent();
     }
 
-    public static Optional<ChoiceCaseNode> findInstantiatedCase(final ChoiceNode instantiatedChoice, final ChoiceCaseNode originalDefinition) {
+    public static Optional<ChoiceCaseNode> findInstantiatedCase(final ChoiceSchemaNode instantiatedChoice, final ChoiceCaseNode originalDefinition) {
         ChoiceCaseNode potential = instantiatedChoice.getCaseNodeByName(originalDefinition.getQName());
         if(originalDefinition.equals(potential)) {
             return Optional.of(potential);

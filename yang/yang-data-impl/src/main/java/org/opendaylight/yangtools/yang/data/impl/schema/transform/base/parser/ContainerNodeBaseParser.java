@@ -9,16 +9,15 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
 import java.util.Map;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
@@ -32,33 +31,33 @@ public abstract class ContainerNodeBaseParser<E> extends
 
     @Override
     protected final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> getBuilder(
-            ContainerSchemaNode schema) {
+            final ContainerSchemaNode schema) {
         return Builders.containerBuilder(schema);
     }
 
     @Override
-    public final ContainerNode parse(Iterable<E> elements, ContainerSchemaNode schema) {
+    public final ContainerNode parse(final Iterable<E> elements, final ContainerSchemaNode schema) {
         checkOnlyOneNode(schema, elements);
         return super.parse(elements, schema);
     }
 
     @Override
-    protected final Set<DataSchemaNode> getRealSchemasForAugment(ContainerSchemaNode schema, AugmentationSchema augmentSchema) {
+    protected final Set<DataSchemaNode> getRealSchemasForAugment(final ContainerSchemaNode schema, final AugmentationSchema augmentSchema) {
         return SchemaUtils.getRealSchemasForAugment((AugmentationTarget) schema, augmentSchema);
     }
 
     @Override
-    protected final DataSchemaNode getSchemaForChild(ContainerSchemaNode schema, QName childQName) {
+    protected final DataSchemaNode getSchemaForChild(final ContainerSchemaNode schema, final QName childQName) {
         return SchemaUtils.findSchemaForChild(schema, childQName);
     }
 
     @Override
-    protected final Map<QName, ChoiceNode> mapChildElementsFromChoices(ContainerSchemaNode schema) {
+    protected final Map<QName, ChoiceSchemaNode> mapChildElementsFromChoices(final ContainerSchemaNode schema) {
         return SchemaUtils.mapChildElementsFromChoices(schema);
     }
 
     @Override
-    protected final Map<QName, AugmentationSchema> mapChildElementsFromAugments(ContainerSchemaNode schema) {
+    protected final Map<QName, AugmentationSchema> mapChildElementsFromAugments(final ContainerSchemaNode schema) {
         return SchemaUtils.mapChildElementsFromAugments(schema);
     }
 

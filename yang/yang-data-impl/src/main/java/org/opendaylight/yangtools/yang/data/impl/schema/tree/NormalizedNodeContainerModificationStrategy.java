@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -33,7 +34,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMa
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -206,8 +207,8 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
 
         private final Map<YangInstanceIdentifier.PathArgument, ModificationApplyOperation> childNodes;
 
-        public ChoiceModificationStrategy(final ChoiceNode schemaNode) {
-            super(org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode.class);
+        public ChoiceModificationStrategy(final ChoiceSchemaNode schemaNode) {
+            super(ChoiceNode.class);
             ImmutableMap.Builder<YangInstanceIdentifier.PathArgument, ModificationApplyOperation> child = ImmutableMap.builder();
 
             for (ChoiceCaseNode caze : schemaNode.getCases()) {
@@ -227,8 +228,8 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
         @Override
         @SuppressWarnings("rawtypes")
         protected DataContainerNodeBuilder createBuilder(final NormalizedNode<?, ?> original) {
-            checkArgument(original instanceof org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode);
-            return ImmutableChoiceNodeBuilder.create((org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode) original);
+            checkArgument(original instanceof ChoiceNode);
+            return ImmutableChoiceNodeBuilder.create((ChoiceNode) original);
         }
     }
 

@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -34,7 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  */
 public interface ToNormalizedNodeParserFactory<E> {
     ToNormalizedNodeParser<E, AugmentationNode, AugmentationSchema> getAugmentationNodeParser();
-    ToNormalizedNodeParser<E, ChoiceNode, org.opendaylight.yangtools.yang.model.api.ChoiceNode> getChoiceNodeParser();
+    ToNormalizedNodeParser<E, ChoiceNode, ChoiceSchemaNode> getChoiceNodeParser();
     ToNormalizedNodeParser<E, ContainerNode, ContainerSchemaNode> getContainerNodeParser();
     ToNormalizedNodeParser<E, LeafNode<?>, LeafSchemaNode> getLeafNodeParser();
     ToNormalizedNodeParser<E, LeafSetEntryNode<?>, LeafListSchemaNode> getLeafSetEntryNodeParser();

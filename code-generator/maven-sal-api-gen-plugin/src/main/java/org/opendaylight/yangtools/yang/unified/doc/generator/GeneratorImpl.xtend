@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode
@@ -420,13 +420,13 @@ class GeneratorImpl {
         «IF child instanceof ListSchemaNode»
             «printListNode(child)»
         «ENDIF»
-        «IF child instanceof ChoiceNode»
+        «IF child instanceof ChoiceSchemaNode»
             «printChoiceNode(child)»
         «ENDIF»
         '''
     }
     
-    private def printChoiceNode(ChoiceNode child) {
+    private def printChoiceNode(ChoiceSchemaNode child) {
         val List<ChoiceCaseNode> cases = new ArrayList(child.cases);
         if(!cases.empty) {
             val ChoiceCaseNode aCase = cases.get(0)
@@ -755,7 +755,7 @@ class GeneratorImpl {
         «module.childNodes.treeSet(YangInstanceIdentifier.builder.build())»
     '''
 
-    private def dispatch CharSequence tree(ChoiceNode node,YangInstanceIdentifier path) '''
+    private def dispatch CharSequence tree(ChoiceSchemaNode node,YangInstanceIdentifier path) '''
         «node.nodeName» (choice)
         «casesTree(node.cases,path)»
     '''
@@ -865,7 +865,7 @@ class GeneratorImpl {
                 «ENDFOR»
                 </ul>
             '''
-        } else if(node instanceof ChoiceNode) {
+        } else if(node instanceof ChoiceSchemaNode) {
             return '''
                 «printInfo(node, "choice")»
                 «listItem("default case", node.defaultCase)»
@@ -944,7 +944,7 @@ class GeneratorImpl {
         val anyxmlNodes = nodes.filter(AnyXmlSchemaNode)
         val leafNodes = nodes.filter(LeafSchemaNode)
         val leafListNodes = nodes.filter(LeafListSchemaNode)
-        val choices = nodes.filter(ChoiceNode)
+        val choices = nodes.filter(ChoiceSchemaNode)
         val cases = nodes.filter(ChoiceCaseNode)
         val containers = nodes.filter(ContainerSchemaNode)
         val lists = nodes.filter(ListSchemaNode)
@@ -1075,7 +1075,7 @@ class GeneratorImpl {
         «node.childNodes.printChildren(level,newPath)»
     '''
 
-    private def dispatch CharSequence printInfo(ChoiceNode node, int level, YangInstanceIdentifier path) '''
+    private def dispatch CharSequence printInfo(ChoiceSchemaNode node, int level, YangInstanceIdentifier path) '''
         «val Set<DataSchemaNode> choiceCases = new HashSet(node.cases)»
         «choiceCases.printChildren(level,path)»
     '''
@@ -1228,7 +1228,7 @@ class GeneratorImpl {
                 pathString.append(':')
                 pathString.append(name.localName)
                 pathString.append('/')
-                if(node instanceof ChoiceNode && dataNode !== null) {
+                if(node instanceof ChoiceSchemaNode && dataNode !== null) {
                     val DataSchemaNode caseNode = dataNode.childNodes.findFirst[DataSchemaNode e | e instanceof ChoiceCaseNode];
                     if(caseNode !== null) {
                         pathString.append("(case)");
@@ -1406,7 +1406,7 @@ class GeneratorImpl {
     '''
 
     private def String nodeSchemaPathToPath(DataSchemaNode node, Map<SchemaPath, DataSchemaNode> childNodes) {
-        if (node instanceof ChoiceNode || node instanceof ChoiceCaseNode) {
+        if (node instanceof ChoiceSchemaNode || node instanceof ChoiceCaseNode) {
             return null
         }
 
@@ -1422,7 +1422,7 @@ class GeneratorImpl {
             for (pathElement : path) {
                 actual.add(pathElement)
                 val DataSchemaNode nodeByPath = childNodes.get(SchemaPath.create(actual, absolute))
-                if (!(nodeByPath instanceof ChoiceNode) && !(nodeByPath instanceof ChoiceCaseNode)) {
+                if (!(nodeByPath instanceof ChoiceSchemaNode) && !(nodeByPath instanceof ChoiceCaseNode)) {
                     result.append(pathElement.localName)
                     if (i != path.size - 1) {
                         result.append("/")
@@ -1440,7 +1440,7 @@ class GeneratorImpl {
             if (node instanceof DataNodeContainer) {
                 collectChildNodes((node as DataNodeContainer).childNodes, destination)
             }
-            if (node instanceof ChoiceNode) {
+            if (node instanceof ChoiceSchemaNode) {
                 val List<DataSchemaNode> choiceCases = new ArrayList()
                 for (caseNode : node.cases) {
                     choiceCases.add(caseNode)

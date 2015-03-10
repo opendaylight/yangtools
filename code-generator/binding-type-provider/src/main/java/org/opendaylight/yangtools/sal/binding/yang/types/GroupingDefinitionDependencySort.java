@@ -9,17 +9,15 @@ package org.opendaylight.yangtools.sal.binding.yang.types;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -149,8 +147,8 @@ public class GroupingDefinitionDependencySort {
         for (DataSchemaNode childNode : container.getChildNodes()) {
             if (childNode instanceof DataNodeContainer) {
                 ret.addAll(getAllUsesNodes((DataNodeContainer) childNode));
-            } else if (childNode instanceof ChoiceNode) {
-                Set<ChoiceCaseNode> cases = ((ChoiceNode) childNode).getCases();
+            } else if (childNode instanceof ChoiceSchemaNode) {
+                Set<ChoiceCaseNode> cases = ((ChoiceSchemaNode) childNode).getCases();
                 for (ChoiceCaseNode choiceCaseNode : cases) {
                     ret.addAll(getAllUsesNodes(choiceCaseNode));
                 }
