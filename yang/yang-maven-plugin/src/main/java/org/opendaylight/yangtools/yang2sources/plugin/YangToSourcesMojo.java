@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
+import com.google.common.annotations.VisibleForTesting;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -27,21 +27,19 @@ import org.apache.maven.repository.RepositorySystem;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
-import org.opendaylight.yangtools.yang2sources.spi.CodeGenerator;
+import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
 import org.sonatype.plexus.build.incremental.BuildContext;
-
-import com.google.common.annotations.VisibleForTesting;
 
 /**
  * Generate sources from yang files using user provided set of
- * {@link CodeGenerator}s. Steps of this process:
+ * {@link BasicCodeGenerator}s. Steps of this process:
  * <ol>
  * <li>List yang files from {@link #yangFilesRootDir}</li>
  * <li>Process yang files using {@link YangParserImpl}</li>
- * <li>For each {@link CodeGenerator} from {@link #codeGenerators}:
+ * <li>For each {@link BasicCodeGenerator} from {@link #codeGenerators}:
  * <ol>
  * <li>Instantiate using default constructor</li>
- * <li>Call {@link CodeGenerator#generateSources(SchemaContext, File, Set)}</li>
+ * <li>Call {@link BasicCodeGenerator#generateSources(SchemaContext, File, Set)}</li>
  * </ol></li>
  * </ol>
  */
@@ -50,7 +48,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
     public static final String PLUGIN_NAME = "org.opendaylight.yangtools:yang-maven-plugin";
 
     /**
-     * Classes implementing {@link CodeGenerator} interface. An instance will be
+     * Classes implementing {@link BasicCodeGenerator} interface. An instance will be
      * created out of every class using default constructor. Method {@link
      * CodeGenerator#generateSources(SchemaContext, File, Set<String>
      * yangModulesNames)} will be called on every instance.
@@ -93,12 +91,12 @@ public final class YangToSourcesMojo extends AbstractMojo {
     public YangToSourcesMojo() {
     }
 
-    public void setProject(MavenProject project) {
+    public void setProject(final MavenProject project) {
         this.project = project;
     }
 
     @VisibleForTesting
-    YangToSourcesMojo(YangToSourcesProcessor processor) {
+    YangToSourcesMojo(final YangToSourcesProcessor processor) {
         this.yangToSourcesProcessor = processor;
     }
 
@@ -119,7 +117,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
         yangToSourcesProcessor.execute();
     }
 
-    private static List<CodeGeneratorArg> processCodeGenerators(CodeGeneratorArg[] codeGenerators) {
+    private static List<CodeGeneratorArg> processCodeGenerators(final CodeGeneratorArg[] codeGenerators) {
         List<CodeGeneratorArg> codeGeneratorArgs;
         if (codeGenerators == null) {
             codeGeneratorArgs = Collections.emptyList();
@@ -129,7 +127,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
         return codeGeneratorArgs;
     }
 
-    private static File processYangFilesRootDir(String yangFilesRootDir, File baseDir) {
+    private static File processYangFilesRootDir(final String yangFilesRootDir, final File baseDir) {
         File yangFilesRootFile;
         if (yangFilesRootDir == null) {
             yangFilesRootFile = new File(baseDir, "src" + File.separator + "main" + File.separator + "yang");
@@ -144,7 +142,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
         return yangFilesRootFile;
     }
 
-    private static File[] processExcludeFiles(String[] excludeFiles, File baseDir) {
+    private static File[] processExcludeFiles(final String[] excludeFiles, final File baseDir) {
         if (excludeFiles == null) {
             return new File[] {};
         }
