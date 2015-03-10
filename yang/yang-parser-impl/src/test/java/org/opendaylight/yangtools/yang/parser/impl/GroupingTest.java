@@ -12,9 +12,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -31,7 +28,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -41,6 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
@@ -161,12 +159,12 @@ public class GroupingTest {
         assertFalse(data_u.equals(data_g));
         assertEquals(data_g,  SchemaNodeUtils.getRootOriginalIfPossible(data_u));
 
-        ChoiceNode how_u = (ChoiceNode) destination.getDataChildByName("how");
+        ChoiceSchemaNode how_u = (ChoiceSchemaNode) destination.getDataChildByName("how");
         assertNotNull(how_u);
         TestUtils.checkIsAddedByUses(how_u, true);
         assertEquals(2, how_u.getCases().size());
 
-        ChoiceNode how_g = (ChoiceNode) grouping.getDataChildByName("how");
+        ChoiceSchemaNode how_g = (ChoiceSchemaNode) grouping.getDataChildByName("how");
         assertNotNull(how_g);
         TestUtils.checkIsAddedByUses(how_g, false);
         assertEquals(2, how_g.getCases().size());
@@ -268,7 +266,7 @@ public class GroupingTest {
         assertFalse(data_u.equals(data_g));
         assertEquals(data_g, SchemaNodeUtils.getRootOriginalIfPossible(data_u));
 
-        ChoiceNode how_u = (ChoiceNode) foo.getDataChildByName("how");
+        ChoiceSchemaNode how_u = (ChoiceSchemaNode) foo.getDataChildByName("how");
         assertNotNull(how_u);
         TestUtils.checkIsAddedByUses(how_u, true);
         assertFalse(how_u.isAugmenting());
@@ -281,7 +279,7 @@ public class GroupingTest {
         LeafSchemaNode intervalLeaf = (LeafSchemaNode) interval.getDataChildByName("interval");
         assertFalse(intervalLeaf.isAugmenting());
 
-        ChoiceNode how_g = (ChoiceNode) grouping.getDataChildByName("how");
+        ChoiceSchemaNode how_g = (ChoiceSchemaNode) grouping.getDataChildByName("how");
         assertNotNull(how_g);
         TestUtils.checkIsAddedByUses(how_g, false);
         assertFalse(how_u.equals(how_g));
@@ -571,7 +569,7 @@ public class GroupingTest {
                 .getDataChildByName("my-container"))
                 .getDataChildByName("my-leaf");
 
-        TypeDefinition impType = null;
+        TypeDefinition<?> impType = null;
         Set<TypeDefinition<?>> typeDefinitions = imp.getTypeDefinitions();
         for (TypeDefinition<?> typeDefinition : typeDefinitions) {
             if (typeDefinition.getQName().getLocalName().equals("imp-type")) {

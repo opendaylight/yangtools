@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.serializ
 
 import java.util.HashSet;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
@@ -18,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 /**
@@ -25,24 +25,22 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  *
  * @param <E> type of serialized elements
  */
-public abstract class ChoiceNodeBaseSerializer<E>
-        extends
-        BaseDispatcherSerializer<E, ChoiceNode, org.opendaylight.yangtools.yang.model.api.ChoiceNode> {
+public abstract class ChoiceNodeBaseSerializer<E> extends BaseDispatcherSerializer<E, ChoiceNode, ChoiceSchemaNode> {
 
     @Override
-    protected final DataSchemaNode getSchemaForChild(final org.opendaylight.yangtools.yang.model.api.ChoiceNode schema,
+    protected final DataSchemaNode getSchemaForChild(final ChoiceSchemaNode schema,
             final DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> childNode) {
         return SchemaUtils.findSchemaForChild(schema, childNode.getNodeType());
     }
 
     @Override
-    protected final AugmentationSchema getAugmentedCase(final org.opendaylight.yangtools.yang.model.api.ChoiceNode schema,
+    protected final AugmentationSchema getAugmentedCase(final ChoiceSchemaNode schema,
             final AugmentationNode augmentationNode) {
         return SchemaUtils.findSchemaForAugment(schema, augmentationNode.getIdentifier().getPossibleChildNames());
     }
 
     @Override
-    protected final Set<DataSchemaNode> getRealSchemasForAugment(final org.opendaylight.yangtools.yang.model.api.ChoiceNode schema, final AugmentationSchema augmentationSchema) {
+    protected final Set<DataSchemaNode> getRealSchemasForAugment(final ChoiceSchemaNode schema, final AugmentationSchema augmentationSchema) {
         Set<DataSchemaNode> aggregatedSchemas = new HashSet<>(SchemaUtils.getRealSchemasForAugment(schema, augmentationSchema));
 
         for (ChoiceCaseNode choiceCaseNode : schema.getCases()) {

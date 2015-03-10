@@ -12,18 +12,17 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
+import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
@@ -33,7 +32,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -169,8 +168,8 @@ public class NormalizedDataBuilderTest {
         LeafSchemaNode augumentString1SchemaNode = (LeafSchemaNode) getSchemaNode(schema, "test", "augmentString1");
         LeafSchemaNode augumentString2SchemaNode = (LeafSchemaNode) getSchemaNode(schema, "test", "augmentString2");
 
-        ChoiceNode choice1SchemaNode = (ChoiceNode) getSchemaNode(schema, "test", "choice");
-        org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode choice = ImmutableChoiceNodeSchemaAwareBuilder
+        ChoiceSchemaNode choice1SchemaNode = (ChoiceSchemaNode) getSchemaNode(schema, "test", "choice");
+        ChoiceNode choice = ImmutableChoiceNodeSchemaAwareBuilder
                 .create(choice1SchemaNode)
                 .withChild(Builders.<String> leafBuilder(augumentString1SchemaNode).withValue("case1").build())
                 // This should fail, since child node belongs to different case
@@ -228,8 +227,8 @@ public class NormalizedDataBuilderTest {
             }
             if (dataSchemaNode instanceof DataNodeContainer) {
                 containers.add((DataNodeContainer) dataSchemaNode);
-            } else if (dataSchemaNode instanceof ChoiceNode) {
-                containers.addAll(((ChoiceNode) dataSchemaNode).getCases());
+            } else if (dataSchemaNode instanceof ChoiceSchemaNode) {
+                containers.addAll(((ChoiceSchemaNode) dataSchemaNode).getCases());
             }
         }
 

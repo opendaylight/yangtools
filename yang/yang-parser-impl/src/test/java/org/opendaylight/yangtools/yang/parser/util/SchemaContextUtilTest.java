@@ -7,38 +7,38 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
-import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.model.util.Int32;
-import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Collections;
-
-import static org.junit.Assert.*;
+import org.junit.Test;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.util.Int32;
+import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public class SchemaContextUtilTest {
     @Mock
@@ -147,7 +147,7 @@ public class SchemaContextUtilTest {
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
-        testNode = ((ChoiceNode) myModule.getDataChildByName("my-choice")).getCaseNodeByName("one").getDataChildByName(
+        testNode = ((ChoiceSchemaNode) myModule.getDataChildByName("my-choice")).getCaseNodeByName("one").getDataChildByName(
                 "my-choice-leaf-one");
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-choice"),
@@ -248,7 +248,7 @@ public class SchemaContextUtilTest {
         assertNull(testNode);
         assertNull(foundNode);
 
-        testNode = ((ChoiceNode) myModule.getDataChildByName("my-choice")).getCaseNodeByName("one").getDataChildByName(
+        testNode = ((ChoiceSchemaNode) myModule.getDataChildByName("my-choice")).getCaseNodeByName("one").getDataChildByName(
                 "no-choice-leaf");
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-choice"),
@@ -706,7 +706,7 @@ public class SchemaContextUtilTest {
         assertEquals(testNode, foundNode);
 
         // find grouping in case
-        dataContainer = (DataNodeContainer) ((ChoiceNode) myModule.getDataChildByName("my-choice")).getCaseNodeByName(
+        dataContainer = (DataNodeContainer) ((ChoiceSchemaNode) myModule.getDataChildByName("my-choice")).getCaseNodeByName(
                 "one").getDataChildByName("my-container-in-case");
         testNode = getGroupingByName(dataContainer, "my-grouping-in-case");
 
@@ -830,7 +830,7 @@ public class SchemaContextUtilTest {
         assertNull(foundNode);
 
         // find grouping in case
-        dataContainer = (DataNodeContainer) ((ChoiceNode) myModule.getDataChildByName("my-choice")).getCaseNodeByName(
+        dataContainer = (DataNodeContainer) ((ChoiceSchemaNode) myModule.getDataChildByName("my-choice")).getCaseNodeByName(
                 "one").getDataChildByName("my-container-in-case");
         testNode = getGroupingByName(dataContainer, "my-grouping-in-case2");
 
@@ -845,7 +845,7 @@ public class SchemaContextUtilTest {
 
     }
 
-    private static GroupingDefinition getGroupingByName(DataNodeContainer dataNodeContainer, String name) {
+    private static GroupingDefinition getGroupingByName(final DataNodeContainer dataNodeContainer, final String name) {
         for (GroupingDefinition grouping : dataNodeContainer.getGroupings()) {
             if (grouping.getQName().getLocalName().equals(name)) {
                 return grouping;
@@ -854,7 +854,7 @@ public class SchemaContextUtilTest {
         return null;
     }
 
-    private static RpcDefinition getRpcByName(Module module, String name) {
+    private static RpcDefinition getRpcByName(final Module module, final String name) {
         for (RpcDefinition rpc : module.getRpcs()) {
             if (rpc.getQName().getLocalName().equals(name)) {
                 return rpc;
@@ -863,7 +863,7 @@ public class SchemaContextUtilTest {
         return null;
     }
 
-    private static NotificationDefinition getNotificationByName(Module module, String name) {
+    private static NotificationDefinition getNotificationByName(final Module module, final String name) {
         for (NotificationDefinition notification : module.getNotifications()) {
             if (notification.getQName().getLocalName().equals(name)) {
                 return notification;
@@ -885,7 +885,7 @@ public class SchemaContextUtilTest {
         Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
                 QName.parseRevision("2014-10-07"));
 
-        ChoiceNode choice = (ChoiceNode)getRpcByName(myModule,"my-name").getInput().getDataChildByName("my-choice");
+        ChoiceSchemaNode choice = (ChoiceSchemaNode)getRpcByName(myModule,"my-name").getInput().getDataChildByName("my-choice");
         SchemaNode testNode = choice.getCaseNodeByName("case-two").getDataChildByName("two");
 
         SchemaPath path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-name"),

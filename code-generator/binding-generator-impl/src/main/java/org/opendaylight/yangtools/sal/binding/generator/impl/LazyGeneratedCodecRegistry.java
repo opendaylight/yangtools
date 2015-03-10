@@ -66,7 +66,7 @@ import org.opendaylight.yangtools.yang.data.impl.codec.ValueWithQName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -281,8 +281,8 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
 
     private DataSchemaNode searchInChoices(final DataNodeContainer node, final QName arg) {
         for (DataSchemaNode child : node.getChildNodes()) {
-            if (child instanceof ChoiceNode) {
-                ChoiceNode choiceNode = (ChoiceNode) child;
+            if (child instanceof ChoiceSchemaNode) {
+                ChoiceSchemaNode choiceNode = (ChoiceSchemaNode) child;
                 DataSchemaNode potential = searchInCases(choiceNode, arg);
                 if (potential != null) {
                     return potential;
@@ -292,7 +292,7 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
         return null;
     }
 
-    private DataSchemaNode searchInCases(final ChoiceNode choiceNode, final QName arg) {
+    private DataSchemaNode searchInCases(final ChoiceSchemaNode choiceNode, final QName arg) {
         Set<ChoiceCaseNode> cases = choiceNode.getCases();
         for (ChoiceCaseNode caseNode : cases) {
             DataSchemaNode node = caseNode.getDataChildByName(arg);
@@ -449,7 +449,7 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void onChoiceCodecCreated(final Class<?> choiceClass,
-            final Class<? extends BindingCodec<Map<QName, Object>, Object>> choiceCodec, final ChoiceNode schema) {
+            final Class<? extends BindingCodec<Map<QName, Object>, Object>> choiceCodec, final ChoiceSchemaNode schema) {
         ChoiceCodec<?> oldCodec = choiceCodecs.get(choiceClass);
         Preconditions.checkState(oldCodec == null);
         BindingCodec<Map<QName, Object>, Object> delegate = newInstanceOf(choiceCodec);
@@ -984,12 +984,12 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
         @Override
         protected void adaptForPathImpl(final InstanceIdentifier<?> augTarget, final DataNodeContainer ctxNode) {
             tryToLoadImplementations();
-            Optional<ChoiceNode> newChoice = BindingSchemaContextUtils.findInstantiatedChoice(ctxNode, choiceType);
+            Optional<ChoiceSchemaNode> newChoice = BindingSchemaContextUtils.findInstantiatedChoice(ctxNode, choiceType);
             if(!newChoice.isPresent()) {
                 // Choice is nested inside other choice, so we need to look two levels deep.
                 in_choices: for(DataSchemaNode child : ctxNode.getChildNodes()) {
-                    if(child instanceof ChoiceNode) {
-                        Optional<ChoiceNode> potential = findChoiceInChoiceCases((ChoiceNode) child, choiceType);
+                    if (child instanceof ChoiceSchemaNode) {
+                        Optional<ChoiceSchemaNode> potential = findChoiceInChoiceCases((ChoiceSchemaNode) child, choiceType);
                         if(potential.isPresent()) {
                             newChoice = potential;
                             break in_choices;
@@ -1010,9 +1010,9 @@ class LazyGeneratedCodecRegistry implements CodecRegistry, SchemaContextListener
             }
         }
 
-        private Optional<ChoiceNode> findChoiceInChoiceCases(final ChoiceNode choice, final Class<?> choiceType) {
+        private Optional<ChoiceSchemaNode> findChoiceInChoiceCases(final ChoiceSchemaNode choice, final Class<?> choiceType) {
             for(ChoiceCaseNode caze : choice.getCases()) {
-                Optional<ChoiceNode> potential = BindingSchemaContextUtils.findInstantiatedChoice(caze, choiceType);
+                Optional<ChoiceSchemaNode> potential = BindingSchemaContextUtils.findInstantiatedChoice(caze, choiceType);
                 if(potential.isPresent()) {
                     return potential;
                 }

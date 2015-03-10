@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
@@ -39,7 +39,7 @@ public class DataValidationException extends RuntimeException {
         }
     }
 
-    public static void checkLegalChild(final boolean isLegal, final YangInstanceIdentifier.PathArgument child, final ChoiceNode schema) {
+    public static void checkLegalChild(final boolean isLegal, final YangInstanceIdentifier.PathArgument child, final ChoiceSchemaNode schema) {
         if (!isLegal) {
             throw new IllegalChildException(child, schema);
         }
@@ -79,7 +79,7 @@ public class DataValidationException extends RuntimeException {
                     + "Direct child nodes: %s, augmented child nodes: %s", child, schema, childNodes, augments));
         }
 
-        private IllegalChildException(final YangInstanceIdentifier.PathArgument child, final ChoiceNode schema) {
+        private IllegalChildException(final YangInstanceIdentifier.PathArgument child, final ChoiceSchemaNode schema) {
             super(String.format("Unknown child node: %s, not detected in choice: %s", child, schema));
         }
 

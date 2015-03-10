@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -68,8 +68,8 @@ public final class SchemaTracker {
                     child = tryFindNotification((SchemaContext) current, qname)
                             .or(tryFindRpc(((SchemaContext) current), qname)).orNull();
                 }
-            } else if (current instanceof ChoiceNode) {
-                child = ((ChoiceNode) current).getCaseNodeByName(qname);
+            } else if (current instanceof ChoiceSchemaNode) {
+                child = ((ChoiceSchemaNode) current).getCaseNodeByName(qname);
             } else if (current instanceof RpcDefinition) {
                 switch (qname.getLocalName()) {
                     case "input":
@@ -146,8 +146,8 @@ public final class SchemaTracker {
             if(schema == null && parent instanceof NotificationDefinition) {
                 schema = ((NotificationDefinition) parent);
             }
-        } else if(parent instanceof ChoiceNode) {
-            schema = findChildInCases((ChoiceNode) parent, qname);
+        } else if(parent instanceof ChoiceSchemaNode) {
+            schema = findChildInCases((ChoiceSchemaNode) parent, qname);
         } else {
             throw new IllegalStateException("Unsupported schema type "+ parent.getClass() +" on stack.");
         }
@@ -213,13 +213,13 @@ public final class SchemaTracker {
         return (LeafListSchemaNode) parent;
     }
 
-    public ChoiceNode startChoiceNode(final NodeIdentifier name) {
+    public ChoiceSchemaNode startChoiceNode(final NodeIdentifier name) {
         LOG.debug("Enter choice {}", name);
         final SchemaNode schema = getSchema(name);
 
-        Preconditions.checkArgument(schema instanceof ChoiceNode, "Node %s is not a choice", schema.getPath());
+        Preconditions.checkArgument(schema instanceof ChoiceSchemaNode, "Node %s is not a choice", schema.getPath());
         schemaStack.push(schema);
-        return (ChoiceNode)schema;
+        return (ChoiceSchemaNode)schema;
     }
 
     public SchemaNode startContainerNode(final NodeIdentifier name) {

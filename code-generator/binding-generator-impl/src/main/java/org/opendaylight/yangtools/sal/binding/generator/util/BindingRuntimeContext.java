@@ -44,7 +44,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.Augmentat
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -229,7 +229,7 @@ public class BindingRuntimeContext implements Immutable {
      *         the given context.
      * @throws IllegalArgumentException If supplied class does not represent case.
      */
-    public Optional<ChoiceCaseNode> getCaseSchemaDefinition(final ChoiceNode schema, final Class<?> childClass) throws IllegalArgumentException {
+    public Optional<ChoiceCaseNode> getCaseSchemaDefinition(final ChoiceSchemaNode schema, final Class<?> childClass) throws IllegalArgumentException {
         final DataSchemaNode origSchema = getSchemaDefinition(childClass);
         Preconditions.checkArgument(origSchema instanceof ChoiceCaseNode, "Supplied schema %s is not case.", origSchema);
 
@@ -274,8 +274,8 @@ public class BindingRuntimeContext implements Immutable {
 
     public ImmutableMap<Type, Entry<Type, Type>> getChoiceCaseChildren(final DataNodeContainer schema) {
         final Map<Type,Entry<Type,Type>> childToCase = new HashMap<>();;
-        for (final ChoiceNode choice :  FluentIterable.from(schema.getChildNodes()).filter(ChoiceNode.class)) {
-            final ChoiceNode originalChoice = getOriginalSchema(choice);
+        for (final ChoiceSchemaNode choice :  FluentIterable.from(schema.getChildNodes()).filter(ChoiceSchemaNode.class)) {
+            final ChoiceSchemaNode originalChoice = getOriginalSchema(choice);
             final Type choiceType = referencedType(typeToDefiningSchema.inverse().get(originalChoice));
             final Collection<Type> cases = choiceToCases.get(choiceType);
 

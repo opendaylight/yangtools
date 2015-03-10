@@ -12,9 +12,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -39,7 +38,7 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
     private final DataNodeContainer container;
     private final List<ListSchemaNode> allLists;
     private final List<ContainerSchemaNode> allContainers;
-    private final List<ChoiceNode> allChoices;
+    private final List<ChoiceSchemaNode> allChoices;
     private final List<DataSchemaNode> allChilds;
     private final List<GroupingDefinition> allGroupings;
     private final List<TypeDefinition<?>> allTypedefs;
@@ -83,7 +82,7 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
      *
      * @return Returns list all containers present in subtree.
      */
-    public List<ChoiceNode> allChoices() {
+    public List<ChoiceSchemaNode> allChoices() {
         return allChoices;
     }
 
@@ -125,8 +124,8 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
                     final ListSchemaNode list = (ListSchemaNode) childNode;
                     allLists.add(list);
                     traverse(list);
-                } else if (childNode instanceof ChoiceNode) {
-                    final ChoiceNode choiceNode = (ChoiceNode) childNode;
+                } else if (childNode instanceof ChoiceSchemaNode) {
+                    final ChoiceSchemaNode choiceNode = (ChoiceSchemaNode) childNode;
                     allChoices.add(choiceNode);
                     final Set<ChoiceCaseNode> cases = choiceNode.getCases();
                     if (cases != null) {

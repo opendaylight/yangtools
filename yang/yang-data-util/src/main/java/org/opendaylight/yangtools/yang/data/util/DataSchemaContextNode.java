@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -89,8 +89,8 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
     static final DataSchemaNode findChildSchemaNode(final DataNodeContainer parent, final QName child) {
         DataSchemaNode potential = parent.getDataChildByName(child);
         if (potential == null) {
-            Iterable<org.opendaylight.yangtools.yang.model.api.ChoiceNode> choices = FluentIterable.from(
-                    parent.getChildNodes()).filter(ChoiceNode.class);
+            Iterable<ChoiceSchemaNode> choices = FluentIterable.from(
+                    parent.getChildNodes()).filter(ChoiceSchemaNode.class);
             potential = findChoice(choices, child);
         }
         return potential;
@@ -105,10 +105,9 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
         return fromDataSchemaNode(result);
     }
 
-    private static org.opendaylight.yangtools.yang.model.api.ChoiceNode findChoice(
-            final Iterable<org.opendaylight.yangtools.yang.model.api.ChoiceNode> choices, final QName child) {
-        org.opendaylight.yangtools.yang.model.api.ChoiceNode foundChoice = null;
-        choiceLoop: for (org.opendaylight.yangtools.yang.model.api.ChoiceNode choice : choices) {
+    private static ChoiceSchemaNode findChoice(final Iterable<ChoiceSchemaNode> choices, final QName child) {
+        ChoiceSchemaNode foundChoice = null;
+        choiceLoop: for (ChoiceSchemaNode choice : choices) {
             for (ChoiceCaseNode caze : choice.getCases()) {
                 if (findChildSchemaNode(caze, child) != null) {
                     foundChoice = choice;
@@ -173,8 +172,8 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
             return fromListSchemaNode((ListSchemaNode) potential);
         } else if (potential instanceof LeafSchemaNode) {
             return new LeafContextNode((LeafSchemaNode) potential);
-        } else if (potential instanceof org.opendaylight.yangtools.yang.model.api.ChoiceNode) {
-            return new ChoiceNodeContextNode((org.opendaylight.yangtools.yang.model.api.ChoiceNode) potential);
+        } else if (potential instanceof ChoiceSchemaNode) {
+            return new ChoiceNodeContextNode((ChoiceSchemaNode) potential);
         } else if (potential instanceof LeafListSchemaNode) {
             return fromLeafListSchemaNode((LeafListSchemaNode) potential);
         } else if (potential instanceof AnyXmlSchemaNode) {

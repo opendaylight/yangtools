@@ -43,7 +43,7 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Submodule_stmtCont
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -732,8 +732,8 @@ public final class BuilderUtils {
 
         if (node instanceof AnyXmlSchemaNode) {
             return new AnyXmlBuilder(moduleName, line, qname, schemaPath, ((AnyXmlSchemaNode) node));
-        } else if (node instanceof ChoiceNode) {
-            return new ChoiceBuilder(moduleName, line, qname, schemaPath, ((ChoiceNode) node));
+        } else if (node instanceof ChoiceSchemaNode) {
+            return new ChoiceBuilder(moduleName, line, qname, schemaPath, ((ChoiceSchemaNode) node));
         } else if (node instanceof ContainerSchemaNode) {
             return new ContainerSchemaNodeBuilder(moduleName, line, qname, schemaPath, ((ContainerSchemaNode) node));
         } else if (node instanceof LeafSchemaNode) {

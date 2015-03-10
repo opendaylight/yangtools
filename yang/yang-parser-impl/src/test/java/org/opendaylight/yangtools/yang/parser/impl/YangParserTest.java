@@ -13,7 +13,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -34,13 +33,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -635,7 +633,7 @@ public class YangParserTest {
     public void testChoice() {
         Module foo = TestUtils.findModule(modules, "foo");
         ContainerSchemaNode transfer = (ContainerSchemaNode) foo.getDataChildByName("transfer");
-        ChoiceNode how = (ChoiceNode) transfer.getDataChildByName("how");
+        ChoiceSchemaNode how = (ChoiceSchemaNode) transfer.getDataChildByName("how");
         Set<ChoiceCaseNode> cases = how.getCases();
         assertEquals(5, cases.size());
         ChoiceCaseNode input = null;

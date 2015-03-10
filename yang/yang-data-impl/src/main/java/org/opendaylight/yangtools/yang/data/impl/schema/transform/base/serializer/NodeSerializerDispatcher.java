@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.FromNormalizedNodeSerializerFactory;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -54,8 +55,8 @@ public interface NodeSerializerDispatcher<E> {
         }
 
         @Override
-        public final Iterable<E> dispatchChildElement(Object childSchema,
-                DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild) {
+        public final Iterable<E> dispatchChildElement(final Object childSchema,
+                final DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild) {
             if (dataContainerChild instanceof ContainerNode) {
                 return onContainerNode(childSchema, dataContainerChild);
             } else if (dataContainerChild instanceof LeafNode<?>) {
@@ -78,43 +79,42 @@ public interface NodeSerializerDispatcher<E> {
             throw new IllegalArgumentException("Unable to serialize " + childSchema);
         }
 
-        private Iterable<E> onAugmentationSchema(Object childSchema,
-                DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild) {
+        private Iterable<E> onAugmentationSchema(final Object childSchema,
+                final DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild) {
             checkSchemaCompatibility(childSchema, AugmentationSchema.class, dataContainerChild);
             return factory.getAugmentationNodeSerializer().serialize((AugmentationSchema) childSchema,
                     (AugmentationNode) dataContainerChild);
         }
 
-        private Iterable<E> onChoiceNode(Object childSchema,
-                DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild) {
-            checkSchemaCompatibility(childSchema, org.opendaylight.yangtools.yang.model.api.ChoiceNode.class,
+        private Iterable<E> onChoiceNode(final Object childSchema,
+                final DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild) {
+            checkSchemaCompatibility(childSchema, ChoiceSchemaNode.class,
                     dataContainerChild);
             return factory.getChoiceNodeSerializer()
-                    .serialize((org.opendaylight.yangtools.yang.model.api.ChoiceNode) childSchema,
-                            (ChoiceNode) dataContainerChild);
+                    .serialize((ChoiceSchemaNode) childSchema, (ChoiceNode) dataContainerChild);
         }
 
-        private Iterable<E> onMapNode(Object childSchema,
-                DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild) {
+        private Iterable<E> onMapNode(final Object childSchema,
+                final DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild) {
             checkSchemaCompatibility(childSchema, ListSchemaNode.class, dataContainerChild);
             return factory.getMapNodeSerializer().serialize((ListSchemaNode) childSchema, (MapNode) dataContainerChild);
         }
 
-        private Iterable<E> onUnkeyedListNode(Object childSchema,
-                DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild) {
+        private Iterable<E> onUnkeyedListNode(final Object childSchema,
+                final DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild) {
             checkSchemaCompatibility(childSchema, ListSchemaNode.class, dataContainerChild);
             return factory.getUnkeyedListNodeSerializer().serialize((ListSchemaNode) childSchema, (UnkeyedListNode) dataContainerChild);
         }
 
-        private Iterable<E> onLeafListNode(Object childSchema,
-                DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild) {
+        private Iterable<E> onLeafListNode(final Object childSchema,
+                final DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild) {
             checkSchemaCompatibility(childSchema, LeafListSchemaNode.class, dataContainerChild);
             return factory.getLeafSetNodeSerializer().serialize((LeafListSchemaNode) childSchema,
                     (LeafSetNode<?>) dataContainerChild);
         }
 
-        private Iterable<E> onLeafNode(Object childSchema,
-                DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild) {
+        private Iterable<E> onLeafNode(final Object childSchema,
+                final DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild) {
             checkSchemaCompatibility(childSchema, LeafSchemaNode.class, dataContainerChild);
             Iterable<E> elements = factory.getLeafNodeSerializer().serialize((LeafSchemaNode) childSchema,
                     (LeafNode<?>) dataContainerChild);
@@ -122,8 +122,8 @@ public interface NodeSerializerDispatcher<E> {
             return elements;
         }
 
-        private Iterable<E> onAnyXmlNode(Object childSchema,
-                DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild) {
+        private Iterable<E> onAnyXmlNode(final Object childSchema,
+                final DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild) {
             checkSchemaCompatibility(childSchema, AnyXmlSchemaNode.class, dataContainerChild);
             Iterable<E> elements = factory.getAnyXmlNodeSerializer().serialize((AnyXmlSchemaNode) childSchema,
                     (AnyXmlNode) dataContainerChild);
@@ -131,16 +131,16 @@ public interface NodeSerializerDispatcher<E> {
             return elements;
         }
 
-        private static void checkOnlyOneSerializedElement(Iterable<?> elements,
-                DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild) {
+        private static void checkOnlyOneSerializedElement(final Iterable<?> elements,
+                final DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild) {
             final int size = Iterables.size(elements);
             Preconditions.checkArgument(size == 1,
                     "Unexpected count of elements for entry serialized from: %s, should be 1, was: %s",
                     dataContainerChild, size);
         }
 
-        private Iterable<E> onContainerNode(Object childSchema,
-                DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild) {
+        private Iterable<E> onContainerNode(final Object childSchema,
+                final DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild) {
             checkSchemaCompatibility(childSchema, ContainerSchemaNode.class, dataContainerChild);
 
             Iterable<E> elements = factory.getContainerNodeSerializer().serialize((ContainerSchemaNode) childSchema,
@@ -149,8 +149,8 @@ public interface NodeSerializerDispatcher<E> {
             return elements;
         }
 
-        private static void checkSchemaCompatibility(Object childSchema, Class<?> containerSchemaNodeClass,
-                DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild) {
+        private static void checkSchemaCompatibility(final Object childSchema, final Class<?> containerSchemaNodeClass,
+                final DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> dataContainerChild) {
             Preconditions.checkArgument(containerSchemaNodeClass.isAssignableFrom(childSchema.getClass()),
                     "Incompatible schema: %s with node: %s, expected: %s", childSchema, dataContainerChild,
                     containerSchemaNodeClass);
