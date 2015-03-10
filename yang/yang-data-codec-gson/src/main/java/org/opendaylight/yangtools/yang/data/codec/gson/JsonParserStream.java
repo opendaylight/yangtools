@@ -8,14 +8,12 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.MalformedJsonException;
-
 import java.io.Closeable;
 import java.io.EOFException;
 import java.io.Flushable;
@@ -24,11 +22,11 @@ import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
@@ -39,6 +37,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -63,6 +62,9 @@ public final class JsonParserStream implements Closeable, Flushable {
     }
 
     public static JsonParserStream create(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext, final SchemaNode parentNode ) {
+        if(parentNode instanceof RpcDefinition) {
+            return new JsonParserStream(writer, schemaContext, new RpcAsContainer((RpcDefinition) parentNode));
+        }
         Preconditions.checkArgument(parentNode instanceof DataSchemaNode, "Instance of DataSchemaNode class awaited.");
         return new JsonParserStream(writer, schemaContext, (DataSchemaNode) parentNode);
     }
@@ -74,30 +76,30 @@ public final class JsonParserStream implements Closeable, Flushable {
     public JsonParserStream parse(final JsonReader reader) throws JsonIOException, JsonSyntaxException {
         // code copied from gson's JsonParser and Stream classes
 
-        boolean lenient = reader.isLenient();
+        final boolean lenient = reader.isLenient();
         reader.setLenient(true);
         boolean isEmpty = true;
         try {
             reader.peek();
             isEmpty = false;
-            CompositeNodeDataWithSchema compositeNodeDataWithSchema = new CompositeNodeDataWithSchema(parentNode);
+            final CompositeNodeDataWithSchema compositeNodeDataWithSchema = new CompositeNodeDataWithSchema(parentNode);
             read(reader, compositeNodeDataWithSchema);
             compositeNodeDataWithSchema.write(writer);
 
             return this;
             // return read(reader);
-        } catch (EOFException e) {
+        } catch (final EOFException e) {
             if (isEmpty) {
                 return this;
                 // return JsonNull.INSTANCE;
             }
             // The stream ended prematurely so it is likely a syntax error.
             throw new JsonSyntaxException(e);
-        } catch (MalformedJsonException e) {
+        } catch (final MalformedJsonException e) {
             throw new JsonSyntaxException(e);
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new JsonIOException(e);
-        } catch (NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             throw new JsonSyntaxException(e);
         } catch (StackOverflowError | OutOfMemoryError e) {
             throw new JsonParseException("Failed parsing JSON source: " + reader + " to Json", e);
@@ -142,11 +144,11 @@ public final class JsonParserStream implements Closeable, Flushable {
             in.endArray();
             return;
         case BEGIN_OBJECT:
-            Set<String> namesakes = new HashSet<>();
+            final Set<String> namesakes = new HashSet<>();
             in.beginObject();
             while (in.hasNext()) {
                 final String jsonElementName = in.nextName();
-                final NamespaceAndName namespaceAndName = resolveNamespace(jsonElementName);
+                final NamespaceAndName namespaceAndName = resolveNamespace(jsonElementName, parent.getSchema());
                 final String localName = namespaceAndName.getName();
                 addNamespace(namespaceAndName.getUri());
                 if (namesakes.contains(jsonElementName)) {
@@ -213,20 +215,12 @@ public final class JsonParserStream implements Closeable, Flushable {
         namespaces.pop();
     }
 
-    private void addNamespace(final Optional<URI> namespace) {
-        if (!namespace.isPresent()) {
-            if (namespaces.isEmpty()) {
-                throw new IllegalStateException("Namespace has to be specified at top level.");
-            } else {
-                namespaces.push(namespaces.peek());
-            }
-        } else {
-            namespaces.push(namespace.get());
-        }
+    private void addNamespace(final URI namespace) {
+        namespaces.push(namespace);
     }
 
-    private NamespaceAndName resolveNamespace(final String childName) {
-        int lastIndexOfColon = childName.lastIndexOf(':');
+    private NamespaceAndName resolveNamespace(final String childName, final DataSchemaNode dataSchemaNode) {
+        final int lastIndexOfColon = childName.lastIndexOf(':');
         String moduleNamePart = null;
         String nodeNamePart = null;
         URI namespace = null;
@@ -240,8 +234,52 @@ public final class JsonParserStream implements Closeable, Flushable {
             nodeNamePart = childName;
         }
 
-        Optional<URI> namespaceOpt = namespace == null ? Optional.<URI> absent() : Optional.of(namespace);
-        return new NamespaceAndName(nodeNamePart, namespaceOpt);
+        if (namespace == null) {
+            Set<URI> potentialUris = Collections.emptySet();
+            potentialUris = resolveAllPotentialNamespaces(nodeNamePart, dataSchemaNode);
+            if (potentialUris.contains(getCurrentNamespace())) {
+                namespace = getCurrentNamespace();
+            } else if (potentialUris.size() == 1) {
+                namespace = potentialUris.iterator().next();
+            } else if (potentialUris.size() > 1) {
+                throw new IllegalStateException("Choose suitable module name for element "+nodeNamePart+":"+toModuleNames(potentialUris));
+            } else if (potentialUris.isEmpty()) {
+                throw new IllegalStateException("Schema node with name "+nodeNamePart+" wasn't found.");
+            }
+        }
+
+        return new NamespaceAndName(nodeNamePart, namespace);
+    }
+
+    private String toModuleNames(final Set<URI> potentialUris) {
+        final StringBuilder builder = new StringBuilder();
+        for (final URI potentialUri : potentialUris) {
+            builder.append("\n");
+            //FIXME how to get information about revision from JSON input? currently first available is used.
+            builder.append(schema.findModuleByNamespace(potentialUri).iterator().next().getName());
+        }
+        return builder.toString();
+    }
+
+    private Set<URI> resolveAllPotentialNamespaces(final String elementName, final DataSchemaNode dataSchemaNode) {
+        final Set<URI> potentialUris = new HashSet<>();
+        final Set<ChoiceNode> choices = new HashSet<>();
+        if (dataSchemaNode instanceof DataNodeContainer) {
+            for (final DataSchemaNode childSchemaNode : ((DataNodeContainer) dataSchemaNode).getChildNodes()) {
+                if (childSchemaNode instanceof ChoiceNode) {
+                    choices.add((ChoiceNode)childSchemaNode);
+                } else if (childSchemaNode.getQName().getLocalName().equals(elementName)) {
+                    potentialUris.add(childSchemaNode.getQName().getNamespace());
+                }
+            }
+
+            for (final ChoiceNode choiceNode : choices) {
+                for (final ChoiceCaseNode concreteCase : choiceNode.getCases()) {
+                    potentialUris.addAll(resolveAllPotentialNamespaces(elementName, concreteCase));
+                }
+            }
+        }
+        return potentialUris;
     }
 
     private URI getCurrentNamespace() {
@@ -262,9 +300,9 @@ public final class JsonParserStream implements Closeable, Flushable {
     private Deque<DataSchemaNode> findSchemaNodeByNameAndNamespace(final DataSchemaNode dataSchemaNode,
             final String childName, final URI namespace) {
         final Deque<DataSchemaNode> result = new ArrayDeque<>();
-        List<ChoiceNode> childChoices = new ArrayList<>();
+        final List<ChoiceNode> childChoices = new ArrayList<>();
         if (dataSchemaNode instanceof DataNodeContainer) {
-            for (DataSchemaNode childNode : ((DataNodeContainer) dataSchemaNode).getChildNodes()) {
+            for (final DataSchemaNode childNode : ((DataNodeContainer) dataSchemaNode).getChildNodes()) {
                 if (childNode instanceof ChoiceNode) {
                     childChoices.add((ChoiceNode) childNode);
                 } else {
@@ -277,9 +315,9 @@ public final class JsonParserStream implements Closeable, Flushable {
             }
         }
         // try to find data schema node in choice (looking for first match)
-        for (ChoiceNode choiceNode : childChoices) {
-            for (ChoiceCaseNode concreteCase : choiceNode.getCases()) {
-                Deque<DataSchemaNode> resultFromRecursion = findSchemaNodeByNameAndNamespace(concreteCase, childName,
+        for (final ChoiceNode choiceNode : childChoices) {
+            for (final ChoiceCaseNode concreteCase : choiceNode.getCases()) {
+                final Deque<DataSchemaNode> resultFromRecursion = findSchemaNodeByNameAndNamespace(concreteCase, childName,
                         namespace);
                 if (!resultFromRecursion.isEmpty()) {
                     resultFromRecursion.push(concreteCase);
@@ -292,10 +330,10 @@ public final class JsonParserStream implements Closeable, Flushable {
     }
 
     private static class NamespaceAndName {
-        private final Optional<URI> uri;
+        private final URI uri;
         private final String name;
 
-        public NamespaceAndName(final String name, final Optional<URI> uri) {
+        public NamespaceAndName(final String name, final URI uri) {
             this.name = name;
             this.uri = uri;
         }
@@ -304,7 +342,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             return name;
         }
 
-        public Optional<URI> getUri() {
+        public URI getUri() {
             return uri;
         }
     }

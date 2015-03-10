@@ -313,4 +313,7 @@ public class TestingNormalizedNodeStructuresCreator {
         return cont1Node(lst12Node());
     }
 
+    public static NormalizedNode<?, ?> topLevelContainer() {
+        return cont1Node();
+    }
 }
