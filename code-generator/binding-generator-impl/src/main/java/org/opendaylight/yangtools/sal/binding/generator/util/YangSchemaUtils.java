@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.sal.binding.generator.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-
 import com.google.common.base.Preconditions;
 import java.net.URI;
 import java.util.Date;
@@ -17,7 +16,7 @@ import java.util.Iterator;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -87,10 +86,10 @@ public final class YangSchemaUtils {
             final DataSchemaNode child = currentNode.getDataChildByName(currentArg);
             if(child instanceof DataNodeContainer) {
                 currentNode = (DataNodeContainer) child;
-            } else if (child instanceof ChoiceNode) {
+            } else if (child instanceof ChoiceSchemaNode) {
                 final QName caseQName = arguments.next();
                 Preconditions.checkArgument(arguments.hasNext(), "Path must not refer case only.");
-                currentNode = ((ChoiceNode) child).getCaseNodeByName(caseQName);
+                currentNode = ((ChoiceSchemaNode) child).getCaseNodeByName(caseQName);
             } else {
                 // Search in grouping
                 for( final GroupingDefinition grouping : currentNode.getGroupings()) {

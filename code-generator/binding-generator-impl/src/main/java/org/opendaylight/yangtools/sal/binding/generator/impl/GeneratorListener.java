@@ -8,10 +8,9 @@
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
 import java.util.Map;
-
 import org.opendaylight.yangtools.yang.binding.BindingCodec;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 
 public interface GeneratorListener {
     void onClassProcessed(Class<?> cl);
@@ -22,5 +21,5 @@ public interface GeneratorListener {
     void onDataContainerCodecCreated(Class<?> dataClass, Class<? extends BindingCodec<?, ?>> dataCodec);
 
     void onChoiceCodecCreated(Class<?> choiceClass,
-                              Class<? extends BindingCodec<Map<QName, Object>, Object>> choiceCodec, ChoiceNode schema);
+                              Class<? extends BindingCodec<Map<QName, Object>, Object>> choiceCodec, ChoiceSchemaNode schema);
 }

@@ -7,40 +7,37 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
+import com.google.common.collect.Sets;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 
 /**
  * Abstract(base) parser for ChoiceNodes, parses elements of type E.
  *
  * @param <E> type of elements to be parsed
  */
-public abstract class ChoiceNodeBaseParser<E> extends
-        BaseDispatcherParser<E, ChoiceNode, org.opendaylight.yangtools.yang.model.api.ChoiceNode> {
+public abstract class ChoiceNodeBaseParser<E> extends BaseDispatcherParser<E, ChoiceNode, ChoiceSchemaNode> {
 
     @Override
     protected final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ChoiceNode> getBuilder(
-            org.opendaylight.yangtools.yang.model.api.ChoiceNode schema) {
+            final ChoiceSchemaNode schema) {
         return Builders.choiceBuilder(schema);
     }
 
     @Override
-    protected final Set<DataSchemaNode> getRealSchemasForAugment(org.opendaylight.yangtools.yang.model.api.ChoiceNode schema,
-            AugmentationSchema augmentSchema) {
+    protected final Set<DataSchemaNode> getRealSchemasForAugment(final ChoiceSchemaNode schema, final AugmentationSchema augmentSchema) {
         Set<DataSchemaNode> fromAllCases = Sets.newHashSet();
 
         fromAllCases.addAll(SchemaUtils.getRealSchemasForAugment(schema, augmentSchema));
@@ -53,15 +50,14 @@ public abstract class ChoiceNodeBaseParser<E> extends
     }
 
     @Override
-    protected final DataSchemaNode getSchemaForChild(org.opendaylight.yangtools.yang.model.api.ChoiceNode schema,
-            QName childQName) {
+    protected final DataSchemaNode getSchemaForChild(final ChoiceSchemaNode schema,
+            final QName childQName) {
         return SchemaUtils.findSchemaForChild(schema, childQName);
     }
 
     @Override
-    protected final Map<QName, org.opendaylight.yangtools.yang.model.api.ChoiceNode> mapChildElementsFromChoices(
-            org.opendaylight.yangtools.yang.model.api.ChoiceNode schema) {
-        Map<QName, org.opendaylight.yangtools.yang.model.api.ChoiceNode> mappedChoices = Maps.newLinkedHashMap();
+    protected final Map<QName, ChoiceSchemaNode> mapChildElementsFromChoices(final ChoiceSchemaNode schema) {
+        Map<QName, ChoiceSchemaNode> mappedChoices = new LinkedHashMap<>();
 
         for (ChoiceCaseNode choiceCaseNode : schema.getCases()) {
             mappedChoices.putAll(SchemaUtils.mapChildElementsFromChoices(choiceCaseNode));
@@ -71,9 +67,8 @@ public abstract class ChoiceNodeBaseParser<E> extends
     }
 
     @Override
-    protected final Map<QName, AugmentationSchema> mapChildElementsFromAugments(
-            org.opendaylight.yangtools.yang.model.api.ChoiceNode schema) {
-        Map<QName, AugmentationSchema> mappedAugments = Maps.newLinkedHashMap();
+    protected final Map<QName, AugmentationSchema> mapChildElementsFromAugments(final ChoiceSchemaNode schema) {
+        Map<QName, AugmentationSchema> mappedAugments = new LinkedHashMap<>();
 
         for (ChoiceCaseNode choiceCaseNode : schema.getCases()) {
             mappedAugments.putAll(SchemaUtils.mapChildElementsFromAugments(choiceCaseNode));

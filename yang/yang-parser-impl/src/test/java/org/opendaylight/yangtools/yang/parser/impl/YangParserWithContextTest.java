@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
 import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,7 +29,7 @@ import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
@@ -135,11 +134,11 @@ public class YangParserWithContextTest {
         assertFalse(data_g.isAddedByUses());
         assertFalse(data_u.equals(data_g));
 
-        ChoiceNode how_u = (ChoiceNode) destination.getDataChildByName("how");
+        ChoiceSchemaNode how_u = (ChoiceSchemaNode) destination.getDataChildByName("how");
         assertNotNull(how_u);
         assertTrue(how_u.isAddedByUses());
 
-        ChoiceNode how_g = (ChoiceNode) grouping.getDataChildByName("how");
+        ChoiceSchemaNode how_g = (ChoiceSchemaNode) grouping.getDataChildByName("how");
         assertNotNull(how_g);
         assertFalse(how_g.isAddedByUses());
         assertFalse(how_u.equals(how_g));

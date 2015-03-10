@@ -25,18 +25,18 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class ChoiceNodeCodecContext extends DataContainerCodecContext<ChoiceNode> {
+final class ChoiceNodeCodecContext extends DataContainerCodecContext<ChoiceSchemaNode> {
     private static final Logger LOG = LoggerFactory.getLogger(ChoiceNodeCodecContext.class);
     private final ImmutableMap<YangInstanceIdentifier.PathArgument, DataContainerCodecPrototype<?>> byYangCaseChild;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byClass;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byCaseChildClass;
 
-    public ChoiceNodeCodecContext(final DataContainerCodecPrototype<ChoiceNode> prototype) {
+    public ChoiceNodeCodecContext(final DataContainerCodecPrototype<ChoiceSchemaNode> prototype) {
         super(prototype);
         Map<YangInstanceIdentifier.PathArgument, DataContainerCodecPrototype<?>> byYangCaseChildBuilder = new HashMap<>();
         Map<Class<?>, DataContainerCodecPrototype<?>> byClassBuilder = new HashMap<>();
