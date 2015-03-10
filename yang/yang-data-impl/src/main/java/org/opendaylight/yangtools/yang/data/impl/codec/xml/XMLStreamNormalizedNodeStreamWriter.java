@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
-import static javax.xml.XMLConstants.DEFAULT_NS_PREFIX;
-
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.util.Map;
+import javax.xml.XMLConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -19,6 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.Augmentat
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamAttributeWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
@@ -35,16 +38,18 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * A {@link NormalizedNodeStreamWriter} which translates the events into an
  * {@link XMLStreamWriter}, resulting in a RFC 6020 XML encoding.
  */
-public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
+public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNodeStreamAttributeWriter {
 
     private final XMLStreamWriter writer;
     private final SchemaTracker tracker;
     private final XmlStreamUtils streamUtils;
+    private RandomPrefix randomPrefix;
 
     private XMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final SchemaContext context, final SchemaPath path) {
         this.writer = Preconditions.checkNotNull(writer);
         this.tracker = SchemaTracker.create(context, path);
         this.streamUtils = XmlStreamUtils.create(XmlUtils.DEFAULT_XML_CODEC_PROVIDER, context);
+        randomPrefix = new RandomPrefix();
     }
 
     /**
@@ -72,9 +77,9 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
 
     private void writeStartElement( QName qname) throws XMLStreamException {
         String ns = qname.getNamespace().toString();
-        writer.writeStartElement(DEFAULT_NS_PREFIX, qname.getLocalName(), ns);
+        writer.writeStartElement(XMLConstants.DEFAULT_NS_PREFIX, qname.getLocalName(), ns);
         if(writer.getNamespaceContext() != null) {
-            String parentNs = writer.getNamespaceContext().getNamespaceURI(DEFAULT_NS_PREFIX);
+            String parentNs = writer.getNamespaceContext().getNamespaceURI(XMLConstants.DEFAULT_NS_PREFIX);
             if (!ns.equals(parentNs)) {
                 writer.writeDefaultNamespace(ns);
             }
@@ -105,6 +110,19 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
         }
     }
 
+    private void writeElement(final QName qname, final SchemaNode schemaNode, final Object value, final Map<QName, String> attributes) throws IOException {
+        try {
+            writeStartElement(qname);
+            writeAttributes(attributes);
+            if (value != null) {
+                streamUtils.writeValue(writer, schemaNode, value);
+            }
+            writer.writeEndElement();
+        } catch (XMLStreamException e) {
+            throw new IOException("Failed to emit element", e);
+        }
+    }
+
     private void startElement(final QName qname) throws IOException {
         try {
             writeStartElement(qname);
@@ -126,6 +144,52 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
     public void leafNode(final NodeIdentifier name, final Object value) throws IOException {
         final LeafSchemaNode schema = tracker.leafNode(name);
         writeElement(schema.getQName(), schema, value);
+    }
+
+    @Override
+    public void leafNode(final NodeIdentifier name, final Object value, final Map<QName, String> attributes) throws IOException {
+        final LeafSchemaNode schema = tracker.leafNode(name);
+        writeElement(schema.getQName(), schema, value, attributes);
+    }
+
+    @Override
+    public void leafSetEntryNode(final Object value, final Map<QName, String> attributes) throws IOException, IllegalArgumentException {
+        final LeafListSchemaNode schema = tracker.leafSetEntryNode();
+        writeElement(schema.getQName(), schema, value, attributes);
+    }
+
+    @Override
+    public void startContainerNode(final NodeIdentifier name, final int childSizeHint, final Map<QName, String> attributes) throws IOException, IllegalArgumentException {
+        startContainerNode(name, childSizeHint);
+        writeAttributes(attributes);
+    }
+
+    @Override
+    public void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint, final Map<QName, String> attributes) throws IOException, IllegalStateException {
+        startUnkeyedListItem(name, childSizeHint);
+        writeAttributes(attributes);
+    }
+
+    @Override
+    public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint, final Map<QName, String> attributes) throws IOException, IllegalArgumentException {
+        startMapEntryNode(identifier, childSizeHint);
+        writeAttributes(attributes);
+    }
+
+    private void writeAttributes(final Map<QName, String> attributes) throws IOException {
+        for (final Map.Entry<QName, String> qNameStringEntry : attributes.entrySet()) {
+            try {
+                final String namespace = qNameStringEntry.getKey().getNamespace().toString();
+                if(Strings.isNullOrEmpty(namespace)) {
+                    writer.writeAttribute(qNameStringEntry.getKey().getLocalName(), qNameStringEntry.getValue());
+                } else {
+                    final String prefix = randomPrefix.encodePrefix(qNameStringEntry.getKey().getNamespace());
+                    writer.writeAttribute(prefix, namespace, qNameStringEntry.getKey().getLocalName(), qNameStringEntry.getValue());
+                }
+            } catch (final XMLStreamException e) {
+                throw new IOException("Unable to emit attribute " + qNameStringEntry, e);
+            }
+        }
     }
 
     @Override

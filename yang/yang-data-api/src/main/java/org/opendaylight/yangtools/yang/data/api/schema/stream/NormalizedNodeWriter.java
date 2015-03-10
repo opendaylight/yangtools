@@ -14,15 +14,12 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
-
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
-
 import javax.xml.stream.XMLStreamReader;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
@@ -137,11 +134,19 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
     private boolean wasProcessAsSimpleNode(final NormalizedNode<?, ?> node) throws IOException {
         if (node instanceof LeafSetEntryNode) {
             final LeafSetEntryNode<?> nodeAsLeafList = (LeafSetEntryNode<?>)node;
-            writer.leafSetEntryNode(nodeAsLeafList.getValue());
+            if(writer instanceof NormalizedNodeStreamAttributeWriter) {
+                ((NormalizedNodeStreamAttributeWriter) writer).leafSetEntryNode(nodeAsLeafList.getValue(), nodeAsLeafList.getAttributes());
+            } else {
+                writer.leafSetEntryNode(nodeAsLeafList.getValue());
+            }
             return true;
         } else if (node instanceof LeafNode) {
             final LeafNode<?> nodeAsLeaf = (LeafNode<?>)node;
-            writer.leafNode(nodeAsLeaf.getIdentifier(), nodeAsLeaf.getValue());
+            if(writer instanceof NormalizedNodeStreamAttributeWriter) {
+                ((NormalizedNodeStreamAttributeWriter) writer).leafNode(nodeAsLeaf.getIdentifier(), nodeAsLeaf.getValue(), nodeAsLeaf.getAttributes());
+            } else {
+                writer.leafNode(nodeAsLeaf.getIdentifier(), nodeAsLeaf.getValue());
+            }
             return true;
         } else if (node instanceof AnyXmlNode) {
             final AnyXmlNode anyXmlNode = (AnyXmlNode)node;
@@ -169,14 +174,23 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
     }
 
     protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
-        writer.startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()));
+        if(writer instanceof NormalizedNodeStreamAttributeWriter) {
+            ((NormalizedNodeStreamAttributeWriter) writer)
+                    .startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()), node.getAttributes());
+        } else {
+            writer.startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()));
+        }
         return writeChildren(node.getValue());
     }
 
     private boolean wasProcessedAsCompositeNode(final NormalizedNode<?, ?> node) throws IOException {
         if (node instanceof ContainerNode) {
             final ContainerNode n = (ContainerNode) node;
-            writer.startContainerNode(n.getIdentifier(), childSizeHint(n.getValue()));
+            if(writer instanceof NormalizedNodeStreamAttributeWriter) {
+                ((NormalizedNodeStreamAttributeWriter) writer).startContainerNode(n.getIdentifier(), childSizeHint(n.getValue()), n.getAttributes());
+            } else {
+                writer.startContainerNode(n.getIdentifier(), childSizeHint(n.getValue()));
+            }
             return writeChildren(n.getValue());
         }
         if (node instanceof MapEntryNode) {
