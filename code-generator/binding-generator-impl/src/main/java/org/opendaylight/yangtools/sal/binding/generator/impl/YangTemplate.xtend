@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.common.QName
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode
 import org.opendaylight.yangtools.yang.model.api.Deviation
@@ -645,7 +645,7 @@ class YangTemplate {
         '''
     }
 
-    def static writeChoiceNode(ChoiceNode choiceNode) {
+    def static writeChoiceNode(ChoiceSchemaNode choiceNode) {
         '''
             choice «choiceNode.getQName.localName» {
                 «FOR child : choiceNode.cases»
@@ -696,7 +696,7 @@ class YangTemplate {
             «IF child instanceof ChoiceCaseNode»
                 «writeChoiceCaseNode(child)»
             «ENDIF»
-            «IF child instanceof ChoiceNode»
+            «IF child instanceof ChoiceSchemaNode»
                 «writeChoiceNode(child)»
             «ENDIF»
             «IF child instanceof ListSchemaNode»

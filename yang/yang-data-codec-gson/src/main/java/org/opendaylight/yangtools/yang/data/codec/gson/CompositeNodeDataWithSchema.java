@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -71,9 +71,9 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
 
         // The choice/case mess, reuse what we already popped
         final DataSchemaNode choiceCandidate = schema;
-        Preconditions.checkArgument(choiceCandidate instanceof ChoiceNode,
+        Preconditions.checkArgument(choiceCandidate instanceof ChoiceSchemaNode,
             "Expected node of type ChoiceNode but was %s", choiceCandidate.getClass().getSimpleName());
-        final ChoiceNode choiceNode = (ChoiceNode) choiceCandidate;
+        final ChoiceSchemaNode choiceNode = (ChoiceSchemaNode) choiceCandidate;
 
         final DataSchemaNode caseCandidate = schemas.pop();
         Preconditions.checkArgument(caseCandidate instanceof ChoiceCaseNode,
@@ -190,7 +190,7 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
      * node is found then it is returned, else null.
      */
     AugmentationSchema findCorrespondingAugment(final DataSchemaNode parent, final DataSchemaNode child) {
-        if (parent instanceof AugmentationTarget && !((parent instanceof ChoiceCaseNode) || (parent instanceof ChoiceNode))) {
+        if (parent instanceof AugmentationTarget && !((parent instanceof ChoiceCaseNode) || (parent instanceof ChoiceSchemaNode))) {
             for (AugmentationSchema augmentation : ((AugmentationTarget) parent).getAvailableAugmentations()) {
                 DataSchemaNode childInAugmentation = augmentation.getDataChildByName(child.getQName());
                 if (childInAugmentation != null) {

@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -15,7 +18,7 @@ import java.util.TreeSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
@@ -27,9 +30,6 @@ import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuild
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements DataSchemaNodeBuilder,
 AugmentationTargetBuilder {
@@ -39,7 +39,7 @@ AugmentationTargetBuilder {
     private boolean augmenting;
     private boolean addedByUses;
     private boolean configuration;
-    private ChoiceNode originalNode;
+    private ChoiceSchemaNode originalNode;
     private ChoiceBuilder originalBuilder;
     private final ConstraintsBuilder constraints;
     // AugmentationTarget args
@@ -56,7 +56,7 @@ AugmentationTargetBuilder {
     }
 
     public ChoiceBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path,
-            final ChoiceNode base) {
+            final ChoiceSchemaNode base) {
         super(moduleName, line, qname);
         this.schemaPath = path;
         constraints = new ConstraintsBuilderImpl(moduleName, line, base.getConstraints());
@@ -83,7 +83,7 @@ AugmentationTargetBuilder {
     }
 
     @Override
-    public ChoiceNode build() {
+    public ChoiceSchemaNode build() {
         if (instance != null) {
             return instance;
         }

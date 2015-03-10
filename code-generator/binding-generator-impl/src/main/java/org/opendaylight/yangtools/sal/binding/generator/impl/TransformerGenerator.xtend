@@ -7,6 +7,12 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl
 
+import static com.google.common.base.Preconditions.*
+import static javassist.Modifier.*
+import static org.opendaylight.yangtools.sal.binding.generator.impl.CodecMapping.*
+
+import static extension org.opendaylight.yangtools.sal.binding.generator.util.YangSchemaUtils.*
+
 import com.google.common.base.Joiner
 import com.google.common.base.Supplier
 import java.io.File
@@ -49,7 +55,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier
 import org.opendaylight.yangtools.yang.common.QName
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode
@@ -66,12 +72,6 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition
 import org.opendaylight.yangtools.yang.model.util.EnumerationType
 import org.opendaylight.yangtools.yang.model.util.ExtendedType
 import org.slf4j.LoggerFactory
-
-import static com.google.common.base.Preconditions.*
-import static javassist.Modifier.*
-import static org.opendaylight.yangtools.sal.binding.generator.impl.CodecMapping.*
-
-import static extension org.opendaylight.yangtools.sal.binding.generator.util.YangSchemaUtils.*
 
 class TransformerGenerator extends AbstractTransformerGenerator {
     private static val LOG = LoggerFactory.getLogger(TransformerGenerator)
@@ -222,8 +222,8 @@ class TransformerGenerator extends AbstractTransformerGenerator {
             val Map<String, Type> properties = typeSpec.allProperties
             if (node instanceof DataNodeContainer) {
                 mappingForNodes((node as DataNodeContainer).childNodes, properties, parent)
-            } else if (node instanceof ChoiceNode) {
-                mappingForNodes((node as ChoiceNode).cases, properties, parent)
+            } else if (node instanceof ChoiceSchemaNode) {
+                mappingForNodes((node as ChoiceSchemaNode).cases, properties, parent)
             }
             return null ]
         ClassLoaderUtils.withClassLoader(cl, sup)
@@ -651,7 +651,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
     }
 
     private def dispatch  Class<? extends BindingCodec<Map<QName, Object>, Object>> generateTransformerFor(
-        Class<?> inputType, GeneratedType typeSpec, ChoiceNode node) {
+        Class<?> inputType, GeneratedType typeSpec, ChoiceSchemaNode node) {
         try {
 
             val SourceCodeGenerator sourceGenerator = sourceCodeGeneratorFactory.getInstance( null );
@@ -918,7 +918,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         }
     '''
 
-    private def dispatch CharSequence deserializeProperty(ChoiceNode schema, Type type, String propertyName) '''
+    private def dispatch CharSequence deserializeProperty(ChoiceSchemaNode schema, Type type, String propertyName) '''
         «type.resolvedName» «propertyName» = «type.serializer(schema).resolvedName».fromDomStatic(_localQName,_compositeNode,$3);
         if(«propertyName» != null) {
             _is_empty = false;
@@ -1599,7 +1599,7 @@ class TransformerGenerator extends AbstractTransformerGenerator {
         }
     '''
 
-    private def dispatch CharSequence serializeProperty(ChoiceNode container, GeneratedType type,
+    private def dispatch CharSequence serializeProperty(ChoiceSchemaNode container, GeneratedType type,
         String propertyName) '''
         «type.resolvedName» «propertyName» = value.«propertyName»();
         if(«propertyName» != null) {

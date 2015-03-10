@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -142,7 +142,7 @@ final class DataContainerCodecPrototype<T> implements NodeContextSupplier {
             } else {
                 return new ListNodeCodecContext((DataContainerCodecPrototype) this);
             }
-        } else if (schema instanceof ChoiceNode) {
+        } else if (schema instanceof ChoiceSchemaNode) {
             return new ChoiceNodeCodecContext((DataContainerCodecPrototype) this);
         } else if (schema instanceof AugmentationSchema) {
             return new AugmentationNodeContext((DataContainerCodecPrototype) this);
@@ -153,6 +153,6 @@ final class DataContainerCodecPrototype<T> implements NodeContextSupplier {
     }
 
     boolean isChoice() {
-        return schema instanceof ChoiceNode;
+        return schema instanceof ChoiceSchemaNode;
     }
 }

@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -41,8 +41,8 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
             return new DataNodeContainerModificationStrategy.ContainerModificationStrategy((ContainerSchemaNode) schemaNode);
         } else if (schemaNode instanceof ListSchemaNode) {
             return fromListSchemaNode((ListSchemaNode) schemaNode);
-        } else if (schemaNode instanceof ChoiceNode) {
-            return new NormalizedNodeContainerModificationStrategy.ChoiceModificationStrategy((ChoiceNode) schemaNode);
+        } else if (schemaNode instanceof ChoiceSchemaNode) {
+            return new NormalizedNodeContainerModificationStrategy.ChoiceModificationStrategy((ChoiceSchemaNode) schemaNode);
         } else if (schemaNode instanceof LeafListSchemaNode) {
             return fromLeafListSchemaNode((LeafListSchemaNode) schemaNode);
         } else if (schemaNode instanceof LeafSchemaNode) {

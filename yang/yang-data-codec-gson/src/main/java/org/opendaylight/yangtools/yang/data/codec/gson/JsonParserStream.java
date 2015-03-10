@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -263,17 +263,17 @@ public final class JsonParserStream implements Closeable, Flushable {
 
     private Set<URI> resolveAllPotentialNamespaces(final String elementName, final DataSchemaNode dataSchemaNode) {
         final Set<URI> potentialUris = new HashSet<>();
-        final Set<ChoiceNode> choices = new HashSet<>();
+        final Set<ChoiceSchemaNode> choices = new HashSet<>();
         if (dataSchemaNode instanceof DataNodeContainer) {
             for (final DataSchemaNode childSchemaNode : ((DataNodeContainer) dataSchemaNode).getChildNodes()) {
-                if (childSchemaNode instanceof ChoiceNode) {
-                    choices.add((ChoiceNode)childSchemaNode);
+                if (childSchemaNode instanceof ChoiceSchemaNode) {
+                    choices.add((ChoiceSchemaNode)childSchemaNode);
                 } else if (childSchemaNode.getQName().getLocalName().equals(elementName)) {
                     potentialUris.add(childSchemaNode.getQName().getNamespace());
                 }
             }
 
-            for (final ChoiceNode choiceNode : choices) {
+            for (final ChoiceSchemaNode choiceNode : choices) {
                 for (final ChoiceCaseNode concreteCase : choiceNode.getCases()) {
                     potentialUris.addAll(resolveAllPotentialNamespaces(elementName, concreteCase));
                 }
@@ -300,11 +300,11 @@ public final class JsonParserStream implements Closeable, Flushable {
     private Deque<DataSchemaNode> findSchemaNodeByNameAndNamespace(final DataSchemaNode dataSchemaNode,
             final String childName, final URI namespace) {
         final Deque<DataSchemaNode> result = new ArrayDeque<>();
-        final List<ChoiceNode> childChoices = new ArrayList<>();
+        final List<ChoiceSchemaNode> childChoices = new ArrayList<>();
         if (dataSchemaNode instanceof DataNodeContainer) {
             for (final DataSchemaNode childNode : ((DataNodeContainer) dataSchemaNode).getChildNodes()) {
-                if (childNode instanceof ChoiceNode) {
-                    childChoices.add((ChoiceNode) childNode);
+                if (childNode instanceof ChoiceSchemaNode) {
+                    childChoices.add((ChoiceSchemaNode) childNode);
                 } else {
                     final QName childQName = childNode.getQName();
                     if (childQName.getLocalName().equals(childName) && childQName.getNamespace().equals(namespace)) {
@@ -315,7 +315,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             }
         }
         // try to find data schema node in choice (looking for first match)
-        for (final ChoiceNode choiceNode : childChoices) {
+        for (final ChoiceSchemaNode choiceNode : childChoices) {
             for (final ChoiceCaseNode concreteCase : choiceNode.getCases()) {
                 final Deque<DataSchemaNode> resultFromRecursion = findSchemaNodeByNameAndNamespace(concreteCase, childName,
                         namespace);

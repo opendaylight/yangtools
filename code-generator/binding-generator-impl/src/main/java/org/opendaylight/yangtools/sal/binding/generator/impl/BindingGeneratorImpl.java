@@ -71,7 +71,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -824,7 +824,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             throw new NullPointerException("Target type not yet generated: " + targetSchemaNode);
         }
 
-        if (!(targetSchemaNode instanceof ChoiceNode)) {
+        if (!(targetSchemaNode instanceof ChoiceSchemaNode)) {
             String packageName = augmentPackageName;
             final Type targetType = new ReferencedTypeImpl(targetTypeBuilder.getPackageName(),
                     targetTypeBuilder.getName());
@@ -832,7 +832,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
         } else {
             generateTypesFromAugmentedChoiceCases(module, augmentPackageName, targetTypeBuilder.toInstance(),
-                    (ChoiceNode) targetSchemaNode, augSchema.getChildNodes());
+                    (ChoiceSchemaNode) targetSchemaNode, augSchema.getChildNodes());
         }
     }
 
@@ -858,7 +858,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             throw new NullPointerException("Target type not yet generated: " + targetSchemaNode);
         }
 
-        if (!(targetSchemaNode instanceof ChoiceNode)) {
+        if (!(targetSchemaNode instanceof ChoiceSchemaNode)) {
             String packageName = augmentPackageName;
             if (usesNodeParent instanceof SchemaNode) {
                 packageName = packageNameForGeneratedType(augmentPackageName, ((SchemaNode) usesNodeParent).getPath(),
@@ -868,7 +868,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                     augSchema);
         } else {
             generateTypesFromAugmentedChoiceCases(module, augmentPackageName, targetTypeBuilder.toInstance(),
-                    (ChoiceNode) targetSchemaNode, augSchema.getChildNodes());
+                    (ChoiceSchemaNode) targetSchemaNode, augSchema.getChildNodes());
         }
     }
 
@@ -895,8 +895,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
             // with same name and different namespace
             if (result instanceof DataNodeContainer) {
                 result = ((DataNodeContainer) result).getDataChildByName(node.getLocalName());
-            } else if (result instanceof ChoiceNode) {
-                result = ((ChoiceNode) result).getCaseNodeByName(node.getLocalName());
+            } else if (result instanceof ChoiceSchemaNode) {
+                result = ((ChoiceSchemaNode) result).getCaseNodeByName(node.getLocalName());
             }
         }
         if (result == null) {
@@ -1113,8 +1113,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 containerToGenType(module, basePackageName, typeBuilder, childOf, (ContainerSchemaNode) node);
             } else if (node instanceof ListSchemaNode) {
                 listToGenType(module, basePackageName, typeBuilder, childOf, (ListSchemaNode) node);
-            } else if (node instanceof ChoiceNode) {
-                choiceToGeneratedType(module, basePackageName, typeBuilder, (ChoiceNode) node);
+            } else if (node instanceof ChoiceSchemaNode) {
+                choiceToGeneratedType(module, basePackageName, typeBuilder, (ChoiceSchemaNode) node);
             } else {
                 // TODO: anyxml not yet supported
                 LOG.debug("Unable to add schema node {} as method in {}: unsupported type of node.", node.getClass(),
@@ -1147,7 +1147,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *             </ul>
      */
     private void choiceToGeneratedType(final Module module, final String basePackageName,
-            final GeneratedTypeBuilder parent, final ChoiceNode choiceNode) {
+            final GeneratedTypeBuilder parent, final ChoiceSchemaNode choiceNode) {
         checkArgument(basePackageName != null, "Base Package Name cannot be NULL.");
         checkArgument(choiceNode != null, "Choice Schema Node cannot be NULL.");
 
@@ -1190,7 +1190,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *             </ul>
      */
     private void generateTypesFromChoiceCases(final Module module, final String basePackageName,
-            final Type refChoiceType, final ChoiceNode choiceNode) {
+            final Type refChoiceType, final ChoiceSchemaNode choiceNode) {
         checkArgument(basePackageName != null, "Base Package Name cannot be NULL.");
         checkArgument(refChoiceType != null, "Referenced Choice Type cannot be NULL.");
         checkArgument(choiceNode != null, "ChoiceNode cannot be NULL.");
@@ -1273,7 +1273,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *             </ul>
      */
     private void generateTypesFromAugmentedChoiceCases(final Module module, final String basePackageName,
-            final Type targetType, final ChoiceNode targetNode, final Iterable<DataSchemaNode> augmentedNodes) {
+            final Type targetType, final ChoiceSchemaNode targetNode, final Iterable<DataSchemaNode> augmentedNodes) {
         checkArgument(basePackageName != null, "Base Package Name cannot be NULL.");
         checkArgument(targetType != null, "Referenced Choice Type cannot be NULL.");
         checkArgument(augmentedNodes != null, "Set of Choice Case Nodes cannot be NULL.");
@@ -1821,8 +1821,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 resolveLeafListSchemaNode(typeBuilder, (LeafListSchemaNode) schemaNode);
             } else if (schemaNode instanceof ContainerSchemaNode) {
                 containerToGenType(module, basePackageName, typeBuilder, typeBuilder, (ContainerSchemaNode) schemaNode);
-            } else if (schemaNode instanceof ChoiceNode) {
-                choiceToGeneratedType(module, basePackageName, typeBuilder, (ChoiceNode) schemaNode);
+            } else if (schemaNode instanceof ChoiceSchemaNode) {
+                choiceToGeneratedType(module, basePackageName, typeBuilder, (ChoiceSchemaNode) schemaNode);
             } else if (schemaNode instanceof ListSchemaNode) {
                 listToGenType(module, basePackageName, typeBuilder, typeBuilder, (ListSchemaNode) schemaNode);
             }

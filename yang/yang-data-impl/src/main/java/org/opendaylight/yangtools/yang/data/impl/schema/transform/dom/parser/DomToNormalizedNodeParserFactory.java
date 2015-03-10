@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNo
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.NodeParserDispatcher;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -102,7 +103,7 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
     }
 
     @Override
-    public ToNormalizedNodeParser<Element, ChoiceNode, org.opendaylight.yangtools.yang.model.api.ChoiceNode> getChoiceNodeParser() {
+    public ToNormalizedNodeParser<Element, ChoiceNode, ChoiceSchemaNode> getChoiceNodeParser() {
         return choiceNodeParser;
     }
 

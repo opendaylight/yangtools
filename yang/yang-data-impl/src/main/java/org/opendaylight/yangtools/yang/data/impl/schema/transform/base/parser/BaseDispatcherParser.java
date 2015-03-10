@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.AttributesBu
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
@@ -60,7 +60,7 @@ public abstract class BaseDispatcherParser<E, N extends DataContainerNode<?>, S>
      * @return map from QName to ChoiceNode schema of child nodes that are
      *         contained within a choice statement under current schema.
      */
-    protected abstract Map<QName, ChoiceNode> mapChildElementsFromChoices(S schema);
+    protected abstract Map<QName, ChoiceSchemaNode> mapChildElementsFromChoices(S schema);
 
     /**
      *
@@ -89,7 +89,7 @@ public abstract class BaseDispatcherParser<E, N extends DataContainerNode<?>, S>
     protected abstract NodeParserDispatcher<E> getDispatcher();
 
     @Override
-    public N parse(Iterable<E> elements, S schema) {
+    public N parse(final Iterable<E> elements, final S schema) {
 
         checkAtLeastOneNode(schema, elements);
 
@@ -103,8 +103,8 @@ public abstract class BaseDispatcherParser<E, N extends DataContainerNode<?>, S>
         LinkedListMultimap<AugmentationSchema, E> augmentsToElements = LinkedListMultimap.create();
 
         // Map child nodes from choices
-        Map<QName, ChoiceNode> mappedChoiceChildNodes = mapChildElementsFromChoices(schema);
-        LinkedListMultimap<ChoiceNode, E> choicesToElements = LinkedListMultimap.create();
+        Map<QName, ChoiceSchemaNode> mappedChoiceChildNodes = mapChildElementsFromChoices(schema);
+        LinkedListMultimap<ChoiceSchemaNode, E> choicesToElements = LinkedListMultimap.create();
 
         // process Child nodes
         for (QName childPartialQName : mappedChildElements.keySet()) {
@@ -117,7 +117,7 @@ public abstract class BaseDispatcherParser<E, N extends DataContainerNode<?>, S>
                 augmentsToElements.putAll(augmentationSchema, childrenForQName);
                 // Choices
             } else if (isMarkedAs(mappedChoiceChildNodes, childSchema.getQName())) {
-                ChoiceNode choiceSchema = mappedChoiceChildNodes.get(childSchema.getQName());
+                ChoiceSchemaNode choiceSchema = mappedChoiceChildNodes.get(childSchema.getQName());
                 choicesToElements.putAll(choiceSchema, childrenForQName);
                 // Regular child nodes
             } else {
@@ -128,7 +128,7 @@ public abstract class BaseDispatcherParser<E, N extends DataContainerNode<?>, S>
         }
 
         // TODO ordering is not preserved for choice and augment elements
-        for (ChoiceNode choiceSchema : choicesToElements.keySet()) {
+        for (ChoiceSchemaNode choiceSchema : choicesToElements.keySet()) {
             containerBuilder.withChild(getDispatcher().dispatchChildElement(choiceSchema,
                     choicesToElements.get(choiceSchema)));
         }
@@ -149,21 +149,21 @@ public abstract class BaseDispatcherParser<E, N extends DataContainerNode<?>, S>
         return containerBuilder.build();
     }
 
-    protected Map<QName, String> getAttributes(E e) {
+    protected Map<QName, String> getAttributes(final E e) {
         return Collections.emptyMap();
     }
 
-    private boolean isMarkedAs(Map<QName, ?> mappedAugmentChildNodes, QName qName) {
+    private boolean isMarkedAs(final Map<QName, ?> mappedAugmentChildNodes, final QName qName) {
         return mappedAugmentChildNodes.containsKey(qName);
     }
 
-    protected void checkOnlyOneNode(S schema, Iterable<E> childNodes) {
+    protected void checkOnlyOneNode(final S schema, final Iterable<E> childNodes) {
         final int size = Iterables.size(childNodes);
         Preconditions.checkArgument(size == 1,
                 "Node detected multiple times, should be 1, identified by: %s, found: %s", schema, childNodes);
     }
 
-    private void checkAtLeastOneNode(S schema, Iterable<E> childNodes) {
+    private void checkAtLeastOneNode(final S schema, final Iterable<E> childNodes) {
         Preconditions.checkArgument(!Iterables.isEmpty(childNodes),
                 "Node detected 0 times, should be at least 1, identified by: %s, found: %s", schema, childNodes);
     }
