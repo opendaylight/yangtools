@@ -26,7 +26,6 @@ import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -68,8 +67,8 @@ public final class SchemaTracker {
                     child = tryFindNotification((SchemaContext) current, qname)
                             .or(tryFindRpc(((SchemaContext) current), qname)).orNull();
                 }
-            } else if (current instanceof ChoiceNode) {
-                child = ((ChoiceNode) current).getCaseNodeByName(qname);
+            } else if (current instanceof ChoiceSchemaNode) {
+                child = ((ChoiceSchemaNode) current).getCaseNodeByName(qname);
             } else if (current instanceof RpcDefinition) {
                 switch (qname.getLocalName()) {
                     case "input":
@@ -146,8 +145,8 @@ public final class SchemaTracker {
             if(schema == null && parent instanceof NotificationDefinition) {
                 schema = ((NotificationDefinition) parent);
             }
-        } else if(parent instanceof ChoiceNode) {
-            schema = findChildInCases((ChoiceNode) parent, qname);
+        } else if(parent instanceof ChoiceSchemaNode) {
+            schema = findChildInCases((ChoiceSchemaNode) parent, qname);
         } else {
             throw new IllegalStateException("Unsupported schema type "+ parent.getClass() +" on stack.");
         }
@@ -155,7 +154,7 @@ public final class SchemaTracker {
         return schema;
     }
 
-    private SchemaNode findChildInCases(final ChoiceNode parent, final QName qname) {
+    private SchemaNode findChildInCases(final ChoiceSchemaNode parent, final QName qname) {
         DataSchemaNode schema = null;
         for(final ChoiceCaseNode caze : parent.getCases()) {
             final DataSchemaNode potential = caze.getDataChildByName(qname);
@@ -167,7 +166,7 @@ public final class SchemaTracker {
         return schema;
     }
 
-    private SchemaNode findCaseByChild(final ChoiceNode parent, final QName qname) {
+    private SchemaNode findCaseByChild(final ChoiceSchemaNode parent, final QName qname) {
         DataSchemaNode schema = null;
         for(final ChoiceCaseNode caze : parent.getCases()) {
             final DataSchemaNode potential = caze.getDataChildByName(qname);
@@ -213,13 +212,13 @@ public final class SchemaTracker {
         return (LeafListSchemaNode) parent;
     }
 
-    public ChoiceNode startChoiceNode(final NodeIdentifier name) {
+    public ChoiceSchemaNode startChoiceSchemaNode(final NodeIdentifier name) {
         LOG.debug("Enter choice {}", name);
         final SchemaNode schema = getSchema(name);
 
-        Preconditions.checkArgument(schema instanceof ChoiceNode, "Node %s is not a choice", schema.getPath());
+        Preconditions.checkArgument(schema instanceof ChoiceSchemaNode, "Node %s is not a choice", schema.getPath());
         schemaStack.push(schema);
-        return (ChoiceNode)schema;
+        return (ChoiceSchemaNode)schema;
     }
 
     public SchemaNode startContainerNode(final NodeIdentifier name) {
@@ -239,9 +238,9 @@ public final class SchemaTracker {
         Object parent = getParent();
 
         Preconditions.checkArgument(parent instanceof AugmentationTarget, "Augmentation not allowed under %s", parent);
-        if(parent instanceof ChoiceNode) {
+        if(parent instanceof ChoiceSchemaNode) {
             final QName name = Iterables.get(identifier.getPossibleChildNames(), 0);
-            parent = findCaseByChild((ChoiceNode) parent, name);
+            parent = findCaseByChild((ChoiceSchemaNode) parent, name);
         }
         Preconditions.checkArgument(parent instanceof DataNodeContainer, "Augmentation allowed only in DataNodeContainer",parent);
         final AugmentationSchema schema = SchemaUtils.findSchemaForAugment((AugmentationTarget) parent, identifier.getPossibleChildNames());

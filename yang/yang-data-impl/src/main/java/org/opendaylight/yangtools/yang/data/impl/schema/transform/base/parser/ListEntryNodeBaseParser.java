@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
@@ -28,27 +28,27 @@ public abstract class ListEntryNodeBaseParser<E, N extends DataContainerNode<?>>
         BaseDispatcherParser<E, N, ListSchemaNode> {
 
     @Override
-    protected final Set<DataSchemaNode> getRealSchemasForAugment(ListSchemaNode schema, AugmentationSchema augmentSchema) {
+    protected final Set<DataSchemaNode> getRealSchemasForAugment(final ListSchemaNode schema, final AugmentationSchema augmentSchema) {
         return SchemaUtils.getRealSchemasForAugment((AugmentationTarget) schema, augmentSchema);
     }
 
     @Override
-    protected final DataSchemaNode getSchemaForChild(ListSchemaNode schema, QName childQName) {
+    protected final DataSchemaNode getSchemaForChild(final ListSchemaNode schema, final QName childQName) {
         return SchemaUtils.findSchemaForChild(schema, childQName);
     }
 
     @Override
-    protected final Map<QName, ChoiceNode> mapChildElementsFromChoices(ListSchemaNode schema) {
+    protected final Map<QName, ChoiceSchemaNode> mapChildElementsFromChoices(final ListSchemaNode schema) {
         return SchemaUtils.mapChildElementsFromChoices(schema);
     }
 
     @Override
-    protected final Map<QName, AugmentationSchema> mapChildElementsFromAugments(ListSchemaNode schema) {
+    protected final Map<QName, AugmentationSchema> mapChildElementsFromAugments(final ListSchemaNode schema) {
         return SchemaUtils.mapChildElementsFromAugments(schema);
     }
 
     @Override
-    public final N parse(Iterable<E> elements, ListSchemaNode schema) {
+    public final N parse(final Iterable<E> elements, final ListSchemaNode schema) {
         checkOnlyOneNode(schema, elements);
         return super.parse(elements, schema);
     }

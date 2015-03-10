@@ -27,7 +27,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -406,7 +406,7 @@ public class UsesAugmentTest {
         assertEquals(expectedPath, box.getPath());
         assertTrue(box.isAddedByUses());
         // * |-- |-- |-- |-- |-- choice address-family
-        ChoiceNode af = (ChoiceNode) endpoints.getDataChildByName("address-family");
+        ChoiceSchemaNode af = (ChoiceSchemaNode) endpoints.getDataChildByName("address-family");
         assertNotNull(af);
         expectedQName = QName.create(UG_NS, UG_REV, "address-family");
         assertEquals(expectedQName, af.getQName());

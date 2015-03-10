@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParserFactory;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -41,7 +41,7 @@ public interface NodeParserDispatcher<E> {
         }
 
         @Override
-        public final DataContainerChild<?, ?> dispatchChildElement(Object schema, List<E> childNodes) {
+        public final DataContainerChild<?, ?> dispatchChildElement(final Object schema, final List<E> childNodes) {
             Preconditions.checkArgument(!childNodes.isEmpty());
 
             if (schema instanceof ContainerSchemaNode) {
@@ -59,8 +59,8 @@ public interface NodeParserDispatcher<E> {
                 } else {
                     return factory.getMapNodeParser().parse(childNodes, listSchemaNode);
                 }
-            } else if (schema instanceof ChoiceNode) {
-                return factory.getChoiceNodeParser().parse(childNodes, (ChoiceNode) schema);
+            } else if (schema instanceof ChoiceSchemaNode) {
+                return factory.getChoiceNodeParser().parse(childNodes, (ChoiceSchemaNode) schema);
             } else if (schema instanceof AugmentationSchema) {
                 return factory.getAugmentationNodeParser().parse(childNodes, (AugmentationSchema) schema);
             } else if (schema instanceof AnyXmlSchemaNode) {

@@ -8,14 +8,14 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
-final class ChoiceNodeImpl implements ChoiceNode, DerivableSchemaNode {
+final class ChoiceNodeImpl implements ChoiceSchemaNode, DerivableSchemaNode {
     private final QName qname;
     private final SchemaPath path;
     String description;
@@ -23,7 +23,7 @@ final class ChoiceNodeImpl implements ChoiceNode, DerivableSchemaNode {
     Status status;
     boolean augmenting;
     boolean addedByUses;
-    ChoiceNode original;
+    ChoiceSchemaNode original;
     boolean configuration;
     ConstraintDefinition constraints;
     ImmutableSet<ChoiceCaseNode> cases;
@@ -72,7 +72,7 @@ final class ChoiceNodeImpl implements ChoiceNode, DerivableSchemaNode {
     }
 
     @Override
-    public Optional<ChoiceNode> getOriginal() {
+    public Optional<ChoiceSchemaNode> getOriginal() {
         return Optional.fromNullable(original);
     }
 
