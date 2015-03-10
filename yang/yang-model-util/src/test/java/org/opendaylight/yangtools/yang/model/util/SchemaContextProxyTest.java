@@ -12,7 +12,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-
 import com.google.common.collect.Sets;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -54,7 +53,7 @@ public class SchemaContextProxyTest {
         revision2 = SimpleDateFormatUtil.getRevisionFormat().parse("2015-01-15");
     }
 
-    private SchemaContext mockSchema(Module... module) {
+    private SchemaContext mockSchema(final Module... module) {
 
         SchemaContext mock = mock(SchemaContext.class);
         doReturn(Sets.newHashSet(module)).when(mock).getModules();
@@ -416,7 +415,7 @@ public class SchemaContextProxyTest {
         assertProxyContext(filteringSchemaContextProxy, moduleConfig, module2, module3, module4);
     }
 
-    private void assertProxyContext(FilteringSchemaContextProxy filteringSchemaContextProxy, Module... expected) {
+    private void assertProxyContext(final FilteringSchemaContextProxy filteringSchemaContextProxy, final Module... expected) {
 
         Set<Module> modSet = Sets.newHashSet();
 
@@ -444,9 +443,9 @@ public class SchemaContextProxyTest {
         }
     }
 
-    private FilteringSchemaContextProxy createProxySchemaCtx(SchemaContext schemaContext, Set<Module> additionalModules, Module... modules) {
+    private FilteringSchemaContextProxy createProxySchemaCtx(final SchemaContext schemaContext, final Set<Module> additionalModules, final Module... modules) {
 
-        Set<Module> modulesSet = new HashSet();
+        Set<Module> modulesSet = new HashSet<>();
 
         if(modules!=null) {
 
@@ -457,7 +456,7 @@ public class SchemaContextProxyTest {
         return new FilteringSchemaContextProxy(schemaContext, createModuleIds(modulesSet) , createModuleIds(additionalModules));
     }
 
-    private Set<ModuleId> createModuleIds(Set<Module> modules) {
+    private Set<ModuleId> createModuleIds(final Set<Module> modules) {
 
         Set<ModuleId> moduleIds = Sets.newHashSet();
 
@@ -472,7 +471,7 @@ public class SchemaContextProxyTest {
         return moduleIds;
     }
 
-    private void mockSubmodules(Module mainModule, Module... submodules){
+    private void mockSubmodules(final Module mainModule, final Module... submodules){
 
         Set<Module> submodulesSet = new HashSet<>();
         submodulesSet.addAll(Arrays.asList(submodules));
@@ -480,7 +479,7 @@ public class SchemaContextProxyTest {
         doReturn(submodulesSet).when(mainModule).getSubmodules();
     }
 
-    private void mockModuleImport(Module importer, Module... imports) {
+    private void mockModuleImport(final Module importer, final Module... imports) {
         Set<ModuleImport> mockedImports = Sets.newHashSet();
         for (final Module module : imports) {
             mockedImports.add(new ModuleImport() {
@@ -510,7 +509,7 @@ public class SchemaContextProxyTest {
     }
 
     //mock module with revision
-    private Module mockModule(String name, final Date rev){
+    private Module mockModule(final String name, final Date rev){
 
         final Module mod = mockModule(name);
 
@@ -522,7 +521,7 @@ public class SchemaContextProxyTest {
     }
 
     //mock module with default revision
-    private Module mockModule(String mName) {
+    private Module mockModule(final String mName) {
 
         Module mockedModule = mock(Module.class);
         doReturn(mName).when(mockedModule).getName();

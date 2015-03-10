@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
 import com.google.common.collect.Iterables;
 import javassist.ClassPool;
 import org.junit.Before;
@@ -81,7 +80,7 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingR
         assertEquals(TopLevelList.class, instanceIdentifier.getTargetType());
         assertFalse(instanceIdentifier.isWildcarded());
         assertTrue(last instanceof InstanceIdentifier.IdentifiableItem);
-        final Identifier key = ((InstanceIdentifier.IdentifiableItem) last).getKey();
+        final Identifier<?> key = ((InstanceIdentifier.IdentifiableItem<?, ?>) last).getKey();
         assertEquals(TopLevelListKey.class, key.getClass());
         assertEquals(TOP_LEVEL_LIST_KEY_VALUE, ((TopLevelListKey)key).getName());
     }
