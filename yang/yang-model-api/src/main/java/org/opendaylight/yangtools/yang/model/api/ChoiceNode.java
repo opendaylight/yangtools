@@ -8,14 +8,16 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
- *
  * The ChoiceNode defines a set of alternatives. It consists of a number of
  * branches defined as ChoiceCaseNode objects.
+ *
+ * @deprecated This interface is deprecated in favor of {@link ChoiceSchemaNode} and
+ *             will be removed in a future release.
  */
+@Deprecated
 public interface ChoiceNode extends DataSchemaNode, AugmentationTarget {
 
     /**
