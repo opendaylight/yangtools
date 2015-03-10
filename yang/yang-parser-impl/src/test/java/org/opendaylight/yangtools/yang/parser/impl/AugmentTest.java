@@ -28,7 +28,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -92,7 +92,7 @@ public class AugmentTest {
         LeafSchemaNode ds0ChannelNumber = (LeafSchemaNode) augment.getDataChildByName("ds0ChannelNumber");
         LeafSchemaNode interfaceId = (LeafSchemaNode) augment.getDataChildByName("interface-id");
         ContainerSchemaNode schemas = (ContainerSchemaNode) augment.getDataChildByName("schemas");
-        ChoiceNode odl = (ChoiceNode) augment.getDataChildByName("odl");
+        ChoiceSchemaNode odl = (ChoiceSchemaNode) augment.getDataChildByName("odl");
 
         assertNotNull(ds0ChannelNumber);
         assertNotNull(interfaceId);
@@ -195,7 +195,7 @@ public class AugmentTest {
         LeafSchemaNode ds0ChannelNumber = (LeafSchemaNode) augmentHolder.getDataChildByName("ds0ChannelNumber");
         LeafSchemaNode interfaceId = (LeafSchemaNode) augmentHolder.getDataChildByName("interface-id");
         ContainerSchemaNode schemas = (ContainerSchemaNode) augmentHolder.getDataChildByName("schemas");
-        ChoiceNode odl = (ChoiceNode) augmentHolder.getDataChildByName("odl");
+        ChoiceSchemaNode odl = (ChoiceSchemaNode) augmentHolder.getDataChildByName("odl");
 
         assertNotNull(ds0ChannelNumber);
         assertNotNull(interfaceId);
@@ -242,7 +242,7 @@ public class AugmentTest {
 
         // foo.yang
         // augment "/br:interfaces/br:ifEntry/bz:augment-holder"
-        ChoiceNode odl = (ChoiceNode) augmentedHolder.getDataChildByName("odl");
+        ChoiceSchemaNode odl = (ChoiceSchemaNode) augmentedHolder.getDataChildByName("odl");
         assertNotNull(odl);
         Set<ChoiceCaseNode> cases = odl.getCases();
         assertEquals(4, cases.size());
@@ -361,7 +361,7 @@ public class AugmentTest {
         ContainerSchemaNode input = submit.getInput();
         QName inputQName = QName.create(NS_BAR, revision, "input");
         assertEquals(inputQName, input.getQName());
-        ChoiceNode arguments = (ChoiceNode) input.getDataChildByName("arguments");
+        ChoiceSchemaNode arguments = (ChoiceSchemaNode) input.getDataChildByName("arguments");
         QName argumentsQName = QName.create(NS_BAR, revision, "arguments");
         assertEquals(argumentsQName, arguments.getQName());
         assertFalse(arguments.isAugmenting());

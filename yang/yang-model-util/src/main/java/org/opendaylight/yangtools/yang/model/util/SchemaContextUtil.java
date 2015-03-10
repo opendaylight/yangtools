@@ -20,7 +20,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -388,8 +388,8 @@ public final class SchemaContextUtil {
             }
         }
 
-        if (foundNode == null && parent instanceof ChoiceNode) {
-            foundNode = ((ChoiceNode) parent).getCaseNodeByName(current);
+        if (foundNode == null && parent instanceof ChoiceSchemaNode) {
+            foundNode = ((ChoiceSchemaNode) parent).getCaseNodeByName(current);
             if (foundNode != null && nextPath.iterator().hasNext()) {
                 foundNode = findNodeIn(foundNode, nextPath);
             }

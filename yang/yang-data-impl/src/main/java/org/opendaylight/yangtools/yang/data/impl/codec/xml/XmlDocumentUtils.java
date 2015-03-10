@@ -42,7 +42,7 @@ import org.opendaylight.yangtools.yang.data.impl.SimpleNodeTOImpl;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -328,8 +328,8 @@ public final class XmlDocumentUtils {
             for (DataSchemaNode dsn : dataSchemaNode) {
                 if (qname.isEqualWithoutRevision(dsn.getQName())) {
                     return Optional.<DataSchemaNode> of(dsn);
-                } else if (dsn instanceof ChoiceNode) {
-                    for (ChoiceCaseNode choiceCase : ((ChoiceNode) dsn).getCases()) {
+                } else if (dsn instanceof ChoiceSchemaNode) {
+                    for (ChoiceCaseNode choiceCase : ((ChoiceSchemaNode) dsn).getCases()) {
                         Optional<DataSchemaNode> foundDsn = findFirstSchema(qname, choiceCase.getChildNodes());
                         if (foundDsn != null && foundDsn.isPresent()) {
                             return foundDsn;

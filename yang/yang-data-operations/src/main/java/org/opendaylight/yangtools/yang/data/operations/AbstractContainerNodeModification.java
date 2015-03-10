@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -34,8 +35,8 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<?>> implements Modification<S, N> {
 
     @Override
-    public final Optional<N> modify(S schema, Optional<N> actual, Optional<N> modification,
-            OperationStack operationStack) throws DataModificationException {
+    public final Optional<N> modify(final S schema, final Optional<N> actual, final Optional<N> modification,
+            final OperationStack operationStack) throws DataModificationException {
 
         operationStack.enteringNode(modification);
 
@@ -76,8 +77,8 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
 
     protected abstract QName getQName(S schema);
 
-    private Optional<N> modifyContainer(S schema, Optional<N> actual, Optional<N> modification,
-            OperationStack operationStack) throws DataModificationException {
+    private Optional<N> modifyContainer(final S schema, final Optional<N> actual, final Optional<N> modification,
+            final OperationStack operationStack) throws DataModificationException {
 
         if (!actual.isPresent()) {
             return modification;
@@ -94,8 +95,8 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
         return build(schema, merged);
     }
 
-    private List<? extends DataContainerChild<?, ?>> modifyContainerChildNodes(S schema, OperationStack operationStack,
-            N actual, N modification, Set<YangInstanceIdentifier.PathArgument> toProcess) throws DataModificationException {
+    private List<? extends DataContainerChild<?, ?>> modifyContainerChildNodes(final S schema, final OperationStack operationStack,
+            final N actual, final N modification, final Set<YangInstanceIdentifier.PathArgument> toProcess) throws DataModificationException {
         List<DataContainerChild<?, ?>> result = Lists.newArrayList();
 
         for (YangInstanceIdentifier.PathArgument childToProcessId : toProcess) {
@@ -112,8 +113,8 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
         return result;
     }
 
-    private Optional<? extends DataContainerChild<?, ?>> modifyContainerNode(OperationStack operationStack, N actual,
-            N modification, YangInstanceIdentifier.PathArgument childToProcess, Object schemaChild)
+    private Optional<? extends DataContainerChild<?, ?>> modifyContainerNode(final OperationStack operationStack, final N actual,
+            final N modification, final YangInstanceIdentifier.PathArgument childToProcess, final Object schemaChild)
             throws DataModificationException {
 
         Optional<DataContainerChild<?, ?>> storedChildren = actual.getChild(childToProcess);
@@ -122,7 +123,7 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
         return NodeDispatcher.dispatchChildModification(schemaChild, storedChildren, modifiedChildren, operationStack);
     }
 
-    private Object findSchema(S schema, YangInstanceIdentifier.PathArgument childToProcessId) {
+    private Object findSchema(final S schema, final YangInstanceIdentifier.PathArgument childToProcessId) {
         if (childToProcessId instanceof YangInstanceIdentifier.AugmentationIdentifier) {
             return findSchemaForAugment(schema, (YangInstanceIdentifier.AugmentationIdentifier) childToProcessId);
         } else {
@@ -134,7 +135,7 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
 
     protected abstract Object findSchemaForAugment(S schema, YangInstanceIdentifier.AugmentationIdentifier childToProcessId);
 
-    private Optional<N> build(S schema, List<? extends DataContainerChild<?, ?>> result) {
+    private Optional<N> build(final S schema, final List<? extends DataContainerChild<?, ?>> result) {
         DataContainerNodeBuilder<?, N> b = getBuilder(schema);
 
         // TODO skip empty container nodes ? e.g. if container looses all its child nodes
@@ -150,8 +151,8 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
 
     protected abstract DataContainerNodeBuilder<?, N> getBuilder(S schema);
 
-    protected Set<YangInstanceIdentifier.PathArgument> getChildrenToProcess(S schema, Optional<N> actual,
-            Optional<N> modification) throws DataModificationException {
+    protected Set<YangInstanceIdentifier.PathArgument> getChildrenToProcess(final S schema, final Optional<N> actual,
+            final Optional<N> modification) throws DataModificationException {
         Set<YangInstanceIdentifier.PathArgument> qNames = Sets.newLinkedHashSet();
 
         qNames.addAll(getChildQNames(actual));
@@ -159,7 +160,7 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
         return qNames;
     }
 
-    private Set<? extends YangInstanceIdentifier.PathArgument> getChildQNames(Optional<N> actual) {
+    private Set<? extends YangInstanceIdentifier.PathArgument> getChildQNames(final Optional<N> actual) {
         Set<YangInstanceIdentifier.PathArgument> qNames = Sets.newLinkedHashSet();
 
         for (DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> child : actual.get().getValue()) {
@@ -179,9 +180,9 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
         private static final ContainerNodeModification CONTAINER_NODE_MODIFICATION = new ContainerNodeModification();
         private static final ChoiceNodeModification CHOICE_NODE_MODIFICATION = new ChoiceNodeModification();
 
-        static Optional<? extends DataContainerChild<?, ?>> dispatchChildModification(Object schemaChild,
-                Optional<DataContainerChild<?, ?>> actual, Optional<DataContainerChild<?, ?>> modification,
-                OperationStack operations) throws DataModificationException {
+        static Optional<? extends DataContainerChild<?, ?>> dispatchChildModification(final Object schemaChild,
+                final Optional<DataContainerChild<?, ?>> actual, final Optional<DataContainerChild<?, ?>> modification,
+                final OperationStack operations) throws DataModificationException {
 
             if (schemaChild instanceof LeafSchemaNode) {
                 return onLeafNode((LeafSchemaNode) schemaChild, actual, modification, operations);
@@ -197,8 +198,8 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
                 } else {
                     return onMapNode((ListSchemaNode) schemaChild, actual, modification, operations);
                 }
-            } else if (schemaChild instanceof org.opendaylight.yangtools.yang.model.api.ChoiceNode) {
-                return onChoiceNode((org.opendaylight.yangtools.yang.model.api.ChoiceNode) schemaChild, actual,
+            } else if (schemaChild instanceof ChoiceSchemaNode) {
+                return onChoiceNode((ChoiceSchemaNode) schemaChild, actual,
                         modification, operations);
             }
 
@@ -206,9 +207,9 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
         }
 
         private static Optional<? extends DataContainerChild<?, ?>> onChoiceNode(
-                org.opendaylight.yangtools.yang.model.api.ChoiceNode schemaChild,
-                Optional<? extends DataContainerChild<?, ?>> actual,
-                Optional<? extends DataContainerChild<?, ?>> modification, OperationStack operations)
+            final ChoiceSchemaNode schemaChild,
+                final Optional<? extends DataContainerChild<?, ?>> actual,
+                final Optional<? extends DataContainerChild<?, ?>> modification, final OperationStack operations)
                 throws DataModificationException {
             checkType(actual, ChoiceNode.class);
             checkType(modification, ChoiceNode.class);
@@ -216,9 +217,9 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
                     (Optional<ChoiceNode>) modification, operations);
         }
 
-        private static Optional<? extends DataContainerChild<?, ?>> onMapNode(ListSchemaNode schemaChild,
-                Optional<? extends DataContainerChild<?, ?>> actual,
-                Optional<? extends DataContainerChild<?, ?>> modification, OperationStack operations)
+        private static Optional<? extends DataContainerChild<?, ?>> onMapNode(final ListSchemaNode schemaChild,
+                final Optional<? extends DataContainerChild<?, ?>> actual,
+                final Optional<? extends DataContainerChild<?, ?>> modification, final OperationStack operations)
                 throws DataModificationException {
             checkType(actual, MapNode.class);
             checkType(modification, MapNode.class);
@@ -226,9 +227,9 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
                     (Optional<MapNode>) modification, operations);
         }
 
-        private static Optional<? extends DataContainerChild<?, ?>> onUnkeyedNode(ListSchemaNode schemaChild,
-                Optional<? extends DataContainerChild<?, ?>> actual,
-                        Optional<? extends DataContainerChild<?, ?>> modification, OperationStack operations)
+        private static Optional<? extends DataContainerChild<?, ?>> onUnkeyedNode(final ListSchemaNode schemaChild,
+                final Optional<? extends DataContainerChild<?, ?>> actual,
+                        final Optional<? extends DataContainerChild<?, ?>> modification, final OperationStack operations)
                                 throws DataModificationException {
             checkType(actual, UnkeyedListNode.class);
             checkType(modification, UnkeyedListNode.class);
@@ -236,9 +237,9 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
                     (Optional<UnkeyedListNode>) modification, operations);
         }
 
-        private static Optional<? extends DataContainerChild<?, ?>> onAugmentationNode(AugmentationSchema schemaChild,
-                Optional<? extends DataContainerChild<?, ?>> actual,
-                Optional<? extends DataContainerChild<?, ?>> modification, OperationStack operations)
+        private static Optional<? extends DataContainerChild<?, ?>> onAugmentationNode(final AugmentationSchema schemaChild,
+                final Optional<? extends DataContainerChild<?, ?>> actual,
+                final Optional<? extends DataContainerChild<?, ?>> modification, final OperationStack operations)
                 throws DataModificationException {
             checkType(actual, AugmentationNode.class);
             checkType(modification, AugmentationNode.class);
@@ -246,9 +247,9 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
                     (Optional<AugmentationNode>) modification, operations);
         }
 
-        private static Optional<? extends DataContainerChild<?, ?>> onLeafSetNode(LeafListSchemaNode schemaChild,
-                Optional<? extends DataContainerChild<?, ?>> actual,
-                Optional<? extends DataContainerChild<?, ?>> modification, OperationStack operations)
+        private static Optional<? extends DataContainerChild<?, ?>> onLeafSetNode(final LeafListSchemaNode schemaChild,
+                final Optional<? extends DataContainerChild<?, ?>> actual,
+                final Optional<? extends DataContainerChild<?, ?>> modification, final OperationStack operations)
                 throws DataModificationException {
             checkType(actual, LeafSetNode.class);
             checkType(modification, LeafSetNode.class);
@@ -256,9 +257,9 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
                     (Optional<LeafSetNode<?>>) modification, operations);
         }
 
-        private static Optional<? extends DataContainerChild<?, ?>> onContainerNode(ContainerSchemaNode schemaChild,
-                Optional<? extends DataContainerChild<?, ?>> actual,
-                Optional<? extends DataContainerChild<?, ?>> modification, OperationStack operations)
+        private static Optional<? extends DataContainerChild<?, ?>> onContainerNode(final ContainerSchemaNode schemaChild,
+                final Optional<? extends DataContainerChild<?, ?>> actual,
+                final Optional<? extends DataContainerChild<?, ?>> modification, final OperationStack operations)
                 throws DataModificationException {
             checkType(actual, ContainerNode.class);
             checkType(modification, ContainerNode.class);
@@ -266,9 +267,9 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
                     (Optional<ContainerNode>) modification, operations);
         }
 
-        private static Optional<? extends DataContainerChild<?, ?>> onLeafNode(LeafSchemaNode schemaChild,
-                Optional<? extends DataContainerChild<?, ?>> actual,
-                Optional<? extends DataContainerChild<?, ?>> modification, OperationStack operations)
+        private static Optional<? extends DataContainerChild<?, ?>> onLeafNode(final LeafSchemaNode schemaChild,
+                final Optional<? extends DataContainerChild<?, ?>> actual,
+                final Optional<? extends DataContainerChild<?, ?>> modification, final OperationStack operations)
                 throws DataModificationException {
             checkType(actual, LeafNode.class);
             checkType(modification, LeafNode.class);
@@ -276,7 +277,7 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
                     (Optional<LeafNode<?>>) modification, operations);
         }
 
-        private static void checkType(Optional<? extends DataContainerChild<?, ?>> actual, Class<?> leafNodeClass) {
+        private static void checkType(final Optional<? extends DataContainerChild<?, ?>> actual, final Class<?> leafNodeClass) {
             if (actual.isPresent()) {
                 Preconditions.checkArgument(leafNodeClass.isAssignableFrom(actual.get().getClass()),
                         "Unexpected node type, should be: %s, but was: %s, for: %s", leafNodeClass, actual.getClass(),

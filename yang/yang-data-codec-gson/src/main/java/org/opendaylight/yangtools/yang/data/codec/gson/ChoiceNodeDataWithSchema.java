@@ -8,10 +8,9 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import java.io.IOException;
-
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 /**
@@ -23,7 +22,7 @@ class ChoiceNodeDataWithSchema extends CompositeNodeDataWithSchema {
 
     private CaseNodeDataWithSchema caseNodeDataWithSchema;
 
-    public ChoiceNodeDataWithSchema(final ChoiceNode schema) {
+    public ChoiceNodeDataWithSchema(final ChoiceSchemaNode schema) {
         super(schema);
     }
 

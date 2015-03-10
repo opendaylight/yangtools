@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -69,7 +69,7 @@ final class SchemaRootCodecContext extends DataContainerCodecContext<SchemaConte
                     Preconditions.checkArgument(childSchema != null, "Argument %s is not valid child of %s", qname,
                             schema());
 
-                    if (childSchema instanceof DataNodeContainer || childSchema instanceof ChoiceNode) {
+                    if (childSchema instanceof DataNodeContainer || childSchema instanceof ChoiceSchemaNode) {
                         final Class<?> childCls = factory().getRuntimeContext().getClassForSchema(childSchema);
                         return getStreamChild(childCls);
                     } else {

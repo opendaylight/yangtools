@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializerImplementation;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializerRegistry;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -150,7 +150,7 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
             emitList(b, getterName, valueType, casted);
         } else if (child instanceof ContainerSchemaNode) {
             b.append(statement(staticInvokeEmitter(childType, getterName)));
-        } else if (child instanceof ChoiceNode) {
+        } else if (child instanceof ChoiceSchemaNode) {
             String propertyName = CHOICE_PREFIX + childType.getName();
             staticConstant(propertyName, DataObjectSerializerImplementation.class, ChoiceDispatchSerializer.from(loadClass(childType)));
             b.append(statement(invoke(propertyName, StreamWriterGenerator.SERIALIZE_METHOD_NAME, REGISTRY, cast(DataObject.class.getName(),getterName), STREAM)));

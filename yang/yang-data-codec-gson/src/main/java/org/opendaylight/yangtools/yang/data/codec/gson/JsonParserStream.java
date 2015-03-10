@@ -15,7 +15,6 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.MalformedJsonException;
-
 import java.io.Closeable;
 import java.io.EOFException;
 import java.io.Flushable;
@@ -28,12 +27,11 @@ import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -262,11 +260,11 @@ public final class JsonParserStream implements Closeable, Flushable {
     private Deque<DataSchemaNode> findSchemaNodeByNameAndNamespace(final DataSchemaNode dataSchemaNode,
             final String childName, final URI namespace) {
         final Deque<DataSchemaNode> result = new ArrayDeque<>();
-        List<ChoiceNode> childChoices = new ArrayList<>();
+        List<ChoiceSchemaNode> childChoices = new ArrayList<>();
         if (dataSchemaNode instanceof DataNodeContainer) {
             for (DataSchemaNode childNode : ((DataNodeContainer) dataSchemaNode).getChildNodes()) {
-                if (childNode instanceof ChoiceNode) {
-                    childChoices.add((ChoiceNode) childNode);
+                if (childNode instanceof ChoiceSchemaNode) {
+                    childChoices.add((ChoiceSchemaNode) childNode);
                 } else {
                     final QName childQName = childNode.getQName();
                     if (childQName.getLocalName().equals(childName) && childQName.getNamespace().equals(namespace)) {
@@ -277,7 +275,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             }
         }
         // try to find data schema node in choice (looking for first match)
-        for (ChoiceNode choiceNode : childChoices) {
+        for (ChoiceSchemaNode choiceNode : childChoices) {
             for (ChoiceCaseNode concreteCase : choiceNode.getCases()) {
                 Deque<DataSchemaNode> resultFromRecursion = findSchemaNodeByNameAndNamespace(concreteCase, childName,
                         namespace);
