@@ -59,7 +59,6 @@ final class UsesNodeImpl implements UsesNode {
         return refines;
     }
 
-    @SuppressWarnings("unused")
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;
     }
