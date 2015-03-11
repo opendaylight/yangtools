@@ -8,6 +8,7 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
@@ -15,7 +16,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
-final class ChoiceNodeImpl implements ChoiceSchemaNode, DerivableSchemaNode {
+// FIXME: BUG-1513: remove ChoiceNode in Beryllium timeframe
+final class ChoiceNodeImpl implements ChoiceNode, ChoiceSchemaNode, DerivableSchemaNode {
     private final QName qname;
     private final SchemaPath path;
     String description;
