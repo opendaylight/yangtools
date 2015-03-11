@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.sal.binding.generator.impl.BindingGeneratorImp
 import org.opendaylight.yangtools.sal.binding.generator.impl.ModuleContext;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -162,8 +162,8 @@ public class MultipleRevisionsSupportTest {
             for (DataSchemaNode child : ((DataNodeContainer) node).getChildNodes()) {
                 assertDeepRevision(revision, child);
             }
-        } else if (node instanceof ChoiceNode) {
-            for (DataSchemaNode child : ((ChoiceNode) node).getCases()) {
+        } else if (node instanceof ChoiceSchemaNode) {
+            for (DataSchemaNode child : ((ChoiceSchemaNode) node).getCases()) {
                 assertDeepRevision(revision, child);
             }
         }

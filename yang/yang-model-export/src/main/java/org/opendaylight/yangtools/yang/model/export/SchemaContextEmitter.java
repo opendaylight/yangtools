@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -222,8 +222,8 @@ class SchemaContextEmitter {
             emitLeafList((LeafListSchemaNode) child);
         } else if (child instanceof ListSchemaNode) {
             emitList((ListSchemaNode) child);
-        } else if (child instanceof ChoiceNode) {
-            emitChoice((ChoiceNode) child);
+        } else if (child instanceof ChoiceSchemaNode) {
+            emitChoice((ChoiceSchemaNode) child);
         } else if (child instanceof AnyXmlSchemaNode) {
             emitAnyxml((AnyXmlSchemaNode) child);
         } else {
@@ -852,7 +852,7 @@ class SchemaContextEmitter {
 
     }
 
-    private void emitChoice(final ChoiceNode choice) {
+    private void emitChoice(final ChoiceSchemaNode choice) {
         writer.startChoiceNode(choice.getQName());
         emitWhen(choice.getConstraints().getWhenCondition());
         // FIXME: BUG-2444: *(ifFeatureNode )
@@ -928,8 +928,8 @@ class SchemaContextEmitter {
             emitRefineLeafListNodes((LeafListSchemaNode) value);
         } else if (value instanceof ListSchemaNode) {
             emitRefineListNodes((ListSchemaNode) value);
-        } else if (value instanceof ChoiceNode) {
-            emitRefineChoiceNodes((ChoiceNode) value);
+        } else if (value instanceof ChoiceSchemaNode) {
+            emitRefineChoiceNodes((ChoiceSchemaNode) value);
         } else if (value instanceof ChoiceCaseNode) {
             emitRefineCaseNodes((ChoiceCaseNode) value);
         } else if (value instanceof ContainerSchemaNode) {
@@ -1023,8 +1023,8 @@ class SchemaContextEmitter {
 
     }
 
-    private void emitRefineChoiceNodes(final ChoiceNode value) {
-        final ChoiceNode original = getOriginalChecked(value);
+    private void emitRefineChoiceNodes(final ChoiceSchemaNode value) {
+        final ChoiceSchemaNode original = getOriginalChecked(value);
 
         // FIXME: BUG-2444: defaultNode //FIXME: BUG-2444: Optional
         if (Objects.deepEquals(original.isConfiguration(), value.isConfiguration())) {

@@ -54,7 +54,7 @@
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode}
  *
  * <dt>choice
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ChoiceNode}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode}
  *
  * <dt>config
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.DataSchemaNode#isConfiguration()}
