@@ -7,12 +7,10 @@
  */
 package org.opendaylight.yangtools.sal.binding.yang.types;
 
-import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.moduleNamespaceToPackageName;
 import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.packageNameForGeneratedType;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNode;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNodeForRelativeXPath;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import com.google.common.io.BaseEncoding;
@@ -201,7 +199,7 @@ public final class TypeProviderImpl implements TypeProvider {
             if (r != null && returnType instanceof GeneratedTransferObject) {
                 GeneratedTransferObject gto = (GeneratedTransferObject) returnType;
                 Module module = findParentModule(schemaContext, parentNode);
-                String basePackageName = moduleNamespaceToPackageName(module);
+                String basePackageName = BindingMapping.getRootPackageName(module.getQNameModule());
                 String packageName = packageNameForGeneratedType(basePackageName, typeDefinition.getPath());
                 String genTOName = BindingMapping.getClassName(typedefName);
                 String name = packageName + "." + genTOName;
@@ -321,7 +319,7 @@ public final class TypeProviderImpl implements TypeProvider {
         }
         Preconditions.checkArgument(identity != null, "Target identity '" + baseIdQName + "' do not exists");
 
-        final String basePackageName = moduleNamespaceToPackageName(module);
+        final String basePackageName = BindingMapping.getRootPackageName(module.getQNameModule());
         final String packageName = packageNameForGeneratedType(basePackageName, identity.getPath());
         final String genTypeName = BindingMapping.getClassName(identity.getQName());
 
@@ -532,7 +530,7 @@ public final class TypeProviderImpl implements TypeProvider {
         final String enumerationName = BindingMapping.getClassName(enumName);
 
         Module module = findParentModule(schemaContext, parentNode);
-        final String basePackageName = moduleNamespaceToPackageName(module);
+        final String basePackageName = BindingMapping.getRootPackageName(module.getQNameModule());
 
         final EnumerationBuilderImpl enumBuilder = new EnumerationBuilderImpl(basePackageName, enumerationName);
         enumBuilder.setDescription(enumTypeDef.getDescription());
@@ -643,7 +641,7 @@ public final class TypeProviderImpl implements TypeProvider {
             if (module == null) {
                 continue;
             }
-            final String basePackageName = moduleNamespaceToPackageName(module);
+            final String basePackageName = BindingMapping.getRootPackageName(module.getQNameModule());
 
             final DataNodeIterator it = new DataNodeIterator(module);
             final List<TypeDefinition<?>> typeDefinitions = it.allTypedefs();
@@ -1387,10 +1385,10 @@ public final class TypeProviderImpl implements TypeProvider {
             path.next();
             if (!(path.hasNext())) {
                 parentName = BindingMapping.getClassName(parent.getName()) + "Data";
-                String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(parent);
+                String basePackageName = BindingMapping.getRootPackageName(parent.getQNameModule());
                 className = basePackageName + "." + parentName + "." + BindingMapping.getClassName(node.getQName());
             } else {
-                String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(parent);
+                String basePackageName = BindingMapping.getRootPackageName(parent.getQNameModule());
                 String packageName = packageNameForGeneratedType(basePackageName, type.getPath());
                 parentName = BindingMapping.getClassName(parent.getName());
                 className = packageName + "." + parentName + "." + BindingMapping.getClassName(node.getQName());
@@ -1410,12 +1408,12 @@ public final class TypeProviderImpl implements TypeProvider {
             String className;
             if (type instanceof ExtendedType) {
                 Module m = getParentModule(type);
-                String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(m);
+                String basePackageName = BindingMapping.getRootPackageName(m.getQNameModule());
                 String packageName = packageNameForGeneratedType(basePackageName, type.getPath());
                 className = packageName + "." + BindingMapping.getClassName(typeQName);
             } else {
                 Module parentModule = getParentModule(node);
-                String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(parentModule);
+                String basePackageName = BindingMapping.getRootPackageName(parentModule.getQNameModule());
                 String packageName = packageNameForGeneratedType(basePackageName, node.getPath());
                 className = packageName + "." + BindingMapping.getClassName(node.getQName());
             }
@@ -1454,7 +1452,7 @@ public final class TypeProviderImpl implements TypeProvider {
         if (type instanceof ExtendedType && !(base instanceof LeafrefTypeDefinition)
                 && !(base instanceof EnumerationType) && !(base instanceof UnionTypeDefinition)) {
             Module m = getParentModule(type);
-            String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(m);
+            String basePackageName = BindingMapping.getRootPackageName(m.getQNameModule());
             String packageName = packageNameForGeneratedType(basePackageName, type.getPath());
             String className = packageName + "." + BindingMapping.getClassName(typeQName);
             sb.insert(0, "new " + className + "(");
@@ -1580,7 +1578,7 @@ public final class TypeProviderImpl implements TypeProvider {
                 module = modules.iterator().next();
             }
 
-            String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(module);
+            String basePackageName = BindingMapping.getRootPackageName(module.getQNameModule());
             className = basePackageName + "." + BindingMapping.getClassName(typeQName);
         } else {
             Iterator<QName> path = node.getPath().getPathFromRoot().iterator();
@@ -1590,13 +1588,13 @@ public final class TypeProviderImpl implements TypeProvider {
                 Date revision = first.getRevision();
                 Module parent = schemaContext.findModuleByNamespaceAndRevision(namespace, revision);
                 parentName = BindingMapping.getClassName((parent).getName()) + "Data";
-                String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(parent);
+                String basePackageName = BindingMapping.getRootPackageName(parent.getQNameModule());
                 className = basePackageName + "." + parentName + "." + BindingMapping.getClassName(node.getQName());
             } else {
                 URI namespace = first.getNamespace();
                 Date revision = first.getRevision();
                 Module parentModule = schemaContext.findModuleByNamespaceAndRevision(namespace, revision);
-                String basePackageName = BindingGeneratorUtil.moduleNamespaceToPackageName(parentModule);
+                String basePackageName = BindingMapping.getRootPackageName(parentModule.getQNameModule());
                 String packageName = packageNameForGeneratedType(basePackageName, node.getType().getPath());
                 className = packageName + "." + BindingMapping.getClassName(node.getQName());
             }
