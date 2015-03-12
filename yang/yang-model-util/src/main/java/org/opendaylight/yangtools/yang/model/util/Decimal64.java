@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -71,7 +72,7 @@ public final class Decimal64 implements DecimalTypeDefinition {
                     "The fraction digits outside of boundaries. Fraction digits MUST be integer between 1 and 18 inclusively");
         }
         this.fractionDigits = fractionDigits;
-        rangeStatements = defaultRangeStatements();
+        rangeStatements = getDefaultRangeStatements(fractionDigits);
         this.path = path;
     }
 
@@ -84,10 +85,10 @@ public final class Decimal64 implements DecimalTypeDefinition {
      *
      * @return unmodifiable List with default definition of Range Statements.
      */
-    private List<RangeConstraint> defaultRangeStatements() {
-        final List<RangeConstraint> rangeStmts = new ArrayList<RangeConstraint>();
-        final BigDecimal min = new BigDecimal("-922337203685477580.8");
-        final BigDecimal max = new BigDecimal("922337203685477580.7");
+    private List<RangeConstraint> getDefaultRangeStatements(final Integer fractionDigits) {
+        final List<RangeConstraint> rangeStmts = new ArrayList<>();
+        final BigDecimal min = new BigDecimal(new BigInteger("-9223372036854775808"), fractionDigits);
+        final BigDecimal max = new BigDecimal(new BigInteger("9223372036854775807"), fractionDigits);
         final String rangeDescription = "Integer values between " + min + " and " + max + ", inclusively.";
         rangeStmts.add(BaseConstraints.newRangeConstraint(min, max, Optional.of(rangeDescription),
                 Optional.of("https://tools.ietf.org/html/rfc6020#section-9.2.4")));

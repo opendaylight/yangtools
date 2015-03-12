@@ -48,8 +48,8 @@ public class Decimal64Test {
 
         assertEquals("Should be DECIMAL64_QNAME", BaseTypes.DECIMAL64_QNAME, decimal64.getQName());
 
-        assertTrue("Should contain max", decimal64.getRangeConstraints().toString().contains("max=922337203685477580.7"));
-        assertTrue("Should contain min", decimal64.getRangeConstraints().toString().contains("min=-922337203685477580.8"));
+        assertTrue("Should contain max", decimal64.getRangeConstraints().toString().contains("max=92233720368547758.07"));
+        assertTrue("Should contain min", decimal64.getRangeConstraints().toString().contains("min=-92233720368547758.08"));
 
         Decimal64 decimal641 = decimal64;
         assertTrue("Hash code of decimal64 and decimal641 should be equal",
