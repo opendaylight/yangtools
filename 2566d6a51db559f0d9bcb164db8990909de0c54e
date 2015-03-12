@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_e0d8e11f",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/api/BindingCodecTree.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-03-12T10:05:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_bd19a6d8",
+      "revId": "2566d6a51db559f0d9bcb164db8990909de0c54e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_1d28dae0",
         "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/api/BindingCodecTree.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2015-03-03T12:31:47Z",
       "side": 1,
       "message": "do not leak this if not needed",
+      "revId": "2566d6a51db559f0d9bcb164db8990909de0c54e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_40d0b5f5",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/api/BindingCodecTree.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-03-12T10:05:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_1d28dae0",
       "revId": "2566d6a51db559f0d9bcb164db8990909de0c54e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_00d62df1",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/api/BindingCodecTreeFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-03-12T10:05:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_dd1d92bf",
+      "revId": "2566d6a51db559f0d9bcb164db8990909de0c54e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_5d8182c1",
         "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/api/BindingCodecTreeNode.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2015-03-03T12:31:47Z",
       "side": 1,
       "message": "**/",
+      "revId": "2566d6a51db559f0d9bcb164db8990909de0c54e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_a0065984",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/api/BindingCodecTreeNode.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-03-12T10:05:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_5d8182c1",
       "revId": "2566d6a51db559f0d9bcb164db8990909de0c54e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_c00b658c",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/api/BindingCodecTreeNode.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-03-12T10:05:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_7d86bedc",
+      "revId": "2566d6a51db559f0d9bcb164db8990909de0c54e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_bd80c6c0",
         "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/api/BindingCodecTreeNode.java",
         "patchSetId": 2
@@ -98,6 +188,24 @@
       "writtenOn": "2015-03-03T12:31:47Z",
       "side": 1,
       "message": "not implementation, but corresponds to getImplementedInterface(), right?",
+      "revId": "2566d6a51db559f0d9bcb164db8990909de0c54e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_20fa4975",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/api/BindingCodecTreeNode.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-03-12T10:05:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_bd80c6c0",
       "revId": "2566d6a51db559f0d9bcb164db8990909de0c54e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_40f7558b",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/api/BindingCodecTreeNode.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-03-12T10:05:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_3d6cb634",
+      "revId": "2566d6a51db559f0d9bcb164db8990909de0c54e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_dd74b2ff",
         "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/api/BindingCodecTreeNode.java",
         "patchSetId": 2
@@ -138,6 +264,24 @@
     },
     {
       "key": {
+        "uuid": "7a96c907_00edcdb6",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/api/BindingCodecTreeNode.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-03-12T10:05:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_dd74b2ff",
+      "revId": "2566d6a51db559f0d9bcb164db8990909de0c54e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_bd67664c",
         "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/api/BindingNormalizedNodeCachingCodec.java",
         "patchSetId": 2
@@ -149,6 +293,24 @@
       "writtenOn": "2015-03-03T12:31:47Z",
       "side": 1,
       "message": "leaking implementation?",
+      "revId": "2566d6a51db559f0d9bcb164db8990909de0c54e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a96c907_a02df9ff",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/api/BindingNormalizedNodeCachingCodec.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-03-12T10:05:36Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a96c907_bd67664c",
       "revId": "2566d6a51db559f0d9bcb164db8990909de0c54e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
