@@ -27,6 +27,7 @@ import static org.opendaylight.yangtools.sal.java.api.generator.test.Compilation
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.cleanUp;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.getSourceFiles;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.testCompilation;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
@@ -87,11 +88,11 @@ public class CompilationTest extends BaseCompilationTest {
 
         // Test if all sources are generated
         File parent = new File(sourcesOutputDir, NS_TEST);
-        File keyArgs = new File(parent, "KeyArgs.java");
-        File links = new File(parent, "Links.java");
-        File linksBuilder = new File(parent, "LinksBuilder.java");
-        File linksKey = new File(parent, "LinksKey.java");
-        File testData = new File(parent, "TestData.java");
+        final File keyArgs = new File(parent, "KeyArgs.java");
+        final File links = new File(parent, "Links.java");
+        final File linksBuilder = new File(parent, "LinksBuilder.java");
+        final File linksKey = new File(parent, "LinksKey.java");
+        final File testData = new File(parent, "TestData.java");
         assertTrue(keyArgs.exists());
         assertTrue(links.exists());
         assertTrue(linksBuilder.exists());
@@ -100,13 +101,13 @@ public class CompilationTest extends BaseCompilationTest {
         assertFilesCount(parent, 6);
 
         parent = new File(sourcesOutputDir, NS_TEST + FS + "links");
-        File level = new File(parent, "Level.java");
-        File linkGroup = new File(parent, "LinkGroup.java");
-        File node = new File(parent, "Node.java");
-        File nodeBuilder = new File(parent, "NodeBuilder.java");
-        File nodeList = new File(parent, "NodeList.java");
-        File nodeListBuilder = new File(parent, "NodeListBuilder.java");
-        File nodesType = new File(parent, "NodesType.java");
+        final File level = new File(parent, "Level.java");
+        final File linkGroup = new File(parent, "LinkGroup.java");
+        final File node = new File(parent, "Node.java");
+        final File nodeBuilder = new File(parent, "NodeBuilder.java");
+        final File nodeList = new File(parent, "NodeList.java");
+        final File nodeListBuilder = new File(parent, "NodeListBuilder.java");
+        final File nodesType = new File(parent, "NodesType.java");
         assertTrue(level.exists());
         assertTrue(linkGroup.exists());
         assertTrue(node.exists());
@@ -119,10 +120,10 @@ public class CompilationTest extends BaseCompilationTest {
         // Test if sources are compilable
         testCompilation(sourcesOutputDir, compiledOutputDir);
 
-        ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
-        Class<?> keyArgsClass = Class.forName(BASE_PKG + ".urn.opendaylight.test.rev131008.KeyArgs", true, loader);
-        Class<?> linksClass = Class.forName(BASE_PKG + ".urn.opendaylight.test.rev131008.Links", true, loader);
-        Class<?> linksKeyClass = Class.forName(BASE_PKG + ".urn.opendaylight.test.rev131008.LinksKey", true, loader);
+        final ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        final Class<?> keyArgsClass = Class.forName(BASE_PKG + ".urn.opendaylight.test.rev131008.KeyArgs", true, loader);
+        final Class<?> linksClass = Class.forName(BASE_PKG + ".urn.opendaylight.test.rev131008.Links", true, loader);
+        final Class<?> linksKeyClass = Class.forName(BASE_PKG + ".urn.opendaylight.test.rev131008.LinksKey", true, loader);
 
         // Test generated 'grouping key-args'
         assertTrue(keyArgsClass.isInterface());
@@ -139,7 +140,7 @@ public class CompilationTest extends BaseCompilationTest {
         // Test list key constructor arguments ordering
         assertContainsConstructor(linksKeyClass, Byte.class, String.class, Integer.class);
         // Test serialVersionUID generation
-        Field suid = assertContainsField(linksKeyClass, "serialVersionUID", Long.TYPE);
+        final Field suid = assertContainsField(linksKeyClass, "serialVersionUID", Long.TYPE);
         suid.setAccessible(true);
         assertEquals(-8829501012356283881L, suid.getLong(null));
 
@@ -262,10 +263,10 @@ public class CompilationTest extends BaseCompilationTest {
 
         // Test if all sources were generated from 'module foo'
         File parent = new File(sourcesOutputDir, NS_FOO);
-        File fooListener = new File(parent, "FooListener.java");
+        final File fooListener = new File(parent, "FooListener.java");
         File pathAttributes = new File(parent, "PathAttributes.java");
-        File update = new File(parent, "Update.java");
-        File updateBuilder = new File(parent, "UpdateBuilder.java");
+        final File update = new File(parent, "Update.java");
+        final File updateBuilder = new File(parent, "UpdateBuilder.java");
         assertTrue(fooListener.exists());
         assertTrue(pathAttributes.exists());
         assertTrue(update.exists());
@@ -276,23 +277,23 @@ public class CompilationTest extends BaseCompilationTest {
         assertFilesCount(parent, 1);
         parent = new File(parent, "attributes");
         assertFilesCount(parent, 2);
-        File origin = new File(parent, "Origin.java");
-        File originBuilder = new File(parent, "OriginBuilder.java");
+        final File origin = new File(parent, "Origin.java");
+        final File originBuilder = new File(parent, "OriginBuilder.java");
         assertTrue(origin.exists());
         assertTrue(originBuilder.exists());
 
         parent = new File(sourcesOutputDir, NS_FOO + FS + "update");
         assertFilesCount(parent, 2);
         pathAttributes = new File(parent, "PathAttributes.java");
-        File pathAttributesBuilder = new File(parent, "PathAttributesBuilder.java");
+        final File pathAttributesBuilder = new File(parent, "PathAttributesBuilder.java");
         assertTrue(pathAttributes.exists());
         assertTrue(pathAttributesBuilder.exists());
 
         // Test if all sources were generated from 'module bar'
         parent = new File(sourcesOutputDir, NS_BAR);
-        File destination = new File(parent, "Destination.java");
-        File pathAttributes1 = new File(parent, "PathAttributes1.java");
-        File pathAttributes1Builder = new File(parent, "PathAttributes1Builder.java");
+        final File destination = new File(parent, "Destination.java");
+        final File pathAttributes1 = new File(parent, "PathAttributes1.java");
+        final File pathAttributes1Builder = new File(parent, "PathAttributes1Builder.java");
         assertTrue(destination.exists());
         assertTrue(pathAttributes1.exists());
         assertTrue(pathAttributes1Builder.exists());
@@ -300,15 +301,15 @@ public class CompilationTest extends BaseCompilationTest {
 
         parent = new File(sourcesOutputDir, NS_BAR + FS + "destination");
         assertFilesCount(parent, 2);
-        File destinationType = new File(parent, "DestinationType.java");
+        final File destinationType = new File(parent, "DestinationType.java");
         assertTrue(destinationType.exists());
 
         parent = new File(parent, "destination");
         assertFilesCount(parent, 1);
         parent = new File(parent, "type");
         assertFilesCount(parent, 2);
-        File destinationIpv4 = new File(parent, "DestinationIp.java");
-        File destinationIpv4Builder = new File(parent, "DestinationIpBuilder.java");
+        final File destinationIpv4 = new File(parent, "DestinationIp.java");
+        final File destinationIpv4Builder = new File(parent, "DestinationIpBuilder.java");
         assertTrue(destinationIpv4.exists());
         assertTrue(destinationIpv4Builder.exists());
 
@@ -317,8 +318,8 @@ public class CompilationTest extends BaseCompilationTest {
         parent = new File(parent, "path");
         assertFilesCount(parent, 1);
         parent = new File(parent, "attributes");
-        File mpUnreachNlri = new File(parent, "MpUnreachNlri.java");
-        File mpUnreachNlriBuilder = new File(parent, "MpUnreachNlriBuilder.java");
+        final File mpUnreachNlri = new File(parent, "MpUnreachNlri.java");
+        final File mpUnreachNlriBuilder = new File(parent, "MpUnreachNlriBuilder.java");
         assertTrue(mpUnreachNlri.exists());
         assertTrue(mpUnreachNlriBuilder.exists());
         assertFilesCount(parent, 3);
@@ -328,8 +329,8 @@ public class CompilationTest extends BaseCompilationTest {
         parent = new File(parent, "unreach");
         assertFilesCount(parent, 1);
         parent = new File(parent, "nlri");
-        File withdrawnRoutes = new File(parent, "WithdrawnRoutes.java");
-        File withdrawnRoutesBuilder = new File(parent, "WithdrawnRoutesBuilder.java");
+        final File withdrawnRoutes = new File(parent, "WithdrawnRoutes.java");
+        final File withdrawnRoutesBuilder = new File(parent, "WithdrawnRoutesBuilder.java");
         assertTrue(withdrawnRoutes.exists());
         assertTrue(withdrawnRoutesBuilder.exists());
         assertFilesCount(parent, 2);
@@ -337,7 +338,7 @@ public class CompilationTest extends BaseCompilationTest {
         // Test if all sources were generated from 'module baz'
         parent = new File(sourcesOutputDir, NS_BAZ);
         assertFilesCount(parent, 2);
-        File linkstateDestination = new File(parent, "LinkstateDestination.java");
+        final File linkstateDestination = new File(parent, "LinkstateDestination.java");
         assertTrue(linkstateDestination.exists());
 
         parent = new File(sourcesOutputDir, NS_BAZ + FS + "update");
@@ -359,28 +360,28 @@ public class CompilationTest extends BaseCompilationTest {
         parent = new File(parent, "destination");
         assertFilesCount(parent, 1);
         parent = new File(parent, "type");
-        File destinationLinkstate = new File(parent, "DestinationLinkstate.java");
-        File destinationLinkstateBuilder = new File(parent, "DestinationLinkstateBuilder.java");
+        final File destinationLinkstate = new File(parent, "DestinationLinkstate.java");
+        final File destinationLinkstateBuilder = new File(parent, "DestinationLinkstateBuilder.java");
         assertTrue(destinationLinkstate.exists());
         assertTrue(destinationLinkstateBuilder.exists());
         assertFilesCount(parent, 3);
         parent = new File(parent, "destination");
         assertFilesCount(parent, 1);
         parent = new File(parent, "linkstate");
-        File links = new File(parent, "Links.java");
-        File linksBuilder = new File(parent, "LinksBuilder.java");
+        final File links = new File(parent, "Links.java");
+        final File linksBuilder = new File(parent, "LinksBuilder.java");
         assertTrue(links.exists());
         assertTrue(linksBuilder.exists());
         assertFilesCount(parent, 3);
         parent = new File(parent, "links");
-        File source = new File(parent, "Source.java");
-        File sourceBuilder = new File(parent, "SourceBuilder.java");
+        final File source = new File(parent, "Source.java");
+        final File sourceBuilder = new File(parent, "SourceBuilder.java");
         assertTrue(source.exists());
         assertTrue(sourceBuilder.exists());
         assertFilesCount(parent, 3);
         parent = new File(parent, "source");
-        File address = new File(parent, "Address.java");
-        File addressBuilder = new File(parent, "AddressBuilder.java");
+        final File address = new File(parent, "Address.java");
+        final File addressBuilder = new File(parent, "AddressBuilder.java");
         assertTrue(address.exists());
         assertTrue(addressBuilder.exists());
         assertFilesCount(parent, 2);
@@ -400,24 +401,24 @@ public class CompilationTest extends BaseCompilationTest {
 
         generateTestSources("/compilation/leaf-return-types", sourcesOutputDir);
 
-        File parent = new File(sourcesOutputDir, NS_TEST);
+        final File parent = new File(sourcesOutputDir, NS_TEST);
         assertTrue(new File(parent, "TestData.java").exists());
         assertTrue(new File(parent, "Nodes.java").exists());
         assertTrue(new File(parent, "NodesBuilder.java").exists());
         assertTrue(new File(parent, "Alg.java").exists());
-        assertTrue(new File(parent, "IdUnionBuilder.java").exists());
+        assertTrue(new File(parent, "NodesIdUnionBuilder.java").exists());
         assertFilesCount(parent, 5);
 
         // Test if sources are compilable
         testCompilation(sourcesOutputDir, compiledOutputDir);
 
-        String pkg = BASE_PKG + ".urn.opendaylight.test.rev131008";
-        ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
-        Class<?> nodesClass = Class.forName(pkg + ".Nodes", true, loader);
-        Class<?> builderClass = Class.forName(pkg + ".NodesBuilder", true, loader);
+        final String pkg = BASE_PKG + ".urn.opendaylight.test.rev131008";
+        final ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        final Class<?> nodesClass = Class.forName(pkg + ".Nodes", true, loader);
+        final Class<?> builderClass = Class.forName(pkg + ".NodesBuilder", true, loader);
 
         // Test methods return type
-        byte[] b = new byte[] {};
+        final byte[] b = new byte[] {};
         assertContainsMethod(nodesClass, b.getClass(), "getIdBinary");
         assertContainsMethod(nodesClass, pkg + ".Nodes$IdBits", "getIdBits", loader);
         assertContainsMethod(nodesClass, Boolean.class, "isIdBoolean");
@@ -438,17 +439,17 @@ public class CompilationTest extends BaseCompilationTest {
         assertContainsMethod(nodesClass, BigInteger.class, "getIdU64");
         assertContainsMethod(nodesClass, pkg + ".Nodes$IdUnion", "getIdUnion", loader);
 
-        Object builderObj = builderClass.newInstance();
+        final Object builderObj = builderClass.newInstance();
 
         Method m = assertContainsMethod(builderClass, builderClass, "setIdBinary", b.getClass());
-        List<Range<Integer>> lengthConstraints = new ArrayList<>();
+        final List<Range<Integer>> lengthConstraints = new ArrayList<>();
         lengthConstraints.add(Range.closed(1, 10));
         Object arg = new byte[] {};
         String expectedMsg = String.format("Invalid length: %s, expected: %s.", arg, lengthConstraints);
         assertContainsRestrictionCheck(builderObj, m, expectedMsg, arg);
 
         m = assertContainsMethod(builderClass, builderClass, "setIdDecimal64", BigDecimal.class);
-        List<Range<BigDecimal>> rangeConstraints = new ArrayList<>();
+        final List<Range<BigDecimal>> rangeConstraints = new ArrayList<>();
         rangeConstraints.add(Range.closed(new BigDecimal("1.5"), new BigDecimal("5.5")));
         arg = new BigDecimal("1.4");
         expectedMsg = String.format("Invalid range: %s, expected: %s.", arg, rangeConstraints);
@@ -467,41 +468,41 @@ public class CompilationTest extends BaseCompilationTest {
         generateTestSources("/compilation/context-reference", sourcesOutputDir);
 
         // Test if all sources are generated
-        File fooParent = new File(sourcesOutputDir, NS_FOO);
+        final File fooParent = new File(sourcesOutputDir, NS_FOO);
         assertFilesCount(fooParent, 3);
         assertTrue(new File(fooParent, "FooData.java").exists());
         assertTrue(new File(fooParent, "Nodes.java").exists());
         assertTrue(new File(fooParent, "NodesBuilder.java").exists());
 
-        File barParent = new File(sourcesOutputDir, NS_BAR);
+        final File barParent = new File(sourcesOutputDir, NS_BAR);
         assertFilesCount(barParent, 1);
         assertTrue(new File(barParent, "IdentityClass.java").exists());
 
         // Test if sources are compilable
         testCompilation(sourcesOutputDir, compiledOutputDir);
 
-        ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
-        Class<?> nodesClass = Class.forName(BASE_PKG + ".urn.opendaylight.foo.rev131008.Nodes", true, loader);
-        Class<?> identityClass = Class
+        final ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        final Class<?> nodesClass = Class.forName(BASE_PKG + ".urn.opendaylight.foo.rev131008.Nodes", true, loader);
+        final Class<?> identityClass = Class
                 .forName(BASE_PKG + ".urn.opendaylight.bar.rev131008.IdentityClass", true, loader);
 
         // test identity
         try {
             identityClass.getConstructor();
-            Class<?> baseIdentity = Class.forName("org.opendaylight.yangtools.yang.binding.BaseIdentity", true, loader);
+            final Class<?> baseIdentity = Class.forName("org.opendaylight.yangtools.yang.binding.BaseIdentity", true, loader);
             assertEquals(baseIdentity, identityClass.getSuperclass());
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw new AssertionError("IdentityClass must have no-arg constructor");
         }
 
         // Test annotation
         try {
-            Method getId = nodesClass.getMethod("getId");
-            Annotation[] annotations = getId.getAnnotations();
+            final Method getId = nodesClass.getMethod("getId");
+            final Annotation[] annotations = getId.getAnnotations();
             assertEquals(1, annotations.length);
-            Annotation routingContext = annotations[0];
+            final Annotation routingContext = annotations[0];
             assertEquals(RoutingContext.class, routingContext.annotationType());
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw new AssertionError("Method getId() not found");
         }
 
@@ -575,10 +576,10 @@ public class CompilationTest extends BaseCompilationTest {
         // Test if sources are compilable
         testCompilation(sourcesOutputDir, compiledOutputDir);
 
-        ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
-        Class<?> outputActionClass = Class.forName(BASE_PKG
+        final ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
+        final Class<?> outputActionClass = Class.forName(BASE_PKG
                 + ".urn.test.foo.rev140717.action.action.output.action._case.OutputAction", true, loader);
-        Class<?> actionClass = Class.forName(BASE_PKG + ".urn.test.foo.rev140717.Action", true, loader);
+        final Class<?> actionClass = Class.forName(BASE_PKG + ".urn.test.foo.rev140717.Action", true, loader);
 
         // Test generated 'container output-action'
         assertTrue(outputActionClass.isInterface());
@@ -621,14 +622,14 @@ public class CompilationTest extends BaseCompilationTest {
             assertEquals(java.lang.Class.class, method.getReturnType());
             returnType = method.getGenericReturnType();
             assertTrue(returnType instanceof ParameterizedType);
-            ParameterizedType pt = (ParameterizedType) returnType;
-            java.lang.reflect.Type[] parameters = pt.getActualTypeArguments();
+            final ParameterizedType pt = (ParameterizedType) returnType;
+            final java.lang.reflect.Type[] parameters = pt.getActualTypeArguments();
             assertEquals(1, parameters.length);
-            java.lang.reflect.Type parameter = parameters[0];
+            final java.lang.reflect.Type parameter = parameters[0];
             assertTrue(parameter instanceof WildcardType);
-            WildcardType wildcardType = (WildcardType) parameter;
+            final WildcardType wildcardType = (WildcardType) parameter;
             assertEquals("? extends " + returnTypeStr, wildcardType.toString());
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw new AssertionError("Method '" + methodName + "' not found");
         }
     }
@@ -644,14 +645,14 @@ public class CompilationTest extends BaseCompilationTest {
             assertEquals(rawReturnType, method.getReturnType());
             returnType = method.getGenericReturnType();
             assertTrue(returnType instanceof ParameterizedType);
-            ParameterizedType pt = (ParameterizedType) returnType;
-            java.lang.reflect.Type[] parameters = pt.getActualTypeArguments();
+            final ParameterizedType pt = (ParameterizedType) returnType;
+            final java.lang.reflect.Type[] parameters = pt.getActualTypeArguments();
             assertEquals(1, parameters.length);
-            java.lang.reflect.Type parameter = parameters[0];
+            final java.lang.reflect.Type parameter = parameters[0];
             assertTrue(parameter instanceof WildcardType);
-            WildcardType wildcardType = (WildcardType) parameter;
+            final WildcardType wildcardType = (WildcardType) parameter;
             assertEquals("?", wildcardType.toString());
-        } catch (NoSuchMethodException e) {
+        } catch (final NoSuchMethodException e) {
             throw new AssertionError("Method '" + methodName + "' not found");
         }
     }
