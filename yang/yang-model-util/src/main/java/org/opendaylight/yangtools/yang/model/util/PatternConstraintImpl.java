@@ -41,10 +41,8 @@ final class PatternConstraintImpl implements PatternConstraint, Immutable {
         this.description = description.orNull();
         this.reference = reference.orNull();
 
-        // FIXME: Lookup better suitable error tag.
-        errorAppTag = "invalid-regular-expression";
-        // TODO: add erro message
-        errorMessage = "";
+        this.errorAppTag = "argument-does-not-match-regex";
+        this.errorMessage = "The argument does not match regular expression '" + this.regex + "'";
     }
 
     @Override
