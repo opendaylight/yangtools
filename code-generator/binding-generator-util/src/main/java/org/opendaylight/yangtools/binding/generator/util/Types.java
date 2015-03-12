@@ -7,13 +7,17 @@
  */
 package org.opendaylight.yangtools.binding.generator.util;
 
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Splitter;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Iterables;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
@@ -43,6 +47,7 @@ public final class Types {
     public static final ConcreteType VOID = typeForClass(Void.class);
     public static final ConcreteType BYTE_ARRAY = primitiveType("byte[]", null);
     public static final ConcreteType CHAR_ARRAY = primitiveType("char[]", null);
+    private static final Splitter DOT_SPLITTER = Splitter.on('.');
 
     /**
      * It is not desirable to create instance of this class
@@ -201,6 +206,16 @@ public final class Types {
     public static ParameterizedType augmentationTypeFor(final Type valueType) {
         final Type augmentation = typeForClass(Augmentation.class);
         return parameterizedTypeFor(augmentation, valueType);
+    }
+
+
+    public static  @Nullable String getOuterClassName(final Type valueType) {
+        final String pkgName = valueType.getPackageName();
+        if(CharMatcher.JAVA_UPPER_CASE.indexIn(pkgName) >= 0) {
+            // It is inner class.
+            return Iterables.getLast(DOT_SPLITTER.split(pkgName));
+        }
+        return null;
     }
 
     /**

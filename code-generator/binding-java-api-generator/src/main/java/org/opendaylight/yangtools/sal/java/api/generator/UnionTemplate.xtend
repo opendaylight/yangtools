@@ -49,7 +49,7 @@ class UnionTemplate extends ClassTemplate {
                 @«ConstructorProperties.importedName»("«property.name»")
                 public «type.name»(«propRet.importedName» «property.fieldName») {
                     «String.importedName» defVal = new «String.importedName»(«property.fieldName»);
-                    «type.name» defInst = «type.name»Builder.getDefaultInstance(defVal);
+                    «type.name» defInst = «typeBuilder()».getDefaultInstance(defVal);
                     «FOR other : finalProperties»
                         «IF other.name.equals("value")»
                             «IF other.returnType.importedName.contains("[]")»
@@ -104,6 +104,14 @@ class UnionTemplate extends ClassTemplate {
             «ENDIF»
         «ENDFOR»
     '''
+    
+    def typeBuilder() {
+        val outerCls = getOuterClassName(type);
+        if(outerCls !== null) {
+            return outerCls + type.name + "Builder"
+        }
+        return type.name + "Builder"
+    }
 
     private def unionConstructorsParentProperties() '''
         «FOR property : parentProperties SEPARATOR "\n"»
