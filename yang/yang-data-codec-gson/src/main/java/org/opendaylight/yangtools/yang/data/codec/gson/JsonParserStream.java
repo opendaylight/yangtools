@@ -83,7 +83,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             reader.peek();
             isEmpty = false;
             final CompositeNodeDataWithSchema compositeNodeDataWithSchema = new CompositeNodeDataWithSchema(parentNode);
-            read(reader, compositeNodeDataWithSchema);
+            read(reader, compositeNodeDataWithSchema,true);
             compositeNodeDataWithSchema.write(writer);
 
             return this;
@@ -115,7 +115,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         ((SimpleNodeDataWithSchema) parent).setValue(translatedValue);
     }
 
-    public void read(final JsonReader in, final AbstractNodeDataWithSchema parent) throws IOException {
+    public void read(final JsonReader in, final AbstractNodeDataWithSchema parent, final boolean rootRead) throws IOException {
         switch (in.peek()) {
         case STRING:
         case NUMBER:
@@ -139,7 +139,7 @@ public final class JsonParserStream implements Closeable, Flushable {
                     newChild = new LeafListEntryNodeDataWithSchema(parent.getSchema());
                     ((CompositeNodeDataWithSchema) parent).addChild(newChild);
                 }
-                read(in, newChild);
+                read(in, newChild,false);
             }
             in.endArray();
             return;
@@ -163,12 +163,12 @@ public final class JsonParserStream implements Closeable, Flushable {
                 }
 
                 AbstractNodeDataWithSchema newChild;
-                newChild = ((CompositeNodeDataWithSchema) parent).addChild(childDataSchemaNodes);
+                newChild = ((CompositeNodeDataWithSchema) parent).addChild(childDataSchemaNodes,rootRead);
 //                FIXME:anyxml data shouldn't be skipped but should be loaded somehow. will be specified after 17AUG2014
                 if (newChild instanceof AnyXmlNodeDataWithSchema) {
                     in.skipValue();
                 } else {
-                    read(in, newChild);
+                    read(in, newChild,false);
                 }
                 removeNamespace();
             }
