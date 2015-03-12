@@ -22,13 +22,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.opendaylight.yangtools.binding.data.codec.util.AugmentationReader;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
+import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class LazyDataObject implements InvocationHandler, AugmentationReader {
+class LazyDataObject<D extends DataObject> implements InvocationHandler, AugmentationReader {
 
     private static final Logger LOG = LoggerFactory.getLogger(LazyDataObject.class);
     private static final String GET_IMPLEMENTED_INTERFACE = "getImplementedInterface";
@@ -40,13 +41,13 @@ class LazyDataObject implements InvocationHandler, AugmentationReader {
 
     private final ConcurrentHashMap<Method, Object> cachedData = new ConcurrentHashMap<>();
     private final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> data;
-    private final DataObjectCodecContext<?> context;
+    private final DataObjectCodecContext<D,?> context;
 
     private volatile ImmutableMap<Class<? extends Augmentation<?>>, Augmentation<?>> cachedAugmentations = null;
     private volatile Integer cachedHashcode = null;
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    LazyDataObject(final DataObjectCodecContext<?> ctx, final NormalizedNodeContainer data) {
+    LazyDataObject(final DataObjectCodecContext<D,?> ctx, final NormalizedNodeContainer data) {
         this.context = Preconditions.checkNotNull(ctx, "Context must not be null");
         this.data = Preconditions.checkNotNull(data, "Data must not be null");
     }
@@ -56,7 +57,7 @@ class LazyDataObject implements InvocationHandler, AugmentationReader {
         if (method.getParameterTypes().length == 0) {
             final String name = method.getName();
             if (GET_IMPLEMENTED_INTERFACE.equals(name)) {
-                return context.bindingClass();
+                return context.getBindingClass();
             } else if (TO_STRING.equals(name)) {
                 return bindingToString();
             } else if (HASHCODE.equals(name)) {
@@ -75,7 +76,7 @@ class LazyDataObject implements InvocationHandler, AugmentationReader {
         if (other == null) {
             return false;
         }
-        if (!context.bindingClass().isAssignableFrom(other.getClass())) {
+        if (!context.getBindingClass().isAssignableFrom(other.getClass())) {
             return false;
         }
         try {
@@ -105,7 +106,7 @@ class LazyDataObject implements InvocationHandler, AugmentationReader {
             final Object value = getBindingData(m);
             result += prime * result + ((value == null) ? 0 : value.hashCode());
         }
-        if (Augmentation.class.isAssignableFrom(context.bindingClass())) {
+        if (Augmentation.class.isAssignableFrom(context.getBindingClass())) {
             result += prime * result + (getAugmentations(this).hashCode());
         }
         cachedHashcode = result;
@@ -156,23 +157,25 @@ class LazyDataObject implements InvocationHandler, AugmentationReader {
             return aug.get(cls);
         }
         Preconditions.checkNotNull(cls,"Supplied augmentation must not be null.");
-        final Optional<DataContainerCodecContext<?>> augCtx= context.getPossibleStreamChild(cls);
+
+        @SuppressWarnings({"unchecked","rawtypes"})
+        final Optional<DataContainerCodecContext<?,?>> augCtx= context.possibleStreamChild((Class) cls);
         if(augCtx.isPresent()) {
             final Optional<NormalizedNode<?, ?>> augData = data.getChild(augCtx.get().getDomPathArgument());
             if (augData.isPresent()) {
-                return augCtx.get().dataFromNormalizedNode(augData.get());
+                return augCtx.get().deserialize(augData.get());
             }
         }
         return null;
     }
 
     public String bindingToString() {
-        final ToStringHelper helper = MoreObjects.toStringHelper(context.bindingClass()).omitNullValues();
+        final ToStringHelper helper = MoreObjects.toStringHelper(context.getBindingClass()).omitNullValues();
 
         for (final Method m :context.getHashCodeAndEqualsMethods()) {
             helper.add(m.getName(), getBindingData(m));
         }
-        if (Augmentable.class.isAssignableFrom(context.bindingClass())) {
+        if (Augmentable.class.isAssignableFrom(context.getBindingClass())) {
             helper.add("augmentations", getAugmentationsImpl());
         }
         return helper.toString();
@@ -198,7 +201,7 @@ class LazyDataObject implements InvocationHandler, AugmentationReader {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final LazyDataObject other = (LazyDataObject) obj;
+        final LazyDataObject<?> other = (LazyDataObject<?>) obj;
         if (context == null) {
             if (other.context != null) {
                 return false;

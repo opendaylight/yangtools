@@ -24,7 +24,7 @@ final class ValueContext {
     private final Class<?> identifier;
     private final String getterName;
 
-    ValueContext(final Class<?> identifier, final LeafNodeCodecContext leaf) {
+    ValueContext(final Class<?> identifier, final LeafNodeCodecContext <?>leaf) {
         getterName = BindingCodecContext.GETTER_PREFIX + BindingMapping.getClassName(leaf.getDomPathArgument().getNodeType());
         try {
             getter = LOOKUP.unreflect(identifier.getMethod(getterName)).asType(OBJECT_METHOD);
