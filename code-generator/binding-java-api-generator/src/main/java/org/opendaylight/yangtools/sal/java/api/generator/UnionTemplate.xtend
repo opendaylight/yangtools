@@ -13,13 +13,13 @@ import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
 import static org.opendaylight.yangtools.binding.generator.util.Types.*
 
 /**
- * Template for generating JAVA class. 
+ * Template for generating JAVA class.
  */
 class UnionTemplate extends ClassTemplate {
 
     /**
      * Creates instance of this class with concrete <code>genType</code>.
-     * 
+     *
      * @param genType generated transfer object which will be transformed to JAVA class source code
      */
     new(GeneratedTransferObject genType) {
@@ -44,7 +44,7 @@ class UnionTemplate extends ClassTemplate {
             «IF isCharArray»
                 /**
                  * Constructor provided only for using in JMX. Don't use it for
-                 * construction new object of this union type. 
+                 * construction new object of this union type.
                  */
                 @«ConstructorProperties.importedName»("«property.name»")
                 public «type.name»(«propRet.importedName» «property.fieldName») {
@@ -84,10 +84,10 @@ class UnionTemplate extends ClassTemplate {
                                     this.«other.fieldName» = «property.fieldName».getValue();
                                 «ELSEIF propRet instanceof GeneratedTransferObject // Is it a GeneratedTransferObject
                                         && (propRet as GeneratedTransferObject).typedef  // Is it a typedef
-                                        && (propRet as GeneratedTransferObject).properties != null 
-                                        && !(propRet as GeneratedTransferObject).properties.empty 
-                                        && ((propRet as GeneratedTransferObject).properties.size == 1) 
-                                        && (propRet as GeneratedTransferObject).properties.get(0).name.equals("value") 
+                                        && (propRet as GeneratedTransferObject).properties != null
+                                        && !(propRet as GeneratedTransferObject).properties.empty
+                                        && ((propRet as GeneratedTransferObject).properties.size == 1)
+                                        && (propRet as GeneratedTransferObject).properties.get(0).name.equals("value")
                                         && BOOLEAN.equals((propRet as GeneratedTransferObject).properties.get(0).returnType)» // And the property value is of type boolean
                                     ««« generated boolean typedef
                                     this.«other.fieldName» = «property.fieldName».isValue().toString().toCharArray();

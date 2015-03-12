@@ -16,34 +16,34 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignatureimport org.opendaylight.yangtools.sal.binding.model.api.AnnotationType
 
 /**
- * Template for generating JAVA interfaces. 
+ * Template for generating JAVA interfaces.
  */
 class InterfaceTemplate extends BaseTemplate {
-    
+
     /**
      * List of constant instances which are generated as JAVA public static final attributes.
      */
     val List<Constant> consts
-    
+
     /**
      * List of method signatures which are generated as method declarations.
      */
     val List<MethodSignature> methods
-    
+
     /**
      * List of enumeration which are generated as JAVA enum type.
      */
     val List<Enumeration> enums
-    
+
     /**
      * List of generated types which are enclosed inside <code>genType</code>
      */
     val List<GeneratedType> enclosedGeneratedTypes
-    
+
     /**
-     * Creates the instance of this class which is used for generating the interface file source 
+     * Creates the instance of this class which is used for generating the interface file source
      * code from <code>genType</code>.
-     * 
+     *
      * @throws IllegalArgumentException if <code>genType</code> equals <code>null</code>
      */
     new(GeneratedType genType) {
@@ -51,16 +51,16 @@ class InterfaceTemplate extends BaseTemplate {
         if (genType == null) {
             throw new IllegalArgumentException("Generated type reference cannot be NULL!")
         }
-        
+
         consts = genType.constantDefinitions
         methods = genType.methodDefinitions
         enums = genType.enumerations
         enclosedGeneratedTypes = genType.enclosedTypes
     }
-    
+
     /**
      * Template method which generate the whole body of the interface.
-     * 
+     *
      * @return string with code for interface body in JAVA format
      */
     override body() '''
@@ -68,19 +68,19 @@ class InterfaceTemplate extends BaseTemplate {
         public interface «type.name»
             «superInterfaces»
         {
-        
+
             «generateInnerClasses»
-        
+
             «generateEnums»
-        
+
             «generateConstants»
-        
+
             «generateMethods»
-        
+
         }
-        
+
     '''
-   
+
 
     def private generateAnnotations(List<AnnotationType> annotations) '''
         «IF annotations != null && !annotations.empty»
@@ -99,10 +99,10 @@ class InterfaceTemplate extends BaseTemplate {
 
     /**
      * Template method which generates the interface name declaration.
-     * 
+     *
      * @return string with the code for the interface declaration in JAVA format
      */
-    def private superInterfaces() 
+    def private superInterfaces()
     '''
     «IF (!type.implements.empty)»
          extends
@@ -114,7 +114,7 @@ class InterfaceTemplate extends BaseTemplate {
 
     /**
      * Template method which generates inner classes inside this interface.
-     * 
+     *
      * @return string with the source code for inner classes in JAVA format
      */
     def private generateInnerClasses() '''
@@ -138,9 +138,9 @@ class InterfaceTemplate extends BaseTemplate {
 
     /**
      * Template method which generates JAVA enum type.
-     * 
+     *
      * @return string with inner enum source code in JAVA format
-     */    
+     */
     def private generateEnums() '''
         «IF !enums.empty»
             «FOR e : enums SEPARATOR "\n"»
@@ -149,12 +149,12 @@ class InterfaceTemplate extends BaseTemplate {
             «ENDFOR»
         «ENDIF»
     '''
-    
+
     /**
      * Template method wich generates JAVA constants.
-     * 
-     * @return string with constants in JAVA format 
-     */    
+     *
+     * @return string with constants in JAVA format
+     */
     def private generateConstants() '''
         «IF !consts.empty»
             «FOR c : consts»
@@ -167,9 +167,9 @@ class InterfaceTemplate extends BaseTemplate {
 
     /**
      * Template method which generates the declaration of the methods.
-     * 
-     * @return string with the declaration of methods source code in JAVA format 
-     */    
+     *
+     * @return string with the declaration of methods source code in JAVA format
+     */
     def private generateMethods() '''
         «IF !methods.empty»
             «FOR m : methods SEPARATOR "\n"»

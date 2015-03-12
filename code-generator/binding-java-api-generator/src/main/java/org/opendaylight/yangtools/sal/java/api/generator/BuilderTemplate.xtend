@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.binding.Identifiable
 import org.opendaylight.yangtools.concepts.Builder
 
 /**
- * Template for generating JAVA builder classes. 
+ * Template for generating JAVA builder classes.
  */
 
 class BuilderTemplate extends BaseTemplate {
@@ -84,7 +84,7 @@ class BuilderTemplate extends BaseTemplate {
     /**
      * Returns set of method signature instances which contains all the methods of the <code>genType</code>
      * and all the methods of the implemented interfaces.
-     * 
+     *
      * @returns set of method signature instances
      */
     def private Set<MethodSignature> createMethods() {
@@ -97,9 +97,9 @@ class BuilderTemplate extends BaseTemplate {
     }
 
     /**
-     * Adds to the <code>methods</code> set all the methods of the <code>implementedIfcs</code> 
+     * Adds to the <code>methods</code> set all the methods of the <code>implementedIfcs</code>
      * and recursively their implemented interfaces.
-     * 
+     *
      * @param methods set of method signatures
      * @param implementedIfcs list of implemented interfaces
      */
@@ -132,7 +132,7 @@ class BuilderTemplate extends BaseTemplate {
 
     /**
      * Returns the first element of the list <code>elements</code>.
-     * 
+     *
      * @param list of elements
      */
     def private <E> first(List<E> elements) {
@@ -141,7 +141,7 @@ class BuilderTemplate extends BaseTemplate {
 
     /**
      * Returns the name of the package from <code>fullyQualifiedName</code>.
-     * 
+     *
      * @param fullyQualifiedName string with fully qualified type name (package + type)
      * @return string with the package name
      */
@@ -163,8 +163,8 @@ class BuilderTemplate extends BaseTemplate {
 
     /**
      * Creates set of generated property instances from getter <code>methods</code>.
-     * 
-     * @param set of method signature instances which should be transformed to list of properties 
+     *
+     * @param set of method signature instances which should be transformed to list of properties
      * @return set of generated property instances which represents the getter <code>methods</code>
      */
     def private propertiesFromMethods(Collection<MethodSignature> methods) {
@@ -183,7 +183,7 @@ class BuilderTemplate extends BaseTemplate {
 
     /**
      * Creates generated property instance from the getter <code>method</code> name and return type.
-     * 
+     *
      * @param method method signature from which is the method name and return type obtained
      * @return generated property instance for the getter <code>method</code>
      * @throws IllegalArgumentException<ul>
@@ -200,7 +200,7 @@ class BuilderTemplate extends BaseTemplate {
         var prefix = "get";
         if(Types.BOOLEAN.equals(method.returnType)) {
             prefix = "is";
-        } 
+        }
         if (method.name.startsWith(prefix)) {
             val fieldName = method.getName().substring(prefix.length()).toFirstLower
             val tmpGenTO = new GeneratedTOBuilderImpl("foo", "foo")
@@ -210,8 +210,8 @@ class BuilderTemplate extends BaseTemplate {
     }
 
     /**
-     * Template method which generates JAVA class body for builder class and for IMPL class. 
-     * 
+     * Template method which generates JAVA class body for builder class and for IMPL class.
+     *
      * @return string with JAVA source code
      */
     override body() '''
@@ -251,7 +251,7 @@ class BuilderTemplate extends BaseTemplate {
                 «generateHashCode()»
 
                 «generateEquals()»
-                
+
                 «generateToString(properties)»
             }
 
@@ -263,7 +263,7 @@ class BuilderTemplate extends BaseTemplate {
      */
     def private generateConstructorsFromIfcs(Type type) '''
         public «type.name»«BUILDER»() {
-        } 
+        }
         «IF (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject))»
             «val ifc = type as GeneratedType»
             «FOR impl : ifc.implements»
@@ -378,7 +378,7 @@ class BuilderTemplate extends BaseTemplate {
                 baseIfcs.add(ifc)
             }
         }
-        return baseIfcs 
+        return baseIfcs
     }
 
     private def Set<Type> getAllIfcs(Type type) {
@@ -392,7 +392,7 @@ class BuilderTemplate extends BaseTemplate {
                 baseIfcs.addAll(impl.getAllIfcs)
             }
         }
-        return baseIfcs 
+        return baseIfcs
     }
 
     private def List<String> toListOfNames(Collection<Type> types) {
@@ -566,7 +566,7 @@ class BuilderTemplate extends BaseTemplate {
                             break;
                             case 1:
                                 final «Map.importedName».Entry<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> e = «prop».«augmentField.name».entrySet().iterator().next();
-                                this.«augmentField.name» = «Collections.importedName».<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»>singletonMap(e.getKey(), e.getValue());       
+                                this.«augmentField.name» = «Collections.importedName».<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»>singletonMap(e.getKey(), e.getValue());
                             break;
                         default :
                             this.«augmentField.name» = new «HashMap.importedName»<>(«prop».«augmentField.name»);
@@ -611,7 +611,7 @@ class BuilderTemplate extends BaseTemplate {
 
     /**
      * Template method which generate getter methods for IMPL class.
-     * 
+     *
      * @return string with getter methods
      */
     def private generateGetters(boolean addOverride) '''
@@ -636,7 +636,7 @@ class BuilderTemplate extends BaseTemplate {
 
     /**
      * Template method which generates the method <code>hashCode()</code>.
-     * 
+     *
      * @return string with the <code>hashCode()</code> method definition in JAVA format
      */
     def protected generateHashCode() '''
@@ -662,8 +662,8 @@ class BuilderTemplate extends BaseTemplate {
 
     /**
      * Template method which generates the method <code>equals()</code>.
-     * 
-     * @return string with the <code>equals()</code> method definition in JAVA format     
+     *
+     * @return string with the <code>equals()</code> method definition in JAVA format
      */
     def protected generateEquals() '''
         «IF !properties.empty || augmentField != null»
@@ -768,15 +768,15 @@ class BuilderTemplate extends BaseTemplate {
         return «type.importedName».class;
     }
     '''
-    
+
     private def createDescription(GeneratedType type) {
         return '''
         Class that builds {@link «type.importedName»} instances.
-        
+
         @see «type.importedName»
     '''
     }
-    
+
     override def protected String formatDataForJavaDoc(GeneratedType type) {
         val typeDescription = createDescription(type)
 
