@@ -11,36 +11,36 @@ import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 
 /**
- * Template for generating JAVA enumeration type. 
+ * Template for generating JAVA enumeration type.
  */
 class EnumTemplate extends BaseTemplate {
 
-    
+
     /**
      * Enumeration which will be transformed to JAVA source code for enumeration
      */
     val Enumeration enums
-    
+
     /**
      * Constructs instance of this class with concrete <code>enums</code>.
-     * 
-     * @param enums enumeration which will be transformed to JAVA source code 
+     *
+     * @param enums enumeration which will be transformed to JAVA source code
      */
     new(Enumeration enums) {
         super(enums as GeneratedType )
         this.enums = enums
     }
-    
-    
+
+
     /**
      * Generates only JAVA enumeration source code.
-     * 
+     *
      * @return string with JAVA enumeration source code
      */
     def generateAsInnerClass() {
         return body
     }
-    
+
     def writeEnumItem(String name, int value, String description) '''
         «asJavadoc(formatToParagraph(description))»
         «name»(«value»)
@@ -48,8 +48,8 @@ class EnumTemplate extends BaseTemplate {
 
     /**
      * Template method which generates enumeration body (declaration + enumeration items).
-     * 
-     * @return string with the enumeration body 
+     *
+     * @return string with the enumeration body
      */
     override body() '''
         «wrapToDocumentation(formatDataForJavaDoc(enums))»
@@ -69,11 +69,11 @@ class EnumTemplate extends BaseTemplate {
 
                 VALUE_MAP = b.build();
             }
-        
+
             private «enums.name»(int value) {
                 this.value = value;
             }
-            
+
             /**
              * @return integer value
              */

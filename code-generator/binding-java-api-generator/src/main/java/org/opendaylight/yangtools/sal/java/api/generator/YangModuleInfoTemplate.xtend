@@ -64,7 +64,7 @@ class YangModuleInfoTemplate {
                 «val DateFormat df = new SimpleDateFormat("yyyy-MM-dd")»
                 private final «String.importedName» revision = "«df.format(module.revision)»";
                 private final «String.importedName» resourcePath = "«sourcePath»";
-                
+
                 private final «Set.importedName»<YangModuleInfo> importedModules;
 
                 public static «YangModuleInfo.importedName» getInstance() {
@@ -190,7 +190,7 @@ class YangModuleInfoTemplate {
         return "/" + module.moduleSourcePath.replace(java.io.File.separatorChar, '/')
     }
 
-    private def imports() ''' 
+    private def imports() '''
         «IF !importMap.empty»
             «FOR entry : importMap.entrySet»
                 «IF entry.value != getRootPackageName(module.QNameModule)»
