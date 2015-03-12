@@ -9,12 +9,13 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Preconditions;
 import java.util.List;
+import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 
-final class CaseNodeCodecContext extends DataObjectCodecContext<ChoiceCaseNode> {
+final class CaseNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<D,ChoiceCaseNode> {
     public CaseNodeCodecContext(final DataContainerCodecPrototype<ChoiceCaseNode> prototype) {
         super(prototype);
     }
@@ -26,8 +27,13 @@ final class CaseNodeCodecContext extends DataObjectCodecContext<ChoiceCaseNode> 
     }
 
     @Override
-    protected Object dataFromNormalizedNode(final NormalizedNode<?, ?> normalizedNode) {
+    public D deserialize(final NormalizedNode<?, ?> normalizedNode) {
         Preconditions.checkState(normalizedNode instanceof ChoiceNode);
         return createBindingProxy((ChoiceNode) normalizedNode);
+    }
+
+    @Override
+    protected Object deserializeObject(NormalizedNode<?, ?> normalizedNode) {
+        return deserialize(normalizedNode);
     }
 }

@@ -8,21 +8,28 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Preconditions;
+import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 
-final class NotificationCodecContext extends DataObjectCodecContext<NotificationDefinition> {
+final class NotificationCodecContext<D extends DataObject & Notification> extends DataObjectCodecContext<D,NotificationDefinition> {
 
     public NotificationCodecContext(final Class<?> key, final NotificationDefinition schema, final CodecContextFactory factory) {
         super(DataContainerCodecPrototype.from(key, schema, factory));
     }
 
     @Override
-    protected Object dataFromNormalizedNode(final NormalizedNode<?, ?> data) {
+    public D deserialize(final NormalizedNode<?, ?> data) {
         Preconditions.checkState(data instanceof ContainerNode);
         return createBindingProxy((NormalizedNodeContainer<?, ?, ?>) data);
+    }
+
+    @Override
+    protected Object deserializeObject(NormalizedNode<?, ?> normalizedNode) {
+        return deserialize(normalizedNode);
     }
 
 }

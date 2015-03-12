@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 /**
  * Type capture of an entity producing NodeCodecContexts.
  */
-interface NodeContextSupplier extends Supplier<NodeCodecContext> {
+interface NodeContextSupplier extends Supplier<NodeCodecContext<?>> {
     @Override
-    @Nonnull NodeCodecContext get();
+    @Nonnull NodeCodecContext<?> get();
 }

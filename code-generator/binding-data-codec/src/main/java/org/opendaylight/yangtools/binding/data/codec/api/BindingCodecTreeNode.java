@@ -46,7 +46,7 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
      * {@link BindingStreamEventWriter}. This means that to enter case, one must
      * issue getChild(ChoiceClass).getChild(CaseClass).
      *
-     * @param childClass
+     * @param childClass Child class by Biding Stream navigation
      * @return Context of child
      * @throws IllegalArgumentException
      *             If supplied child class is not valid in specified context.

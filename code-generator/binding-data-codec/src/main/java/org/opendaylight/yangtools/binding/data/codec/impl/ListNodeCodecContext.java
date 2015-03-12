@@ -17,13 +17,24 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-class ListNodeCodecContext extends DataObjectCodecContext<ListSchemaNode> {
+class ListNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<D,ListSchemaNode> {
     protected ListNodeCodecContext(final DataContainerCodecPrototype<ListSchemaNode> prototype) {
         super(prototype);
     }
 
     @Override
-    protected Object dataFromNormalizedNode(final NormalizedNode<?, ?> node) {
+    public D deserialize(final NormalizedNode<?, ?> node) {
+        if (node instanceof MapEntryNode) {
+            return fromMapEntry((MapEntryNode) node);
+        } else if (node instanceof UnkeyedListEntryNode) {
+            return fromUnkeyedListEntry((UnkeyedListEntryNode) node);
+        } else {
+            throw new IllegalStateException("Unsupported data type " + node.getClass());
+        }
+    }
+
+    @Override
+    protected Object deserializeObject(NormalizedNode<?, ?> node) {
         if (node instanceof MapNode) {
             return fromMap((MapNode) node);
         } else if (node instanceof MapEntryNode) {
@@ -37,28 +48,29 @@ class ListNodeCodecContext extends DataObjectCodecContext<ListSchemaNode> {
         }
     }
 
-    private List<DataObject> fromMap(final MapNode nodes) {
-        List<DataObject> ret = new ArrayList<>(nodes.getValue().size());
+    private List<D> fromMap(final MapNode nodes) {
+        List<D> ret = new ArrayList<>(nodes.getValue().size());
         for (MapEntryNode node : nodes.getValue()) {
             ret.add(fromMapEntry(node));
         }
         return ret;
     }
 
-    private DataObject fromMapEntry(final MapEntryNode node) {
+    private D fromMapEntry(final MapEntryNode node) {
         return createBindingProxy(node);
     }
 
-    private DataObject fromUnkeyedListEntry(final UnkeyedListEntryNode node) {
+    private D fromUnkeyedListEntry(final UnkeyedListEntryNode node) {
         return createBindingProxy(node);
     }
 
-    private List<DataObject> fromUnkeyedList(final UnkeyedListNode nodes) {
+    private List<D> fromUnkeyedList(final UnkeyedListNode nodes) {
         // FIXME: Could be this lazy transformed list?
-        List<DataObject> ret = new ArrayList<>(nodes.getValue().size());
+        List<D> ret = new ArrayList<>(nodes.getValue().size());
         for (UnkeyedListEntryNode node : nodes.getValue()) {
             ret.add(fromUnkeyedListEntry(node));
         }
         return ret;
     }
+
 }

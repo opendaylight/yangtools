@@ -18,10 +18,12 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTreeFactory;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeWriterFactory;
 import org.opendaylight.yangtools.binding.data.codec.gen.impl.DataObjectSerializerGenerator;
 import org.opendaylight.yangtools.concepts.Delegator;
+import org.opendaylight.yangtools.sal.binding.generator.impl.ModuleInfoBackedContext;
 import org.opendaylight.yangtools.sal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
@@ -32,6 +34,7 @@ import org.opendaylight.yangtools.yang.binding.DataObjectSerializerRegistry;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.binding.Notification;
+import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -44,11 +47,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerRegistry, BindingNormalizedNodeWriterFactory, BindingNormalizedNodeSerializer {
+public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerRegistry,
+        BindingCodecTreeFactory, BindingNormalizedNodeWriterFactory,
+        BindingNormalizedNodeSerializer {
     private static final Logger LOG = LoggerFactory.getLogger(BindingNormalizedNodeCodecRegistry.class);
 
     private final DataObjectSerializerGenerator generator;
@@ -70,7 +76,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
     }
 
     public void onBindingRuntimeContextUpdated(final BindingRuntimeContext context) {
-        codecContext = new BindingCodecContext(context);
+        codecContext = create(context);
         generator.onBindingRuntimeContextUpdated(context);
     }
 
@@ -172,7 +178,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         }
 
         final List<PathArgument> builder = new ArrayList<>();
-        final NodeCodecContext codec = codecContext.getCodecContextNode(path, builder);
+        final NodeCodecContext<?> codec = codecContext.getCodecContextNode(path, builder);
         if (codec == null) {
             if (data != null) {
                 LOG.warn("Path {} does not have a binding equivalent, should have been caught earlier ({})", path, data.getClass());
@@ -180,21 +186,21 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
             return null;
         }
 
-        final DataObject lazyObj = (DataObject) codec.dataFromNormalizedNode(data);
+        final DataObject lazyObj = codec.deserialize(data);
         final InstanceIdentifier<?> bindingPath = InstanceIdentifier.create(builder);
         return new SimpleEntry<InstanceIdentifier<?>, DataObject>(bindingPath, lazyObj);
     }
 
     @Override
     public Notification fromNormalizedNodeNotification(final SchemaPath path, final ContainerNode data) {
-        final NotificationCodecContext codec = codecContext.getNotificationContext(path);
-        return (Notification) codec.dataFromNormalizedNode(data);
+        final NotificationCodecContext<?> codec = codecContext.getNotificationContext(path);
+        return codec.deserialize(data);
     }
 
     @Override
     public DataObject fromNormalizedNodeRpcData(final SchemaPath path, final ContainerNode data) {
-        final ContainerNodeCodecContext codec = codecContext.getRpcDataContext(path);
-        return (DataObject) codec.dataFromNormalizedNode(data);
+        final ContainerNodeCodecContext<?> codec = codecContext.getRpcDataContext(path);
+        return codec.deserialize(data);
     }
 
    @Override
@@ -220,15 +226,36 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
     }
 
     public <T extends DataObject> Function<Optional<NormalizedNode<?, ?>>, Optional<T>>  deserializeFunction(final InstanceIdentifier<T> path) {
-        final DataObjectCodecContext<?> ctx = (DataObjectCodecContext<?>) codecContext.getCodecContextNode(path, null);
+        final DataObjectCodecContext<?,?> ctx = (DataObjectCodecContext<?,?>) codecContext.getCodecContextNode(path, null);
         return new DeserializeFunction<T>(ctx);
+    }
+
+    @Override
+    public BindingCodecContext create(BindingRuntimeContext context) {
+        return new BindingCodecContext(context, this);
+    }
+
+    @Override
+    public BindingCodecContext create(SchemaContext context, Class<?>... bindingClasses) {
+        ModuleInfoBackedContext strategy = ModuleInfoBackedContext.create();
+        for (Class<?> bindingCls : bindingClasses) {
+            try {
+                strategy.registerModuleInfo(BindingReflections.getModuleInfo(bindingCls));
+            } catch (Exception e) {
+                throw new IllegalStateException(
+                        "Could not create BindingRuntimeContext from class " + bindingCls.getName(),
+                        e);
+            }
+        }
+        BindingRuntimeContext runtimeCtx = BindingRuntimeContext.create(strategy, context);
+        return create(runtimeCtx);
     }
 
 
     private static final class DeserializeFunction<T> implements Function<Optional<NormalizedNode<?, ?>>, Optional<T>> {
-        private final DataObjectCodecContext<?> ctx;
+        private final DataObjectCodecContext<?,?> ctx;
 
-        DeserializeFunction(final DataObjectCodecContext<?> ctx) {
+        DeserializeFunction(final DataObjectCodecContext<?,?> ctx) {
             this.ctx = ctx;
         }
 
@@ -236,7 +263,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         @Override
         public Optional<T> apply(final Optional<NormalizedNode<?, ?>> input) {
             if (input.isPresent()) {
-                return Optional.of((T) ctx.dataFromNormalizedNode(input.get()));
+                return Optional.of((T) ctx.deserialize(input.get()));
             }
             return Optional.absent();
         }
