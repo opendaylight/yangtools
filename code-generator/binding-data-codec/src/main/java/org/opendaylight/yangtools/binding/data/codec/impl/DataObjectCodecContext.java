@@ -49,7 +49,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataContainerCodecContext<T> {
+abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeContainer> extends DataContainerCodecContext<D,T> {
     private static final Logger LOG = LoggerFactory.getLogger(DataObjectCodecContext.class);
     private static final Lookup LOOKUP = MethodHandles.publicLookup();
     private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class, InvocationHandler.class);
@@ -61,64 +61,54 @@ abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataC
         }
     };
 
-    private final ImmutableMap<String, LeafNodeCodecContext> leafChild;
+    private final ImmutableMap<String, LeafNodeCodecContext<?>> leafChild;
     private final ImmutableMap<YangInstanceIdentifier.PathArgument, NodeContextSupplier> byYang;
     private final ImmutableSortedMap<Method, NodeContextSupplier> byMethod;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byStreamClass;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClass;
     private final MethodHandle proxyConstructor;
 
-    // FIXME: this field seems to be unused
-    private final Method augmentationGetter;
-
     protected DataObjectCodecContext(final DataContainerCodecPrototype<T> prototype) {
         super(prototype);
 
-        this.leafChild = factory().getLeafNodes(bindingClass(), schema());
+        this.leafChild = factory().getLeafNodes(getBindingClass(), schema());
 
-        Map<Class<?>, Method> clsToMethod = BindingReflections.getChildrenClassToMethod(bindingClass());
+        final Map<Class<?>, Method> clsToMethod = BindingReflections.getChildrenClassToMethod(getBindingClass());
 
-        Map<YangInstanceIdentifier.PathArgument, NodeContextSupplier> byYangBuilder = new HashMap<>();
-        SortedMap<Method, NodeContextSupplier> byMethodBuilder = new TreeMap<>(METHOD_BY_ALPHABET);
-        Map<Class<?>, DataContainerCodecPrototype<?>> byStreamClassBuilder = new HashMap<>();
-        Map<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClassBuilder = new HashMap<>();
+        final Map<YangInstanceIdentifier.PathArgument, NodeContextSupplier> byYangBuilder = new HashMap<>();
+        final SortedMap<Method, NodeContextSupplier> byMethodBuilder = new TreeMap<>(METHOD_BY_ALPHABET);
+        final Map<Class<?>, DataContainerCodecPrototype<?>> byStreamClassBuilder = new HashMap<>();
+        final Map<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClassBuilder = new HashMap<>();
 
         // Adds leaves to mapping
-        for (LeafNodeCodecContext leaf : leafChild.values()) {
+        for (final LeafNodeCodecContext<?> leaf : leafChild.values()) {
             byMethodBuilder.put(leaf.getGetter(), leaf);
             byYangBuilder.put(leaf.getDomPathArgument(), leaf);
         }
 
-        for (Entry<Class<?>, Method> childDataObj : clsToMethod.entrySet()) {
-            DataContainerCodecPrototype<?> childProto = loadChildPrototype(childDataObj.getKey());
+        for (final Entry<Class<?>, Method> childDataObj : clsToMethod.entrySet()) {
+            final DataContainerCodecPrototype<?> childProto = loadChildPrototype(childDataObj.getKey());
             byMethodBuilder.put(childDataObj.getValue(), childProto);
             byStreamClassBuilder.put(childProto.getBindingClass(), childProto);
             byYangBuilder.put(childProto.getYangArg(), childProto);
             if (childProto.isChoice()) {
-                ChoiceNodeCodecContext choice = (ChoiceNodeCodecContext) childProto.get();
-                for(Class<?> cazeChild : choice.getCaseChildrenClasses()) {
+                final ChoiceNodeCodecContext<?> choice = (ChoiceNodeCodecContext<?>) childProto.get();
+                for(final Class<?> cazeChild : choice.getCaseChildrenClasses()) {
                     byBindingArgClassBuilder.put(cazeChild, childProto);
                 }
             }
         }
         this.byMethod = ImmutableSortedMap.copyOfSorted(byMethodBuilder);
-        if (Augmentable.class.isAssignableFrom(bindingClass())) {
-            try {
-                augmentationGetter = bindingClass().getMethod("getAugmentation", Class.class);
-            } catch (NoSuchMethodException | SecurityException e) {
-               throw new IllegalStateException("Could not get required method.",e);
-            }
-            ImmutableMap<AugmentationIdentifier, Type> augmentations = factory().getRuntimeContext()
+        if (Augmentable.class.isAssignableFrom(getBindingClass())) {
+            final ImmutableMap<AugmentationIdentifier, Type> augmentations = factory().getRuntimeContext()
                     .getAvailableAugmentationTypes(schema());
-            for (Entry<AugmentationIdentifier, Type> augment : augmentations.entrySet()) {
-                DataContainerCodecPrototype<?> augProto = getAugmentationPrototype(augment.getValue());
+            for (final Entry<AugmentationIdentifier, Type> augment : augmentations.entrySet()) {
+                final DataContainerCodecPrototype<?> augProto = getAugmentationPrototype(augment.getValue());
                 if (augProto != null) {
                     byYangBuilder.put(augProto.getYangArg(), augProto);
                     byStreamClassBuilder.put(augProto.getBindingClass(), augProto);
                 }
             }
-        } else {
-            augmentationGetter = null;
         }
 
         this.byYang = ImmutableMap.copyOf(byYangBuilder);
@@ -126,7 +116,7 @@ abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataC
         byBindingArgClassBuilder.putAll(byStreamClass);
         this.byBindingArgClass = ImmutableMap.copyOf(byBindingArgClassBuilder);
 
-        final Class<?> proxyClass = Proxy.getProxyClass(bindingClass().getClassLoader(),  new Class[] { bindingClass() });
+        final Class<?> proxyClass = Proxy.getProxyClass(getBindingClass().getClassLoader(),  new Class[] { getBindingClass() });
         try {
             proxyConstructor = LOOKUP.findConstructor(proxyClass, CONSTRUCTOR_TYPE).asType(DATAOBJECT_TYPE);
         } catch (NoSuchMethodException | IllegalAccessException e) {
@@ -134,11 +124,13 @@ abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataC
         }
     }
 
+
+    @SuppressWarnings("unchecked")
     @Override
-    protected DataContainerCodecContext<?> getStreamChild(final Class<?> childClass) {
+    public <DV extends DataObject> DataContainerCodecContext<DV, ?> streamChild(final Class<DV> childClass) {
         DataContainerCodecPrototype<?> childProto = byStreamClass.get(childClass);
         if (childProto != null) {
-            return childProto.get();
+            return DataContainerCodecContext.class.cast(childProto.get());
         }
 
         if (Augmentation.class.isAssignableFrom(childClass))  {
@@ -149,9 +141,10 @@ abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataC
              *
              * FIXME: Cache mapping of mismatched augmentation to real one, to speed up lookup.
              */
-            Class<?> augTarget = BindingReflections.findAugmentationTarget((Class) childClass);
-            if ((bindingClass().equals(augTarget))) {
-                for (DataContainerCodecPrototype<?> realChild : byStreamClass.values()) {
+            @SuppressWarnings("rawtypes")
+            final Class<?> augTarget = BindingReflections.findAugmentationTarget((Class) childClass);
+            if ((getBindingClass().equals(augTarget))) {
+                for (final DataContainerCodecPrototype<?> realChild : byStreamClass.values()) {
                     if (Augmentation.class.isAssignableFrom(realChild.getBindingClass())
                             && BindingReflections.isSubstitutionFor(childClass,realChild.getBindingClass())) {
                         childProto = realChild;
@@ -161,33 +154,36 @@ abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataC
             }
         }
         Preconditions.checkArgument(childProto != null, " Child %s is not valid child.",childClass);
-        return childProto.get();
+        return (DataContainerCodecContext<DV, ?>) childProto.get();
     }
 
+
+    @SuppressWarnings("unchecked")
     @Override
-    protected Optional<DataContainerCodecContext<?>> getPossibleStreamChild(final Class<?> childClass) {
-        DataContainerCodecPrototype<?> childProto = byStreamClass.get(childClass);
+    public <DV extends DataObject> Optional<DataContainerCodecContext<DV, ?>> possibleStreamChild(
+            Class<DV> childClass) {
+        final DataContainerCodecPrototype<?> childProto = byStreamClass.get(childClass);
         if(childProto != null) {
-            return Optional.<DataContainerCodecContext<?>>of(childProto.get());
+            return Optional.<DataContainerCodecContext<DV,?>>of((DataContainerCodecContext<DV,?>) childProto.get());
         }
         return Optional.absent();
     }
 
     @Override
-    protected DataContainerCodecContext<?> getIdentifierChild(final InstanceIdentifier.PathArgument arg,
+    public DataContainerCodecContext<?,?> bindingPathArgumentChild(final InstanceIdentifier.PathArgument arg,
             final List<YangInstanceIdentifier.PathArgument> builder) {
 
         final Class<? extends DataObject> argType = arg.getType();
         final DataContainerCodecPrototype<?> ctxProto = byBindingArgClass.get(argType);
         if(ctxProto != null) {
-            final DataContainerCodecContext<?> context = ctxProto.get();
+            final DataContainerCodecContext<?,?> context = ctxProto.get();
             if(context instanceof ChoiceNodeCodecContext) {
-                final ChoiceNodeCodecContext choice = (ChoiceNodeCodecContext) context;
-                final DataContainerCodecContext<?> caze = choice.getCazeByChildClass(arg.getType());
+                final ChoiceNodeCodecContext<?> choice = (ChoiceNodeCodecContext<?>) context;
+                final DataContainerCodecContext<?,?> caze = choice.getCazeByChildClass(arg.getType());
                 if(caze != null) {
                     choice.addYangPathArgument(arg, builder);
                     caze.addYangPathArgument(arg, builder);
-                    return caze.getIdentifierChild(arg, builder);
+                    return caze.bindingPathArgumentChild(arg, builder);
                 }
                 return null;
             }
@@ -198,30 +194,31 @@ abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataC
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    protected NodeCodecContext getYangIdentifierChild(YangInstanceIdentifier.PathArgument arg) {
+    public NodeCodecContext<D> yangPathArgumentChild(YangInstanceIdentifier.PathArgument arg) {
         if(arg instanceof NodeIdentifierWithPredicates) {
             arg = new NodeIdentifier(arg.getNodeType());
         }
-        NodeContextSupplier childSupplier = byYang.get(arg);
+        final NodeContextSupplier childSupplier = byYang.get(arg);
         Preconditions.checkArgument(childSupplier != null, "Argument %s is not valid child of %s", arg, schema());
-        return childSupplier.get();
+        return (NodeCodecContext<D>) childSupplier.get();
     }
 
-    protected final LeafNodeCodecContext getLeafChild(final String name) {
-        final LeafNodeCodecContext value = leafChild.get(name);
-        Preconditions.checkArgument(value != null, "Leaf %s is not valid for %s", name, bindingClass());
+    protected final LeafNodeCodecContext<?> getLeafChild(final String name) {
+        final LeafNodeCodecContext<?> value = leafChild.get(name);
+        Preconditions.checkArgument(value != null, "Leaf %s is not valid for %s", name, getBindingClass());
         return value;
     }
 
     private DataContainerCodecPrototype<?> loadChildPrototype(final Class<?> childClass) {
-        DataSchemaNode origDef = factory().getRuntimeContext().getSchemaDefinition(childClass);
+        final DataSchemaNode origDef = factory().getRuntimeContext().getSchemaDefinition(childClass);
         // Direct instantiation or use in same module in which grouping
         // was defined.
         DataSchemaNode sameName;
         try {
             sameName = schema().getDataChildByName(origDef.getQName());
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             sameName = null;
         }
         final DataSchemaNode childSchema;
@@ -239,8 +236,8 @@ abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataC
             }
         } else {
             // We are looking for instantiation via uses in other module
-            QName instantiedName = QName.create(namespace(), origDef.getQName().getLocalName());
-            DataSchemaNode potential = schema().getDataChildByName(instantiedName);
+            final QName instantiedName = QName.create(namespace(), origDef.getQName().getLocalName());
+            final DataSchemaNode potential = schema().getDataChildByName(instantiedName);
             // We check if it is really instantiated from same
             // definition as class was derived
             if (potential != null && origDef.equals(SchemaNodeUtils.getRootOriginalIfPossible(potential))) {
@@ -254,50 +251,54 @@ abstract class DataObjectCodecContext<T extends DataNodeContainer> extends DataC
     }
 
     private DataContainerCodecPrototype<?> getAugmentationPrototype(final Type value) {
-        ClassLoadingStrategy loader = factory().getRuntimeContext().getStrategy();
+        final ClassLoadingStrategy loader = factory().getRuntimeContext().getStrategy();
         @SuppressWarnings("rawtypes")
         final Class augClass;
         try {
             augClass = loader.loadClass(value);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             LOG.warn("Failed to load augmentation prototype for {}", value, e);
             return null;
         }
 
-        Entry<AugmentationIdentifier, AugmentationSchema> augSchema = factory().getRuntimeContext()
+        @SuppressWarnings("unchecked")
+        final Entry<AugmentationIdentifier, AugmentationSchema> augSchema = factory().getRuntimeContext()
                 .getResolvedAugmentationSchema(schema(), augClass);
         return DataContainerCodecPrototype.from(augClass, augSchema.getKey(), augSchema.getValue(), factory());
     }
 
     @SuppressWarnings("rawtypes")
     Object getBindingChildValue(final Method method, final NormalizedNodeContainer domData) {
-        NodeCodecContext childContext = byMethod.get(method).get();
-        Optional<NormalizedNode<?, ?>> domChild = domData.getChild(childContext.getDomPathArgument());
+        final NodeCodecContext<?> childContext = byMethod.get(method).get();
+        @SuppressWarnings("unchecked")
+        final Optional<NormalizedNode<?, ?>> domChild = domData.getChild(childContext.getDomPathArgument());
         if (domChild.isPresent()) {
-            return childContext.dataFromNormalizedNode(domChild.get());
+            return childContext.deserializeObject(domChild.get());
         }
         return null;
     }
 
-    protected final DataObject createBindingProxy(final NormalizedNodeContainer<?, ?, ?> node) {
+    protected final D createBindingProxy(final NormalizedNodeContainer<?, ?, ?> node) {
         try {
-            return (DataObject) proxyConstructor.invokeExact((InvocationHandler)new LazyDataObject(this, node));
-        } catch (Throwable e) {
+            return (D) proxyConstructor.invokeExact((InvocationHandler)new LazyDataObject<>(this, node));
+        } catch (final Throwable e) {
             throw Throwables.propagate(e);
         }
     }
 
+    @SuppressWarnings("unchecked")
     public Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAllAugmentationsFrom(
             final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> data) {
 
         @SuppressWarnings("rawtypes")
+        final
         Map map = new HashMap<>();
 
-        for(DataContainerCodecPrototype<?> value : byStreamClass.values()) {
+        for(final DataContainerCodecPrototype<?> value : byStreamClass.values()) {
             if(Augmentation.class.isAssignableFrom(value.getBindingClass())) {
-                Optional<NormalizedNode<?, ?>> augData = data.getChild(value.getYangArg());
+                final Optional<NormalizedNode<?, ?>> augData = data.getChild(value.getYangArg());
                 if(augData.isPresent()) {
-                    map.put(value.getBindingClass(), value.get().dataFromNormalizedNode(augData.get()));
+                    map.put(value.getBindingClass(), value.get().deserializeObject(augData.get()));
                 }
             }
         }

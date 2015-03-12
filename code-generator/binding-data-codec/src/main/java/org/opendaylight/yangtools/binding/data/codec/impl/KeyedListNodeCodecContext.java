@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 import java.lang.reflect.Method;
 import java.util.List;
 import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
@@ -19,16 +21,16 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class KeyedListNodeCodecContext extends ListNodeCodecContext {
+final class KeyedListNodeCodecContext<D extends DataObject & Identifiable<?>> extends ListNodeCodecContext<D> {
     private final Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> codec;
     private final Method keyGetter;
 
     KeyedListNodeCodecContext(final DataContainerCodecPrototype<ListSchemaNode> prototype) {
         super(prototype);
 
-        this.codec = factory().getPathArgumentCodec(bindingClass(), schema());
+        this.codec = factory().getPathArgumentCodec(getBindingClass(), schema());
         try {
-            this.keyGetter = bindingClass().getMethod("getKey");
+            this.keyGetter = getBindingClass().getMethod("getKey");
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException("Required method not available", e);
         }
@@ -75,6 +77,6 @@ final class KeyedListNodeCodecContext extends ListNodeCodecContext {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     NodeIdentifierWithPredicates serialize(final Identifier<?> key) {
-        return codec.serialize(new IdentifiableItem(bindingClass(), key));
+        return codec.serialize(new IdentifiableItem(getBindingClass(), key));
     }
 }

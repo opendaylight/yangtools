@@ -8,20 +8,26 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Preconditions;
+import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
-final class ContainerNodeCodecContext extends DataObjectCodecContext<ContainerSchemaNode> {
+final class ContainerNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<D,ContainerSchemaNode> {
 
     ContainerNodeCodecContext(final DataContainerCodecPrototype<ContainerSchemaNode> prototype) {
         super(prototype);
     }
 
     @Override
-    protected Object dataFromNormalizedNode(final NormalizedNode<?, ?> data) {
+    public D deserialize(final NormalizedNode<?, ?> data) {
         Preconditions.checkState(data instanceof ContainerNode);
         return createBindingProxy((ContainerNode) data);
+    }
+
+    @Override
+    protected Object deserializeObject(NormalizedNode<?, ?> normalizedNode) {
+        return deserialize(normalizedNode);
     }
 
 }

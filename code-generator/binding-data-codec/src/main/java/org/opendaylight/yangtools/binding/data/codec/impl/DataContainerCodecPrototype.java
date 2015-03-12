@@ -35,8 +35,9 @@ final class DataContainerCodecPrototype<T> implements NodeContextSupplier {
     private final Class<?> bindingClass;
     private final InstanceIdentifier.Item<?> bindingArg;
     private final YangInstanceIdentifier.PathArgument yangArg;
-    private volatile DataContainerCodecContext<T> instance = null;
+    private volatile DataContainerCodecContext<?,T> instance = null;
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private DataContainerCodecPrototype(final Class<?> cls, final YangInstanceIdentifier.PathArgument arg, final T nodeSchema,
             final CodecContextFactory factory) {
         super();
@@ -53,8 +54,9 @@ final class DataContainerCodecPrototype<T> implements NodeContextSupplier {
         }
     }
 
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private DataContainerCodecPrototype(final Class<?> cls, final YangInstanceIdentifier.PathArgument arg, final T nodeSchema,
-            final CodecContextFactory factory,final DataContainerCodecContext<T> instance) {
+            final CodecContextFactory factory,final DataContainerCodecContext<?,T> instance) {
         super();
         this.yangArg = arg;
         this.schema = nodeSchema;
@@ -115,8 +117,8 @@ final class DataContainerCodecPrototype<T> implements NodeContextSupplier {
     }
 
     @Override
-    public DataContainerCodecContext<T> get() {
-        DataContainerCodecContext<T> tmp = instance;
+    public DataContainerCodecContext<?,T> get() {
+        DataContainerCodecContext<?,T> tmp = instance;
         if (tmp == null) {
             synchronized (this) {
                 tmp = instance;
@@ -132,22 +134,22 @@ final class DataContainerCodecPrototype<T> implements NodeContextSupplier {
 
     @GuardedBy("this")
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private DataContainerCodecContext createInstance() {
+    private DataContainerCodecContext<?,T> createInstance() {
         // FIXME: make protected abstract
         if (schema instanceof ContainerSchemaNode) {
-            return new ContainerNodeCodecContext((DataContainerCodecPrototype) this);
+            return new ContainerNodeCodecContext(this);
         } else if (schema instanceof ListSchemaNode) {
             if (Identifiable.class.isAssignableFrom(getBindingClass())) {
-                return new KeyedListNodeCodecContext((DataContainerCodecPrototype) this);
+                return new KeyedListNodeCodecContext(this);
             } else {
-                return new ListNodeCodecContext((DataContainerCodecPrototype) this);
+                return new ListNodeCodecContext(this);
             }
         } else if (schema instanceof ChoiceSchemaNode) {
-            return new ChoiceNodeCodecContext((DataContainerCodecPrototype) this);
+            return new ChoiceNodeCodecContext(this);
         } else if (schema instanceof AugmentationSchema) {
-            return new AugmentationNodeContext((DataContainerCodecPrototype) this);
+            return new AugmentationNodeContext(this);
         } else if (schema instanceof ChoiceCaseNode) {
-            return new CaseNodeCodecContext((DataContainerCodecPrototype) this);
+            return new CaseNodeCodecContext(this);
         }
         throw new IllegalArgumentException("Unsupported type " + bindingClass + " " + schema);
     }

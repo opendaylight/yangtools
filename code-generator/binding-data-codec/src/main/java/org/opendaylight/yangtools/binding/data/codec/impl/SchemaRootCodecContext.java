@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
+import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.DataRoot;
 import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
@@ -34,52 +35,54 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
 
-final class SchemaRootCodecContext extends DataContainerCodecContext<SchemaContext> {
+final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCodecContext<D,SchemaContext> {
 
-    private final LoadingCache<Class<?>, DataContainerCodecContext<?>> childrenByClass = CacheBuilder.newBuilder()
-            .build(new CacheLoader<Class<?>, DataContainerCodecContext<?>>() {
+    private final LoadingCache<Class<?>, DataContainerCodecContext<?,?>> childrenByClass = CacheBuilder.newBuilder()
+            .build(new CacheLoader<Class<?>, DataContainerCodecContext<?,?>>() {
                 @Override
-                public DataContainerCodecContext<?> load(final Class<?> key) {
+                public DataContainerCodecContext<?,?> load(final Class<?> key) {
                     return createDataTreeChildContext(key);
                 }
 
             });
 
-    private final LoadingCache<Class<?>, ContainerNodeCodecContext> rpcDataByClass = CacheBuilder.newBuilder().build(
-            new CacheLoader<Class<?>, ContainerNodeCodecContext>() {
+    private final LoadingCache<Class<?>, ContainerNodeCodecContext<?>> rpcDataByClass = CacheBuilder.newBuilder().build(
+            new CacheLoader<Class<?>, ContainerNodeCodecContext<?>>() {
                 @Override
-                public ContainerNodeCodecContext load(final Class<?> key) {
+                public ContainerNodeCodecContext<?> load(final Class<?> key) {
                     return createRpcDataContext(key);
                 }
             });
 
-    private final LoadingCache<Class<?>, NotificationCodecContext> notificationsByClass = CacheBuilder.newBuilder()
-            .build(new CacheLoader<Class<?>, NotificationCodecContext>() {
+    private final LoadingCache<Class<?>, NotificationCodecContext<?>> notificationsByClass = CacheBuilder.newBuilder()
+            .build(new CacheLoader<Class<?>, NotificationCodecContext<?>>() {
                 @Override
-                public NotificationCodecContext load(final Class<?> key) {
+                public NotificationCodecContext<?> load(final Class<?> key) {
                     return createNotificationDataContext(key);
                 }
             });
 
-    private final LoadingCache<QName, DataContainerCodecContext<?>> childrenByQName = CacheBuilder.newBuilder().build(
-            new CacheLoader<QName, DataContainerCodecContext<?>>() {
+    private final LoadingCache<QName, DataContainerCodecContext<?,?>> childrenByQName = CacheBuilder.newBuilder().build(
+            new CacheLoader<QName, DataContainerCodecContext<?,?>>() {
+                @SuppressWarnings("unchecked")
                 @Override
-                public DataContainerCodecContext<?> load(final QName qname) {
+                public DataContainerCodecContext<?,?> load(final QName qname) {
                     final DataSchemaNode childSchema = schema().getDataChildByName(qname);
                     Preconditions.checkArgument(childSchema != null, "Argument %s is not valid child of %s", qname,
                             schema());
 
                     if (childSchema instanceof DataNodeContainer || childSchema instanceof ChoiceSchemaNode) {
-                        final Class<?> childCls = factory().getRuntimeContext().getClassForSchema(childSchema);
-                        return getStreamChild(childCls);
+                        @SuppressWarnings("rawtypes")
+                        final Class childCls = factory().getRuntimeContext().getClassForSchema(childSchema);
+                        return streamChild(childCls);
                     } else {
                         throw new UnsupportedOperationException("Unsupported child type " + childSchema.getClass());
                     }
                 }
             });
 
-    private final LoadingCache<SchemaPath, ContainerNodeCodecContext> rpcDataByPath = CacheBuilder.newBuilder().build(
-            new CacheLoader<SchemaPath, ContainerNodeCodecContext>() {
+    private final LoadingCache<SchemaPath, ContainerNodeCodecContext<?>> rpcDataByPath = CacheBuilder.newBuilder().build(
+            new CacheLoader<SchemaPath, ContainerNodeCodecContext<?>>() {
 
                 @SuppressWarnings({ "rawtypes", "unchecked" })
                 @Override
@@ -90,8 +93,8 @@ final class SchemaRootCodecContext extends DataContainerCodecContext<SchemaConte
                 }
             });
 
-    private final LoadingCache<SchemaPath, NotificationCodecContext> notificationsByPath = CacheBuilder.newBuilder()
-            .build(new CacheLoader<SchemaPath, NotificationCodecContext>() {
+    private final LoadingCache<SchemaPath, NotificationCodecContext<?>> notificationsByPath = CacheBuilder.newBuilder()
+            .build(new CacheLoader<SchemaPath, NotificationCodecContext<?>>() {
 
                 @SuppressWarnings({ "rawtypes", "unchecked" })
                 @Override
@@ -113,48 +116,53 @@ final class SchemaRootCodecContext extends DataContainerCodecContext<SchemaConte
      *            CodecContextFactory
      * @return
      */
-    static SchemaRootCodecContext create(final CodecContextFactory factory) {
+    static SchemaRootCodecContext<?> create(final CodecContextFactory factory) {
         final DataContainerCodecPrototype<SchemaContext> prototype = DataContainerCodecPrototype.rootPrototype(factory);
-        return new SchemaRootCodecContext(prototype);
+        return new SchemaRootCodecContext<>(prototype);
+    }
+
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <DV extends DataObject> DataContainerCodecContext<DV, ?> streamChild(Class<DV> childClass)
+            throws IllegalArgumentException {
+        return (DataContainerCodecContext<DV, ?>) childrenByClass.getUnchecked(childClass);
     }
 
     @Override
-    protected DataContainerCodecContext<?> getStreamChild(final Class<?> childClass) {
-        return childrenByClass.getUnchecked(childClass);
-    }
-
-    @Override
-    protected Optional<DataContainerCodecContext<?>> getPossibleStreamChild(final Class<?> childClass) {
+    public <E extends DataObject> Optional<DataContainerCodecContext<E,?>> possibleStreamChild(final Class<E> childClass) {
         throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
-    protected NodeCodecContext getYangIdentifierChild(final PathArgument arg) {
+    public DataContainerCodecContext<?,?> yangPathArgumentChild(final PathArgument arg) {
         return childrenByQName.getUnchecked(arg.getNodeType());
     }
 
     @Override
-    protected Object dataFromNormalizedNode(final NormalizedNode<?, ?> normalizedNode) {
-        throw new UnsupportedOperationException("Could not create Binding data representation for root");
+    public D deserialize(final NormalizedNode<?, ?> normalizedNode) {
+        throw new UnsupportedOperationException(
+                "Could not create Binding data representation for root");
     }
 
-    ContainerNodeCodecContext getRpc(final Class<? extends DataContainer> rpcInputOrOutput) {
+
+    ContainerNodeCodecContext<?> getRpc(final Class<? extends DataContainer> rpcInputOrOutput) {
         return rpcDataByClass.getUnchecked(rpcInputOrOutput);
     }
 
-    NotificationCodecContext getNotification(final Class<? extends Notification> notification) {
+    NotificationCodecContext<?> getNotification(final Class<? extends Notification> notification) {
         return notificationsByClass.getUnchecked(notification);
     }
 
-    NotificationCodecContext getNotification(final SchemaPath notification) {
+    NotificationCodecContext<?> getNotification(final SchemaPath notification) {
         return notificationsByPath.getUnchecked(notification);
     }
 
-    ContainerNodeCodecContext getRpc(final SchemaPath notification) {
+    ContainerNodeCodecContext<?> getRpc(final SchemaPath notification) {
         return rpcDataByPath.getUnchecked(notification);
     }
 
-    private DataContainerCodecContext<?> createDataTreeChildContext(final Class<?> key) {
+    private DataContainerCodecContext<?,?> createDataTreeChildContext(final Class<?> key) {
         final Class<Object> parent = ClassLoaderUtils.findFirstGenericArgument(key, ChildOf.class);
         Preconditions.checkArgument(DataRoot.class.isAssignableFrom(parent));
         final QName qname = BindingReflections.findQName(key);
@@ -162,7 +170,7 @@ final class SchemaRootCodecContext extends DataContainerCodecContext<SchemaConte
         return DataContainerCodecPrototype.from(key, childSchema, factory()).get();
     }
 
-    private ContainerNodeCodecContext createRpcDataContext(final Class<?> key) {
+    private ContainerNodeCodecContext<?> createRpcDataContext(final Class<?> key) {
         Preconditions.checkArgument(DataContainer.class.isAssignableFrom(key));
         final QName qname = BindingReflections.findQName(key);
         final QNameModule module = qname.getModule();
@@ -189,10 +197,10 @@ final class SchemaRootCodecContext extends DataContainerCodecContext<SchemaConte
         Preconditions.checkArgument(rpc != null, "Supplied class %s is not valid RPC class.", key);
         final ContainerSchemaNode schema = SchemaNodeUtils.getRpcDataSchema(rpc, qname);
         Preconditions.checkArgument(schema != null, "Schema for %s does not define input / output.", rpc.getQName());
-        return (ContainerNodeCodecContext) DataContainerCodecPrototype.from(key, schema, factory()).get();
+        return (ContainerNodeCodecContext<?>) DataContainerCodecPrototype.from(key, schema, factory()).get();
     }
 
-    private NotificationCodecContext createNotificationDataContext(final Class<?> notificationType) {
+    private NotificationCodecContext<?> createNotificationDataContext(final Class<?> notificationType) {
         Preconditions.checkArgument(Notification.class.isAssignableFrom(notificationType));
         Preconditions.checkArgument(notificationType.isInterface(), "Supplied class must be interface.");
         final QName qname = BindingReflections.findQName(notificationType);
@@ -204,7 +212,12 @@ final class SchemaRootCodecContext extends DataContainerCodecContext<SchemaConte
                 SchemaPath.create(true, qname));
         Preconditions.checkArgument(schema != null, "Supplied %s is not valid notification", notificationType);
 
-        return new NotificationCodecContext(notificationType, schema, factory());
+        return new NotificationCodecContext<>(notificationType, schema, factory());
+    }
+
+    @Override
+    protected Object deserializeObject(NormalizedNode<?, ?> normalizedNode) {
+        throw new UnsupportedOperationException("Unable to deserialize root");
     }
 
 }
