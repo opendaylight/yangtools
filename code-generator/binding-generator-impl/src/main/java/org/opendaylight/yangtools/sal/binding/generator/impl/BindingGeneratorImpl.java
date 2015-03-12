@@ -25,7 +25,6 @@ import static org.opendaylight.yangtools.binding.generator.util.Types.typeForCla
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNode;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findNodeInSchemaContext;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
-
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
@@ -108,6 +107,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
     private static final Splitter BSDOT_SPLITTER = Splitter.on("\\.");
     private static final char NEW_LINE = '\n';
+    private static final String QNAME_FQCN = QName.class.getName();
 
     /**
      * Constant with the concrete name of identifier.
@@ -653,7 +653,9 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
     private static Constant qnameConstant(final GeneratedTypeBuilderBase<?> toBuilder, final String constantName,
             final QName name) {
-        final StringBuilder sb = new StringBuilder("org.opendaylight.yangtools.yang.common.QName");
+        final StringBuilder sb = new StringBuilder(QNAME_FQCN);
+        sb.append(".cachedReference(");
+        sb.append(QNAME_FQCN);
         sb.append(".create(");
         sb.append('"');
         sb.append(name.getNamespace());
@@ -661,7 +663,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
         sb.append(name.getFormattedRevision());
         sb.append("\",\"");
         sb.append(name.getLocalName());
-        sb.append("\");");
+        sb.append("\"))");
 
         return toBuilder.addConstant(typeForClass(QName.class), constantName, sb.toString());
     }
