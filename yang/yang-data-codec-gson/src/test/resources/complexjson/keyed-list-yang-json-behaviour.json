@@ -1,0 +1,8 @@
+{
+  "lst11": [{
+                "key111":"key111 value",
+                "lf112":"/complexjson:cont1/complexjson:lflst11[.='foo']",
+                "lf113":"lf113 value",
+                "lf111":"lf111 value"
+            }]
+}

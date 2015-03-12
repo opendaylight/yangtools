@@ -200,6 +200,19 @@ public class JsonStreamToNormalizedNodeTest {
         assertNotNull(transformedInput);
     }
 
+    @Test
+    public void listItemWithArray() throws IOException, URISyntaxException {
+        final String inputJson = loadTextFile("/complexjson/keyed-list-yang-json-behaviour.json");
+
+        final NormalizedNodeResult result = new NormalizedNodeResult();
+        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final SchemaNode parentNode = schemaContext.getDataChildByName("cont1");
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, schemaContext, parentNode);
+        jsonParser.parse(new JsonReader(new StringReader(inputJson)));
+        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        assertNotNull(transformedInput);
+    }
+
     private void verifyTransformationToNormalizedNode(final String inputJson,
             final NormalizedNode<?, ?> awaitedStructure) {
         final NormalizedNodeResult result = new NormalizedNodeResult();

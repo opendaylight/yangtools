@@ -83,7 +83,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             reader.peek();
             isEmpty = false;
             final CompositeNodeDataWithSchema compositeNodeDataWithSchema = new CompositeNodeDataWithSchema(parentNode);
-            read(reader, compositeNodeDataWithSchema,true);
+            read(reader, compositeNodeDataWithSchema);
             compositeNodeDataWithSchema.write(writer);
 
             return this;
@@ -115,7 +115,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         ((SimpleNodeDataWithSchema) parent).setValue(translatedValue);
     }
 
-    public void read(final JsonReader in, final AbstractNodeDataWithSchema parent, final boolean rootRead) throws IOException {
+    public void read(final JsonReader in, AbstractNodeDataWithSchema parent) throws IOException {
         switch (in.peek()) {
         case STRING:
         case NUMBER:
@@ -131,21 +131,24 @@ public final class JsonParserStream implements Closeable, Flushable {
         case BEGIN_ARRAY:
             in.beginArray();
             while (in.hasNext()) {
-                AbstractNodeDataWithSchema newChild = null;
-                if (parent instanceof ListNodeDataWithSchema) {
-                    newChild = new ListEntryNodeDataWithSchema(parent.getSchema());
-                    ((CompositeNodeDataWithSchema) parent).addChild(newChild);
-                } else if (parent instanceof LeafListNodeDataWithSchema) {
-                    newChild = new LeafListEntryNodeDataWithSchema(parent.getSchema());
-                    ((CompositeNodeDataWithSchema) parent).addChild(newChild);
-                }
-                read(in, newChild,false);
+                final AbstractNodeDataWithSchema newChild = newArrayEntry(parent);
+                read(in, newChild);
             }
             in.endArray();
             return;
         case BEGIN_OBJECT:
             final Set<String> namesakes = new HashSet<>();
             in.beginObject();
+            /*
+             * This allows parsing of incorrectly /as showcased/
+             * in testconf nesting of list items - eg.
+             * lists with one value are sometimes serialized
+             * without wrapping array.
+             *
+             */
+            if(isArray(parent)) {
+                parent = newArrayEntry(parent);
+            }
             while (in.hasNext()) {
                 final String jsonElementName = in.nextName();
                 final NamespaceAndName namespaceAndName = resolveNamespace(jsonElementName, parent.getSchema());
@@ -162,13 +165,16 @@ public final class JsonParserStream implements Closeable, Flushable {
                             + getCurrentNamespace() + " doesn't exist.");
                 }
 
-                AbstractNodeDataWithSchema newChild;
-                newChild = ((CompositeNodeDataWithSchema) parent).addChild(childDataSchemaNodes,rootRead);
-//                FIXME:anyxml data shouldn't be skipped but should be loaded somehow. will be specified after 17AUG2014
+                final AbstractNodeDataWithSchema newChild = ((CompositeNodeDataWithSchema) parent).addChild(childDataSchemaNodes);
+                /*
+                 * FIXME:anyxml data shouldn't be skipped but should be loaded somehow.
+                 * will be able to load anyxml which conforms to YANG data using these
+                 * parser, for other anyxml will be harder.
+                 */
                 if (newChild instanceof AnyXmlNodeDataWithSchema) {
                     in.skipValue();
                 } else {
-                    read(in, newChild,false);
+                    read(in, newChild);
                 }
                 removeNamespace();
             }
@@ -180,6 +186,23 @@ public final class JsonParserStream implements Closeable, Flushable {
         case END_ARRAY:
             break;
         }
+    }
+
+    private boolean isArray(final AbstractNodeDataWithSchema parent) {
+        return parent instanceof ListNodeDataWithSchema || parent instanceof ListNodeDataWithSchema;
+    }
+
+    private AbstractNodeDataWithSchema newArrayEntry(final AbstractNodeDataWithSchema parent) {
+        AbstractNodeDataWithSchema newChild;
+        if (parent instanceof ListNodeDataWithSchema) {
+            newChild = new ListEntryNodeDataWithSchema(parent.getSchema());
+        } else if (parent instanceof LeafListNodeDataWithSchema) {
+            newChild = new LeafListEntryNodeDataWithSchema(parent.getSchema());
+        } else {
+            throw new IllegalStateException("Incorrec nesting caused by parser.");
+        }
+        ((CompositeNodeDataWithSchema) parent).addChild(newChild);
+        return newChild;
     }
 
     private Object translateValueByType(final String value, final DataSchemaNode node) {

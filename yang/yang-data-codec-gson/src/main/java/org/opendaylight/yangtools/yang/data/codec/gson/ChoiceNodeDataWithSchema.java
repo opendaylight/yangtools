@@ -27,8 +27,8 @@ class ChoiceNodeDataWithSchema extends CompositeNodeDataWithSchema {
     }
 
     @Override
-    protected CompositeNodeDataWithSchema addCompositeChild(final DataSchemaNode schema, final boolean rootListItem) {
-        final CaseNodeDataWithSchema newChild = new CaseNodeDataWithSchema((ChoiceCaseNode) schema);
+    protected CompositeNodeDataWithSchema addCompositeChild(final DataSchemaNode schema) {
+        CaseNodeDataWithSchema newChild = new CaseNodeDataWithSchema((ChoiceCaseNode) schema);
         caseNodeDataWithSchema = newChild;
         addCompositeChild(newChild);
         return newChild;
