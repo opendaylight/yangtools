@@ -63,7 +63,7 @@ abstract class BaseTemplate {
         '''.toString
     }
 
-    protected def imports() ''' 
+    protected def imports() '''
         «IF !importMap.empty»
             «FOR entry : importMap.entrySet»
                 «IF !hasSamePackage(entry.value)»
@@ -104,10 +104,10 @@ abstract class BaseTemplate {
 
     /**
      * Template method which generates the getter method for <code>field</code>
-     * 
-     * @param field 
+     *
+     * @param field
      * generated property with data about field which is generated as the getter method
-     * @return string with the getter method source code in JAVA format 
+     * @return string with the getter method source code in JAVA format
      */
     final protected def getterMethod(GeneratedProperty field) {
         '''
@@ -128,10 +128,10 @@ abstract class BaseTemplate {
 
     /**
      * Template method which generates the setter method for <code>field</code>
-     * 
-     * @param field 
+     *
+     * @param field
      * generated property with data about field which is generated as the setter method
-     * @return string with the setter method source code in JAVA format 
+     * @return string with the setter method source code in JAVA format
      */
     final protected def setterMethod(GeneratedProperty field) '''
         «val returnType = field.returnType.importedName»
@@ -152,7 +152,7 @@ abstract class BaseTemplate {
 
     /**
      * Template method which generates method parameters with their types from <code>parameters</code>.
-     * 
+     *
      * @param parameters
      * group of generated property instances which are transformed to the method parameters
      * @return string with the list of the method parameters with their types in JAVA format
@@ -162,17 +162,17 @@ abstract class BaseTemplate {
 
     /**
      * Template method which generates sequence of the names of the class attributes from <code>parameters</code>.
-     * 
-     * @param parameters 
+     *
+     * @param parameters
      * group of generated property instances which are transformed to the sequence of parameter names
-     * @return string with the list of the parameter names of the <code>parameters</code> 
+     * @return string with the list of the parameter names of the <code>parameters</code>
      */
     def final protected asArguments(Iterable<GeneratedProperty> parameters) '''«IF !parameters.empty»«FOR parameter : parameters SEPARATOR ", "»«parameter.
         fieldName»«ENDFOR»«ENDIF»'''
 
     /**
      * Template method which generates JAVA comments.
-     * 
+     *
      * @param comment string with the comment for whole JAVA class
      * @return string with comment in JAVA format
      */
@@ -196,8 +196,11 @@ abstract class BaseTemplate {
         sb.append(NEW_LINE)
 
         for (String t : NL_SPLITTER.split(text)) {
-            sb.append(" * ")
-            sb.append(t)
+            sb.append(" *")
+            if (!t.isEmpty()) {
+                sb.append(' ');
+                sb.append(t)
+            }
             sb.append(NEW_LINE)
         }
         sb.append(" */")
@@ -450,7 +453,7 @@ abstract class BaseTemplate {
 
     /**
      * Template method which generates method parameters with their types from <code>parameters</code>.
-     * 
+     *
      * @param parameters
      * list of parameter instances which are transformed to the method parameters
      * @return string with the list of the method parameters with their types in JAVA format
