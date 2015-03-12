@@ -25,15 +25,18 @@ public interface BindingCodecTreeFactory {
     BindingCodecTree create(BindingRuntimeContext context);
 
     /**
-    *
-    * Creates Binding Codec Tree for specified Binding runtime context.
-    *
-    * @param context
-    *            Binding Runtime Context for which Binding codecs should be
-    *            instantiated.
-    * @param bindingClasses
-    * @return Binding Codec Tree for specified Binding runtime context.
-    */
+     *
+     * Creates Binding Codec Tree for specified Binding runtime context.
+     *
+     * @param context
+     *            Binding Runtime Context for which Binding codecs should be
+     *            instantiated.
+     * @param bindingClasses
+     *            Binding Runtime Context will be constructed using bindings
+     *            which contains specified classes, in order to support
+     *            deserialization in multi-classloader environment.
+     * @return Binding Codec Tree for specified Binding runtime context.
+     */
     @Beta
    BindingCodecTree create(SchemaContext context, Class<?>... bindingClasses);
 
