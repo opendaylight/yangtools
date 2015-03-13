@@ -38,7 +38,6 @@ public class BundleStartTest {
         options.add(mavenBundle("ch.qos.logback", "logback-core").versionAsInProject());
         options.add(mavenBundle("ch.qos.logback", "logback-classic").versionAsInProject());
         options.add(mavenBundle("com.google.guava", "guava").versionAsInProject());
-        options.add(mavenBundle("commons-io", "commons-io").versionAsInProject());
         options.add(mavenBundle("org.apache.commons", "commons-lang3").versionAsInProject());
         options.add(mavenBundle("org.opendaylight.yangtools.thirdparty", "antlr4-runtime-osgi-nohead")
                 .versionAsInProject());
