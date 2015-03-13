@@ -14,6 +14,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.io.ByteSource;
+import com.google.common.io.ByteStreams;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -32,7 +33,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.apache.commons.io.IOUtils;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Belongs_to_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Module_header_stmtsContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Module_stmtContext;
@@ -786,16 +786,16 @@ public final class BuilderUtils {
 
     private static final class ByteSourceImpl extends ByteSource {
         private final String toString;
-        private final ByteArrayOutputStream output = new ByteArrayOutputStream();
+        private final byte[] data;
 
         private ByteSourceImpl(final InputStream input) throws IOException {
             toString = input.toString();
-            IOUtils.copy(input, output);
+            data = ByteStreams.toByteArray(input);
         }
 
         @Override
         public InputStream openStream() throws IOException {
-            return new NamedByteArrayInputStream(output.toByteArray(), toString);
+            return new NamedByteArrayInputStream(data, toString);
         }
     }
 

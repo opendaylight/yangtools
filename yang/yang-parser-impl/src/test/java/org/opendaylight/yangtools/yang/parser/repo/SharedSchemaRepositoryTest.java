@@ -30,13 +30,13 @@ import com.google.common.io.Files;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
@@ -276,7 +276,7 @@ public class SharedSchemaRepositoryTest {
 
                     @Override
                     public InputStream openStream() throws IOException {
-                        return IOUtils.toInputStream("running");
+                        return new ByteArrayInputStream("running".getBytes(Charsets.UTF_8));
                     }
                 });
             }
