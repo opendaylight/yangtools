@@ -39,7 +39,6 @@
     <feature name='odl-yangtools-data-binding' version='${project.version}' description='OpenDaylight :: Yangtools :: Data Binding'>
         <feature version='${project.version}'>odl-yangtools-binding</feature>
         <bundle>mvn:org.opendaylight.yangtools.thirdparty/antlr4-runtime-osgi-nohead/{{VERSION}}</bundle>
-        <bundle>mvn:commons-io/commons-io/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-data-api/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-data-impl/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-data-operations/{{VERSION}}</bundle>
