@@ -6,10 +6,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.io.ByteSource;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import org.apache.commons.io.IOUtils;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -929,9 +928,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public void setSource(final ByteSource byteSource) throws IOException {
-        try (InputStream stream = byteSource.openStream()) {
-            setSource(IOUtils.toString(stream));
-        }
+        setSource(byteSource.asCharSource(Charsets.UTF_8).read());
     }
 
     public void setSource(final String source) {

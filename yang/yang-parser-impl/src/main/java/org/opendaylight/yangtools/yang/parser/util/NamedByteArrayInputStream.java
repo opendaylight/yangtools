@@ -8,10 +8,10 @@
 
 package org.opendaylight.yangtools.yang.parser.util;
 
+import com.google.common.io.ByteStreams;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import org.apache.commons.io.IOUtils;
 
 public class NamedByteArrayInputStream extends ByteArrayInputStream implements NamedInputStream {
     private final String toString;
@@ -21,11 +21,12 @@ public class NamedByteArrayInputStream extends ByteArrayInputStream implements N
     }
 
     public static ByteArrayInputStream create(InputStream originalIS) throws IOException {
-        String content = IOUtils.toString(originalIS);
+        final byte[] data = ByteStreams.toByteArray(originalIS);
+
         if (originalIS instanceof NamedInputStream) {
-            return new NamedByteArrayInputStream(content.getBytes(), originalIS.toString());
+            return new NamedByteArrayInputStream(data, originalIS.toString());
         } else {
-            return new ByteArrayInputStream(content.getBytes());
+            return new ByteArrayInputStream(data);
         }
     }
 
