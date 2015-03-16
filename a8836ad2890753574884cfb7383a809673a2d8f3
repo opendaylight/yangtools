@@ -1,0 +1,95 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_39d1c4fb",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-16T18:54:27Z",
+      "side": 1,
+      "message": "empty lines in import",
+      "revId": "a8836ad2890753574884cfb7383a809673a2d8f3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_59ce105c",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 735,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-16T18:54:27Z",
+      "side": 1,
+      "message": "trailing whitespace",
+      "range": {
+        "startLine": 735,
+        "startChar": 20,
+        "endLine": 735,
+        "endChar": 21
+      },
+      "revId": "a8836ad2890753574884cfb7383a809673a2d8f3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b904f47e",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/ModuleContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-16T18:54:27Z",
+      "side": 1,
+      "message": "final?",
+      "revId": "a8836ad2890753574884cfb7383a809673a2d8f3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f9da7c16",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/ModuleContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 220,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-16T18:54:27Z",
+      "side": 1,
+      "message": "please add javadocs",
+      "revId": "a8836ad2890753574884cfb7383a809673a2d8f3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_19d8881c",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/ModuleContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 222,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-16T18:54:27Z",
+      "side": 1,
+      "message": "missing space",
+      "revId": "a8836ad2890753574884cfb7383a809673a2d8f3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
