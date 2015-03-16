@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
+import org.opendaylight.yangtools.sal.binding.model.api.type.builder.EnumBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -50,6 +51,7 @@ public final class ModuleContext {
     private final BiMap<Type,ChoiceCaseNode> caseTypeToSchema = HashBiMap.create();
 
     private final Multimap<Type, Type> augmentableToAugmentations = HashMultimap.create();
+    private final Map<SchemaPath, Type> innerTypes = new HashMap<>();
 
     List<Type> getGeneratedTypes() {
         List<Type> result = new ArrayList<>();
@@ -213,6 +215,20 @@ public final class ModuleContext {
 
     protected void addTypeToSchema(Type type, TypeDefinition<?> typedef) {
         typeToSchema.put(type, typedef);
+    }
+
+    /**
+     * Adds mapping between schema path and inner enum.
+     *
+     * @param path
+     * @param enumBuilder
+     */
+    void addInnerTypedefType(SchemaPath path, EnumBuilder enumBuilder) {
+        innerTypes.put(path, enumBuilder);
+    }
+
+    public Type getInnerType(SchemaPath path) {
+        return innerTypes.get(path);
     }
 
 }
