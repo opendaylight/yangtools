@@ -17,7 +17,8 @@ public class Utils {
     public static QName qNameFromArgument(StmtContext<?,?,?> ctx, String value) {
         // TODO: Implement real parsing
         String prefix = "";
-        ctx.getFromNamespace(PrefixToModule.class, prefix);
+
+        //ctx.getFromNamespace(PrefixToModule.class, prefix);
 
         return QName.create(value);
     }
