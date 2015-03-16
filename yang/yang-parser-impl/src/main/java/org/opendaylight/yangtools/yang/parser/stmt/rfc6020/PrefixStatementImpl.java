@@ -42,8 +42,8 @@ public class PrefixStatementImpl extends AbstractDeclaredStatement<String> imple
         super(context);
     }
 
-   @Override
-public java.lang.String getValue() {
-    return rawArgument();
-}
+    @Override
+    public java.lang.String getValue() {
+        return rawArgument();
+    }
 }
