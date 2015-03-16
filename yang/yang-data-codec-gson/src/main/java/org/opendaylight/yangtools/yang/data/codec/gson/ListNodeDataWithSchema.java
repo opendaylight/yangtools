@@ -21,10 +21,15 @@ class ListNodeDataWithSchema extends CompositeNodeDataWithSchema {
 
     @Override
     public void write(final NormalizedNodeStreamWriter writer) throws IOException {
-        if (((ListSchemaNode) getSchema()).getKeyDefinition().isEmpty()) {
+        final ListSchemaNode schema = (ListSchemaNode) getSchema();
+        if (schema.getKeyDefinition().isEmpty()) {
             writer.startUnkeyedList(provideNodeIdentifier(), childSizeHint());
         } else {
-            writer.startMapNode(provideNodeIdentifier(), childSizeHint());
+            if (schema.isUserOrdered()) {
+                writer.startOrderedMapNode(provideNodeIdentifier(), childSizeHint());
+            } else {
+                writer.startMapNode(provideNodeIdentifier(), childSizeHint());
+            }
         }
         super.write(writer);
         writer.endNode();
