@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
+import org.opendaylight.yangtools.sal.binding.model.api.type.builder.EnumBuilder;
+
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.HashMultimap;
@@ -50,6 +52,7 @@ public final class ModuleContext {
     private final BiMap<Type,ChoiceCaseNode> caseTypeToSchema = HashBiMap.create();
 
     private final Multimap<Type, Type> augmentableToAugmentations = HashMultimap.create();
+    private Map<SchemaPath, Type> innerTypes = new HashMap<>();
 
     List<Type> getGeneratedTypes() {
         List<Type> result = new ArrayList<>();
@@ -213,6 +216,14 @@ public final class ModuleContext {
 
     protected void addTypeToSchema(Type type, TypeDefinition<?> typedef) {
         typeToSchema.put(type, typedef);
+    }
+
+    public void addInnerTypedefType(SchemaPath path, EnumBuilder enumBuilder) {
+        innerTypes.put(path,enumBuilder);
+    }
+
+    public Type getInnerType(SchemaPath path) {
+        return innerTypes.get(path);
     }
 
 }
