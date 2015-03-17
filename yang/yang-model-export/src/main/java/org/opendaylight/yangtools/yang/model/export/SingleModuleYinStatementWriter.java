@@ -144,8 +144,12 @@ class SingleModuleYinStatementWriter implements StatementTextWriter {
         }
     }
 
-    private boolean isArgumentYinElement(StatementDefinition currentStatement2) {
-        // FIXME: Implement this
+    private boolean isArgumentYinElement(StatementDefinition currentStatement) {
+        if (currentStatement instanceof Rfc6020Mapping) {
+            return ((Rfc6020Mapping) currentStatement).isArgumentYinElement();
+        } else if (currentStatement instanceof ExtensionStatement) {
+            return ((ExtensionStatement) currentStatement).isArgumentYinElement();
+        }
         return false;
     }
 
