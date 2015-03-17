@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_2a539f18",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/BindingCodecContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-17T15:40:30Z",
+      "side": 1,
+      "message": "can it be null?",
+      "revId": "49330a50b3d82b1f9d770731cf81d3de91113cfe",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_ea5cd727",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/BindingNormalizedNodeCodecRegistry.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-17T15:40:30Z",
+      "side": 1,
+      "message": "move this into the loop and note which class was the offender. also make sure to use spaces where appropriate :)",
+      "revId": "49330a50b3d82b1f9d770731cf81d3de91113cfe",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6a31a7eb",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/CachingNormalizedNodeCodecImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-17T15:40:30Z",
+      "side": 1,
+      "message": "missing copyright header",
+      "revId": "49330a50b3d82b1f9d770731cf81d3de91113cfe",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_0a4ee36f",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/CachingNormalizedNodeCodecImpl.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-17T15:40:30Z",
+      "side": 1,
+      "message": "can these be null?",
+      "revId": "49330a50b3d82b1f9d770731cf81d3de91113cfe",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_aa3ecfb6",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/DataContainerCodecContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-17T15:40:30Z",
+      "side": 1,
+      "message": "\"Failed to serialize\"",
+      "revId": "49330a50b3d82b1f9d770731cf81d3de91113cfe",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_6a48c75b",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/LeafNodeCodecContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-17T15:40:30Z",
+      "side": 1,
+      "message": "import YangInstanceIdentifier, use YangInstasnceIdentifier.PathArgument",
+      "revId": "49330a50b3d82b1f9d770731cf81d3de91113cfe",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
