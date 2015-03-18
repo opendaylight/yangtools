@@ -33,7 +33,7 @@ final class InstanceIdentifierCodec implements Codec<YangInstanceIdentifier, Ins
     @Override
     public InstanceIdentifier<?> deserialize(final YangInstanceIdentifier input) {
         final List<InstanceIdentifier.PathArgument> builder = new ArrayList<>();
-        final NodeCodecContext codec = context.getCodecContextNode(input, builder);
+        final NodeCodecContext<?> codec = context.getCodecContextNode(input, builder);
         if (codec == null) {
             return null;
         }

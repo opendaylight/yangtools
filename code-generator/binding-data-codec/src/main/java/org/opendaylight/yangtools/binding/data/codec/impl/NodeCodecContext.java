@@ -8,11 +8,12 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.collect.ImmutableMap;
-
 import java.util.List;
-
+import org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTreeNode;
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.sal.binding.generator.util.BindingRuntimeContext;
+import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.DataObjectSerializer;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -37,7 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  * </ul>
  *
  */
-abstract class NodeCodecContext {
+abstract class NodeCodecContext<D extends DataObject> implements BindingCodecTreeNode<D> {
 
     /**
      * Returns Yang Instance Identifier Path Argument of current node
@@ -69,7 +70,7 @@ abstract class NodeCodecContext {
          * @param schema  Instantiated schema of binding type.
          * @return Map of local name to leaf node context.
          */
-        ImmutableMap<String, LeafNodeCodecContext> getLeafNodes(Class<?> type, DataNodeContainer schema);
+        ImmutableMap<String, LeafNodeCodecContext<?>> getLeafNodes(Class<?> type, DataNodeContainer schema);
 
         /**
          * Returns Path argument codec for list item
@@ -80,6 +81,8 @@ abstract class NodeCodecContext {
          */
         Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> getPathArgumentCodec(Class<?> type,
                 ListSchemaNode schema);
+
+        DataObjectSerializer getEventStreamSerializer(Class<?> type);
     }
 
     /**
@@ -97,11 +100,5 @@ abstract class NodeCodecContext {
         }
     }
 
-    /**
-     * Return the data object for a normalized node
-     *
-     * @param normalizedNode Backing normalized node
-     * @return Data object
-     */
-    protected abstract Object dataFromNormalizedNode(NormalizedNode<?, ?> normalizedNode);
+    protected abstract Object deserializeObject(NormalizedNode<?, ?> normalizedNode);
 }
