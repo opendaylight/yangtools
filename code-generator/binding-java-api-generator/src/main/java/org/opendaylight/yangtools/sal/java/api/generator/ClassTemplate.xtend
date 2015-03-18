@@ -165,6 +165,10 @@ class ClassTemplate extends BaseTemplate {
     def private generateLengthMethod(String methodName, String varName) '''
         «IF restrictions != null && !(restrictions.lengthConstraints.empty)»
             «val numberClass = restrictions.lengthConstraints.iterator.next.min.class»
+            /**
+             * @deprecated This method is slated for removal in a future release. See BUG-1485 for details.
+             */
+            @Deprecated
             public static «List.importedName»<«Range.importedName»<«numberClass.importedNumber»>> «methodName»() {
                 return «varName»;
             }
@@ -174,6 +178,10 @@ class ClassTemplate extends BaseTemplate {
     def private generateRangeMethod(String methodName, String varName) '''
         «IF restrictions != null && !(restrictions.rangeConstraints.empty)»
             «val returnType = allProperties.iterator.next.returnType»
+            /**
+             * @deprecated This method is slated for removal in a future release. See BUG-1485 for details.
+             */
+            @Deprecated
             public static «List.importedName»<«Range.importedName»<«returnType.importedNumber»>> «methodName»() {
                 return «varName»;
             }
