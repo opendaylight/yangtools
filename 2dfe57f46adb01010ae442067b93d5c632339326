@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_1b007700",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/DataObjectCodecContext.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-03-18T08:31:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_15a288ae",
+      "revId": "2dfe57f46adb01010ae442067b93d5c632339326",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_55c81074",
         "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/DataObjectCodecContext.java",
         "patchSetId": 3
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_3b053311",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/DataObjectCodecContext.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-03-18T08:31:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_55c81074",
+      "revId": "2dfe57f46adb01010ae442067b93d5c632339326",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_35a784bf",
         "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/LeafNodeCodecContext.java",
         "patchSetId": 3
@@ -47,6 +83,24 @@
       "writtenOn": "2015-03-17T21:37:26Z",
       "side": 1,
       "message": "kill two empty lines please",
+      "revId": "2dfe57f46adb01010ae442067b93d5c632339326",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_db09af2d",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/LeafNodeCodecContext.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-03-18T08:31:27Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_35a784bf",
       "revId": "2dfe57f46adb01010ae442067b93d5c632339326",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
