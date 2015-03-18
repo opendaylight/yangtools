@@ -1,0 +1,9 @@
+module test {
+    yang-version 1;
+    namespace "urn:tst:yang";
+    prefix "tst";
+
+    description "This is a test module";
+
+    revision 2015-03-04;
+}

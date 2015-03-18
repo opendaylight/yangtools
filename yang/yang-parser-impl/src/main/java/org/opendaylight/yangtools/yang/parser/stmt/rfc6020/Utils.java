@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import com.google.common.base.CharMatcher;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
@@ -17,10 +18,15 @@ public class Utils {
     public static QName qNameFromArgument(StmtContext<?,?,?> ctx, String value) {
         // TODO: Implement real parsing
         String prefix = "";
-        ctx.getFromNamespace(PrefixToModule.class, prefix);
+
+        //ctx.getFromNamespace(PrefixToModule.class, prefix);
 
         return QName.create(value);
     }
 
+    public static String trimQuotesFromString(String input) {
+        String s = CharMatcher.is('\"').trimFrom(input);
+        return CharMatcher.is('\'').trimFrom(s);
+    }
 
 }

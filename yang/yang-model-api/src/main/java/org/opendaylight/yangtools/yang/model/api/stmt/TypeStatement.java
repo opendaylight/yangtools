@@ -10,11 +10,10 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 @Rfc6020AbnfRule("type-stmt")
-public interface TypeStatement extends DeclaredStatement<QName> {
+public interface TypeStatement extends DeclaredStatement<String> {
 
     @Nonnull String getName();
 
