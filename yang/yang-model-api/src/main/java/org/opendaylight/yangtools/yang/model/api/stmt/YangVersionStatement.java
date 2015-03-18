@@ -9,7 +9,10 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
+import javax.annotation.Nonnull;
+
 public interface YangVersionStatement extends DeclaredStatement<String> {
 
+        @Nonnull String getValue();
 }
 
