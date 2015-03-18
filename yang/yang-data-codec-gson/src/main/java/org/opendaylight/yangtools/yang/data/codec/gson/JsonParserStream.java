@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
@@ -34,13 +33,10 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
  * This class parses JSON elements from a GSON JsonReader. It disallows multiple elements of the same name unlike the
@@ -206,32 +202,15 @@ public final class JsonParserStream implements Closeable, Flushable {
     }
 
     private Object translateValueByType(final String value, final DataSchemaNode node) {
-        final TypeDefinition<? extends Object> typeDefinition = typeDefinition(node);
-        if (typeDefinition == null) {
+        if (node instanceof AnyXmlSchemaNode) {
+            /*
+             *  FIXME: Figure out some YANG extension dispatch, which will
+             *  reuse JSON parsing or XML parsing - anyxml is not well-defined in
+             * JSON.
+             */
             return value;
         }
-
-        return codecs.codecFor(typeDefinition).deserialize(value);
-    }
-
-    private static TypeDefinition<? extends Object> typeDefinition(final DataSchemaNode node) {
-        TypeDefinition<?> baseType = null;
-        if (node instanceof LeafListSchemaNode) {
-            baseType = ((LeafListSchemaNode) node).getType();
-        } else if (node instanceof LeafSchemaNode) {
-            baseType = ((LeafSchemaNode) node).getType();
-        } else if (node instanceof AnyXmlSchemaNode) {
-            return null;
-        } else {
-            throw new IllegalArgumentException("Unhandled parameter types: " + Arrays.<Object> asList(node).toString());
-        }
-
-        if (baseType != null) {
-            while (baseType.getBaseType() != null) {
-                baseType = baseType.getBaseType();
-            }
-        }
-        return baseType;
+        return codecs.codecFor(node).deserialize(value);
     }
 
     private void removeNamespace() {

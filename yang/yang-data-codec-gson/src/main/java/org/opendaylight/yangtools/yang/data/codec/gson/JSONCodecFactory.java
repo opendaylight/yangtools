@@ -15,11 +15,15 @@ import com.google.common.cache.LoadingCache;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
 import org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +34,6 @@ import org.slf4j.LoggerFactory;
 @Beta
 public final class JSONCodecFactory {
     private static final Logger LOG = LoggerFactory.getLogger(JSONCodecFactory.class);
-    private static final JSONCodec<Object> LEAFREF_DEFAULT_CODEC = new JSONLeafrefCodec();
     private static final JSONCodec<Object> NULL_CODEC = new JSONCodec<Object>() {
         @Override
         public Object deserialize(final String input) {
@@ -54,38 +57,19 @@ public final class JSONCodecFactory {
         }
     };
 
-    private static TypeDefinition<?> resolveBaseTypeFrom(final TypeDefinition<?> type) {
-        TypeDefinition<?> superType = type;
-        while (superType.getBaseType() != null) {
-            superType = superType.getBaseType();
-        }
-        return superType;
-    }
-
-    private final LoadingCache<TypeDefinition<?>, JSONCodec<Object>> codecs =
-            CacheBuilder.newBuilder().softValues().build(new CacheLoader<TypeDefinition<?>, JSONCodec<Object>>() {
-        @SuppressWarnings("unchecked")
+    private final LoadingCache<DataSchemaNode, JSONCodec<Object>> codecs =
+            CacheBuilder.newBuilder().softValues().build(new CacheLoader<DataSchemaNode, JSONCodec<Object>>() {
         @Override
-        public JSONCodec<Object> load(final TypeDefinition<?> key) throws Exception {
-            final TypeDefinition<?> type = resolveBaseTypeFrom(key);
-
-            if (type instanceof InstanceIdentifierType) {
-                return (JSONCodec<Object>) iidCodec;
+        public JSONCodec<Object> load(final DataSchemaNode key) throws Exception {
+            final TypeDefinition<?> type;
+            if (key instanceof LeafSchemaNode) {
+                type = ((LeafSchemaNode) key).getType();
+            } else if (key instanceof LeafListSchemaNode) {
+                type = ((LeafListSchemaNode) key).getType();
+            } else {
+                throw new IllegalArgumentException("Not supported node type " + key.getClass().getName());
             }
-            if (type instanceof IdentityrefType) {
-                return (JSONCodec<Object>) idrefCodec;
-            }
-            if (type instanceof LeafrefTypeDefinition) {
-                return LEAFREF_DEFAULT_CODEC;
-            }
-
-            final TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codec = TypeDefinitionAwareCodec.from(type);
-            if (codec == null) {
-                LOG.debug("Codec for type \"{}\" is not implemented yet.", type.getQName().getLocalName());
-                return NULL_CODEC;
-            }
-
-            return (JSONCodec<Object>) AbstractJSONCodec.create(codec);
+            return createCodec(key,type);
         }
     });
 
@@ -109,11 +93,55 @@ public final class JSONCodecFactory {
         return new JSONCodecFactory(context);
     }
 
+    private static TypeDefinition<?> resolveBaseTypeFrom(final TypeDefinition<?> type) {
+        TypeDefinition<?> superType = type;
+        while (superType.getBaseType() != null) {
+            superType = superType.getBaseType();
+        }
+        return superType;
+    }
+
+    private JSONCodec<Object> createCodec(DataSchemaNode key, TypeDefinition<?> type) {
+        TypeDefinition<?> baseType = resolveBaseTypeFrom(type);
+        if (baseType instanceof LeafrefTypeDefinition) {
+            return createReferencedTypeCodec(key, (LeafrefTypeDefinition) baseType);
+        }
+        return createFromSimpleType(type);
+    }
+
+    private JSONCodec<Object> createReferencedTypeCodec(DataSchemaNode schema,
+            LeafrefTypeDefinition type) {
+        // FIXME: Verify if this does indeed support leafref of leafref
+        TypeDefinition<?> referencedType =
+                SchemaContextUtil.getBaseTypeForLeafRef(type, getSchemaContext(), schema);
+        return createFromSimpleType(referencedType);
+    }
+
+    @SuppressWarnings("unchecked")
+    private JSONCodec<Object> createFromSimpleType(TypeDefinition<?> type) {
+        final TypeDefinition<?> baseType = resolveBaseTypeFrom(type);
+        if (baseType instanceof InstanceIdentifierType) {
+            return (JSONCodec<Object>) iidCodec;
+        }
+        if (baseType instanceof IdentityrefType) {
+            return (JSONCodec<Object>) idrefCodec;
+        }
+
+        final TypeDefinitionAwareCodec<Object, ?> codec = TypeDefinitionAwareCodec.from(type);
+        if (codec == null) {
+            LOG.debug("Codec for type \"{}\" is not implemented yet.", type.getQName()
+                    .getLocalName());
+            return NULL_CODEC;
+        }
+        return (JSONCodec<Object>) AbstractJSONCodec.create(codec);
+    }
+
     SchemaContext getSchemaContext() {
         return schemaContext;
     }
 
-    JSONCodec<Object> codecFor(final TypeDefinition<?> typeDefinition) {
-        return codecs.getUnchecked(typeDefinition);
+    JSONCodec<Object> codecFor(DataSchemaNode schema) {
+        return codecs.getUnchecked(schema);
     }
+
 }
