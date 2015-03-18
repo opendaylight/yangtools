@@ -21,6 +21,7 @@
 
     <feature name='odl-yangtools-models' version='${project.version}' description='OpenDaylight :: Yangtools :: Models'>
         <feature version='${project.version}'>odl-yangtools-binding</feature>
+        <bundle>mvn:org.opendaylight.yangtools.model/iana-if-type-2014-05-08/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools.model/ietf-inet-types/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools.model/ietf-interfaces/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools.model/ietf-yang-types/{{VERSION}}</bundle>

@@ -22,6 +22,7 @@
     <modules>
         <module>iana-afn-safi</module>
         <module>iana-if-type</module>
+        <module>iana-if-type-2014-05-08</module>
         <!-- 
         <module>ietf-topology-l3-unicast-igp</module>
         <module>ietf-topology-isis</module>
