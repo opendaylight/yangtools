@@ -8,9 +8,7 @@
 package org.opendaylight.yangtools.yang.data.operations;
 
 import com.google.common.base.Optional;
-
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
@@ -39,10 +37,6 @@ public class DataModificationException extends Exception {
 
         public DataMissingException(final QName nodeType) {
             super(String.format("Data missing for node: %s", nodeType), nodeType);
-        }
-
-        public DataMissingException(final QName nodeType, final Node<?> modificationNode) {
-            super(String.format("Data missing for node: %s, %s", nodeType, modificationNode), nodeType);
         }
 
         public DataMissingException(final QName nodeType, final NormalizedNode<?, ?> modificationNode) {

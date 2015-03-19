@@ -12,8 +12,6 @@ import com.google.common.collect.Sets;
 import java.util.HashMap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.CompositeNode;
-import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -31,8 +29,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
-import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
-import org.opendaylight.yangtools.yang.data.impl.NodeFactory;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
@@ -250,20 +246,6 @@ public class TestingNormalizedNodeStructuresCreator {
                         new NodeWithValue(QName.create("ns:complex:json", "2014-08-11", "lflst11"), "lflst11 value2\r\nanother line 2"))
                 .withValue("lflst11 value2\r\nanother line 2").build());
         return lflst11.build();
-    }
-
-    private static CompositeNode prepareLf12Value() {
-        SimpleNode<?> anyxmlInData = NodeFactory.createImmutableSimpleNode(
-                QName.create("ns:complex:json", "2014-08-11", "anyxml-in-data"), null, "foo");
-        return ImmutableCompositeNode.builder().add(anyxmlInData)
-                .setQName(QName.create("ns:complex:json", "2014-08-11", "lf12-any")).build();
-    }
-
-    private static CompositeNode prepareLf13Value() {
-        SimpleNode<?> anyxmlInData = NodeFactory.createImmutableSimpleNode(
-                QName.create("ns:complex:json", "2014-08-11", "anyxml-in-data"), null, "foo");
-        return ImmutableCompositeNode.builder().add(anyxmlInData)
-                .setQName(QName.create("ns:complex:json", "2014-08-11", "lf13-any")).build();
     }
 
     public static NormalizedNode<?, ?> leafNodeInContainer() {

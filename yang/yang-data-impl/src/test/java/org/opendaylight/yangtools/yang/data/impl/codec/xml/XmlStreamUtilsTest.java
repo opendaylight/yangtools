@@ -20,7 +20,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.AbstractMap;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Map;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
@@ -31,8 +30,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.data.api.Node;
-import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -144,34 +141,6 @@ public class XmlStreamUtilsTest {
         final TypeDefinition<?> targetBaseType = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypedef, schemaContext, schemaNode);
         assertEquals("Wrong class found.", clas, targetBaseType.getClass());
         return targetBaseType;
-    }
-
-    @Test
-    public void testEmptyNodeWithAttribute() throws Exception {
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final XMLStreamWriter writer =  XML_OUTPUT_FACTORY.createXMLStreamWriter(out);
-
-        final Map<QName, String> attrs = Maps.newHashMap();
-        attrs.put(QName.create("namespaceAttr", "2012-12-12", "attr1"), "value");
-        final QName qName = QName.create("urn:opendaylight:controller:rpc:test", "2014-07-28", "cont");
-        final ImmutableCompositeNode dataAttributes = ImmutableCompositeNode.create(qName, attrs, Collections.<Node<?>>emptyList());
-        XmlStreamUtils.create(XmlUtils.DEFAULT_XML_CODEC_PROVIDER).writeDocument(writer, dataAttributes);
-
-        writer.close();
-        out.close();
-
-        final String xmlAsString = new String(out.toByteArray());
-
-        // TODO why resulting xml does not have namespace definition ? If sending xml by e.g. netconf the namespace is there but not here in test
-        final String expectedXmlAsString = "<cont xmlns:a=\"namespaceAttr\" a:attr1=\"value\"></cont>";
-
-        XMLUnit.setIgnoreAttributeOrder(true);
-        final Document control = XMLUnit.buildControlDocument(expectedXmlAsString);
-        final Document test = XMLUnit.buildTestDocument(xmlAsString);
-        final Diff diff = XMLUnit.compareXML(control, test);
-
-        final boolean identical = diff.identical();
-        assertTrue("Xml differs: " + diff.toString(), identical);
     }
 
     private Map<String, String> mapPrefixed(final Iterable<Map.Entry<URI, String>> prefixes) {

@@ -36,7 +36,6 @@
         <module>yang-parser-api</module>
         <module>yang-parser-impl</module>
         <module>yang-model-export</module>
-        <module>yang-data-composite-node</module>
     </modules>
     <build>
         <plugins>
