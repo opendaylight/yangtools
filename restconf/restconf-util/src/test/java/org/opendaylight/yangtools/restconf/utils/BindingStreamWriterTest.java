@@ -47,7 +47,6 @@ import org.opendaylight.yangtools.binding.data.codec.gen.impl.DataObjectSerializ
 import org.opendaylight.yangtools.binding.data.codec.gen.impl.StreamWriterGenerator;
 import org.opendaylight.yangtools.binding.data.codec.impl.BindingNormalizedNodeCodecRegistry;
 import org.opendaylight.yangtools.sal.binding.generator.impl.ModuleInfoBackedContext;
-import org.opendaylight.yangtools.sal.binding.generator.impl.RuntimeGeneratedMappingServiceImpl;
 import org.opendaylight.yangtools.sal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.yangtools.sal.binding.generator.util.JavassistUtils;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -71,7 +70,7 @@ public class BindingStreamWriterTest {
     private static final ReportedLspKey LSP1_KEY = new ReportedLspKey("one");
     private static final ReportedLspKey LSP2_KEY = new ReportedLspKey("two");
 
-    private RuntimeGeneratedMappingServiceImpl mappingService;
+
     private Optional<SchemaContext> schemaContext;
     private DataObjectSerializerGenerator generator;
     private BindingNormalizedNodeCodecRegistry registry;
@@ -79,12 +78,9 @@ public class BindingStreamWriterTest {
 
     @Before
     public void setup() {
-        this.mappingService = new RuntimeGeneratedMappingServiceImpl(ClassPool.getDefault());
-
         final ModuleInfoBackedContext moduleInfo = ModuleInfoBackedContext.create();
         moduleInfo.addModuleInfos(BindingReflections.loadModuleInfos());
         schemaContext = moduleInfo.tryToCreateSchemaContext();
-        this.mappingService.onGlobalContextUpdated(moduleInfo.tryToCreateSchemaContext().get());
         JavassistUtils utils = JavassistUtils.forClassPool(ClassPool.getDefault());
         generator = StreamWriterGenerator.create(utils);
         registry = new BindingNormalizedNodeCodecRegistry(generator);

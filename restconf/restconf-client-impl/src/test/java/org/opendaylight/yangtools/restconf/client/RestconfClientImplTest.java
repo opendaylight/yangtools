@@ -7,13 +7,15 @@
  */
 package org.opendaylight.yangtools.restconf.client;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import com.google.common.util.concurrent.ListenableFuture;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import javassist.ClassPool;
 import org.junit.Before;
 import org.opendaylight.yangtools.restconf.client.api.RestconfClientContext;
 import org.opendaylight.yangtools.restconf.client.api.UnsupportedProtocolException;
@@ -22,13 +24,12 @@ import org.opendaylight.yangtools.restconf.client.api.data.OperationalDatastore;
 import org.opendaylight.yangtools.restconf.client.api.event.EventStreamInfo;
 import org.opendaylight.yangtools.restconf.client.api.event.ListenableEventStreamContext;
 import org.opendaylight.yangtools.sal.binding.generator.impl.ModuleInfoBackedContext;
-import org.opendaylight.yangtools.sal.binding.generator.impl.RuntimeGeneratedMappingServiceImpl;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 
 public class RestconfClientImplTest {
 
@@ -38,17 +39,19 @@ public class RestconfClientImplTest {
     public static final String JSON = "+json";
     public static final String XML = "+xml";
     private  RestconfClientContext restconfClientContext;
-    private RuntimeGeneratedMappingServiceImpl mappingService;
-
 
     @Before
     public void setupRestconfClientContext() throws MalformedURLException, UnsupportedProtocolException {
-        mappingService = new RuntimeGeneratedMappingServiceImpl(new ClassPool());
 
         final ModuleInfoBackedContext moduleInfo = ModuleInfoBackedContext.create();
         moduleInfo.addModuleInfos(BindingReflections.loadModuleInfos());
-        mappingService.onGlobalContextUpdated(moduleInfo.tryToCreateSchemaContext().get());
-        this.restconfClientContext = new RestconfClientFactory().getRestconfClientContext(new URL(restconfUrl),mappingService, mappingService);
+        this.restconfClientContext = new RestconfClientFactory().getRestconfClientContext(new URL(restconfUrl),new SchemaContextHolder() {
+
+            @Override
+            public SchemaContext getSchemaContext() {
+                return moduleInfo.tryToCreateSchemaContext().get();
+            }
+        });
         assertNotNull(this.restconfClientContext);
     }
 
@@ -60,7 +63,7 @@ public class RestconfClientImplTest {
         }
         if (streamsFuture.isDone()){
             try {
-                Set<EventStreamInfo> streams = (Set<EventStreamInfo>) streamsFuture.get();
+                Set<EventStreamInfo> streams = streamsFuture.get();
                 assertNotNull(streams);
             } catch (InterruptedException e) {
                 fail(e.getMessage());
@@ -77,7 +80,7 @@ public class RestconfClientImplTest {
         }
         if (servicesFuture.isDone()){
             try {
-                Set<Class<? extends RpcService>> streams = (Set<Class<? extends RpcService>>) servicesFuture.get();
+                Set<Class<? extends RpcService>> streams = servicesFuture.get();
                 assertNotNull(streams);
             } catch (InterruptedException e) {
                 fail(e.getMessage());
