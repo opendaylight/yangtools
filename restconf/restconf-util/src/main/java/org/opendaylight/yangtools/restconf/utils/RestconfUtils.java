@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.restconf.utils;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
@@ -27,19 +26,12 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.binding.data.codec.impl.BindingNormalizedNodeCodecRegistry;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.CompositeNode;
-import org.opendaylight.yangtools.yang.data.api.Node;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.impl.ImmutableCompositeNode;
-import org.opendaylight.yangtools.yang.data.impl.codec.BindingIndependentMappingService;
-import org.opendaylight.yangtools.yang.data.impl.codec.DeserializationException;
-import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
-import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -50,6 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class RestconfUtils {
@@ -57,13 +50,6 @@ public class RestconfUtils {
     private static final Logger logger = LoggerFactory.getLogger(RestconfUtils.class);
 
     private static final BiMap<URI, String> uriToModuleName = HashBiMap.<URI, String> create();
-
-    public static Entry<String, DataSchemaNode> toRestconfIdentifier(
-            final org.opendaylight.yangtools.yang.binding.InstanceIdentifier<?> bindingIdentifier,
-            final BindingIndependentMappingService mappingService, final SchemaContext schemaContext) {
-        YangInstanceIdentifier domIdentifier = mappingService.toDataDom(bindingIdentifier);
-        return toRestconfIdentifier(domIdentifier, schemaContext);
-    }
 
     public static Entry<String, DataSchemaNode> toRestconfIdentifier(final YangInstanceIdentifier xmlInstanceIdentifier,
             final SchemaContext schemaContext) {
@@ -212,92 +198,24 @@ public class RestconfUtils {
      * @return Set of classes representing rpc services parsed from input stream
      */
     public static Set<Class<? extends RpcService>> rpcServicesFromInputStream(final InputStream inputStream,
-            final BindingIndependentMappingService mappingService, final SchemaContext schemaContext) {
+            final BindingNormalizedNodeCodecRegistry mappingService, final SchemaContext schemaContext) {
         try {
             DocumentBuilderFactory documentBuilder = DocumentBuilderFactory.newInstance();
             documentBuilder.setNamespaceAware(true);
             DocumentBuilder builder = documentBuilder.newDocumentBuilder();
             Document doc = builder.parse(inputStream);
             Element rootElement = doc.getDocumentElement();
-
-            List<Node<?>> domNodes = XmlDocumentUtils.toDomNodes(rootElement,
-                    Optional.of(schemaContext.getChildNodes()));
+            NodeList domNodes = rootElement.getChildNodes();
             Set<Class<? extends RpcService>> rpcServices = new HashSet<Class<? extends RpcService>>();
-            for (Node<?> node : domNodes) {
-                if (node instanceof ImmutableCompositeNode) {
-                    ImmutableCompositeNode icNode = (ImmutableCompositeNode) node;
-                    QName namespace = null;
-                    QName revision = null;
-                    QName name = null;
-                    for (QName q : icNode.keySet()) {
-                        if (q.getLocalName().equals("namespace")) {
-                            namespace = q;
-                        }
-                        if (q.getLocalName().equals("revision")) {
-                            revision = q;
-                        }
-                        if (q.getLocalName().equals("name")) {
-                            name = q;
-                        }
 
-                    }
+            for (int i = 0; i < domNodes.getLength(); i++) {
 
-                    // FIXME: Method getRpcServiceClassFor has been modified and
-                    // fixed to follow API contract. This call MUST be updated
-                    // to follow contract i.e. pass correct parameters:
-                    // "NAMESPACE" and "REVISION"
-                    Optional<Class<? extends RpcService>> rpcService = mappingService.getRpcServiceClassFor(
-                            icNode.get(name).get(0).getValue().toString(), icNode.get(revision).get(0).getValue()
-                                    .toString());
-                    if (rpcService.isPresent()) {
-                        rpcServices.add(rpcService.get());
-                    }
-                }
             }
-
+            /**
+             * FIXME: Parse modules section and find all related RPC services.
+             *
+             */
             return rpcServices;
-        } catch (ParserConfigurationException e) {
-            logger.trace("Parse configuration exception {}", e);
-        } catch (SAXException e) {
-            logger.trace("SAX exception {}", e);
-        } catch (IOException e) {
-            logger.trace("IOException {}", e);
-        }
-        return null;
-    }
-
-    /**
-     * Parse DataObject from input stream.
-     *
-     * @param path
-     *            identifier of expected result object
-     * @param inputStream
-     *            stream containing xml data to parse
-     * @param schemaContext
-     *            parsed yang data context
-     * @param mappingService
-     *            current mapping service
-     * @param dataSchema
-     *            yang data schema node representation of resulting data object
-     * @return DataObject instance parsed from input stream
-     */
-    public static DataObject dataObjectFromInputStream(
-            final org.opendaylight.yangtools.yang.binding.InstanceIdentifier<?> path, final InputStream inputStream,
-            final SchemaContext schemaContext, final BindingIndependentMappingService mappingService,
-            final DataSchemaNode dataSchema) {
-        // Parse stream into w3c Document
-        try {
-            DocumentBuilderFactory documentBuilder = DocumentBuilderFactory.newInstance();
-            documentBuilder.setNamespaceAware(true);
-            DocumentBuilder builder = documentBuilder.newDocumentBuilder();
-            Document doc = builder.parse(inputStream);
-            Element rootElement = doc.getDocumentElement();
-            Node<?> domNode = XmlDocumentUtils.toDomNode(rootElement, Optional.of(dataSchema),
-                    Optional.<XmlCodecProvider> absent(), Optional.of(schemaContext));
-            DataObject dataObject = mappingService.dataObjectFromDataDom(path, (CompositeNode) domNode); // getDataFromResponse
-            return dataObject;
-        } catch (DeserializationException e) {
-            logger.trace("Deserialization exception {}", e);
         } catch (ParserConfigurationException e) {
             logger.trace("Parse configuration exception {}", e);
         } catch (SAXException e) {
