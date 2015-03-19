@@ -40,6 +40,10 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>binding-data-codec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-common</artifactId>
         </dependency>
         <dependency>
@@ -85,11 +89,6 @@
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>binding-generator-impl</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>binding-data-codec</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
