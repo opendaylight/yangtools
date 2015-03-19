@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
+import com.google.common.base.Verify;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -58,6 +59,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     private LogicalOperation operation = LogicalOperation.NONE;
     private Optional<TreeNode> snapshotCache;
     private NormalizedNode<?, ?> value;
+    private ModificationType modType;
 
     private ModifiedNode(final PathArgument identifier, final Optional<TreeNode> original, final boolean isOrdered) {
         this.identifier = identifier;
@@ -88,7 +90,6 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     Optional<TreeNode> getOriginal() {
         return original;
     }
-
 
     @Override
     LogicalOperation getOperation() {
@@ -123,7 +124,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     ModifiedNode modifyChild(final PathArgument child, final boolean isOrdered) {
         clearSnapshot();
         if (operation == LogicalOperation.NONE) {
-            updateModificationType(LogicalOperation.TOUCH);
+            updateOperationType(LogicalOperation.TOUCH);
         }
         final ModifiedNode potential = children.get(child);
         if (potential != null) {
@@ -185,7 +186,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         clearSnapshot();
         children.clear();
         this.value = null;
-        updateModificationType(newType);
+        updateOperationType(newType);
     }
 
     /**
@@ -195,14 +196,14 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      */
     void write(final NormalizedNode<?, ?> value) {
         clearSnapshot();
-        updateModificationType(LogicalOperation.WRITE);
+        updateOperationType(LogicalOperation.WRITE);
         children.clear();
         this.value = value;
     }
 
     void merge(final NormalizedNode<?, ?> value) {
         clearSnapshot();
-        updateModificationType(LogicalOperation.MERGE);
+        updateOperationType(LogicalOperation.MERGE);
 
         /*
          * Blind overwrite of any previous data is okay, no matter whether the node
@@ -243,7 +244,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
 
         // A TOUCH node without any children is a no-op
         if (operation == LogicalOperation.TOUCH && children.isEmpty()) {
-            updateModificationType(LogicalOperation.NONE);
+            updateOperationType(LogicalOperation.NONE);
         }
     }
 
@@ -260,8 +261,9 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         return snapshot;
     }
 
-    private void updateModificationType(final LogicalOperation type) {
+    private void updateOperationType(final LogicalOperation type) {
         operation = type;
+        modType = null;
         clearSnapshot();
     }
 
@@ -269,6 +271,14 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     public String toString() {
         return "NodeModification [identifier=" + identifier + ", modificationType="
                 + operation + ", childModification=" + children + "]";
+    }
+
+    void resolveModificationType(@Nonnull final ModificationType type) {
+        modType = Verify.verifyNotNull(type);
+    }
+
+    @Nonnull ModificationType modificationType() {
+        return Verify.verifyNotNull(modType, "Node %s does not have resolved modification type", this);
     }
 
     /**
