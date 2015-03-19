@@ -38,24 +38,24 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         @Override
         public boolean apply(final @Nonnull ModifiedNode input) {
             Preconditions.checkNotNull(input);
-            switch (input.getType()) {
+            switch (input.getOperation()) {
             case DELETE:
             case MERGE:
             case WRITE:
                 return true;
-            case SUBTREE_MODIFIED:
-            case UNMODIFIED:
+            case TOUCH:
+            case NONE:
                 return false;
             }
 
-            throw new IllegalArgumentException(String.format("Unhandled modification type %s", input.getType()));
+            throw new IllegalArgumentException(String.format("Unhandled modification type %s", input.getOperation()));
         }
     };
 
     private final Map<PathArgument, ModifiedNode> children;
     private final Optional<TreeNode> original;
     private final PathArgument identifier;
-    private ModificationType modificationType = ModificationType.UNMODIFIED;
+    private LogicalOperation operation = LogicalOperation.NONE;
     private Optional<TreeNode> snapshotCache;
     private NormalizedNode<?, ?> value;
 
@@ -84,24 +84,15 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         return identifier;
     }
 
-    /**
-     *
-     * Returns original store metadata
-     * @return original store metadata
-     */
     @Override
     Optional<TreeNode> getOriginal() {
         return original;
     }
 
-    /**
-     * Returns modification type
-     *
-     * @return modification type
-     */
+
     @Override
-    ModificationType getType() {
-        return modificationType;
+    LogicalOperation getOperation() {
+        return operation;
     }
 
     /**
@@ -131,8 +122,8 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      */
     ModifiedNode modifyChild(final PathArgument child, final boolean isOrdered) {
         clearSnapshot();
-        if (modificationType == ModificationType.UNMODIFIED) {
-            updateModificationType(ModificationType.SUBTREE_MODIFIED);
+        if (operation == LogicalOperation.NONE) {
+            updateModificationType(LogicalOperation.TOUCH);
         }
         final ModifiedNode potential = children.get(child);
         if (potential != null) {
@@ -166,16 +157,16 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * Records a delete for associated node.
      */
     void delete() {
-        final ModificationType newType;
+        final LogicalOperation newType;
 
-        switch (modificationType) {
+        switch (operation) {
         case DELETE:
-        case UNMODIFIED:
+        case NONE:
             // We need to record this delete.
-            newType = ModificationType.DELETE;
+            newType = LogicalOperation.DELETE;
             break;
         case MERGE:
-        case SUBTREE_MODIFIED:
+        case TOUCH:
         case WRITE:
             /*
              * We are canceling a previous modification. This is a bit tricky,
@@ -185,10 +176,10 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
              * As documented in BUG-2470, a delete of data introduced in this
              * transaction needs to be turned into a no-op.
              */
-            newType = original.isPresent() ? ModificationType.DELETE : ModificationType.UNMODIFIED;
+            newType = original.isPresent() ? LogicalOperation.DELETE : LogicalOperation.NONE;
             break;
         default:
-            throw new IllegalStateException("Unhandled deletion of node with " + modificationType);
+            throw new IllegalStateException("Unhandled deletion of node with " + operation);
         }
 
         clearSnapshot();
@@ -204,14 +195,14 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      */
     void write(final NormalizedNode<?, ?> value) {
         clearSnapshot();
-        updateModificationType(ModificationType.WRITE);
+        updateModificationType(LogicalOperation.WRITE);
         children.clear();
         this.value = value;
     }
 
     void merge(final NormalizedNode<?, ?> value) {
         clearSnapshot();
-        updateModificationType(ModificationType.MERGE);
+        updateModificationType(LogicalOperation.MERGE);
 
         /*
          * Blind overwrite of any previous data is okay, no matter whether the node
@@ -245,14 +236,14 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             final ModifiedNode child = it.next();
             child.seal();
 
-            if (child.modificationType == ModificationType.UNMODIFIED) {
+            if (child.operation == LogicalOperation.NONE) {
                 it.remove();
             }
         }
 
-        // A SUBTREE_MODIFIED node without any children is a no-op
-        if (modificationType == ModificationType.SUBTREE_MODIFIED && children.isEmpty()) {
-            updateModificationType(ModificationType.UNMODIFIED);
+        // A TOUCH node without any children is a no-op
+        if (operation == LogicalOperation.TOUCH && children.isEmpty()) {
+            updateModificationType(LogicalOperation.NONE);
         }
     }
 
@@ -269,15 +260,15 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         return snapshot;
     }
 
-    private void updateModificationType(final ModificationType type) {
-        modificationType = type;
+    private void updateModificationType(final LogicalOperation type) {
+        operation = type;
         clearSnapshot();
     }
 
     @Override
     public String toString() {
         return "NodeModification [identifier=" + identifier + ", modificationType="
-                + modificationType + ", childModification=" + children + "]";
+                + operation + ", childModification=" + children + "]";
     }
 
     /**

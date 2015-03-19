@@ -15,6 +15,10 @@ import java.util.Collection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
+import org.opendaylight.yangtools.yang.data.api.schema.OrderedLeafSetNode;
+import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
@@ -69,7 +73,39 @@ final class InMemoryDataTreeCandidate extends AbstractDataTreeCandidate {
 
         @Override
         public ModificationType getModificationType() {
-            return mod.getType();
+            switch (mod.getOperation()) {
+            case DELETE:
+                return ModificationType.DELETE;
+            case MERGE:
+                // Merge into non-existing data is a write
+                if (oldMeta == null) {
+                    return ModificationType.WRITE;
+                }
+
+                // Data-based checks to narrow down types
+                final NormalizedNode<?, ?> data = newMeta.getData();
+
+                // leaf or anyxml are always written
+                if (!(data instanceof NormalizedNodeContainer)) {
+                    return ModificationType.WRITE;
+                }
+
+                // Unkeyed collections are always written
+                if (data instanceof UnkeyedListNode || data instanceof OrderedMapNode || data instanceof OrderedLeafSetNode) {
+                    return ModificationType.WRITE;
+                }
+
+                // Everything else is subtree modified
+                return ModificationType.SUBTREE_MODIFIED;
+            case TOUCH:
+                return ModificationType.SUBTREE_MODIFIED;
+            case NONE:
+                return ModificationType.UNMODIFIED;
+            case WRITE:
+                return ModificationType.WRITE;
+            }
+
+            throw new IllegalStateException("Unhandled internal operation " + mod.getOperation());
         }
 
         private Optional<NormalizedNode<?, ?>> optionalData(final TreeNode meta) {

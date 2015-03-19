@@ -7,12 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-
 import com.google.common.base.Optional;
 import java.util.Collection;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 
 /**
@@ -24,9 +22,9 @@ abstract class NodeModification implements Identifiable<PathArgument> {
     /**
      * Get the type of modification.
      *
-     * @return Modification type.
+     * @return Operation type.
      */
-    abstract ModificationType getType();
+    abstract LogicalOperation getOperation();
 
     /**
      * Get the original tree node to which the modification is to be applied.

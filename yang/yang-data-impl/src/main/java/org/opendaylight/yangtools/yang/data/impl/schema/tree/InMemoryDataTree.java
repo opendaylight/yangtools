@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
@@ -85,7 +84,7 @@ final class InMemoryDataTree implements DataTree {
         final InMemoryDataTreeModification m = (InMemoryDataTreeModification)modification;
         final ModifiedNode root = m.getRootModification();
 
-        if (root.getType() == ModificationType.UNMODIFIED) {
+        if (root.getOperation() == LogicalOperation.NONE) {
             return new NoopDataTreeCandidate(PUBLIC_ROOT_PATH, root);
         }
 
