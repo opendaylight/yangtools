@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.IncorrectDataStructureException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
@@ -38,6 +39,7 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
     @Override
     protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
             final Version version) {
+        modification.resolveModificationType(ModificationType.WRITE);
         return applyWrite(modification, Optional.of(currentMeta), version);
     }
 

@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModifiedNodeDoesNotExistException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
@@ -145,6 +146,7 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
     protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
             final Version version) {
         // For Node Containers - merge is same as subtree change - we only replace children.
+        modification.resolveModificationType(ModificationType.SUBTREE_MODIFIED);
         return applySubtreeChange(modification, currentMeta, version);
     }
 
