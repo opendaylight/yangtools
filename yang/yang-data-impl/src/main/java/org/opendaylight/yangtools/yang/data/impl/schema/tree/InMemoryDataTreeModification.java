@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
@@ -118,7 +117,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
 
     private ModificationApplyOperation resolveModificationStrategy(final YangInstanceIdentifier path) {
         LOG.trace("Resolving modification apply strategy for {}", path);
-        if (rootNode.getType() == ModificationType.UNMODIFIED) {
+        if (rootNode.getOperation() == LogicalOperation.NONE) {
             strategyTree.upgradeIfPossible();
         }
 
@@ -164,7 +163,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
     public DataTreeModification newModification() {
         Preconditions.checkState(sealed == 1, "Attempted to chain on an unsealed modification");
 
-        if (rootNode.getType() == ModificationType.UNMODIFIED) {
+        if (rootNode.getOperation() == LogicalOperation.NONE) {
             // Simple fast case: just use the underlying modification
             return snapshot.newModification();
         }

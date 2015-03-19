@@ -69,7 +69,24 @@ final class InMemoryDataTreeCandidate extends AbstractDataTreeCandidate {
 
         @Override
         public ModificationType getModificationType() {
-            return mod.getType();
+            switch (mod.getOperation()) {
+            case DELETE:
+                return ModificationType.DELETE;
+            case MERGE:
+                if (oldMeta == null || mod.getChildren().isEmpty()) {
+                    return ModificationType.WRITE;
+                } else {
+                    return ModificationType.SUBTREE_MODIFIED;
+                }
+            case TOUCH:
+                return ModificationType.SUBTREE_MODIFIED;
+            case NONE:
+                return ModificationType.UNMODIFIED;
+            case WRITE:
+                return ModificationType.WRITE;
+            }
+
+            throw new IllegalStateException("Unhandled internal operation " + mod.getOperation());
         }
 
         private Optional<NormalizedNode<?, ?>> optionalData(final TreeNode meta) {
