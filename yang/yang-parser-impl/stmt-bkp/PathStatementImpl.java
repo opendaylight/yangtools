@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Date;
-
+import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface RevisionStatement extends DeclaredStatement<Date>, DocumentationGroup {
+public interface PathStatement extends DeclaredStatement<RevisionAwareXPath> {
 
-    Date getDate();
+    // FIXME: Introduce proper type representing parsed leafref
+    @Nonnull String getValue();
 
 }
+

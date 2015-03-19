@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Date;
-
+import java.util.Collection;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface RevisionStatement extends DeclaredStatement<Date>, DocumentationGroup {
+public interface UniqueStatement extends DeclaredStatement<Collection<SchemaNodeIdentifier.Relative>> {
 
-    Date getDate();
-
+    @Nonnull Collection<SchemaNodeIdentifier.Relative> getTag();
 }
+

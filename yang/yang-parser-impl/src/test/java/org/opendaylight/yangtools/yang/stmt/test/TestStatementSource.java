@@ -74,46 +74,50 @@ class TestStatementSource implements StatementStreamSource {
     }
 
     protected void body() throws SourceException {
-        stmt(YangVersion).arg("1");end();
-        stmt(Description).arg("Here goes description of this module");end();
-        stmt(Contact).arg("Here goes our address...");end();
+//        stmt(YangVersion).arg("1");end();
+//        stmt(Description).arg("Here goes description of this module");end();
+//        stmt(Contact).arg("Here goes our address...");end();
+//
+//        stmt(Revision).arg("2015-03-12");
+//            stmt(Description).arg("This revision brings this and that...");end();
+//            stmt(Reference).arg("Learn more here...");end();
+//        end();
 
-        stmt(Revision).arg("2015-03-12");
-            stmt(Description).arg("This revision brings this and that...");end();
-            stmt(Reference).arg("Learn more here...");end();
+        stmt(Container).arg(name+":my-container-with-prefix");
+//            stmt(Leaf).arg("MyContainerLeaf");
+//                stmt(Type).arg("string");end();
+//                stmt(Config).arg("TRUE");end();
+//            end();
+//            stmt(Choice).arg("choose-your-destiny");
+//                stmt(Default).arg("destiny-one");end();
+//                stmt(Case).arg("destiny-one");
+//                    stmt(Leaf).arg("destiny-one-leaf");end();
+//                end();
+//                stmt(Case).arg("destiny-two");
+//                    stmt(Mandatory).arg("true");
+//                    stmt(Container).arg("InnerContainer");
+//                        stmt(Leaf).arg("leaf-of-deep");end();
+//                    end();
+//                end();
+//            end();
+//            stmt(Container).arg("MyContainerInContainer");
+//                stmt(Must).arg("xpath expression");
+//                stmt(Leaf).arg("MyContainerInContainerLeaf");
+//                    stmt(Type).arg("string");end();
+//                end();
+//                stmt(Deviation).arg("/tst:test/tst:element");
+//                    stmt(Deviate).arg("add");end();
+//                end();
+//            end();
         end();
-        stmt(Revision).arg("2015-03-11");
-            stmt(Description).arg("This revision brought this and that...");end();
-            stmt(Reference).arg("Learn more here...");end();
-        end();
+        stmt(Container).arg("my-container-without-prefix").end();
 
-        stmt(Container).arg("MyContainer");
-            stmt(Leaf).arg("MyContainerLeaf");
-                stmt(Type).arg("string");end();
-                stmt(Config).arg("TRUE");end();
-            end();
-            stmt(Choice).arg("choose-your-destiny");
-                stmt(Default).arg("destiny-one");end();
-                stmt(Case).arg("destiny-one");
-                    stmt(Leaf).arg("destiny-one-leaf");end();
-                end();
-                stmt(Case).arg("destiny-two");
-                    stmt(Mandatory).arg("true");
-                    stmt(Container).arg("InnerContainer");
-                        stmt(Leaf).arg("leaf-of-deep");end();
-                    end();
-                end();
-            end();
-            stmt(Container).arg("MyContainerInContainer");
-                stmt(Must).arg("xpath expression");
-                stmt(Leaf).arg("MyContainerInContainerLeaf");
-                    stmt(Type).arg("string");end();
-                end();
-                stmt(Deviation).arg("/tst:test/tst:element");
-                    stmt(Deviate).arg("add");end();
-                end();
-            end();
-        end();
+        int i = 0;
+        for(String imp : imports)  {
+            i++;
+            stmt(Container).arg(imp+":my-container-with-imported-prefix"+i).end();
+        }
+
     }
 
     TestStatementSource header() throws SourceException {

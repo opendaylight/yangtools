@@ -7,12 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Date;
-
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface RevisionStatement extends DeclaredStatement<Date>, DocumentationGroup {
-
-    Date getDate();
+public interface KeyStatement extends DeclaredStatement<Collection<SchemaNodeIdentifier>> {
 
 }
+

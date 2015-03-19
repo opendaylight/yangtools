@@ -90,7 +90,6 @@ public class ImportStatementDefinition extends
     }
 
     private static ModuleIdentifier getImportedModuleIdentifier(Mutable<String, ImportStatement, ?> stmt) {
-
         String moduleName = stmt.getStatementArgument();
         String revisionArg = firstAttributeOf(stmt.declaredSubstatements(),RevisionDateStatement.class);
         final Optional<Date> revision;
@@ -103,11 +102,7 @@ public class ImportStatementDefinition extends
         } else {
             revision = Optional.absent();
         }
-
-//        Optional<URI> moduleNs = Optional.fromNullable(firstAttributeOf(stmt.getParentContext().declaredSubstatements(),
-//                NamespaceStatement.class));
-
-        return new ModuleIdentifierImpl(moduleName, Optional.<URI>absent(), revision);
+        return new ModuleIdentifierImpl(moduleName, Optional.<URI> absent(), revision);
     }
 
 }

@@ -32,7 +32,9 @@ public interface StmtContext<A,D extends DeclaredStatement<A>, E extends Effecti
 
     @Nullable A getStatementArgument();
 
-    @Nonnull <K,VT, V extends VT,N extends IdentifierNamespace<K, V>> VT getFromNamespace(Class<N> type, K key) throws NamespaceNotAvailableException;
+    //<K,VT, V extends VT,N extends IdentifierNamespace<K, V>>
+    //       <K, VT, V extends VT ,N extends IdentifierNamespace<K, V>> VT getFromNamespace(Class<N> type, K key)
+    @Nonnull <K,V,N extends IdentifierNamespace<K, V>> V getFromNamespace(Class<N> type, K key) throws NamespaceNotAvailableException;
 
     @Nonnull StmtContext<?,?,?> getRoot();
 
@@ -47,6 +49,7 @@ public interface StmtContext<A,D extends DeclaredStatement<A>, E extends Effecti
         @Override
         StmtContext.Mutable<?,?,?> getParentContext();
 
+        //<K,V,VT extends V,N extends IdentifierNamespace<K, V>> void addToNs(Class<N> type, K key, VT value)
         <K,V,VT extends V,N extends IdentifierNamespace<K, V>> void addToNs(Class<N> type, K key, VT value) throws NamespaceNotAvailableException;
 
         @Override

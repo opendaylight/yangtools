@@ -7,12 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Date;
-
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface RevisionStatement extends DeclaredStatement<Date>, DocumentationGroup {
+public interface UnknownStatement<S> extends DeclaredStatement<S> {
 
-    Date getDate();
-
+    @Nullable String getArgument();
 }

@@ -9,6 +9,9 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
+import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
+import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import com.google.common.base.Optional;
 import java.net.URI;
 import java.util.Date;
@@ -26,37 +29,98 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public class ModuleStatementSupport extends AbstractStatementSupport<String, ModuleStatement, EffectiveStatement<String,ModuleStatement>> {
+public class ModuleStatementSupport
+        extends
+        AbstractStatementSupport<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> {
 
     public ModuleStatementSupport() {
         super(Rfc6020Mapping.Module);
     }
 
     @Override
-    public String parseArgumentValue(StmtContext<?,?,?> ctx, String value) {
+    public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
         return value;
     }
 
     @Override
-    public ModuleStatement createDeclared(StmtContext<String, ModuleStatement,?> ctx) {
+    public ModuleStatement createDeclared(
+            StmtContext<String, ModuleStatement, ?> ctx) {
         return new ModuleStatementImpl(ctx);
     }
 
     @Override
-    public EffectiveStatement<String,ModuleStatement> createEffective(StmtContext<String, ModuleStatement,EffectiveStatement<String,ModuleStatement>> ctx) {
+    public EffectiveStatement<String, ModuleStatement> createEffective(
+            StmtContext<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> ctx) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void onLinkageDeclared(Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt)
+    public void onLinkageDeclared(
+            Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt)
             throws InferenceException, SourceException {
-        URI moduleNs = firstAttributeOf(stmt.declaredSubstatements(),NamespaceStatement.class);
 
-        QNameModule qnameNamespace = QNameModule.create(moduleNs, null);
-        ModuleIdentifierImpl moduleIdentifier = new ModuleIdentifierImpl(stmt.getStatementArgument(), Optional.<URI>absent(), Optional.<Date>absent());
+        Optional<URI> moduleNs = Optional.fromNullable(firstAttributeOf(
+                stmt.declaredSubstatements(), NamespaceStatement.class));
+        if (!moduleNs.isPresent()) {
+            throw new IllegalArgumentException("Namespace of the module ["
+                    + stmt.getStatementArgument() + "] is missing.");
+        }
 
-        stmt.addContext(ModuleNamespace.class,moduleIdentifier ,stmt);
+        Optional<Date> revisionDate = Optional.fromNullable(firstAttributeOf(
+                stmt.declaredSubstatements(), RevisionStatement.class));
+
+        QNameModule qnameNamespace = QNameModule.create(moduleNs.get(),
+                revisionDate.orNull());
+        ModuleIdentifierImpl moduleIdentifier = new ModuleIdentifierImpl(
+                stmt.getStatementArgument(), Optional.<URI> absent(),
+                revisionDate);
+
+        stmt.addContext(ModuleNamespace.class, moduleIdentifier, stmt);
         stmt.addContext(NamespaceToModule.class, qnameNamespace, stmt);
+
+        // URI moduleNs =
+        // firstAttributeOf(stmt.declaredSubstatements(),NamespaceStatement.class);
+        //
+        // QNameModule qnameNamespace = QNameModule.create(moduleNs, null);
+        // ModuleIdentifierImpl moduleIdentifier = new
+        // ModuleIdentifierImpl(stmt.getStatementArgument(),
+        // Optional.<URI>absent(), Optional.<Date>absent());
+        //
+        // stmt.addContext(ModuleNamespace.class,moduleIdentifier ,stmt);
+        // stmt.addContext(NamespaceToModule.class, qnameNamespace, stmt);
+    }
+
+    /*
+     * public void ( Mutable<String, ModuleStatement, EffectiveStatement<String,
+     * ModuleStatement>> stmt) throws InferenceException, SourceException {
+     */
+
+    @Override
+    public void onStatementDefinitionDeclared(
+            StmtContext.Mutable<String, ModuleStatement, org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement<String, ModuleStatement>> stmt)
+            throws InferenceException, SourceException {
+
+        URI moduleNs = firstAttributeOf(stmt.declaredSubstatements(),
+                NamespaceStatement.class);
+        if (moduleNs == null) {
+            throw new IllegalArgumentException("Namespace of the module ["
+                    + stmt.getStatementArgument() + "] is missing.");
+        }
+
+        Optional<Date> revisionDate = Optional.fromNullable(firstAttributeOf(
+                stmt.declaredSubstatements(), RevisionStatement.class));
+
+        QNameModule qNameModule = QNameModule.create(moduleNs,
+                revisionDate.orNull());
+
+        String modulePrefix = firstAttributeOf(stmt.declaredSubstatements(),
+                PrefixStatement.class);
+        if (modulePrefix == null) {
+            throw new IllegalArgumentException("Prefix of the module ["
+                    + stmt.getStatementArgument() + "] is missing.");
+        }
+
+        stmt.addToNs(PrefixToModule.class, modulePrefix, qNameModule);
     }
 
 }
