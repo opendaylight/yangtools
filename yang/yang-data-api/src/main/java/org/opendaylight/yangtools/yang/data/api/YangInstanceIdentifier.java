@@ -16,6 +16,7 @@ import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -463,6 +464,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
          *
          * @return {@link YangInstanceIdentifier}
          */
+        @Override
         YangInstanceIdentifier build();
 
         /*
@@ -736,6 +738,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
             return this;
         }
 
+        @Override
         @Deprecated
         public YangInstanceIdentifier toInstance() {
             return build();
@@ -804,6 +807,10 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
         } catch (IllegalArgumentException | IllegalAccessException e) {
             throw new IOException(e);
         }
+    }
+
+    private Object readResolve() throws ObjectStreamException {
+        return legacyPath.isEmpty() ? EMPTY : this;
     }
 
     private void writeObject(final ObjectOutputStream outputStream) throws IOException {
