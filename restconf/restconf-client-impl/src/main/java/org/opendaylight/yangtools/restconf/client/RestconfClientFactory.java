@@ -23,11 +23,24 @@ public class RestconfClientFactory implements RestconfClientContextFactory {
     private AuthenticationHolder authenticationHolder;
 
     @Override
+    @Deprecated
     public RestconfClientContext getRestconfClientContext(URL baseUrl, BindingIndependentMappingService mappingService, SchemaContextHolder schemaContextHolder) throws UnsupportedProtocolException {
         if (!baseUrl.getProtocol().equals("http")){
             throw new UnsupportedProtocolException("Unsupported protocol "+baseUrl.getProtocol());
         }
         RestconfClientImpl restconfClient = new RestconfClientImpl(baseUrl,mappingService,schemaContextHolder);
+        if (null!=authenticationHolder){
+            restconfClient.setAuthenticationHolder(authenticationHolder);
+        }
+        return restconfClient;
+    }
+
+    @Override
+    public RestconfClientContext getRestconfClientContext(URL baseUrl, SchemaContextHolder schemaContextHolder) throws UnsupportedProtocolException {
+        if (!baseUrl.getProtocol().equals("http")){
+            throw new UnsupportedProtocolException("Unsupported protocol "+baseUrl.getProtocol());
+        }
+        RestconfClientImpl restconfClient = new RestconfClientImpl(baseUrl,schemaContextHolder);
         if (null!=authenticationHolder){
             restconfClient.setAuthenticationHolder(authenticationHolder);
         }

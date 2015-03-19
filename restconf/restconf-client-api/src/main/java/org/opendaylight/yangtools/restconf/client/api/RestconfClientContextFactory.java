@@ -22,7 +22,11 @@ public interface RestconfClientContextFactory {
 	 * @return RestconfClientContext attached to the backend server.
 	 * @throws UnsupportedProtocolException if the factory cannot handle the protocol specified in the URL.
 	 */
-	RestconfClientContext getRestconfClientContext(URL baseUrl,BindingIndependentMappingService mappingService,SchemaContextHolder holder) throws UnsupportedProtocolException;
+    @Deprecated
+RestconfClientContext getRestconfClientContext(URL baseUrl,BindingIndependentMappingService mappingService,SchemaContextHolder holder) throws UnsupportedProtocolException;
     void setAuthentication(AuthenticationHolder authenticationHolder);
+
+    RestconfClientContext getRestconfClientContext(URL baseUrl, SchemaContextHolder schemaContextHolder)
+            throws UnsupportedProtocolException;
 
 }
