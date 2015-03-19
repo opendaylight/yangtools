@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.IncorrectDataStructureException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -113,17 +112,17 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
 
     @Override
     public void verifyStructure(final ModifiedNode modification) throws IllegalArgumentException {
-        if (modification.getType() == ModificationType.WRITE) {
+        if (modification.getOperation() == LogicalOperation.WRITE) {
             verifyWrittenStructure(modification.getWrittenValue());
         }
     }
 
     @Override
     public final void checkApplicable(final YangInstanceIdentifier path,final NodeModification modification, final Optional<TreeNode> current) throws DataValidationFailedException {
-        switch (modification.getType()) {
+        switch (modification.getOperation()) {
         case DELETE:
             checkDeleteApplicable(modification, current);
-        case SUBTREE_MODIFIED:
+        case TOUCH:
             checkSubtreeModificationApplicable(path, modification, current);
             return;
         case WRITE:
@@ -132,10 +131,10 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
         case MERGE:
             checkMergeApplicable(path, modification, current);
             return;
-        case UNMODIFIED:
+        case NONE:
             return;
         default:
-            throw new UnsupportedOperationException("Suplied modification type "+ modification.getType()+ "is not supported.");
+            throw new UnsupportedOperationException("Suplied modification type "+ modification.getOperation()+ "is not supported.");
         }
 
     }
@@ -192,10 +191,10 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
     public final Optional<TreeNode> apply(final ModifiedNode modification,
             final Optional<TreeNode> currentMeta, final Version version) {
 
-        switch (modification.getType()) {
+        switch (modification.getOperation()) {
         case DELETE:
             return modification.setSnapshot(Optional.<TreeNode> absent());
-        case SUBTREE_MODIFIED:
+        case TOUCH:
             Preconditions.checkArgument(currentMeta.isPresent(), "Metadata not available for modification",
                     modification);
             return modification.setSnapshot(Optional.of(applySubtreeChange(modification, currentMeta.get(),
@@ -213,7 +212,7 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
             return modification.setSnapshot(Optional.of(result));
         case WRITE:
             return modification.setSnapshot(Optional.of(applyWrite(modification, currentMeta, version)));
-        case UNMODIFIED:
+        case NONE:
             return currentMeta;
         default:
             throw new IllegalArgumentException("Provided modification type is not supported.");
