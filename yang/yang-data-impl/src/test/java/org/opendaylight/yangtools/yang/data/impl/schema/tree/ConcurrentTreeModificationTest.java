@@ -1,5 +1,11 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
+import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 import com.google.common.base.Optional;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,13 +22,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableCo
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
-import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
 public class ConcurrentTreeModificationTest {
     private static final Logger LOG = LoggerFactory.getLogger(ConcurrentTreeModificationTest.class);
@@ -50,12 +49,15 @@ public class ConcurrentTreeModificationTest {
 
     private SchemaContext schemaContext;
     private RootModificationApplyOperation rootOper;
+    private InMemoryDataTree inMemoryDataTree;
 
     @Before
     public void prepare() {
         schemaContext = TestModel.createTestContext();
         assertNotNull("Schema context must not be null.", schemaContext);
         rootOper = RootModificationApplyOperation.from(SchemaAwareApplyOperation.from(schemaContext));
+        inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create();
+        inMemoryDataTree.setSchemaContext(schemaContext);
     }
 
     private ContainerNode createFooTestContainerNode() {
@@ -85,8 +87,6 @@ public class ConcurrentTreeModificationTest {
 
     @Test
     public void writeWrite1stLevelEmptyTreeTest() throws DataValidationFailedException {
-        InMemoryDataTree inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create();
-        inMemoryDataTree.setSchemaContext(schemaContext);
         InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
@@ -116,8 +116,6 @@ public class ConcurrentTreeModificationTest {
 
     @Test
     public void writeMerge1stLevelEmptyTreeTest() throws DataValidationFailedException {
-        InMemoryDataTree inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create();
-        inMemoryDataTree.setSchemaContext(schemaContext);
         InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
@@ -142,8 +140,6 @@ public class ConcurrentTreeModificationTest {
 
     @Test
     public void writeWriteFooBar1stLevelEmptyTreeTest() throws DataValidationFailedException {
-        InMemoryDataTree inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create();
-        inMemoryDataTree.setSchemaContext(schemaContext);
         InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
@@ -174,8 +170,6 @@ public class ConcurrentTreeModificationTest {
 
     @Test
     public void writeMergeFooBar1stLevelEmptyTreeTest() throws DataValidationFailedException {
-        InMemoryDataTree inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create();
-        inMemoryDataTree.setSchemaContext(schemaContext);
         InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
@@ -201,8 +195,6 @@ public class ConcurrentTreeModificationTest {
 
     @Test
     public void mergeWriteFooBar1stLevelEmptyTreeTest() throws DataValidationFailedException {
-        InMemoryDataTree inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create();
-        inMemoryDataTree.setSchemaContext(schemaContext);
         InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
@@ -233,8 +225,6 @@ public class ConcurrentTreeModificationTest {
 
     @Test
     public void mergeMergeFooBar1stLevelEmptyTreeTest() throws DataValidationFailedException {
-        InMemoryDataTree inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create();
-        inMemoryDataTree.setSchemaContext(schemaContext);
         InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
@@ -260,8 +250,6 @@ public class ConcurrentTreeModificationTest {
 
     @Test
     public void writeWriteFooBar1stLevelEmptyContainerTest() throws DataValidationFailedException {
-        InMemoryDataTree inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create();
-        inMemoryDataTree.setSchemaContext(schemaContext);
         DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
@@ -295,8 +283,6 @@ public class ConcurrentTreeModificationTest {
 
     @Test
     public void writeMergeFooBar1stLevelEmptyContainerTest() throws DataValidationFailedException {
-        InMemoryDataTree inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create();
-        inMemoryDataTree.setSchemaContext(schemaContext);
         DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
@@ -326,8 +312,6 @@ public class ConcurrentTreeModificationTest {
 
     @Test
     public void mergeWriteFooBar1stLevelEmptyContainerTest() throws DataValidationFailedException {
-        InMemoryDataTree inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create();
-        inMemoryDataTree.setSchemaContext(schemaContext);
         DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
@@ -362,8 +346,6 @@ public class ConcurrentTreeModificationTest {
 
     @Test
     public void mergeMergeFooBar1stLevelEmptyContainerTest() throws DataValidationFailedException {
-        InMemoryDataTree inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create();
-        inMemoryDataTree.setSchemaContext(schemaContext);
         DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
@@ -392,8 +374,6 @@ public class ConcurrentTreeModificationTest {
 
     @Test
     public void deleteWriteFooBar1stLevelEmptyContainerTest() throws DataValidationFailedException {
-        InMemoryDataTree inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create();
-        inMemoryDataTree.setSchemaContext(schemaContext);
         DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
@@ -427,8 +407,6 @@ public class ConcurrentTreeModificationTest {
 
     @Test
     public void deleteMergeFooBar1stLevelEmptyContainerTest() throws DataValidationFailedException {
-        InMemoryDataTree inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create();
-        inMemoryDataTree.setSchemaContext(schemaContext);
         DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
@@ -456,8 +434,6 @@ public class ConcurrentTreeModificationTest {
 
     @Test
     public void writeWriteFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
-        InMemoryDataTree inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create();
-        inMemoryDataTree.setSchemaContext(schemaContext);
         DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
@@ -487,8 +463,6 @@ public class ConcurrentTreeModificationTest {
 
     @Test
     public void writeMergeFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
-        InMemoryDataTree inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create();
-        inMemoryDataTree.setSchemaContext(schemaContext);
         DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
@@ -518,8 +492,6 @@ public class ConcurrentTreeModificationTest {
 
     @Test
     public void mergeWriteFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
-        InMemoryDataTree inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create();
-        inMemoryDataTree.setSchemaContext(schemaContext);
         DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
@@ -549,8 +521,6 @@ public class ConcurrentTreeModificationTest {
 
     @Test
     public void mergeMergeFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
-        InMemoryDataTree inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create();
-        inMemoryDataTree.setSchemaContext(schemaContext);
         DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
@@ -580,8 +550,6 @@ public class ConcurrentTreeModificationTest {
 
     @Test
     public void deleteWriteFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
-        InMemoryDataTree inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create();
-        inMemoryDataTree.setSchemaContext(schemaContext);
         DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
@@ -615,8 +583,6 @@ public class ConcurrentTreeModificationTest {
 
     @Test
     public void deleteMergeFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
-        InMemoryDataTree inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create();
-        inMemoryDataTree.setSchemaContext(schemaContext);
         DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
