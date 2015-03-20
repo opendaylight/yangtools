@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
@@ -26,7 +27,7 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
     }
 
     @Override
-    public InMemoryDataTree create() {
+    public DataTree create() {
         final NodeIdentifier root = new NodeIdentifier(SchemaContext.NAME);
         final NormalizedNode<?, ?> data = Builders.containerBuilder().withNodeIdentifier(root).build();
 
