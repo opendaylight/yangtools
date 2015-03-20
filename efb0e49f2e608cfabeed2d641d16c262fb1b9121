@@ -25,6 +25,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_1431215a",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/ModifierImpl.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 339,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2015-03-20T12:41:51Z",
+      "side": 1,
+      "message": "Even though we supply ModelProcessingPhase.EffectiveModel only for now, check has been added for future use.",
+      "parentUuid": "7a96c907_0fa98e8f",
+      "revId": "efb0e49f2e608cfabeed2d641d16c262fb1b9121",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a96c907_cf96464c",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/YangInferencePipeline.java",
         "patchSetId": 7
