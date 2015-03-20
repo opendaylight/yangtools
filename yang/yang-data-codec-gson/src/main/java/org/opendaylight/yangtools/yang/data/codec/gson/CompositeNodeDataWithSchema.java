@@ -96,7 +96,7 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
         CompositeNodeDataWithSchema caseNodeDataWithSchema = findChoice(childNodes, choiceCandidate, caseCandidate);
         if (caseNodeDataWithSchema == null) {
             ChoiceNodeDataWithSchema choiceNodeDataWithSchema = new ChoiceNodeDataWithSchema(choiceNode);
-            addChild(choiceNodeDataWithSchema);
+            childNodes.add(choiceNodeDataWithSchema);
             caseNodeDataWithSchema = choiceNodeDataWithSchema.addCompositeChild(caseNode);
         }
 
