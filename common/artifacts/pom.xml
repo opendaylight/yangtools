@@ -204,11 +204,6 @@
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-data-composite-node</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>restconf-client-api</artifactId>
                 <version>${project.version}</version>
             </dependency>

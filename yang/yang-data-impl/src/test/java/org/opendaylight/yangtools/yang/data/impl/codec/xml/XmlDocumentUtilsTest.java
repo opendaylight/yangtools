@@ -8,35 +8,21 @@
 
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 import com.google.common.base.Charsets;
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.io.ByteSource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.activation.UnsupportedDataTypeException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
-import org.junit.Test;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.CompositeNode;
-import org.opendaylight.yangtools.yang.data.api.Node;
-import org.opendaylight.yangtools.yang.data.api.SimpleNode;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 public class XmlDocumentUtilsTest {
@@ -79,32 +65,6 @@ public class XmlDocumentUtilsTest {
         testRpc = rpcTestModule.getRpcs().iterator().next();
     }
 
-    @Test
-    public void testRpcInputTransform() throws Exception {
-
-        final Document inputDocument = readXmlToDocument(XML_CONTENT);
-        final Element input = inputDocument.getDocumentElement();
-
-        final CompositeNode node = inputXmlToCompositeNode(input);
-        final SimpleNode<?> refParsed = node.getSimpleNodesByName("ref").iterator().next();
-        assertEquals(YangInstanceIdentifier.class, refParsed.getValue().getClass());
-        final Document serializedDocument = inputCompositeNodeToXml(node);
-
-        XMLUnit.compareXML(inputDocument, serializedDocument);
-    }
-
-    @Test
-    public void testRpcReplyToDom() throws Exception {
-        final Document reply = readXmlToDocument(RPC_REPLY);
-        final CompositeNode domNodes = XmlDocumentUtils.rpcReplyToDomNodes(reply, QName.create("urn:opendaylight:controller:rpc:test", "2014-07-28", "test"), schema);
-        assertEquals(1, domNodes.getValue().size());
-        final Node<?> outputNode = domNodes.getValue().get(0);
-        assertTrue(outputNode instanceof CompositeNode);
-        assertEquals(1, ((CompositeNode) outputNode).getValue().size());
-        final Node<?> okNode = ((CompositeNode) outputNode).getValue().get(0);
-        assertEquals("ok", okNode.getNodeType().getLocalName());
-    }
-
     public static Document readXmlToDocument(final String xmlContent) throws SAXException, IOException {
         return readXmlToDocument(new ByteArrayInputStream(xmlContent.getBytes(Charsets.UTF_8)));
     }
@@ -120,15 +80,5 @@ public class XmlDocumentUtilsTest {
 
         doc.getDocumentElement().normalize();
         return doc;
-    }
-
-    public Document inputCompositeNodeToXml(final CompositeNode cNode)
-            throws UnsupportedDataTypeException {
-        return XmlDocumentUtils.toDocument(cNode, testRpc.getInput(), XmlDocumentUtils.defaultValueCodecProvider());
-    }
-
-    public CompositeNode inputXmlToCompositeNode(final Element e) {
-        return (CompositeNode) XmlDocumentUtils.toDomNode(e, Optional.<DataSchemaNode>of(testRpc.getInput()),
-                Optional.of(XmlDocumentUtils.defaultValueCodecProvider()), Optional.of(schema));
     }
 }

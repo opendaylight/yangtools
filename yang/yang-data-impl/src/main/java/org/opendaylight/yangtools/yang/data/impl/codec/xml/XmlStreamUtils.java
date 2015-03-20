@@ -5,27 +5,15 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.net.URI;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
 import java.util.Map.Entry;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
-import org.opendaylight.yangtools.yang.data.api.CompositeNode;
-import org.opendaylight.yangtools.yang.data.api.Node;
-import org.opendaylight.yangtools.yang.data.api.SimpleNode;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
-import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -66,29 +54,6 @@ public class XmlStreamUtils {
     }
 
     /**
-     * Check if a particular data element can be emitted as an empty element, bypassing value encoding. This
-     * functionality is optional, as valid XML stream is produced even if start/end element is produced unconditionally.
-     *
-     * @param data Data node
-     * @return True if the data node will result in empty element body.
-     */
-    public static boolean isEmptyElement(final Node<?> data) {
-        if (data == null) {
-            return true;
-        }
-
-        if (data instanceof CompositeNode) {
-            return ((CompositeNode) data).getValue().isEmpty();
-        }
-        if (data instanceof SimpleNode) {
-            return data.getValue() == null;
-        }
-
-        // Safe default
-        return false;
-    }
-
-    /**
      * Write an InstanceIdentifier into the output stream. Calling corresponding {@link XMLStreamWriter#writeStartElement(String)}
      * and {@link XMLStreamWriter#writeEndElement()} is the responsibility of the caller.
      *
@@ -107,152 +72,6 @@ public class XmlStreamUtils {
         final String str = XmlUtils.encodeIdentifier(prefixes, id);
         writeNamespaceDeclarations(writer,prefixes.getPrefixes());
         writer.writeCharacters(str);
-    }
-
-    /**
-     * Write a full XML document corresponding to a CompositeNode into an XML stream writer.
-     *
-     * @param writer XML Stream writer
-     * @param data data node
-     * @param schema corresponding schema node, may be null
-     * @throws XMLStreamException if an encoding problem occurs
-     */
-    public void writeDocument(final @Nonnull XMLStreamWriter writer, final @Nonnull CompositeNode data, final @Nullable SchemaNode schema) throws XMLStreamException {
-        // final Boolean repairing = (Boolean) writer.getProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES);
-        // Preconditions.checkArgument(repairing == true, "XML Stream Writer has to be repairing namespaces");
-
-        writer.writeStartDocument();
-        writeElement(writer, data, schema);
-        writer.writeEndDocument();
-        writer.flush();
-    }
-
-    /**
-     * Short-hand for {@link #writeDocument(XMLStreamWriter, CompositeNode, SchemaNode)})} with
-     * null SchemaNode.
-     *
-     * @param writer XML Stream writer
-     * @param data data node
-     * @throws XMLStreamException if an encoding problem occurs
-     */
-    public void writeDocument(final XMLStreamWriter writer, final CompositeNode data) throws XMLStreamException {
-        writeDocument(writer, data, null);
-    }
-
-    /**
-     * Write an element into a XML stream writer. This includes the element start/end tags and
-     * the value of the element.
-     *
-     * @param writer XML Stream writer
-     * @param data data node
-     * @param schema Schema node
-     * @throws XMLStreamException if an encoding problem occurs
-     */
-    public void writeElement(final XMLStreamWriter writer, final @Nonnull Node<?> data, final SchemaNode schema) throws XMLStreamException {
-        final QName qname = data.getNodeType();
-        final String ns = qname.getNamespace() != null ? qname.getNamespace().toString() : "";
-        final String pfx = "";
-
-        if (isEmptyElement(data)) {
-            if (hasAttributes(data)) {
-                writer.writeStartElement(pfx, qname.getLocalName(), ns);
-                final RandomPrefix randomPrefix = new RandomPrefix();
-                writeAttributes(writer, (AttributesContainer) data, randomPrefix);
-                writer.writeEndElement();
-            } else {
-                writer.writeEmptyElement(pfx, qname.getLocalName(), ns);
-            }
-            return;
-        }
-
-        writer.writeStartElement(pfx, qname.getLocalName(), ns);
-        writeValue(writer, data, schema);
-        writer.writeEndElement();
-    }
-
-    /**
-     * Write a value into a XML stream writer. This method assumes the start and end of element is
-     * emitted by the caller.
-     *
-     * @param writer XML Stream writer
-     * @param data data node
-     * @param schema Schema node
-     * @throws XMLStreamException if an encoding problem occurs
-     */
-    public void writeValue(final XMLStreamWriter writer, final @Nonnull Node<?> data, final SchemaNode schema) throws XMLStreamException {
-        if (hasAttributes(data)) {
-            RandomPrefix randomPrefix = new RandomPrefix();
-            writeAttributes(writer, (AttributesContainer) data, randomPrefix);
-        }
-
-        if (data instanceof SimpleNode<?>) {
-            // Simple node
-            if (schema instanceof LeafListSchemaNode || schema instanceof LeafSchemaNode) {
-                writeValue(writer, schema, data.getValue());
-            } else {
-                Object value = data.getValue();
-                if (value != null) {
-                    writer.writeCharacters(String.valueOf(value));
-                }
-            }
-        } else {
-            // CompositeNode
-            final CompositeNode castedData = ((CompositeNode) data);
-            final DataNodeContainer castedSchema;
-            if (schema instanceof DataNodeContainer) {
-                castedSchema = (DataNodeContainer) schema;
-            } else {
-                castedSchema = null;
-            }
-            final Collection<QName> keyLeaves;
-            if (schema instanceof ListSchemaNode) {
-                keyLeaves = ((ListSchemaNode) schema).getKeyDefinition();
-
-            } else {
-                keyLeaves = Collections.emptyList();
-
-            }
-            for (QName key : keyLeaves) {
-                SimpleNode<?> keyLeaf = castedData.getFirstSimpleByName(key);
-                if(keyLeaf != null) {
-                    writeChildElement(writer,keyLeaf,castedSchema);
-                }
-            }
-
-            for (Node<?> child : castedData.getValue()) {
-                if(keyLeaves.contains(child.getNodeType())) {
-                    // Skip key leaf which was written by previous for loop.
-                    continue;
-                }
-                writeChildElement(writer,child,castedSchema);
-            }
-        }
-    }
-
-    private void writeChildElement(final XMLStreamWriter writer, final Node<?> child, final DataNodeContainer parentSchema) throws XMLStreamException {
-        DataSchemaNode childSchema = null;
-        if (parentSchema != null) {
-            childSchema = SchemaUtils.findFirstSchema(child.getNodeType(), parentSchema.getChildNodes()).orNull();
-            if ((childSchema == null) && LOG.isDebugEnabled()) {
-                LOG.debug("Probably the data node \"{}\" does not conform to schema", child == null ? "" : child.getNodeType().getLocalName());
-            }
-        }
-        writeElement(writer, child, childSchema);
-    }
-
-    private static void writeAttributes(final XMLStreamWriter writer, final AttributesContainer data, final RandomPrefix randomPrefix) throws XMLStreamException {
-        for (Entry<QName, String> attribute : data.getAttributes().entrySet()) {
-            writeAttribute(writer, attribute, randomPrefix);
-        }
-    }
-
-    private static boolean hasAttributes(final Node<?> data) {
-        if (data instanceof AttributesContainer) {
-            final Map<QName, String> c = ((AttributesContainer) data).getAttributes();
-            return c != null && !c.isEmpty();
-        } else {
-            return false;
-        }
     }
 
     @VisibleForTesting
