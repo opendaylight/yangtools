@@ -43,7 +43,6 @@ import org.opendaylight.yangtools.restconf.utils.RestconfUtils;
 import org.opendaylight.yangtools.restconf.utils.XmlTools;
 import org.opendaylight.yangtools.sal.binding.generator.util.JavassistUtils;
 import org.opendaylight.yangtools.yang.binding.RpcService;
-import org.opendaylight.yangtools.yang.data.impl.codec.BindingIndependentMappingService;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContextHolder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContextListener;
@@ -68,12 +67,6 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
     private ConfigurationDataStoreImpl configurationDatastoreAccessor;
 
     private DataObjectSerializerGenerator generator;
-
-    @Deprecated
-    public RestconfClientImpl(final URL url, final BindingIndependentMappingService mappingService,
-            final SchemaContextHolder schemaContextHolder) {
-        this(url,schemaContextHolder);
-    }
 
     public RestconfClientImpl(final URL url, final SchemaContextHolder schemaContextHolder) {
         Preconditions.checkArgument(url != null, "Restconf endpoint URL must be supplied.");
