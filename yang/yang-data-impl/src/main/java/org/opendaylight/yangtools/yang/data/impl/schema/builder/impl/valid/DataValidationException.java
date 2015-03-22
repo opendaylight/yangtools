@@ -51,17 +51,21 @@ public class DataValidationException extends RuntimeException {
         }
     }
 
-    public static void checkListKey(final DataContainerChild<?, ?> childNode, final Map<QName, Object> keyValues, final QName keyQName,
-            final NodeIdentifierWithPredicates nodeId) {
-        checkListKey(childNode, keyQName, nodeId);
-
-        final Object expected = nodeId.getKeyValues().get(keyQName);
-        final Object actual = childNode.getValue();
-
+    public static void checkListKey(final NodeIdentifierWithPredicates nodeId, final QName keyQName, final Object expected, final Object actual) {
         // Objects.equals() does not deal with arrays, but is faster
         if (!Objects.equals(expected, actual) && !Objects.deepEquals(expected, actual)) {
             throw new IllegalListKeyException(keyQName, nodeId, actual, expected);
         }
+    }
+
+    public static void checkListKey(final DataContainerChild<?, ?> childNode, final Map<QName, Object> keyValues, final QName keyQName,
+            final NodeIdentifierWithPredicates nodeId) {
+        checkListKey(childNode, keyQName, nodeId);
+
+        final Object expected = keyValues.get(keyQName);
+        final Object actual = childNode.getValue();
+
+        checkListKey(nodeId, keyQName, expected, actual);
     }
 
     public static void checkListKey(final DataContainerChild<?, ?> childNode, final QName keyQName, final NodeIdentifierWithPredicates nodeId) {
