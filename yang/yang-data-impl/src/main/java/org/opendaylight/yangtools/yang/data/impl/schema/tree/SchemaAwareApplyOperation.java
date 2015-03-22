@@ -52,21 +52,14 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
 
     public static SchemaAwareApplyOperation from(final DataNodeContainer resolvedTree,
             final AugmentationTarget augSchemas, final AugmentationIdentifier identifier) {
-        AugmentationSchema augSchema = null;
-
-        allAugments:
-            for (AugmentationSchema potential : augSchemas.getAvailableAugmentations()) {
-                for (DataSchemaNode child : potential.getChildNodes()) {
-                    if (identifier.getPossibleChildNames().contains(child.getQName())) {
-                        augSchema = potential;
-                        break allAugments;
-                    }
+        for (AugmentationSchema potential : augSchemas.getAvailableAugmentations()) {
+            for (DataSchemaNode child : potential.getChildNodes()) {
+                if (identifier.getPossibleChildNames().contains(child.getQName())) {
+                    return new DataNodeContainerModificationStrategy.AugmentationModificationStrategy(potential, resolvedTree);
                 }
             }
-
-        if (augSchema != null) {
-            return new DataNodeContainerModificationStrategy.AugmentationModificationStrategy(augSchema, resolvedTree);
         }
+
         return null;
     }
 
