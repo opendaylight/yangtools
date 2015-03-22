@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
-import com.google.common.base.Verify;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -277,8 +276,16 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         modType = type;
     }
 
-    @Nonnull ModificationType modificationType() {
-        return Verify.verifyNotNull(modType, "Node %s does not have resolved modification type", this);
+    /**
+     * Return the physical modification done to data. May return null if the
+     * operation has not been applied to the underlying tree. This is different
+     * from the logical operation in that it can actually be a no-op if the
+     * operation has no side-effects (like an empty merge on a container).
+     *
+     * @return Modification type.
+     */
+    ModificationType getModificationType() {
+        return modType;
     }
 
     /**
