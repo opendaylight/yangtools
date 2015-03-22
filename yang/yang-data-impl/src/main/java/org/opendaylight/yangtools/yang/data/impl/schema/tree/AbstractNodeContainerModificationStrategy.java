@@ -140,7 +140,8 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
 
         /*
          * The user has issued an empty merge operation. In this case we do not perform
-         * a data tree mutation, do not pass GO, and do not collect useless garbage.
+         * a data tree mutation, do not pass GO, and do not collect useless garbage. It
+         * also means the ModificationType is UNMODIFIED.
          */
         final Collection<ModifiedNode> children = modification.getChildren();
         if (children.isEmpty()) {
@@ -150,21 +151,27 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
         }
 
         @SuppressWarnings("rawtypes")
-        NormalizedNodeContainerBuilder dataBuilder = createBuilder(currentMeta.getData());
+        final NormalizedNodeContainerBuilder dataBuilder = createBuilder(currentMeta.getData());
+        final TreeNode ret = mutateChildren(newMeta, dataBuilder, version, children);
 
         /*
-         * TODO: this is not entirely accurate. If there is only an empty merge operation
-         *       among the children, its effect is ModificationType.UNMODIFIED. That would
-         *       mean this operation can be turned into UNMODIFIED, cascading that further
-         *       up the root -- potentially turning the entire transaction into a no-op
-         *       from the perspective of physical replication.
+         * It is possible that the only modifications under this node were empty merges,
+         * which were turned into UNMODIFIED. If that is the case, we can turn this operation
+         * into UNMODIFIED, too, potentially cascading it up to root. This has the benefit
+         * of speeding up any users, who can skip processing child nodes.
          *
-         *       In order to do that, though, we either have to walk the children ourselves
-         *       (looking for a non-UNMODIFIED child), or have mutateChildren() pass that
-         *       information back to us.
+         * In order to do that, though, we have to check all child operations are UNMODIFIED.
+         * Let's do precisely that, stopping as soon we find a different result.
          */
-        modification.resolveModificationType(ModificationType.SUBTREE_MODIFIED);
-        return mutateChildren(newMeta, dataBuilder, version, children);
+        for (ModifiedNode child : children) {
+            if (child.getModificationType() != ModificationType.UNMODIFIED) {
+                modification.resolveModificationType(ModificationType.SUBTREE_MODIFIED);
+                return ret;
+            }
+        }
+
+        modification.resolveModificationType(ModificationType.UNMODIFIED);
+        return ret;
     }
 
     @Override
