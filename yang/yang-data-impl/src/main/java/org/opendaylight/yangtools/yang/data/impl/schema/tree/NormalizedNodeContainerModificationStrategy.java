@@ -146,7 +146,6 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
     protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
             final Version version) {
         // For Node Containers - merge is same as subtree change - we only replace children.
-        modification.resolveModificationType(ModificationType.SUBTREE_MODIFIED);
         return applySubtreeChange(modification, currentMeta, version);
     }
 
@@ -162,6 +161,7 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
          */
         final Collection<ModifiedNode> children = modification.getChildren();
         if (children.isEmpty()) {
+            modification.resolveModificationType(ModificationType.UNMODIFIED);
             newMeta.setData(currentMeta.getData());
             return newMeta.seal();
         }
@@ -169,6 +169,18 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
         @SuppressWarnings("rawtypes")
         NormalizedNodeContainerBuilder dataBuilder = createBuilder(currentMeta.getData());
 
+        /*
+         * TODO: this is not entirely accurate. If there is only an empty merge operation
+         *       among the children, its effect is ModificationType.UNMODIFIED. That would
+         *       mean this operation can be turned into UNMODIFIED, cascading that further
+         *       up the root -- potentially turning the entire transaction into a no-op
+         *       from the perspective of physical replication.
+         *
+         *       In order to do that, though, we either have to walk the children ourselves
+         *       (looking for a non-UNMODIFIED child), or have mutateChildren() pass that
+         *       information back to us.
+         */
+        modification.resolveModificationType(ModificationType.SUBTREE_MODIFIED);
         return mutateChildren(newMeta, dataBuilder, version, children);
     }
 
