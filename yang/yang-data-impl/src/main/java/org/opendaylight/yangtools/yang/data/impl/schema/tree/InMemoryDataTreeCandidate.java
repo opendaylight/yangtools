@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import com.google.common.collect.Collections2;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -69,7 +70,7 @@ final class InMemoryDataTreeCandidate extends AbstractDataTreeCandidate {
 
         @Override
         public ModificationType getModificationType() {
-            return mod.modificationType();
+            return Verify.verifyNotNull(mod.getModificationType(), "Node %s does not have resolved modification type", mod);
         }
 
         private Optional<NormalizedNode<?, ?>> optionalData(final TreeNode meta) {
