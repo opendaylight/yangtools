@@ -1,0 +1,35 @@
+= Developer Guide
+
+== Overview
+
+=== Architecture
+
+=== Concepts
+
+=== Components
+
+==== YANG Model API
+
+==== YANG Parser
+
+==== YANG Data API
+
+==== YANG Data Codecs
+
+==== YANG Maven Plugin
+
+== How to / Tutorials
+
+=== Working with YANG Model
+
+=== Working with YANG Data
+
+=== Serialization / deserialization of YANG Data
+
+=== Introducing schema source repositories
+
+=== Writing YANG driven generators
+
+=== Introducing specific extension support for YANG parser
+
+=== Diagnostics
