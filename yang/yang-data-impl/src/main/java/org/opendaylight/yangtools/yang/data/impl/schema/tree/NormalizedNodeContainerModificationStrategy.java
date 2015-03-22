@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
@@ -79,7 +78,7 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
         final NormalizedNode<?, ?> newValue = modification.getWrittenValue();
         final TreeNode newValueMeta = TreeNodeFactory.createTreeNode(newValue, version);
 
-        if (Iterables.isEmpty(modification.getChildren())) {
+        if (modification.getChildren().isEmpty()) {
             return newValueMeta;
         }
 
@@ -158,8 +157,8 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
          * The user has issued an empty merge operation. In this case we do not perform
          * a data tree mutation, do not pass GO, and do not collect useless garbage.
          */
-        final Iterable<ModifiedNode> children = modification.getChildren();
-        if (Iterables.isEmpty(children)) {
+        final Collection<ModifiedNode> children = modification.getChildren();
+        if (children.isEmpty()) {
             newMeta.setData(currentMeta.getData());
             return newMeta.seal();
         }
