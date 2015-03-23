@@ -11,8 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.IncorrectDataStructureException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
@@ -20,8 +18,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
 abstract class ValueNodeModificationStrategy<T extends DataSchemaNode> extends SchemaAwareApplyOperation {
     private final Class<? extends NormalizedNode<?, ?>> nodeClass;
@@ -68,19 +64,5 @@ abstract class ValueNodeModificationStrategy<T extends DataSchemaNode> extends S
     protected void checkSubtreeModificationApplicable(final YangInstanceIdentifier path, final NodeModification modification,
             final Optional<TreeNode> current) throws IncorrectDataStructureException {
         throw new IncorrectDataStructureException(path, "Subtree modification is not allowed.");
-    }
-
-    static final class LeafSetEntryModificationStrategy extends ValueNodeModificationStrategy<LeafListSchemaNode> {
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        LeafSetEntryModificationStrategy(final LeafListSchemaNode schema) {
-            super(schema, (Class) LeafSetEntryNode.class);
-        }
-    }
-
-    static final class LeafModificationStrategy extends ValueNodeModificationStrategy<LeafSchemaNode> {
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        LeafModificationStrategy(final LeafSchemaNode schema) {
-            super(schema, (Class) LeafNode.class);
-        }
     }
 }

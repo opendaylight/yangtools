@@ -27,8 +27,8 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
 
     private final Optional<ModificationApplyOperation> entryStrategy;
 
-    protected UnkeyedListModificationStrategy(final ListSchemaNode schema) {
-        entryStrategy = Optional.<ModificationApplyOperation> of(new DataNodeContainerModificationStrategy.UnkeyedListItemModificationStrategy(schema));
+    UnkeyedListModificationStrategy(final ListSchemaNode schema) {
+        entryStrategy = Optional.<ModificationApplyOperation> of(new UnkeyedListItemModificationStrategy(schema));
     }
 
     @Override

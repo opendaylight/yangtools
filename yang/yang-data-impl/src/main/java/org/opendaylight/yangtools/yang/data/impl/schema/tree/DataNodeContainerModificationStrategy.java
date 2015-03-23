@@ -7,35 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
-import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
 /**
  * Base strategy for applying changes to a ContainerNode, irrespective of its
@@ -89,69 +73,5 @@ abstract class DataNodeContainerModificationStrategy<T extends DataNodeContainer
     @Override
     public String toString() {
         return getClass().getSimpleName() + " [" + schema + "]";
-    }
-
-    public static class AugmentationModificationStrategy extends DataNodeContainerModificationStrategy<AugmentationSchema> {
-
-        protected AugmentationModificationStrategy(final AugmentationSchema schema, final DataNodeContainer resolved) {
-            super(createAugmentProxy(schema,resolved), AugmentationNode.class);
-        }
-
-        @Override
-        @SuppressWarnings("rawtypes")
-        protected DataContainerNodeBuilder createBuilder(final NormalizedNode<?, ?> original) {
-            checkArgument(original instanceof AugmentationNode);
-            return ImmutableAugmentationNodeBuilder.create((AugmentationNode) original);
-        }
-
-        private static AugmentationSchema createAugmentProxy(final AugmentationSchema schema, final DataNodeContainer resolved) {
-            Set<DataSchemaNode> realChildSchemas = new HashSet<>();
-            for(DataSchemaNode augChild : schema.getChildNodes()) {
-                realChildSchemas.add(resolved.getDataChildByName(augChild.getQName()));
-            }
-            return new EffectiveAugmentationSchema(schema, realChildSchemas);
-        }
-    }
-
-    public static class ContainerModificationStrategy extends DataNodeContainerModificationStrategy<ContainerSchemaNode> {
-
-        public ContainerModificationStrategy(final ContainerSchemaNode schemaNode) {
-            super(schemaNode, ContainerNode.class);
-        }
-
-        @Override
-        @SuppressWarnings("rawtypes")
-        protected DataContainerNodeBuilder createBuilder(final NormalizedNode<?, ?> original) {
-            checkArgument(original instanceof ContainerNode);
-            return ImmutableContainerNodeBuilder.create((ContainerNode) original);
-        }
-    }
-
-    public static class ListEntryModificationStrategy extends DataNodeContainerModificationStrategy<ListSchemaNode> {
-
-        protected ListEntryModificationStrategy(final ListSchemaNode schema) {
-            super(schema, MapEntryNode.class);
-        }
-
-        @Override
-        @SuppressWarnings("rawtypes")
-        protected final DataContainerNodeBuilder createBuilder(final NormalizedNode<?, ?> original) {
-            checkArgument(original instanceof MapEntryNode);
-            return ImmutableMapEntryNodeBuilder.create((MapEntryNode) original);
-        }
-    }
-
-    public static class UnkeyedListItemModificationStrategy extends DataNodeContainerModificationStrategy<ListSchemaNode> {
-
-        public UnkeyedListItemModificationStrategy(final ListSchemaNode schemaNode) {
-            super(schemaNode, UnkeyedListEntryNode.class);
-        }
-
-        @Override
-        @SuppressWarnings("rawtypes")
-        protected DataContainerNodeBuilder createBuilder(final NormalizedNode<?, ?> original) {
-            checkArgument(original instanceof UnkeyedListEntryNode);
-            return ImmutableUnkeyedListEntryNodeBuilder.create((UnkeyedListEntryNode) original);
-        }
     }
 }
