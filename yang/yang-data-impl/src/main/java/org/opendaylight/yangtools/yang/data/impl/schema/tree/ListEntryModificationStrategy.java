@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class ListEntryModificationStrategy extends DataNodeContainerModificationStrategy<ListSchemaNode> {
+final class ListEntryModificationStrategy extends AbstractDataNodeContainerModificationStrategy<ListSchemaNode> {
     ListEntryModificationStrategy(final ListSchemaNode schema) {
         super(schema, MapEntryNode.class);
     }

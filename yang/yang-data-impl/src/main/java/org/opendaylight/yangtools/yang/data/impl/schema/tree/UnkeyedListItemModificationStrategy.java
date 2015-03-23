@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class UnkeyedListItemModificationStrategy extends DataNodeContainerModificationStrategy<ListSchemaNode> {
+final class UnkeyedListItemModificationStrategy extends AbstractDataNodeContainerModificationStrategy<ListSchemaNode> {
     UnkeyedListItemModificationStrategy(final ListSchemaNode schemaNode) {
         super(schemaNode, UnkeyedListEntryNode.class);
     }
