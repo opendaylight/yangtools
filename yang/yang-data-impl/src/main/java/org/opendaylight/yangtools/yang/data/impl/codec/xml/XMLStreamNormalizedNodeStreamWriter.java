@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;
 import javax.xml.XMLConstants;
-import java.io.StringWriter;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -55,7 +54,7 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
     private final XMLStreamWriter writer;
     private final SchemaTracker tracker;
     private final XmlStreamUtils streamUtils;
-    private RandomPrefix randomPrefix;
+    private final RandomPrefix randomPrefix;
 
     private XMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final SchemaContext context, final SchemaPath path) {
         this.writer = Preconditions.checkNotNull(writer);
@@ -87,7 +86,7 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
         return new XMLStreamNormalizedNodeStreamWriter(writer, context, path);
     }
 
-    private void writeStartElement( QName qname) throws XMLStreamException {
+    private void writeStartElement(final QName qname) throws XMLStreamException {
         String ns = qname.getNamespace().toString();
         writer.writeStartElement(XMLConstants.DEFAULT_NS_PREFIX, qname.getLocalName(), ns);
         if(writer.getNamespaceContext() != null) {
