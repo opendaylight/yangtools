@@ -129,6 +129,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         final ModificationApplyOperation operation = resolveModificationStrategy(path);
 
         final boolean isOrdered;
+        // FIXME: disregards RootModificationApplyOperation
         if (operation instanceof SchemaAwareApplyOperation) {
             isOrdered = ((SchemaAwareApplyOperation) operation).isOrdered();
         } else {
