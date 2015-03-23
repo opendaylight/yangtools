@@ -38,15 +38,15 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
 
     public static SchemaAwareApplyOperation from(final DataSchemaNode schemaNode) {
         if (schemaNode instanceof ContainerSchemaNode) {
-            return new DataNodeContainerModificationStrategy.ContainerModificationStrategy((ContainerSchemaNode) schemaNode);
+            return new ContainerModificationStrategy((ContainerSchemaNode) schemaNode);
         } else if (schemaNode instanceof ListSchemaNode) {
             return fromListSchemaNode((ListSchemaNode) schemaNode);
         } else if (schemaNode instanceof ChoiceSchemaNode) {
-            return new NormalizedNodeContainerModificationStrategy.ChoiceModificationStrategy((ChoiceSchemaNode) schemaNode);
+            return new ChoiceModificationStrategy((ChoiceSchemaNode) schemaNode);
         } else if (schemaNode instanceof LeafListSchemaNode) {
             return fromLeafListSchemaNode((LeafListSchemaNode) schemaNode);
         } else if (schemaNode instanceof LeafSchemaNode) {
-            return new ValueNodeModificationStrategy.LeafModificationStrategy((LeafSchemaNode) schemaNode);
+            return new LeafModificationStrategy((LeafSchemaNode) schemaNode);
         }
         throw new IllegalArgumentException("Not supported schema node type for " + schemaNode.getClass());
     }
@@ -56,7 +56,7 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
         for (AugmentationSchema potential : augSchemas.getAvailableAugmentations()) {
             for (DataSchemaNode child : potential.getChildNodes()) {
                 if (identifier.getPossibleChildNames().contains(child.getQName())) {
-                    return new DataNodeContainerModificationStrategy.AugmentationModificationStrategy(potential, resolvedTree);
+                    return new AugmentationModificationStrategy(potential, resolvedTree);
                 }
             }
         }
@@ -77,17 +77,17 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
             return new UnkeyedListModificationStrategy(schemaNode);
         }
         if (schemaNode.isUserOrdered()) {
-            return new NormalizedNodeContainerModificationStrategy.OrderedMapModificationStrategy(schemaNode);
+            return new OrderedMapModificationStrategy(schemaNode);
         }
 
-        return new NormalizedNodeContainerModificationStrategy.UnorderedMapModificationStrategy(schemaNode);
+        return new UnorderedMapModificationStrategy(schemaNode);
     }
 
     private static SchemaAwareApplyOperation fromLeafListSchemaNode(final LeafListSchemaNode schemaNode) {
         if(schemaNode.isUserOrdered()) {
-            return new NormalizedNodeContainerModificationStrategy.OrderedLeafSetModificationStrategy(schemaNode);
+            return new OrderedLeafSetModificationStrategy(schemaNode);
         } else {
-            return new NormalizedNodeContainerModificationStrategy.UnorderedLeafSetModificationStrategy(schemaNode);
+            return new UnorderedLeafSetModificationStrategy(schemaNode);
         }
     }
 

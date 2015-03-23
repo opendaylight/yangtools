@@ -9,17 +9,10 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
-import java.util.Map;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
-import org.opendaylight.yangtools.yang.data.api.schema.OrderedLeafSetNode;
-import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModifiedNodeDoesNotExistException;
@@ -27,18 +20,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareApplyOperation {
 
@@ -216,152 +198,4 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
 
     @SuppressWarnings("rawtypes")
     protected abstract NormalizedNodeContainerBuilder createBuilder(NormalizedNode<?, ?> original);
-
-    static final class ChoiceModificationStrategy extends NormalizedNodeContainerModificationStrategy {
-        private final Map<YangInstanceIdentifier.PathArgument, ModificationApplyOperation> childNodes;
-
-        public ChoiceModificationStrategy(final ChoiceSchemaNode schemaNode) {
-            super(ChoiceNode.class);
-            ImmutableMap.Builder<YangInstanceIdentifier.PathArgument, ModificationApplyOperation> child = ImmutableMap.builder();
-
-            for (ChoiceCaseNode caze : schemaNode.getCases()) {
-                for (DataSchemaNode cazeChild : caze.getChildNodes()) {
-                    SchemaAwareApplyOperation childNode = SchemaAwareApplyOperation.from(cazeChild);
-                    child.put(new YangInstanceIdentifier.NodeIdentifier(cazeChild.getQName()), childNode);
-                }
-            }
-            childNodes = child.build();
-        }
-
-        @Override
-        public Optional<ModificationApplyOperation> getChild(final YangInstanceIdentifier.PathArgument child) {
-            return Optional.fromNullable(childNodes.get(child));
-        }
-
-        @Override
-        @SuppressWarnings("rawtypes")
-        protected DataContainerNodeBuilder createBuilder(final NormalizedNode<?, ?> original) {
-            checkArgument(original instanceof ChoiceNode);
-            return ImmutableChoiceNodeBuilder.create((ChoiceNode) original);
-        }
-    }
-
-    static final class OrderedLeafSetModificationStrategy extends NormalizedNodeContainerModificationStrategy {
-        private final Optional<ModificationApplyOperation> entryStrategy;
-
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        protected OrderedLeafSetModificationStrategy(final LeafListSchemaNode schema) {
-            super((Class) LeafSetNode.class);
-            entryStrategy = Optional.<ModificationApplyOperation> of(new ValueNodeModificationStrategy.LeafSetEntryModificationStrategy(schema));
-        }
-
-        @Override
-        boolean isOrdered() {
-            return true;
-        }
-
-        @SuppressWarnings("rawtypes")
-        @Override
-        protected NormalizedNodeContainerBuilder createBuilder(final NormalizedNode<?, ?> original) {
-            checkArgument(original instanceof OrderedLeafSetNode<?>);
-            return ImmutableOrderedLeafSetNodeBuilder.create((OrderedLeafSetNode<?>) original);
-        }
-
-        @Override
-        public Optional<ModificationApplyOperation> getChild(final YangInstanceIdentifier.PathArgument identifier) {
-            if (identifier instanceof YangInstanceIdentifier.NodeWithValue) {
-                return entryStrategy;
-            }
-            return Optional.absent();
-        }
-    }
-
-    static final class OrderedMapModificationStrategy extends NormalizedNodeContainerModificationStrategy {
-        private final Optional<ModificationApplyOperation> entryStrategy;
-
-        protected OrderedMapModificationStrategy(final ListSchemaNode schema) {
-            super(OrderedMapNode.class);
-            entryStrategy = Optional.<ModificationApplyOperation> of(new DataNodeContainerModificationStrategy.ListEntryModificationStrategy(schema));
-        }
-
-        @Override
-        boolean isOrdered() {
-            return true;
-        }
-
-        @SuppressWarnings("rawtypes")
-        @Override
-        protected NormalizedNodeContainerBuilder createBuilder(final NormalizedNode<?, ?> original) {
-            checkArgument(original instanceof OrderedMapNode);
-            return ImmutableOrderedMapNodeBuilder.create((OrderedMapNode) original);
-        }
-
-        @Override
-        public Optional<ModificationApplyOperation> getChild(final YangInstanceIdentifier.PathArgument identifier) {
-            if (identifier instanceof YangInstanceIdentifier.NodeIdentifierWithPredicates) {
-                return entryStrategy;
-            }
-            return Optional.absent();
-        }
-
-        @Override
-        public String toString() {
-            return "OrderedMapModificationStrategy [entry=" + entryStrategy + "]";
-        }
-    }
-
-    static final class UnorderedLeafSetModificationStrategy extends NormalizedNodeContainerModificationStrategy {
-
-        private final Optional<ModificationApplyOperation> entryStrategy;
-
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        UnorderedLeafSetModificationStrategy(final LeafListSchemaNode schema) {
-            super((Class) LeafSetNode.class);
-            entryStrategy = Optional.<ModificationApplyOperation> of(new ValueNodeModificationStrategy.LeafSetEntryModificationStrategy(schema));
-        }
-
-        @SuppressWarnings("rawtypes")
-        @Override
-        protected NormalizedNodeContainerBuilder createBuilder(final NormalizedNode<?, ?> original) {
-            checkArgument(original instanceof LeafSetNode<?>);
-            return ImmutableLeafSetNodeBuilder.create((LeafSetNode<?>) original);
-        }
-
-        @Override
-        public Optional<ModificationApplyOperation> getChild(final YangInstanceIdentifier.PathArgument identifier) {
-            if (identifier instanceof YangInstanceIdentifier.NodeWithValue) {
-                return entryStrategy;
-            }
-            return Optional.absent();
-        }
-    }
-
-    static final class UnorderedMapModificationStrategy extends NormalizedNodeContainerModificationStrategy {
-        private final Optional<ModificationApplyOperation> entryStrategy;
-
-        protected UnorderedMapModificationStrategy(final ListSchemaNode schema) {
-            super(MapNode.class);
-            entryStrategy = Optional.<ModificationApplyOperation> of(new DataNodeContainerModificationStrategy.ListEntryModificationStrategy(schema));
-        }
-
-        @SuppressWarnings("rawtypes")
-        @Override
-        protected NormalizedNodeContainerBuilder createBuilder(final NormalizedNode<?, ?> original) {
-            checkArgument(original instanceof MapNode);
-            return ImmutableMapNodeBuilder.create((MapNode) original);
-        }
-
-        @Override
-        public Optional<ModificationApplyOperation> getChild(final YangInstanceIdentifier.PathArgument identifier) {
-            if (identifier instanceof YangInstanceIdentifier.NodeIdentifierWithPredicates) {
-                return entryStrategy;
-            }
-            return Optional.absent();
-        }
-
-        @Override
-        public String toString() {
-            return "UnorderedMapModificationStrategy [entry=" + entryStrategy + "]";
-        }
-    }
 }
