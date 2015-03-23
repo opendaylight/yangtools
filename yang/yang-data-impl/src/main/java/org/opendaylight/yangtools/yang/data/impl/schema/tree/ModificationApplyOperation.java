@@ -10,13 +10,12 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 
 /**
- *
  * Operation responsible for applying {@link ModifiedNode} on tree.
  *
  * Operation is composite - operation on top level node consists of
@@ -34,11 +33,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailed
  *
  * Hierarchical composite operation which is responsible for applying
  * modification on particular subtree and creating updated subtree
- *
- *
  */
-interface ModificationApplyOperation extends StoreTreeNode<ModificationApplyOperation> {
-
+abstract class ModificationApplyOperation implements StoreTreeNode<ModificationApplyOperation> {
     /**
      *
      * Implementation of this operation must be stateless and must not change
@@ -57,7 +53,19 @@ interface ModificationApplyOperation extends StoreTreeNode<ModificationApplyOper
      *         node, {@link Optional#absent()} if {@link ModifiedNode}
      *         resulted in deletion of this node.
      */
-    Optional<TreeNode> apply(ModifiedNode modification, Optional<TreeNode> storeMeta, Version version);
+    abstract Optional<TreeNode> apply(ModifiedNode modification, Optional<TreeNode> storeMeta, Version version);
+
+    /**
+    *
+    * Checks if provided node modification could be applied to current metadata node.
+    *
+    * @param modification Modification
+    * @param current Metadata Node to which modification should be applied
+    * @return true if modification is applicable
+    *         false if modification is no applicable
+    * @throws DataValidationFailedException
+    */
+   abstract void checkApplicable(YangInstanceIdentifier path, NodeModification modification, Optional<TreeNode> current) throws DataValidationFailedException;
 
     /**
      *
@@ -67,7 +75,7 @@ interface ModificationApplyOperation extends StoreTreeNode<ModificationApplyOper
      * @param modification to be verified.
      * @throws IllegalArgumentException If provided NodeModification does not adhere to the structure.
      */
-    void verifyStructure(ModifiedNode modification) throws IllegalArgumentException;
+    abstract void verifyStructure(ModifiedNode modification) throws IllegalArgumentException;
 
     /**
      * Returns a suboperation for specified tree node
@@ -76,17 +84,5 @@ interface ModificationApplyOperation extends StoreTreeNode<ModificationApplyOper
      *    if suboperation is not supported for specified tree node.
      */
     @Override
-    Optional<ModificationApplyOperation> getChild(PathArgument child);
-
-    /**
-     *
-     * Checks if provided node modification could be applied to current metadata node.
-     *
-     * @param modification Modification
-     * @param current Metadata Node to which modification should be applied
-     * @return true if modification is applicable
-     *         false if modification is no applicable
-     * @throws DataValidationFailedException
-     */
-    void checkApplicable(YangInstanceIdentifier path, NodeModification modification, Optional<TreeNode> current) throws DataValidationFailedException;
+    public abstract Optional<ModificationApplyOperation> getChild(PathArgument child);
 }
