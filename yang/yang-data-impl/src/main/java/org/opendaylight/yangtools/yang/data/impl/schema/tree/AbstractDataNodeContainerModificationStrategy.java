@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
@@ -21,6 +20,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base strategy for applying changes to a ContainerNode, irrespective of its
@@ -29,23 +30,19 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * @param <T> Type of the container node
  */
 abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeContainer> extends AbstractNodeContainerModificationStrategy {
-
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractDataNodeContainerModificationStrategy.class);
     private final LoadingCache<PathArgument, ModificationApplyOperation> childCache = CacheBuilder.newBuilder()
-            .build(CacheLoader.from(new Function<PathArgument, ModificationApplyOperation>() {
-
+            .build(new CacheLoader<PathArgument, ModificationApplyOperation>() {
                 @Override
-                public ModificationApplyOperation apply(final PathArgument identifier) {
-                    if (identifier instanceof AugmentationIdentifier && schema instanceof AugmentationTarget) {
-                        return SchemaAwareApplyOperation.from(schema, (AugmentationTarget) schema, (AugmentationIdentifier) identifier);
+                public ModificationApplyOperation load(final PathArgument key) throws Exception {
+                    if (key instanceof AugmentationIdentifier && schema instanceof AugmentationTarget) {
+                        return SchemaAwareApplyOperation.from(schema, (AugmentationTarget) schema, (AugmentationIdentifier) key);
                     }
 
-                    DataSchemaNode child = schema.getDataChildByName(identifier.getNodeType());
-                    if (child == null) {
-                        return null;
-                    }
-                    return SchemaAwareApplyOperation.from(child);
+                    final DataSchemaNode child = schema.getDataChildByName(key.getNodeType());
+                    return child == null ? null : SchemaAwareApplyOperation.from(child);
                 }
-            }));
+            });
     private final T schema;
 
     protected AbstractDataNodeContainerModificationStrategy(final T schema, final Class<? extends NormalizedNode<?, ?>> nodeClass) {
@@ -62,6 +59,7 @@ abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeC
         try {
             return Optional.<ModificationApplyOperation> fromNullable(childCache.get(identifier));
         } catch (ExecutionException e) {
+            LOG.trace("Child {} not present in container schema {}", identifier, this);
             return Optional.absent();
         }
     }
