@@ -32,7 +32,7 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     }
 
     @Override
-    public void verifyStructure(final ModifiedNode modification) throws IllegalArgumentException {
+    void verifyStructure(final ModifiedNode modification) throws IllegalArgumentException {
         for (ModifiedNode childModification : modification.getChildren()) {
             resolveChildOperation(childModification.getIdentifier()).verifyStructure(childModification);
         }
