@@ -9,7 +9,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class OrderedMapModificationStrategy extends NormalizedNodeContainerModificationStrategy {
+final class OrderedMapModificationStrategy extends AbstractNodeContainerModificationStrategy {
     private final Optional<ModificationApplyOperation> entryStrategy;
 
     OrderedMapModificationStrategy(final ListSchemaNode schema) {

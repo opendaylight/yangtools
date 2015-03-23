@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-final class ChoiceModificationStrategy extends NormalizedNodeContainerModificationStrategy {
+final class ChoiceModificationStrategy extends AbstractNodeContainerModificationStrategy {
     private final Map<YangInstanceIdentifier.PathArgument, ModificationApplyOperation> childNodes;
 
     ChoiceModificationStrategy(final ChoiceSchemaNode schemaNode) {

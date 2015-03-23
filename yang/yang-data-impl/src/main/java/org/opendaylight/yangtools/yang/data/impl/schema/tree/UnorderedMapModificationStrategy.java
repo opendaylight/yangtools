@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class UnorderedMapModificationStrategy extends NormalizedNodeContainerModificationStrategy {
+final class UnorderedMapModificationStrategy extends AbstractNodeContainerModificationStrategy {
     private final Optional<ModificationApplyOperation> entryStrategy;
 
     UnorderedMapModificationStrategy(final ListSchemaNode schema) {

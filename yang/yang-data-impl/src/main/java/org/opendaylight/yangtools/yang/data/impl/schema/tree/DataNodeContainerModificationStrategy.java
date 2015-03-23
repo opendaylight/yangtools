@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  *
  * @param <T> Type of the container node
  */
-abstract class DataNodeContainerModificationStrategy<T extends DataNodeContainer> extends NormalizedNodeContainerModificationStrategy {
+abstract class DataNodeContainerModificationStrategy<T extends DataNodeContainer> extends AbstractNodeContainerModificationStrategy {
 
     private final T schema;
     private final LoadingCache<PathArgument, ModificationApplyOperation> childCache = CacheBuilder.newBuilder()
