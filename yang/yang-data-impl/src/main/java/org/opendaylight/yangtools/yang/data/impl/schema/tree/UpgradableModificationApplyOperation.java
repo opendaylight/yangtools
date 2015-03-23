@@ -29,7 +29,7 @@ final class UpgradableModificationApplyOperation extends RootModificationApplyOp
     }
 
     @Override
-    public void upgradeIfPossible() {
+    void upgradeIfPossible() {
         ModificationApplyOperation holderCurrent = holder.getCurrent();
         if (holderCurrent != delegate) {
             // FIXME: Allow update only if there is addition of models, not
@@ -44,7 +44,7 @@ final class UpgradableModificationApplyOperation extends RootModificationApplyOp
     }
 
     @Override
-    public RootModificationApplyOperation snapshot() {
+    RootModificationApplyOperation snapshot() {
         return new UpgradableModificationApplyOperation(holder, getDelegate());
     }
 
