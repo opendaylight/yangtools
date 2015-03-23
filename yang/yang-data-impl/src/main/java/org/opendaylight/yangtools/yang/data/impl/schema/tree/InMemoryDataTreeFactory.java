@@ -30,7 +30,7 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
         final NodeIdentifier root = new NodeIdentifier(SchemaContext.NAME);
         final NormalizedNode<?, ?> data = Builders.containerBuilder().withNodeIdentifier(root).build();
 
-        return new InMemoryDataTree(TreeNodeFactory.createTreeNodeRecursively(data, Version.initial()), null);
+        return new InMemoryDataTree(TreeNodeFactory.createTreeNode(data, Version.initial()), null);
     }
 
     /**
