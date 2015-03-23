@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
+abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaAwareApplyOperation.class);
 
     public static SchemaAwareApplyOperation from(final DataSchemaNode schemaNode) {
@@ -105,14 +105,14 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
     }
 
     @Override
-    public void verifyStructure(final ModifiedNode modification) throws IllegalArgumentException {
+    void verifyStructure(final ModifiedNode modification) throws IllegalArgumentException {
         if (modification.getOperation() == LogicalOperation.WRITE) {
             verifyWrittenStructure(modification.getWrittenValue());
         }
     }
 
     @Override
-    public final void checkApplicable(final YangInstanceIdentifier path,final NodeModification modification, final Optional<TreeNode> current) throws DataValidationFailedException {
+    final void checkApplicable(final YangInstanceIdentifier path,final NodeModification modification, final Optional<TreeNode> current) throws DataValidationFailedException {
         switch (modification.getOperation()) {
         case DELETE:
             checkDeleteApplicable(modification, current);
@@ -130,7 +130,6 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
         default:
             throw new UnsupportedOperationException("Suplied modification type "+ modification.getOperation()+ "is not supported.");
         }
-
     }
 
     protected void checkMergeApplicable(final YangInstanceIdentifier path, final NodeModification modification, final Optional<TreeNode> current) throws DataValidationFailedException {
@@ -182,9 +181,7 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
     }
 
     @Override
-    public final Optional<TreeNode> apply(final ModifiedNode modification,
-            final Optional<TreeNode> currentMeta, final Version version) {
-
+    final Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> currentMeta, final Version version) {
         switch (modification.getOperation()) {
         case DELETE:
             modification.resolveModificationType(ModificationType.DELETE);
@@ -227,11 +224,9 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
      * @param version New subtree version of parent node
      * @return A sealed TreeNode representing applied operation.
      */
-    protected abstract TreeNode applyMerge(ModifiedNode modification,
-            TreeNode currentMeta, Version version);
+    protected abstract TreeNode applyMerge(ModifiedNode modification, TreeNode currentMeta, Version version);
 
-    protected abstract TreeNode applyWrite(ModifiedNode modification,
-            Optional<TreeNode> currentMeta, Version version);
+    protected abstract TreeNode applyWrite(ModifiedNode modification, Optional<TreeNode> currentMeta, Version version);
 
     /**
      * Apply a nested operation. Since there may not actually be a nested operation
@@ -243,8 +238,7 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
      * @param version New subtree version of parent node
      * @return A sealed TreeNode representing applied operation.
      */
-    protected abstract TreeNode applySubtreeChange(ModifiedNode modification,
-            TreeNode currentMeta, Version version);
+    protected abstract TreeNode applySubtreeChange(ModifiedNode modification, TreeNode currentMeta, Version version);
 
     /**
      *

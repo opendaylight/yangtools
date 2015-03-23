@@ -58,7 +58,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
  * update user did not invoked any operation.
  *
  */
-abstract class RootModificationApplyOperation implements ModificationApplyOperation {
+abstract class RootModificationApplyOperation extends ModificationApplyOperation {
 
     @Override
     public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
@@ -66,13 +66,13 @@ abstract class RootModificationApplyOperation implements ModificationApplyOperat
     }
 
     @Override
-    public final void checkApplicable(final YangInstanceIdentifier path, final NodeModification modification, final Optional<TreeNode> current)
+    final void checkApplicable(final YangInstanceIdentifier path, final NodeModification modification, final Optional<TreeNode> current)
             throws DataValidationFailedException {
         getDelegate().checkApplicable(path, modification, current);
     }
 
     @Override
-    public final Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> currentMeta,
+    final Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> currentMeta,
             final Version version) {
         return getDelegate().apply(modification, currentMeta, version);
     }
@@ -93,7 +93,7 @@ abstract class RootModificationApplyOperation implements ModificationApplyOperat
     }
 
     @Override
-    public void verifyStructure(final ModifiedNode modification) throws IllegalArgumentException {
+    final void verifyStructure(final ModifiedNode modification) throws IllegalArgumentException {
         getDelegate().verifyStructure(modification);
     }
 
