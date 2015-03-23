@@ -13,7 +13,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
  * This class is factory for upgradable root modifications and provides an
  * access to set latest backing implementation.
  */
-class LatestOperationHolder {
+final class LatestOperationHolder {
 
     private ModificationApplyOperation current = AlwaysFailOperation.INSTANCE;
 
@@ -22,7 +22,7 @@ class LatestOperationHolder {
      *
      * @return
      */
-    public ModificationApplyOperation getCurrent() {
+    ModificationApplyOperation getCurrent() {
         return current;
     }
 
@@ -41,7 +41,7 @@ class LatestOperationHolder {
      * @param newApplyOper
      *            New backing implementation
      */
-    public void setCurrent(final ModificationApplyOperation newApplyOper) {
+    void setCurrent(final ModificationApplyOperation newApplyOper) {
         current = newApplyOper;
     }
 
@@ -53,7 +53,7 @@ class LatestOperationHolder {
      * @return New upgradable {@link RootModificationApplyOperation} with
      *         {@link #getCurrent()} used as backing implementation.
      */
-    public RootModificationApplyOperation newSnapshot() {
+    RootModificationApplyOperation newSnapshot() {
         return new UpgradableModificationApplyOperation(this, current);
     }
 
