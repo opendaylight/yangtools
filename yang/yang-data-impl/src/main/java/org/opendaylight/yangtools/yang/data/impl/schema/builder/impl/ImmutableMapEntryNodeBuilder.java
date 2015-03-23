@@ -105,7 +105,7 @@ public class ImmutableMapEntryNodeBuilder extends AbstractImmutableDataContainer
                 LOG.debug("Adding leaf {} implied by key {}", leaf, key);
                 withChild(leaf);
             } else {
-                DataValidationException.checkListKey(childNode, getNodeIdentifier().getKeyValues(), key.getKey(), getNodeIdentifier());
+                DataValidationException.checkListKey(getNodeIdentifier(), key.getKey(), key.getValue(), childNode.getValue());
             }
         }
 
