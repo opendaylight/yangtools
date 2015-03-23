@@ -116,19 +116,20 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
         switch (modification.getOperation()) {
         case DELETE:
             checkDeleteApplicable(modification, current);
+            break;
         case TOUCH:
             checkSubtreeModificationApplicable(path, modification, current);
-            return;
+            break;
         case WRITE:
             checkWriteApplicable(path, modification, current);
-            return;
+            break;
         case MERGE:
             checkMergeApplicable(path, modification, current);
-            return;
+            break;
         case NONE:
-            return;
+            break;
         default:
-            throw new UnsupportedOperationException("Suplied modification type "+ modification.getOperation()+ "is not supported.");
+            throw new UnsupportedOperationException("Suplied modification type "+ modification.getOperation()+ " is not supported.");
         }
 
     }
