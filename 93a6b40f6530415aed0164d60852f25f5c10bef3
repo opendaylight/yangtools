@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_55832256",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/ListConstraintsValidator.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2470
+      },
+      "writtenOn": "2015-03-23T08:11:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_afe2539d",
+      "revId": "93a6b40f6530415aed0164d60852f25f5c10bef3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_4fef0f88",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/UnkeyedListModificationStrategy.java",
         "patchSetId": 8
@@ -30,6 +48,24 @@
       "writtenOn": "2015-03-22T09:28:17Z",
       "side": 1,
       "message": "Preconditions.checkNotNull()",
+      "revId": "93a6b40f6530415aed0164d60852f25f5c10bef3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_75889e71",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/UnkeyedListModificationStrategy.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 2470
+      },
+      "writtenOn": "2015-03-23T08:11:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_4fef0f88",
       "revId": "93a6b40f6530415aed0164d60852f25f5c10bef3",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_157d9a6e",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/ListConstraintsValidationTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2470
+      },
+      "writtenOn": "2015-03-23T08:11:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_6ff44b5b",
+      "revId": "93a6b40f6530415aed0164d60852f25f5c10bef3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_0fe90780",
         "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/ListConstraintsValidationTest.java",
         "patchSetId": 8
@@ -64,6 +118,24 @@
       "writtenOn": "2015-03-22T09:28:17Z",
       "side": 1,
       "message": "Use @Test(expected\u003dDataValidationFailedException.class) annotation instead.",
+      "revId": "93a6b40f6530415aed0164d60852f25f5c10bef3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_35821650",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/ListConstraintsValidationTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 329,
+      "author": {
+        "id": 2470
+      },
+      "writtenOn": "2015-03-23T08:11:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_0fe90780",
       "revId": "93a6b40f6530415aed0164d60852f25f5c10bef3",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
