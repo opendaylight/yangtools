@@ -217,8 +217,7 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
     @SuppressWarnings("rawtypes")
     protected abstract NormalizedNodeContainerBuilder createBuilder(NormalizedNode<?, ?> original);
 
-    public static class ChoiceModificationStrategy extends NormalizedNodeContainerModificationStrategy {
-
+    static final class ChoiceModificationStrategy extends NormalizedNodeContainerModificationStrategy {
         private final Map<YangInstanceIdentifier.PathArgument, ModificationApplyOperation> childNodes;
 
         public ChoiceModificationStrategy(final ChoiceSchemaNode schemaNode) {
@@ -247,8 +246,7 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
         }
     }
 
-    public static class OrderedLeafSetModificationStrategy extends NormalizedNodeContainerModificationStrategy {
-
+    static final class OrderedLeafSetModificationStrategy extends NormalizedNodeContainerModificationStrategy {
         private final Optional<ModificationApplyOperation> entryStrategy;
 
         @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -278,8 +276,7 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
         }
     }
 
-    public static class OrderedMapModificationStrategy extends NormalizedNodeContainerModificationStrategy {
-
+    static final class OrderedMapModificationStrategy extends NormalizedNodeContainerModificationStrategy {
         private final Optional<ModificationApplyOperation> entryStrategy;
 
         protected OrderedMapModificationStrategy(final ListSchemaNode schema) {
@@ -313,12 +310,12 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
         }
     }
 
-    public static class UnorderedLeafSetModificationStrategy extends NormalizedNodeContainerModificationStrategy {
+    static final class UnorderedLeafSetModificationStrategy extends NormalizedNodeContainerModificationStrategy {
 
         private final Optional<ModificationApplyOperation> entryStrategy;
 
         @SuppressWarnings({ "unchecked", "rawtypes" })
-        protected UnorderedLeafSetModificationStrategy(final LeafListSchemaNode schema) {
+        UnorderedLeafSetModificationStrategy(final LeafListSchemaNode schema) {
             super((Class) LeafSetNode.class);
             entryStrategy = Optional.<ModificationApplyOperation> of(new ValueNodeModificationStrategy.LeafSetEntryModificationStrategy(schema));
         }
@@ -339,8 +336,7 @@ abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareAp
         }
     }
 
-    public static class UnorderedMapModificationStrategy extends NormalizedNodeContainerModificationStrategy {
-
+    static final class UnorderedMapModificationStrategy extends NormalizedNodeContainerModificationStrategy {
         private final Optional<ModificationApplyOperation> entryStrategy;
 
         protected UnorderedMapModificationStrategy(final ListSchemaNode schema) {

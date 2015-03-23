@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Optional;
-
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
@@ -114,7 +113,7 @@ abstract class RootModificationApplyOperation implements ModificationApplyOperat
      * @return Derived {@link RootModificationApplyOperation} with separate
      *         upgrade lifecycle.
      */
-    public abstract RootModificationApplyOperation snapshot();
+    abstract RootModificationApplyOperation snapshot();
 
     /**
      * Upgrades backing implementation to latest available, if possible.
@@ -124,9 +123,9 @@ abstract class RootModificationApplyOperation implements ModificationApplyOperat
      * operation and latest operation is updated by
      * {@link LatestOperationHolder#setCurrent(ModificationApplyOperation)}.
      */
-    public abstract void upgradeIfPossible();
+    abstract void upgradeIfPossible();
 
-    public static RootModificationApplyOperation from(final ModificationApplyOperation resolver) {
+    static RootModificationApplyOperation from(final ModificationApplyOperation resolver) {
         if (resolver instanceof RootModificationApplyOperation) {
             return ((RootModificationApplyOperation) resolver).snapshot();
         }

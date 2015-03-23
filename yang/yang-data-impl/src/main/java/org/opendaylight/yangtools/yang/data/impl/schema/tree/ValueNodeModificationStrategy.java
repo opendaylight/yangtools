@@ -24,12 +24,10 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
 abstract class ValueNodeModificationStrategy<T extends DataSchemaNode> extends SchemaAwareApplyOperation {
-
-    private final T schema;
     private final Class<? extends NormalizedNode<?, ?>> nodeClass;
+    private final T schema;
 
     protected ValueNodeModificationStrategy(final T schema, final Class<? extends NormalizedNode<?, ?>> nodeClass) {
-        super();
         this.schema = schema;
         this.nodeClass = nodeClass;
     }
@@ -72,16 +70,16 @@ abstract class ValueNodeModificationStrategy<T extends DataSchemaNode> extends S
         throw new IncorrectDataStructureException(path, "Subtree modification is not allowed.");
     }
 
-    public static class LeafSetEntryModificationStrategy extends ValueNodeModificationStrategy<LeafListSchemaNode> {
+    static final class LeafSetEntryModificationStrategy extends ValueNodeModificationStrategy<LeafListSchemaNode> {
         @SuppressWarnings({ "unchecked", "rawtypes" })
-        protected LeafSetEntryModificationStrategy(final LeafListSchemaNode schema) {
+        LeafSetEntryModificationStrategy(final LeafListSchemaNode schema) {
             super(schema, (Class) LeafSetEntryNode.class);
         }
     }
 
-    public static class LeafModificationStrategy extends ValueNodeModificationStrategy<LeafSchemaNode> {
+    static final class LeafModificationStrategy extends ValueNodeModificationStrategy<LeafSchemaNode> {
         @SuppressWarnings({ "unchecked", "rawtypes" })
-        protected LeafModificationStrategy(final LeafSchemaNode schema) {
+        LeafModificationStrategy(final LeafSchemaNode schema) {
             super(schema, (Class) LeafNode.class);
         }
     }
