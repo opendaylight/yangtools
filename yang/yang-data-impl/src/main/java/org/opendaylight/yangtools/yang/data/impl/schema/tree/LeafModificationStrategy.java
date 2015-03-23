@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
-final class LeafModificationStrategy extends ValueNodeModificationStrategy<LeafSchemaNode> {
+final class LeafModificationStrategy extends AbstractValueNodeModificationStrategy<LeafSchemaNode> {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     LeafModificationStrategy(final LeafSchemaNode schema) {
         super(schema, (Class) LeafNode.class);
