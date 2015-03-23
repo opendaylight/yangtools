@@ -10,17 +10,22 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerAttrNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ImmutableMapEntryNodeBuilder extends AbstractImmutableDataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> {
-
+    private static final Logger LOG = LoggerFactory.getLogger(ImmutableMapEntryNodeBuilder.class);
     protected final Map<QName, YangInstanceIdentifier.PathArgument> childrenQNamesToPaths;
 
     protected ImmutableMapEntryNodeBuilder() {
@@ -91,15 +96,20 @@ public class ImmutableMapEntryNodeBuilder extends AbstractImmutableDataContainer
 
     @Override
     public MapEntryNode build() {
-        checkKeys();
-        return new ImmutableMapEntryNode(getNodeIdentifier(), buildValue(), getAttributes());
-    }
+        for (final Entry<QName, Object> key : getNodeIdentifier().getKeyValues().entrySet()) {
+            final DataContainerChild<?, ?> childNode = getChild(childrenQNamesToPaths.get(key.getValue()));
 
-    private void checkKeys() {
-        for (final QName keyQName : getNodeIdentifier().getKeyValues().keySet()) {
-            DataContainerChild<?, ?> childNode = getChild(childrenQNamesToPaths.get(keyQName));
-            DataValidationException.checkListKey(childNode, getNodeIdentifier().getKeyValues(), keyQName, getNodeIdentifier());
+            // We have enough information to fill-in missing leaf nodes, so let's do that
+            if (childNode == null) {
+                LeafNode<Object> leaf = ImmutableNodes.leafNode(key.getKey(), key.getValue());
+                LOG.debug("Adding leaf {} implied by key {}", leaf, key);
+                withChild(leaf);
+            } else {
+                DataValidationException.checkListKey(childNode, getNodeIdentifier().getKeyValues(), key.getKey(), getNodeIdentifier());
+            }
         }
+
+        return new ImmutableMapEntryNode(getNodeIdentifier(), buildValue(), getAttributes());
     }
 
     private static final class ImmutableMapEntryNode extends AbstractImmutableDataContainerAttrNode<YangInstanceIdentifier.NodeIdentifierWithPredicates> implements MapEntryNode {
