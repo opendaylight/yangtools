@@ -20,14 +20,12 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
  *
  */
 final class UpgradableModificationApplyOperation extends RootModificationApplyOperation {
-
     private final LatestOperationHolder holder;
     private ModificationApplyOperation delegate;
 
-    public UpgradableModificationApplyOperation(final LatestOperationHolder holder, final ModificationApplyOperation delegate) {
+    UpgradableModificationApplyOperation(final LatestOperationHolder holder, final ModificationApplyOperation delegate) {
         this.holder = holder;
         this.delegate = delegate;
-
     }
 
     @Override
