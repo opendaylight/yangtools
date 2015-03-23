@@ -73,6 +73,7 @@ final class InMemoryDataTreeCandidate extends AbstractDataTreeCandidate {
 
         @Override
         public ModificationType getModificationType() {
+            // FIXME: BUG-2876: we should eliminate this in favor of a field in mod
             switch (mod.getOperation()) {
             case DELETE:
                 return ModificationType.DELETE;

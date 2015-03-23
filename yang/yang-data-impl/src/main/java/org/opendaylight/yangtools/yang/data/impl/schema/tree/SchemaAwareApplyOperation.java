@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.IncorrectDataStructureException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -186,10 +187,12 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
 
         switch (modification.getOperation()) {
         case DELETE:
+            modification.resolveModificationType(ModificationType.DELETE);
             return modification.setSnapshot(Optional.<TreeNode> absent());
         case TOUCH:
             Preconditions.checkArgument(currentMeta.isPresent(), "Metadata not available for modification",
                     modification);
+            modification.resolveModificationType(ModificationType.SUBTREE_MODIFIED);
             return modification.setSnapshot(Optional.of(applySubtreeChange(modification, currentMeta.get(),
                     version)));
         case MERGE:
@@ -199,19 +202,32 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
             if (currentMeta.isPresent()) {
                 result = applyMerge(modification,currentMeta.get(), version);
             } else {
+                modification.resolveModificationType(ModificationType.WRITE);
                 result = applyWrite(modification, currentMeta, version);
             }
 
             return modification.setSnapshot(Optional.of(result));
         case WRITE:
+            modification.resolveModificationType(ModificationType.WRITE);
             return modification.setSnapshot(Optional.of(applyWrite(modification, currentMeta, version)));
         case NONE:
+            modification.resolveModificationType(ModificationType.UNMODIFIED);
             return currentMeta;
         default:
             throw new IllegalArgumentException("Provided modification type is not supported.");
         }
     }
 
+    /**
+     * Apply a merge operation. Since the result of merge differs based on the data type
+     * being modified, implementations of this method are responsible for calling
+     * {@link ModifiedNode#resolveModificationType(ModificationType)} as appropriate.
+     *
+     * @param modification Modified node
+     * @param currentMeta Store Metadata Node on which NodeModification should be applied
+     * @param version New subtree version of parent node
+     * @return A sealed TreeNode representing applied operation.
+     */
     protected abstract TreeNode applyMerge(ModifiedNode modification,
             TreeNode currentMeta, Version version);
 
