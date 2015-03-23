@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -22,12 +23,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 
-abstract class NormalizedNodeContainerModificationStrategy extends SchemaAwareApplyOperation {
+abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareApplyOperation {
 
     private final Class<? extends NormalizedNode<?, ?>> nodeClass;
 
-    protected NormalizedNodeContainerModificationStrategy(final Class<? extends NormalizedNode<?, ?>> nodeClass) {
-        this.nodeClass = nodeClass;
+    protected AbstractNodeContainerModificationStrategy(final Class<? extends NormalizedNode<?, ?>> nodeClass) {
+        this.nodeClass = Preconditions.checkNotNull(nodeClass);
     }
 
     @Override

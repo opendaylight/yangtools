@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
-final class OrderedLeafSetModificationStrategy extends NormalizedNodeContainerModificationStrategy {
+final class OrderedLeafSetModificationStrategy extends AbstractNodeContainerModificationStrategy {
     private final Optional<ModificationApplyOperation> entryStrategy;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
