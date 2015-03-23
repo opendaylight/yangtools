@@ -48,7 +48,7 @@ final class DataTreeState {
         return new InMemoryDataTreeSnapshot(schemaContext, root, holder.newSnapshot());
     }
 
-    DataTreeState withSchemaContext(final SchemaContext newSchemaContext, final SchemaAwareApplyOperation operation) {
+    DataTreeState withSchemaContext(final SchemaContext newSchemaContext, final ModificationApplyOperation operation) {
         holder.setCurrent(operation);
         return new DataTreeState(root, holder, newSchemaContext);
     }

@@ -29,7 +29,7 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
 
         for (ChoiceCaseNode caze : schemaNode.getCases()) {
             for (DataSchemaNode cazeChild : caze.getChildNodes()) {
-                SchemaAwareApplyOperation childNode = SchemaAwareApplyOperation.from(cazeChild);
+                ModificationApplyOperation childNode = SchemaAwareApplyOperation.from(cazeChild);
                 child.put(new YangInstanceIdentifier.NodeIdentifier(cazeChild.getQName()), childNode);
             }
         }
