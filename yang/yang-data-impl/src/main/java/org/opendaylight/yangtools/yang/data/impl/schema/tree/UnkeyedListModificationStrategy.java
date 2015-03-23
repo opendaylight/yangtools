@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.Iterables;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -54,7 +53,7 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
         final NormalizedNode<?, ?> newValue = modification.getWrittenValue();
         final TreeNode newValueMeta = TreeNodeFactory.createTreeNode(newValue, version);
 
-        if (Iterables.isEmpty(modification.getChildren())) {
+        if (modification.getChildren().isEmpty()) {
             return newValueMeta;
         }
 
