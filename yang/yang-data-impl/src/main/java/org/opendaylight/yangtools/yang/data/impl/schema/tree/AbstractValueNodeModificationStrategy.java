@@ -30,25 +30,30 @@ abstract class AbstractValueNodeModificationStrategy<T extends DataSchemaNode> e
     }
 
     @Override
-    protected void verifyWrittenStructure(final NormalizedNode<?, ?> writtenValue) {
+    protected final void verifyWrittenStructure(final NormalizedNode<?, ?> writtenValue) {
         checkArgument(nodeClass.isInstance(writtenValue), "Node should must be of type %s", nodeClass);
     }
 
     @Override
-    public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
+    public final Optional<ModificationApplyOperation> getChild(final PathArgument child) {
         throw new UnsupportedOperationException("Node " + schema.getPath()
                 + "is leaf type node. Child nodes not allowed");
     }
 
     @Override
-    protected TreeNode applySubtreeChange(final ModifiedNode modification,
+    protected final ChildTrackingPolicy getChildPolicy() {
+        return ChildTrackingPolicy.NONE;
+    }
+
+    @Override
+    protected final TreeNode applySubtreeChange(final ModifiedNode modification,
             final TreeNode currentMeta, final Version version) {
         throw new UnsupportedOperationException("Node " + schema.getPath()
                 + "is leaf type node. Subtree change is not allowed.");
     }
 
     @Override
-    protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
+    protected final TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
             final Version version) {
         // Just overwrite whatever was there
         modification.resolveModificationType(ModificationType.WRITE);
@@ -56,13 +61,13 @@ abstract class AbstractValueNodeModificationStrategy<T extends DataSchemaNode> e
     }
 
     @Override
-    protected TreeNode applyWrite(final ModifiedNode modification,
+    protected final TreeNode applyWrite(final ModifiedNode modification,
             final Optional<TreeNode> currentMeta, final Version version) {
         return TreeNodeFactory.createTreeNodeRecursively(modification.getWrittenValue(), version);
     }
 
     @Override
-    protected void checkSubtreeModificationApplicable(final YangInstanceIdentifier path, final NodeModification modification,
+    protected final void checkSubtreeModificationApplicable(final YangInstanceIdentifier path, final NodeModification modification,
             final Optional<TreeNode> current) throws IncorrectDataStructureException {
         throw new IncorrectDataStructureException(path, "Subtree modification is not allowed.");
     }

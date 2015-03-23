@@ -61,7 +61,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 abstract class RootModificationApplyOperation extends ModificationApplyOperation {
 
     @Override
-    public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
+    public final Optional<ModificationApplyOperation> getChild(final PathArgument child) {
         return getDelegate().getChild(child);
     }
 
@@ -78,23 +78,28 @@ abstract class RootModificationApplyOperation extends ModificationApplyOperation
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public final boolean equals(final Object obj) {
         return getDelegate().equals(obj);
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return getDelegate().hashCode();
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return getDelegate().toString();
     }
 
     @Override
     final void verifyStructure(final ModifiedNode modification) throws IllegalArgumentException {
         getDelegate().verifyStructure(modification);
+    }
+
+    @Override
+    final ChildTrackingPolicy getChildPolicy() {
+        return getDelegate().getChildPolicy();
     }
 
     /**

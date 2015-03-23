@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -37,7 +38,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
     InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot, final RootModificationApplyOperation resolver) {
         this.snapshot = Preconditions.checkNotNull(snapshot);
         this.strategyTree = Preconditions.checkNotNull(resolver).snapshot();
-        this.rootNode = ModifiedNode.createUnmodified(snapshot.getRootNode(), false);
+        this.rootNode = ModifiedNode.createUnmodified(snapshot.getRootNode(), strategyTree.getChildPolicy());
 
         /*
          * We could allocate version beforehand, since Version contract
@@ -115,30 +116,48 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         }
     }
 
-    private ModificationApplyOperation resolveModificationStrategy(final YangInstanceIdentifier path) {
-        LOG.trace("Resolving modification apply strategy for {}", path);
+    private void upgradeIfPossible() {
         if (rootNode.getOperation() == LogicalOperation.NONE) {
             strategyTree.upgradeIfPossible();
         }
+    }
 
+    private ModificationApplyOperation resolveModificationStrategy(final YangInstanceIdentifier path) {
+        LOG.trace("Resolving modification apply strategy for {}", path);
+
+        upgradeIfPossible();
         return StoreTreeNodes.<ModificationApplyOperation>findNodeChecked(strategyTree, path);
     }
 
     private OperationWithModification resolveModificationFor(final YangInstanceIdentifier path) {
-        // We ensure strategy is present.
-        final ModificationApplyOperation operation = resolveModificationStrategy(path);
+        upgradeIfPossible();
 
-        final boolean isOrdered;
-        if (operation instanceof SchemaAwareApplyOperation) {
-            isOrdered = ((SchemaAwareApplyOperation) operation).isOrdered();
-        } else {
-            isOrdered = true;
-        }
-
+        /*
+         * Walk the strategy and modification trees in-sync, creating modification nodes as needed.
+         *
+         * If the user has provided wrong input, we may end up with a bunch of TOUCH nodes present
+         * ending with an empty one, as we will throw the exception below. This fact could end up
+         * being a problem, as we'd have bunch of phantom operations.
+         *
+         * That is fine, as we will prune any empty TOUCH nodes in the last phase of the ready
+         * process.
+         */
+        ModificationApplyOperation operation = strategyTree;
         ModifiedNode modification = rootNode;
-        for (PathArgument pathArg : path.getPathArguments()) {
-            modification = modification.modifyChild(pathArg, isOrdered);
+
+        int i = 1;
+        for(PathArgument pathArg : path.getPathArguments()) {
+            Optional<ModificationApplyOperation> potential = operation.getChild(pathArg);
+            if (!potential.isPresent()) {
+                throw new IllegalArgumentException(String.format("Child %s is not present in tree.",
+                        Iterables.toString(Iterables.limit(path.getPathArguments(), i))));
+            }
+            operation = potential.get();
+            ++i;
+
+            modification = modification.modifyChild(pathArg, operation.getChildPolicy());
         }
+
         return OperationWithModification.from(operation, modification);
     }
 

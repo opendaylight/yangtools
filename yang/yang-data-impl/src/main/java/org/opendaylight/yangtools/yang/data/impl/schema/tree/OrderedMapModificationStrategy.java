@@ -18,8 +18,8 @@ final class OrderedMapModificationStrategy extends AbstractNodeContainerModifica
     }
 
     @Override
-    boolean isOrdered() {
-        return true;
+    protected ChildTrackingPolicy getChildPolicy() {
+        return ChildTrackingPolicy.ORDERED;
     }
 
     @SuppressWarnings("rawtypes")

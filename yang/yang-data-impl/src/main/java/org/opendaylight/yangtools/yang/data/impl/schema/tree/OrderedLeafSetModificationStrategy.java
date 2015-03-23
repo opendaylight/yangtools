@@ -27,8 +27,8 @@ final class OrderedLeafSetModificationStrategy extends AbstractNodeContainerModi
     }
 
     @Override
-    boolean isOrdered() {
-        return true;
+    protected ChildTrackingPolicy getChildPolicy() {
+        return ChildTrackingPolicy.ORDERED;
     }
 
     @SuppressWarnings("rawtypes")

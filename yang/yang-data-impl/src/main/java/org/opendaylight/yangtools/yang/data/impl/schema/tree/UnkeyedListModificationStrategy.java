@@ -32,8 +32,8 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
     }
 
     @Override
-    boolean isOrdered() {
-        return true;
+    protected ChildTrackingPolicy getChildPolicy() {
+        return ChildTrackingPolicy.ORDERED;
     }
 
     @Override

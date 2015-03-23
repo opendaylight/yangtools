@@ -80,15 +80,7 @@ final class OperationWithModification {
 
     private OperationWithModification forChild(final PathArgument childId) {
         ModificationApplyOperation childOp = applyOperation.getChild(childId).get();
-
-        final boolean isOrdered;
-        if (childOp instanceof SchemaAwareApplyOperation) {
-            isOrdered = ((SchemaAwareApplyOperation) childOp).isOrdered();
-        } else {
-            isOrdered = true;
-        }
-
-        ModifiedNode childMod = modification.modifyChild(childId, isOrdered);
+        ModifiedNode childMod = modification.modifyChild(childId, childOp.getChildPolicy());
 
         return from(childOp,childMod);
     }

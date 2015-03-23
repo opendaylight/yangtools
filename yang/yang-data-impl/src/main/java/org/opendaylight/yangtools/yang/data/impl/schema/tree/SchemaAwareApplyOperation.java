@@ -177,8 +177,9 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         }
     }
 
-    boolean isOrdered() {
-        return false;
+    @Override
+    protected ChildTrackingPolicy getChildPolicy() {
+        return ChildTrackingPolicy.UNORDERED;
     }
 
     @Override

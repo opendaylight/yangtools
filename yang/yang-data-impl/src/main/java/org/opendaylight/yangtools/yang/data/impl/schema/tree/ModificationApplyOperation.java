@@ -78,6 +78,13 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
     abstract void verifyStructure(ModifiedNode modification) throws IllegalArgumentException;
 
     /**
+     * Return the tracking policy for this node's children.
+     *
+     * @return Tracking policy, may not be null.
+     */
+    abstract ChildTrackingPolicy getChildPolicy();
+
+    /**
      * Returns a suboperation for specified tree node
      *
      * @return Reference to suboperation for specified tree node, {@link Optional#absent()}

@@ -12,6 +12,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Verify;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -61,14 +62,22 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     private NormalizedNode<?, ?> value;
     private ModificationType modType;
 
-    private ModifiedNode(final PathArgument identifier, final Optional<TreeNode> original, final boolean isOrdered) {
+    private ModifiedNode(final PathArgument identifier, final Optional<TreeNode> original, final ChildTrackingPolicy childPolicy) {
         this.identifier = identifier;
         this.original = original;
 
-        if (isOrdered) {
+        switch (childPolicy) {
+        case NONE:
+            children = Collections.emptyMap();
+            break;
+        case ORDERED:
             children = new LinkedHashMap<>();
-        } else {
+            break;
+        case UNORDERED:
             children = new HashMap<>();
+            break;
+        default:
+            throw new IllegalArgumentException("Unsupported child tracking policy " + childPolicy);
         }
     }
 
@@ -117,11 +126,12 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * If this node's {@link ModificationType} is {@link ModificationType#UNMODIFIED}
      * changes modification type to {@link ModificationType#SUBTREE_MODIFIED}
      *
-     * @param child
+     * @param child child identifier, may not be null
+     * @param childPolicy child tracking policy for the node we are looking for
      * @return {@link ModifiedNode} for specified child, with {@link #getOriginal()}
      *         containing child metadata if child was present in original data.
      */
-    ModifiedNode modifyChild(final PathArgument child, final boolean isOrdered) {
+    ModifiedNode modifyChild(@Nonnull final PathArgument child, @Nonnull final ChildTrackingPolicy childPolicy) {
         clearSnapshot();
         if (operation == LogicalOperation.NONE) {
             updateOperationType(LogicalOperation.TOUCH);
@@ -139,7 +149,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             currentMetadata = Optional.absent();
         }
 
-        final ModifiedNode newlyCreated = new ModifiedNode(child, currentMetadata, isOrdered);
+        final ModifiedNode newlyCreated = new ModifiedNode(child, currentMetadata, childPolicy);
         children.put(child, newlyCreated);
         return newlyCreated;
     }
@@ -289,12 +299,23 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * @return An isolated node. This node should never reach a datatree.
      */
     ModifiedNode asNewlyWritten(final NormalizedNode<?, ?> value) {
-        final ModifiedNode ret = new ModifiedNode(getIdentifier(), Optional.<TreeNode>absent(), false);
+        /*
+         * We are instantiating an "equivalent" of this node. Currently the only callsite does not care
+         * about the actual iteration order, so we do not have to specify the same tracking policy as
+         * we were instantiated with. Since this is the only time we need to know that policy (it affects
+         * only things in constructor), we do not want to retain it (saves some memory on per-instance
+         * basis).
+         *
+         * We could reconstruct it using two instanceof checks (to undo what the constructor has done),
+         * which would give perfect results. The memory saving would be at most 32 bytes of a short-lived
+         * object, so let's not bother with that.
+         */
+        final ModifiedNode ret = new ModifiedNode(getIdentifier(), Optional.<TreeNode>absent(), ChildTrackingPolicy.UNORDERED);
         ret.write(value);
         return ret;
     }
 
-    public static ModifiedNode createUnmodified(final TreeNode metadataTree, final boolean isOrdered) {
-        return new ModifiedNode(metadataTree.getIdentifier(), Optional.of(metadataTree), isOrdered);
+    public static ModifiedNode createUnmodified(final TreeNode metadataTree, final ChildTrackingPolicy childPolicy) {
+        return new ModifiedNode(metadataTree.getIdentifier(), Optional.of(metadataTree), childPolicy);
     }
 }

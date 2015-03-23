@@ -46,4 +46,9 @@ final class AlwaysFailOperation extends ModificationApplyOperation {
     void verifyStructure(final ModifiedNode modification) {
         throw new IllegalStateException("Schema Context is not available.");
     }
+
+    @Override
+    ChildTrackingPolicy getChildPolicy() {
+        throw new IllegalStateException("Schema Context is not available.");
+    }
 }
