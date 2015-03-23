@@ -192,7 +192,6 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
         case TOUCH:
             Preconditions.checkArgument(currentMeta.isPresent(), "Metadata not available for modification",
                     modification);
-            modification.resolveModificationType(ModificationType.SUBTREE_MODIFIED);
             return modification.setSnapshot(Optional.of(applySubtreeChange(modification, currentMeta.get(),
                     version)));
         case MERGE:
@@ -234,6 +233,16 @@ abstract class SchemaAwareApplyOperation implements ModificationApplyOperation {
     protected abstract TreeNode applyWrite(ModifiedNode modification,
             Optional<TreeNode> currentMeta, Version version);
 
+    /**
+     * Apply a nested operation. Since there may not actually be a nested operation
+     * to be applied, implementations of this method are responsible for calling
+     * {@link ModifiedNode#resolveModificationType(ModificationType)} as appropriate.
+     *
+     * @param modification Modified node
+     * @param currentMeta Store Metadata Node on which NodeModification should be applied
+     * @param version New subtree version of parent node
+     * @return A sealed TreeNode representing applied operation.
+     */
     protected abstract TreeNode applySubtreeChange(ModifiedNode modification,
             TreeNode currentMeta, Version version);
 
