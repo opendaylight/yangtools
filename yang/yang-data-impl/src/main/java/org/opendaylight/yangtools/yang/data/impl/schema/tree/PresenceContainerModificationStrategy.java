@@ -14,14 +14,17 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
-final class ContainerModificationStrategy extends AbstractDataNodeContainerModificationStrategy<ContainerSchemaNode> {
-    ContainerModificationStrategy(final ContainerSchemaNode schemaNode) {
+/**
+ * Presence containers obey normal node rules. Their existence is always explicit.
+ */
+final class PresenceContainerModificationStrategy extends AbstractDataNodeContainerModificationStrategy<ContainerSchemaNode> {
+    PresenceContainerModificationStrategy(final ContainerSchemaNode schemaNode) {
         super(schemaNode, ContainerNode.class);
     }
 
     @Override
     @SuppressWarnings("rawtypes")
-    protected DataContainerNodeBuilder createBuilder(final NormalizedNode<?, ?> original) {
+    protected final DataContainerNodeBuilder createBuilder(final NormalizedNode<?, ?> original) {
         checkArgument(original instanceof ContainerNode);
         return ImmutableContainerNodeBuilder.create((ContainerNode) original);
     }
