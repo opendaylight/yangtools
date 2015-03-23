@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
-final class AugmentationModificationStrategy extends DataNodeContainerModificationStrategy<AugmentationSchema> {
+final class AugmentationModificationStrategy extends AbstractDataNodeContainerModificationStrategy<AugmentationSchema> {
     AugmentationModificationStrategy(final AugmentationSchema schema, final DataNodeContainer resolved) {
         super(createAugmentProxy(schema,resolved), AugmentationNode.class);
     }

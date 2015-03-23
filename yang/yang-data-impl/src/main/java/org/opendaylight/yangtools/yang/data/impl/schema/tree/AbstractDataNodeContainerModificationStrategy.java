@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -27,9 +28,8 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  *
  * @param <T> Type of the container node
  */
-abstract class DataNodeContainerModificationStrategy<T extends DataNodeContainer> extends AbstractNodeContainerModificationStrategy {
+abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeContainer> extends AbstractNodeContainerModificationStrategy {
 
-    private final T schema;
     private final LoadingCache<PathArgument, ModificationApplyOperation> childCache = CacheBuilder.newBuilder()
             .build(CacheLoader.from(new Function<PathArgument, ModificationApplyOperation>() {
 
@@ -46,19 +46,19 @@ abstract class DataNodeContainerModificationStrategy<T extends DataNodeContainer
                     return SchemaAwareApplyOperation.from(child);
                 }
             }));
+    private final T schema;
 
-    protected DataNodeContainerModificationStrategy(final T schema,
-            final Class<? extends NormalizedNode<?, ?>> nodeClass) {
+    protected AbstractDataNodeContainerModificationStrategy(final T schema, final Class<? extends NormalizedNode<?, ?>> nodeClass) {
         super(nodeClass);
-        this.schema = schema;
+        this.schema = Preconditions.checkNotNull(schema);
     }
 
-    protected T getSchema() {
+    protected final T getSchema() {
         return schema;
     }
 
     @Override
-    public Optional<ModificationApplyOperation> getChild(final PathArgument identifier) {
+    public final Optional<ModificationApplyOperation> getChild(final PathArgument identifier) {
         try {
             return Optional.<ModificationApplyOperation> fromNullable(childCache.get(identifier));
         } catch (ExecutionException e) {
