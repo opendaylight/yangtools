@@ -47,7 +47,7 @@ abstract class AbstractValueNodeModificationStrategy<T extends DataSchemaNode> e
 
     @Override
     protected final TreeNode applyTouch(final ModifiedNode modification,
-            final TreeNode currentMeta, final Version version) {
+            final Optional<TreeNode> currentMeta, final Version version) {
         throw new UnsupportedOperationException("Node " + schema.getPath()
                 + "is leaf type node. Subtree change is not allowed.");
     }

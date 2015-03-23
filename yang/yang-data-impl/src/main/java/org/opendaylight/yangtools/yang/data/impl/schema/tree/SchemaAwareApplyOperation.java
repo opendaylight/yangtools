@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.List;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -38,7 +40,12 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
 
     public static SchemaAwareApplyOperation from(final DataSchemaNode schemaNode) {
         if (schemaNode instanceof ContainerSchemaNode) {
-            return new ContainerModificationStrategy((ContainerSchemaNode) schemaNode);
+// FIXME: BUG-2339: activate this
+//            if (((ContainerSchemaNode) schemaNode).isPresenceContainer()) {
+                return new PresenceContainerModificationStrategy((ContainerSchemaNode) schemaNode);
+//            } else {
+//                return new StructuralContainerModificationStrategy((ContainerSchemaNode) schemaNode);
+//            }
         } else if (schemaNode instanceof ListSchemaNode) {
             return fromListSchemaNode((ListSchemaNode) schemaNode);
         } else if (schemaNode instanceof ChoiceSchemaNode) {
@@ -189,10 +196,12 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
             modification.resolveModificationType(ModificationType.DELETE);
             return modification.setSnapshot(Optional.<TreeNode> absent());
         case TOUCH:
-            Preconditions.checkArgument(currentMeta.isPresent(), "Metadata not available for modification",
-                    modification);
-            return modification.setSnapshot(Optional.of(applyTouch(modification, currentMeta.get(),
-                    version)));
+            /*
+             * Normally we would require current metadata be available, but structural containers
+             * can be touched even if they do not exist. They can also disappear if they end up
+             * not holding any data.
+             */
+            return modification.setSnapshot(Optional.fromNullable(applyTouch(modification, currentMeta, version)));
         case MERGE:
             final TreeNode result;
 
@@ -226,9 +235,9 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
      * @param version New subtree version of parent node
      * @return A sealed TreeNode representing applied operation.
      */
-    protected abstract TreeNode applyMerge(ModifiedNode modification, TreeNode currentMeta, Version version);
+    protected abstract @Nonnull TreeNode applyMerge(ModifiedNode modification, TreeNode currentMeta, Version version);
 
-    protected abstract TreeNode applyWrite(ModifiedNode modification, Optional<TreeNode> currentMeta, Version version);
+    protected abstract @Nonnull TreeNode applyWrite(ModifiedNode modification, Optional<TreeNode> currentMeta, Version version);
 
     /**
      * Apply a nested operation. Since there may not actually be a nested operation
@@ -238,9 +247,10 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
      * @param modification Modified node
      * @param currentMeta Store Metadata Node on which NodeModification should be applied
      * @param version New subtree version of parent node
-     * @return A sealed TreeNode representing applied operation.
+     * @return A sealed TreeNode representing applied operation, or null if the node should
+     *         be deleted.
      */
-    protected abstract TreeNode applyTouch(ModifiedNode modification, TreeNode currentMeta, Version version);
+    protected abstract @Nullable TreeNode applyTouch(ModifiedNode modification, Optional<TreeNode> currentMeta, Version version);
 
     /**
      *

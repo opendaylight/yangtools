@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.Collection;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -132,9 +133,7 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
         return applyTouch(modification, currentMeta, version);
     }
 
-    @Override
-    public TreeNode applyTouch(final ModifiedNode modification,
-            final TreeNode currentMeta, final Version version) {
+    protected final @Nonnull TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
         final MutableTreeNode newMeta = currentMeta.mutable();
         newMeta.setSubtreeVersion(version);
 
@@ -168,6 +167,13 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     }
 
     @Override
+    protected TreeNode applyTouch(final ModifiedNode modification,
+            final Optional<TreeNode> current, final Version version) {
+        Preconditions.checkArgument(current.isPresent(), "Metadata not available for modification %s", modification);
+        return applyTouch(modification, current.get(), version);
+    }
+
+    @Override
     protected void checkTouchApplicable(final YangInstanceIdentifier path, final NodeModification modification,
             final Optional<TreeNode> current) throws DataValidationFailedException {
         if (!modification.getOriginal().isPresent() && !current.isPresent()) {
@@ -175,11 +181,10 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
         }
 
         SchemaAwareApplyOperation.checkConflicting(path, current.isPresent(), "Node was deleted by other transaction.");
-        checkChildPreconditions(path, modification, current);
+        checkChildPreconditions(path, modification, current.get());
     }
 
-    private void checkChildPreconditions(final YangInstanceIdentifier path, final NodeModification modification, final Optional<TreeNode> current) throws DataValidationFailedException {
-        final TreeNode currentMeta = current.get();
+    protected final void checkChildPreconditions(final YangInstanceIdentifier path, final NodeModification modification, final TreeNode currentMeta) throws DataValidationFailedException {
         for (NodeModification childMod : modification.getChildren()) {
             final YangInstanceIdentifier.PathArgument childId = childMod.getIdentifier();
             final Optional<TreeNode> childMeta = currentMeta.getChild(childId);
@@ -192,8 +197,8 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     @Override
     protected void checkMergeApplicable(final YangInstanceIdentifier path, final NodeModification modification,
             final Optional<TreeNode> current) throws DataValidationFailedException {
-        if(current.isPresent()) {
-            checkChildPreconditions(path, modification,current);
+        if (current.isPresent()) {
+            checkChildPreconditions(path, modification, current.get());
         }
     }
 
