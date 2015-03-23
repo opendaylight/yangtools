@@ -22,6 +22,7 @@ import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
@@ -303,19 +304,28 @@ public final class JsonParserStream implements Closeable, Flushable {
             final String childName, final URI namespace) {
         final Deque<DataSchemaNode> result = new ArrayDeque<>();
         final List<ChoiceSchemaNode> childChoices = new ArrayList<>();
+        DataSchemaNode potentialChildNode = null;
         if (dataSchemaNode instanceof DataNodeContainer) {
             for (final DataSchemaNode childNode : ((DataNodeContainer) dataSchemaNode).getChildNodes()) {
                 if (childNode instanceof ChoiceSchemaNode) {
                     childChoices.add((ChoiceSchemaNode) childNode);
                 } else {
                     final QName childQName = childNode.getQName();
+
                     if (childQName.getLocalName().equals(childName) && childQName.getNamespace().equals(namespace)) {
-                        result.push(childNode);
-                        return result;
+                        if (potentialChildNode == null ||
+                                childQName.getRevision().after(potentialChildNode.getQName().getRevision())) {
+                            potentialChildNode = childNode;
+                        }
                     }
                 }
             }
         }
+        if (potentialChildNode != null) {
+            result.push(potentialChildNode);
+            return result;
+        }
+
         // try to find data schema node in choice (looking for first match)
         for (final ChoiceSchemaNode choiceNode : childChoices) {
             for (final ChoiceCaseNode concreteCase : choiceNode.getCases()) {
