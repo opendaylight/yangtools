@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_b85ffb0d",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/ListConstraintsValidator.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-03-23T12:07:59Z",
+      "side": 1,
+      "message": "Could we supply min/max elements as arguments.",
+      "range": {
+        "startLine": 21,
+        "startChar": 49,
+        "endLine": 21,
+        "endChar": 69
+      },
+      "revId": "df6be6e3bb659e1a2491c647bb37b31988b1c7f9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_98623fd7",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/NormalizedNodeContainerModificationStrategy.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 245,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-03-23T12:07:59Z",
+      "side": 1,
+      "message": "Could we do this call optional (validation will not happen, when min/max is not specified).\n\nAlso I would preffer caching of min/max elements here.",
+      "range": {
+        "startLine": 245,
+        "startChar": 12,
+        "endLine": 245,
+        "endChar": 109
+      },
+      "revId": "df6be6e3bb659e1a2491c647bb37b31988b1c7f9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
