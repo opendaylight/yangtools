@@ -67,7 +67,7 @@ abstract class AbstractValueNodeModificationStrategy<T extends DataSchemaNode> e
     }
 
     @Override
-    protected final void checkSubtreeModificationApplicable(final YangInstanceIdentifier path, final NodeModification modification,
+    protected final void checkTouchApplicable(final YangInstanceIdentifier path, final NodeModification modification,
             final Optional<TreeNode> current) throws IncorrectDataStructureException {
         throw new IncorrectDataStructureException(path, "Subtree modification is not allowed.");
     }

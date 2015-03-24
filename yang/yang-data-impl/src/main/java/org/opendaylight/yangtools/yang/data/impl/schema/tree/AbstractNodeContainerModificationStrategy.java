@@ -168,7 +168,7 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     }
 
     @Override
-    protected void checkSubtreeModificationApplicable(final YangInstanceIdentifier path, final NodeModification modification,
+    protected void checkTouchApplicable(final YangInstanceIdentifier path, final NodeModification modification,
             final Optional<TreeNode> current) throws DataValidationFailedException {
         if (!modification.getOriginal().isPresent() && !current.isPresent()) {
             throw new ModifiedNodeDoesNotExistException(path, String.format("Node %s does not exist. Cannot apply modification to its children.", path));
