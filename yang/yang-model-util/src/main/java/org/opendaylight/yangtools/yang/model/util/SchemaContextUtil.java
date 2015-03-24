@@ -20,6 +20,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -221,7 +222,7 @@ public final class SchemaContextUtil {
         final QName qname = Iterables.getFirst(schemaNode.getPath().getPathTowardsRoot(), null);
         Preconditions.checkState(qname != null,
                 "Schema Path contains invalid state of path parts. " +
-                "The Schema Path MUST contain at least ONE QName which defines namespace and Local name of path.");
+                        "The Schema Path MUST contain at least ONE QName which defines namespace and Local name of path.");
         return context.findModuleByNamespaceAndRevision(qname.getNamespace(), qname.getRevision());
     }
 
@@ -626,7 +627,7 @@ public final class SchemaContextUtil {
         RevisionAwareXPath pathStatement = typeDefinition.getPathStatement();
         pathStatement = new RevisionAwareXPathImpl(stripConditionsFromXPathString(pathStatement), pathStatement.isAbsolute());
 
-        final Module parentModule = SchemaContextUtil.findParentModule(schemaContext, schema);
+        Module parentModule = findParentModuleByType(schemaContext, schema);
 
         final DataSchemaNode dataSchemaNode;
         if(pathStatement.isAbsolute()) {
@@ -649,6 +650,29 @@ public final class SchemaContextUtil {
         } else {
             return targetTypeDefinition;
         }
+    }
+
+    public static Module findParentModuleByType(final SchemaContext schemaContext, final SchemaNode schema) {
+        TypeDefinition<?> nodeType = null;
+
+        if (schema instanceof LeafSchemaNode) {
+            nodeType = ((LeafSchemaNode) schema).getType();
+        } else if (schema instanceof LeafListSchemaNode) {
+            nodeType = ((LeafListSchemaNode) schema).getType();
+        }
+
+        if (nodeType != null && nodeType instanceof ExtendedType) {
+            while (nodeType.getBaseType() instanceof ExtendedType) {
+                nodeType = nodeType.getBaseType();
+            }
+
+            QNameModule typeDefModuleQname = nodeType.getQName().getModule();
+
+            return schemaContext.findModuleByNamespaceAndRevision(typeDefModuleQname.getNamespace(),
+                    typeDefModuleQname.getRevision());
+        }
+
+        return SchemaContextUtil.findParentModule(schemaContext, schema);
     }
 
     /**
