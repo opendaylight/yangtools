@@ -191,7 +191,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         case TOUCH:
             Preconditions.checkArgument(currentMeta.isPresent(), "Metadata not available for modification",
                     modification);
-            return modification.setSnapshot(Optional.of(applySubtreeChange(modification, currentMeta.get(),
+            return modification.setSnapshot(Optional.of(applyTouch(modification, currentMeta.get(),
                     version)));
         case MERGE:
             final TreeNode result;
@@ -240,7 +240,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
      * @param version New subtree version of parent node
      * @return A sealed TreeNode representing applied operation.
      */
-    protected abstract TreeNode applySubtreeChange(ModifiedNode modification, TreeNode currentMeta, Version version);
+    protected abstract TreeNode applyTouch(ModifiedNode modification, TreeNode currentMeta, Version version);
 
     /**
      *
