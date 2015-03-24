@@ -20,6 +20,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -221,7 +222,7 @@ public final class SchemaContextUtil {
         final QName qname = Iterables.getFirst(schemaNode.getPath().getPathTowardsRoot(), null);
         Preconditions.checkState(qname != null,
                 "Schema Path contains invalid state of path parts. " +
-                "The Schema Path MUST contain at least ONE QName which defines namespace and Local name of path.");
+                        "The Schema Path MUST contain at least ONE QName which defines namespace and Local name of path.");
         return context.findModuleByNamespaceAndRevision(qname.getNamespace(), qname.getRevision());
     }
 
@@ -626,7 +627,7 @@ public final class SchemaContextUtil {
         RevisionAwareXPath pathStatement = typeDefinition.getPathStatement();
         pathStatement = new RevisionAwareXPathImpl(stripConditionsFromXPathString(pathStatement), pathStatement.isAbsolute());
 
-        final Module parentModule = SchemaContextUtil.findParentModule(schemaContext, schema);
+        Module parentModule = findParentModuleByType(schemaContext, schema);
 
         final DataSchemaNode dataSchemaNode;
         if(pathStatement.isAbsolute()) {
@@ -649,6 +650,50 @@ public final class SchemaContextUtil {
         } else {
             return targetTypeDefinition;
         }
+    }
+
+    /**
+     * Returns parent Yang Module for specified Schema Context in which Schema
+     * Node is declared. If Schema Node is of type 'ExtendedType' it tries to find parent module
+     * in which the type was originally declared (needed for correct leafref path resolution). <br>
+     * If the Schema Node is not present in Schema Context the
+     * operation will return <code>null</code>. <br>
+     * If Schema Context or Schema Node contains <code>null</code> references
+     * the method will throw IllegalArgumentException
+     *
+     * @throws IllegalArgumentException
+     *
+     * @param schemaContext
+     *            Schema Context
+     * @param schemaNode
+     *            Schema Node
+     * @return Yang Module for specified Schema Context and Schema Node, if
+     *         Schema Node is NOT present, the method will returns
+     *         <code>null</code>
+     */
+    public static Module findParentModuleByType(final SchemaContext schemaContext, final SchemaNode schemaNode) {
+        Preconditions.checkArgument(schemaContext != null, "Schema Context reference cannot be NULL!");
+        Preconditions.checkArgument(schemaNode != null, "Schema Node cannot be NULL!");
+        TypeDefinition<?> nodeType = null;
+
+        if (schemaNode instanceof LeafSchemaNode) {
+            nodeType = ((LeafSchemaNode) schemaNode).getType();
+        } else if (schemaNode instanceof LeafListSchemaNode) {
+            nodeType = ((LeafListSchemaNode) schemaNode).getType();
+        }
+
+        if (nodeType != null && nodeType instanceof ExtendedType) {
+            while (nodeType.getBaseType() instanceof ExtendedType) {
+                nodeType = nodeType.getBaseType();
+            }
+
+            QNameModule typeDefModuleQname = nodeType.getQName().getModule();
+
+            return schemaContext.findModuleByNamespaceAndRevision(typeDefModuleQname.getNamespace(),
+                    typeDefModuleQname.getRevision());
+        }
+
+        return SchemaContextUtil.findParentModule(schemaContext, schemaNode);
     }
 
     /**
