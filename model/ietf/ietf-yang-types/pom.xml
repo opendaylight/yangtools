@@ -24,6 +24,25 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.3.1</version>
+                <executions>
+                    <execution>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>exec</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <executable>accelerate/replace.sh</executable>
+                    <arguments>
+                        <argument>target/generated-sources/sal/org/opendaylight/yang/gen/v1/urn/ietf/params/xml/ns/yang/ietf/yang/types/rev100924/</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
             </plugin>
             <plugin>
