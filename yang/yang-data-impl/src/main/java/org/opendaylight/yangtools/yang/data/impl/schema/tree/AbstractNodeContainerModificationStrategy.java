@@ -129,11 +129,11 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
             final Version version) {
         // For Node Containers - merge is same as subtree change - we only replace children.
-        return applySubtreeChange(modification, currentMeta, version);
+        return applyTouch(modification, currentMeta, version);
     }
 
     @Override
-    public TreeNode applySubtreeChange(final ModifiedNode modification,
+    public TreeNode applyTouch(final ModifiedNode modification,
             final TreeNode currentMeta, final Version version) {
         final MutableTreeNode newMeta = currentMeta.mutable();
         newMeta.setSubtreeVersion(version);

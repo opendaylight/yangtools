@@ -44,7 +44,7 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
     }
 
     @Override
-    protected TreeNode applySubtreeChange(final ModifiedNode modification,
+    protected TreeNode applyTouch(final ModifiedNode modification,
             final TreeNode currentMeta, final Version version) {
         throw new UnsupportedOperationException("UnkeyedList does not support subtree change.");
     }
