@@ -118,7 +118,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
             checkDeleteApplicable(modification, current);
             break;
         case TOUCH:
-            checkSubtreeModificationApplicable(path, modification, current);
+            checkTouchApplicable(path, modification, current);
             break;
         case WRITE:
             checkWriteApplicable(path, modification, current);
@@ -252,7 +252,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
      * @throws ConflictingModificationAppliedException If subtree was changed in conflicting way
      * @throws IncorrectDataStructureException If subtree modification is not applicable (e.g. leaf node).
      */
-    protected abstract void checkSubtreeModificationApplicable(YangInstanceIdentifier path, final NodeModification modification,
+    protected abstract void checkTouchApplicable(YangInstanceIdentifier path, final NodeModification modification,
             final Optional<TreeNode> current) throws DataValidationFailedException;
 
     protected abstract void verifyWrittenStructure(NormalizedNode<?, ?> writtenValue);
