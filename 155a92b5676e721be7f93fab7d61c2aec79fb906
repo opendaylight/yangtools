@@ -1,0 +1,140 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_fd2b282e",
+        "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-25T23:45:07Z",
+      "side": 1,
+      "message": "forces instantiation of a Pattern, a Splitter.on(\u0027:\u0027), as a constant would be better.",
+      "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3dd99057",
+        "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-25T23:45:07Z",
+      "side": 1,
+      "message": "security risk: directly storing an array (see below)",
+      "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9d20e44a",
+        "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-25T23:45:07Z",
+      "side": 1,
+      "message": "String.format() is major overhead, as it needs to be parsed. a lookup table would be better.",
+      "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7d1718ee",
+        "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-25T23:45:07Z",
+      "side": 1,
+      "message": "security risk, introduces a TOCTOU race as users can perform System.arrayCopy() to mutate the data. We really need to decide what class to use for enforcing read-only view of a byte[].",
+      "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9de78412",
+        "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-25T23:45:07Z",
+      "side": 1,
+      "message": "it seems _binary_form is known to be non-null",
+      "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bd1da011",
+        "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-25T23:45:07Z",
+      "side": 1,
+      "message": "duplicated code with getValue()",
+      "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_7dee38ee",
+        "filename": "model/ietf/ietf-yang-types/accelerate/replace.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-25T23:45:07Z",
+      "side": 1,
+      "message": "how will this work on windows?",
+      "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1dbb74e6",
+        "filename": "model/ietf/ietf-yang-types/accelerate/replace.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-25T23:45:07Z",
+      "side": 1,
+      "message": "out copyright headers usually inline EPL and a reference to it.",
+      "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
