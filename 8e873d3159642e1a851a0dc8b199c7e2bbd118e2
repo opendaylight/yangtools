@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_ec129c61",
+        "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2015-03-25T14:02:37Z",
+      "side": 1,
+      "message": "The license header should be the first thing in the file - above the package statement.",
+      "revId": "8e873d3159642e1a851a0dc8b199c7e2bbd118e2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_27273fb8",
+        "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2015-03-25T14:02:37Z",
+      "side": 1,
+      "message": "Should try to avoid trailing spaces. I guess yangtools doesn\u0027t enforce this via checkstyle although controller does. Eclipse can do this automatically via Preferences-\u003eJava-\u003eEditor-\u003eSave Actions.",
+      "revId": "8e873d3159642e1a851a0dc8b199c7e2bbd118e2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_e709572d",
+        "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2015-03-25T14:02:37Z",
+      "side": 1,
+      "message": "Should be immutable so please declare as final.",
+      "revId": "8e873d3159642e1a851a0dc8b199c7e2bbd118e2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_a7134f5b",
+        "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2015-03-25T14:02:37Z",
+      "side": 1,
+      "message": "Preconditions only supports %s",
+      "revId": "8e873d3159642e1a851a0dc8b199c7e2bbd118e2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
