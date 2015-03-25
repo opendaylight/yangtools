@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.objcache.guava;
 
+import com.google.common.base.FinalizableReferenceQueue;
 import org.opendaylight.yangtools.objcache.ObjectCache;
 import org.opendaylight.yangtools.objcache.spi.IObjectCacheFactory;
-
-import com.google.common.base.FinalizableReferenceQueue;
 
 public final class GuavaObjectCacheFactory implements AutoCloseable, IObjectCacheFactory {
     private static final GuavaObjectCacheFactory INSTANCE = new GuavaObjectCacheFactory();
@@ -29,9 +28,14 @@ public final class GuavaObjectCacheFactory implements AutoCloseable, IObjectCach
 
     @Override
     public void close() {
-    	queue.close();
+        queue.close();
     }
 
+    /**
+     * Return a factory instance.
+     *
+     * @return A factory instance.
+     */
     public static GuavaObjectCacheFactory getInstance() {
         return INSTANCE;
     }

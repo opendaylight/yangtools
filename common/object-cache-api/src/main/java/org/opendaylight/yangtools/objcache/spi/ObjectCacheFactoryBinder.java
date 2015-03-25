@@ -11,10 +11,10 @@ package org.opendaylight.yangtools.objcache.spi;
  * Interface binding an implementation into ObjectCacheFactory.
  */
 public interface ObjectCacheFactoryBinder {
-	/**
-	 * Get the implementation-specific cache factory.
-	 * 
-	 * @return Implementation-specific factory.
-	 */
-	IObjectCacheFactory getProductCacheFactory();
+    /**
+     * Get the implementation-specific cache factory.
+     *
+     * @return Implementation-specific factory.
+     */
+    IObjectCacheFactory getProductCacheFactory();
 }

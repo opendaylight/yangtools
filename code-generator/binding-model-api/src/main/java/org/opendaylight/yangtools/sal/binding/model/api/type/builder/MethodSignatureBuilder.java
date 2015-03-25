@@ -1,10 +1,9 @@
-/**
-
+/*
+ * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
  *
- * March 2013
- *
- * Copyright (c) 2013 by Cisco Systems, Inc.
- * All rights reserved.
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 package org.opendaylight.yangtools.sal.binding.model.api.type.builder;
 
@@ -22,8 +21,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.Type;
  * The methods as {@link #addAnnotation(String, String)} and
  * {@link #setComment(String)} can be used as optional because not all methods
  * MUST contain annotation or comment definitions.
- * 
- * 
+ *
+ *
  * @see MethodSignature
  */
 public interface MethodSignatureBuilder extends TypeMemberBuilder<MethodSignatureBuilder> {
@@ -33,7 +32,7 @@ public interface MethodSignatureBuilder extends TypeMemberBuilder<MethodSignatur
      * the flag <code>isAbstract == true</code> The instantiated Method
      * Signature MUST have return value for {@link MethodSignature#isAbstract()}
      * also equals to <code>true</code>.
-     * 
+     *
      * @param isAbstract
      *            is abstract flag
      */
@@ -42,11 +41,11 @@ public interface MethodSignatureBuilder extends TypeMemberBuilder<MethodSignatur
     /**
      * Adds Parameter into the List of method parameters. Neither the Name or
      * Type of parameter can be <code>null</code>.
-     * 
+     *
      * <br>
      * In case that any of parameters are defined as <code>null</code> the
      * method SHOULD throw an {@link IllegalArgumentException}
-     * 
+     *
      * @param type
      *            Parameter Type
      * @param name
@@ -61,7 +60,7 @@ public interface MethodSignatureBuilder extends TypeMemberBuilder<MethodSignatur
      * <code>class</code> or <code>interface</code> definition. In case that
      * defining Type will be passed as <code>null</code> reference the method
      * SHOULD thrown {@link IllegalArgumentException}.
-     * 
+     *
      * @param definingType
      *            Defining Type of Method Signature
      * @return <code>new</code> <i>immutable</i> instance of Method Signature.

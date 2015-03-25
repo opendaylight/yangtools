@@ -8,12 +8,11 @@
 
 package org.opendaylight.yangtools.util.concurrent;
 
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * A ThreadPoolExecutor with a specified bounded queue capacity that favors creating new threads
@@ -41,7 +40,7 @@ public class FastThreadPoolExecutor extends ThreadPoolExecutor {
      * @param threadPrefix
      *            the name prefix for threads created by this executor.
      */
-    public FastThreadPoolExecutor( int maximumPoolSize, int maximumQueueSize, String threadPrefix ) {
+    public FastThreadPoolExecutor( final int maximumPoolSize, final int maximumQueueSize, final String threadPrefix ) {
         this( maximumPoolSize, maximumQueueSize, DEFAULT_IDLE_TIMEOUT_IN_SEC, TimeUnit.SECONDS,
               threadPrefix );
     }
@@ -60,8 +59,8 @@ public class FastThreadPoolExecutor extends ThreadPoolExecutor {
      * @param threadPrefix
      *            the name prefix for threads created by this executor.
      */
-    public FastThreadPoolExecutor( int maximumPoolSize, int maximumQueueSize, long keepAliveTime,
-            TimeUnit unit, String threadPrefix ) {
+    public FastThreadPoolExecutor( final int maximumPoolSize, final int maximumQueueSize, final long keepAliveTime,
+            final TimeUnit unit, final String threadPrefix ) {
         // We use all core threads (the first 2 parameters below equal) so, when a task is submitted,
         // if the thread limit hasn't been reached, a new thread will be spawned to execute
         // the task even if there is an existing idle thread in the pool. This is faster than
@@ -77,7 +76,7 @@ public class FastThreadPoolExecutor extends ThreadPoolExecutor {
         setThreadFactory( new ThreadFactoryBuilder().setDaemon( true )
                                                  .setNameFormat( threadPrefix + "-%d" ).build() );
 
-        if( keepAliveTime > 0 ) {
+        if (keepAliveTime > 0) {
             // Need to specifically configure core threads to timeout.
             allowCoreThreadTimeOut( true );
         }
@@ -89,7 +88,7 @@ public class FastThreadPoolExecutor extends ThreadPoolExecutor {
         return ((TrackingLinkedBlockingQueue<?>)getQueue()).getLargestQueueSize();
     }
 
-    protected ToStringHelper addToStringAttributes( ToStringHelper toStringHelper ) {
+    protected ToStringHelper addToStringAttributes( final ToStringHelper toStringHelper ) {
         return toStringHelper;
     }
 

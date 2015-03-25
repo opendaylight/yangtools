@@ -9,13 +9,13 @@ package org.opendaylight.yangtools.concepts;
 
 /**
  * Mutable object - object may change it's state during lifecycle.
- * 
+ *
  * This interface is mutually exclusive with {@link Immutable}  and other
  * {@link MutationBehaviour}s.
- * 
+ *
  * @author Tony Tkacik
  *
  */
-public interface Mutable extends MutationBehaviour<Mutable>{
-    
+public interface Mutable extends MutationBehaviour<Mutable> {
+
 }

@@ -58,10 +58,11 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
      * @param collection Target collection
      * @return An unmodifiable view of the collection
      */
-    public static <T> Collection<T> create(final @Nonnull Collection<T> collection) {
-        if (collection instanceof UnmodifiableCollection || collection instanceof ImmutableCollection ||
-                Collections.EMPTY_LIST == collection || Collections.EMPTY_SET == collection ||
-                UNMODIFIABLE_COLLECTION_CLASS.isInstance(collection) || SINGLETON_CLASSES.contains(collection.getClass())) {
+    public static <T> Collection<T> create(@Nonnull final Collection<T> collection) {
+        if (collection instanceof UnmodifiableCollection || collection instanceof ImmutableCollection
+                || Collections.EMPTY_LIST == collection || Collections.EMPTY_SET == collection
+                || UNMODIFIABLE_COLLECTION_CLASS.isInstance(collection)
+                || SINGLETON_CLASSES.contains(collection.getClass())) {
             return collection;
         }
 

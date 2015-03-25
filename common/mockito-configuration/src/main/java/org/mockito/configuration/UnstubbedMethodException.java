@@ -7,16 +7,13 @@
  */
 package org.mockito.configuration;
 
-
 /**
  * Exception to be thrown on unstubbed method call.
  */
 public class UnstubbedMethodException extends RuntimeException {
+    private static final long serialVersionUID = 1L;
 
-	private static final long serialVersionUID = 1L;
-
-	public UnstubbedMethodException(String message) {
-		super(message);
-	}
-
+    public UnstubbedMethodException(final String message) {
+        super(message);
+    }
 }

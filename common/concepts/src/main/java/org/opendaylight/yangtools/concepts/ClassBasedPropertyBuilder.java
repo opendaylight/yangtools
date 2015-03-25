@@ -7,21 +7,20 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-public interface ClassBasedPropertyBuilder<P,T extends ClassBasedPropertyBuilder<P,T>> extends Builder<P> {
-
+public interface ClassBasedPropertyBuilder<P, T extends ClassBasedPropertyBuilder<P, T>> extends Builder<P> {
     /**
      * Sets a value of property uniquely identified by its
      * class.
-     * 
+     *
      * @param type Type of property to set
-     * @param value Value of property 
+     * @param value Value of property
      * @return Builder instance
      */
     <V> T set(Class<V> type, V value);
-    
+
     /**
      * Gets a value of property based on its type.
-     * 
+     *
      * @param type Type of property to get
      * @return Builder instance
      */

@@ -8,19 +8,17 @@
 
 package org.opendaylight.yangtools.util.concurrent;
 
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Nullable;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.AbstractListeningExecutorService;
 import com.google.common.util.concurrent.ListenableFuture;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+import javax.annotation.Nullable;
 
 /**
  * An {@link com.google.common.util.concurrent.ListeningExecutorService} implementation that also allows for an {@link Executor} to be
@@ -56,8 +54,8 @@ public class AsyncNotifyingListeningExecutorService extends AbstractListeningExe
      * @param listenableFutureExecutor the executor used to run listener callbacks asynchronously.
      *     If null, no executor is used.
      */
-    public AsyncNotifyingListeningExecutorService( ExecutorService delegate,
-            @Nullable Executor listenableFutureExecutor ) {
+    public AsyncNotifyingListeningExecutorService( final ExecutorService delegate,
+            @Nullable final Executor listenableFutureExecutor ) {
         this.delegate = Preconditions.checkNotNull( delegate );
         this.listenableFutureExecutor = listenableFutureExecutor;
     }
@@ -67,7 +65,7 @@ public class AsyncNotifyingListeningExecutorService extends AbstractListeningExe
      *
      * @param task the Callable to execute
      */
-    private <T> AsyncNotifyingListenableFutureTask<T> newFutureTask( Callable<T> task ) {
+    private <T> AsyncNotifyingListenableFutureTask<T> newFutureTask( final Callable<T> task ) {
         return AsyncNotifyingListenableFutureTask.create( task, listenableFutureExecutor );
     }
 
@@ -76,7 +74,7 @@ public class AsyncNotifyingListeningExecutorService extends AbstractListeningExe
      *
      * @param task the Runnable to execute
      */
-    private <T> AsyncNotifyingListenableFutureTask<T> newFutureTask( Runnable task, T result ) {
+    private <T> AsyncNotifyingListenableFutureTask<T> newFutureTask( final Runnable task, final T result ) {
         return AsyncNotifyingListenableFutureTask.create( task, result, listenableFutureExecutor );
     }
 
@@ -88,7 +86,7 @@ public class AsyncNotifyingListeningExecutorService extends AbstractListeningExe
     }
 
     @Override
-    public boolean awaitTermination( long timeout, TimeUnit unit ) throws InterruptedException {
+    public boolean awaitTermination( final long timeout, final TimeUnit unit ) throws InterruptedException {
         return delegate.awaitTermination( timeout, unit );
     }
 
@@ -113,37 +111,37 @@ public class AsyncNotifyingListeningExecutorService extends AbstractListeningExe
     }
 
     @Override
-    public void execute( Runnable command ) {
+    public void execute( final Runnable command ) {
         delegate.execute( command );
     }
 
     @Override
-    public <T> ListenableFuture<T> submit( Callable<T> task ) {
+    public <T> ListenableFuture<T> submit( final Callable<T> task ) {
         AsyncNotifyingListenableFutureTask<T> futureTask = newFutureTask( task );
         delegate.execute( futureTask );
         return futureTask;
     }
 
     @Override
-    public ListenableFuture<?> submit( Runnable task ) {
+    public ListenableFuture<?> submit( final Runnable task ) {
         AsyncNotifyingListenableFutureTask<Void> futureTask = newFutureTask( task, null );
         delegate.execute( futureTask );
         return futureTask;
     }
 
     @Override
-    public <T> ListenableFuture<T> submit( Runnable task, T result ) {
+    public <T> ListenableFuture<T> submit( final Runnable task, final T result ) {
         AsyncNotifyingListenableFutureTask<T> futureTask = newFutureTask( task, result );
         delegate.execute( futureTask );
         return futureTask;
     }
 
-    protected ToStringHelper addToStringAttributes( ToStringHelper toStringHelper ) {
+    protected ToStringHelper addToStringAttributes( final ToStringHelper toStringHelper ) {
         return toStringHelper;
     }
 
     @Override
-    public final String toString(){
+    public final String toString() {
         return addToStringAttributes( MoreObjects.toStringHelper( this )
                 .add( "delegate", delegate ) ).toString();
     }

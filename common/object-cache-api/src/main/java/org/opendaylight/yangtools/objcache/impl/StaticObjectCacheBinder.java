@@ -14,11 +14,11 @@ import org.opendaylight.yangtools.objcache.spi.AbstractObjectCacheBinder;
  * it at compile-time, but it is not packaged and thus not present at run-time.
  */
 public final class StaticObjectCacheBinder extends AbstractObjectCacheBinder {
-	private StaticObjectCacheBinder() {
-		super(null);
-	}
+    private StaticObjectCacheBinder() {
+        super(null);
+    }
 
-	public static StaticObjectCacheBinder getInstance() {
-		throw new IllegalStateException("This class should have been replaced");
-	}
+    public static StaticObjectCacheBinder getInstance() {
+        throw new IllegalStateException("This class should have been replaced");
+    }
 }

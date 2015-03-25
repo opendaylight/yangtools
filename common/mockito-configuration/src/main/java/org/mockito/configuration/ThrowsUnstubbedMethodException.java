@@ -8,7 +8,6 @@
 package org.mockito.configuration;
 
 import java.io.Serializable;
-
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -16,14 +15,10 @@ import org.mockito.stubbing.Answer;
  * Answer that throws {@link UnstubbedMethodException}.
  */
 public class ThrowsUnstubbedMethodException implements Answer<Object>, Serializable {
-	private static final long serialVersionUID = 1L;
-
-    public ThrowsUnstubbedMethodException() {
-    }
+    private static final long serialVersionUID = 1L;
 
     @Override
-	public Object answer(InvocationOnMock invocation) throws Throwable {
-        Throwable t = new UnstubbedMethodException(invocation.toString() + " was not stubbed");
-        throw t;
+    public Object answer(final InvocationOnMock invocation) throws UnstubbedMethodException {
+        throw new UnstubbedMethodException(invocation.toString() + " was not stubbed");
     }
 }

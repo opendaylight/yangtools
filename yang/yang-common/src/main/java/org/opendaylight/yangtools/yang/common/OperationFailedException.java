@@ -49,10 +49,9 @@ public class OperationFailedException extends Exception {
                                     final RpcError... errors) {
         super(Preconditions.checkNotNull(message), cause);
 
-        if( errors != null && errors.length > 0 ) {
+        if (errors != null && errors.length > 0) {
             errorList = ImmutableList.<RpcError>copyOf( Arrays.asList( errors ) );
-        }
-        else {
+        } else {
             // Add a default RpcError.
             errorList = ImmutableList.of(RpcResultBuilder.newError(ErrorType.APPLICATION, null,
                     getMessage(), null, null, getCause()));

@@ -11,13 +11,13 @@ import org.opendaylight.yangtools.objcache.guava.GuavaObjectCacheFactory;
 import org.opendaylight.yangtools.objcache.spi.AbstractObjectCacheBinder;
 
 public final class StaticObjectCacheBinder extends AbstractObjectCacheBinder {
-	private static final StaticObjectCacheBinder INSTANCE = new StaticObjectCacheBinder();
+    private static final StaticObjectCacheBinder INSTANCE = new StaticObjectCacheBinder();
 
-	private StaticObjectCacheBinder() {
-		super(GuavaObjectCacheFactory.getInstance());
-	}
+    private StaticObjectCacheBinder() {
+        super(GuavaObjectCacheFactory.getInstance());
+    }
 
-	public static StaticObjectCacheBinder getInstance() {
-		return INSTANCE;
-	}
+    public static StaticObjectCacheBinder getInstance() {
+        return INSTANCE;
+    }
 }

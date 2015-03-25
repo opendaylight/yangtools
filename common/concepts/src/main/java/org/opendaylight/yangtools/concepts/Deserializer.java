@@ -7,7 +7,18 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-public interface Deserializer<P,I> {
-
+/**
+ * The concept of a serializer, which produces an object from some input.
+ *
+ * @param <P> Product type
+ * @param <I> Input type
+ */
+public interface Deserializer<P, I> {
+    /**
+     * Produce an object base on input.
+     *
+     * @param input Input object
+     * @return Product derived from input
+     */
     P deserialize(I input);
 }

@@ -8,9 +8,8 @@
 package org.opendaylight.yangtools.objcache.spi;
 
 import javax.annotation.Nonnull;
-
 import org.opendaylight.yangtools.objcache.ObjectCache;
 
 public interface IObjectCacheFactory {
-	ObjectCache getObjectCache(@Nonnull Class<?> objClass);
+    ObjectCache getObjectCache(@Nonnull Class<?> objClass);
 }

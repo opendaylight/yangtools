@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 
 final class InstanceIdentifierBuilderImpl<T extends DataObject> implements InstanceIdentifier.InstanceIdentifierBuilder<T> {
     private final ImmutableList.Builder<PathArgument> pathBuilder = ImmutableList.builder();
@@ -54,7 +53,7 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
     }
 
     @SuppressWarnings("unchecked")
-    <N extends DataObject & Identifiable<K> , K extends Identifier<N>> InstanceIdentifierBuilderImpl<N> addNode(final Class<N> listItem, final K listKey) {
+    <N extends DataObject & Identifiable<K>, K extends Identifier<N>> InstanceIdentifierBuilderImpl<N> addNode(final Class<N> listItem, final K listKey) {
         arg = new IdentifiableItem<N, K>(listItem, listKey);
         hashBuilder.addArgument(arg);
         pathBuilder.add(arg);
@@ -103,6 +102,7 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
     /*
      * @deprecated Use #build() instead.
      */
+    @Override
     @Deprecated
     public InstanceIdentifier<T> toInstance() {
         return build();

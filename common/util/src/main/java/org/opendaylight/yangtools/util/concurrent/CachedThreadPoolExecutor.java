@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.util.concurrent;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.base.Preconditions;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -14,10 +18,6 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import com.google.common.base.MoreObjects;
-import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Preconditions;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 /**
  * A ThreadPoolExecutor with a specified bounded queue capacity that favors reusing previously
@@ -50,7 +50,7 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
      * @param threadPrefix
      *            the name prefix for threads created by this executor.
      */
-    public CachedThreadPoolExecutor( int maximumPoolSize, int maximumQueueSize, String threadPrefix ) {
+    public CachedThreadPoolExecutor( final int maximumPoolSize, final int maximumQueueSize, final String threadPrefix ) {
         // We're using a custom SynchronousQueue that has a backing bounded LinkedBlockingQueue.
         // We don't specify any core threads (first parameter) so, when a task is submitted,
         // the base class will always try to offer to the queue. If there is an existing waiting
@@ -77,18 +77,18 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
     }
 
     @Override
-    public void setRejectedExecutionHandler( RejectedExecutionHandler handler ) {
+    public void setRejectedExecutionHandler( final RejectedExecutionHandler handler ) {
         Preconditions.checkNotNull( handler );
         rejectedTaskHandler.setDelegateRejectedExecutionHandler( handler );
     }
 
     @Override
-    public RejectedExecutionHandler getRejectedExecutionHandler(){
+    public RejectedExecutionHandler getRejectedExecutionHandler() {
         return rejectedTaskHandler.getDelegateRejectedExecutionHandler();
     }
 
     @Override
-    public BlockingQueue<Runnable> getQueue(){
+    public BlockingQueue<Runnable> getQueue() {
         return executorQueue.getBackingQueue();
     }
 
@@ -96,7 +96,7 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
         return ((TrackingLinkedBlockingQueue<?>)executorQueue.getBackingQueue()).getLargestQueueSize();
     }
 
-    protected ToStringHelper addToStringAttributes( ToStringHelper toStringHelper ) {
+    protected ToStringHelper addToStringAttributes( final ToStringHelper toStringHelper ) {
         return toStringHelper;
     }
 
@@ -130,7 +130,7 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
 
         private final LinkedBlockingQueue<Runnable> backingQueue;
 
-        ExecutorQueue( int maxBackingQueueSize ) {
+        ExecutorQueue( final int maxBackingQueueSize ) {
             backingQueue = new TrackingLinkedBlockingQueue<>( maxBackingQueueSize );
         }
 
@@ -139,7 +139,7 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
         }
 
         @Override
-        public Runnable poll( long timeout, TimeUnit unit ) throws InterruptedException {
+        public Runnable poll( final long timeout, final TimeUnit unit ) throws InterruptedException {
             long totalWaitTime = unit.toMillis( timeout );
             long waitTime = Math.min( totalWaitTime, POLL_WAIT_TIME_IN_MS );
             Runnable task = null;
@@ -156,10 +156,10 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
             //   periods, one thread will eventually wake up and get the task from the backingQueue
             //   and execute it, although slightly delayed.
 
-            while( task == null ) {
+            while (task == null) {
                 // First try to get a task from the backing queue.
                 task = backingQueue.poll();
-                if( task == null ) {
+                if (task == null) {
                     // No task in backing - call the base class to wait for one to be offered.
                     task = super.poll( waitTime, TimeUnit.MILLISECONDS );
 
@@ -193,14 +193,14 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
         private final LinkedBlockingQueue<Runnable> backingQueue;
         private volatile RejectedExecutionHandler delegateRejectedExecutionHandler;
 
-        RejectedTaskHandler( LinkedBlockingQueue<Runnable> backingQueue,
-                             RejectedExecutionHandler delegateRejectedExecutionHandler ) {
+        RejectedTaskHandler( final LinkedBlockingQueue<Runnable> backingQueue,
+                             final RejectedExecutionHandler delegateRejectedExecutionHandler ) {
             this.backingQueue = backingQueue;
             this.delegateRejectedExecutionHandler = delegateRejectedExecutionHandler;
         }
 
         void setDelegateRejectedExecutionHandler(
-                RejectedExecutionHandler delegateRejectedExecutionHandler ) {
+                final RejectedExecutionHandler delegateRejectedExecutionHandler ) {
             this.delegateRejectedExecutionHandler = delegateRejectedExecutionHandler;
         }
 
@@ -209,12 +209,12 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
         }
 
         @Override
-        public void rejectedExecution( Runnable task, ThreadPoolExecutor executor ) {
-            if( executor.isShutdown() ) {
+        public void rejectedExecution( final Runnable task, final ThreadPoolExecutor executor ) {
+            if (executor.isShutdown()) {
                 throw new RejectedExecutionException( "Executor has been shutdown." );
             }
 
-            if( !backingQueue.offer( task ) ) {
+            if (!backingQueue.offer(task)) {
                 delegateRejectedExecutionHandler.rejectedExecution( task, executor );
             }
         }

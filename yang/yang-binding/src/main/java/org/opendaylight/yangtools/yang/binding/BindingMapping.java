@@ -8,16 +8,13 @@
 package org.opendaylight.yangtools.yang.binding;
 
 import static com.google.common.base.Preconditions.checkArgument;
-
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
-
 import java.text.SimpleDateFormat;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
@@ -156,7 +153,7 @@ public final class BindingMapping {
 
     public static String getPropertyName(final String yangIdentifier) {
         final String potential = toFirstLower(toCamelCase(yangIdentifier));
-        if("class".equals(potential)) {
+        if ("class".equals(potential)) {
             return "xmlClass";
         }
         return potential;

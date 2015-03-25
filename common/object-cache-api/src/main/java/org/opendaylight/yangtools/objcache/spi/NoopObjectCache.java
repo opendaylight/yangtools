@@ -15,29 +15,29 @@ import org.opendaylight.yangtools.objcache.ObjectCache;
  * does not do any caching, so it only returns the request object.
  */
 public final class NoopObjectCache implements ObjectCache {
-	private static final NoopObjectCache INSTANCE = new NoopObjectCache();
+    private static final NoopObjectCache INSTANCE = new NoopObjectCache();
 
-	private NoopObjectCache() {
+    private NoopObjectCache() {
 
-	}
+    }
 
-	/**
-	 * Get the cache instance. Since the cache does not have any state,
-	 * this method always returns a singleton instance.
-	 *
-	 * @return Cache instance.
-	 */
-	public static NoopObjectCache getInstance() {
-		return INSTANCE;
-	}
+    /**
+     * Get the cache instance. Since the cache does not have any state,
+     * this method always returns a singleton instance.
+     *
+     * @return Cache instance.
+     */
+    public static NoopObjectCache getInstance() {
+        return INSTANCE;
+    }
 
-	@Override
-	public <T> T getReference(final T object) {
-		return object;
-	}
+    @Override
+    public <T> T getReference(final T object) {
+        return object;
+    }
 
-	@Override
-	public <B extends ProductAwareBuilder<P>, P> P getProduct(final B builder) {
-		return builder.build();
-	}
+    @Override
+    public <B extends ProductAwareBuilder<P>, P> P getProduct(final B builder) {
+        return builder.build();
+    }
 }

@@ -39,8 +39,7 @@ public final class CompositeObjectRegistration<T> extends AbstractObjectRegistra
         return new CompositeObjectRegistrationBuilder<>(instance);
     }
 
-    public static final class CompositeObjectRegistrationBuilder<T> implements //
-    Builder<CompositeObjectRegistration<T>> {
+    public static final class CompositeObjectRegistrationBuilder<T> implements Builder<CompositeObjectRegistration<T>> {
 
         private final T instance;
         private final Set<Registration> registrations;

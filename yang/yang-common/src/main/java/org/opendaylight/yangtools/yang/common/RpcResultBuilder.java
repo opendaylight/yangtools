@@ -11,11 +11,9 @@ package org.opendaylight.yangtools.yang.common;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
-
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.RpcError.ErrorSeverity;
 import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
@@ -59,7 +57,7 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
         }
 
         @Override
-        public String toString(){
+        public String toString() {
             return "RpcResult [successful=" + successful + ", result="
                     + result + ", errors=" + errors + "]";
         }
@@ -109,7 +107,7 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
         }
 
         @Override
-        public String getMessage(){
+        public String getMessage() {
             return message;
         }
 
@@ -124,7 +122,7 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
         }
 
         @Override
-        public String toString(){
+        public String toString() {
             return "RpcError [message=" + message + ", severity="
                     + severity + ", errorType=" + errorType + ", tag=" + tag
                     + ", applicationTag=" + applicationTag + ", info=" + info
@@ -154,7 +152,7 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
      * @param result the result value
      */
     public static <T> RpcResultBuilder<T> success( final T result ) {
-         return new RpcResultBuilder<T>( true, result );
+        return new RpcResultBuilder<T>( true, result );
     }
 
     /**
@@ -291,7 +289,7 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
 
     private void addError( final RpcError error ) {
 
-        if( errors == null ) {
+        if (errors == null) {
             errors = new ImmutableList.Builder<RpcError>();
         }
 
@@ -400,8 +398,8 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
      * @param errors the list of RpcErrors
      */
     public RpcResultBuilder<T> withRpcErrors( final Collection<RpcError> errors ) {
-        if( errors != null ) {
-            for( RpcError error: errors ) {
+        if (errors != null) {
+            for (RpcError error : errors) {
                 addError( error );
             }
         }

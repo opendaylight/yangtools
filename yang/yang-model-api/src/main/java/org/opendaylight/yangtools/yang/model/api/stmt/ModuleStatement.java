@@ -11,9 +11,7 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface ModuleStatement extends DeclaredStatement<String>, ModuleHeaderGroup, LinkageGroup, MetaGroup,
-        RevisionGroup, BodyGroup
-
-    {
+        RevisionGroup, BodyGroup {
 
     @Nonnull String getName();
 

@@ -42,7 +42,7 @@ public final class NotificationListenerInvoker {
             .build(new CacheLoader<Class<? extends NotificationListener>, NotificationListenerInvoker>() {
 
                 @Override
-                public NotificationListenerInvoker load(Class<? extends NotificationListener> key) throws Exception {
+                public NotificationListenerInvoker load(final Class<? extends NotificationListener> key) throws Exception {
                     return createInvoker(key);
                 }
 
@@ -50,7 +50,7 @@ public final class NotificationListenerInvoker {
 
     private final Map<QName, MethodHandle> methodInvokers;
 
-    public NotificationListenerInvoker(Map<QName, MethodHandle> map) {
+    public NotificationListenerInvoker(final Map<QName, MethodHandle> map) {
         this.methodInvokers = map;
     }
 
@@ -64,7 +64,7 @@ public final class NotificationListenerInvoker {
      *         supplied RPC type.
      *
      */
-    public static NotificationListenerInvoker from(Class<? extends NotificationListener> type) {
+    public static NotificationListenerInvoker from(final Class<? extends NotificationListener> type) {
         Preconditions.checkArgument(type.isInterface());
         Preconditions.checkArgument(BindingReflections.isBindingClass(type));
         return INVOKERS.getUnchecked(type);
@@ -82,8 +82,8 @@ public final class NotificationListenerInvoker {
      *            Input data for RPC.
      *
      */
-    public void invokeNotification(@Nonnull NotificationListener impl, @Nonnull QName rpcName,
-            @Nullable DataContainer input) {
+    public void invokeNotification(@Nonnull final NotificationListener impl, @Nonnull final QName rpcName,
+            @Nullable final DataContainer input) {
         Preconditions.checkNotNull(impl, "implemetation must be supplied");
         MethodHandle invoker = methodInvokers.get(rpcName);
         Preconditions.checkArgument(invoker != null, "Supplied notification is not valid for implementation %s", impl);
@@ -94,12 +94,12 @@ public final class NotificationListenerInvoker {
         }
     }
 
-    private static NotificationListenerInvoker createInvoker(Class<? extends NotificationListener> key) {
+    private static NotificationListenerInvoker createInvoker(final Class<? extends NotificationListener> key) {
         return new NotificationListenerInvoker(createInvokerMap(key));
     }
 
-    private static Map<QName, MethodHandle> createInvokerMap(Class<? extends NotificationListener> key) {
-        Builder<QName, MethodHandle> ret = ImmutableMap.<QName, MethodHandle> builder();
+    private static Map<QName, MethodHandle> createInvokerMap(final Class<? extends NotificationListener> key) {
+        Builder<QName, MethodHandle> ret = ImmutableMap.<QName, MethodHandle>builder();
         for (Method method : key.getMethods()) {
             if (BindingReflections.isNotificationCallback(method)) {
 

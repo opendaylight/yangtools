@@ -84,8 +84,8 @@ public abstract class AbstractObjectCache implements ObjectCache {
     protected abstract static class SoftKey<T> extends FinalizableSoftReference<T> {
         private final int hashCode;
 
-        public SoftKey(final T referent, final FinalizableReferenceQueue q) {
-            super(Preconditions.checkNotNull(referent), q);
+        public SoftKey(final T referent, final FinalizableReferenceQueue queue) {
+            super(Preconditions.checkNotNull(referent), queue);
             hashCode = referent.hashCode();
         }
 

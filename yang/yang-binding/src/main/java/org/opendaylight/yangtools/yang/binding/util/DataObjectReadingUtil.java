@@ -1,8 +1,14 @@
+/*
+ * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.opendaylight.yangtools.yang.binding.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -41,8 +47,8 @@ public class DataObjectReadingUtil {
      *            Path, which is nested to parent, and should be readed.
      * @return Value of object.
      */
-    public static final <T extends DataObject, P extends DataObject> Map<InstanceIdentifier<T>, T> readData(P parent,
-            InstanceIdentifier<P> parentPath, InstanceIdentifier<T> childPath) {
+    public static final <T extends DataObject, P extends DataObject> Map<InstanceIdentifier<T>, T> readData(final P parent,
+            final InstanceIdentifier<P> parentPath, final InstanceIdentifier<T> childPath) {
         checkArgument(parent != null, "Parent must not be null.");
         checkArgument(parentPath != null, "Parent path must not be null");
         checkArgument(childPath != null, "Child path must not be null");
@@ -70,12 +76,12 @@ public class DataObjectReadingUtil {
     }
 
     @SuppressWarnings("rawtypes")
-    private static Map<InstanceIdentifier, DataContainer> readData(Entry<InstanceIdentifier, DataContainer> entry,
-            PathArgument pathArgument) {
+    private static Map<InstanceIdentifier, DataContainer> readData(final Entry<InstanceIdentifier, DataContainer> entry,
+            final PathArgument pathArgument) {
         return readData(entry.getValue(), entry.getKey(), pathArgument);
     }
 
-    public static final <T extends DataObject> Optional<T> readData(DataObject source, Class<T> child) {
+    public static final <T extends DataObject> Optional<T> readData(final DataObject source, final Class<T> child) {
         checkArgument(source != null, "Object should not be null.");
         checkArgument(child != null, "Child type should not be null");
         Class<? extends DataContainer> parentClass = source.getImplementedInterface();
@@ -86,24 +92,24 @@ public class DataObjectReadingUtil {
     }
 
     @SuppressWarnings("rawtypes")
-    private static final Map<InstanceIdentifier, DataContainer> readData(DataContainer parent,
-            InstanceIdentifier parentPath, PathArgument child) {
+    private static final Map<InstanceIdentifier, DataContainer> readData(final DataContainer parent,
+            final InstanceIdentifier parentPath, final PathArgument child) {
         checkArgument(parent != null, "Object should not be null.");
         checkArgument(child != null, "Child argument should not be null");
         Class<? extends DataContainer> parentClass = parent.getImplementedInterface();
         return resolveReadStrategy(parentClass, child.getType()).readUsingPathArgument(parent, child, parentPath);
     }
 
-    private static DataObjectReadingStrategy resolveReadStrategy(Class<? extends DataContainer> parentClass,
-            Class<? extends DataContainer> type) {
+    private static DataObjectReadingStrategy resolveReadStrategy(final Class<? extends DataContainer> parentClass,
+            final Class<? extends DataContainer> type) {
 
         DataObjectReadingStrategy strategy = createReadStrategy(parentClass, type);
         // FIXME: Add caching of strategies
         return strategy;
     }
 
-    private static DataObjectReadingStrategy createReadStrategy(Class<? extends DataContainer> parent,
-            Class<? extends DataContainer> child) {
+    private static DataObjectReadingStrategy createReadStrategy(final Class<? extends DataContainer> parent,
+            final Class<? extends DataContainer> child) {
 
         if (Augmentable.class.isAssignableFrom(parent) && Augmentation.class.isAssignableFrom(child)) {
             return REAUSABLE_AUGMENTATION_READING_STRATEGY;
@@ -122,7 +128,7 @@ public class DataObjectReadingUtil {
         return new ContainerReadingStrategy(parent, child);
     }
 
-    private static Method resolveGetterMethod(Class<? extends DataContainer> parent, Class<?> child) {
+    private static Method resolveGetterMethod(final Class<? extends DataContainer> parent, final Class<?> child) {
         String methodName = "get" + child.getSimpleName();
         try {
             return parent.getMethod(methodName);
@@ -141,7 +147,7 @@ public class DataObjectReadingUtil {
         private final Method getterMethod;
 
         @SuppressWarnings("unchecked")
-        public DataObjectReadingStrategy(Class parentType, Class childType) {
+        public DataObjectReadingStrategy(final Class parentType, final Class childType) {
             super();
             checkArgument(DataContainer.class.isAssignableFrom(parentType));
             checkArgument(DataContainer.class.isAssignableFrom(childType));
@@ -151,7 +157,7 @@ public class DataObjectReadingUtil {
         }
 
         @SuppressWarnings("unchecked")
-        public DataObjectReadingStrategy(Class parentType, Class childType, Method getter) {
+        public DataObjectReadingStrategy(final Class parentType, final Class childType, final Method getter) {
             this.parentType = parentType;
             this.childType = childType;
             this.getterMethod = getter;
@@ -180,14 +186,14 @@ public class DataObjectReadingUtil {
     @SuppressWarnings("rawtypes")
     private static class ContainerReadingStrategy extends DataObjectReadingStrategy {
 
-        public ContainerReadingStrategy(Class<? extends DataContainer> parent, Class<? extends DataContainer> child) {
+        public ContainerReadingStrategy(final Class<? extends DataContainer> parent, final Class<? extends DataContainer> child) {
             super(parent, child);
             checkArgument(child.isAssignableFrom(getGetterMethod().getReturnType()));
         }
 
         @Override
-        public Map<InstanceIdentifier, DataContainer> readUsingPathArgument(DataContainer parent,
-                PathArgument childArgument, InstanceIdentifier parentPath) {
+        public Map<InstanceIdentifier, DataContainer> readUsingPathArgument(final DataContainer parent,
+                final PathArgument childArgument, final InstanceIdentifier parentPath) {
             final DataContainer result = read(parent, childArgument.getType());
             if (result != null) {
                 @SuppressWarnings("unchecked")
@@ -198,7 +204,7 @@ public class DataObjectReadingUtil {
         }
 
         @Override
-        public DataContainer read(DataContainer parent, Class<?> childType) {
+        public DataContainer read(final DataContainer parent, final Class<?> childType) {
             try {
                 Object potentialData = getGetterMethod().invoke(parent);
                 checkState(potentialData instanceof DataContainer);
@@ -213,21 +219,21 @@ public class DataObjectReadingUtil {
     @SuppressWarnings("rawtypes")
     private static class ListItemReadingStrategy extends DataObjectReadingStrategy {
 
-        public ListItemReadingStrategy(Class<? extends DataContainer> parent, Class child) {
+        public ListItemReadingStrategy(final Class<? extends DataContainer> parent, final Class child) {
             super(parent, child);
             checkArgument(Iterable.class.isAssignableFrom(getGetterMethod().getReturnType()));
         }
 
         @Override
-        public DataContainer read(DataContainer parent, Class<?> childType) {
+        public DataContainer read(final DataContainer parent, final Class<?> childType) {
             // This will always fail since we do not have key.
             return null;
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public Map<InstanceIdentifier, DataContainer> readUsingPathArgument(DataContainer parent,
-                PathArgument childArgument, InstanceIdentifier builder) {
+        public Map<InstanceIdentifier, DataContainer> readUsingPathArgument(final DataContainer parent,
+                final PathArgument childArgument, final InstanceIdentifier builder) {
             try {
                 Object potentialList = getGetterMethod().invoke(parent);
                 if (potentialList instanceof Iterable) {
@@ -249,8 +255,8 @@ public class DataObjectReadingUtil {
             return Collections.emptyMap();
         }
 
-        private Map<InstanceIdentifier, DataContainer> readAll(Iterable<Identifiable> dataList,
-                InstanceIdentifier parentPath) {
+        private Map<InstanceIdentifier, DataContainer> readAll(final Iterable<Identifiable> dataList,
+                final InstanceIdentifier parentPath) {
             Builder<InstanceIdentifier, DataContainer> result = ImmutableMap
                     .<InstanceIdentifier, DataContainer> builder();
             for (Identifiable item : dataList) {
@@ -262,8 +268,8 @@ public class DataObjectReadingUtil {
         }
 
         @SuppressWarnings("unchecked")
-        private Map<InstanceIdentifier, DataContainer> readUsingIdentifiableItem(Iterable<Identifiable> dataList,
-                IdentifiableItem childArgument, InstanceIdentifier parentPath) {
+        private Map<InstanceIdentifier, DataContainer> readUsingIdentifiableItem(final Iterable<Identifiable> dataList,
+                final IdentifiableItem childArgument, final InstanceIdentifier parentPath) {
             final Identifier<?> key = childArgument.getKey();
             for (Identifiable item : dataList) {
                 if (key.equals(item.getKey()) && item instanceof DataContainer) {
@@ -289,8 +295,8 @@ public class DataObjectReadingUtil {
 
         @SuppressWarnings("rawtypes")
         @Override
-        public Map<InstanceIdentifier, DataContainer> readUsingPathArgument(DataContainer parent,
-                PathArgument childArgument, InstanceIdentifier builder) {
+        public Map<InstanceIdentifier, DataContainer> readUsingPathArgument(final DataContainer parent,
+                final PathArgument childArgument, final InstanceIdentifier builder) {
             checkArgument(childArgument instanceof Item<?>, "Path Argument must be Item without keys");
             DataContainer aug = read(parent, childArgument.getType());
             if (aug != null) {
@@ -303,7 +309,7 @@ public class DataObjectReadingUtil {
         }
 
         @Override
-        public DataContainer read(DataContainer parent, Class<?> childType) {
+        public DataContainer read(final DataContainer parent, final Class<?> childType) {
             checkArgument(Augmentation.class.isAssignableFrom(childType), "Parent must be Augmentable.");
             checkArgument(parent instanceof Augmentable<?>, "Parent must be Augmentable.");
 
@@ -324,7 +330,7 @@ public class DataObjectReadingUtil {
      * @throws IllegalArgumentException
      *             if parent argument is bigger than child
      */
-    private static <P, C> List<C> subList(Iterable<P> parent, Iterable<C> child) {
+    private static <P, C> List<C> subList(final Iterable<P> parent, final Iterable<C> child) {
         Iterator<P> iParent = parent.iterator();
         List<C> result = new ArrayList<>();
         for (C arg : child) {

@@ -22,8 +22,8 @@ public class ListenerNotificationQueueStats {
     private final String listenerClassName;
     private final int currentQueueSize;
 
-    @ConstructorProperties({"listenerClassName","currentQueueSize"})
-    public ListenerNotificationQueueStats( String listenerClassName, int currentQueueSize ) {
+    @ConstructorProperties({ "listenerClassName","currentQueueSize" })
+    public ListenerNotificationQueueStats( final String listenerClassName, final int currentQueueSize ) {
         this.listenerClassName = listenerClassName;
         this.currentQueueSize = currentQueueSize;
     }
@@ -31,14 +31,14 @@ public class ListenerNotificationQueueStats {
     /**
      * Returns the name of the listener class.
      */
-    public String getListenerClassName(){
+    public String getListenerClassName() {
         return listenerClassName;
     }
 
     /**
      * Returns the current notification queue size.
      */
-    public int getCurrentQueueSize(){
+    public int getCurrentQueueSize() {
         return currentQueueSize;
     }
 }
