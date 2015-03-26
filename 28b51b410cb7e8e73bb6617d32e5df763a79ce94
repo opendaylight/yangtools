@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_3b9f5752",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONNormalizedNodeStreamWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2015-03-26T17:52:52Z",
+      "side": 1,
+      "message": "http://json.org specifies more patterns to be escaped. You miss \\f, \\b, and \\u four-hex-digits (not sure if slash really needs to be escaped).\nIs there a java library for handling such things?",
+      "range": {
+        "startLine": 53,
+        "startChar": 87,
+        "endLine": 53,
+        "endChar": 88
+      },
+      "revId": "28b51b410cb7e8e73bb6617d32e5df763a79ce94",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
