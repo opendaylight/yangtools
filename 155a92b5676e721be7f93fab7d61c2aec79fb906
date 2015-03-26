@@ -108,6 +108,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_d5588458",
+        "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2015-03-26T13:50:58Z",
+      "side": 1,
+      "message": "Can you point to documentation re: \"A clone when not needed can be optimized away by JIT\"? In any event, you state JIT CAN optimize but no guarantee.\n\nIn theory you\u0027re right about immutability and safety. In reality, I don\u0027t see why anyone would modify the contents of the byte[] after passing to the ctor. We can document that it takes ownership. In the end theory is fine but we also need to build practical and performant software. \n\nI ran into defensive copying of byte[] on ingress and egress with the profobuff code and, while safe, it\u0027s grossly inefficient - I had to work around it. I wish they provided APIs to forego the defensive copying when I know I won\u0027t be modifying it (and doesn\u0027t make sense to), i.e. let the user decide whether they need defensive safety or not.",
+      "parentUuid": "5a93c517_55e9d47e",
+      "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_9d20e44a",
         "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
         "patchSetId": 3
