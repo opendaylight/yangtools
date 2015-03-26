@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_5dfc9c3e",
+        "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 2774
+      },
+      "writtenOn": "2015-03-26T09:26:14Z",
+      "side": 1,
+      "message": "Ack. Next version will use a splitter.",
+      "parentUuid": "5a93c517_fd2b282e",
+      "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_3dd99057",
         "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
         "patchSetId": 3
@@ -54,6 +72,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_bdffe033",
+        "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 2774
+      },
+      "writtenOn": "2015-03-26T09:26:14Z",
+      "side": 1,
+      "message": "Based on auditing the code so far all of the usage is inline - byte arrays instantiated from reading a ByteBuf as byte[] and consumed straight away. There is no other users. I agree with Tom - for the use pattern presently in place it\u0027s worth it.",
+      "parentUuid": "5a93c517_bda04091",
+      "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_9d20e44a",
         "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
         "patchSetId": 3
@@ -65,6 +101,24 @@
       "writtenOn": "2015-03-25T23:45:07Z",
       "side": 1,
       "message": "String.format() is major overhead, as it needs to be parsed. a lookup table would be better.",
+      "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f5182077",
+        "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 2774
+      },
+      "writtenOn": "2015-03-26T09:26:14Z",
+      "side": 1,
+      "message": "I had a look at possible alternatives. When you read the source of Interger.toHexString() and add-up the overhead of pushing all the results through a string builder the difference is not that big. It will also make the code unreadable which is not what we would want at this stage. I suggest we park this particular one for later.",
+      "parentUuid": "5a93c517_9d20e44a",
       "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -88,6 +142,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_1d9614f1",
+        "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 2774
+      },
+      "writtenOn": "2015-03-26T09:26:14Z",
+      "side": 1,
+      "message": "Long term - I agree with you as we can and should integrate bitops, etc into that. I looked at BigInteger, it is horrid and there is nothing else out there at present.\nShort term - all of this is used inline (as in the examples posted on the bug) so there is no race in the current code which uses it.",
+      "parentUuid": "5a93c517_7d1718ee",
+      "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_9de78412",
         "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
         "patchSetId": 3
@@ -99,6 +171,24 @@
       "writtenOn": "2015-03-25T23:45:07Z",
       "side": 1,
       "message": "it seems _binary_form is known to be non-null",
+      "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_3d9bd019",
+        "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 2774
+      },
+      "writtenOn": "2015-03-26T09:26:14Z",
+      "side": 1,
+      "message": "Cut-n-paste from yang generated code. Will fix in next revision.",
+      "parentUuid": "5a93c517_9de78412",
       "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -122,6 +212,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_dd9f4c02",
+        "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 185,
+      "author": {
+        "id": 2774
+      },
+      "writtenOn": "2015-03-26T09:26:14Z",
+      "side": 1,
+      "message": "Ack. Will fix in next revision.",
+      "parentUuid": "5a93c517_bd1da011",
+      "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_7dee38ee",
         "filename": "model/ietf/ietf-yang-types/accelerate/replace.sh",
         "patchSetId": 3
@@ -139,6 +247,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_fda48858",
+        "filename": "model/ietf/ietf-yang-types/accelerate/replace.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2774
+      },
+      "writtenOn": "2015-03-26T09:26:14Z",
+      "side": 1,
+      "message": "Do we support building on windows? Building, not running. I can rewrite it as python (it is already used somewhere, I think in of).",
+      "parentUuid": "5a93c517_7dee38ee",
+      "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_1dbb74e6",
         "filename": "model/ietf/ietf-yang-types/accelerate/replace.sh",
         "patchSetId": 3
@@ -150,6 +276,24 @@
       "writtenOn": "2015-03-25T23:45:07Z",
       "side": 1,
       "message": "out copyright headers usually inline EPL and a reference to it.",
+      "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9d89c4cc",
+        "filename": "model/ietf/ietf-yang-types/accelerate/replace.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 2774
+      },
+      "writtenOn": "2015-03-26T09:26:14Z",
+      "side": 1,
+      "message": "Ack. Will fix in next revision.",
+      "parentUuid": "5a93c517_1dbb74e6",
       "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
