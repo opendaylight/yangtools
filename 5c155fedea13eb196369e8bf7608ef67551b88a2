@@ -16,6 +16,24 @@
       "revId": "5c155fedea13eb196369e8bf7608ef67551b88a2",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1526ecce",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaContextUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 655,
+      "author": {
+        "id": 2470
+      },
+      "writtenOn": "2015-03-26T13:49:30Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_75d5f0b7",
+      "revId": "5c155fedea13eb196369e8bf7608ef67551b88a2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
