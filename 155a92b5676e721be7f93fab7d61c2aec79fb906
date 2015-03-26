@@ -90,6 +90,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_55e9d47e",
+        "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-26T13:23:16Z",
+      "side": 1,
+      "message": "A clone when not needed can be optimized away by JIT. We cannot make assumptions about current usage of in-tree users. The general contract of these classes is that they are immutable. If we allow for an avenue for the data to be modified outside of the normal lifecycle, we will have to make a defensive copy when crossing BI/BA barrier -- which is far from the actual user, so runtime will probably be not able to eliminate that copy.",
+      "parentUuid": "5a93c517_bdffe033",
+      "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_9d20e44a",
         "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
         "patchSetId": 3
@@ -155,6 +173,24 @@
       "side": 1,
       "message": "That is exactly what I was going to do in the next rev :)",
       "parentUuid": "5a93c517_15b02c42",
+      "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_95967cef",
+        "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-26T13:23:16Z",
+      "side": 1,
+      "message": "how about doing it *really* efficiently?\n\nprivate static final char[] TABLE \u003d \"01234567890abcdef\".toCharArray();\n\nsb.append(TABLE[_binary_form[i] \u003e\u003e\u003e 4]);\nsb.append(TABLE[_binary_form[i] \u0026 0xf]);",
+      "parentUuid": "5a93c517_75809046",
       "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -295,6 +331,24 @@
       "side": 1,
       "message": "Do we support building on windows? Building, not running. I can rewrite it as python (it is already used somewhere, I think in of).",
       "parentUuid": "5a93c517_7dee38ee",
+      "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d5e5e4a8",
+        "filename": "model/ietf/ietf-yang-types/accelerate/replace.sh",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-03-26T13:23:16Z",
+      "side": 1,
+      "message": "yes we do, and we do not currently require anything but maven. I think we need to find a better solution to this entire problem :-/",
+      "parentUuid": "5a93c517_fda48858",
       "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
