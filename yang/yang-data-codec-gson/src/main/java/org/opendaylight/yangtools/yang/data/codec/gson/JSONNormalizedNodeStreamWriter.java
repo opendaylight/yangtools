@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import java.io.IOException;
 import java.io.Writer;
 import java.net.URI;
+import java.util.regex.Pattern;
 
 /**
  * This implementation will create JSON output as output stream.
@@ -44,7 +45,12 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
     /**
      * Matcher used to check if a string needs to be escaped.
      */
-    private static final CharMatcher JSON_ILLEGAL_STRING_CHARACTERS = CharMatcher.anyOf("\\\"\n\r");
+
+    private static final Pattern NEWLINE_CHAR_PATTERN = Pattern.compile("\n");
+    private static final Pattern CR_CHAR_PATTERN = Pattern.compile("\r");
+    private static final Pattern TAB_CHAR_PATTERN = Pattern.compile("\t");
+    private static final Pattern QUOTE_CHAR_PATTERN = Pattern.compile("\"");
+    private static final Pattern REVERSE_SOLIDUS_CHAR_PATTERN = Pattern.compile("\\\\");
 
     private final SchemaTracker tracker;
     private final JSONCodecFactory codecs;
@@ -229,27 +235,22 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         if (needQuotes) {
             writer.append('"');
 
-            final int needEscape = JSON_ILLEGAL_STRING_CHARACTERS.countIn(str);
-            if (needEscape != 0) {
-                final char[] escaped = new char[str.length() + needEscape];
-                int offset = 0;
-
-                for (int i = 0; i < str.length(); i++) {
-                    final char c = str.charAt(i);
-                    if (JSON_ILLEGAL_STRING_CHARACTERS.matches(c)) {
-                        escaped[offset++] = '\\';
-                    }
-                    escaped[offset++] = c;
-                }
-                writer.write(escaped);
-            } else {
-                writer.append(str);
-            }
+            final String escaped = replaceAllIllegalChars(str);
+            writer.append(escaped);
 
             writer.append('"');
         } else {
             writer.append(str);
         }
+    }
+
+    static String replaceAllIllegalChars(String string){
+        String result = REVERSE_SOLIDUS_CHAR_PATTERN.matcher(string).replaceAll("\\\\\\\\");
+        result = NEWLINE_CHAR_PATTERN.matcher(result).replaceAll("\\\\n");
+        result = CR_CHAR_PATTERN.matcher(result).replaceAll("\\\\r");
+        result = TAB_CHAR_PATTERN.matcher(result).replaceAll("\\\\t");
+        result = QUOTE_CHAR_PATTERN.matcher(result).replaceAll("\\\\\"");
+        return result;
     }
 
     @Override
