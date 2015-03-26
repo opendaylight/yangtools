@@ -125,6 +125,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_15b02c42",
+        "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2015-03-26T10:33:32Z",
+      "side": 1,
+      "message": "You could use a single format call:\n\n String.format(\"%02x:%02x:%02x:%02x:%02x:%02x\", _binary_form[0], _binary_form[1]), ....);\n\nIt\u0027s brute force but probably more efficient than multiple calls plus you wouldn\u0027t need the overhead of your own StringBuilder either.",
+      "parentUuid": "5a93c517_f5182077",
+      "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_7d1718ee",
         "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
         "patchSetId": 3
