@@ -36,6 +36,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_bda04091",
+        "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 118,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2015-03-26T00:06:14Z",
+      "side": 1,
+      "message": "For efficiency you don\u0027t want to clone it. I think whatever the security risk is worth bypassing for performance. Same as below. Just javadoc that it takes ownership.",
+      "parentUuid": "5a93c517_3dd99057",
+      "revId": "155a92b5676e721be7f93fab7d61c2aec79fb906",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_9d20e44a",
         "filename": "model/ietf/ietf-yang-types/accelerate/data/MacAddress.java",
         "patchSetId": 3
