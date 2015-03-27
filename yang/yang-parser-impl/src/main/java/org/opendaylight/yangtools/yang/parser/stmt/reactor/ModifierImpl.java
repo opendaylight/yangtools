@@ -337,9 +337,10 @@ class ModifierImpl implements ModelActionBuilder {
 
     private class PhaseModificationInNamespace<C extends Mutable<?,?,?>> extends AbstractPrerequisite<C> implements OnNamespaceItemAdded, ContextMutation {
 
-        private ModelProcessingPhase modPhase;
+        private final ModelProcessingPhase modPhase;
 
         public <K, N extends StatementNamespace<K, ?, ?>> PhaseModificationInNamespace(ModelProcessingPhase phase) throws SourceException {
+            Preconditions.checkArgument(phase != null, "Model processing phase must not be null");
             this.modPhase = phase;
         }
 

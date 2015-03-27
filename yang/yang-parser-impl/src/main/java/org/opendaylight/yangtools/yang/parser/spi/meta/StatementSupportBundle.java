@@ -16,6 +16,10 @@ public final class StatementSupportBundle implements Immutable,NamespaceBehaviou
     private final ImmutableMap<QName, StatementSupport<?,?,?>> definitions;
     private final ImmutableMap<Class<?>, NamespaceBehaviour<?, ?, ?>> namespaceDefinitions;
 
+    public ImmutableMap<QName, StatementSupport<?, ?, ?>> getDefinitions() {
+        return definitions;
+    }
+
     private StatementSupportBundle(StatementSupportBundle parent,
             ImmutableMap<QName, StatementSupport<?, ?, ?>> statements,
             ImmutableMap<Class<?>, NamespaceBehaviour<?, ?, ?>> namespaces) {
