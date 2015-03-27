@@ -126,6 +126,14 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     @Override
     public <DV extends DataObject> DataContainerCodecContext<DV, ?> streamChild(Class<DV> childClass)
             throws IllegalArgumentException {
+        /* FIXME: This is still not solved for RPCs
+         * TODO: Probably performance wise RPC, Data and Notification loading cache
+         *       should be merge for performance resons. Needs microbenchmark to
+         *       determine which is faster (keeping them separate or in same cache).
+         */
+        if (Notification.class.isAssignableFrom(childClass)) {
+            return (DataContainerCodecContext<DV, ?>) getNotification((Class<? extends Notification>)childClass);
+        }
         return (DataContainerCodecContext<DV, ?>) childrenByClass.getUnchecked(childClass);
     }
 
