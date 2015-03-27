@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_e4770c01",
+        "filename": "model/ietf/ietf-yang-types/accelerate/replace.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 48
+      },
+      "writtenOn": "2015-03-27T15:45:18Z",
+      "side": 1,
+      "message": "This is unlikely to be portable across Windows, Mac and Linux unless I\u0027m missing something.",
+      "revId": "d7411a6cf1f372f4b8ae4ab24fe433b8aed47e5d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_64845cd4",
+        "filename": "model/ietf/ietf-yang-types/accelerate/replace.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 48
+      },
+      "writtenOn": "2015-03-27T15:45:18Z",
+      "side": 1,
+      "message": "Ideally avoid trailing whitespace.",
+      "revId": "d7411a6cf1f372f4b8ae4ab24fe433b8aed47e5d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_848728d7",
+        "filename": "model/ietf/ietf-yang-types/accelerate/replace.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 48
+      },
+      "writtenOn": "2015-03-27T15:45:18Z",
+      "side": 1,
+      "message": "Ideally avoid trailing whitespace.",
+      "revId": "d7411a6cf1f372f4b8ae4ab24fe433b8aed47e5d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
