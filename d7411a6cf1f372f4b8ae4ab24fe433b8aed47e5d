@@ -73,6 +73,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_4f64d9e4",
+        "filename": "model/ietf/ietf-yang-types/accelerate/replace.sh",
+        "patchSetId": 4
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 2774
+      },
+      "writtenOn": "2015-03-27T17:05:43Z",
+      "side": 1,
+      "message": "Perl or python will allow to have a proper config file, checksums, decision to replace, etc. So I am all for switching to one of them instead of shell. I said from the very beginning - the replacement mechanics in the patch are ugly and at POC level, I will happily implement something better if I we agree on what and how.",
+      "parentUuid": "5a93c517_0f47b14c",
+      "revId": "d7411a6cf1f372f4b8ae4ab24fe433b8aed47e5d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_64845cd4",
         "filename": "model/ietf/ietf-yang-types/accelerate/replace.sh",
         "patchSetId": 4
