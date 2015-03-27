@@ -126,6 +126,9 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     @Override
     public <DV extends DataObject> DataContainerCodecContext<DV, ?> streamChild(Class<DV> childClass)
             throws IllegalArgumentException {
+        if (Notification.class.isAssignableFrom(childClass)) {
+            return (DataContainerCodecContext<DV, ?>) getNotification((Class<? extends Notification>)childClass);
+        }
         return (DataContainerCodecContext<DV, ?>) childrenByClass.getUnchecked(childClass);
     }
 
