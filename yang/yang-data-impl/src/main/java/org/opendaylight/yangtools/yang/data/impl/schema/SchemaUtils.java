@@ -35,10 +35,13 @@ public final class SchemaUtils {
     }
 
     public static final Optional<DataSchemaNode> findFirstSchema(final QName qname, final Iterable<DataSchemaNode> dataSchemaNode) {
+        Optional<DataSchemaNode> sNode = Optional.absent();
         if (dataSchemaNode != null && qname != null) {
             for (DataSchemaNode dsn : dataSchemaNode) {
                 if (qname.isEqualWithoutRevision(dsn.getQName())) {
-                    return Optional.<DataSchemaNode> of(dsn);
+                    if (!sNode.isPresent() || sNode.get().getQName().getRevision().compareTo(dsn.getQName().getRevision()) < 0) {
+                        sNode = Optional.of(dsn);
+                    }
                 } else if (dsn instanceof ChoiceSchemaNode) {
                     for (ChoiceCaseNode choiceCase : ((ChoiceSchemaNode) dsn).getCases()) {
                         Optional<DataSchemaNode> foundDsn = findFirstSchema(qname, choiceCase.getChildNodes());
@@ -49,7 +52,7 @@ public final class SchemaUtils {
                 }
             }
         }
-        return Optional.absent();
+        return sNode;
     }
 
     public static DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname) {
