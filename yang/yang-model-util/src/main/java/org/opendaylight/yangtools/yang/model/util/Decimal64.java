@@ -33,7 +33,7 @@ public final class Decimal64 implements DecimalTypeDefinition {
     private static final String UNITS = "";
     private static final BigDecimal DEFAULT_VALUE = null;
 
-    private final String description = "The decimal64 type represents a subset of the real numbers, which can "
+    private static final String DESCRIPTION = "The decimal64 type represents a subset of the real numbers, which can "
             + "be represented by decimal numerals. The value space of decimal64 is the set of numbers that can "
             + "be obtained by multiplying a 64-bit signed integer by a negative power of ten, i.e., expressible as "
             + "'i x 10^-n' where i is an integer64 and n is an integer between 1 and 18, inclusively.";
@@ -121,7 +121,7 @@ public final class Decimal64 implements DecimalTypeDefinition {
 
     @Override
     public String getDescription() {
-        return description;
+        return DESCRIPTION;
     }
 
     @Override
