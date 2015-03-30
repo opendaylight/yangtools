@@ -27,8 +27,9 @@ public class UnkeyedListNodeModification implements Modification<ListSchemaNode,
             Optional<UnkeyedListNode> modification, OperationStack operationStack) throws DataModificationException {
 
         // Merge or None operation on parent, leaving actual if modification not present
-        if (modification.isPresent() == false)
+        if (!modification.isPresent()) {
             return actual;
+        }
 
         List<UnkeyedListEntryNode> resultNodes = Lists.newArrayList();
         if (actual.isPresent())
@@ -75,8 +76,9 @@ public class UnkeyedListNodeModification implements Modification<ListSchemaNode,
     }
 
     private Optional<UnkeyedListNode> build(ListSchemaNode schema, List<UnkeyedListEntryNode> resultNodes) {
-        if (resultNodes.isEmpty())
+        if (resultNodes.isEmpty()) {
             return Optional.absent();
+        }
 
         CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> b = Builders.unkeyedListBuilder();
         b.withNodeIdentifier(new NodeIdentifier(schema.getQName()));
