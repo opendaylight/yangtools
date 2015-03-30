@@ -15,12 +15,8 @@ public interface DocumentationGroup {
 
     @Nullable ReferenceStatement getReference();
 
-
-
-    public interface WithStatus extends DocumentationGroup {
+    interface WithStatus extends DocumentationGroup {
 
         @Nullable StatusStatement getStatus();
-
     }
-
 }

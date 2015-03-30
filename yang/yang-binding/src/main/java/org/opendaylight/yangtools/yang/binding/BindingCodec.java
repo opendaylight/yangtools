@@ -9,17 +9,14 @@ package org.opendaylight.yangtools.yang.binding;
 
 import org.opendaylight.yangtools.concepts.Codec;
 
-public interface BindingCodec<P, I> extends //
-        BindingSerializer<P, I>, //
-        BindingDeserializer<I, P>, //
-        Codec<P, I> {
+public interface BindingCodec<P, I> extends BindingSerializer<P, I>, BindingDeserializer<I, P>, Codec<P, I> {
 
     @Override
-    public P serialize(I input);
+    P serialize(I input);
 
     @Override
-    public I deserialize(P input);
+    I deserialize(P input);
 
-    public I deserialize(P input, InstanceIdentifier<?> bindingIdentifier);
+    I deserialize(P input, InstanceIdentifier<?> bindingIdentifier);
 
 }

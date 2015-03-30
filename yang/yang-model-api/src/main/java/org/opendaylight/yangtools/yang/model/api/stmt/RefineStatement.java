@@ -16,7 +16,7 @@ public interface RefineStatement extends DeclaredStatement<SchemaNodeIdentifier>
 
     String getTargetNode();
 
-    public interface RefineContainerStatement extends RefineStatement {
+    interface RefineContainerStatement extends RefineStatement {
 
         Collection<? extends MustStatement> getMusts();
 
@@ -26,7 +26,7 @@ public interface RefineStatement extends DeclaredStatement<SchemaNodeIdentifier>
 
     }
 
-    public interface RefineLeafStatement extends RefineStatement {
+    interface RefineLeafStatement extends RefineStatement {
 
         Collection<? extends MustStatement> getMusts();
 
@@ -37,6 +37,5 @@ public interface RefineStatement extends DeclaredStatement<SchemaNodeIdentifier>
         @Nullable PresenceStatement getPresence();
 
     }
-
 }
 

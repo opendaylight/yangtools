@@ -82,7 +82,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
  */
 public interface ModelActionBuilder {
 
-    public interface Prerequisite<T> extends Supplier<T> {
+    interface Prerequisite<T> extends Supplier<T> {
 
         /**
          *
@@ -92,17 +92,16 @@ public interface ModelActionBuilder {
          *
          */
         @Override
-        public T get();
+        T get();
 
         boolean isDone();
-
     }
 
     /**
      * User-defined inference action.
      *
      */
-    public interface InferenceAction {
+    interface InferenceAction {
 
         /**
          * Invoked once all prerequisites were met and forward references

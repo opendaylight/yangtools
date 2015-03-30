@@ -189,7 +189,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      *            a string that contains a human-readable textual description of
      *            type definition.
      */
-    public void setDescription(String description);
+    void setDescription(String description);
 
     /**
      * Set the name of the module, in which generated type was specified.
@@ -197,7 +197,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * @param moduleName
      *            the name of the module
      */
-    public void setModuleName(String moduleName);
+    void setModuleName(String moduleName);
 
     /**
      * Set a list of QNames which represent schema path in schema tree from
@@ -206,7 +206,7 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * @param schemaPath
      *            a list of QNames which represent schema path in schema tree
      */
-    public void setSchemaPath(Iterable<QName> schemaPath);
+    void setSchemaPath(Iterable<QName> schemaPath);
 
     /**
      * Set a string that is used to specify a textual cross-reference to an
@@ -217,6 +217,6 @@ public interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
      * @param reference
      *            a textual cross-reference to an external document.
      */
-    public void setReference(String reference);
+    void setReference(String reference);
 
 }

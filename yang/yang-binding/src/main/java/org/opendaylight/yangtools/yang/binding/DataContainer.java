@@ -20,10 +20,8 @@ package org.opendaylight.yangtools.yang.binding;
  * <li>List
  * <li>Case
  * </ul>
- * 
- *
  */
 public interface DataContainer {
 
-    public Class<? extends DataContainer> getImplementedInterface();
+    Class<? extends DataContainer> getImplementedInterface();
 }

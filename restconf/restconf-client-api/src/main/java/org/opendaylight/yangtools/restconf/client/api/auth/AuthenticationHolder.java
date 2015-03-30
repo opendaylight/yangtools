@@ -5,8 +5,8 @@ package org.opendaylight.yangtools.restconf.client.api.auth;
  */
 public interface AuthenticationHolder {
 
-    public RestAuthType getAuthType();
-    public String getUserName();
-    public String getPassword();
-    public boolean authenticationRequired();
+    RestAuthType getAuthType();
+    String getUserName();
+    String getPassword();
+    boolean authenticationRequired();
 }

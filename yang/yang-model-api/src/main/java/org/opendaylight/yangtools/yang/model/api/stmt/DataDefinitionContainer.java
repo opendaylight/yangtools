@@ -15,7 +15,7 @@ public interface DataDefinitionContainer {
     Collection<? extends DataDefinitionStatement> getDataDefinitions();
 
 
-    public interface WithReusableDefinitions extends DataDefinitionContainer {
+    interface WithReusableDefinitions extends DataDefinitionContainer {
 
         Collection<? extends TypedefStatement> getTypedefs();
 
