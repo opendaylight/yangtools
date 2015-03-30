@@ -60,6 +60,10 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         this.supports = supports;
     }
 
+    public StatementSupportBundle getSupportsForPhase(ModelProcessingPhase currentPhase) {
+        return supports.get(currentPhase);
+    }
+
     public void addSource(@Nonnull StatementStreamSource source) {
         sources.add(new SourceSpecificContext(this,source));
     }

@@ -9,10 +9,12 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
@@ -27,8 +29,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinitionMap;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
@@ -51,6 +56,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     private ModelProcessingPhase inProgressPhase;
     private ModelProcessingPhase finishedPhase;
+    private QNameToStatementDefinitionMap qNameToStmtDefMap = new QNameToStatementDefinitionMap();
 
 
     SourceSpecificContext(BuildGlobalContext currentContext,StatementStreamSource source) {
@@ -80,7 +86,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                 if(root == null) {
                     root = new RootStatementContext(this, SourceSpecificContext.this);
                 } else {
-                    Preconditions.checkState(root.getIdentifier().equals(getIdentifier()), "Root statement was already defined.");
+                    Preconditions.checkState(root.getIdentifier().equals(getIdentifier()), "Root statement was already defined as %s.", root.getIdentifier());
                 }
                 root.resetLists();
                 return root;
@@ -200,9 +206,10 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             break;
         case StatementDefinition:
             source.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes());
+            break;
         case FullDeclaration:
             source.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes());
-
+            break;
         default:
             break;
         }
@@ -214,8 +221,11 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     private QNameToStatementDefinition stmtDef() {
-        // TODO Auto-generated method stub
-        return null;
+        ImmutableMap<QName, StatementSupport<?, ?, ?>> definitions = currentContext.getSupportsForPhase(
+                inProgressPhase).getDefinitions();
+        for (Map.Entry<QName, StatementSupport<?,?,?>> entry : definitions.entrySet()) {
+            qNameToStmtDefMap.put(entry.getKey(), entry.getValue());
+        }
+        return qNameToStmtDefMap;
     }
-
 }
