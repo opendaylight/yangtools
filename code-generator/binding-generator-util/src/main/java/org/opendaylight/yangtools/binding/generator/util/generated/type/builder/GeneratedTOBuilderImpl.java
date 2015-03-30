@@ -313,19 +313,19 @@ public final class GeneratedTOBuilderImpl extends AbstractGeneratedTypeBuilder<G
         public String serializeTypedef(final Type type) {
             if (type instanceof ParameterizedType) {
                 ParameterizedType parameterizedType = (ParameterizedType) type;
-                StringBuffer sb = new StringBuffer();
+                StringBuilder sb = new StringBuilder();
                 sb.append(parameterizedType.getRawType().getFullyQualifiedName());
-                sb.append("<");
+                sb.append('<');
                 boolean first = true;
                 for (Type parameter : parameterizedType.getActualTypeArguments()) {
                     if (first) {
                         first = false;
                     } else {
-                        sb.append(",");
+                        sb.append(',');
                     }
                     sb.append(serializeTypedef(parameter));
                 }
-                sb.append(">");
+                sb.append('>');
                 return sb.toString();
             } else {
                 return type.getFullyQualifiedName();
