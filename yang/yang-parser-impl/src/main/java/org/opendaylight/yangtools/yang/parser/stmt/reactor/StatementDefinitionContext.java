@@ -56,8 +56,10 @@ class StatementDefinitionContext<A,D extends DeclaredStatement<A>,E extends Effe
             break;
         case StatementDefinition:
             support.onStatementDefinitionDeclared(statement);
+            break;
         case FullDeclaration:
             support.onFullDefinitionDeclared(statement);
+            break;
         default:
             break;
         }
