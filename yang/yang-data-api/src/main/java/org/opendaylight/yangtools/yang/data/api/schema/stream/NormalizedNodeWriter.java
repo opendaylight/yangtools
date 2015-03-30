@@ -46,9 +46,9 @@ import org.slf4j.LoggerFactory;
  */
 @Beta
 public class NormalizedNodeWriter implements Closeable, Flushable {
-    private final NormalizedNodeStreamWriter writer;
+    protected final NormalizedNodeStreamWriter writer;
 
-    private NormalizedNodeWriter(final NormalizedNodeStreamWriter writer) {
+    protected NormalizedNodeWriter(final NormalizedNodeStreamWriter writer) {
         this.writer = Preconditions.checkNotNull(writer);
     }
 
@@ -96,7 +96,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
      * @return
      * @throws IOException when thrown from the backing writer.
      */
-    public final NormalizedNodeWriter write(final NormalizedNode<?, ?> node) throws IOException {
+    public NormalizedNodeWriter write(final NormalizedNode<?, ?> node) throws IOException {
         if (wasProcessedAsCompositeNode(node)) {
             return this;
         }
