@@ -285,9 +285,9 @@ public final class BindingGeneratorUtil {
         firstChar = uppercase ? Character.toUpperCase(firstChar) : Character.toLowerCase(firstChar);
 
         if (firstChar >= '0' && firstChar <= '9') {
-            return correctStr = '_' + correctStr;
+            return '_' + correctStr;
         } else {
-            return correctStr = firstChar + correctStr.substring(1);
+            return firstChar + correctStr.substring(1);
         }
     }
 
