@@ -255,13 +255,20 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
 
         @Override
         public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof ModuleId)) {
+                return false;
+            }
 
             ModuleId moduleId = (ModuleId) o;
-
-            if (name != null ? !name.equals(moduleId.name) : moduleId.name != null) return false;
-            if (rev != null ? !rev.equals(moduleId.rev) : moduleId.rev != null) return false;
+            if (name != null ? !name.equals(moduleId.name) : moduleId.name != null) {
+                return false;
+            }
+            if (rev != null ? !rev.equals(moduleId.rev) : moduleId.rev != null) {
+                return false;
+            }
 
             return true;
         }
