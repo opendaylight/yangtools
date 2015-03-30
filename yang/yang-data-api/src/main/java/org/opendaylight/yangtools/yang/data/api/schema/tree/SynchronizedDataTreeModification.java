@@ -24,7 +24,7 @@ public final class SynchronizedDataTreeModification implements DataTreeModificat
         this.delegate = Preconditions.checkNotNull(delegate);
     }
 
-    public DataTreeModification create(final DataTreeModification delegate) {
+    public static DataTreeModification create(final DataTreeModification delegate) {
         return new SynchronizedDataTreeModification(delegate);
     }
 
