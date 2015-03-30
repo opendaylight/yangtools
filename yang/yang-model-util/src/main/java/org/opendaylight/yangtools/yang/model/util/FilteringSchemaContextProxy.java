@@ -190,7 +190,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
         }
 
         return false;
-    };
+    }
 
     //check for any dependency regarding given string
     private boolean checkModuleDependency(Module module, Collection<ModuleId> rootModules) {

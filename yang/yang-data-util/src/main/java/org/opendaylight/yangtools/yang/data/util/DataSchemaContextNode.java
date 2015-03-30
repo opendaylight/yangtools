@@ -51,7 +51,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
     @Override
     public T getIdentifier() {
         return identifier;
-    };
+    }
 
     protected DataSchemaContextNode(final T identifier, final SchemaNode schema) {
         super();

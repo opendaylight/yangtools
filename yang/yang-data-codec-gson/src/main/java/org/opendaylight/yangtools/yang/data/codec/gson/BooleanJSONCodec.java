@@ -35,5 +35,5 @@ final class BooleanJSONCodec extends AbstractJSONCodec<Boolean> {
     @Override
     public void serializeToWriter(JsonWriter writer, Boolean value) throws IOException {
         writer.value(value);
-    };
+    }
 }

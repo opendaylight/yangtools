@@ -57,7 +57,7 @@ public final class TextToASTTransformer extends SchemaSourceTransformer<YangText
                 return Futures.immediateCheckedFuture(ASTSchemaSource.create(input.getIdentifier().getName(), ctx, text));
             }
         }
-    };
+    }
 
     public static final TextToASTTransformation TRANSFORMATION = new TextToASTTransformation();
     private static final Logger LOG = LoggerFactory.getLogger(TextToASTTransformer.class);

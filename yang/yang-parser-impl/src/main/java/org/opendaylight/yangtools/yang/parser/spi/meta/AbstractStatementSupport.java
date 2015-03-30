@@ -69,7 +69,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     @Override
     public void onStatementAdded(StmtContext.Mutable<A, D, E> stmt) {
         // NOOP for most implementations
-    };
+    }
 
     /**
      *

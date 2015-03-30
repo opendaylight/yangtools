@@ -21,12 +21,12 @@ public final class SimpleDateFormatUtil {
         @Override
         protected SimpleDateFormat initialValue() {
             return new SimpleDateFormat("yyyy-MM-dd");
-        };
+        }
 
         @Override
         public void set(SimpleDateFormat value) {
             throw new UnsupportedOperationException();
-        };
+        }
 
     };
 

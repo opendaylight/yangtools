@@ -273,7 +273,7 @@ public class BindingRuntimeContext implements Immutable {
     }
 
     public ImmutableMap<Type, Entry<Type, Type>> getChoiceCaseChildren(final DataNodeContainer schema) {
-        final Map<Type,Entry<Type,Type>> childToCase = new HashMap<>();;
+        final Map<Type,Entry<Type,Type>> childToCase = new HashMap<>();
         for (final ChoiceSchemaNode choice :  FluentIterable.from(schema.getChildNodes()).filter(ChoiceSchemaNode.class)) {
             final ChoiceSchemaNode originalChoice = getOriginalSchema(choice);
             final Type choiceType = referencedType(typeToDefiningSchema.inverse().get(originalChoice));

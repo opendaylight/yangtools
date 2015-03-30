@@ -243,7 +243,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         public Boolean deserialize(final String stringRepresentation) {
             return Boolean.valueOf(stringRepresentation);
         }
-    };
+    }
 
     public static class Uint8CodecStringImpl extends TypeDefinitionAwareCodec<Short, UnsignedIntegerTypeDefinition>
             implements Uint8Codec<String> {
@@ -265,7 +265,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
             }
             return Short.valueOf(stringRepresentation, base);
         }
-    };
+    }
 
     public static class Uint16CodecStringImpl extends TypeDefinitionAwareCodec<Integer, UnsignedIntegerTypeDefinition>
             implements Uint16Codec<String> {
@@ -286,7 +286,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         public String serialize(final Integer data) {
             return data == null ? "" : data.toString();
         }
-    };
+    }
 
     public static class Uint32CodecStringImpl extends TypeDefinitionAwareCodec<Long, UnsignedIntegerTypeDefinition>
             implements Uint32Codec<String> {
@@ -308,7 +308,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         public String serialize(final Long data) {
             return data == null ? "" : data.toString();
         }
-    };
+    }
 
     public static class Uint64CodecStringImpl extends
             TypeDefinitionAwareCodec<BigInteger, UnsignedIntegerTypeDefinition> implements Uint64Codec<String> {
@@ -330,7 +330,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         public String serialize(final BigInteger data) {
             return data == null ? "" : data.toString();
         }
-    };
+    }
 
     public static class StringCodecStringImpl extends TypeDefinitionAwareCodec<String, StringTypeDefinition> implements
             StringCodec<String> {
@@ -348,7 +348,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         public String serialize(final String data) {
             return data == null ? "" : data;
         }
-    };
+    }
 
     public static class Int16CodecStringImpl extends TypeDefinitionAwareCodec<Short, IntegerTypeDefinition> implements
             Int16Codec<String> {
@@ -370,7 +370,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         public String serialize(final Short data) {
             return data == null ? "" : data.toString();
         }
-    };
+    }
 
     public static class Int32CodecStringImpl extends TypeDefinitionAwareCodec<Integer, IntegerTypeDefinition> implements
             Int32Codec<String> {
@@ -392,7 +392,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         public String serialize(final Integer data) {
             return data == null ? "" : data.toString();
         }
-    };
+    }
 
     public static class Int64CodecStringImpl extends TypeDefinitionAwareCodec<Long, IntegerTypeDefinition> implements
             Int64Codec<String> {
@@ -414,7 +414,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         public String serialize(final Long data) {
             return data == null ? "" : data.toString();
         }
-    };
+    }
 
     public static class Int8CodecStringImpl extends TypeDefinitionAwareCodec<Byte, IntegerTypeDefinition> implements
             Int8Codec<String> {
@@ -436,7 +436,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         public String serialize(final Byte data) {
             return data == null ? "" : data.toString();
         }
-    };
+    }
 
     public static class EmptyCodecStringImpl extends TypeDefinitionAwareCodec<Void, EmptyTypeDefinition> implements
             EmptyCodec<String> {
@@ -456,7 +456,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
                                          "The value must be empty" );
             return null;
         }
-    };
+    }
 
     public static final class BinaryCodecStringImpl extends TypeDefinitionAwareCodec<byte[], BinaryTypeDefinition>
             implements BinaryCodec<String> {
@@ -474,7 +474,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         public byte[] deserialize(final String stringRepresentation) {
             return stringRepresentation == null ? null : DatatypeConverter.parseBase64Binary(stringRepresentation);
         }
-    };
+    }
 
     public static final class BitsCodecStringImpl extends TypeDefinitionAwareCodec<Set<String>, BitsTypeDefinition>
             implements BitsCodec<String> {
@@ -517,7 +517,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
             return ImmutableSet.copyOf(strings);
         }
-    };
+    }
 
     public static class EnumCodecStringImpl extends TypeDefinitionAwareCodec<String, EnumTypeDefinition> implements
             EnumCodec<String> {
@@ -548,7 +548,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         public String serialize(final String data) {
             return data == null ? "" : data;
         }
-    };
+    }
 
     public static class DecimalCodecStringImpl extends TypeDefinitionAwareCodec<BigDecimal, DecimalTypeDefinition>
             implements DecimalCodec<String> {
@@ -567,7 +567,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
             Preconditions.checkArgument( stringRepresentation != null , "Input cannot be null" );
             return new BigDecimal(stringRepresentation);
         }
-    };
+    }
 
     public static class UnionCodecStringImpl extends TypeDefinitionAwareCodec<Object, UnionTypeDefinition> implements
             UnionCodec<String> {
@@ -612,5 +612,5 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
             return stringRepresentation;
         }
-    };
+    }
 }

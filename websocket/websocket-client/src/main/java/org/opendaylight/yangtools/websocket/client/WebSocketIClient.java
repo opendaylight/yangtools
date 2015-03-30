@@ -36,7 +36,7 @@ import com.google.common.base.Preconditions;
  */
 public class WebSocketIClient {
     private final EventLoopGroup group = new NioEventLoopGroup();
-    private final Bootstrap bootstrap = new Bootstrap();;
+    private final Bootstrap bootstrap = new Bootstrap();
     private final WebSocketClientHandler clientHandler;
     private final URI uri;
     private Channel clientChannel;
