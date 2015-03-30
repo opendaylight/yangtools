@@ -118,16 +118,16 @@ public final class DomUtils {
 
     public static Object parseXmlValue(final Element xml, final XmlCodecProvider codecProvider, final DataSchemaNode schema, final TypeDefinition<?> type, final SchemaContext schemaCtx) {
         TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(type);
-        if (baseType instanceof LeafrefTypeDefinition) {
-            final LeafrefTypeDefinition leafrefTypeDefinition = (LeafrefTypeDefinition) baseType;
-            baseType = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypeDefinition, schemaCtx, schema);
-        }
 
         String text = xml.getTextContent();
         text = text.trim();
         final Object value;
 
-        if (baseType instanceof InstanceIdentifierType) {
+        if (baseType instanceof LeafrefTypeDefinition) {
+            final LeafrefTypeDefinition leafrefTypeDefinition = (LeafrefTypeDefinition) baseType;
+            baseType = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypeDefinition, schemaCtx, schema);
+            value = parseXmlValue(xml, codecProvider, baseType);
+        } else if (baseType instanceof InstanceIdentifierType) {
             value = InstanceIdentifierForXmlCodec.deserialize(xml, schemaCtx);
         } else if (baseType instanceof IdentityrefTypeDefinition) {
             value = InstanceIdentifierForXmlCodec.toIdentity(text, xml, schemaCtx);
