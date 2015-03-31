@@ -36,4 +36,18 @@ final class CaseNodeCodecContext<D extends DataObject> extends DataObjectCodecCo
     protected Object deserializeObject(NormalizedNode<?, ?> normalizedNode) {
         return deserialize(normalizedNode);
     }
+
+    @Override
+    public org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument serializePathArgument(
+            PathArgument arg) {
+        Preconditions.checkArgument(arg == null);
+        return null;
+    }
+
+    @Override
+    public PathArgument deserializePathArgument(
+            org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument arg) {
+        Preconditions.checkArgument(arg == null);
+        return null;
+    }
 }

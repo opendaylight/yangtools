@@ -309,4 +309,15 @@ abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeCon
         return byMethod.keySet();
     }
 
+    @Override
+    public InstanceIdentifier.PathArgument deserializePathArgument(YangInstanceIdentifier.PathArgument arg) {
+        Preconditions.checkArgument(getDomPathArgument().equals(arg));
+        return bindingArg();
+    }
+
+    @Override
+    public YangInstanceIdentifier.PathArgument serializePathArgument(InstanceIdentifier.PathArgument arg) {
+        Preconditions.checkArgument(bindingArg().equals(arg));
+        return getDomPathArgument();
+    }
 }

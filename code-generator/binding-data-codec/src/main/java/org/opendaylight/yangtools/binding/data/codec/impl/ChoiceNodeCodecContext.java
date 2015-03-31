@@ -19,6 +19,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -160,6 +161,19 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
     @Override
     protected Object deserializeObject(NormalizedNode<?, ?> normalizedNode) {
         return deserialize(normalizedNode);
+    }
+
+    @Override
+    public PathArgument deserializePathArgument(YangInstanceIdentifier.PathArgument arg) {
+        Preconditions.checkArgument(getDomPathArgument().equals(arg));
+        return null;
+    }
+
+    @Override
+    public YangInstanceIdentifier.PathArgument serializePathArgument(
+            PathArgument arg) {
+        // FIXME: check for null, since binding container is null.
+        return getDomPathArgument();
     }
 
 }

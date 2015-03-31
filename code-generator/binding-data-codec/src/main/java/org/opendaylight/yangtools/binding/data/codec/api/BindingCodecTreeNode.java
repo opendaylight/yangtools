@@ -118,4 +118,28 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
 
     @Beta
     void writeAsNormalizedNode(T data, NormalizedNodeStreamWriter writer);
+
+    /**
+     * Serializes path argument for current node.
+     *
+     * @param arg Binding Path Argument, may be null if Binding Instance Identifier does not have
+     *        representation for current node (e.g. choice or case).
+     * @return Yang Path Argument, may be null if Yang Instance Identifier does not have
+     *         representation for current node (e.g. case).
+     * @throws IllegalArgumentException If supplied {@code arg} is not valid.
+     */
+    @Beta
+    @Nullable YangInstanceIdentifier.PathArgument serializePathArgument(@Nullable InstanceIdentifier.PathArgument arg);
+
+    /**
+     * Deserializes path argument for current node.
+     *
+     * @param arg Yang Path Argument, may be null if Yang Instance Identifier does not have
+     *         representation for current node (e.g. case).
+     * @return Binding Path Argument, may be null if Binding Instance Identifier does not have
+     *        representation for current node (e.g. choice or case).
+     * @throws IllegalArgumentException If supplied {@code arg} is not valid.
+     */
+    @Beta
+    @Nullable InstanceIdentifier.PathArgument deserializePathArgument(@Nullable YangInstanceIdentifier.PathArgument arg);
 }
