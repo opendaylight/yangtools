@@ -98,7 +98,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
         PATHARGUMENTS_FIELD = f;
     }
 
-    private final ImmutableList<PathArgument> getLegacyPath() {
+    private ImmutableList<PathArgument> getLegacyPath() {
         // Temporary variable saves a volatile read
         ImmutableList<PathArgument> ret = legacyPath;
         if (ret == null) {
@@ -156,7 +156,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
         this.hash = hash;
     }
 
-    private static final YangInstanceIdentifier trustedCreate(final Iterable<PathArgument> path) {
+    private static YangInstanceIdentifier trustedCreate(final Iterable<PathArgument> path) {
         final HashCodeBuilder<PathArgument> hash = new HashCodeBuilder<>();
         for (PathArgument a : path) {
             hash.addArgument(a);
@@ -165,7 +165,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
         return new YangInstanceIdentifier(path, hash.build());
     }
 
-    public static final YangInstanceIdentifier create(final Iterable<? extends PathArgument> path) {
+    public static YangInstanceIdentifier create(final Iterable<? extends PathArgument> path) {
         if (Iterables.isEmpty(path)) {
             return EMPTY;
         }
@@ -173,7 +173,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
         return trustedCreate(ImmutableList.copyOf(path));
     }
 
-    public static final YangInstanceIdentifier create(final PathArgument... path) {
+    public static YangInstanceIdentifier create(final PathArgument... path) {
         // We are forcing a copy, since we cannot trust the user
         return create(Arrays.asList(path));
     }

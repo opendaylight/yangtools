@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-public class YinExportUtils {
+public final class YinExportUtils {
 
 
     private YinExportUtils() {

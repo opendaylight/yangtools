@@ -92,27 +92,27 @@ final class DataContainerCodecPrototype<T> implements NodeContextSupplier {
         return new DataContainerCodecPrototype<NotificationDefinition>(augClass,arg, schema, factory);
     }
 
-    protected final T getSchema() {
+    protected T getSchema() {
         return schema;
     }
 
-    protected final QNameModule getNamespace() {
+    protected QNameModule getNamespace() {
         return namespace;
     }
 
-    protected final CodecContextFactory getFactory() {
+    protected CodecContextFactory getFactory() {
         return factory;
     }
 
-    protected final Class<?> getBindingClass() {
+    protected Class<?> getBindingClass() {
         return bindingClass;
     }
 
-    protected final InstanceIdentifier.Item<?> getBindingArg() {
+    protected InstanceIdentifier.Item<?> getBindingArg() {
         return bindingArg;
     }
 
-    protected final YangInstanceIdentifier.PathArgument getYangArg() {
+    protected YangInstanceIdentifier.PathArgument getYangArg() {
         return yangArg;
     }
 

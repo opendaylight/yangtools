@@ -33,7 +33,7 @@ public interface NodeParserDispatcher<E> {
      * Abstract implementation that implements the dispatch conditions. Only requires parsers to be provided.
      * The same instance of parser can be provided in case it is immutable.
      */
-    public static abstract class BaseNodeParserDispatcher<E> implements NodeParserDispatcher<E> {
+    public abstract static class BaseNodeParserDispatcher<E> implements NodeParserDispatcher<E> {
         private final ToNormalizedNodeParserFactory<E> factory;
 
         protected BaseNodeParserDispatcher(final ToNormalizedNodeParserFactory<E> factory) {
