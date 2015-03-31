@@ -75,14 +75,14 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
         return Collections.singleton(identifier.getNodeType());
     }
 
-    public abstract @Nullable DataSchemaContextNode<?> getChild(final PathArgument child);
-
-    public abstract @Nullable DataSchemaContextNode<?> getChild(QName child);
+    @Nullable public abstract DataSchemaContextNode<?> getChild(final PathArgument child);
+              
+    @Nullable public abstract DataSchemaContextNode<?> getChild(QName child);
 
     public abstract boolean isLeaf();
 
 
-    public @Nullable DataSchemaNode getDataSchemaNode() {
+    @Nullable public DataSchemaNode getDataSchemaNode() {
         return dataSchemaNode;
     }
 
@@ -149,7 +149,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
      * @param child
      * @return
      */
-    static @Nullable DataSchemaContextNode<?> fromAugmentation(final DataNodeContainer parent,
+    @Nullable static DataSchemaContextNode<?> fromAugmentation(final DataNodeContainer parent,
             final AugmentationTarget parentAug, final DataSchemaNode child) {
         AugmentationSchema augmentation = null;
         for (AugmentationSchema aug : parentAug.getAvailableAugmentations()) {
@@ -165,7 +165,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
         return fromDataSchemaNode(child);
     }
 
-    public static @Nullable DataSchemaContextNode<?> fromDataSchemaNode(final DataSchemaNode potential) {
+    @Nullable public static DataSchemaContextNode<?> fromDataSchemaNode(final DataSchemaNode potential) {
         if (potential instanceof ContainerSchemaNode) {
             return new ContainerContextNode((ContainerSchemaNode) potential);
         } else if (potential instanceof ListSchemaNode) {

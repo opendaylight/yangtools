@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 
 final class InMemoryDataTreeCandidate extends AbstractDataTreeCandidate {
-    private static abstract class AbstractNode implements DataTreeCandidateNode {
+    private abstract static class AbstractNode implements DataTreeCandidateNode {
         private final ModifiedNode mod;
         private final TreeNode newMeta;
         private final TreeNode oldMeta;

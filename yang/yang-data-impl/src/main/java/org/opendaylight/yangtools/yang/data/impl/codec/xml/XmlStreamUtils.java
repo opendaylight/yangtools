@@ -64,7 +64,7 @@ public class XmlStreamUtils {
      * @deprecated Use {@link #writeInstanceIdentifier(XMLStreamWriter, YangInstanceIdentifier)} instead.
      */
     @Deprecated
-    public static void write(final @Nonnull XMLStreamWriter writer, final @Nonnull YangInstanceIdentifier id) throws XMLStreamException {
+    public static void write(@Nonnull final XMLStreamWriter writer, @Nonnull final YangInstanceIdentifier id) throws XMLStreamException {
         Preconditions.checkNotNull(writer, "Writer may not be null");
         Preconditions.checkNotNull(id, "Variable should contain instance of instance identifier and can't be null");
 
@@ -92,7 +92,7 @@ public class XmlStreamUtils {
      * @param value data value
      * @throws XMLStreamException if an encoding problem occurs
      */
-    public void writeValue(final @Nonnull XMLStreamWriter writer, final @Nonnull SchemaNode schemaNode, final Object value) throws XMLStreamException {
+    public void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final SchemaNode schemaNode, final Object value) throws XMLStreamException {
         if (value == null) {
             LOG.debug("Value of {}:{} is null, not encoding it", schemaNode.getQName().getNamespace(), schemaNode.getQName().getLocalName());
             return;
@@ -124,7 +124,7 @@ public class XmlStreamUtils {
      * @param value data value
      * @throws XMLStreamException if an encoding problem occurs
      */
-    public void writeValue(final @Nonnull XMLStreamWriter writer, final @Nonnull TypeDefinition<?> type, final Object value) throws XMLStreamException {
+    public void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final TypeDefinition<?> type, final Object value) throws XMLStreamException {
         if (value == null) {
             LOG.debug("Value of {}:{} is null, not encoding it", type.getQName().getNamespace(), type.getQName().getLocalName());
             return;
@@ -153,7 +153,7 @@ public class XmlStreamUtils {
         }
     }
 
-    private static void write(final @Nonnull XMLStreamWriter writer, final @Nonnull IdentityrefTypeDefinition type, final @Nonnull Object value) throws XMLStreamException {
+    private static void write@Nonnull (final XMLStreamWriter writer, @Nonnull final IdentityrefTypeDefinition type, @Nonnull final Object value) throws XMLStreamException {
         if (value instanceof QName) {
             final QName qname = (QName) value;
             final String prefix = "x";
@@ -167,7 +167,7 @@ public class XmlStreamUtils {
         }
     }
 
-    private void write(final @Nonnull XMLStreamWriter writer, final @Nonnull InstanceIdentifierTypeDefinition type, final @Nonnull Object value) throws XMLStreamException {
+    private void write(@Nonnull final XMLStreamWriter writer, @Nonnull final InstanceIdentifierTypeDefinition type, @Nonnull final Object value) throws XMLStreamException {
         if (value instanceof YangInstanceIdentifier) {
             writeInstanceIdentifier(writer, (YangInstanceIdentifier)value);
         } else {
