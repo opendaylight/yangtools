@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.binding.Augmentable
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.Identifiable
 import org.opendaylight.yangtools.concepts.Builder
+import org.opendaylight.yangtools.yang.binding.AugmentationHolder
 
 /**
  * Template for generating JAVA builder classes.
@@ -556,25 +557,28 @@ class BuilderTemplate extends BaseTemplate {
                 this.«field.fieldName» = base.«field.getterMethodName»();
             «ENDFOR»
             «IF augmentField != null»
-                «IF !impl»if (base instanceof «type.name»«IMPL») {«ENDIF»
-                    «IF !impl»«type.name»«IMPL» _impl = («type.name»«IMPL») base;«ENDIF»
-                    «val prop = if (impl) "base" else "_impl"»
-                    «IF impl»
-                        switch («prop».«augmentField.name».size()) {
-                        case 0:
-                            this.«augmentField.name» = «Collections.importedName».emptyMap();
-                            break;
-                            case 1:
-                                final «Map.importedName».Entry<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> e = «prop».«augmentField.name».entrySet().iterator().next();
-                                this.«augmentField.name» = «Collections.importedName».<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»>singletonMap(e.getKey(), e.getValue());
-                            break;
-                        default :
-                            this.«augmentField.name» = new «HashMap.importedName»<>(«prop».«augmentField.name»);
-                        }
-                    «ELSE»
-                        this.«augmentField.name» = new «HashMap.importedName»<>(«prop».«augmentField.name»);
-                    «ENDIF»
-                «IF !impl»}«ENDIF»
+                «IF impl»
+                    switch (base.«augmentField.name».size()) {
+                    case 0:
+                        this.«augmentField.name» = «Collections.importedName».emptyMap();
+                        break;
+                        case 1:
+                            final «Map.importedName».Entry<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> e = base.«augmentField.name».entrySet().iterator().next();
+                            this.«augmentField.name» = «Collections.importedName».<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»>singletonMap(e.getKey(), e.getValue());
+                        break;
+                    default :
+                        this.«augmentField.name» = new «HashMap.importedName»<>(base.«augmentField.name»);
+                    }
+                «ELSE»
+                    if (base instanceof «type.name»«IMPL») {
+                        «type.name»«IMPL» impl = («type.name»«IMPL») base;
+                        this.«augmentField.name» = new «HashMap.importedName»<>(impl.«augmentField.name»);
+                    } else if (base instanceof «AugmentationHolder.importedName») {
+                        @SuppressWarnings("unchecked")
+                        «AugmentationHolder.importedName»<«type.importedName»> casted =(«AugmentationHolder.importedName»<«type.importedName»>) base;
+                        this.«augmentField.name» = new «HashMap.importedName»<>(casted.augmentations());
+                    }
+                «ENDIF»
             «ENDIF»
         }
     '''

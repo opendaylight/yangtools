@@ -1,11 +1,13 @@
 /*
- * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2014 Cisco Systems, Inc. and others. All rights reserved.
  *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0 which accompanies this distribution,
- * and is available at http://www.eclipse.org/legal/epl-v10.html
+ * This program and the accompanying materials are made available under the terms of the Eclipse
+ * Public License v1.0 which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  */
 package org.opendaylight.yangtools.yang.binding.util;
+
+import org.opendaylight.yangtools.yang.binding.AugmentationHolder;
 
 import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
@@ -30,19 +32,31 @@ abstract class AugmentationFieldGetter {
         }
     };
 
-   /**
-    *
-    * Retrieves augmentations from supplied object
-    *
-    * @param input Input Data object, from which augmentations should be extracted
-    * @return Map of Augmentation class to augmentation
-    */
-   protected abstract Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object input);
+    private static final AugmentationFieldGetter AUGMENTATION_HOLDER_GETTER = new AugmentationFieldGetter() {
 
-    private static final LoadingCache<Class<?>, AugmentationFieldGetter> AUGMENTATION_GETTERS =
-            CacheBuilder.newBuilder().weakKeys().softValues().build(new AugmentationGetterLoader());
+        @Override
+        @SuppressWarnings({"unchecked", "rawtypes"})
+        protected Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object input) {
+            return (Map) ((AugmentationHolder<?>) input).augmentations();
+        }
+    };
+
+    /**
+     *
+     * Retrieves augmentations from supplied object
+     *
+     * @param input Input Data object, from which augmentations should be extracted
+     * @return Map of Augmentation class to augmentation
+     */
+    protected abstract Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object input);
+
+    private static final LoadingCache<Class<?>, AugmentationFieldGetter> AUGMENTATION_GETTERS = CacheBuilder
+            .newBuilder().weakKeys().softValues().build(new AugmentationGetterLoader());
 
     public static AugmentationFieldGetter getGetter(final Class<? extends Object> clz) {
+        if(AugmentationHolder.class.isAssignableFrom(clz)) {
+            return AUGMENTATION_HOLDER_GETTER;
+        }
         return AUGMENTATION_GETTERS.getUnchecked(clz);
     }
 
@@ -80,6 +94,5 @@ abstract class AugmentationFieldGetter {
             }
         }
     }
-
 
 }

@@ -37,6 +37,7 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
     private static final String EQUALS = "equals";
     private static final String GET_AUGMENTATION = "getAugmentation";
     private static final String HASHCODE = "hashCode";
+    private static final String AUGMENTATIONS = "augmentations";
     private static final Object NULL_VALUE = new Object();
 
     private final ConcurrentHashMap<Method, Object> cachedData = new ConcurrentHashMap<>();
@@ -62,6 +63,8 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
                 return bindingToString();
             } else if (HASHCODE.equals(name)) {
                 return bindingHashCode();
+            } else if (AUGMENTATIONS.equals(name)) {
+                return getAugmentationsImpl();
             }
             return getBindingData(method);
         } else if (GET_AUGMENTATION.equals(method.getName())) {
