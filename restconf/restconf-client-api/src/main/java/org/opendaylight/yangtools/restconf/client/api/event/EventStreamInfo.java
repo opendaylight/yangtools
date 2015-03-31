@@ -18,9 +18,9 @@ public interface EventStreamInfo extends Identifiable<String> {
      * @return name of event stream.
      */
     @Override
-    public String getIdentifier();
+    String getIdentifier();
 
-    public String getDescription();
+    String getDescription();
 
     boolean isReplaySupported();
 

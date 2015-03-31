@@ -53,5 +53,5 @@ public interface LeafSetEntryNode<T> extends AttributesContainer, NormalizedNode
      *
      */
     @Override
-    public T getValue();
+    T getValue();
 }

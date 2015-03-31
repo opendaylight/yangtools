@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.Type;
 
 public interface ClassLoadingStrategy {
 
-    public Class<?> loadClass(Type type) throws ClassNotFoundException;
+    Class<?> loadClass(Type type) throws ClassNotFoundException;
 
     Class<?> loadClass(String fullyQualifiedName) throws ClassNotFoundException;
 
