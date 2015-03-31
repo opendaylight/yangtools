@@ -100,7 +100,6 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     private final StatementDefinitionContext<A, D, E> definition;
     private final StatementIdentifier identifier;
     private final StatementSourceReference statementDeclSource;
-    private final A argument;
 
     private LinkedHashMap<StatementIdentifier, StatementContextBase<?, ?, ?> > substatements = new LinkedHashMap<>();
 
@@ -120,7 +119,6 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         this.definition = builder.getDefinition();
         this.identifier = builder.getIdentifier();
         this.statementDeclSource = builder.getStamementSource();
-        this.argument = definition.parseArgumentValue(this, this.rawStatementArgument());
         this.completedPhase = null;
     }
 
@@ -149,11 +147,6 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     @Override
     public String rawStatementArgument() {
         return identifier.getArgument();
-    }
-
-    @Override
-    public A getStatementArgument() {
-        return argument;
     }
 
     @Override

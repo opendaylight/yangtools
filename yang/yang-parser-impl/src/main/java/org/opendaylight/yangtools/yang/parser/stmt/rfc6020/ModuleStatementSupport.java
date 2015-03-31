@@ -8,7 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
-
+import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
@@ -69,49 +71,14 @@ public class ModuleStatementSupport
         Optional<Date> revisionDate = Optional.fromNullable(firstAttributeOf(
                 stmt.declaredSubstatements(), RevisionStatement.class));
 
-        QNameModule qnameNamespace = QNameModule.create(moduleNs.get(),
+        QNameModule qNameModule = QNameModule.create(moduleNs.get(),
                 revisionDate.orNull());
-        ModuleIdentifierImpl moduleIdentifier = new ModuleIdentifierImpl(
+        ModuleIdentifier moduleIdentifier = new ModuleIdentifierImpl(
                 stmt.getStatementArgument(), Optional.<URI> absent(),
                 revisionDate);
 
         stmt.addContext(ModuleNamespace.class, moduleIdentifier, stmt);
-        stmt.addContext(NamespaceToModule.class, qnameNamespace, stmt);
-
-        // URI moduleNs =
-        // firstAttributeOf(stmt.declaredSubstatements(),NamespaceStatement.class);
-        //
-        // QNameModule qnameNamespace = QNameModule.create(moduleNs, null);
-        // ModuleIdentifierImpl moduleIdentifier = new
-        // ModuleIdentifierImpl(stmt.getStatementArgument(),
-        // Optional.<URI>absent(), Optional.<Date>absent());
-        //
-        // stmt.addContext(ModuleNamespace.class,moduleIdentifier ,stmt);
-        // stmt.addContext(NamespaceToModule.class, qnameNamespace, stmt);
-    }
-
-    /*
-     * public void ( Mutable<String, ModuleStatement, EffectiveStatement<String,
-     * ModuleStatement>> stmt) throws InferenceException, SourceException {
-     */
-
-    @Override
-    public void onStatementDefinitionDeclared(
-            StmtContext.Mutable<String, ModuleStatement, org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement<String, ModuleStatement>> stmt)
-            throws InferenceException, SourceException {
-
-        URI moduleNs = firstAttributeOf(stmt.declaredSubstatements(),
-                NamespaceStatement.class);
-        if (moduleNs == null) {
-            throw new IllegalArgumentException("Namespace of the module ["
-                    + stmt.getStatementArgument() + "] is missing.");
-        }
-
-        Optional<Date> revisionDate = Optional.fromNullable(firstAttributeOf(
-                stmt.declaredSubstatements(), RevisionStatement.class));
-
-        QNameModule qNameModule = QNameModule.create(moduleNs,
-                revisionDate.orNull());
+        stmt.addContext(NamespaceToModule.class, qNameModule, stmt);
 
         String modulePrefix = firstAttributeOf(stmt.declaredSubstatements(),
                 PrefixStatement.class);
@@ -121,6 +88,30 @@ public class ModuleStatementSupport
         }
 
         stmt.addToNs(PrefixToModule.class, modulePrefix, qNameModule);
+        stmt.addToNs(ModuleIdentifierToModuleQName.class, moduleIdentifier, qNameModule);
+
+        stmt.addToNs(ImpPrefixToModuleIdentifier.class, modulePrefix, moduleIdentifier);
+
     }
+
+
+
+//    @Override
+//    public void onFullDefinitionDeclared(
+//            Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt)
+//            throws InferenceException, SourceException {
+//
+//        Optional<Date> revisionDate = Optional.fromNullable(firstAttributeOf(
+//                stmt.declaredSubstatements(), RevisionStatement.class));
+//
+//        ModuleIdentifier moduleIdentifier = new ModuleIdentifierImpl(
+//                stmt.getStatementArgument(), Optional.<URI> absent(),
+//                revisionDate);
+//
+//        String modulePrefix = firstAttributeOf(stmt.declaredSubstatements(),
+//                PrefixStatement.class);
+//
+//        stmt.addToNs(ImpPrefixToModuleIdentifier.class, modulePrefix, moduleIdentifier);
+//    }
 
 }

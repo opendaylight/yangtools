@@ -1,12 +1,8 @@
 package org.opendaylight.yangtools.yang.stmt.test;
 
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Import;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Module;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Namespace;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.*;
-
 import java.util.Arrays;
 import java.util.List;
+import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
@@ -16,15 +12,44 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 
-
-
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Container;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Import;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Module;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Namespace;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Prefix;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Revision;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.RevisionDate;
 
 class TestStatementSource implements StatementStreamSource {
+
+    public static class ModuleEntry {
+
+        private final String name;
+        private final String revision;
+
+        public ModuleEntry(String name, String revision) {
+
+            this.name = name;
+            this.revision = revision;
+        }
+
+        public String getName() {
+
+            return name;
+        }
+
+        public String getRevision() {
+
+            return revision;
+        }
+    }
 
     private static final String NS_PREFIX = "urn:org:opendaylight:yangtools:test:";
 
     private final String name;
-    private final List<String> imports;
+    private final String revision;
+    private final List<ModuleEntry> imports;
+    private String container;
     private StatementWriter writer;
     private StatementSourceReference REF = new StatementSourceReference() {
 
@@ -34,10 +59,16 @@ class TestStatementSource implements StatementStreamSource {
         }
     };
 
+    public TestStatementSource(ModuleEntry module, ModuleEntry... imports) {
 
-    public TestStatementSource(String name, String... imports) {
-        this.name = name;
+        this.name = module.getName();
+        this.revision = module.getRevision();
         this.imports = Arrays.asList(imports);
+    }
+
+    public void setContainer(String container) {
+
+        this.container = container;
     }
 
     @Override
@@ -50,8 +81,6 @@ class TestStatementSource implements StatementStreamSource {
         end();
 
     }
-
-
 
     @Override
     public void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef) throws SourceException {
@@ -74,59 +103,35 @@ class TestStatementSource implements StatementStreamSource {
     }
 
     protected void body() throws SourceException {
-//        stmt(YangVersion).arg("1");end();
-//        stmt(Description).arg("Here goes description of this module");end();
-//        stmt(Contact).arg("Here goes our address...");end();
-//
-//        stmt(Revision).arg("2015-03-12");
-//            stmt(Description).arg("This revision brings this and that...");end();
-//            stmt(Reference).arg("Learn more here...");end();
-//        end();
 
-        stmt(Container).arg(name+":my-container-with-prefix");
-//            stmt(Leaf).arg("MyContainerLeaf");
-//                stmt(Type).arg("string");end();
-//                stmt(Config).arg("TRUE");end();
-//            end();
-//            stmt(Choice).arg("choose-your-destiny");
-//                stmt(Default).arg("destiny-one");end();
-//                stmt(Case).arg("destiny-one");
-//                    stmt(Leaf).arg("destiny-one-leaf");end();
-//                end();
-//                stmt(Case).arg("destiny-two");
-//                    stmt(Mandatory).arg("true");
-//                    stmt(Container).arg("InnerContainer");
-//                        stmt(Leaf).arg("leaf-of-deep");end();
-//                    end();
-//                end();
-//            end();
-//            stmt(Container).arg("MyContainerInContainer");
-//                stmt(Must).arg("xpath expression");
-//                stmt(Leaf).arg("MyContainerInContainerLeaf");
-//                    stmt(Type).arg("string");end();
-//                end();
-//                stmt(Deviation).arg("/tst:test/tst:element");
-//                    stmt(Deviate).arg("add");end();
-//                end();
-//            end();
-        end();
-        stmt(Container).arg("my-container-without-prefix").end();
-
-        int i = 0;
-        for(String imp : imports)  {
-            i++;
-            stmt(Container).arg(imp+":my-container-with-imported-prefix"+i).end();
-        }
-
+        if (container != null)
+            stmt(Container).arg(container).end();
     }
 
     TestStatementSource header() throws SourceException {
-        stmt(Module).arg(name); {
+
+        stmt(Module).arg(name);
+        {
             stmt(Namespace).arg(getNamespace()).end();
             stmt(Prefix).arg(name).end();
-            for(String imp : imports)  {
+
+            if (revision != null) {
+                stmt(Revision).arg(revision).end();
+            }
+
+            for (ModuleEntry impEntry : imports) {
+
+                String imp = impEntry.getName();
+                String rev = impEntry.getRevision();
+
                 stmt(Import).arg(imp);
+                {
                     stmt(Prefix).arg(imp).end();
+
+                    if (rev != null) {
+                        stmt(RevisionDate).arg(rev).end();
+                    }
+                }
                 end();
             }
         }
@@ -152,5 +157,8 @@ class TestStatementSource implements StatementStreamSource {
         return this;
     }
 
+    @Test
+    public void testPrefix() {
 
+    }
 }

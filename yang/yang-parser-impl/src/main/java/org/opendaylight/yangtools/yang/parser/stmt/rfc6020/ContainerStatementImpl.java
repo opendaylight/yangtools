@@ -28,11 +28,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class ContainerStatementImpl extends AbstractDeclaredStatement<QName> implements ContainerStatement {
-    private QName qname;
+    //private QName qname;
 
     protected ContainerStatementImpl(StmtContext<QName, ContainerStatement,?> context) {
         super(context);
-        this.qname = Utils.qNameFromArgument(context,rawArgument());
+        //this.qname =
     }
 
     public static class Definition extends AbstractStatementSupport<QName,ContainerStatement,EffectiveStatement<QName,ContainerStatement>> {
@@ -43,7 +43,7 @@ public class ContainerStatementImpl extends AbstractDeclaredStatement<QName> imp
 
         @Override
         public QName parseArgumentValue(StmtContext<?,?,?> ctx, String value) {
-            return QName.create(value);
+            return Utils.qNameFromArgument(ctx,value);
         }
 
         @Override
@@ -60,7 +60,7 @@ public class ContainerStatementImpl extends AbstractDeclaredStatement<QName> imp
 
     @Override
     public QName getName() {
-        return qname;
+        return argument();
     }
 
     @Override

@@ -7,17 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Optional;
 import java.net.URI;
 import java.util.Date;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 /**
- * ModuleIdentifier that can be used for indexing/searching by name.
- * Name is only non-null attribute.
- * Equality check on namespace and revision is only triggered if they are non-null
+ * ModuleIdentifier that can be used for indexing/searching by name. Name is
+ * only non-null attribute. Equality check on namespace and revision is only
+ * triggered if they are non-null
  */
 public class ModuleIdentifierImpl implements ModuleIdentifier {
     private final QNameModule qnameModule;
@@ -50,11 +52,8 @@ public class ModuleIdentifierImpl implements ModuleIdentifier {
 
     @Override
     public String toString() {
-        return "ModuleIdentifierImpl{" +
-                "name='" + name + '\'' +
-                ", namespace=" + getNamespace() +
-                ", revision=" + getRevision() +
-                '}';
+        return "ModuleIdentifierImpl{" + "name='" + name + '\'' + ", namespace=" + getNamespace() + ", revision="
+                + getRevision() + '}';
     }
 
     @Override
@@ -76,8 +75,29 @@ public class ModuleIdentifierImpl implements ModuleIdentifier {
         if (getNamespace() != null && !getNamespace().equals(that.getNamespace())) {
             return false;
         }
+
+        Date dfltRev = SimpleDateFormatUtil.DEFAULT_DATE_REV;
+        Date dfltImp = SimpleDateFormatUtil.DEFAULT_DATE_IMP;
+
+        // if revision is in import only, spec says that it is undefined which
+        // revision to take
+        if (getRevision() == dfltImp ^ that.getRevision() == dfltImp) {
+            return true;
+        }
+
+        // default and none revisions taken as equal
+        if ((dfltRev.equals(getRevision()) && that.getRevision() == null)
+                || (dfltRev.equals(that.getRevision()) && getRevision() == null)) {
+            return true;
+        }
+
+        // else if none of them is default and one null
+        if (getRevision() == null ^ that.getRevision() == null) {
+            return false;
+        }
+
         // only fail if this revision is non-null
-        if (getRevision() != null && !getRevision().equals(that.getRevision())) {
+        if (getRevision() != null && that.getRevision() != null && !getRevision().equals(that.getRevision())) {
             return false;
         }
 

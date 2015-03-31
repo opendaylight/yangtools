@@ -19,10 +19,12 @@ class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Effectiv
 
 
     private final SourceSpecificContext sourceContext;
+    private final A argument;
 
     RootStatementContext(ContextBuilder<A, D,E> builder, SourceSpecificContext sourceContext) throws SourceException {
         super(builder);
         this.sourceContext = sourceContext;
+        this.argument =   builder.getDefinition().parseArgumentValue(this, builder.getRawArgument());
     }
 
     @Override
@@ -49,6 +51,9 @@ class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Effectiv
         return sourceContext;
     }
 
-
+    @Override
+    public A getStatementArgument() {
+        return argument;
+    }
 
 }

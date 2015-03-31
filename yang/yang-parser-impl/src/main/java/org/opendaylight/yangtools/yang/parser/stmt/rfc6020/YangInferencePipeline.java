@@ -9,8 +9,11 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.global;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.sourceLocal;
-import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
+
+import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
@@ -32,12 +35,15 @@ public class YangInferencePipeline {
             .addSupport(new YangVersionStatementImpl.Definition())
             .addSupport(global(ModuleNamespace.class))
             .addSupport(global(NamespaceToModule.class))
+            .addSupport(global(PrefixToModule.class))
+            .addSupport(global(ModuleIdentifierToModuleQName.class))
             .addSupport(sourceLocal(ImportedModuleContext.class))
+            .addSupport(sourceLocal(ImpPrefixToModuleIdentifier.class))
+            //.addSupport(global(ImpPrefixToModuleIdentifier.class))
             .build();
 
     private static final StatementSupportBundle STMT_DEF_BUNDLE = StatementSupportBundle.
             derivedFrom(LINKAGE_BUNDLE)
-            .addSupport(global(PrefixToModule.class))
             .build();
 
     private static final StatementSupportBundle FULL_DECL_BUNDLE = StatementSupportBundle.

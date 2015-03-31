@@ -9,8 +9,11 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import java.net.URISyntaxException;
 import java.net.URI;
@@ -44,7 +47,18 @@ public class Utils {
         case 2:
             prefix = namesParts[0];
             localName = namesParts[1];
-            qNameModule = ctx.getFromNamespace(PrefixToModule.class, prefix);
+
+
+            ModuleIdentifier impModIdentifier = ctx.getRoot().getFromNamespace(ImpPrefixToModuleIdentifier.class, prefix);
+            qNameModule = ctx.getFromNamespace(ModuleIdentifierToModuleQName.class, impModIdentifier);
+
+//            qNameModule = ctx.getFromNamespace(PrefixToModule.class, prefix);
+//
+//            EffectiveStatement<String, ModuleStatement> stmt = ctx.getFromNamespace(NamespaceToModule.class, qNameModule);
+//            stmt.getDeclared().g
+//
+//            ctx.getFromNamespace(ImportedModuleContext.class, importedModuleIdentifier);
+
             break;
         default:
             break;

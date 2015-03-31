@@ -1,9 +1,9 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
-
 import java.text.ParseException;
 import java.util.Date;
+import javax.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -13,7 +13,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import javax.annotation.Nullable;
 
 public class RevisionStatementImpl extends AbstractDeclaredStatement<Date>
         implements RevisionStatement {
@@ -34,14 +33,14 @@ public class RevisionStatementImpl extends AbstractDeclaredStatement<Date>
         @Override
         public Date parseArgumentValue(StmtContext<?, ?, ?> ctx, String value)
                 throws SourceException {
-            Date revision = null;
+            Date revision = SimpleDateFormatUtil.DEFAULT_DATE_REV;
+
             try {
                 revision = SimpleDateFormatUtil.getRevisionFormat()
                         .parse(value);
             } catch (ParseException e) {
                 throw new IllegalArgumentException(e);
             }
-
             return revision;
         }
 

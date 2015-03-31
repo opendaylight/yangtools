@@ -48,7 +48,15 @@ public class StmtContextUtils {
     public static final boolean producesDeclared(StmtContext<?, ?, ?> ctx, Class<? extends DeclaredStatement<?>> type) {
         return type.isAssignableFrom(ctx.getPublicDefinition().getDeclaredRepresentationClass());
     }
-
-
+//
+//    @SuppressWarnings("unchecked")
+//    public static final <AT,DT extends DeclaredStatement<AT>> AT firstAttributeOf(Iterable<? extends StmtContext<?,?,?>> contexts, Class<DT> declaredType) {
+//        for(StmtContext<?, ?, ?> ctx : contexts) {
+//            if(producesDeclared(ctx,declaredType)) {
+//                return (AT) ctx.getStatementArgument();
+//            }
+//        }
+//        return null;
+//    }
 
 }

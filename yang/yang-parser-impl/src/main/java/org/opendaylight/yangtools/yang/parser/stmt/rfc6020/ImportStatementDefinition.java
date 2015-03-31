@@ -8,9 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 
-import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SourceLinkage;
-import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
-
 import com.google.common.base.Optional;
 import java.net.URI;
 import java.text.ParseException;
@@ -21,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
@@ -31,7 +29,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Infere
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+
+import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SourceLinkage;
+import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 public class ImportStatementDefinition extends
         AbstractStatementSupport<String, ImportStatement, EffectiveStatement<String, ImportStatement>> {
@@ -65,6 +67,9 @@ public class ImportStatementDefinition extends
         final Prerequisite<Mutable<?, ?, ?>> linkageTarget;
         imported = importAction.requiresCtx(stmt, ModuleNamespace.class, impIdentifier, SourceLinkage);
         linkageTarget = importAction.mutatesCtx(stmt.getRoot(),SourceLinkage);
+
+        String impPrefix = firstAttributeOf(stmt.declaredSubstatements(),PrefixStatement.class);
+        stmt.addToNs(ImpPrefixToModuleIdentifier.class, impPrefix, impIdentifier);
 
         importAction.apply(new InferenceAction() {
 
@@ -101,7 +106,7 @@ public class ImportStatementDefinition extends
                 throw new IllegalArgumentException(e);
             }
         } else {
-            revision = Optional.absent();
+            revision = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_IMP);
         }
 
 //        Optional<URI> moduleNs = Optional.fromNullable(firstAttributeOf(stmt.getParentContext().declaredSubstatements(),
@@ -109,5 +114,17 @@ public class ImportStatementDefinition extends
 
         return new ModuleIdentifierImpl(moduleName, Optional.<URI>absent(), revision);
     }
+
+//
+//    @Override
+//    public void onFullDefinitionDeclared(
+//            Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt)
+//            throws InferenceException, SourceException {
+//
+//        final ModuleIdentifier impIdentifier = getImportedModuleIdentifier(stmt);
+//
+//        String impPrefix = firstAttributeOf(stmt.declaredSubstatements(),PrefixStatement.class);
+//        stmt.addToNs(ImpPrefixToModuleIdentifier.class, impPrefix, impIdentifier);
+//    }
 
 }
