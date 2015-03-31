@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_6850a65e",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONNormalizedNodeStreamWriter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2015-03-31T12:04:29Z",
+      "side": 1,
+      "message": "This can be just the second half of the recently replaced REVERSE_SOLIDUS_CHAR_PATTERN. Fortunately, that seem to be the only kind of error, so if string is first split on REVERSE_SOLIDUS_CHAR_PATTERN and every substring fed to the 7 replaceAll calls, then the result will be a join of the processed substrings on \"\\\\\\\\\\\\\\\\\".",
+      "range": {
+        "startLine": 252,
+        "startChar": 68,
+        "endLine": 252,
+        "endChar": 72
+      },
+      "revId": "fdcc48ae75213d867aa17b0b96f1e179f4b4757a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
