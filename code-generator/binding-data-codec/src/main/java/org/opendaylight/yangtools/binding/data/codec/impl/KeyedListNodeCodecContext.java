@@ -79,4 +79,22 @@ final class KeyedListNodeCodecContext<D extends DataObject & Identifiable<?>> ex
     NodeIdentifierWithPredicates serialize(final Identifier<?> key) {
         return codec.serialize(new IdentifiableItem(getBindingClass(), key));
     }
+
+    @Override
+    public YangInstanceIdentifier.PathArgument serializePathArgument(InstanceIdentifier.PathArgument arg) {
+        if(arg instanceof IdentifiableItem) {
+            return codec.serialize((IdentifiableItem<?,?>) arg);
+        }
+        return super.serializePathArgument(arg);
+    }
+
+    @Override
+    public InstanceIdentifier.PathArgument deserializePathArgument(YangInstanceIdentifier.PathArgument arg) {
+        if(arg instanceof NodeIdentifierWithPredicates) {
+            return codec.deserialize((NodeIdentifierWithPredicates) arg);
+        }
+        return super.deserializePathArgument(arg);
+    }
+
+
 }

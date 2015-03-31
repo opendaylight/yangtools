@@ -18,10 +18,12 @@ import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.DataRoot;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -226,6 +228,18 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     @Override
     protected Object deserializeObject(NormalizedNode<?, ?> normalizedNode) {
         throw new UnsupportedOperationException("Unable to deserialize root");
+    }
+
+    @Override
+    public InstanceIdentifier.PathArgument deserializePathArgument(YangInstanceIdentifier.PathArgument arg) {
+        Preconditions.checkArgument(arg == null);
+        return null;
+    }
+
+    @Override
+    public YangInstanceIdentifier.PathArgument serializePathArgument(InstanceIdentifier.PathArgument arg) {
+        Preconditions.checkArgument(arg == null);
+        return null;
     }
 
 }

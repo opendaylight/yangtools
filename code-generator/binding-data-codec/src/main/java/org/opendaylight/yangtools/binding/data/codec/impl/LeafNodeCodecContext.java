@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTreeNode;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
@@ -119,6 +121,17 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
             return result;
         }
         return null;
+    }
+
+    @Override
+    public InstanceIdentifier.PathArgument deserializePathArgument(YangInstanceIdentifier.PathArgument arg) {
+        Preconditions.checkArgument(getDomPathArgument().equals(arg));
+        return null;
+    }
+
+    @Override
+    public YangInstanceIdentifier.PathArgument serializePathArgument(InstanceIdentifier.PathArgument arg) {
+        return getDomPathArgument();
     }
 
 }
