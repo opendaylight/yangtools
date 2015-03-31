@@ -682,7 +682,7 @@ public final class SchemaContextUtil {
             nodeType = ((LeafListSchemaNode) schemaNode).getType();
         }
 
-        if (nodeType != null && nodeType instanceof ExtendedType) {
+        if (nodeType instanceof ExtendedType) {
             while (nodeType.getBaseType() instanceof ExtendedType) {
                 nodeType = nodeType.getBaseType();
             }
