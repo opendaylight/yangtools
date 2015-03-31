@@ -42,6 +42,7 @@ public class BundleStartTest {
         options.add(mavenBundle("org.opendaylight.yangtools.thirdparty", "antlr4-runtime-osgi-nohead")
                 .versionAsInProject());
         options.add(mavenBundle("org.javassist", "javassist").versionAsInProject());
+        options.add(mavenBundle("com.github.romix", "java-concurrent-hash-trie-map").versionAsInProject());
 
         options.add(mavenBundle(GROUP, "concepts").versionAsInProject());
         options.add(mavenBundle(GROUP, "util").versionAsInProject());

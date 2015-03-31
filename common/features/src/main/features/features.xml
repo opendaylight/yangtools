@@ -57,6 +57,7 @@
         <feature version='${project.version}'>odl-yangtools-common</feature>
         <bundle>mvn:org.opendaylight.yangtools/yang-binding/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/util/{{VERSION}}</bundle>
+        <bundle>mvn:com.github.romix/java-concurrent-hash-trie-map/{{VERSION}}</bundle>
     </feature>
 
     <feature name='odl-yangtools-common' version='${project.version}' description='OpenDaylight :: Yangtools :: Common'>
@@ -67,6 +68,7 @@
         <bundle>mvn:org.opendaylight.yangtools/object-cache-api/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/object-cache-guava/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/object-cache-noop/{{VERSION}}</bundle>
+        <bundle>mvn:com.github.romix/java-concurrent-hash-trie-map/{{VERSION}}</bundle>
     </feature>
     <feature name='odl-yangtools-binding-generator' version='${project.version}' description='OpenDaylight :: Yangtools :: Binding Generator'>
         <feature version='${project.version}'>odl-yangtools-data-binding</feature>
