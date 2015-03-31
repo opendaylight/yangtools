@@ -18,5 +18,5 @@ public interface ClientMessageCallback {
      * @param message
      *            the message which aid to will be client notified
      */
-    public void onMessageReceived(Object message);
+    void onMessageReceived(Object message);
 }
