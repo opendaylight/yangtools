@@ -37,7 +37,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 final class ModifiedNode extends NodeModification implements StoreTreeNode<ModifiedNode> {
     static final Predicate<ModifiedNode> IS_TERMINAL_PREDICATE = new Predicate<ModifiedNode>() {
         @Override
-        public boolean apply(final @Nonnull ModifiedNode input) {
+        public boolean apply(@Nonnull final ModifiedNode input) {
             Preconditions.checkNotNull(input);
             switch (input.getOperation()) {
             case DELETE:

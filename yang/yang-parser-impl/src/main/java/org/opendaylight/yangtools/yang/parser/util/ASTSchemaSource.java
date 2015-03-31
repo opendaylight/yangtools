@@ -55,7 +55,7 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
     private final SourceIdentifier id;
     private final String text;
 
-    private ASTSchemaSource(final @Nonnull SourceIdentifier id, @Nonnull final ParserRuleContext tree, final @Nonnull YangModelDependencyInfo depInfo, final String text) {
+    private ASTSchemaSource(@Nonnull final SourceIdentifier id, @Nonnull final ParserRuleContext tree, @Nonnull final YangModelDependencyInfo depInfo, final String text) {
         this.depInfo = Preconditions.checkNotNull(depInfo);
         this.tree = Preconditions.checkNotNull(tree);
         this.id = Preconditions.checkNotNull(id);
@@ -71,7 +71,7 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
      * @return A new representation instance.
      * @throws YangSyntaxErrorException if we fail to extract dependency information.
      */
-    public static ASTSchemaSource create(final @Nonnull String name, final @Nonnull ParserRuleContext tree) throws YangSyntaxErrorException {
+    public static ASTSchemaSource create(@Nonnull final String name, @Nonnull final ParserRuleContext tree) throws YangSyntaxErrorException {
         final YangModelDependencyInfo depInfo = YangModelDependencyInfo.fromAST(name, tree);
         final SourceIdentifier id = getSourceId(depInfo);
         return new ASTSchemaSource(id, tree, depInfo, null);
@@ -96,7 +96,7 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
      * @deprecated Migration only, will be removed as soon as the migration is completed.
      */
     @Deprecated
-    public static ASTSchemaSource create(final @Nonnull String name, final @Nonnull ParserRuleContext tree, final String text) throws YangSyntaxErrorException {
+    public static ASTSchemaSource create(@Nonnull final String name, @Nonnull final ParserRuleContext tree, final String text) throws YangSyntaxErrorException {
         final YangModelDependencyInfo depInfo = YangModelDependencyInfo.fromAST(name, tree);
         final SourceIdentifier id = getSourceId(depInfo);
         return new ASTSchemaSource(id, tree, depInfo, text);
@@ -118,7 +118,7 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
      *
      * @return Underlying AST.
      */
-    public @Nonnull ParserRuleContext getAST() {
+    @Nonnull public ParserRuleContext getAST() {
         return tree;
     }
 
@@ -130,7 +130,7 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
      *
      * @return Dependency information.
      */
-    public @Nonnull YangModelDependencyInfo getDependencyInformation() {
+    @Nonnull public YangModelDependencyInfo getDependencyInformation() {
         return depInfo;
     }
 
@@ -143,7 +143,7 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
      *             choice. Will be removed as soon as the migration is completed.
      */
     @Deprecated
-    public @Nonnull String getYangText() {
+    @Nonnull public String getYangText() {
         return text;
     }
 }

@@ -43,7 +43,6 @@ class SingleModuleYinStatementWriter implements StatementTextWriter {
         this.currentModuleNs = moduleNamespace;
         this.prefixToNamespace = HashBiMap.create(prefixToNs);
         initializeYinNamespaceInXml();
-
     }
 
     private void initializeYinNamespaceInXml() {
@@ -60,7 +59,7 @@ class SingleModuleYinStatementWriter implements StatementTextWriter {
         }
     }
 
-    static final StatementTextWriter create(final XMLStreamWriter writer, final URI moduleNs,
+    static StatementTextWriter create(final XMLStreamWriter writer, final URI moduleNs,
             final Map<String, URI> prefixToNs) {
         return new SingleModuleYinStatementWriter(writer, moduleNs, prefixToNs);
     }

@@ -151,7 +151,7 @@ public abstract class AbstractCachingSchemaSourceProvider<I, O> implements Advan
 
         protected SchemaSourceProviderInstance(final AdvancedSchemaSourceProvider<I> delegate) {
             super();
-            this.delegate = Preconditions.checkNotNull(delegate, "Delegate should not be null");;
+            this.delegate = Preconditions.checkNotNull(delegate, "Delegate should not be null");
         }
 
         @Override
