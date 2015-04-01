@@ -95,7 +95,7 @@ final class InMemoryDataTreeCandidate extends AbstractDataTreeCandidate {
         public DataTreeCandidateNode getModifiedChild(final PathArgument identifier) {
             final Optional<ModifiedNode> childMod = mod.getChild(identifier);
             if (childMod.isPresent()) {
-                return childNode(mod);
+                return childNode(childMod.get());
             }
             return null;
         }
