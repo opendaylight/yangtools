@@ -1,0 +1,77 @@
+package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
+
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+
+import java.text.ParseException;
+import java.util.Date;
+import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import javax.annotation.Nullable;
+
+public class RevisionStatementImpl extends AbstractDeclaredStatement<Date>
+        implements RevisionStatement {
+
+    protected RevisionStatementImpl(
+            StmtContext<Date, RevisionStatement, ?> context) {
+        super(context);
+    }
+
+    public static class Definition
+            extends
+            AbstractStatementSupport<Date, RevisionStatement, EffectiveStatement<Date, RevisionStatement>> {
+
+        public Definition() {
+            super(Rfc6020Mapping.Revision);
+        }
+
+        @Override
+        public Date parseArgumentValue(StmtContext<?, ?, ?> ctx, String value)
+                throws SourceException {
+            Date revision = null;
+            try {
+                revision = SimpleDateFormatUtil.getRevisionFormat()
+                        .parse(value);
+            } catch (ParseException e) {
+                throw new IllegalArgumentException(e);
+            }
+
+            return revision;
+        }
+
+        @Override
+        public RevisionStatement createDeclared(
+                StmtContext<Date, RevisionStatement, ?> ctx) {
+            return new RevisionStatementImpl(ctx);
+        }
+
+        @Override
+        public EffectiveStatement<Date, RevisionStatement> createEffective(
+                StmtContext<Date, RevisionStatement, EffectiveStatement<Date, RevisionStatement>> ctx) {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    @Override
+    public Date getDate() {
+        return argument();
+    }
+
+    @Nullable
+    @Override
+    public DescriptionStatement getDescription() {
+        return firstDeclared(DescriptionStatement.class);
+    }
+
+    @Nullable
+    @Override
+    public ReferenceStatement getReference() {
+        return firstDeclared(ReferenceStatement.class);
+    }
+}

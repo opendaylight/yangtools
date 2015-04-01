@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface IdentityStatement extends DeclaredStatement<QName>, DocumentationGroup.WithStatus {
 
-    @Nonnull String getName();
+    @Nonnull QName getName();
 
     @Nullable BaseStatement getBase();
 

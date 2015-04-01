@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.stmt.test;
 import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Import;
 import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Module;
 import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Namespace;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Prefix;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -73,12 +73,54 @@ class TestStatementSource implements StatementStreamSource {
 
     }
 
-    protected void extensions() {
-        // TODO Auto-generated method stub
+    protected void extensions() throws SourceException {
 
     }
 
-    protected void body() {
+    protected void body() throws SourceException {
+//        stmt(YangVersion).arg("1");end();
+//        stmt(Description).arg("Here goes description of this module");end();
+//        stmt(Contact).arg("Here goes our address...");end();
+//
+//        stmt(Revision).arg("2015-03-12");
+//            stmt(Description).arg("This revision brings this and that...");end();
+//            stmt(Reference).arg("Learn more here...");end();
+//        end();
+
+        stmt(Container).arg(name+":my-container-with-prefix");
+//            stmt(Leaf).arg("MyContainerLeaf");
+//                stmt(Type).arg("string");end();
+//                stmt(Config).arg("TRUE");end();
+//            end();
+//            stmt(Choice).arg("choose-your-destiny");
+//                stmt(Default).arg("destiny-one");end();
+//                stmt(Case).arg("destiny-one");
+//                    stmt(Leaf).arg("destiny-one-leaf");end();
+//                end();
+//                stmt(Case).arg("destiny-two");
+//                    stmt(Mandatory).arg("true");
+//                    stmt(Container).arg("InnerContainer");
+//                        stmt(Leaf).arg("leaf-of-deep");end();
+//                    end();
+//                end();
+//            end();
+//            stmt(Container).arg("MyContainerInContainer");
+//                stmt(Must).arg("xpath expression");
+//                stmt(Leaf).arg("MyContainerInContainerLeaf");
+//                    stmt(Type).arg("string");end();
+//                end();
+//                stmt(Deviation).arg("/tst:test/tst:element");
+//                    stmt(Deviate).arg("add");end();
+//                end();
+//            end();
+        end();
+        stmt(Container).arg("my-container-without-prefix").end();
+
+        int i = 0;
+        for(String imp : imports)  {
+            i++;
+            stmt(Container).arg(imp+":my-container-with-imported-prefix"+i).end();
+        }
 
     }
 
@@ -86,9 +128,11 @@ class TestStatementSource implements StatementStreamSource {
         stmt(Module).arg(name); {
             stmt(Namespace).arg(getNamespace()).end();
             stmt(Prefix).arg(name).end();
+            stmt(Revision).arg("2000-01-01").end();
             for(String imp : imports)  {
                 stmt(Import).arg(imp);
                     stmt(Prefix).arg(imp).end();
+                    stmt(RevisionDate).arg("2000-01-01").end();
                 end();
             }
         }
