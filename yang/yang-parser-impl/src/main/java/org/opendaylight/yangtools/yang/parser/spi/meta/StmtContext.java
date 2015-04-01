@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import org.opendaylight.yangtools.yang.common.QNameModule;
+
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,21 +36,28 @@ public interface StmtContext<A,D extends DeclaredStatement<A>, E extends Effecti
 
     @Nullable A getStatementArgument();
 
-    @Nonnull <K,VT, V extends VT,N extends IdentifierNamespace<K, V>> VT getFromNamespace(Class<N> type, K key) throws NamespaceNotAvailableException;
+    //<K,VT, V extends VT,N extends IdentifierNamespace<K, V>>
+    //       <K, VT, V extends VT ,N extends IdentifierNamespace<K, V>> VT getFromNamespace(Class<N> type, K key)
+    @Nonnull <K,V,N extends IdentifierNamespace<K, V>> V getFromNamespace(Class<N> type, K key) throws NamespaceNotAvailableException;
 
     @Nonnull StmtContext<?,?,?> getRoot();
 
     @Nonnull Collection<? extends StmtContext<?,?,?>> declaredSubstatements();
 
+    public Collection<? extends StmtContext<?, ?, ?>> effectiveSubstatements();
+
     D buildDeclared();
 
     E buildEffective();
+
+    public StatementContextBase<?, ?, ?>  createCopy(QNameModule newQNameModule,StatementContextBase<?, ?, ?> newParent) throws SourceException;
 
     interface Mutable<A,D extends DeclaredStatement<A>,E extends EffectiveStatement<A, D>> extends StmtContext<A,D,E> {
 
         @Override
         StmtContext.Mutable<?,?,?> getParentContext();
 
+        //<K,V,VT extends V,N extends IdentifierNamespace<K, V>> void addToNs(Class<N> type, K key, VT value)
         <K,V,VT extends V,N extends IdentifierNamespace<K, V>> void addToNs(Class<N> type, K key, VT value) throws NamespaceNotAvailableException;
 
         @Override

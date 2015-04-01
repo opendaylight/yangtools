@@ -9,7 +9,16 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.global;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.sourceLocal;
+import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.treeScoped;
 
+import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
+
+import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
+import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
@@ -22,17 +31,75 @@ public final class YangInferencePipeline {
 
     public static final StatementSupportBundle LINKAGE_BUNDLE = StatementSupportBundle.builder()
             .addSupport(new ModuleStatementSupport())
+            .addSupport(new SubmoduleStatementImpl.Definition())
             .addSupport(new NamespaceStatementImpl.Definition())
             .addSupport(new ImportStatementDefinition())
+            .addSupport(new IncludeStatementImpl.Definition())
             .addSupport(new PrefixStatementImpl.Definition())
+            .addSupport(new YangVersionStatementImpl.Definition())
+            .addSupport(new DescriptionStatementImpl.Definition())
+            .addSupport(new RevisionStatementImpl.Definition())
+            .addSupport(new RevisionDateStatementImpl.Definition())
+            .addSupport(new ReferenceStatementImpl.Definition())
+            .addSupport(new ContactStatementImpl.Definition())
+            .addSupport(new OrganizationStatementImpl.Definition())
+            .addSupport(new BelongsToStatementImpl.Definition())
             .addSupport(global(ModuleNamespace.class))
+            .addSupport(global(SubmoduleNamespace.class))
             .addSupport(global(NamespaceToModule.class))
+            .addSupport(global(ModuleNameToModuleQName.class))
+            .addSupport(global(PrefixToModule.class))
+            .addSupport(global(ModuleIdentifierToModuleQName.class))
             .addSupport(sourceLocal(ImportedModuleContext.class))
+            .addSupport(sourceLocal(IncludedModuleContext.class))
+            .addSupport(sourceLocal(ImpPrefixToModuleIdentifier.class))
+            .addSupport(sourceLocal(BelongsToPrefixToModuleName.class))
+            //.addSupport(global(ImpPrefixToModuleIdentifier.class))
+                    .build();
+
+    private static final StatementSupportBundle STMT_DEF_BUNDLE = StatementSupportBundle.
+            derivedFrom(LINKAGE_BUNDLE)
+            .addSupport(new YinElementStatementImpl.Definition())
+            .addSupport(new ArgumentStatementImpl.Definition())
+            .addSupport(new ExtensionStatementImpl.Definition())
+            //TODO: implement extension support in SourceSpecificContext
+            // in order to prepare statements for full declaration phase,
+            // when those ones are read.
             .build();
 
-    private static final StatementSupportBundle STMT_DEF_BUNDLE = StatementSupportBundle.derivedFrom(LINKAGE_BUNDLE).build();
-
-    private static final StatementSupportBundle FULL_DECL_BUNDLE = StatementSupportBundle.derivedFrom(STMT_DEF_BUNDLE).build();
+    private static final StatementSupportBundle FULL_DECL_BUNDLE = StatementSupportBundle.
+            derivedFrom(STMT_DEF_BUNDLE)
+            .addSupport(new ContainerStatementImpl.Definition())
+            .addSupport(new LeafStatementImpl.Definition())
+            .addSupport(new TypeStatementImpl.Definition())
+            .addSupport(new ConfigStatementImpl.Definition())
+            .addSupport(new DeviationStatementImpl.Definition())
+            .addSupport(new DeviateStatementImpl.Definition())
+            .addSupport(new ChoiceStatementImpl.Definition())
+            .addSupport(new CaseStatementImpl.Definition())
+            .addSupport(new DefaultStatementImpl.Definition())
+            .addSupport(new MustStatementImpl.Definition())
+            .addSupport(new MandatoryStatementImpl.Definition())
+            .addSupport(new TypedefStatementImpl.Definition())
+            .addSupport(new AnyxmlStatementImpl.Definition())
+            .addSupport(new IfFeatureStatementImpl.Definition())
+            .addSupport(new UsesStatementImpl.Definition())
+            .addSupport(new GroupingStatementImpl.Definition())
+            .addSupport(treeScoped(GroupingNamespace.class)) //treeScoped
+            .addSupport(new StatusStatementImpl.Definition())
+            .addSupport(new ErrorMessageStatementImpl.Definition())
+            .addSupport(new ErrorAppTagStatementImpl.Definition())
+            .addSupport(new LeafListStatementImpl.Definition())
+            .addSupport(new ListStatementImpl.Definition())
+            .addSupport(new PresenceStatementImpl.Definition())
+            .addSupport(new KeyStatementImpl.Definition())
+            .addSupport(new MaxElementsStatementImpl.Definition())
+            .addSupport(new MinElementsStatementImpl.Definition())
+            .addSupport(new OrderedByStatementImpl.Definition())
+            .addSupport(new WhenStatementImpl.Definition())
+            .addSupport(new AugmentStatementImpl.Definition())
+            .addSupport(new RefineStatementImpl.Definition())
+            .build();
 
     public static final Map<ModelProcessingPhase, StatementSupportBundle> RFC6020_BUNDLES = ImmutableMap
             .<ModelProcessingPhase, StatementSupportBundle> builder()
