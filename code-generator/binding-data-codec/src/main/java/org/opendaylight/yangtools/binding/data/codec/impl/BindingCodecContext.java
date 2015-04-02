@@ -71,7 +71,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
     private final BindingRuntimeContext context;
     private final SchemaRootCodecContext<?> root;
 
-    BindingCodecContext(final BindingRuntimeContext context, BindingNormalizedNodeCodecRegistry registry) {
+    BindingCodecContext(final BindingRuntimeContext context, final BindingNormalizedNodeCodecRegistry registry) {
         this.context = Preconditions.checkNotNull(context, "Binding Runtime Context is required.");
         this.root = SchemaRootCodecContext.create(this);
         this.identityCodec = new IdentityCodec(context);
@@ -94,7 +94,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public DataObjectSerializer getEventStreamSerializer(Class<?> type) {
+    public DataObjectSerializer getEventStreamSerializer(final Class<?> type) {
         return registry.getSerializer((Class) type);
     }
 
@@ -143,7 +143,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
      *
      */
     @Nullable NodeCodecContext<?> getCodecContextNode(final @Nonnull YangInstanceIdentifier dom,
-            final @Nonnull Collection<InstanceIdentifier.PathArgument> bindingArguments) {
+            final @Nullable Collection<InstanceIdentifier.PathArgument> bindingArguments) {
         NodeCodecContext<?> currentNode = root;
         ListNodeCodecContext<?> currentList = null;
 
@@ -165,7 +165,9 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
 
                 // We entered list, so now we have all information to emit
                 // list path using second list argument.
-                bindingArguments.add(currentList.getBindingPathArgument(domArg));
+                if (bindingArguments != null) {
+                    bindingArguments.add(currentList.getBindingPathArgument(domArg));
+                }
                 currentList = null;
                 currentNode = nextNode;
             } else if (nextNode instanceof ListNodeCodecContext) {
@@ -177,7 +179,9 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
                 // it is not supported by binding instance identifier.
                 currentNode = nextNode;
             } else if (nextNode instanceof DataContainerCodecContext<?,?>) {
-                bindingArguments.add(((DataContainerCodecContext<?,?>) nextNode).getBindingPathArgument(domArg));
+                if (bindingArguments != null) {
+                    bindingArguments.add(((DataContainerCodecContext<?,?>) nextNode).getBindingPathArgument(domArg));
+                }
                 currentNode = nextNode;
             } else if (nextNode instanceof LeafNodeCodecContext) {
                 LOG.debug("Instance identifier referencing a leaf is not representable (%s)", dom);
@@ -197,7 +201,9 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         }
 
         if (currentList != null) {
-            bindingArguments.add(currentList.getBindingPathArgument(null));
+            if(bindingArguments != null) {
+                bindingArguments.add(currentList.getBindingPathArgument(null));
+            }
             return currentList;
         }
         return currentNode;
@@ -341,18 +347,18 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends DataObject> BindingCodecTreeNode<T> getSubtreeCodec(InstanceIdentifier<T> path) {
+    public <T extends DataObject> BindingCodecTreeNode<T> getSubtreeCodec(final InstanceIdentifier<T> path) {
         // TODO Do we need defensive check here?
         return (BindingCodecTreeNode<T>) getCodecContextNode(path, null);
     }
 
     @Override
-    public BindingCodecTreeNode<?> getSubtreeCodec(YangInstanceIdentifier path) {
+    public BindingCodecTreeNode<?> getSubtreeCodec(final YangInstanceIdentifier path) {
         return getCodecContextNode(path, null);
     }
 
     @Override
-    public BindingCodecTreeNode<?> getSubtreeCodec(SchemaPath path) {
+    public BindingCodecTreeNode<?> getSubtreeCodec(final SchemaPath path) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 }
