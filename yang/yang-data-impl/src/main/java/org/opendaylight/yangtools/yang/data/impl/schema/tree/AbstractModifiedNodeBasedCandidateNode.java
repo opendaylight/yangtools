@@ -59,6 +59,12 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     }
 
     private static DataTreeCandidateNode createChildNode(@Nonnull final ModifiedNode input, @Nullable final TreeNode oldMeta, @Nullable final TreeNode newMeta) {
+        if(oldMeta == null) {
+            return RecursiveModificationCandidateNode.initialWriteNode(newMeta.getData());
+        }
+        if(newMeta == null) {
+            return RecursiveModificationCandidateNode.deleteNode(oldMeta.getData());
+        }
         return new ChildNode(input, oldMeta, newMeta);
     }
 
