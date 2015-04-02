@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateNod
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 
-
 abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandidateNode {
     private final ModifiedNode mod;
     private final TreeNode newMeta;
@@ -53,18 +52,19 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
         }
     }
 
-    private DataTreeCandidateNode childNode(final ModifiedNode input) {
+    private DataTreeCandidateNode childNode(final ModificationType type, final ModifiedNode input) {
         final PathArgument id = input.getIdentifier();
-        return createChildNode(input, childMeta(oldMeta, id), childMeta(newMeta, id));
+        return createChildNode(type, input, childMeta(oldMeta, id), childMeta(newMeta, id));
     }
 
-    private static DataTreeCandidateNode createChildNode(@Nonnull final ModifiedNode input, @Nullable final TreeNode oldMeta, @Nullable final TreeNode newMeta) {
-        if(oldMeta == null) {
-            return RecursiveModificationCandidateNode.initialWriteNode(newMeta.getData());
+    private static DataTreeCandidateNode createChildNode(@Nonnull final ModificationType parentType, @Nonnull final ModifiedNode input, @Nullable final TreeNode oldMeta, @Nullable final TreeNode newMeta) {
+        if (oldMeta == null) {
+            return AbstractRecursiveCandidateNode.initialWriteNode(newMeta.getData());
         }
-        if(newMeta == null) {
-            return RecursiveModificationCandidateNode.deleteNode(oldMeta.getData());
+        if (newMeta == null) {
+            return AbstractRecursiveCandidateNode.deleteNode(oldMeta.getData());
         }
+
         return new ChildNode(input, oldMeta, newMeta);
     }
 
@@ -73,7 +73,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
         return Collections2.transform(mod.getChildren(), new Function<ModifiedNode, DataTreeCandidateNode>() {
             @Override
             public DataTreeCandidateNode apply(final ModifiedNode input) {
-                return childNode(input);
+                return childNode(mod.getModificationType(), input);
             }
         });
     }
@@ -105,13 +105,13 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     public DataTreeCandidateNode getModifiedChild(final PathArgument identifier) {
         final Optional<ModifiedNode> childMod = mod.getChild(identifier);
         if (childMod.isPresent()) {
-            return childNode(childMod.get());
+            return childNode(mod.getModificationType(), childMod.get());
         }
         return null;
     }
 
-    static final class ChildNode extends AbstractModifiedNodeBasedCandidateNode {
-        public ChildNode(final ModifiedNode mod, final TreeNode oldMeta, final TreeNode newMeta) {
+    private static final class ChildNode extends AbstractModifiedNodeBasedCandidateNode {
+        ChildNode(final ModifiedNode mod, final TreeNode oldMeta, final TreeNode newMeta) {
             super(mod, oldMeta, newMeta);
         }
 
