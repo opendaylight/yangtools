@@ -27,9 +27,12 @@ abstract class LeafDataTreeCandidateNode implements DataTreeCandidateNode {
         return new InitialWrite(childData);
     }
 
-
     static DataTreeCandidateNode deleteNode(final NormalizedNode<?, ?> childData) {
         return new Delete(childData);
+    }
+
+    static DataTreeCandidateNode unmodifiedNode(final NormalizedNode<?, ?> childData) {
+        return new Unmodified(childData);
     }
 
     protected final Optional<NormalizedNode<?, ?>> dataOptional() {
@@ -53,7 +56,7 @@ abstract class LeafDataTreeCandidateNode implements DataTreeCandidateNode {
 
     private static final class Delete extends LeafDataTreeCandidateNode implements DataTreeCandidateNode {
 
-        protected Delete(final NormalizedNode<?, ?> data) {
+        Delete(final NormalizedNode<?, ?> data) {
             super(data);
         }
 
@@ -71,12 +74,11 @@ abstract class LeafDataTreeCandidateNode implements DataTreeCandidateNode {
         public Optional<NormalizedNode<?, ?>> getDataBefore() {
             return dataOptional();
         }
-
     }
 
     private static final class InitialWrite extends LeafDataTreeCandidateNode {
 
-        protected InitialWrite(final NormalizedNode<?, ?> data) {
+        InitialWrite(final NormalizedNode<?, ?> data) {
             super(data);
         }
 
@@ -94,7 +96,26 @@ abstract class LeafDataTreeCandidateNode implements DataTreeCandidateNode {
         public Optional<NormalizedNode<?, ?>> getDataBefore() {
             return Optional.absent();
         }
-
     }
 
+    private static final class Unmodified extends LeafDataTreeCandidateNode {
+        Unmodified(final NormalizedNode<?, ?> data) {
+            super(data);
+        }
+
+        @Override
+        public ModificationType getModificationType() {
+            return ModificationType.UNMODIFIED;
+        }
+
+        @Override
+        public Optional<NormalizedNode<?, ?>> getDataAfter() {
+            return dataOptional();
+        }
+
+        @Override
+        public Optional<NormalizedNode<?, ?>> getDataBefore() {
+            return dataOptional();
+        }
+    }
 }
