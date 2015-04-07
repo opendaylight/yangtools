@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_ed47d11b",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/SchemaUtils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-04-07T13:45:52Z",
+      "side": 1,
+      "message": "Javadoc should be added explaining the intention and current behavior, since the method name is outdated and does not correspond to return value.",
+      "revId": "d2e733f69881d2e64b716dd715ff2823e93695ca",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
