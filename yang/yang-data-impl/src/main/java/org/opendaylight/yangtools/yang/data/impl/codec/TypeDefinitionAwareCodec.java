@@ -7,15 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT16_QNAME;
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT32_QNAME;
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT64_QNAME;
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT8_QNAME;
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT16_QNAME;
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT32_QNAME;
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT64_QNAME;
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT8_QNAME;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -47,6 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.DerivedType;
 
 public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> implements DataStringCodec<J> {
 
@@ -69,32 +61,8 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     private static final EmptyCodecStringImpl EMPTY_DEFAULT_CODEC = new EmptyCodecStringImpl(
             Optional.<EmptyTypeDefinition> absent());
 
-    private static final Int8CodecStringImpl INT8_DEFAULT_CODEC = new Int8CodecStringImpl(
-            Optional.<IntegerTypeDefinition> absent());
-
-    private static final Int16CodecStringImpl INT16_DEFAULT_CODEC = new Int16CodecStringImpl(
-            Optional.<IntegerTypeDefinition> absent());
-
-    private static final Int32CodecStringImpl INT32_DEFAULT_CODEC = new Int32CodecStringImpl(
-            Optional.<IntegerTypeDefinition> absent());
-
-    private static final Int64CodecStringImpl INT64_DEFAULT_CODEC = new Int64CodecStringImpl(
-            Optional.<IntegerTypeDefinition> absent());
-
     private static final StringCodecStringImpl STRING_DEFAULT_CODEC = new StringCodecStringImpl(
             Optional.<StringTypeDefinition> absent());
-
-    private static final Uint8CodecStringImpl UINT8_DEFAULT_CODEC = new Uint8CodecStringImpl(
-            Optional.<UnsignedIntegerTypeDefinition> absent());
-
-    private static final Uint16CodecStringImpl UINT16_DEFAULT_CODEC = new Uint16CodecStringImpl(
-            Optional.<UnsignedIntegerTypeDefinition> absent());
-
-    private static final Uint32CodecStringImpl UINT32_DEFAULT_CODEC = new Uint32CodecStringImpl(
-            Optional.<UnsignedIntegerTypeDefinition> absent());
-
-    private static final Uint64CodecStringImpl UINT64_DEFAULT_CODEC = new Uint64CodecStringImpl(
-            Optional.<UnsignedIntegerTypeDefinition> absent());
 
     @Override
     public Class<J> getInputClass() {
@@ -118,55 +86,31 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
     @SuppressWarnings("unchecked")
     public static final <T extends TypeDefinition<T>> TypeDefinitionAwareCodec<?, T> fromType(final T typeDefinition) {
-        T superType = typeDefinition;
-        while (superType.getBaseType() != null) {
-            superType = superType.getBaseType();
-        }
-
+        final T normalizedType = (T) DerivedType.from(typeDefinition);
         @SuppressWarnings("rawtypes")
         TypeDefinitionAwareCodec codec = null;
 
-        if (superType instanceof BinaryTypeDefinition) {
+        if (normalizedType instanceof BinaryTypeDefinition) {
             codec = BINARY_DEFAULT_CODEC;
-        } else if (superType instanceof BitsTypeDefinition) {
-            codec = new BitsCodecStringImpl( Optional.of( (BitsTypeDefinition)superType ) );
-        } else if (superType instanceof BooleanTypeDefinition) {
+        } else if (normalizedType instanceof BitsTypeDefinition) {
+            codec = new BitsCodecStringImpl( Optional.of( (BitsTypeDefinition)normalizedType ) );
+        } else if (normalizedType instanceof BooleanTypeDefinition) {
             codec = BOOLEAN_DEFAULT_CODEC;
-        } else if (superType instanceof DecimalTypeDefinition) {
+        } else if (normalizedType instanceof DecimalTypeDefinition) {
             codec = DECIMAL64_DEFAULT_CODEC;
-        } else if (superType instanceof EmptyTypeDefinition) {
+        } else if (normalizedType instanceof EmptyTypeDefinition) {
             codec = EMPTY_DEFAULT_CODEC;
-        } else if (superType instanceof EnumTypeDefinition) {
-            codec = new EnumCodecStringImpl( Optional.of( (EnumTypeDefinition)superType ) );
-        } else if (superType instanceof IntegerTypeDefinition) {
-            if (INT8_QNAME.equals(superType.getQName())) {
-                codec = INT8_DEFAULT_CODEC;
-            } else if (INT16_QNAME.equals(superType.getQName())) {
-                codec = INT16_DEFAULT_CODEC;
-            } else if (INT32_QNAME.equals(superType.getQName())) {
-                codec = INT32_DEFAULT_CODEC;
-            } else if (INT64_QNAME.equals(superType.getQName())) {
-                codec = INT64_DEFAULT_CODEC;
-            }
-        } else if (superType instanceof StringTypeDefinition) {
+        } else if (normalizedType instanceof EnumTypeDefinition) {
+            codec = new EnumCodecStringImpl( Optional.of( (EnumTypeDefinition)normalizedType ) );
+        } else if (normalizedType instanceof IntegerTypeDefinition) {
+            codec = AbstractIntegerStringCodec.from((IntegerTypeDefinition) normalizedType);
+        } else if (normalizedType instanceof StringTypeDefinition) {
             codec = STRING_DEFAULT_CODEC;
-        } else if (superType instanceof UnionTypeDefinition) {
-            codec = new UnionCodecStringImpl( Optional.of( (UnionTypeDefinition)superType ) );
-        } else if (superType instanceof UnsignedIntegerTypeDefinition) {
-            if (UINT8_QNAME.equals(superType.getQName())) {
-                codec = UINT8_DEFAULT_CODEC;
-            }
-            if (UINT16_QNAME.equals(superType.getQName())) {
-                codec = UINT16_DEFAULT_CODEC;
-            }
-            if (UINT32_QNAME.equals(superType.getQName())) {
-                codec = UINT32_DEFAULT_CODEC;
-            }
-            if (UINT64_QNAME.equals(superType.getQName())) {
-                codec = UINT64_DEFAULT_CODEC;
-            }
+        } else if (normalizedType instanceof UnionTypeDefinition) {
+            codec = new UnionCodecStringImpl( Optional.of( (UnionTypeDefinition)normalizedType ) );
+        } else if (normalizedType instanceof UnsignedIntegerTypeDefinition) {
+            codec = AbstractIntegerStringCodec.from((UnsignedIntegerTypeDefinition) normalizedType);
         }
-
         return codec;
     }
 
