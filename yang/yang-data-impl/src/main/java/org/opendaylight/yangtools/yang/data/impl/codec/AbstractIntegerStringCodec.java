@@ -7,6 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
+import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT16_QNAME;
+import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT32_QNAME;
+import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT64_QNAME;
+import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT8_QNAME;
+import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT16_QNAME;
+import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT32_QNAME;
+import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT64_QNAME;
+import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT8_QNAME;
+
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Optional;
 import com.google.common.collect.Range;
@@ -52,6 +61,42 @@ abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N>, T ex
 
     }
 
+    static TypeDefinitionAwareCodec<?, IntegerTypeDefinition> from(final IntegerTypeDefinition type) {
+        final Optional<IntegerTypeDefinition> typeOptional = Optional.of(type);
+        IntegerTypeDefinition baseType = type;
+        while(baseType.getBaseType() != null) {
+            baseType = baseType.getBaseType();
+        }
+        if (INT8_QNAME.equals(baseType.getQName())) {
+            return new Int8StringCodec(typeOptional);
+        } else if (INT16_QNAME.equals(baseType.getQName())) {
+            return new Int16StringCodec(typeOptional);
+        } else if (INT32_QNAME.equals(baseType.getQName())) {
+            return new Int32StringCodec(typeOptional);
+        } else if (INT64_QNAME.equals(baseType.getQName())) {
+            return new Int64StringCodec(typeOptional);
+        }
+        throw new IllegalArgumentException("Unsupported base type: " + baseType.getQName());
+    }
+
+    static TypeDefinitionAwareCodec<?, UnsignedIntegerTypeDefinition> from(final UnsignedIntegerTypeDefinition type) {
+        final Optional<UnsignedIntegerTypeDefinition> typeOptional = Optional.of(type);
+        UnsignedIntegerTypeDefinition baseType = type;
+        while(baseType.getBaseType() != null) {
+            baseType = baseType.getBaseType();
+        }
+        if (UINT8_QNAME.equals(baseType.getQName())) {
+            return new Uint8StringCodec(typeOptional);
+        } else if (UINT16_QNAME.equals(baseType.getQName())) {
+            return new Uint16StringCodec(typeOptional);
+        } else if (UINT32_QNAME.equals(baseType.getQName())) {
+            return new Uint32StringCodec(typeOptional);
+        } else if (UINT64_QNAME.equals(baseType.getQName())) {
+            return new Uint64StringCodec(typeOptional);
+        }
+        throw new IllegalArgumentException("Unsupported base type: " + baseType.getQName());
+    }
+
     private Range<N> createRange(final Number yangMin, final Number yangMax) {
         final N min = convertValue(yangMin);
         final N max = convertValue(yangMax);
@@ -82,7 +127,7 @@ abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N>, T ex
             }
         }
         // FIXME: Provide better error report.
-        throw new IllegalArgumentException("Value is not in required range.");
+        throw new IllegalArgumentException("Value '" + value + "'  is not in required range " + rangeConstraints);
     }
 
     /**
