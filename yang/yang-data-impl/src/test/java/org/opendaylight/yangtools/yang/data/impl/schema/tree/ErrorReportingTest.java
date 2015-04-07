@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
@@ -23,7 +22,7 @@ public class ErrorReportingTest {
 
     @Before
     public void setup() {
-        tree = InMemoryDataTreeFactory.getInstance().create();
+        tree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create();
         tree.setSchemaContext(TestModel.createTestContext());
     }
 
