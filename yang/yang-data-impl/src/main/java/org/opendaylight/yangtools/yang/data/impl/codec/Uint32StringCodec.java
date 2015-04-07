@@ -15,7 +15,7 @@ class Uint32StringCodec extends AbstractIntegerStringCodec<Long, UnsignedInteger
         implements Uint32Codec<String> {
 
     protected Uint32StringCodec(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
-        super(typeDef, Long.class);
+        super(typeDef, extractRange(typeDef.orNull()),Long.class);
     }
 
     @Override
@@ -26,5 +26,10 @@ class Uint32StringCodec extends AbstractIntegerStringCodec<Long, UnsignedInteger
     @Override
     public final String serialize(final Long data) {
         return data == null ? "" : data.toString();
+    }
+
+    @Override
+    protected Long convertValue(final Number value) {
+        return value.longValue();
     }
 }

@@ -15,7 +15,7 @@ class Uint8StringCodec extends AbstractIntegerStringCodec<Short, UnsignedInteger
         implements Uint8Codec<String> {
 
     protected Uint8StringCodec(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
-        super(typeDef, Short.class);
+        super(typeDef, extractRange(typeDef.orNull()),Short.class);
     }
 
     @Override
@@ -26,5 +26,10 @@ class Uint8StringCodec extends AbstractIntegerStringCodec<Short, UnsignedInteger
     @Override
     public final Short deserialize(final String stringRepresentation,final int base) {
         return Short.valueOf(stringRepresentation, base);
+    }
+
+    @Override
+    protected Short convertValue(final Number value) {
+        return value.shortValue();
     }
 }

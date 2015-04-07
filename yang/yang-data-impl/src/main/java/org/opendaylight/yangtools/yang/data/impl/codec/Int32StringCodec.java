@@ -15,7 +15,7 @@ class Int32StringCodec extends AbstractIntegerStringCodec<Integer, IntegerTypeDe
         Int32Codec<String> {
 
     protected Int32StringCodec(final Optional<IntegerTypeDefinition> typeDef) {
-        super(typeDef, Integer.class);
+        super(typeDef, extractRange(typeDef.orNull()),Integer.class);
     }
 
     @Override
@@ -26,5 +26,10 @@ class Int32StringCodec extends AbstractIntegerStringCodec<Integer, IntegerTypeDe
     @Override
     public final String serialize(final Integer data) {
         return data == null ? "" : data.toString();
+    }
+
+    @Override
+    protected Integer convertValue(final Number value) {
+        return value.intValue();
     }
 }
