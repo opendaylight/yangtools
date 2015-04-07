@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_137ee06b",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/AbstractIntegerStringCodec.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-07T18:58:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_ad2b0993",
+      "revId": "211b640cf09eae7c20ebaef0609709b0773a9a83",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_cd2695ce",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/AbstractIntegerStringCodec.java",
         "patchSetId": 1
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_33819c4a",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/AbstractIntegerStringCodec.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-07T18:58:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_cd2695ce",
+      "revId": "211b640cf09eae7c20ebaef0609709b0773a9a83",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_0d147d4c",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/Uint8StringCodec.java",
         "patchSetId": 1
@@ -47,6 +83,24 @@
       "writtenOn": "2015-04-07T15:58:47Z",
       "side": 1,
       "message": "missing space",
+      "revId": "211b640cf09eae7c20ebaef0609709b0773a9a83",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d397188f",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/Uint8StringCodec.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-07T18:58:25Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_0d147d4c",
       "revId": "211b640cf09eae7c20ebaef0609709b0773a9a83",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
