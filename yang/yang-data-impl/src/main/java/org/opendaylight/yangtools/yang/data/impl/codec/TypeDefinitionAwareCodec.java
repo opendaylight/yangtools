@@ -16,7 +16,6 @@ import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT32_QNAME;
 import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT64_QNAME;
 import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT8_QNAME;
 
-import com.google.common.base.CharMatcher;
 import com.google.common.base.Joiner;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -28,8 +27,6 @@ import com.google.common.io.BaseEncoding;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.xml.bind.DatatypeConverter;
 import org.opendaylight.yangtools.yang.data.api.codec.BinaryCodec;
 import org.opendaylight.yangtools.yang.data.api.codec.BitsCodec;
@@ -62,57 +59,12 @@ import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinit
 
 public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> implements DataStringCodec<J> {
 
-    private static final Pattern intPattern = Pattern.compile("[+-]?[1-9][0-9]*$");
-    private static final Pattern hexPattern = Pattern.compile("[+-]?0[xX][0-9a-fA-F]+");
-    private static final Pattern octalPattern = Pattern.compile("[+-]?0[1-7][0-7]*$");
 
-    // For up to two characters, this is very fast
-    private static final CharMatcher X_MATCHER = CharMatcher.anyOf("xX");
 
     private final Optional<T> typeDefinition;
     private final Class<J> inputClass;
 
-    private static final int provideBase(final String integer) {
-        if (integer == null) {
-            throw new IllegalArgumentException("String representing integer number cannot be NULL");
-        }
 
-        if ((integer.length() == 1) && (integer.charAt(0) == '0')) {
-            return 10;
-        }
-
-        final Matcher intMatcher = intPattern.matcher(integer);
-        if (intMatcher.matches()) {
-            return 10;
-        } else {
-            final Matcher hexMatcher = hexPattern.matcher(integer);
-            if (hexMatcher.matches()) {
-                return 16;
-            } else {
-                final Matcher octMatcher = octalPattern.matcher(integer);
-                if (octMatcher.matches()) {
-                    return 8;
-                } else {
-                    String formatedMessage = String.format("Incorrect lexical representation of integer value: %s."
-                            + "%nAn integer value can be defined as: "
-                            + "%n  - a decimal number,"
-                            + "%n  - a hexadecimal number (prefix 0x),"
-                            + "%n  - an octal number (prefix 0)."
-                            + "%nSigned values are allowed. Spaces between digits are NOT allowed.", integer);
-                    throw new NumberFormatException(formatedMessage);
-                }
-            }
-        }
-    }
-
-    private static String normalizeHexadecimal(final String hexInt) {
-        if (hexInt == null) {
-            throw new IllegalArgumentException(
-                    "String representing integer number in Hexadecimal format cannot be NULL!");
-        }
-
-        return X_MATCHER.removeFrom(hexInt);
-    }
 
     private static final BinaryCodecStringImpl BINARY_DEFAULT_CODEC = new BinaryCodecStringImpl(
             Optional.<BinaryTypeDefinition> absent());
@@ -245,7 +197,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
     }
 
-    public static class Uint8CodecStringImpl extends TypeDefinitionAwareCodec<Short, UnsignedIntegerTypeDefinition>
+    public static class Uint8CodecStringImpl extends AbstractIntegerStringCodec<Short, UnsignedIntegerTypeDefinition>
             implements Uint8Codec<String> {
 
         protected Uint8CodecStringImpl(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
@@ -258,27 +210,19 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
 
         @Override
-        public Short deserialize(final String stringRepresentation) {
-            int base = provideBase(stringRepresentation);
-            if (base == 16) {
-                return Short.valueOf(normalizeHexadecimal(stringRepresentation), base);
-            }
+        public Short deserialize(final String stringRepresentation,final int base) {
             return Short.valueOf(stringRepresentation, base);
         }
     }
 
-    public static class Uint16CodecStringImpl extends TypeDefinitionAwareCodec<Integer, UnsignedIntegerTypeDefinition>
+    public static class Uint16CodecStringImpl extends AbstractIntegerStringCodec<Integer, UnsignedIntegerTypeDefinition>
             implements Uint16Codec<String> {
         protected Uint16CodecStringImpl(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
             super(typeDef, Integer.class);
         }
 
         @Override
-        public Integer deserialize(final String stringRepresentation) {
-            int base = provideBase(stringRepresentation);
-            if (base == 16) {
-                return Integer.valueOf(normalizeHexadecimal(stringRepresentation), base);
-            }
+        public Integer deserialize(final String stringRepresentation, final int base) {
             return Integer.valueOf(stringRepresentation, base);
         }
 
@@ -288,7 +232,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
     }
 
-    public static class Uint32CodecStringImpl extends TypeDefinitionAwareCodec<Long, UnsignedIntegerTypeDefinition>
+    public static class Uint32CodecStringImpl extends AbstractIntegerStringCodec<Long, UnsignedIntegerTypeDefinition>
             implements Uint32Codec<String> {
 
         protected Uint32CodecStringImpl(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
@@ -296,11 +240,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
 
         @Override
-        public Long deserialize(final String stringRepresentation) {
-            int base = provideBase(stringRepresentation);
-            if (base == 16) {
-                return Long.valueOf(normalizeHexadecimal(stringRepresentation), base);
-            }
+        public Long deserialize(final String stringRepresentation, final int base) {
             return Long.valueOf(stringRepresentation, base);
         }
 
@@ -310,19 +250,14 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
     }
 
-    public static class Uint64CodecStringImpl extends
-            TypeDefinitionAwareCodec<BigInteger, UnsignedIntegerTypeDefinition> implements Uint64Codec<String> {
+    public static class Uint64CodecStringImpl extends AbstractIntegerStringCodec<BigInteger, UnsignedIntegerTypeDefinition> implements Uint64Codec<String> {
 
         protected Uint64CodecStringImpl(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
             super(typeDef, BigInteger.class);
         }
 
         @Override
-        public BigInteger deserialize(final String stringRepresentation) {
-            int base = provideBase(stringRepresentation);
-            if (base == 16) {
-                return new BigInteger(normalizeHexadecimal(stringRepresentation), base);
-            }
+        public BigInteger deserialize(final String stringRepresentation, final int base) {
             return new BigInteger(stringRepresentation, base);
         }
 
@@ -350,7 +285,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
     }
 
-    public static class Int16CodecStringImpl extends TypeDefinitionAwareCodec<Short, IntegerTypeDefinition> implements
+    public static class Int16CodecStringImpl extends AbstractIntegerStringCodec<Short, IntegerTypeDefinition> implements
             Int16Codec<String> {
 
         protected Int16CodecStringImpl(final Optional<IntegerTypeDefinition> typeDef) {
@@ -358,11 +293,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
 
         @Override
-        public Short deserialize(final String stringRepresentation) {
-            int base = provideBase(stringRepresentation);
-            if (base == 16) {
-                return Short.valueOf(normalizeHexadecimal(stringRepresentation), base);
-            }
+        public Short deserialize(final String stringRepresentation, final int base) {
             return Short.valueOf(stringRepresentation, base);
         }
 
@@ -372,7 +303,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
     }
 
-    public static class Int32CodecStringImpl extends TypeDefinitionAwareCodec<Integer, IntegerTypeDefinition> implements
+    public static class Int32CodecStringImpl extends AbstractIntegerStringCodec<Integer, IntegerTypeDefinition> implements
             Int32Codec<String> {
 
         protected Int32CodecStringImpl(final Optional<IntegerTypeDefinition> typeDef) {
@@ -380,11 +311,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
 
         @Override
-        public Integer deserialize(final String stringRepresentation) {
-            int base = provideBase(stringRepresentation);
-            if (base == 16) {
-                return Integer.valueOf(normalizeHexadecimal(stringRepresentation), base);
-            }
+        public Integer deserialize(final String stringRepresentation, final int base) {
             return Integer.valueOf(stringRepresentation, base);
         }
 
@@ -394,7 +321,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
     }
 
-    public static class Int64CodecStringImpl extends TypeDefinitionAwareCodec<Long, IntegerTypeDefinition> implements
+    public static class Int64CodecStringImpl extends AbstractIntegerStringCodec<Long, IntegerTypeDefinition> implements
             Int64Codec<String> {
 
         protected Int64CodecStringImpl(final Optional<IntegerTypeDefinition> typeDef) {
@@ -402,11 +329,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
 
         @Override
-        public Long deserialize(final String stringRepresentation) {
-            int base = provideBase(stringRepresentation);
-            if (base == 16) {
-                return Long.valueOf(normalizeHexadecimal(stringRepresentation), base);
-            }
+        public Long deserialize(final String stringRepresentation, final int base) {
             return Long.valueOf(stringRepresentation, base);
         }
 
@@ -416,7 +339,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
     }
 
-    public static class Int8CodecStringImpl extends TypeDefinitionAwareCodec<Byte, IntegerTypeDefinition> implements
+    public static class Int8CodecStringImpl extends AbstractIntegerStringCodec<Byte, IntegerTypeDefinition> implements
             Int8Codec<String> {
 
         protected Int8CodecStringImpl(final Optional<IntegerTypeDefinition> typeDef) {
@@ -424,11 +347,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
 
         @Override
-        public Byte deserialize(final String stringRepresentation) {
-            int base = provideBase(stringRepresentation);
-            if (base == 16) {
-                return Byte.valueOf(normalizeHexadecimal(stringRepresentation), base);
-            }
+        public Byte deserialize(final String stringRepresentation, final int base) {
             return Byte.valueOf(stringRepresentation, base);
         }
 
@@ -498,15 +417,15 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
                 return ImmutableSet.of();
             }
 
-            Iterable<String> strings = SPLITTER.split(stringRepresentation);
+            final Iterable<String> strings = SPLITTER.split(stringRepresentation);
 
             if( getTypeDefinition().isPresent() ) {
-                Set<String> allowedNames = Sets.newHashSet();
-                for( BitsTypeDefinition.Bit bit: getTypeDefinition().get().getBits() ) {
+                final Set<String> allowedNames = Sets.newHashSet();
+                for( final BitsTypeDefinition.Bit bit: getTypeDefinition().get().getBits() ) {
                     allowedNames.add( bit.getName() );
                 }
 
-                for( String bit: strings ) {
+                for( final String bit: strings ) {
                     if( !allowedNames.contains( bit ) ) {
                         throw new IllegalArgumentException(
                             "Invalid value \"" + bit + "\" for bits type. Allowed values are: " +
@@ -529,8 +448,8 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         @Override
         public String deserialize(final String stringRepresentation) {
             if( getTypeDefinition().isPresent() ) {
-                Set<String> allowedNames = Sets.newHashSet();
-                for( EnumPair pair: getTypeDefinition().get().getValues() ) {
+                final Set<String> allowedNames = Sets.newHashSet();
+                for( final EnumPair pair: getTypeDefinition().get().getValues() ) {
                     allowedNames.add( pair.getName() );
                 }
 
@@ -585,8 +504,8 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         public Object deserialize(final String stringRepresentation) {
             if( getTypeDefinition().isPresent() ) {
                 boolean valid = false;
-                for( TypeDefinition<?> type: getTypeDefinition().get().getTypes() ) {
-                    TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> typeAwareCodec = from( type );
+                for( final TypeDefinition<?> type: getTypeDefinition().get().getTypes() ) {
+                    final TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> typeAwareCodec = from( type );
                     if( typeAwareCodec == null ) {
                         // This is a type for which we have no codec (eg identity ref) so we'll say it's valid
                         // but we'll continue in case there's another type for which we do have a codec.
@@ -599,7 +518,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
                         valid = true;
                         break;
                     }
-                    catch( Exception e ) {
+                    catch( final Exception e ) {
                         // invalid - try the next union type.
                     }
                 }
