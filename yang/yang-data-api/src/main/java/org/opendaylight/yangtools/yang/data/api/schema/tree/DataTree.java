@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 /**
  * Interface representing a data tree which can be modified in an MVCC fashion.
  */
-public interface DataTree {
+public interface DataTree extends DataTreeBranch {
     /**
      * Take a read-only point-in-time snapshot of the tree.
      *
@@ -28,19 +28,6 @@ public interface DataTree {
      * @throws IllegalArgumentException if the new context is incompatible
      */
     void setSchemaContext(SchemaContext newSchemaContext);
-
-    /**
-     * Validate whether a particular modification can be applied to the data tree.
-     */
-    void validate(DataTreeModification modification) throws DataValidationFailedException;
-
-    /**
-     * Prepare a modification for commit.
-     *
-     * @param modification
-     * @return candidate data tree
-     */
-    DataTreeCandidate prepare(DataTreeModification modification);
 
     /**
      * Commit a data tree candidate.
