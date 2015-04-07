@@ -8,17 +8,11 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import java.util.Collections;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.BranchingDataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
@@ -27,8 +21,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Read-only snapshot of the data tree.
  */
-final class InMemoryDataTree implements DataTree {
-    private static final YangInstanceIdentifier PUBLIC_ROOT_PATH = YangInstanceIdentifier.create(Collections.<PathArgument>emptyList());
+final class InMemoryDataTree extends AbstractDataTreeBranch implements BranchingDataTree {
     private static final AtomicReferenceFieldUpdater<InMemoryDataTree, DataTreeState> STATE_UPDATER =
             AtomicReferenceFieldUpdater.newUpdater(InMemoryDataTree.class, DataTreeState.class, "state");
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTree.class);
@@ -70,32 +63,6 @@ final class InMemoryDataTree implements DataTree {
     }
 
     @Override
-    public void validate(final DataTreeModification modification) throws DataValidationFailedException {
-        Preconditions.checkArgument(modification instanceof InMemoryDataTreeModification, "Invalid modification class %s", modification.getClass());
-        final InMemoryDataTreeModification m = (InMemoryDataTreeModification)modification;
-
-        m.getStrategy().checkApplicable(PUBLIC_ROOT_PATH, m.getRootModification(), Optional.<TreeNode>of(state.getRoot()));
-    }
-
-    @Override
-    public DataTreeCandidate prepare(final DataTreeModification modification) {
-        Preconditions.checkArgument(modification instanceof InMemoryDataTreeModification, "Invalid modification class %s", modification.getClass());
-
-        final InMemoryDataTreeModification m = (InMemoryDataTreeModification)modification;
-        final ModifiedNode root = m.getRootModification();
-
-        if (root.getOperation() == LogicalOperation.NONE) {
-            return new NoopDataTreeCandidate(PUBLIC_ROOT_PATH, root);
-        }
-
-        final TreeNode currentRoot = state.getRoot();
-        final Optional<TreeNode> newRoot = m.getStrategy().apply(m.getRootModification(),
-            Optional.<TreeNode>of(currentRoot), m.getVersion());
-        Preconditions.checkState(newRoot.isPresent(), "Apply strategy failed to produce root node");
-        return new InMemoryDataTreeCandidate(PUBLIC_ROOT_PATH, root, currentRoot, newRoot.get());
-    }
-
-    @Override
     public void commit(final DataTreeCandidate candidate) {
         if (candidate instanceof NoopDataTreeCandidate) {
             return;
@@ -105,10 +72,10 @@ final class InMemoryDataTree implements DataTree {
         final InMemoryDataTreeCandidate c = (InMemoryDataTreeCandidate)candidate;
 
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Data Tree is {}", NormalizedNodes.toStringTree(c.getAfterRoot().getData()));
+            LOG.trace("Data Tree is {}", NormalizedNodes.toStringTree(c.getBranchRoot().getData()));
         }
 
-        final TreeNode newRoot = c.getAfterRoot();
+        final TreeNode newRoot = c.getBranchRoot();
         DataTreeState currentState, newState;
         do {
             currentState = state;
@@ -126,5 +93,10 @@ final class InMemoryDataTree implements DataTree {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).add("object", super.toString()).add("state", state).toString();
+    }
+
+    @Override
+    protected TreeNode getBranchRoot() {
+        return state.getRoot();
     }
 }
