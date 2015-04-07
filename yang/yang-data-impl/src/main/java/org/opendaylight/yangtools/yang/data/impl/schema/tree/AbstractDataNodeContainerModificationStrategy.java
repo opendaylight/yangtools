@@ -12,6 +12,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 import java.util.concurrent.ExecutionException;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -34,13 +35,14 @@ abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeC
     private final LoadingCache<PathArgument, ModificationApplyOperation> childCache = CacheBuilder.newBuilder()
             .build(new CacheLoader<PathArgument, ModificationApplyOperation>() {
                 @Override
-                public ModificationApplyOperation load(final PathArgument key) throws Exception {
+                public ModificationApplyOperation load(final PathArgument key) {
                     if (key instanceof AugmentationIdentifier && schema instanceof AugmentationTarget) {
                         return SchemaAwareApplyOperation.from(schema, (AugmentationTarget) schema, (AugmentationIdentifier) key);
                     }
 
                     final DataSchemaNode child = schema.getDataChildByName(key.getNodeType());
-                    return child == null ? null : SchemaAwareApplyOperation.from(child);
+                    Preconditions.checkArgument(child != null, "Schema %s does not have a node for child %s", schema, key.getNodeType());
+                    return SchemaAwareApplyOperation.from(child);
                 }
             });
     private final T schema;
@@ -58,8 +60,8 @@ abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeC
     public final Optional<ModificationApplyOperation> getChild(final PathArgument identifier) {
         try {
             return Optional.<ModificationApplyOperation> fromNullable(childCache.get(identifier));
-        } catch (ExecutionException e) {
-            LOG.trace("Child {} not present in container schema {}", identifier, this);
+        } catch (ExecutionException | UncheckedExecutionException e) {
+            LOG.trace("Child {} not present in container schema {} children {}", identifier, this, schema.getChildNodes(), e.getCause());
             return Optional.absent();
         }
     }
