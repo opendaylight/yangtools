@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
-
 import com.google.common.base.Preconditions;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateTip;
 
-abstract class AbstractDataTreeCandidate implements DataTreeCandidate {
+abstract class AbstractDataTreeCandidate extends AbstractDataTreeBranch implements DataTreeCandidateTip {
     private final YangInstanceIdentifier rootPath;
 
     protected AbstractDataTreeCandidate(final YangInstanceIdentifier rootPath) {
@@ -24,5 +22,4 @@ abstract class AbstractDataTreeCandidate implements DataTreeCandidate {
     public final YangInstanceIdentifier getRootPath() {
         return rootPath;
     }
-
 }
