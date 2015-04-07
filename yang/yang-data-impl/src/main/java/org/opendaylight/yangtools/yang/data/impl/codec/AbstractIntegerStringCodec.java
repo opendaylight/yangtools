@@ -9,9 +9,16 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Optional;
+import com.google.common.collect.Range;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
 abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N>, T extends TypeDefinition<T>> extends TypeDefinitionAwareCodec<N, T>{
 
@@ -27,6 +34,75 @@ abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N>, T ex
             + "\n  - a decimal number,"
             + "\n  - a hexadecimal number (prefix 0x)," + "%n  - an octal number (prefix 0)."
             + "\nSigned values are allowed. Spaces between digits are NOT allowed.";
+
+
+    private final List<Range<N>> rangeConstraints;
+
+    protected AbstractIntegerStringCodec(final Optional<T> typeDefinition, final List<RangeConstraint> constraints , final Class<N> outputClass) {
+        super(typeDefinition, outputClass);
+        if(constraints.isEmpty()) {
+            rangeConstraints = Collections.emptyList();
+        } else {
+            final ArrayList<Range<N>> builder = new ArrayList<>(constraints.size());
+            for(final RangeConstraint yangConstraint : constraints) {
+                builder.add(createRange(yangConstraint.getMin(),yangConstraint.getMax()));
+            }
+            rangeConstraints = builder;
+        }
+
+    }
+
+    private Range<N> createRange(final Number yangMin, final Number yangMax) {
+        final N min = convertValue(yangMin);
+        final N max = convertValue(yangMax);
+        return Range.closed(min, max);
+    }
+
+    @Override
+    public final N deserialize(final String stringRepresentation) {
+        final int base = provideBase(stringRepresentation);
+        final N deserialized;
+        if (base == 16) {
+            deserialized = deserialize(normalizeHexadecimal(stringRepresentation),base);
+        } else {
+            deserialized = deserialize(stringRepresentation,base);
+        }
+        validate(deserialized);
+        return deserialized;
+    }
+
+
+    private final void validate(final N value) {
+        if(rangeConstraints.isEmpty()) {
+            return;
+        }
+        for(final Range<N> constraint : rangeConstraints) {
+            if(constraint.contains(value)) {
+                return;
+            }
+        }
+        // FIXME: Provide better error report.
+        throw new IllegalArgumentException("Value is not in required range.");
+    }
+
+    protected abstract N deserialize(String stringRepresentation, int base);
+
+    protected abstract N convertValue(Number value);
+
+
+    protected static List<RangeConstraint> extractRange(final IntegerTypeDefinition type) {
+        if(type == null) {
+            return Collections.emptyList();
+        }
+        return type.getRangeConstraints();
+    }
+
+    protected static List<RangeConstraint> extractRange(final UnsignedIntegerTypeDefinition type) {
+        if(type == null) {
+            return Collections.emptyList();
+        }
+        return type.getRangeConstraints();
+    }
 
     private static final int provideBase(final String integer) {
         if (integer == null) {
@@ -62,21 +138,4 @@ abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N>, T ex
 
         return X_MATCHER.removeFrom(hexInt);
     }
-
-    protected AbstractIntegerStringCodec(final Optional<T> typeDefinition, final Class<N> outputClass) {
-        super(typeDefinition, outputClass);
-
-    }
-
-    @Override
-    public final N deserialize(final String stringRepresentation) {
-        final int base = provideBase(stringRepresentation);
-        if (base == 16) {
-            return deserialize(normalizeHexadecimal(stringRepresentation),base);
-        }
-        return deserialize(stringRepresentation,base);
-    }
-
-    protected abstract N deserialize(String stringRepresentation, int base);
-
 }

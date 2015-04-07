@@ -15,8 +15,10 @@ class Int16StringCodec extends AbstractIntegerStringCodec<Short, IntegerTypeDefi
         Int16Codec<String> {
 
     protected Int16StringCodec(final Optional<IntegerTypeDefinition> typeDef) {
-        super(typeDef, Short.class);
+        super(typeDef, extractRange(typeDef.orNull()),Short.class);
     }
+
+
 
     @Override
     public final Short deserialize(final String stringRepresentation, final int base) {
@@ -26,5 +28,10 @@ class Int16StringCodec extends AbstractIntegerStringCodec<Short, IntegerTypeDefi
     @Override
     public final String serialize(final Short data) {
         return data == null ? "" : data.toString();
+    }
+
+    @Override
+    protected Short convertValue(final Number value) {
+        return value.shortValue();
     }
 }

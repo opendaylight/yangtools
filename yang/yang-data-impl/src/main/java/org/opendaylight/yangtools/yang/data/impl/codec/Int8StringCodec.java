@@ -15,7 +15,7 @@ class Int8StringCodec extends AbstractIntegerStringCodec<Byte, IntegerTypeDefini
         Int8Codec<String> {
 
     protected Int8StringCodec(final Optional<IntegerTypeDefinition> typeDef) {
-        super(typeDef, Byte.class);
+        super(typeDef, extractRange(typeDef.orNull()),Byte.class);
     }
 
     @Override
@@ -26,5 +26,10 @@ class Int8StringCodec extends AbstractIntegerStringCodec<Byte, IntegerTypeDefini
     @Override
     public String serialize(final Byte data) {
         return data == null ? "" : data.toString();
+    }
+
+    @Override
+    protected Byte convertValue(final Number value) {
+        return value.byteValue();
     }
 }

@@ -15,7 +15,7 @@ class Int64StringCodec extends AbstractIntegerStringCodec<Long, IntegerTypeDefin
         Int64Codec<String> {
 
     protected Int64StringCodec(final Optional<IntegerTypeDefinition> typeDef) {
-        super(typeDef, Long.class);
+        super(typeDef, extractRange(typeDef.orNull()),Long.class);
     }
 
     @Override
@@ -26,5 +26,10 @@ class Int64StringCodec extends AbstractIntegerStringCodec<Long, IntegerTypeDefin
     @Override
     public final String serialize(final Long data) {
         return data == null ? "" : data.toString();
+    }
+
+    @Override
+    protected Long convertValue(final Number value) {
+        return value.longValue();
     }
 }

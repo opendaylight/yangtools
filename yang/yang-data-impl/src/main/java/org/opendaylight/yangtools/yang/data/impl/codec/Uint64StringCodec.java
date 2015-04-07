@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinit
 class Uint64StringCodec extends AbstractIntegerStringCodec<BigInteger, UnsignedIntegerTypeDefinition> implements Uint64Codec<String> {
 
     protected Uint64StringCodec(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
-        super(typeDef, BigInteger.class);
+        super(typeDef, extractRange(typeDef.orNull()),BigInteger.class);
     }
 
     @Override
@@ -26,5 +26,13 @@ class Uint64StringCodec extends AbstractIntegerStringCodec<BigInteger, UnsignedI
     @Override
     public final String serialize(final BigInteger data) {
         return data == null ? "" : data.toString();
+    }
+
+    @Override
+    protected BigInteger convertValue(final Number value) {
+        if(value instanceof BigInteger) {
+            return (BigInteger) value;
+        }
+        return BigInteger.valueOf(value.longValue());
     }
 }

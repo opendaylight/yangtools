@@ -14,16 +14,21 @@ import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinit
 class Uint16StringCodec extends AbstractIntegerStringCodec<Integer, UnsignedIntegerTypeDefinition>
         implements Uint16Codec<String> {
     protected Uint16StringCodec(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
-        super(typeDef, Integer.class);
+        super(typeDef, extractRange(typeDef.orNull()),Integer.class);
     }
 
     @Override
-    public Integer deserialize(final String stringRepresentation, final int base) {
+    public final Integer deserialize(final String stringRepresentation, final int base) {
         return Integer.valueOf(stringRepresentation, base);
     }
 
     @Override
-    public String serialize(final Integer data) {
+    public final String serialize(final Integer data) {
         return data == null ? "" : data.toString();
+    }
+
+    @Override
+    protected Integer convertValue(final Number value) {
+        return value.intValue();
     }
 }
