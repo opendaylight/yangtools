@@ -33,7 +33,8 @@ final class InMemoryDataTreeCandidate extends AbstractDataTreeCandidate {
         this.root = new RootNode(modificationRoot, beforeRoot, afterRoot);
     }
 
-    TreeNode getAfterRoot() {
+    @Override
+    protected TreeNode getBranchRoot() {
         return root.getNewMeta();
     }
 
