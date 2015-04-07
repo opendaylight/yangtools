@@ -25,7 +25,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import com.google.common.io.BaseEncoding;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.Set;
 import javax.xml.bind.DatatypeConverter;
 import org.opendaylight.yangtools.yang.data.api.codec.BinaryCodec;
@@ -34,15 +33,7 @@ import org.opendaylight.yangtools.yang.data.api.codec.BooleanCodec;
 import org.opendaylight.yangtools.yang.data.api.codec.DecimalCodec;
 import org.opendaylight.yangtools.yang.data.api.codec.EmptyCodec;
 import org.opendaylight.yangtools.yang.data.api.codec.EnumCodec;
-import org.opendaylight.yangtools.yang.data.api.codec.Int16Codec;
-import org.opendaylight.yangtools.yang.data.api.codec.Int32Codec;
-import org.opendaylight.yangtools.yang.data.api.codec.Int64Codec;
-import org.opendaylight.yangtools.yang.data.api.codec.Int8Codec;
 import org.opendaylight.yangtools.yang.data.api.codec.StringCodec;
-import org.opendaylight.yangtools.yang.data.api.codec.Uint16Codec;
-import org.opendaylight.yangtools.yang.data.api.codec.Uint32Codec;
-import org.opendaylight.yangtools.yang.data.api.codec.Uint64Codec;
-import org.opendaylight.yangtools.yang.data.api.codec.Uint8Codec;
 import org.opendaylight.yangtools.yang.data.api.codec.UnionCodec;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
@@ -197,74 +188,37 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
     }
 
-    public static class Uint8CodecStringImpl extends AbstractIntegerStringCodec<Short, UnsignedIntegerTypeDefinition>
-            implements Uint8Codec<String> {
+    @Deprecated
+    public static class Uint8CodecStringImpl extends Uint8StringCodec {
 
         protected Uint8CodecStringImpl(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
-            super(typeDef, Short.class);
-        }
-
-        @Override
-        public String serialize(final Short data) {
-            return data == null ? "" : data.toString();
-        }
-
-        @Override
-        public Short deserialize(final String stringRepresentation,final int base) {
-            return Short.valueOf(stringRepresentation, base);
+            super(typeDef);
         }
     }
 
-    public static class Uint16CodecStringImpl extends AbstractIntegerStringCodec<Integer, UnsignedIntegerTypeDefinition>
-            implements Uint16Codec<String> {
+    @Deprecated
+    public static class Uint16CodecStringImpl extends Uint16StringCodec {
         protected Uint16CodecStringImpl(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
-            super(typeDef, Integer.class);
-        }
-
-        @Override
-        public Integer deserialize(final String stringRepresentation, final int base) {
-            return Integer.valueOf(stringRepresentation, base);
-        }
-
-        @Override
-        public String serialize(final Integer data) {
-            return data == null ? "" : data.toString();
+            super(typeDef);
         }
     }
 
-    public static class Uint32CodecStringImpl extends AbstractIntegerStringCodec<Long, UnsignedIntegerTypeDefinition>
-            implements Uint32Codec<String> {
+    @Deprecated
+    public static class Uint32CodecStringImpl extends Uint32StringCodec {
 
         protected Uint32CodecStringImpl(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
-            super(typeDef, Long.class);
+            super(typeDef);
         }
 
-        @Override
-        public Long deserialize(final String stringRepresentation, final int base) {
-            return Long.valueOf(stringRepresentation, base);
-        }
-
-        @Override
-        public String serialize(final Long data) {
-            return data == null ? "" : data.toString();
-        }
     }
 
-    public static class Uint64CodecStringImpl extends AbstractIntegerStringCodec<BigInteger, UnsignedIntegerTypeDefinition> implements Uint64Codec<String> {
+    @Deprecated
+    public static class Uint64CodecStringImpl extends Uint64StringCodec {
 
         protected Uint64CodecStringImpl(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
-            super(typeDef, BigInteger.class);
+            super(typeDef);
         }
 
-        @Override
-        public BigInteger deserialize(final String stringRepresentation, final int base) {
-            return new BigInteger(stringRepresentation, base);
-        }
-
-        @Override
-        public String serialize(final BigInteger data) {
-            return data == null ? "" : data.toString();
-        }
     }
 
     public static class StringCodecStringImpl extends TypeDefinitionAwareCodec<String, StringTypeDefinition> implements
@@ -285,76 +239,40 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         }
     }
 
-    public static class Int16CodecStringImpl extends AbstractIntegerStringCodec<Short, IntegerTypeDefinition> implements
-            Int16Codec<String> {
+    @Deprecated
+    public static class Int16CodecStringImpl extends Int16StringCodec {
 
         protected Int16CodecStringImpl(final Optional<IntegerTypeDefinition> typeDef) {
-            super(typeDef, Short.class);
+            super(typeDef);
         }
 
-        @Override
-        public Short deserialize(final String stringRepresentation, final int base) {
-            return Short.valueOf(stringRepresentation, base);
-        }
-
-        @Override
-        public String serialize(final Short data) {
-            return data == null ? "" : data.toString();
-        }
     }
 
-    public static class Int32CodecStringImpl extends AbstractIntegerStringCodec<Integer, IntegerTypeDefinition> implements
-            Int32Codec<String> {
+    @Deprecated
+    public static class Int32CodecStringImpl extends Int32StringCodec {
 
         protected Int32CodecStringImpl(final Optional<IntegerTypeDefinition> typeDef) {
-            super(typeDef, Integer.class);
+            super(typeDef);
         }
 
-        @Override
-        public Integer deserialize(final String stringRepresentation, final int base) {
-            return Integer.valueOf(stringRepresentation, base);
-        }
-
-        @Override
-        public String serialize(final Integer data) {
-            return data == null ? "" : data.toString();
-        }
     }
 
-    public static class Int64CodecStringImpl extends AbstractIntegerStringCodec<Long, IntegerTypeDefinition> implements
-            Int64Codec<String> {
+    @Deprecated
+    public static class Int64CodecStringImpl extends Int64StringCodec {
 
         protected Int64CodecStringImpl(final Optional<IntegerTypeDefinition> typeDef) {
-            super(typeDef, Long.class);
+            super(typeDef);
         }
 
-        @Override
-        public Long deserialize(final String stringRepresentation, final int base) {
-            return Long.valueOf(stringRepresentation, base);
-        }
-
-        @Override
-        public String serialize(final Long data) {
-            return data == null ? "" : data.toString();
-        }
     }
 
-    public static class Int8CodecStringImpl extends AbstractIntegerStringCodec<Byte, IntegerTypeDefinition> implements
-            Int8Codec<String> {
+    @Deprecated
+    public static class Int8CodecStringImpl extends Int8StringCodec {
 
         protected Int8CodecStringImpl(final Optional<IntegerTypeDefinition> typeDef) {
-            super(typeDef, Byte.class);
+            super(typeDef);
         }
 
-        @Override
-        public Byte deserialize(final String stringRepresentation, final int base) {
-            return Byte.valueOf(stringRepresentation, base);
-        }
-
-        @Override
-        public String serialize(final Byte data) {
-            return data == null ? "" : data.toString();
-        }
     }
 
     public static class EmptyCodecStringImpl extends TypeDefinitionAwareCodec<Void, EmptyTypeDefinition> implements
