@@ -104,7 +104,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
             // This is unusual, the user is requesting we follow into an otherwise-terminal node.
             // We need to fudge things based on before/after data to correctly fake the expectations.
             if (canHaveChildren(oldMeta, newMeta)) {
-                return AbstractDataTreeCandidateNode.deltaChildren(getContainer(oldMeta), getContainer(newMeta));
+                return AbstractDataTreeCandidateNode.deltaChildren(getContainer(oldMeta), getContainer(newMeta)).values();
             } else {
                 return Collections.emptyList();
             }

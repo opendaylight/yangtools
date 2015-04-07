@@ -47,6 +47,6 @@ final class RecursiveReplaceCandidateNode extends AbstractDataTreeCandidateNode 
 
     @Override
     public Collection<DataTreeCandidateNode> getChildNodes() {
-        return deltaChildren(oldData, getData());
+        return deltaChildren(oldData, getData()).values();
     }
 }
