@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_0270cca3",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/AbstractDataTreeCandidateNode.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-07T06:51:02Z",
+      "side": 1,
+      "message": "oldChildren is null, new children is not null, shouldn\u0027t be this initial write?",
+      "range": {
+        "startLine": 59,
+        "startChar": 15,
+        "endLine": 59,
+        "endChar": 72
+      },
+      "revId": "a871cb474b4ec576e7addae6a3d6371cbf64a39d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_227388b2",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/AbstractDataTreeCandidateNode.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-07T06:51:02Z",
+      "side": 1,
+      "message": "node is present in oldChildren, but not in new children, should not be this deleteNode?",
+      "range": {
+        "startLine": 67,
+        "startChar": 7,
+        "endLine": 69,
+        "endChar": 9
+      },
+      "revId": "a871cb474b4ec576e7addae6a3d6371cbf64a39d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
