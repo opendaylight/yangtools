@@ -10,7 +10,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SourceLinkage;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
-
+import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import com.google.common.base.Optional;
 import java.net.URI;
 import java.text.ParseException;
@@ -66,6 +67,9 @@ public class ImportStatementDefinition extends
         imported = importAction.requiresCtx(stmt, ModuleNamespace.class, impIdentifier, SourceLinkage);
         linkageTarget = importAction.mutatesCtx(stmt.getRoot(),SourceLinkage);
 
+        String impPrefix = firstAttributeOf(stmt.declaredSubstatements(),PrefixStatement.class);
+        stmt.addToNs(ImpPrefixToModuleIdentifier.class, impPrefix, impIdentifier);
+
         importAction.apply(new InferenceAction() {
 
             @Override
@@ -90,6 +94,7 @@ public class ImportStatementDefinition extends
     }
 
     private static ModuleIdentifier getImportedModuleIdentifier(Mutable<String, ImportStatement, ?> stmt) throws SourceException {
+
         String moduleName = stmt.getStatementArgument();
         String revisionArg = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
         final Optional<Date> revision;
@@ -102,9 +107,25 @@ public class ImportStatementDefinition extends
                         stmt.getStatementSourceReference(), e);
             }
         } else {
-            revision = Optional.absent();
+            revision = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_IMP);
         }
-        return new ModuleIdentifierImpl(moduleName, Optional.<URI> absent(), revision);
+
+//        Optional<URI> moduleNs = Optional.fromNullable(firstAttributeOf(stmt.getParentContext().declaredSubstatements(),
+//                NamespaceStatement.class));
+
+        return new ModuleIdentifierImpl(moduleName, Optional.<URI>absent(), revision);
     }
+
+//
+//    @Override
+//    public void onFullDefinitionDeclared(
+//            Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt)
+//            throws InferenceException, SourceException {
+//
+//        final ModuleIdentifier impIdentifier = getImportedModuleIdentifier(stmt);
+//
+//        String impPrefix = firstAttributeOf(stmt.declaredSubstatements(),PrefixStatement.class);
+//        stmt.addToNs(ImpPrefixToModuleIdentifier.class, impPrefix, impIdentifier);
+//    }
 
 }

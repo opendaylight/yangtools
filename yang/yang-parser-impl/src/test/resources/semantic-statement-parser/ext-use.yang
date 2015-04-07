@@ -1,0 +1,43 @@
+module ext-use {
+    yang-version 1;
+    namespace "urn:simple.extension.use";
+    prefix "ext-use";
+
+    import ext-typedef {
+        prefix "ext";
+    }
+
+    organization "opendaylight";
+    contact "http://www.opendaylight.org/";
+
+    description "Model for testing of used extensions across model.";
+
+    revision "2015-03-30" {
+        reference "Initial revision.";
+    }
+
+    leaf value {
+      ext:simple-ext-w-arg "key:value";
+      type uint32;
+      description "value";
+    }
+
+    grouping inner-ext {
+        ext:simple-ext-w-arg "value:test";
+
+        leaf inner-value {
+          ext:simple-ext-w-arg "key:inner-value";
+          type uint32;
+          description "value";
+        }
+    }
+
+    container cont-ext {
+        ext:simple-ext-w-arg "value:test";
+
+        leaf inner-value {
+            ext:simple-ext-w-arg "value:test";
+            type string;
+        }
+    }
+}

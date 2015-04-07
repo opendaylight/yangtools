@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 @Rfc6020AbnfRule("argument-stmt")
 public interface ArgumentStatement extends DeclaredStatement<QName> {
 
-    @Nonnull String getName();
+    @Nonnull QName getName();
 
     @Nullable YinElementStatement getYinElement();
 
