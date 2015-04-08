@@ -59,7 +59,7 @@ abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeC
         try {
             return Optional.<ModificationApplyOperation> fromNullable(childCache.get(identifier));
         } catch (ExecutionException e) {
-            LOG.trace("Child {} not present in container schema {}", identifier, this);
+            LOG.trace("Child {} not present in container schema {}, children {}", identifier, this, schema.getChildNodes());
             return Optional.absent();
         }
     }
