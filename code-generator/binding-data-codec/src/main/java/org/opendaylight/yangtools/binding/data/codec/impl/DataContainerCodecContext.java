@@ -136,7 +136,7 @@ abstract class DataContainerCodecContext<D extends DataObject,T> extends NodeCod
     @Override
     public BindingNormalizedNodeCachingCodec<D> createCachingCodec(
             ImmutableCollection<Class<? extends DataObject>> cacheSpecifier) {
-        return new CachingNormalizedNodeCodecImpl<D>(this,ImmutableSet.copyOf(cacheSpecifier));
+        return new CachingNormalizedNodeCodec<D>(this,ImmutableSet.copyOf(cacheSpecifier));
     }
 
     BindingStreamEventWriter createWriter(NormalizedNodeStreamWriter domWriter) {
