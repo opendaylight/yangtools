@@ -34,11 +34,19 @@ public final class SchemaUtils {
     private SchemaUtils() {
     }
 
+    /**
+     * @param qname - schema node to find
+     * @param dataSchemaNode - iterable of schemaNodes to look through
+     * @return - schema node with newest revision or absent if no schema node with matching qname is found
+     */
     public static final Optional<DataSchemaNode> findFirstSchema(final QName qname, final Iterable<DataSchemaNode> dataSchemaNode) {
+        DataSchemaNode sNode = null;
         if (dataSchemaNode != null && qname != null) {
             for (DataSchemaNode dsn : dataSchemaNode) {
                 if (qname.isEqualWithoutRevision(dsn.getQName())) {
-                    return Optional.<DataSchemaNode> of(dsn);
+                    if (sNode == null || sNode.getQName().compareTo(dsn.getQName()) < 0) {
+                        sNode = dsn;
+                    }
                 } else if (dsn instanceof ChoiceSchemaNode) {
                     for (ChoiceCaseNode choiceCase : ((ChoiceSchemaNode) dsn).getCases()) {
                         Optional<DataSchemaNode> foundDsn = findFirstSchema(qname, choiceCase.getChildNodes());
@@ -49,7 +57,7 @@ public final class SchemaUtils {
                 }
             }
         }
-        return Optional.absent();
+        return Optional.fromNullable(sNode);
     }
 
     public static DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname) {
