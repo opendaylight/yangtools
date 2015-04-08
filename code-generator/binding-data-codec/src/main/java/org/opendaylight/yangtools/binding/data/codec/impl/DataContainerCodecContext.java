@@ -135,11 +135,14 @@ abstract class DataContainerCodecContext<D extends DataObject,T> extends NodeCod
 
     @Override
     public BindingNormalizedNodeCachingCodec<D> createCachingCodec(
-            ImmutableCollection<Class<? extends DataObject>> cacheSpecifier) {
-        return new CachingNormalizedNodeCodecImpl<D>(this,ImmutableSet.copyOf(cacheSpecifier));
+            final ImmutableCollection<Class<? extends DataObject>> cacheSpecifier) {
+        if(cacheSpecifier.isEmpty()) {
+            return new NonCachingCodec<>(this);
+        }
+        return new CachingNormalizedNodeCodec<D>(this,ImmutableSet.copyOf(cacheSpecifier));
     }
 
-    BindingStreamEventWriter createWriter(NormalizedNodeStreamWriter domWriter) {
+    BindingStreamEventWriter createWriter(final NormalizedNodeStreamWriter domWriter) {
         return  new BindingToNormalizedStreamWriter(this, domWriter);
     }
 
@@ -151,7 +154,7 @@ abstract class DataContainerCodecContext<D extends DataObject,T> extends NodeCod
     }
 
     @Override
-    public NormalizedNode<?, ?> serialize(D data) {
+    public NormalizedNode<?, ?> serialize(final D data) {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         // We create DOM stream writer which produces normalized nodes
         final NormalizedNodeStreamWriter domWriter = ImmutableNormalizedNodeStreamWriter.from(result);
@@ -160,10 +163,10 @@ abstract class DataContainerCodecContext<D extends DataObject,T> extends NodeCod
     }
 
     @Override
-    public void writeAsNormalizedNode(D data, NormalizedNodeStreamWriter writer) {
+    public void writeAsNormalizedNode(final D data, final NormalizedNodeStreamWriter writer) {
         try {
             eventStreamSerializer().serialize(data, createWriter(writer));
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new IllegalStateException("Failed to serialize Binding DTO",e);
         }
     }

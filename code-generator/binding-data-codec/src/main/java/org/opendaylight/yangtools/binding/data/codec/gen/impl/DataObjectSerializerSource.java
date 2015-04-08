@@ -21,6 +21,7 @@ abstract class DataObjectSerializerSource extends AbstractSource {
 
     private static final ClassLoadingStrategy STRATEGY = GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy();
 
+    protected static final String SERIALIZER = "_serializer";
     protected static final String STREAM = "_stream";
     protected static final String ITERATOR = "_iterator";
     protected static final String CURRENT = "_current";
@@ -39,7 +40,7 @@ abstract class DataObjectSerializerSource extends AbstractSource {
     protected Class<? extends DataContainer> loadClass(final Type childType) {
         try {
             return (Class<? extends DataContainer>) STRATEGY.loadClass(childType);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             throw new IllegalStateException("Could not load referenced class ", e);
         }
     }
@@ -131,11 +132,11 @@ abstract class DataObjectSerializerSource extends AbstractSource {
         final Class<?> cls;
         try {
             cls = STRATEGY.loadClass(childType);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             throw new IllegalStateException("Failed to invoke emitter", e);
         }
 
-        String className = this.generator.loadSerializerFor(cls) + ".getInstance()";
+        final String className = this.generator.loadSerializerFor(cls) + ".getInstance()";
         return invoke(className, AbstractStreamWriterGenerator.SERIALIZE_METHOD_NAME, REGISTRY, name, STREAM);
     }
 }
