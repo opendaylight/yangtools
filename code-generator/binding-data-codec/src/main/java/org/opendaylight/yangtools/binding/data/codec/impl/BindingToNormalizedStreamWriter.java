@@ -39,7 +39,7 @@ class BindingToNormalizedStreamWriter implements BindingStreamEventWriter, Deleg
 
     }
 
-    private NodeCodecContext<?> current() {
+    protected final NodeCodecContext<?> current() {
         return schema.peek();
     }
 
@@ -67,22 +67,23 @@ class BindingToNormalizedStreamWriter implements BindingStreamEventWriter, Deleg
             next = ((DataContainerCodecContext<?,?>) current()).streamChild((Class) name);
         }
         this.schema.push(next);
-        T arg = (T) next.getDomPathArgument();
+        final T arg = (T) next.getDomPathArgument();
         return arg;
     }
 
     private <T extends YangInstanceIdentifier.PathArgument> T enter(final String localName, final Class<T> identifier) {
-        NodeCodecContext<?> current = current();
-        NodeCodecContext<?> next = ((DataObjectCodecContext<?,?>) current).getLeafChild(localName);
+        final NodeCodecContext<?> current = current();
+        final NodeCodecContext<?> next = ((DataObjectCodecContext<?,?>) current).getLeafChild(localName);
         this.schema.push(next);
         @SuppressWarnings("unchecked")
+        final
         T arg = (T) next.getDomPathArgument();
         return arg;
     }
 
     @Override
     public void endNode() throws IOException {
-        NodeCodecContext<?> left = schema.pop();
+        final NodeCodecContext<?> left = schema.pop();
         // NormalizedNode writer does not have entry into case, but into choice
         // so for leaving case, we do not emit endNode.
         if (!(left instanceof CaseNodeCodecContext)) {
@@ -98,29 +99,29 @@ class BindingToNormalizedStreamWriter implements BindingStreamEventWriter, Deleg
     private Map.Entry<NodeIdentifier, Object> serializeLeaf(final String localName, final Object value) {
         Preconditions.checkArgument(current() instanceof DataObjectCodecContext);
 
-        DataObjectCodecContext<?,?> currentCasted = (DataObjectCodecContext<?,?>) current();
-        LeafNodeCodecContext<?> leafContext = currentCasted.getLeafChild(localName);
+        final DataObjectCodecContext<?,?> currentCasted = (DataObjectCodecContext<?,?>) current();
+        final LeafNodeCodecContext<?> leafContext = currentCasted.getLeafChild(localName);
 
-        NodeIdentifier domArg = (NodeIdentifier) leafContext.getDomPathArgument();
-        Object domValue = leafContext.getValueCodec().serialize(value);
+        final NodeIdentifier domArg = (NodeIdentifier) leafContext.getDomPathArgument();
+        final Object domValue = leafContext.getValueCodec().serialize(value);
         return new AbstractMap.SimpleEntry<>(domArg, domValue);
     }
 
     @Override
     public void leafNode(final String localName, final Object value) throws IOException, IllegalArgumentException {
-        Entry<NodeIdentifier, Object> dom = serializeLeaf(localName, value);
+        final Entry<NodeIdentifier, Object> dom = serializeLeaf(localName, value);
         getDelegate().leafNode(dom.getKey(), dom.getValue());
     }
 
     @Override
     public void anyxmlNode(final String name, final Object value) throws IOException, IllegalArgumentException {
-        Entry<NodeIdentifier, Object> dom = serializeLeaf(name, value);
+        final Entry<NodeIdentifier, Object> dom = serializeLeaf(name, value);
         getDelegate().anyxmlNode(dom.getKey(), dom.getValue());
     }
 
     @Override
     public void leafSetEntryNode(final Object value) throws IOException, IllegalArgumentException {
-        LeafNodeCodecContext<?> ctx = (LeafNodeCodecContext<?>) current();
+        final LeafNodeCodecContext<?> ctx = (LeafNodeCodecContext<?>) current();
         getDelegate().leafSetEntryNode(ctx.getValueCodec().serialize(value));
     }
 
@@ -156,7 +157,7 @@ class BindingToNormalizedStreamWriter implements BindingStreamEventWriter, Deleg
     @Override
     public void startMapEntryNode(final Identifier<?> key, final int childSizeHint) throws IOException, IllegalArgumentException {
         duplicateSchemaEnter();
-        NodeIdentifierWithPredicates identifier = ((KeyedListNodeCodecContext<?>) current()).serialize(key);
+        final NodeIdentifierWithPredicates identifier = ((KeyedListNodeCodecContext<?>) current()).serialize(key);
         getDelegate().startMapEntryNode(identifier, childSizeHint);
     }
 

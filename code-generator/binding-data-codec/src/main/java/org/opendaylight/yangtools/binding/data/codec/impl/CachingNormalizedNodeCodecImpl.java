@@ -8,6 +8,9 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Preconditions;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import java.util.Set;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -17,26 +20,42 @@ class CachingNormalizedNodeCodecImpl<D extends DataObject> implements BindingNor
 
     private final Set<Class<? extends DataObject>> cachedValues;
     private final DataContainerCodecContext<D, ?> context;
+    private final LoadingCache<DataContainerCodecContext<?, ?>, BindingNormalizedNodeCache> caches = CacheBuilder
+            .newBuilder().build(new CacheLoader<DataContainerCodecContext<?, ?>, BindingNormalizedNodeCache>() {
 
-    CachingNormalizedNodeCodecImpl(DataContainerCodecContext<D, ?> subtreeRoot, Set<Class<? extends DataObject>> cacheSpec) {
+                @Override
+                public BindingNormalizedNodeCache load(final DataContainerCodecContext<?, ?> key) throws Exception {
+                    return new BindingNormalizedNodeCache(CachingNormalizedNodeCodecImpl.this, key);
+                }
+
+            });
+
+    CachingNormalizedNodeCodecImpl(final DataContainerCodecContext<D, ?> subtreeRoot, final Set<Class<? extends DataObject>> cacheSpec) {
         this.context = Preconditions.checkNotNull(subtreeRoot);
         this.cachedValues = Preconditions.checkNotNull(cacheSpec);
     }
 
     @Override
-    public D deserialize(NormalizedNode<?, ?> data) {
+    public D deserialize(final NormalizedNode<?, ?> data) {
         return context.deserialize(data);
     }
 
     @Override
-    public NormalizedNode<?, ?> serialize(D data) {
-        // FIXME: Add real-class based serialization.
-        return context.serialize(data);
+    public NormalizedNode<?, ?> serialize(final D data) {
+        return BindingNormalizedNodeBuilder.serialize(this, context, data);
     }
 
     @Override
     public void close() {
         // NOOP as of now.
+    }
+
+    boolean isCached(final Class<? extends DataObject> type) {
+        return cachedValues.contains(type);
+    }
+
+    BindingNormalizedNodeCache getCachingSerializer(final DataContainerCodecContext<?, ?> childCtx) {
+        return caches.getUnchecked(childCtx);
     }
 
 }
