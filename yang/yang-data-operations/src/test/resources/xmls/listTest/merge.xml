@@ -27,7 +27,7 @@
     <list>
         <uint32>6</uint32>
         <containerInList>
-            <uint32 nc:operation="delete">-1</uint32>
+            <uint32 nc:operation="delete">1</uint32>
         </containerInList>
     </list>
 
