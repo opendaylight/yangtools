@@ -13,25 +13,26 @@ import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCa
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-class CachingNormalizedNodeCodecImpl<D extends DataObject> implements BindingNormalizedNodeCachingCodec<D>{
+class CachingNormalizedNodeCodec<D extends DataObject> extends AbstractBindingNormalizedNodeCacheHolder implements
+        BindingNormalizedNodeCachingCodec<D> {
 
-    private final Set<Class<? extends DataObject>> cachedValues;
     private final DataContainerCodecContext<D, ?> context;
 
-    CachingNormalizedNodeCodecImpl(DataContainerCodecContext<D, ?> subtreeRoot, Set<Class<? extends DataObject>> cacheSpec) {
+
+    CachingNormalizedNodeCodec(final DataContainerCodecContext<D, ?> subtreeRoot,
+            final Set<Class<? extends DataObject>> cacheSpec) {
+        super(cacheSpec);
         this.context = Preconditions.checkNotNull(subtreeRoot);
-        this.cachedValues = Preconditions.checkNotNull(cacheSpec);
     }
 
     @Override
-    public D deserialize(NormalizedNode<?, ?> data) {
+    public D deserialize(final NormalizedNode<?, ?> data) {
         return context.deserialize(data);
     }
 
     @Override
-    public NormalizedNode<?, ?> serialize(D data) {
-        // FIXME: Add real-class based serialization.
-        return context.serialize(data);
+    public NormalizedNode<?, ?> serialize(final D data) {
+        return CachingNormalizedNodeSerializer.serialize(this, context, data);
     }
 
     @Override

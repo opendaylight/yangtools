@@ -18,6 +18,7 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTree;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTreeFactory;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeWriterFactory;
@@ -71,7 +72,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         return serializers.getUnchecked(type);
     }
 
-    public BindingCodecContext getCodecContext() {
+    public BindingCodecTree getCodecContext() {
         return codecContext;
     }
 
@@ -231,23 +232,23 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
     }
 
     @Override
-    public BindingCodecContext create(BindingRuntimeContext context) {
+    public BindingCodecContext create(final BindingRuntimeContext context) {
         return new BindingCodecContext(context, this);
     }
 
     @Override
-    public BindingCodecContext create(SchemaContext context, Class<?>... bindingClasses) {
-        ModuleInfoBackedContext strategy = ModuleInfoBackedContext.create();
-        for (Class<?> bindingCls : bindingClasses) {
+    public BindingCodecContext create(final SchemaContext context, final Class<?>... bindingClasses) {
+        final ModuleInfoBackedContext strategy = ModuleInfoBackedContext.create();
+        for (final Class<?> bindingCls : bindingClasses) {
             try {
                 strategy.registerModuleInfo(BindingReflections.getModuleInfo(bindingCls));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 throw new IllegalStateException(
                         "Could not create BindingRuntimeContext from class " + bindingCls.getName(),
                         e);
             }
         }
-        BindingRuntimeContext runtimeCtx = BindingRuntimeContext.create(strategy, context);
+        final BindingRuntimeContext runtimeCtx = BindingRuntimeContext.create(strategy, context);
         return create(runtimeCtx);
     }
 

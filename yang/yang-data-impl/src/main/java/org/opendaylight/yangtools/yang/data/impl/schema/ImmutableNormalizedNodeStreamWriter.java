@@ -60,8 +60,12 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     private final Deque<NormalizedNodeContainerBuilder> builders = new ArrayDeque<>();
 
     @SuppressWarnings("rawtypes")
-    private ImmutableNormalizedNodeStreamWriter( final NormalizedNodeContainerBuilder topLevelBuilder) {
+    protected ImmutableNormalizedNodeStreamWriter(final NormalizedNodeContainerBuilder topLevelBuilder) {
         builders.push(topLevelBuilder);
+    }
+
+    protected ImmutableNormalizedNodeStreamWriter(final NormalizedNodeResult result) {
+        this(new NormalizedNodeResultBuilder(result));
     }
 
     /**
@@ -99,7 +103,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
      * @return {@link NormalizedNodeStreamWriter} which will write item to supplied result holder.
      */
     public static final NormalizedNodeStreamWriter from(final NormalizedNodeResult result) {
-        return new ImmutableNormalizedNodeStreamWriter(new NormalizedNodeResultBuilder(result));
+        return new ImmutableNormalizedNodeStreamWriter(result);
     }
 
 
@@ -114,7 +118,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @SuppressWarnings("unchecked")
-    private void writeChild(final NormalizedNode<?, ?> child) {
+    protected void writeChild(final NormalizedNode<?, ?> child) {
         getCurrent().addChild(child);
     }
 
@@ -123,9 +127,9 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     public void endNode() {
         final NormalizedNodeContainerBuilder finishedBuilder = builders.poll();
         Preconditions.checkState(finishedBuilder != null, "Node which should be closed does not exists.");
-        NormalizedNodeContainerBuilder current = getCurrent();
+        final NormalizedNodeContainerBuilder current = getCurrent();
         Preconditions.checkState(current != null, "Reached top level node, which could not be closed in this writer.");
-        NormalizedNode<PathArgument, ?> product = finishedBuilder.build();
+        final NormalizedNode<PathArgument, ?> product = finishedBuilder.build();
         current.addChild(product);
     }
 
@@ -138,7 +142,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     @Override
     public void startLeafSet(final NodeIdentifier name, final int childSizeHint) throws IllegalArgumentException {
         checkDataNodeContainer();
-        ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = UNKNOWN_SIZE == childSizeHint ?
+        final ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = UNKNOWN_SIZE == childSizeHint ?
                 ImmutableLeafSetNodeBuilder.create() : ImmutableLeafSetNodeBuilder.create(childSizeHint);
         builder.withNodeIdentifier(name);
         enter(builder);
@@ -148,7 +152,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     public void leafSetEntryNode(final Object value) throws IllegalArgumentException {
         Preconditions.checkArgument(getCurrent() instanceof ImmutableLeafSetNodeBuilder<?>);
         @SuppressWarnings("unchecked")
-        ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = ((ImmutableLeafSetNodeBuilder<Object>) getCurrent());
+        final ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = ((ImmutableLeafSetNodeBuilder<Object>) getCurrent());
         builder.withChildValue(value);
     }
 
@@ -231,6 +235,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
 
     private void checkDataNodeContainer() {
         @SuppressWarnings("rawtypes")
+        final
         NormalizedNodeContainerBuilder current = getCurrent();
         if(!(current instanceof NormalizedNodeResultBuilder)) {
         Preconditions.checkArgument(current instanceof DataContainerNodeBuilder<?, ?>, "Invalid nesting of data.");
