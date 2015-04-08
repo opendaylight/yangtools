@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_fba9c6df",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsStringCodec.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-08T16:40:05Z",
+      "side": 1,
+      "message": "private?",
+      "revId": "92e0b838e0fe94e1f4fda85bac12e50439532061",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_9bb0c244",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsStringCodec.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-08T16:40:05Z",
+      "side": 1,
+      "message": "space :)",
+      "revId": "92e0b838e0fe94e1f4fda85bac12e50439532061",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_bbab3ed5",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/BitsStringCodec.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-08T16:40:05Z",
+      "side": 1,
+      "message": "for (\nBit bit : yangBits",
+      "revId": "92e0b838e0fe94e1f4fda85bac12e50439532061",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_5bba3a24",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/UnionStringCodec.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-08T16:40:05Z",
+      "side": 1,
+      "message": "catch on the same line",
+      "revId": "92e0b838e0fe94e1f4fda85bac12e50439532061",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
