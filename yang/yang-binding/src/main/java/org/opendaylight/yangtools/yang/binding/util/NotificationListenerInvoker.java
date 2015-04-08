@@ -85,11 +85,11 @@ public final class NotificationListenerInvoker {
     public void invokeNotification(@Nonnull final NotificationListener impl, @Nonnull final QName rpcName,
             @Nullable final DataContainer input) {
         Preconditions.checkNotNull(impl, "implemetation must be supplied");
-        MethodHandle invoker = methodInvokers.get(rpcName);
+        final MethodHandle invoker = methodInvokers.get(rpcName);
         Preconditions.checkArgument(invoker != null, "Supplied notification is not valid for implementation %s", impl);
         try {
             invoker.invokeExact(impl, input);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             throw Throwables.propagate(e);
         }
     }
@@ -99,18 +99,18 @@ public final class NotificationListenerInvoker {
     }
 
     private static Map<QName, MethodHandle> createInvokerMap(final Class<? extends NotificationListener> key) {
-        Builder<QName, MethodHandle> ret = ImmutableMap.<QName, MethodHandle>builder();
-        for (Method method : key.getMethods()) {
+        final Builder<QName, MethodHandle> ret = ImmutableMap.<QName, MethodHandle>builder();
+        for (final Method method : key.getMethods()) {
             if (BindingReflections.isNotificationCallback(method)) {
 
-                Class<?> notification = method.getParameterTypes()[0];
-                QName name = BindingReflections.findQName(notification);
+                final Class<?> notification = method.getParameterTypes()[0];
+                final QName name = BindingReflections.findQName(notification);
                 MethodHandle handle;
                 try {
                     handle = LOOKUP.unreflect(method).asType(
-                            MethodType.methodType(Void.class, NotificationListener.class, DataContainer.class));
+                            MethodType.methodType(void.class, NotificationListener.class, DataContainer.class));
                     ret.put(name, handle);
-                } catch (IllegalAccessException e) {
+                } catch (final IllegalAccessException e) {
                     throw new IllegalStateException("Can not access public method.", e);
                 }
             }
