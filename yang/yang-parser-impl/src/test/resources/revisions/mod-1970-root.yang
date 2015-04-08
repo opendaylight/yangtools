@@ -1,0 +1,8 @@
+module mod-1970-root {
+	namespace mod-1970-root;
+	prefix mod-1970-root;
+
+	include mod-1970-rev {
+		revision-date "1970-01-01";
+	}
+}

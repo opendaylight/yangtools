@@ -28,9 +28,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class ContainerStatementImpl extends AbstractDeclaredStatement<QName> implements ContainerStatement {
+    //private QName qname;
 
     protected ContainerStatementImpl(StmtContext<QName, ContainerStatement,?> context) {
         super(context);
+        //this.qname =
     }
 
     public static class Definition extends AbstractStatementSupport<QName,ContainerStatement,EffectiveStatement<QName,ContainerStatement>> {

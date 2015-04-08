@@ -7,13 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.stmt.test;
 
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Container;
 import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Import;
 import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Module;
 import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Namespace;
 import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Prefix;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Revision;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.RevisionDate;
 
 import java.util.Arrays;
 import java.util.List;
+
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
@@ -25,10 +29,34 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 
 class TestStatementSource implements StatementStreamSource {
 
+    public static class ModuleEntry {
+
+        private final String name;
+        private final String revision;
+
+        public ModuleEntry(String name, String revision) {
+
+            this.name = name;
+            this.revision = revision;
+        }
+
+        public String getName() {
+
+            return name;
+        }
+
+        public String getRevision() {
+
+            return revision;
+        }
+    }
+
     private static final String NS_PREFIX = "urn:org:opendaylight:yangtools:test:";
 
     private final String name;
-    private final List<String> imports;
+    private final String revision;
+    private final List<ModuleEntry> imports;
+    private String container;
     private StatementWriter writer;
     private StatementSourceReference REF = new StatementSourceReference() {
 
@@ -38,10 +66,16 @@ class TestStatementSource implements StatementStreamSource {
         }
     };
 
+    public TestStatementSource(ModuleEntry module, ModuleEntry... imports) {
 
-    public TestStatementSource(String name, String... imports) {
-        this.name = name;
+        this.name = module.getName();
+        this.revision = module.getRevision();
         this.imports = Arrays.asList(imports);
+    }
+
+    public void setContainer(String container) {
+
+        this.container = container;
     }
 
     @Override
@@ -54,8 +88,6 @@ class TestStatementSource implements StatementStreamSource {
         end();
 
     }
-
-
 
     @Override
     public void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef) throws SourceException {
@@ -73,22 +105,40 @@ class TestStatementSource implements StatementStreamSource {
 
     }
 
-    protected void extensions() {
-        // TODO Auto-generated method stub
+    protected void extensions() throws SourceException {
 
     }
 
-    protected void body() {
+    protected void body() throws SourceException {
 
+        if (container != null)
+            stmt(Container).arg(container).end();
     }
 
     TestStatementSource header() throws SourceException {
-        stmt(Module).arg(name); {
+
+        stmt(Module).arg(name);
+        {
             stmt(Namespace).arg(getNamespace()).end();
             stmt(Prefix).arg(name).end();
-            for(String imp : imports)  {
+
+            if (revision != null) {
+                stmt(Revision).arg(revision).end();
+            }
+
+            for (ModuleEntry impEntry : imports) {
+
+                String imp = impEntry.getName();
+                String rev = impEntry.getRevision();
+
                 stmt(Import).arg(imp);
+                {
                     stmt(Prefix).arg(imp).end();
+
+                    if (rev != null) {
+                        stmt(RevisionDate).arg(rev).end();
+                    }
+                }
                 end();
             }
         }
@@ -113,6 +163,4 @@ class TestStatementSource implements StatementStreamSource {
         writer.endStatement(REF);
         return this;
     }
-
-
 }

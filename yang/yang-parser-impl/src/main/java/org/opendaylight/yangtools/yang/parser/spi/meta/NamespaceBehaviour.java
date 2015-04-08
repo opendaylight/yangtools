@@ -131,7 +131,7 @@ public abstract class NamespaceBehaviour<K,V, N extends IdentifierNamespace<K, V
         @Override
         public V getFrom(final NamespaceStorageNode storage, final K key) {
             NamespaceStorageNode current = storage;
-            while(current.getParentNamespaceStorage() != null) {
+            while(current.getStorageNodeType() != storageType) {
                 current = current.getParentNamespaceStorage();
             }
             return getFromLocalStorage(current,key);
