@@ -39,7 +39,7 @@ class BindingToNormalizedStreamWriter implements BindingStreamEventWriter, Deleg
 
     }
 
-    private NodeCodecContext<?> current() {
+    protected final NodeCodecContext<?> current() {
         return schema.peek();
     }
 
