@@ -119,7 +119,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     @Deprecated
     public static class StringCodecStringImpl extends StringStringCodec {
         protected StringCodecStringImpl(final Optional<StringTypeDefinition> typeDef) {
-            super(typeDef);
+            super(typeDef.get());
         }
     }
 
