@@ -66,7 +66,7 @@ public final class TextToASTTransformer extends SchemaSourceTransformer<YangText
         super(provider, YangTextSchemaSource.class, consumer, ASTSchemaSource.class, TRANSFORMATION);
     }
 
-    public static final TextToASTTransformer create(final SchemaRepository provider, final SchemaSourceRegistry consumer) {
+    public static TextToASTTransformer create(final SchemaRepository provider, final SchemaSourceRegistry consumer) {
         return new TextToASTTransformer(provider, consumer);
     }
 }
