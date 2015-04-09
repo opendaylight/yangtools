@@ -80,7 +80,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
     private static final Field PATHARGUMENTS_FIELD;
 
     private static final long serialVersionUID = 3L;
-    private transient final Iterable<PathArgument> pathArguments;
+    private final transient Iterable<PathArgument> pathArguments;
     private final int hash;
 
     private volatile ImmutableList<PathArgument> legacyPath = null;
@@ -302,7 +302,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
      *
      * @return new builder for InstanceIdentifier with empty path arguments.
      */
-    static public InstanceIdentifierBuilder builder() {
+    public static InstanceIdentifierBuilder builder() {
         return new BuilderImpl();
     }
 
@@ -313,7 +313,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
      * @param origin Instace Identifier from which path arguments are copied.
      * @return new builder for InstanceIdentifier with path arguments copied from original instance identifier.
      */
-    static public InstanceIdentifierBuilder builder(final YangInstanceIdentifier origin) {
+    public static InstanceIdentifierBuilder builder(final YangInstanceIdentifier origin) {
         return new BuilderImpl(origin.getPathArguments(), origin.hashCode());
     }
 

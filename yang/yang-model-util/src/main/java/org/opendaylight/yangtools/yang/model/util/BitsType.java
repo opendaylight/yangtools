@@ -23,16 +23,15 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
  * @see BitsTypeDefinition
  */
 public final class BitsType implements BitsTypeDefinition {
-    private final static QName NAME = BaseTypes.BITS_QNAME;
-
-    private final SchemaPath path;
+    private static final QName NAME = BaseTypes.BITS_QNAME;
     private static final String DESCRIPTION = "The bits built-in type represents a bit set. "
             + "That is, a bits value is a set of flags identified by small integer position "
             + "numbers starting at 0.  Each bit number has an assigned name.";
 
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.7";
-    private final List<Bit> bits;
     private static final String UNITS = "";
+    private final SchemaPath path;
+    private final List<Bit> bits;
 
     /**
      * Default constructor. <br>
