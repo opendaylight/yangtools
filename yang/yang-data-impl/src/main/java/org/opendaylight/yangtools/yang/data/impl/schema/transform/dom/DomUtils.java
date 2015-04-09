@@ -126,7 +126,7 @@ public final class DomUtils {
         if (baseType instanceof LeafrefTypeDefinition) {
             final LeafrefTypeDefinition leafrefTypeDefinition = (LeafrefTypeDefinition) baseType;
             baseType = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypeDefinition, schemaCtx, schema);
-            value = parseXmlValue(xml, codecProvider, baseType);
+            value = parseXmlValue(xml, codecProvider, schema, baseType, schemaCtx);
         } else if (baseType instanceof InstanceIdentifierType) {
             value = InstanceIdentifierForXmlCodec.deserialize(xml, schemaCtx);
         } else if (baseType instanceof IdentityrefTypeDefinition) {
