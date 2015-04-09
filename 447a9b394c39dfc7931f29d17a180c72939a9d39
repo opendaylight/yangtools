@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_11b9f3e8",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/CompiledPatternContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-09T07:50:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_1b84b25c",
+      "revId": "447a9b394c39dfc7931f29d17a180c72939a9d39",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_3b872e63",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/StringPatternCheckingCodec.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2015-04-08T16:41:55Z",
       "side": 1,
       "message": "add the exception, too",
+      "revId": "447a9b394c39dfc7931f29d17a180c72939a9d39",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d1caab6d",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/StringPatternCheckingCodec.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-09T07:50:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_3b872e63",
       "revId": "447a9b394c39dfc7931f29d17a180c72939a9d39",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_71c95777",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/StringPatternCheckingCodec.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-09T07:50:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_db7dea6f",
+      "revId": "447a9b394c39dfc7931f29d17a180c72939a9d39",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_fb80e647",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/StringStringCodec.java",
         "patchSetId": 2
@@ -64,6 +118,24 @@
       "writtenOn": "2015-04-08T16:41:55Z",
       "side": 1,
       "message": "erased space",
+      "revId": "447a9b394c39dfc7931f29d17a180c72939a9d39",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_91c42360",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/StringStringCodec.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-09T07:50:18Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_fb80e647",
       "revId": "447a9b394c39dfc7931f29d17a180c72939a9d39",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
