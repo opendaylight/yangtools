@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -81,6 +80,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 
+import com.google.common.annotations.Beta;
+import com.google.common.base.Preconditions;
+
 @Beta
 public enum Rfc6020Mapping implements StatementDefinition {
     Anyxml(AnyxmlStatement.class, "anyxml", "name"),
@@ -149,9 +151,27 @@ public enum Rfc6020Mapping implements StatementDefinition {
     YangVersion(YangVersionStatement.class, "yang-version", "value"),
     YinElement(YinElementStatement.class, "yin-element", "value");
 
-    private final @Nonnull Class<? extends DeclaredStatement<?>> type;
-    private final @Nonnull QName name;
-    private final @Nullable QName argument;
+//    StringRestrictions(TypeStatement.StringRestrictions.class, "string-restrictions", "type"),
+
+    // solved
+//    EnumSpecification(TypeStatement.EnumSpecification.class, "enum", "type");
+//    Decimal64(TypeStatement.Decimal64Specification.class, "range", "type"),
+//    IdentityRef(TypeStatement.IdentityRefSpecification.class, "identityref", "type"),
+//    InstanceIdentifier(TypeStatement.InstanceIdentifierSpecification.class, "instance-identifier", "type"),
+//    LeafRef(TypeStatement.LeafrefSpecification.class, "leaf-ref", "type"),
+//    NumericalRestrictions(TypeStatement.NumericalRestrictions.class, "numerical-restrictions", "type"),
+//    Union(TypeStatement.UnionSpecification.class, "union", "type"),
+//    Bits(TypeStatement.BitsSpecification.class, "bits", "type");
+
+    private final
+    @Nonnull
+    Class<? extends DeclaredStatement<?>> type;
+    private final
+    @Nonnull
+    QName name;
+    private final
+    @Nullable
+    QName argument;
     private final boolean yinElement;
 
 
@@ -170,7 +190,7 @@ public enum Rfc6020Mapping implements StatementDefinition {
     }
 
     private Rfc6020Mapping(Class<? extends DeclaredStatement<?>> clz, final String nameStr, final String argumentStr,
-            final boolean yinElement) {
+                           final boolean yinElement) {
         type = Preconditions.checkNotNull(clz);
         name = yinQName(nameStr);
         argument = yinQName(argumentStr);

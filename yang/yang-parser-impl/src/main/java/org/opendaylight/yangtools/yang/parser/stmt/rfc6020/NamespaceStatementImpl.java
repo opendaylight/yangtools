@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.NamespaceEffectiveStatementImpl;
+
 import java.net.URI;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
@@ -34,7 +36,7 @@ public class NamespaceStatementImpl extends AbstractDeclaredStatement<URI> imple
 
         @Override
         public EffectiveStatement<URI,NamespaceStatement> createEffective(StmtContext<URI, NamespaceStatement,EffectiveStatement<URI,NamespaceStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new NamespaceEffectiveStatementImpl(ctx);
         }
 
     }
