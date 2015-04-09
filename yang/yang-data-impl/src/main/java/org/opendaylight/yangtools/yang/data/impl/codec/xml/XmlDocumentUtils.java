@@ -30,13 +30,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public final class XmlDocumentUtils {
+    public static final QName OPERATION_ATTRIBUTE_QNAME = QName.create(SchemaContext.NAME, "operation");
+    private static final Logger LOG = LoggerFactory.getLogger(XmlDocumentUtils.class);
 
     private XmlDocumentUtils() {
         throw new UnsupportedOperationException("Utility class should not be instantiated");
     }
-
-    public static final QName OPERATION_ATTRIBUTE_QNAME = QName.create(SchemaContext.NAME, "operation");
-    private static final Logger LOG = LoggerFactory.getLogger(XmlDocumentUtils.class);
 
     public static Document getDocument() {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -50,7 +49,7 @@ public final class XmlDocumentUtils {
         return doc;
     }
 
-    private static final Element createElementFor(final Document doc, final QName qname, final Object obj) {
+    private static Element createElementFor(final Document doc, final QName qname, final Object obj) {
         final Element ret;
         if (qname.getNamespace() != null) {
             ret = doc.createElementNS(qname.getNamespace().toString(), qname.getLocalName());
@@ -82,8 +81,6 @@ public final class XmlDocumentUtils {
         return QName.create(namespace != null ? URI.create(namespace) : null, null, localName);
     }
 
-
-
     public static Optional<ModifyAction> getModifyOperationFromAttributes(final Element xmlElement) {
         Attr attributeNodeNS = xmlElement.getAttributeNodeNS(OPERATION_ATTRIBUTE_QNAME.getNamespace().toString(), OPERATION_ATTRIBUTE_QNAME.getLocalName());
         if(attributeNodeNS == null) {
@@ -96,8 +93,7 @@ public final class XmlDocumentUtils {
         return Optional.of(action);
     }
 
-
-    public static final Optional<DataSchemaNode> findFirstSchema(final QName qname, final Iterable<DataSchemaNode> dataSchemaNode) {
+    public static Optional<DataSchemaNode> findFirstSchema(final QName qname, final Iterable<DataSchemaNode> dataSchemaNode) {
         if (dataSchemaNode != null && qname != null) {
             for (DataSchemaNode dsn : dataSchemaNode) {
                 if (qname.isEqualWithoutRevision(dsn.getQName())) {
@@ -115,7 +111,7 @@ public final class XmlDocumentUtils {
         return Optional.absent();
     }
 
-    public static final XmlCodecProvider defaultValueCodecProvider() {
+    public static XmlCodecProvider defaultValueCodecProvider() {
         return XmlUtils.DEFAULT_XML_CODEC_PROVIDER;
     }
 }

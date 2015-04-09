@@ -31,11 +31,11 @@ public final class StatementSupportBundle implements Immutable,NamespaceBehaviou
         this.namespaceDefinitions = namespaces;
     }
 
-    public static final Builder builder() {
+    public static Builder builder() {
         return new Builder(EMPTY);
     }
 
-    public static final Builder derivedFrom(StatementSupportBundle parent) {
+    public static Builder derivedFrom(StatementSupportBundle parent) {
         return new Builder(parent);
     }
 

@@ -28,7 +28,7 @@ public final class TreeNodeFactory {
      * @param version data node version
      * @return new AbstractTreeNode instance, covering the data tree provided
      */
-    public static final TreeNode createTreeNodeRecursively(final NormalizedNode<?, ?> data, final Version version) {
+    public static TreeNode createTreeNodeRecursively(final NormalizedNode<?, ?> data, final Version version) {
         if (data instanceof NormalizedNodeContainer<?, ?, ?>) {
             @SuppressWarnings("unchecked")
             NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container = (NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>>) data;
@@ -51,7 +51,7 @@ public final class TreeNodeFactory {
      * @param version data node version
      * @return new AbstractTreeNode instance, covering the data tree provided
      */
-    public static final TreeNode createTreeNode(final NormalizedNode<?, ?> data, final Version version) {
+    public static TreeNode createTreeNode(final NormalizedNode<?, ?> data, final Version version) {
         if (data instanceof NormalizedNodeContainer<?, ?, ?>) {
             @SuppressWarnings("unchecked")
             NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container = (NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>>) data;

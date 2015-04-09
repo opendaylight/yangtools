@@ -117,7 +117,7 @@ abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N>, T ex
     }
 
 
-    private final void validate(final N value) {
+    private void validate(final N value) {
         if (rangeConstraints.isEmpty()) {
             return;
         }
@@ -159,7 +159,7 @@ abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N>, T ex
         return type.getRangeConstraints();
     }
 
-    private static final int provideBase(final String integer) {
+    private static int provideBase(final String integer) {
         if (integer == null) {
             throw new IllegalArgumentException("String representing integer number cannot be NULL");
         }
