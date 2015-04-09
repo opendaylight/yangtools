@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.common.RpcResult;
 
 abstract class RpcMethodInvoker {
 
-    private static Lookup LOOKUP = MethodHandles.publicLookup();
+    private static final Lookup LOOKUP = MethodHandles.publicLookup();
 
     protected abstract Future<RpcResult<?>> invokeOn(RpcService impl, DataObject input);
 
@@ -37,5 +37,4 @@ abstract class RpcMethodInvoker {
         }
 
     }
-
 }
