@@ -1,7 +1,8 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import java.util.HashSet;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -44,7 +45,7 @@ public class ContainerEffectiveStatementImpl extends
         initPresence();
 
         // :TODO init other fields
-        path = null;
+        path = Utils.getSchemaPath(ctx);
 
     }
 

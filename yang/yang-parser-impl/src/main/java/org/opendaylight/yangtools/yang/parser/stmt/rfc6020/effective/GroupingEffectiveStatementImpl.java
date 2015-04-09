@@ -1,5 +1,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+
 import java.util.Collection;
 import java.util.LinkedList;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -26,7 +28,7 @@ public class GroupingEffectiveStatementImpl extends
 
         qname = ctx.getStatementArgument();
         // :TODO init other fields
-        path = null;
+        path = Utils.getSchemaPath(ctx);
 
         initSubstatementCollections();
     }
