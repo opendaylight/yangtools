@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_51bbfbc3",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/DomUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-09T08:03:13Z",
+      "side": 1,
+      "message": "Please do not change signature of public method, since we are after API Freeze.",
+      "range": {
+        "startLine": 49,
+        "startChar": 0,
+        "endLine": 50,
+        "endChar": 65
+      },
+      "revId": "932a1bbd512a23e462a433546c26529bef9a59d8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_11b573cc",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/DomUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-09T08:03:13Z",
+      "side": 1,
+      "message": "Move this dispatch to its original place,\nthis codecs are no use without schema context and this method is to be used without schema context.",
+      "range": {
+        "startLine": 52,
+        "startChar": 12,
+        "endLine": 56,
+        "endChar": 13
+      },
+      "revId": "932a1bbd512a23e462a433546c26529bef9a59d8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b1cb5f52",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/parser/LeafNodeDomParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-09T08:03:13Z",
+      "side": 1,
+      "message": "Please revert this change.",
+      "range": {
+        "startLine": 39,
+        "startChar": 8,
+        "endLine": 39,
+        "endChar": 186
+      },
+      "revId": "932a1bbd512a23e462a433546c26529bef9a59d8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d1c62b49",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/parser/LeafSetEntryNodeDomParser.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-09T08:03:13Z",
+      "side": 1,
+      "message": "Please revert this change.",
+      "range": {
+        "startLine": 39,
+        "startChar": 6,
+        "endLine": 40,
+        "endChar": 5
+      },
+      "revId": "932a1bbd512a23e462a433546c26529bef9a59d8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
