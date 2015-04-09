@@ -46,7 +46,16 @@ public final class DomUtils {
         return XmlUtils.DEFAULT_XML_CODEC_PROVIDER;
     }
 
-    public static Object parseXmlValue(final Element xml, final XmlCodecProvider codecProvider, final TypeDefinition<?> type) {
+    public static Object parseXmlValue(final Element xml, final XmlCodecProvider codecProvider, final TypeDefinition<?> type,
+                                       SchemaContext schemaCtx) {
+        if (schemaCtx != null) {
+            if (type instanceof InstanceIdentifierType) {
+                return InstanceIdentifierForXmlCodec.deserialize(xml, schemaCtx);
+            } else if (type instanceof IdentityrefTypeDefinition) {
+                return InstanceIdentifierForXmlCodec.toIdentity(xml.getTextContent(), xml, schemaCtx);
+            }
+        }
+
         TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codec = codecProvider.codecFor(type);
 
         String text = xml.getTextContent();
@@ -118,21 +127,14 @@ public final class DomUtils {
 
     public static Object parseXmlValue(final Element xml, final XmlCodecProvider codecProvider, final DataSchemaNode schema, final TypeDefinition<?> type, final SchemaContext schemaCtx) {
         TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(type);
-
-        String text = xml.getTextContent();
-        text = text.trim();
         final Object value;
 
         if (baseType instanceof LeafrefTypeDefinition) {
             final LeafrefTypeDefinition leafrefTypeDefinition = (LeafrefTypeDefinition) baseType;
             baseType = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypeDefinition, schemaCtx, schema);
-            value = parseXmlValue(xml, codecProvider, baseType);
-        } else if (baseType instanceof InstanceIdentifierType) {
-            value = InstanceIdentifierForXmlCodec.deserialize(xml, schemaCtx);
-        } else if (baseType instanceof IdentityrefTypeDefinition) {
-            value = InstanceIdentifierForXmlCodec.toIdentity(text, xml, schemaCtx);
+            value = parseXmlValue(xml, codecProvider, baseType, schemaCtx);
         } else {
-            value = parseXmlValue(xml, codecProvider, type);
+            value = parseXmlValue(xml, codecProvider, type, schemaCtx);
         }
 
         return value;
