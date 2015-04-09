@@ -2,6 +2,9 @@ package org.opendaylight.yangtools.yang.stmt.effective.build.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -66,6 +69,10 @@ public class EffectiveBuildTest {
 
         ContainerSchemaNode grpSubSubCon2 = (ContainerSchemaNode)grpSubCon2.getDataChildByName(q6);
         assertNotNull(grpSubSubCon2);
+
+        assertEquals(SchemaPath.create(true, q1,q2,q3), subSubCon.getPath());
+        assertEquals(SchemaPath.create(true, q4,q5,q6), subSubCon2.getPath());
+        assertEquals(SchemaPath.create(true, q7,q5,q6), grpSubSubCon2.getPath());
 
     }
 
