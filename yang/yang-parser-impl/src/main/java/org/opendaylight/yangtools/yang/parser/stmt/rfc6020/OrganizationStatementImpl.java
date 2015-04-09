@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.OrganizationEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
@@ -14,8 +16,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class OrganizationStatementImpl extends AbstractDeclaredStatement<String>
-        implements OrganizationStatement {
+public class OrganizationStatementImpl extends
+        AbstractDeclaredStatement<String> implements OrganizationStatement {
 
     protected OrganizationStatementImpl(
             StmtContext<String, OrganizationStatement, ?> context) {
@@ -44,7 +46,7 @@ public class OrganizationStatementImpl extends AbstractDeclaredStatement<String>
         @Override
         public EffectiveStatement<String, OrganizationStatement> createEffective(
                 StmtContext<String, OrganizationStatement, EffectiveStatement<String, OrganizationStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new OrganizationEffectiveStatementImpl(ctx);
         }
 
     }
