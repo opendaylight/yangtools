@@ -75,12 +75,10 @@ public final class JSONCodecFactory {
 
     private final SchemaContext schemaContext;
     private final JSONCodec<?> iidCodec;
-    private final JSONCodec<?> idrefCodec;
 
     private JSONCodecFactory(final SchemaContext context) {
         this.schemaContext = Preconditions.checkNotNull(context);
         iidCodec = new JSONStringInstanceIdentifierCodec(context);
-        idrefCodec = new JSONStringIdentityrefCodec(context);
     }
 
     /**
@@ -101,10 +99,15 @@ public final class JSONCodecFactory {
         return superType;
     }
 
+    @SuppressWarnings("unchecked")
     private JSONCodec<Object> createCodec(DataSchemaNode key, TypeDefinition<?> type) {
         TypeDefinition<?> baseType = resolveBaseTypeFrom(type);
         if (baseType instanceof LeafrefTypeDefinition) {
             return createReferencedTypeCodec(key, (LeafrefTypeDefinition) baseType);
+        } else if (baseType instanceof IdentityrefType) {
+            final JSONCodec<?> jsonStringIdentityrefCodec = new JSONStringIdentityrefCodec(schemaContext,
+                    key.getQName().getModule());
+            return (JSONCodec<Object>) jsonStringIdentityrefCodec;
         }
         return createFromSimpleType(type);
     }
@@ -122,9 +125,6 @@ public final class JSONCodecFactory {
         final TypeDefinition<?> baseType = resolveBaseTypeFrom(type);
         if (baseType instanceof InstanceIdentifierType) {
             return (JSONCodec<Object>) iidCodec;
-        }
-        if (baseType instanceof IdentityrefType) {
-            return (JSONCodec<Object>) idrefCodec;
         }
 
         final TypeDefinitionAwareCodec<Object, ?> codec = TypeDefinitionAwareCodec.from(type);

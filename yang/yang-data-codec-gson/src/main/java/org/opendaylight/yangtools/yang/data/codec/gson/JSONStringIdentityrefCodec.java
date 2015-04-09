@@ -11,21 +11,30 @@ import com.google.common.base.Preconditions;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.net.URI;
+
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringIdentityrefCodec;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 final class JSONStringIdentityrefCodec extends AbstractModuleStringIdentityrefCodec implements JSONCodec<QName> {
     private final SchemaContext context;
+    private final QNameModule parentModuleQname;
 
-    JSONStringIdentityrefCodec(final SchemaContext context) {
+    JSONStringIdentityrefCodec(final SchemaContext context, final QNameModule parentModule) {
         this.context = Preconditions.checkNotNull(context);
+        this.parentModuleQname = Preconditions.checkNotNull(parentModule);
     }
 
     @Override
     protected Module moduleForPrefix(final String prefix) {
-        return context.findModuleByName(prefix, null);
+        if (prefix.isEmpty()) {
+            return context.findModuleByNamespaceAndRevision(parentModuleQname.getNamespace(),
+                    parentModuleQname.getRevision());
+        } else {
+            return context.findModuleByName(prefix, null);
+        }
     }
 
     @Override
