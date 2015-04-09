@@ -1,0 +1,7 @@
+submodule equal-rev {
+	belongs-to "equal-root" {
+		prefix equal-root;
+	}
+
+	revision "2001-05-19";
+}
