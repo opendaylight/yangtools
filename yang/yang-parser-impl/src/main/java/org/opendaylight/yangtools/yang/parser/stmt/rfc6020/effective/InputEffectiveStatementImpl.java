@@ -7,30 +7,29 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import com.google.common.collect.ImmutableSet;
-
-import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Collection;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import com.google.common.base.Optional;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.util.List;
 import java.util.Set;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import java.util.Collection;
+import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class ContainerEffectiveStatementImpl extends
-        AbstractEffectiveDocumentedDataNodeContainer<QName, ContainerStatement>
-        implements ContainerSchemaNode, DerivableSchemaNode {
+public class InputEffectiveStatementImpl extends
+        AbstractEffectiveDocumentedDataNodeContainer<QName, InputStatement>
+        implements ContainerSchemaNode {
+
     private final QName qname;
     private final SchemaPath path;
     private final boolean presence;
@@ -44,8 +43,8 @@ public class ContainerEffectiveStatementImpl extends
     private ImmutableSet<AugmentationSchema> augmentations;
     private ImmutableList<UnknownSchemaNode> unknownNodes;
 
-    public ContainerEffectiveStatementImpl(
-            StmtContext<QName, ContainerStatement, EffectiveStatement<QName, ContainerStatement>> ctx) {
+    public InputEffectiveStatementImpl(
+            StmtContext<QName, InputStatement, EffectiveStatement<QName, InputStatement>> ctx) {
         super(ctx);
 
         qname = ctx.getStatementArgument();
@@ -99,11 +98,6 @@ public class ContainerEffectiveStatementImpl extends
     }
 
     @Override
-    public Optional<ContainerSchemaNode> getOriginal() {
-        return Optional.fromNullable(original);
-    }
-
-    @Override
     public boolean isConfiguration() {
         return configuration;
     }
@@ -148,7 +142,7 @@ public class ContainerEffectiveStatementImpl extends
         if (getClass() != obj.getClass()) {
             return false;
         }
-        ContainerEffectiveStatementImpl other = (ContainerEffectiveStatementImpl) obj;
+        InputEffectiveStatementImpl other = (InputEffectiveStatementImpl) obj;
         if (qname == null) {
             if (other.qname != null) {
                 return false;
@@ -168,6 +162,7 @@ public class ContainerEffectiveStatementImpl extends
 
     @Override
     public String toString() {
-        return "container " + qname.getLocalName();
+        return "RPC input " + qname.getLocalName();
     }
+
 }

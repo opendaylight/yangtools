@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+public class ArgumentEffectiveStatementImpl extends
+        EffectiveStatementBase<QName, ArgumentStatement> {
 
-public class DescriptionEffectiveStatementImpl extends
-        EffectiveStatementBase<String, DescriptionStatement> {
-
-    public DescriptionEffectiveStatementImpl(
-            StmtContext<String, DescriptionStatement, ?> ctx) {
+    public ArgumentEffectiveStatementImpl(
+            StmtContext<QName, ArgumentStatement, ?> ctx) {
         super(ctx);
     }
 

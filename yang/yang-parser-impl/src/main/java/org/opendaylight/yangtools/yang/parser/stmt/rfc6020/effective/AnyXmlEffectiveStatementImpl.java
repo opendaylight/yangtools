@@ -7,52 +7,41 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import com.google.common.collect.ImmutableSet;
-
-import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Collection;
+import java.util.LinkedList;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import java.util.List;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
-public class ContainerEffectiveStatementImpl extends
-        AbstractEffectiveDocumentedDataNodeContainer<QName, ContainerStatement>
-        implements ContainerSchemaNode, DerivableSchemaNode {
+public class AnyXmlEffectiveStatementImpl extends
+        AbstractEffectiveDocumentedNode<QName, AnyxmlStatement> implements
+        AnyXmlSchemaNode, DerivableSchemaNode {
     private final QName qname;
     private final SchemaPath path;
-    private final boolean presence;
 
+    boolean configuration;
+    AnyXmlSchemaNode original;
+    ConstraintDefinition constraintsDef;
     boolean augmenting;
     boolean addedByUses;
-    boolean configuration;
-    ContainerSchemaNode original;
-    ConstraintDefinition constraints;
 
-    private ImmutableSet<AugmentationSchema> augmentations;
-    private ImmutableList<UnknownSchemaNode> unknownNodes;
+    ImmutableList<UnknownSchemaNode> unknownNodes;
 
-    public ContainerEffectiveStatementImpl(
-            StmtContext<QName, ContainerStatement, EffectiveStatement<QName, ContainerStatement>> ctx) {
+    public AnyXmlEffectiveStatementImpl(
+            StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx) {
         super(ctx);
-
-        qname = ctx.getStatementArgument();
-        path = Utils.getSchemaPath(ctx);
-        presence = (firstEffective(PresenceEffectiveStatementImpl.class) == null) ? false
-                : true;
-        // :TODO init other fields
+        this.qname = ctx.getStatementArgument();
+        this.path = Utils.getSchemaPath(ctx);
 
         initSubstatementCollections();
     }
@@ -61,21 +50,15 @@ public class ContainerEffectiveStatementImpl extends
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
         LinkedList<UnknownSchemaNode> unknownNodes = new LinkedList<UnknownSchemaNode>();
-        HashSet<AugmentationSchema> augmentations = new HashSet<AugmentationSchema>();
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
                 unknownNodes.add(unknownNode);
             }
-            if (effectiveStatement instanceof AugmentationSchema) {
-                AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
-                augmentations.add(augmentationSchema);
-            }
         }
 
         this.unknownNodes = ImmutableList.copyOf(unknownNodes);
-        this.augmentations = ImmutableSet.copyOf(augmentations);
     }
 
     @Override
@@ -99,7 +82,7 @@ public class ContainerEffectiveStatementImpl extends
     }
 
     @Override
-    public Optional<ContainerSchemaNode> getOriginal() {
+    public Optional<AnyXmlSchemaNode> getOriginal() {
         return Optional.fromNullable(original);
     }
 
@@ -110,17 +93,7 @@ public class ContainerEffectiveStatementImpl extends
 
     @Override
     public ConstraintDefinition getConstraints() {
-        return constraints;
-    }
-
-    @Override
-    public Set<AugmentationSchema> getAvailableAugmentations() {
-        return augmentations;
-    }
-
-    @Override
-    public boolean isPresenceContainer() {
-        return presence;
+        return constraintsDef;
     }
 
     @Override
@@ -148,7 +121,7 @@ public class ContainerEffectiveStatementImpl extends
         if (getClass() != obj.getClass()) {
             return false;
         }
-        ContainerEffectiveStatementImpl other = (ContainerEffectiveStatementImpl) obj;
+        AnyXmlEffectiveStatementImpl other = (AnyXmlEffectiveStatementImpl) obj;
         if (qname == null) {
             if (other.qname != null) {
                 return false;
@@ -168,6 +141,13 @@ public class ContainerEffectiveStatementImpl extends
 
     @Override
     public String toString() {
-        return "container " + qname.getLocalName();
+        StringBuilder sb = new StringBuilder(
+                AnyXmlEffectiveStatementImpl.class.getSimpleName());
+        sb.append("[");
+        sb.append("qname=").append(qname);
+        sb.append(", path=").append(path);
+        sb.append("]");
+        return sb.toString();
     }
+
 }

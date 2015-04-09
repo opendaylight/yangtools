@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RpcEffectiveStatementImpl;
+
 import javax.annotation.Nullable;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -54,7 +56,7 @@ public class RpcStatementImpl extends AbstractDeclaredStatement<QName>
         @Override
         public EffectiveStatement<QName, RpcStatement> createEffective(
                 StmtContext<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new RpcEffectiveStatementImpl(ctx);
         }
 
     }

@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import java.util.Date;
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+public class RevisionEffectiveStatementImpl extends
+        EffectiveStatementBase<Date, RevisionStatement> {
 
-public class DescriptionEffectiveStatementImpl extends
-        EffectiveStatementBase<String, DescriptionStatement> {
-
-    public DescriptionEffectiveStatementImpl(
-            StmtContext<String, DescriptionStatement, ?> ctx) {
+    public RevisionEffectiveStatementImpl(
+            StmtContext<Date, RevisionStatement, ?> ctx) {
         super(ctx);
     }
 

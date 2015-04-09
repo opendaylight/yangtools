@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.InputEffectiveStatementImpl;
+
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
@@ -19,38 +22,38 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class InputStatementImpl extends AbstractDeclaredStatement<Void>
+public class InputStatementImpl extends AbstractDeclaredStatement<QName>
         implements InputStatement {
 
-    protected InputStatementImpl(
-            StmtContext<Void, InputStatement, ?> context) {
+    protected InputStatementImpl(StmtContext<QName, InputStatement, ?> context) {
         super(context);
     }
 
     public static class Definition
             extends
-            AbstractStatementSupport<Void, InputStatement, EffectiveStatement<Void, InputStatement>> {
+            AbstractStatementSupport<QName, InputStatement, EffectiveStatement<QName, InputStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.Input);
         }
 
         @Override
-        public Void parseArgumentValue(StmtContext<?, ?, ?> ctx, String value)
+        public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value)
                 throws SourceException {
-            return null;
+            value = "input";
+            return Utils.qNameFromArgument(ctx, value);
         }
 
         @Override
         public InputStatement createDeclared(
-                StmtContext<Void, InputStatement, ?> ctx) {
+                StmtContext<QName, InputStatement, ?> ctx) {
             return new InputStatementImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<Void, InputStatement> createEffective(
-                StmtContext<Void, InputStatement, EffectiveStatement<Void, InputStatement>> ctx) {
-            throw new UnsupportedOperationException();
+        public EffectiveStatement<QName, InputStatement> createEffective(
+                StmtContext<QName, InputStatement, EffectiveStatement<QName, InputStatement>> ctx) {
+            return new InputEffectiveStatementImpl(ctx);
         }
 
     }
@@ -70,4 +73,3 @@ public class InputStatementImpl extends AbstractDeclaredStatement<Void>
         return allDeclared(DataDefinitionStatement.class);
     }
 }
-
