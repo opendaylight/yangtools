@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IdentityEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -49,7 +51,7 @@ public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
         @Override
         public EffectiveStatement<QName, IdentityStatement> createEffective(
                 StmtContext<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new IdentityEffectiveStatementImpl(ctx);
         }
 
     }

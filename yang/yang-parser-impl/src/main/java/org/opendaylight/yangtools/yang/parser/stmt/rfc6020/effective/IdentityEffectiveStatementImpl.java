@@ -7,75 +7,58 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import com.google.common.collect.ImmutableSet;
-
-import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Collection;
+import java.util.LinkedList;
+
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
-public class ContainerEffectiveStatementImpl extends
-        AbstractEffectiveDocumentedDataNodeContainer<QName, ContainerStatement>
-        implements ContainerSchemaNode, DerivableSchemaNode {
+public class IdentityEffectiveStatementImpl extends
+        AbstractEffectiveDocumentedNode<QName, IdentityStatement> implements
+        IdentitySchemaNode {
     private final QName qname;
     private final SchemaPath path;
-    private final boolean presence;
+    IdentitySchemaNode baseIdentity;
+    private final Set<IdentitySchemaNode> derivedIdentities;
 
-    boolean augmenting;
-    boolean addedByUses;
-    boolean configuration;
-    ContainerSchemaNode original;
-    ConstraintDefinition constraints;
+    ImmutableList<UnknownSchemaNode> unknownNodes;
 
-    private ImmutableSet<AugmentationSchema> augmentations;
-    private ImmutableList<UnknownSchemaNode> unknownNodes;
-
-    public ContainerEffectiveStatementImpl(
-            StmtContext<QName, ContainerStatement, EffectiveStatement<QName, ContainerStatement>> ctx) {
+    public IdentityEffectiveStatementImpl(
+            StmtContext<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> ctx) {
         super(ctx);
 
-        qname = ctx.getStatementArgument();
-        path = Utils.getSchemaPath(ctx);
-        presence = (firstEffective(PresenceEffectiveStatementImpl.class) == null) ? false
-                : true;
-        // :TODO init other fields
+        this.qname = ctx.getStatementArgument();
+        this.path = Utils.getSchemaPath(ctx);
 
         initSubstatementCollections();
+
+        // :TODO init other fields
+        this.derivedIdentities = null;
     }
 
     private void initSubstatementCollections() {
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
         LinkedList<UnknownSchemaNode> unknownNodes = new LinkedList<UnknownSchemaNode>();
-        HashSet<AugmentationSchema> augmentations = new HashSet<AugmentationSchema>();
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
                 unknownNodes.add(unknownNode);
             }
-            if (effectiveStatement instanceof AugmentationSchema) {
-                AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
-                augmentations.add(augmentationSchema);
-            }
         }
 
         this.unknownNodes = ImmutableList.copyOf(unknownNodes);
-        this.augmentations = ImmutableSet.copyOf(augmentations);
     }
 
     @Override
@@ -84,43 +67,18 @@ public class ContainerEffectiveStatementImpl extends
     }
 
     @Override
+    public IdentitySchemaNode getBaseIdentity() {
+        return baseIdentity;
+    }
+
+    @Override
+    public Set<IdentitySchemaNode> getDerivedIdentities() {
+        return Collections.unmodifiableSet(derivedIdentities);
+    }
+
+    @Override
     public SchemaPath getPath() {
         return path;
-    }
-
-    @Override
-    public boolean isAugmenting() {
-        return augmenting;
-    }
-
-    @Override
-    public boolean isAddedByUses() {
-        return addedByUses;
-    }
-
-    @Override
-    public Optional<ContainerSchemaNode> getOriginal() {
-        return Optional.fromNullable(original);
-    }
-
-    @Override
-    public boolean isConfiguration() {
-        return configuration;
-    }
-
-    @Override
-    public ConstraintDefinition getConstraints() {
-        return constraints;
-    }
-
-    @Override
-    public Set<AugmentationSchema> getAvailableAugmentations() {
-        return augmentations;
-    }
-
-    @Override
-    public boolean isPresenceContainer() {
-        return presence;
     }
 
     @Override
@@ -148,7 +106,7 @@ public class ContainerEffectiveStatementImpl extends
         if (getClass() != obj.getClass()) {
             return false;
         }
-        ContainerEffectiveStatementImpl other = (ContainerEffectiveStatementImpl) obj;
+        IdentityEffectiveStatementImpl other = (IdentityEffectiveStatementImpl) obj;
         if (qname == null) {
             if (other.qname != null) {
                 return false;
@@ -168,6 +126,12 @@ public class ContainerEffectiveStatementImpl extends
 
     @Override
     public String toString() {
-        return "container " + qname.getLocalName();
+        StringBuilder sb = new StringBuilder(
+                IdentityEffectiveStatementImpl.class.getSimpleName());
+        sb.append("[");
+        sb.append("base=").append(baseIdentity);
+        sb.append(", qname=").append(qname);
+        sb.append("]");
+        return sb.toString();
     }
 }
