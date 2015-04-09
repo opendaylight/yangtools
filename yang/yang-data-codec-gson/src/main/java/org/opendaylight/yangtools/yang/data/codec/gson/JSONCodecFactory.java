@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.DerivedType;
 import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
 import org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
@@ -51,7 +52,7 @@ public final class JSONCodecFactory {
         }
 
         @Override
-        public void serializeToWriter(JsonWriter writer, Object value) throws IOException {
+        public void serializeToWriter(final JsonWriter writer, final Object value) throws IOException {
             // NOOP since codec is unkwown.
             LOG.warn("Call of the serializeToWriter method on JSONCodecFactory.NULL_CODEC object. No operation performed.");
         }
@@ -91,17 +92,9 @@ public final class JSONCodecFactory {
         return new JSONCodecFactory(context);
     }
 
-    private static TypeDefinition<?> resolveBaseTypeFrom(final TypeDefinition<?> type) {
-        TypeDefinition<?> superType = type;
-        while (superType.getBaseType() != null) {
-            superType = superType.getBaseType();
-        }
-        return superType;
-    }
-
     @SuppressWarnings("unchecked")
-    private JSONCodec<Object> createCodec(DataSchemaNode key, TypeDefinition<?> type) {
-        TypeDefinition<?> baseType = resolveBaseTypeFrom(type);
+    private JSONCodec<Object> createCodec(final DataSchemaNode key, final TypeDefinition<?> type) {
+        final TypeDefinition<?> baseType = DerivedType.from(type);
         if (baseType instanceof LeafrefTypeDefinition) {
             return createReferencedTypeCodec(key, (LeafrefTypeDefinition) baseType);
         } else if (baseType instanceof IdentityrefType) {
@@ -112,18 +105,17 @@ public final class JSONCodecFactory {
         return createFromSimpleType(type);
     }
 
-    private JSONCodec<Object> createReferencedTypeCodec(DataSchemaNode schema,
-            LeafrefTypeDefinition type) {
+    private JSONCodec<Object> createReferencedTypeCodec(final DataSchemaNode schema,
+            final LeafrefTypeDefinition type) {
         // FIXME: Verify if this does indeed support leafref of leafref
-        TypeDefinition<?> referencedType =
+        final TypeDefinition<?> referencedType =
                 SchemaContextUtil.getBaseTypeForLeafRef(type, getSchemaContext(), schema);
         return createFromSimpleType(referencedType);
     }
 
     @SuppressWarnings("unchecked")
-    private JSONCodec<Object> createFromSimpleType(TypeDefinition<?> type) {
-        final TypeDefinition<?> baseType = resolveBaseTypeFrom(type);
-        if (baseType instanceof InstanceIdentifierType) {
+    private JSONCodec<Object> createFromSimpleType(final TypeDefinition<?> type) {
+        if (type instanceof InstanceIdentifierType) {
             return (JSONCodec<Object>) iidCodec;
         }
 
@@ -140,7 +132,7 @@ public final class JSONCodecFactory {
         return schemaContext;
     }
 
-    JSONCodec<Object> codecFor(DataSchemaNode schema) {
+    JSONCodec<Object> codecFor(final DataSchemaNode schema) {
         return codecs.getUnchecked(schema);
     }
 

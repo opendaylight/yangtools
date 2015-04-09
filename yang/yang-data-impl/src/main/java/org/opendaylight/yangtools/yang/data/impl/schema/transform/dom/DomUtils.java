@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.DerivedType;
 import org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.w3c.dom.Element;
@@ -47,7 +48,7 @@ public final class DomUtils {
     }
 
     public static Object parseXmlValue(final Element xml, final XmlCodecProvider codecProvider, final TypeDefinition<?> type) {
-        TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codec = codecProvider.codecFor(type);
+        final TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> codec = codecProvider.codecFor(type);
 
         String text = xml.getTextContent();
         text = text.trim();
@@ -64,16 +65,16 @@ public final class DomUtils {
 
     public static void serializeXmlValue(final Element element, final TypeDefinition<? extends TypeDefinition<?>> type, final XmlCodecProvider codecProvider, final Object value) {
         try {
-            XMLStreamWriter writer = XMLOutputFactory.newFactory().createXMLStreamWriter(new DOMResult(element));
+            final XMLStreamWriter writer = XMLOutputFactory.newFactory().createXMLStreamWriter(new DOMResult(element));
             XmlStreamUtils.create(codecProvider).writeValue(writer, type, value);
-        } catch (XMLStreamException e) {
+        } catch (final XMLStreamException e) {
             throw new IllegalStateException("XML encoding failed", e);
         }
     }
 
     public static LinkedListMultimap<QName, Element> mapChildElementsForSingletonNode(final Element node) {
-        List<Element> childNodesCollection = Lists.newArrayList();
-        NodeList childNodes = node.getChildNodes();
+        final List<Element> childNodesCollection = Lists.newArrayList();
+        final NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             if(childNodes.item(i) instanceof Element) {
                 childNodesCollection.add((Element) childNodes.item(i));
@@ -84,10 +85,10 @@ public final class DomUtils {
     }
 
     public static LinkedListMultimap<QName, Element> mapChildElements(final Iterable<Element> childNodesCollection) {
-        LinkedListMultimap<QName, Element> mappedChildElements = LinkedListMultimap.create();
+        final LinkedListMultimap<QName, Element> mappedChildElements = LinkedListMultimap.create();
 
-        for (Element element : childNodesCollection) {
-            QName childQName = XmlDocumentUtils.qNameFromElement(element);
+        for (final Element element : childNodesCollection) {
+            final QName childQName = XmlDocumentUtils.qNameFromElement(element);
             mappedChildElements.put(childQName, element);
         }
 
@@ -96,10 +97,10 @@ public final class DomUtils {
 
 
     public static Map<QName, String> toAttributes(final NamedNodeMap xmlAttributes) {
-        Map<QName, String> attributes = new HashMap<>();
+        final Map<QName, String> attributes = new HashMap<>();
 
         for (int i = 0; i < xmlAttributes.getLength(); i++) {
-            Node node = xmlAttributes.item(i);
+            final Node node = xmlAttributes.item(i);
             String namespace = node.getNamespaceURI();
             if (namespace == null) {
                 namespace = "";
@@ -110,14 +111,14 @@ public final class DomUtils {
                 continue;
             }
 
-            QName qName = new QName(URI.create(namespace), node.getLocalName());
+            final QName qName = new QName(URI.create(namespace), node.getLocalName());
             attributes.put(qName, node.getNodeValue());
         }
         return attributes;
     }
 
     public static Object parseXmlValue(final Element xml, final XmlCodecProvider codecProvider, final DataSchemaNode schema, final TypeDefinition<?> type, final SchemaContext schemaCtx) {
-        TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(type);
+        TypeDefinition<?> baseType = DerivedType.from(type);
 
         String text = xml.getTextContent();
         text = text.trim();
