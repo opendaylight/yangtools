@@ -1,0 +1,26 @@
+module ext-typedef {
+    yang-version 1;
+    namespace "urn:simple.extension.typedefs";
+    prefix "ext";
+
+    organization "opendaylight";
+    contact "http://www.opendaylight.org/";
+
+    description "Model for testing and resolving of extension typedefs.";
+
+    revision "2015-03-30" {
+        reference "Initial revision.";
+    }
+
+    extension simple-ext-w-arg {
+        argument "ext-arg";
+        description "Extension with single argument definition.";
+    }
+
+    leaf myleaf {
+        type union {
+            type string;
+            type int32;
+        }
+    }
+}

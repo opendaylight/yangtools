@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.ValueAddedListener;
 
-abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> extends
+public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> extends
         NamespaceStorageSupport implements StmtContext.Mutable<A, D, E>, Identifiable<StatementIdentifier> {
 
     interface OnNamespaceItemAdded extends EventListener{
@@ -100,7 +100,6 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     private final StatementDefinitionContext<A, D, E> definition;
     private final StatementIdentifier identifier;
     private final StatementSourceReference statementDeclSource;
-    private final A argument;
 
     private LinkedHashMap<StatementIdentifier, StatementContextBase<?, ?, ?> > substatements = new LinkedHashMap<>();
 
@@ -120,7 +119,13 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
         this.definition = builder.getDefinition();
         this.identifier = builder.getIdentifier();
         this.statementDeclSource = builder.getStamementSource();
-        this.argument = definition.parseArgumentValue(this, this.rawStatementArgument());
+        this.completedPhase = null;
+    }
+
+    StatementContextBase(StatementContextBase<A,D,E> original) {
+        this.definition = original.definition;
+        this.identifier = original.identifier;
+        this.statementDeclSource = original.statementDeclSource;
         this.completedPhase = null;
     }
 
@@ -152,13 +157,21 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
     }
 
     @Override
-    public A getStatementArgument() {
-        return argument;
+    public Collection<StatementContextBase<?, ?, ?>> declaredSubstatements() {
+        return Collections.unmodifiableCollection(declared);
     }
 
     @Override
-    public Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements() {
-        return Collections.unmodifiableCollection(declared);
+    public Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements() {
+        return Collections.unmodifiableCollection(effective);
+    }
+
+    public void addEffectiveSubstatement(StatementContextBase<?, ?, ?> substatement){
+        effective.add(substatement);
+    }
+
+    public void addDeclaredSubstatement(StatementContextBase<?, ?, ?> substatement){
+        declared.add(substatement);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -186,6 +199,8 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
             }
         };
     }
+
+
 
     @Override
     public StorageNodeType getStorageNodeType() {
@@ -230,6 +245,9 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
             }
         }
         for(StatementContextBase<?, ?, ?> child: declared) {
+            finished &= child.tryToCompletePhase(phase);
+        }
+        for(StatementContextBase<?, ?, ?> child: effective) {
             finished &= child.tryToCompletePhase(phase);
         }
         if(finished) {

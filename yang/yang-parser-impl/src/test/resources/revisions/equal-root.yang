@@ -1,0 +1,8 @@
+module equal-root {
+	namespace equal-root;
+	prefix equal-root;
+
+	include equal-rev {
+		revision-date "2001-05-19";
+	}
+}

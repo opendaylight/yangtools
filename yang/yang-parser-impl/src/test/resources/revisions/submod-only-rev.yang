@@ -1,0 +1,7 @@
+submodule submod-only-rev {
+	belongs-to "submod-only-root" {
+		prefix submod-only-root;
+	}
+
+	revision "2001-05-19";
+}

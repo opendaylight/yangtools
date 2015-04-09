@@ -1,0 +1,6 @@
+module submod-only-root {
+	namespace submod-only-root;
+	prefix submod-only-root;
+
+	include submod-only-rev;
+}
