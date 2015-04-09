@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface YinElementStatement extends DeclaredStatement<String> {
+public interface YinElementStatement extends DeclaredStatement<Boolean> {
 
-    @Nonnull String getValue();
+    @Nonnull Boolean getValue();
 }
 
