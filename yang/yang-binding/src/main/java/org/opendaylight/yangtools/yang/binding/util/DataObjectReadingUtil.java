@@ -176,10 +176,10 @@ public class DataObjectReadingUtil {
             return getterMethod;
         }
 
-        abstract public Map<InstanceIdentifier, DataContainer> readUsingPathArgument(DataContainer parent,
+        public abstract Map<InstanceIdentifier, DataContainer> readUsingPathArgument(DataContainer parent,
                 PathArgument childArgument, InstanceIdentifier targetBuilder);
 
-        abstract public DataContainer read(DataContainer parent, Class<?> childType);
+        public abstract DataContainer read(DataContainer parent, Class<?> childType);
 
     }
 

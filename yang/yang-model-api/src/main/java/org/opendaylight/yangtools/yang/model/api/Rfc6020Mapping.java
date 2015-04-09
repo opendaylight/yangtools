@@ -149,9 +149,9 @@ public enum Rfc6020Mapping implements StatementDefinition {
     YangVersion(YangVersionStatement.class, "yang-version", "value"),
     YinElement(YinElementStatement.class, "yin-element", "value");
 
-    private final @Nonnull Class<? extends DeclaredStatement<?>> type;
-    private final @Nonnull QName name;
-    private final @Nullable QName argument;
+    private final Class<? extends DeclaredStatement<?>> type;
+    private final QName name;
+    private final QName argument;
     private final boolean yinElement;
 
 
@@ -177,7 +177,7 @@ public enum Rfc6020Mapping implements StatementDefinition {
         this.yinElement = yinElement;
     }
 
-    private static QName yinQName(String nameStr) {
+    @Nonnull private static QName yinQName(String nameStr) {
         return QName.cachedReference(QName.create(YangConstants.RFC6020_YIN_MODULE, nameStr));
     }
 
@@ -187,12 +187,12 @@ public enum Rfc6020Mapping implements StatementDefinition {
     }
 
     @Override
-    public QName getArgumentName() {
+    @Nullable public QName getArgumentName() {
         return argument;
     }
 
     @Override
-    public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
+    @Nonnull public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
         return type;
     }
 

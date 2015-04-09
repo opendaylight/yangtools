@@ -98,7 +98,7 @@ public abstract class AbstractCachingSchemaSourceProvider<I, O> implements Advan
      * @param input Optional of schema source, representing one returned from delegate.
      * @return Optional of schema source, representing result returned from this cache.
      */
-    abstract protected Optional<O> cacheSchemaSource(SourceIdentifier identifier, Optional<I> input);
+    protected abstract Optional<O> cacheSchemaSource(SourceIdentifier identifier, Optional<I> input);
 
     /**
      * Returns cached schema source of {@link Optional#absent()} if source is not present in cache.
@@ -111,7 +111,7 @@ public abstract class AbstractCachingSchemaSourceProvider<I, O> implements Advan
      * @param identifier Source Identifier for which schema should be retrieved.
      * @return Cached schema source.
      */
-    abstract protected Optional<O> getCachedSchemaSource(SourceIdentifier identifier);
+    protected abstract Optional<O> getCachedSchemaSource(SourceIdentifier identifier);
 
     @Override
     public AdvancedSchemaSourceProvider<I> getDelegate() {
@@ -143,9 +143,7 @@ public abstract class AbstractCachingSchemaSourceProvider<I, O> implements Advan
      *
      */
     @Beta
-    private class SchemaSourceProviderInstance implements //
-    AdvancedSchemaSourceProvider<O>,
-    Delegator<AdvancedSchemaSourceProvider<I>> {
+    private class SchemaSourceProviderInstance implements AdvancedSchemaSourceProvider<O>, Delegator<AdvancedSchemaSourceProvider<I>> {
 
         private final AdvancedSchemaSourceProvider<I> delegate;
 
