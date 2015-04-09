@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AugmentEffectiveStatementImpl;
+
 import java.util.Collection;
-
 import javax.annotation.Nonnull;
-
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
@@ -48,7 +48,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
         @Override
         public EffectiveStatement<SchemaNodeIdentifier, AugmentStatement> createEffective(
                 StmtContext<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new AugmentEffectiveStatementImpl(ctx);
         }
     }
 

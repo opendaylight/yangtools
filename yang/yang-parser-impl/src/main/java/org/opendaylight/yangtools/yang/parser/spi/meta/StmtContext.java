@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import java.util.Map;
+import java.util.List;
 
+import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
@@ -36,6 +37,8 @@ public interface StmtContext<A,D extends DeclaredStatement<A>, E extends Effecti
     @Nullable String rawStatementArgument();
 
     @Nullable A getStatementArgument();
+
+    @Nullable List<Object> getArgumentsFromRoot();
 
     //<K,VT, V extends VT,N extends IdentifierNamespace<K, V>>
     //       <K, VT, V extends VT ,N extends IdentifierNamespace<K, V>> VT getFromNamespace(Class<N> type, K key)

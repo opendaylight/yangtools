@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AnyXmlEffectiveStatementImpl;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -49,7 +50,7 @@ public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implem
 
         @Override
         public EffectiveStatement<QName,AnyxmlStatement> createEffective(StmtContext<QName,AnyxmlStatement,EffectiveStatement<QName,AnyxmlStatement>> ctx) {
-           throw new UnsupportedOperationException();
+           return new AnyXmlEffectiveStatementImpl(ctx);
         }
 
     }

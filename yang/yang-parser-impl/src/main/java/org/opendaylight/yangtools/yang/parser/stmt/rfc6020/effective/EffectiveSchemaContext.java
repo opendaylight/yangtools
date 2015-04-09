@@ -26,44 +26,48 @@ import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 
 public class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
 
-    private  final Map<ModuleIdentifier, String> identifiersToSources;
-    private  final SetMultimap<URI, Module> namespaceToModules;
-    private  final SetMultimap<String, Module> nameToModules;
-    private  final Set<Module> modules;
-
+    private final Map<ModuleIdentifier, String> identifiersToSources;
+    private final SetMultimap<URI, Module> namespaceToModules;
+    private final SetMultimap<String, Module> nameToModules;
+    private final Set<Module> modules;
 
     private final ImmutableList<DeclaredStatement<?>> rootDeclaredStatements;
-    private final ImmutableList<EffectiveStatement<?,?>> rootEffectiveStatements;
+    private final ImmutableList<EffectiveStatement<?, ?>> rootEffectiveStatements;
 
-    public EffectiveSchemaContext(List<DeclaredStatement<?>> rootDeclaredStatements, List<EffectiveStatement<?,?>> rootEffectiveStatements) {
-        this.rootDeclaredStatements = ImmutableList.copyOf(rootDeclaredStatements);
-        this.rootEffectiveStatements = ImmutableList.copyOf(rootEffectiveStatements);
+    public EffectiveSchemaContext(
+            List<DeclaredStatement<?>> rootDeclaredStatements,
+            List<EffectiveStatement<?, ?>> rootEffectiveStatements) {
+        this.rootDeclaredStatements = ImmutableList
+                .copyOf(rootDeclaredStatements);
+        this.rootEffectiveStatements = ImmutableList
+                .copyOf(rootEffectiveStatements);
 
         HashSet<Module> modules = new HashSet<Module>();
         for (EffectiveStatement<?, ?> rootEffectiveStatement : rootEffectiveStatements) {
-            if(rootEffectiveStatement instanceof Module) {
+            if (rootEffectiveStatement instanceof Module) {
                 Module module = (Module) rootEffectiveStatement;
                 modules.add(module);
             }
         }
         this.modules = ImmutableSet.copyOf(modules);
 
-       final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(
-               new TreeMap<URI, Collection<Module>>(), MODULE_SET_SUPPLIER);
-       final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(
-               new TreeMap<String, Collection<Module>>(), MODULE_SET_SUPPLIER);
+        final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(
+                new TreeMap<URI, Collection<Module>>(), MODULE_SET_SUPPLIER);
+        final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(
+                new TreeMap<String, Collection<Module>>(), MODULE_SET_SUPPLIER);
 
-       for (Module m : modules) {
-           nameMap.put(m.getName(), m);
-           nsMap.put(m.getNamespace(), m);
-       }
+        for (Module m : modules) {
+            nameMap.put(m.getName(), m);
+            nsMap.put(m.getNamespace(), m);
+        }
 
-       namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
-       nameToModules = ImmutableSetMultimap.copyOf(nameMap);
+        namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
+        nameToModules = ImmutableSetMultimap.copyOf(nameMap);
 
-       //:TODO
-       //this.identifiersToSources = ImmutableMap.copyOf(identifiersToSources);
-       this.identifiersToSources = null;
+        // :TODO
+        // this.identifiersToSources =
+        // ImmutableMap.copyOf(identifiersToSources);
+        this.identifiersToSources = null;
 
     }
 
@@ -71,18 +75,18 @@ public class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
         return rootDeclaredStatements;
     }
 
-    public ImmutableList<EffectiveStatement<?,?>> getRootEffectiveStatements() {
+    public ImmutableList<EffectiveStatement<?, ?>> getRootEffectiveStatements() {
         return rootEffectiveStatements;
     }
 
     @Override
-    protected Map<ModuleIdentifier, String> getIdentifiersToSources(){
+    protected Map<ModuleIdentifier, String> getIdentifiersToSources() {
 
         return identifiersToSources;
     }
 
     @Override
-    public Set<Module> getModules(){
+    public Set<Module> getModules() {
 
         return modules;
     }

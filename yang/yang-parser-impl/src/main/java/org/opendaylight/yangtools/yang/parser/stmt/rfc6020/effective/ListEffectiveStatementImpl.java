@@ -1,60 +1,70 @@
-/**
- * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
- *
- * This program and the accompanying materials are made available under the
- * terms of the Eclipse Public License v1.0 which accompanies this distribution,
- * and is available at http://www.eclipse.org/legal/epl-v10.html
- */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import com.google.common.collect.ImmutableSet;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 
-import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Collection;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
-public class ContainerEffectiveStatementImpl extends
-        AbstractEffectiveDocumentedDataNodeContainer<QName, ContainerStatement>
-        implements ContainerSchemaNode, DerivableSchemaNode {
+public class ListEffectiveStatementImpl extends
+        AbstractEffectiveDocumentedDataNodeContainer<QName, ListStatement>
+        implements ListSchemaNode, DerivableSchemaNode {
     private final QName qname;
     private final SchemaPath path;
-    private final boolean presence;
 
     boolean augmenting;
     boolean addedByUses;
+    ListSchemaNode original;
     boolean configuration;
-    ContainerSchemaNode original;
     ConstraintDefinition constraints;
+    boolean userOrdered;
 
-    private ImmutableSet<AugmentationSchema> augmentations;
-    private ImmutableList<UnknownSchemaNode> unknownNodes;
+    ImmutableList<QName> keyDefinition;
+    ImmutableSet<AugmentationSchema> augmentations;
+    ImmutableList<UnknownSchemaNode> unknownNodes;
 
-    public ContainerEffectiveStatementImpl(
-            StmtContext<QName, ContainerStatement, EffectiveStatement<QName, ContainerStatement>> ctx) {
+    public ListEffectiveStatementImpl(
+            StmtContext<QName, ListStatement, EffectiveStatement<QName, ListStatement>> ctx) {
         super(ctx);
-
-        qname = ctx.getStatementArgument();
-        path = Utils.getSchemaPath(ctx);
-        presence = (firstEffective(PresenceEffectiveStatementImpl.class) == null) ? false
-                : true;
+        this.qname = ctx.getStatementArgument();
+        this.path = Utils.getSchemaPath(ctx);
         // :TODO init other fields
 
+        initKeyDefinition();
         initSubstatementCollections();
+    }
+
+    /**
+     *
+     */
+    private void initKeyDefinition() {
+        List<QName> keyDefinition = new LinkedList<QName>();
+        KeyEffectiveStatementImpl key = firstEffective(KeyEffectiveStatementImpl.class);
+
+        if (key != null) {
+            Collection<SchemaNodeIdentifier> keyParts = key.argument();
+            for (SchemaNodeIdentifier keyPart : keyParts) {
+                keyDefinition.add(keyPart.getLastComponent());
+            }
+        }
+
+        this.keyDefinition = ImmutableList.copyOf(keyDefinition);
     }
 
     private void initSubstatementCollections() {
@@ -89,6 +99,11 @@ public class ContainerEffectiveStatementImpl extends
     }
 
     @Override
+    public List<QName> getKeyDefinition() {
+        return keyDefinition;
+    }
+
+    @Override
     public boolean isAugmenting() {
         return augmenting;
     }
@@ -99,7 +114,7 @@ public class ContainerEffectiveStatementImpl extends
     }
 
     @Override
-    public Optional<ContainerSchemaNode> getOriginal() {
+    public Optional<ListSchemaNode> getOriginal() {
         return Optional.fromNullable(original);
     }
 
@@ -119,8 +134,8 @@ public class ContainerEffectiveStatementImpl extends
     }
 
     @Override
-    public boolean isPresenceContainer() {
-        return presence;
+    public boolean isUserOrdered() {
+        return userOrdered;
     }
 
     @Override
@@ -148,7 +163,7 @@ public class ContainerEffectiveStatementImpl extends
         if (getClass() != obj.getClass()) {
             return false;
         }
-        ContainerEffectiveStatementImpl other = (ContainerEffectiveStatementImpl) obj;
+        final ListEffectiveStatementImpl other = (ListEffectiveStatementImpl) obj;
         if (qname == null) {
             if (other.qname != null) {
                 return false;
@@ -168,6 +183,6 @@ public class ContainerEffectiveStatementImpl extends
 
     @Override
     public String toString() {
-        return "container " + qname.getLocalName();
+        return "list " + qname.getLocalName();
     }
 }

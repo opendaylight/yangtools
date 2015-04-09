@@ -8,7 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
-
+import java.util.Iterator;
+import java.util.LinkedList;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -174,5 +176,24 @@ public class Utils {
         }
 
         return QName.create(qNameModule, localName);
+    }
+
+    public static SchemaPath getSchemaPath(
+            StmtContext<?,?,?> ctx) {
+
+        Iterator<Object> argumentsIterator = ctx.getArgumentsFromRoot().iterator();
+        argumentsIterator.next(); //skip root argument
+
+        List<QName> qnamesFromRoot = new LinkedList<QName>();
+
+        while(argumentsIterator.hasNext()) {
+            Object argument = argumentsIterator.next();
+            if(argument instanceof QName) {
+                QName qname = (QName) argument;
+                qnamesFromRoot.add(qname);
+            } else return SchemaPath.SAME;
+        }
+
+        return SchemaPath.create(qnamesFromRoot, true);
     }
 }
