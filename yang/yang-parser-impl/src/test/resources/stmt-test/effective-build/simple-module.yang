@@ -1,0 +1,30 @@
+module simple-module {
+
+    namespace "simple.yang";
+    prefix sim;
+
+    container root-container {
+        container sim:sub-container {
+            container sub-sub-container {
+            }
+        }
+    }
+    
+//    container sim:root-container2 {
+//        container sub-container2 {
+//            container "sim:sub-sub-container2" {
+//            }
+//        }
+//    }
+    
+    container sim:root-container2 {
+        uses grp;
+    }
+    
+    grouping grp{
+        container sub-container2 {
+            container "sim:sub-sub-container2" {
+            }
+        }
+    }
+}

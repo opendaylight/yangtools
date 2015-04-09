@@ -1,0 +1,5 @@
+submodule nowhere-rev {
+	belongs-to "nowhere-root" {
+		prefix nowhere-root;
+	}
+}

@@ -1,0 +1,8 @@
+module unequal-root {
+	namespace unequal-root;
+	prefix unequal-root;
+
+	include unequal-rev {
+		revision-date "2001-05-19";
+	}
+}

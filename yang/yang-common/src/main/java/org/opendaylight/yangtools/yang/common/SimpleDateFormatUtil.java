@@ -8,9 +8,28 @@
 
 package org.opendaylight.yangtools.yang.common;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public final class SimpleDateFormatUtil {
+
+    private static final String REVISION_SIMPLE_DATE = "yyyy-MM-dd";
+    private static final String DEFAULT_DATE = "1970-01-01";
+
+    public static Date DEFAULT_DATE_REV;
+    public static Date DEFAULT_DATE_IMP;
+
+    static {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(REVISION_SIMPLE_DATE);
+
+        try {
+            DEFAULT_DATE_REV = simpleDateFormat.parse(DEFAULT_DATE);
+            DEFAULT_DATE_IMP = simpleDateFormat.parse(DEFAULT_DATE);
+        } catch (ParseException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
 
     private SimpleDateFormatUtil() {
         throw new UnsupportedOperationException("Utility class should not be instantiated");
@@ -20,7 +39,7 @@ public final class SimpleDateFormatUtil {
 
         @Override
         protected SimpleDateFormat initialValue() {
-            return new SimpleDateFormat("yyyy-MM-dd");
+            return new SimpleDateFormat(REVISION_SIMPLE_DATE);
         }
 
         @Override

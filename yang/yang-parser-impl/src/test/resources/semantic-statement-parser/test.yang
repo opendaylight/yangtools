@@ -1,0 +1,19 @@
+module test {
+    yang-version 1;
+    namespace "urn:tst:yang";
+    prefix "tst";
+
+    import importedtest {
+            prefix "imptst";
+    }
+
+    description "This is a test module";
+
+    revision 2015-03-04;
+
+    container mycontainer {
+        leaf myleaf {
+            type string;
+        }
+    }
+}
