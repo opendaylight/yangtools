@@ -117,7 +117,7 @@ public final class JSONCodecFactory {
         // FIXME: Verify if this does indeed support leafref of leafref
         TypeDefinition<?> referencedType =
                 SchemaContextUtil.getBaseTypeForLeafRef(type, getSchemaContext(), schema);
-        return createFromSimpleType(referencedType);
+        return createCodec(schema, referencedType);
     }
 
     @SuppressWarnings("unchecked")
