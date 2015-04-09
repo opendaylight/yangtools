@@ -1,0 +1,52 @@
+module simple-nodes {
+    yang-version 1;
+    namespace "urn:opendaylight:"+
+        "simple-nodes";
+    prefix "sn";
+
+    organization "opendaylight";
+
+    import test {
+        prefix tst;
+    }
+
+    description
+        "test file containing yang data nodes";
+
+    revision "2013-07-30" {
+        description
+            "Initial revision.";
+        reference "will be defined";
+    }
+
+
+    typedef mytype {
+        type string;
+    }
+
+    // NOTE: simple comment
+
+
+
+    anyxml data {
+        config false;
+         description "anyxml desc";
+         if-feature has-name;
+         mandatory true;
+         must "ifType != 'ethernet' or " +
+                      "(ifType = 'ethernet' and ifMTU = 1500)" {
+            error-message "An ethernet MTU must be 1500";
+         }
+         must "ifType != 'atm' or " +
+                      "(ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)" {
+                     error-app-tag "anyxml data error-app-tag";
+                     error-message "An atm MTU must be  64 .. 17966";
+                     description "an error occured in data";
+                     reference "data must ref";
+                }
+         reference "data ref";
+         status obsolete;
+         when "class != 'wheel'";
+    }
+
+}

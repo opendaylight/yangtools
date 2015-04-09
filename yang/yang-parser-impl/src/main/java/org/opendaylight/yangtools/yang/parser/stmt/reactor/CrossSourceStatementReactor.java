@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
+
 import com.google.common.collect.ImmutableMap;
 import java.util.EnumMap;
 import java.util.Map;
@@ -64,7 +66,9 @@ public class CrossSourceStatementReactor {
             return context.build();
         }
 
-
+        public EffectiveSchemaContext buildEffective() throws SourceException, ReactorException {
+            return context.buildEffective();
+        }
 
     }
 
