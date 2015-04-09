@@ -7,54 +7,52 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import com.google.common.collect.ImmutableSet;
-
-import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Collection;
+
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
-public class ContainerEffectiveStatementImpl extends
-        AbstractEffectiveDocumentedDataNodeContainer<QName, ContainerStatement>
-        implements ContainerSchemaNode, DerivableSchemaNode {
+public class ChoiceEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, ChoiceStatement> implements ChoiceSchemaNode, DerivableSchemaNode {
     private final QName qname;
     private final SchemaPath path;
-    private final boolean presence;
 
     boolean augmenting;
     boolean addedByUses;
+    ChoiceSchemaNode original;
     boolean configuration;
-    ContainerSchemaNode original;
     ConstraintDefinition constraints;
+    String defaultCase;
 
-    private ImmutableSet<AugmentationSchema> augmentations;
-    private ImmutableList<UnknownSchemaNode> unknownNodes;
+    ImmutableSet<ChoiceCaseNode> cases;
+    ImmutableSet<AugmentationSchema> augmentations;
+    ImmutableList<UnknownSchemaNode> unknownNodes;
 
-    public ContainerEffectiveStatementImpl(
-            StmtContext<QName, ContainerStatement, EffectiveStatement<QName, ContainerStatement>> ctx) {
+    public ChoiceEffectiveStatementImpl(StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
         super(ctx);
 
-        qname = ctx.getStatementArgument();
-        path = Utils.getSchemaPath(ctx);
-        presence = (firstEffective(PresenceEffectiveStatementImpl.class) == null) ? false
-                : true;
-        // :TODO init other fields
+        this.qname = ctx.getStatementArgument();
+        this.path = Utils.getSchemaPath(ctx);
+        //:TODO init other fields
 
         initSubstatementCollections();
+
     }
 
     private void initSubstatementCollections() {
@@ -62,6 +60,7 @@ public class ContainerEffectiveStatementImpl extends
 
         LinkedList<UnknownSchemaNode> unknownNodes = new LinkedList<UnknownSchemaNode>();
         HashSet<AugmentationSchema> augmentations = new HashSet<AugmentationSchema>();
+        HashSet<ChoiceCaseNode> cases = new HashSet<ChoiceCaseNode>();
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
@@ -72,10 +71,15 @@ public class ContainerEffectiveStatementImpl extends
                 AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
                 augmentations.add(augmentationSchema);
             }
+            if (effectiveStatement instanceof ChoiceCaseNode) {
+                ChoiceCaseNode choiceCaseNode = (ChoiceCaseNode) effectiveStatement;
+                cases.add(choiceCaseNode);
+            }
         }
 
         this.unknownNodes = ImmutableList.copyOf(unknownNodes);
         this.augmentations = ImmutableSet.copyOf(augmentations);
+        this.cases = ImmutableSet.copyOf(cases);
     }
 
     @Override
@@ -99,7 +103,7 @@ public class ContainerEffectiveStatementImpl extends
     }
 
     @Override
-    public Optional<ContainerSchemaNode> getOriginal() {
+    public Optional<ChoiceSchemaNode> getOriginal() {
         return Optional.fromNullable(original);
     }
 
@@ -119,13 +123,45 @@ public class ContainerEffectiveStatementImpl extends
     }
 
     @Override
-    public boolean isPresenceContainer() {
-        return presence;
+    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
+        return unknownNodes;
     }
 
     @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownNodes;
+    public Set<ChoiceCaseNode> getCases() {
+        return cases;
+    }
+
+    @Override
+    public ChoiceCaseNode getCaseNodeByName(final QName name) {
+        if (name == null) {
+            throw new IllegalArgumentException("Choice Case QName cannot be NULL!");
+        }
+        for (final ChoiceCaseNode caseNode : cases) {
+            if (caseNode != null && name.equals(caseNode.getQName())) {
+                return caseNode;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public ChoiceCaseNode getCaseNodeByName(final String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("Choice Case string Name cannot be NULL!");
+        }
+        for (final ChoiceCaseNode caseNode : cases) {
+            if (caseNode != null && (caseNode.getQName() != null)
+                    && name.equals(caseNode.getQName().getLocalName())) {
+                return caseNode;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public String getDefaultCase() {
+        return defaultCase;
     }
 
     @Override
@@ -148,7 +184,7 @@ public class ContainerEffectiveStatementImpl extends
         if (getClass() != obj.getClass()) {
             return false;
         }
-        ContainerEffectiveStatementImpl other = (ContainerEffectiveStatementImpl) obj;
+        ChoiceEffectiveStatementImpl other = (ChoiceEffectiveStatementImpl) obj;
         if (qname == null) {
             if (other.qname != null) {
                 return false;
@@ -168,6 +204,11 @@ public class ContainerEffectiveStatementImpl extends
 
     @Override
     public String toString() {
-        return "container " + qname.getLocalName();
+        StringBuilder sb = new StringBuilder(ChoiceEffectiveStatementImpl.class.getSimpleName());
+        sb.append("[");
+        sb.append("qname=").append(qname);
+        sb.append("]");
+        return sb.toString();
     }
+
 }

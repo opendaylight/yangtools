@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.NotificationEffectiveStatementImpl;
+
 import javax.annotation.Nullable;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
@@ -53,7 +55,7 @@ public class NotificationStatementImpl extends AbstractDeclaredStatement<QName>
         @Override
         public EffectiveStatement<QName, NotificationStatement> createEffective(
                 StmtContext<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new NotificationEffectiveStatementImpl(ctx);
         }
 
     }

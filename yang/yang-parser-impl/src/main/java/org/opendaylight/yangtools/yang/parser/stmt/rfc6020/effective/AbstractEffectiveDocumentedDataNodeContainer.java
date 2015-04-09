@@ -1,5 +1,5 @@
-/*
- * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+/**
+ * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -7,14 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import com.google.common.collect.ImmutableSet;
+
+import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -27,11 +28,11 @@ public abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends 
         extends AbstractEffectiveDocumentedNode<A, D> implements
         DataNodeContainer {
 
-    private final Map<QName, DataSchemaNode> childNodes;
-    private final Set<GroupingDefinition> groupings;
-    private final Set<UsesNode> uses;
-    private final Set<TypeDefinition<?>> typeDefinitions;
-    private final Set<DataSchemaNode> publicChildNodes;
+    private final ImmutableMap<QName, DataSchemaNode> childNodes;
+    private final ImmutableSet<GroupingDefinition> groupings;
+    private final ImmutableSet<UsesNode> uses;
+    private final ImmutableSet<TypeDefinition<?>> typeDefinitions;
+    private final ImmutableSet<DataSchemaNode> publicChildNodes;
 
     protected AbstractEffectiveDocumentedDataNodeContainer(
             final StmtContext<A, D, ?> ctx) {
@@ -39,11 +40,11 @@ public abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends 
 
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
-        childNodes = new HashMap<QName, DataSchemaNode>();
-        groupings = new HashSet<GroupingDefinition>();
-        uses = new HashSet<UsesNode>();
-        typeDefinitions = new HashSet<TypeDefinition<?>>();
-        publicChildNodes = new HashSet<DataSchemaNode>();
+        HashMap<QName, DataSchemaNode> childNodes = new HashMap<QName, DataSchemaNode>();
+        HashSet<GroupingDefinition> groupings = new HashSet<GroupingDefinition>();
+        HashSet<UsesNode> uses = new HashSet<UsesNode>();
+        HashSet<TypeDefinition<?>> typeDefinitions = new HashSet<TypeDefinition<?>>();
+        HashSet<DataSchemaNode> publicChildNodes = new HashSet<DataSchemaNode>();
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof DataSchemaNode) {
@@ -65,6 +66,12 @@ public abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends 
                 groupings.add(grp);
             }
         }
+
+        this.childNodes = ImmutableMap.copyOf(childNodes);
+        this.groupings = ImmutableSet.copyOf(groupings);
+        this.publicChildNodes = ImmutableSet.copyOf(publicChildNodes);
+        this.typeDefinitions = ImmutableSet.copyOf(typeDefinitions);
+        this.uses = ImmutableSet.copyOf(uses);
     }
 
     @Override
