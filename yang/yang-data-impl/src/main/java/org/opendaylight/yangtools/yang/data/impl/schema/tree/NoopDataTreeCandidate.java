@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 
 /**
  * Internal utility class for an empty candidate. We instantiate this class
@@ -54,14 +55,21 @@ final class NoopDataTreeCandidate extends AbstractDataTreeCandidate {
             return null;
         }
     };
+    private final TreeNode afterRoot;
 
-    protected NoopDataTreeCandidate(final YangInstanceIdentifier rootPath, final ModifiedNode modificationRoot) {
+    protected NoopDataTreeCandidate(final YangInstanceIdentifier rootPath, final ModifiedNode modificationRoot, final TreeNode afterRoot) {
         super(rootPath);
         Preconditions.checkArgument(modificationRoot.getOperation() == LogicalOperation.NONE);
+        this.afterRoot = Preconditions.checkNotNull(afterRoot);
     }
 
     @Override
     public DataTreeCandidateNode getRootNode() {
         return ROOT;
+    }
+
+    @Override
+    protected TreeNode getTipRoot() {
+        return afterRoot;
     }
 }
