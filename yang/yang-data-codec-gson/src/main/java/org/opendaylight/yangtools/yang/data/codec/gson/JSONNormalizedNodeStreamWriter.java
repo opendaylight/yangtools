@@ -53,7 +53,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * Create a new stream writer, which writes to the specified {@link Writer}.
      *
      * This instance of writer can be used only to emit one top level element,
-     * therwise it will produce incorrect JSON.
+     * otherwise it will produce incorrect JSON.
      *
      * @param schemaContext Schema context
      * @param writer Output writer
@@ -67,7 +67,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * Create a new stream writer, which writes to the specified {@link Writer}.
      *
      * This instance of writer can be used only to emit one top level element,
-     * therwise it will produce incorrect JSON.
+     * otherwise it will produce incorrect JSON.
      *
      * @param schemaContext Schema context
      * @param path Root schemapath
@@ -82,7 +82,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * Create a new stream writer, which writes to the specified {@link Writer}.
      *
      * This instance of writer can be used only to emit one top level element,
-     * therwise it will produce incorrect JSON.
+     * otherwise it will produce incorrect JSON.
      *
      * @param schemaContext Schema context
      * @param path Root schemapath
@@ -99,7 +99,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * Create a new stream writer, which writes to the specified output stream.
      *
      * This instance of writer can be used only to emit one top level element,
-     * therwise it will produce incorrect JSON.
+     * otherwise it will produce incorrect JSON.
      *
      * @param schemaContext Schema context
      * @param writer Output writer
@@ -115,7 +115,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * can be reused between multiple writers.
      *
      * This instance of writer can be used only to emit one top level element,
-     * therwise it will produce incorrect JSON.
+     * otherwise it will produce incorrect JSON.
      *
      * @param codecFactory JSON codec factory
      * @param writer Output writer
@@ -130,7 +130,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * Create a new stream writer, which writes to the specified output stream.
      *
      * This instance of writer can be used only to emit one top level element,
-     * therwise it will produce incorrect JSON.
+     * otherwise it will produce incorrect JSON.
      *
      * @param schemaContext Schema context
      * @param path Schema Path
@@ -152,7 +152,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * top-level JSON element and ends it.
      *
      * This instance of writer can be used only to emit one top level element,
-     * therwise it will produce incorrect JSON.
+     * otherwise it will produce incorrect JSON.
      *
      * @param codecFactory JSON codec factory
      * @param path Schema Path
