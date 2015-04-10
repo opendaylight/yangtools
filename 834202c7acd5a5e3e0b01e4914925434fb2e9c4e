@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_90b17891",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/DataNodeContainerSerializerSource.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-10T10:22:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_70a94c7a",
+      "revId": "834202c7acd5a5e3e0b01e4914925434fb2e9c4e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_30bbc4c5",
         "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/DataNodeContainerSerializerSource.java",
         "patchSetId": 3
@@ -30,6 +48,30 @@
       "writtenOn": "2015-04-10T09:27:38Z",
       "side": 1,
       "message": "append single char",
+      "range": {
+        "startLine": 67,
+        "startChar": 18,
+        "endLine": 67,
+        "endChar": 19
+      },
+      "revId": "834202c7acd5a5e3e0b01e4914925434fb2e9c4e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_b0acb436",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/DataNodeContainerSerializerSource.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-10T10:22:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_30bbc4c5",
       "range": {
         "startLine": 67,
         "startChar": 18,
@@ -82,6 +124,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_50abf01c",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/BindingNormalizedNodeCache.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-10T10:22:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_f0b47cd2",
+      "revId": "834202c7acd5a5e3e0b01e4914925434fb2e9c4e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_70d70cee",
         "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/DataContainerCodecContext.java",
         "patchSetId": 3
@@ -99,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_70a62c55",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/DataContainerCodecContext.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-10T10:22:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_70d70cee",
+      "revId": "834202c7acd5a5e3e0b01e4914925434fb2e9c4e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_1006c886",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/ImmutableNormalizedNodeStreamWriter.java",
         "patchSetId": 3
@@ -110,6 +188,24 @@
       "writtenOn": "2015-04-10T09:27:38Z",
       "side": 1,
       "message": "put this on a single line (same below)",
+      "revId": "834202c7acd5a5e3e0b01e4914925434fb2e9c4e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_104c889d",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/ImmutableNormalizedNodeStreamWriter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-10T10:22:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_1006c886",
       "revId": "834202c7acd5a5e3e0b01e4914925434fb2e9c4e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
