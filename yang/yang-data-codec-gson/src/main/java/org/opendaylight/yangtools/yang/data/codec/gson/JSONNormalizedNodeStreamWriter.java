@@ -53,12 +53,18 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * Create a new stream writer, which writes to the specified {@link Writer}.
      *
      * This instance of writer can be used only to emit one top level element,
-     * therwise it will produce incorrect JSON.
+     * otherwise it will produce incorrect JSON.
+     *
+     * @deprecated please use
+     *             {@link #createExclusiveWriter(JSONCodecFactory, SchemaPath, URI, JsonWriter)} or
+     *             {@link #createNestedWriter(JSONCodecFactory, SchemaPath, URI, JsonWriter)} as
+     *             appropriate instead.
      *
      * @param schemaContext Schema context
      * @param writer Output writer
      * @return A stream writer instance
      */
+    @Deprecated
     public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final Writer writer) {
         return create(schemaContext, SchemaPath.ROOT, null, writer);
     }
@@ -67,13 +73,19 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * Create a new stream writer, which writes to the specified {@link Writer}.
      *
      * This instance of writer can be used only to emit one top level element,
-     * therwise it will produce incorrect JSON.
+     * otherwise it will produce incorrect JSON.
+     *
+     * @deprecated please use
+     *             {@link #createExclusiveWriter(JSONCodecFactory, SchemaPath, URI, JsonWriter)} or
+     *             {@link #createNestedWriter(JSONCodecFactory, SchemaPath, URI, JsonWriter)} as
+     *             appropriate instead.
      *
      * @param schemaContext Schema context
      * @param path Root schemapath
      * @param writer Output writer
      * @return A stream writer instance
      */
+    @Deprecated
     public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final SchemaPath path, final Writer writer) {
         return create(schemaContext, path, null, writer);
     }
@@ -82,7 +94,12 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * Create a new stream writer, which writes to the specified {@link Writer}.
      *
      * This instance of writer can be used only to emit one top level element,
-     * therwise it will produce incorrect JSON.
+     * otherwise it will produce incorrect JSON.
+     *
+     * @deprecated please use
+     *             {@link #createExclusiveWriter(JSONCodecFactory, SchemaPath, URI, JsonWriter)} or
+     *             {@link #createNestedWriter(JSONCodecFactory, SchemaPath, URI, JsonWriter)} as
+     *             appropriate instead.
      *
      * @param schemaContext Schema context
      * @param path Root schemapath
@@ -90,6 +107,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * @param initialNs Initial namespace
      * @return A stream writer instance
      */
+    @Deprecated
     public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final SchemaPath path,
             final URI initialNs, final Writer writer) {
         return createExclusiveWriter(JSONCodecFactory.create(schemaContext), path, initialNs, JsonWriterFactory.createJsonWriter(writer));
@@ -99,13 +117,19 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * Create a new stream writer, which writes to the specified output stream.
      *
      * This instance of writer can be used only to emit one top level element,
-     * therwise it will produce incorrect JSON.
+     * otherwise it will produce incorrect JSON.
+     *
+     * @deprecated please use
+     *             {@link #createExclusiveWriter(JSONCodecFactory, SchemaPath, URI, JsonWriter)} or
+     *             {@link #createNestedWriter(JSONCodecFactory, SchemaPath, URI, JsonWriter)} as
+     *             appropriate instead.
      *
      * @param schemaContext Schema context
      * @param writer Output writer
      * @param indentSize indentation size
      * @return A stream writer instance
      */
+    @Deprecated
     public static NormalizedNodeStreamWriter create(final SchemaContext schemaContext, final Writer writer, final int indentSize) {
         return createExclusiveWriter(JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, null,JsonWriterFactory.createJsonWriter(writer, indentSize));
     }
@@ -115,13 +139,19 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * can be reused between multiple writers.
      *
      * This instance of writer can be used only to emit one top level element,
-     * therwise it will produce incorrect JSON.
+     * otherwise it will produce incorrect JSON.
+     *
+     * @deprecated please use
+     *             {@link #createExclusiveWriter(JSONCodecFactory, SchemaPath, URI, JsonWriter)} or
+     *             {@link #createNestedWriter(JSONCodecFactory, SchemaPath, URI, JsonWriter)} as
+     *             appropriate instead.
      *
      * @param codecFactory JSON codec factory
      * @param writer Output writer
      * @param indentSize indentation size
      * @return A stream writer instance
      */
+    @Deprecated
     public static NormalizedNodeStreamWriter create(final JSONCodecFactory codecFactory, final Writer writer, final int indentSize) {
         return createExclusiveWriter(codecFactory, SchemaPath.ROOT, null, JsonWriterFactory.createJsonWriter(writer,indentSize));
     }
@@ -130,7 +160,12 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * Create a new stream writer, which writes to the specified output stream.
      *
      * This instance of writer can be used only to emit one top level element,
-     * therwise it will produce incorrect JSON.
+     * otherwise it will produce incorrect JSON.
+     *
+     * @deprecated please use
+     *             {@link #createExclusiveWriter(JSONCodecFactory, SchemaPath, URI, JsonWriter)} or
+     *             {@link #createNestedWriter(JSONCodecFactory, SchemaPath, URI, JsonWriter)} as
+     *             appropriate instead.
      *
      * @param schemaContext Schema context
      * @param path Schema Path
@@ -138,6 +173,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * @param jsonWriter JsonWriter
      * @return A stream writer instance
      */
+    @Deprecated
     public static NormalizedNodeStreamWriter create(SchemaContext schemaContext, SchemaPath path, URI initialNs,
             JsonWriter jsonWriter) {
         return createExclusiveWriter(JSONCodecFactory.create(schemaContext), path, initialNs, jsonWriter);
@@ -152,7 +188,7 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
      * top-level JSON element and ends it.
      *
      * This instance of writer can be used only to emit one top level element,
-     * therwise it will produce incorrect JSON.
+     * otherwise it will produce incorrect JSON.
      *
      * @param codecFactory JSON codec factory
      * @param path Schema Path
