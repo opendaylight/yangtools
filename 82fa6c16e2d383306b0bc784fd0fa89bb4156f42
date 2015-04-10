@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_902658cd",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONNormalizedNodeStreamWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-10T10:31:17Z",
+      "side": 1,
+      "message": "Same effect could be achieved by createExclusiveWriter and createNestedWriter where you specify JsonWriter directly with configuration needed.\n\nI would not go with introducing new factories, but maybe rather point in javadocs to the createExclusiveWriter and createNestedWriter instead, since they are more powerful.",
+      "range": {
+        "startLine": 81,
+        "startChar": 4,
+        "endLine": 130,
+        "endChar": 5
+      },
+      "revId": "82fa6c16e2d383306b0bc784fd0fa89bb4156f42",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
