@@ -14,21 +14,35 @@ import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 class StringStringCodec extends TypeDefinitionAwareCodec<String, StringTypeDefinition> implements
         StringCodec<String> {
 
-    protected StringStringCodec(final Optional<StringTypeDefinition> typeDef) {
-        super(typeDef, String.class);
+    protected StringStringCodec(final StringTypeDefinition typeDef) {
+        super(Optional.of(typeDef), String.class);
+        typeDef.getLengthConstraints();
     }
 
-    static TypeDefinitionAwareCodec<?,StringTypeDefinition> from(final StringTypeDefinition normalizedType) {
-        return new StringStringCodec(Optional.fromNullable(normalizedType));
+    static TypeDefinitionAwareCodec<?, StringTypeDefinition> from(final StringTypeDefinition normalizedType) {
+        if (normalizedType.getPatternConstraints().isEmpty()) {
+            return new StringStringCodec(normalizedType);
+        }
+
+        return new StringPatternCheckingCodec(normalizedType);
     }
 
     @Override
     public final String deserialize(final String stringRepresentation) {
-        return stringRepresentation == null ? "" : stringRepresentation;
+        if (stringRepresentation == null) {
+            // FIXME: These seems buggy, but someone may be using this behaviour
+            return "";
+        }
+        validate(stringRepresentation);
+        return stringRepresentation;
     }
 
     @Override
     public final String serialize(final String data) {
         return data == null ? "" : data;
+    }
+
+    protected void validate(final String s) {
+
     }
 }
