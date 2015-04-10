@@ -1,0 +1,118 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5a93c517_70a94c7a",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/DataNodeContainerSerializerSource.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-10T09:27:38Z",
+      "side": 1,
+      "message": "b.append() instead of string concat",
+      "revId": "834202c7acd5a5e3e0b01e4914925434fb2e9c4e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_30bbc4c5",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/DataNodeContainerSerializerSource.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-10T09:27:38Z",
+      "side": 1,
+      "message": "append single char",
+      "range": {
+        "startLine": 67,
+        "startChar": 18,
+        "endLine": 67,
+        "endChar": 19
+      },
+      "revId": "834202c7acd5a5e3e0b01e4914925434fb2e9c4e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_d0b140e2",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/DataNodeContainerSerializerSource.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-10T09:27:38Z",
+      "side": 1,
+      "message": "append single char",
+      "range": {
+        "startLine": 173,
+        "startChar": 11,
+        "endLine": 173,
+        "endChar": 12
+      },
+      "revId": "834202c7acd5a5e3e0b01e4914925434fb2e9c4e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_f0b47cd2",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/BindingNormalizedNodeCache.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-10T09:27:38Z",
+      "side": 1,
+      "message": "weakValues() would be better, as they are eagerly reclaimed, leading to less GC pressure",
+      "revId": "834202c7acd5a5e3e0b01e4914925434fb2e9c4e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_70d70cee",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/DataContainerCodecContext.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 139,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-10T09:27:38Z",
+      "side": 1,
+      "message": "missing space :) and we may want to check for empty/single-entry spec and provide an accelerated class.",
+      "revId": "834202c7acd5a5e3e0b01e4914925434fb2e9c4e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5a93c517_1006c886",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/ImmutableNormalizedNodeStreamWriter.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 155,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-10T09:27:38Z",
+      "side": 1,
+      "message": "put this on a single line (same below)",
+      "revId": "834202c7acd5a5e3e0b01e4914925434fb2e9c4e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
