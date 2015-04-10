@@ -195,7 +195,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         } else if (parent instanceof LeafListNodeDataWithSchema) {
             newChild = new LeafListEntryNodeDataWithSchema(parent.getSchema());
         } else {
-            throw new IllegalStateException("Incorrec nesting caused by parser.");
+            throw new IllegalStateException("Incorrect nesting caused by parser.");
         }
         ((CompositeNodeDataWithSchema) parent).addChild(newChild);
         return newChild;
