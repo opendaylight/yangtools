@@ -207,7 +207,7 @@ public class JsonStreamToNormalizedNodeTest {
             //second parameter isn't necessary because error will be raised before it is used.
             verifyTransformationToNormalizedNode(inputJson, null);
         } catch (final IllegalStateException e) {
-            assertTrue(e.getMessage().contains("Schema node with name dummy-element wasn't found."));
+            assertTrue(e.getMessage().contains("Schema node with name dummy-element wasn't found"));
         }
     }
 
