@@ -105,7 +105,7 @@ public final class JsonParserStream implements Closeable, Flushable {
     }
 
     private final void setValue(final AbstractNodeDataWithSchema parent, final String value) {
-        Preconditions.checkArgument(parent instanceof SimpleNodeDataWithSchema, "Node %s is not a simple type", parent);
+        Preconditions.checkArgument(parent instanceof SimpleNodeDataWithSchema, "Node %s is not a simple type", parent.getSchema().getQName());
 
         final Object translatedValue = translateValueByType(value, parent.getSchema());
         ((SimpleNodeDataWithSchema) parent).setValue(translatedValue);
@@ -199,7 +199,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         } else if (parent instanceof LeafListNodeDataWithSchema) {
             newChild = new LeafListEntryNodeDataWithSchema(parent.getSchema());
         } else {
-            throw new IllegalStateException("Incorrec nesting caused by parser.");
+            throw new IllegalStateException("Found an unexpected array nested under "+ parent.getSchema().getQName());
         }
         ((CompositeNodeDataWithSchema) parent).addChild(newChild);
         return newChild;
@@ -250,7 +250,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             } else if (potentialUris.size() > 1) {
                 throw new IllegalStateException("Choose suitable module name for element "+nodeNamePart+":"+toModuleNames(potentialUris));
             } else if (potentialUris.isEmpty()) {
-                throw new IllegalStateException("Schema node with name "+nodeNamePart+" wasn't found.");
+                throw new IllegalStateException("Schema node with name "+nodeNamePart+" wasn't found under "+dataSchemaNode.getQName()+".");
             }
         }
 
