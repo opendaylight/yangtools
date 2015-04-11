@@ -69,7 +69,7 @@ class SingleModuleYinStatementWriter implements StatementTextWriter {
         currentStatement = Preconditions.checkNotNull(statement);
         try {
             writeStartXmlElement(statement.getStatementName());
-            if (Rfc6020Mapping.Module.equals(statement) || Rfc6020Mapping.Submodule.equals(statement)) {
+            if (Rfc6020Mapping.MODULE.equals(statement) || Rfc6020Mapping.SUBMODULE.equals(statement)) {
                 declareXmlNamespaces(prefixToNamespace);
             }
         } catch (final XMLStreamException e) {

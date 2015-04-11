@@ -43,55 +43,55 @@ final class SchemaToStatementWriterAdaptor implements Rfc6020ModuleWriter {
 
     @Override
     public void startModuleNode(final String identifier) {
-        writer.startStatement(Rfc6020Mapping.Module);
+        writer.startStatement(Rfc6020Mapping.MODULE);
         writer.writeArgument(identifier);
     }
 
     @Override
     public void startOrganizationNode(final String input) {
-        writer.startStatement(Rfc6020Mapping.Organization);
+        writer.startStatement(Rfc6020Mapping.ORGANIZATION);
         writer.writeArgument(input);
     }
 
     @Override
     public void startContactNode(final String input) {
-        writer.startStatement(Rfc6020Mapping.Contact);
+        writer.startStatement(Rfc6020Mapping.CONTACT);
         writer.writeArgument(input);
     }
 
     @Override
     public void startDescriptionNode(final String input) {
-        writer.startStatement(Rfc6020Mapping.Description);
+        writer.startStatement(Rfc6020Mapping.DESCRIPTION);
         writer.writeArgument(input);
     }
 
     @Override
     public void startReferenceNode(final String input) {
-        writer.startStatement(Rfc6020Mapping.Reference);
+        writer.startStatement(Rfc6020Mapping.REFERENCE);
         writer.writeArgument(input);
     }
 
     @Override
     public void startUnitsNode(final String input) {
-        writer.startStatement(Rfc6020Mapping.Units);
+        writer.startStatement(Rfc6020Mapping.UNITS);
         writer.writeArgument(input);
     }
 
     @Override
     public void startYangVersionNode(final String input) {
-        writer.startStatement(Rfc6020Mapping.YangVersion);
+        writer.startStatement(Rfc6020Mapping.YANG_VERSION);
         writer.writeArgument(input);
     }
 
     @Override
     public void startNamespaceNode(final URI uri) {
-        writer.startStatement(Rfc6020Mapping.Namespace);
+        writer.startStatement(Rfc6020Mapping.NAMESPACE);
         writer.writeArgument(uri.toString());
     }
 
     @Override
     public void startKeyNode(final List<QName> keyList) {
-        writer.startStatement(Rfc6020Mapping.Key);
+        writer.startStatement(Rfc6020Mapping.KEY);
         final StringBuilder keyStr = new StringBuilder();
         for (final QName item : keyList) {
             keyStr.append(item.getLocalName());
@@ -101,281 +101,281 @@ final class SchemaToStatementWriterAdaptor implements Rfc6020ModuleWriter {
 
     @Override
     public void startPrefixNode(final String input) {
-        writer.startStatement(Rfc6020Mapping.Prefix);
+        writer.startStatement(Rfc6020Mapping.PREFIX);
         writer.writeArgument(input);
     }
 
     @Override
     public void startFeatureNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.Feature);
+        writer.startStatement(Rfc6020Mapping.FEATURE);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startExtensionNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.Extension);
+        writer.startStatement(Rfc6020Mapping.EXTENSION);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startArgumentNode(final String input) {
-        writer.startStatement(Rfc6020Mapping.Argument);
+        writer.startStatement(Rfc6020Mapping.ARGUMENT);
         writer.writeArgument(input);
     }
 
     @Override
     public void startStatusNode(final Status status) {
-        writer.startStatement(Rfc6020Mapping.Status);
+        writer.startStatement(Rfc6020Mapping.STATUS);
         writer.writeArgument(status.toString().toLowerCase());
     }
 
     @Override
     public void startTypeNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.Type);
+        writer.startStatement(Rfc6020Mapping.TYPE);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startLeafNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.Leaf);
+        writer.startStatement(Rfc6020Mapping.LEAF);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startContainerNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.Container);
+        writer.startStatement(Rfc6020Mapping.CONTAINER);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startGroupingNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.Grouping);
+        writer.startStatement(Rfc6020Mapping.GROUPING);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startRpcNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.Rpc);
+        writer.startStatement(Rfc6020Mapping.RPC);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startInputNode() {
-        writer.startStatement(Rfc6020Mapping.Input);
+        writer.startStatement(Rfc6020Mapping.INPUT);
     }
 
     @Override
     public void startOutputNode() {
-        writer.startStatement(Rfc6020Mapping.Output);
+        writer.startStatement(Rfc6020Mapping.OUTPUT);
     }
 
     @Override
     public void startLeafListNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.LeafList);
+        writer.startStatement(Rfc6020Mapping.LEAF_LIST);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startListNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.List);
+        writer.startStatement(Rfc6020Mapping.LIST);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startChoiceNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.Choice);
+        writer.startStatement(Rfc6020Mapping.CHOICE);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startCaseNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.Case);
+        writer.startStatement(Rfc6020Mapping.CASE);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startNotificationNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.Notification);
+        writer.startStatement(Rfc6020Mapping.NOTIFICATION);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startIdentityNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.Identity);
+        writer.startStatement(Rfc6020Mapping.IDENTITY);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startBaseNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.Base);
+        writer.startStatement(Rfc6020Mapping.BASE);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startTypedefNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.Typedef);
+        writer.startStatement(Rfc6020Mapping.TYPEDEF);
         writer.writeArgument(qName);
     }
 
     @Override
     public void startRevisionNode(final Date date) {
-        writer.startStatement(Rfc6020Mapping.Revision);
+        writer.startStatement(Rfc6020Mapping.REVISION);
         writer.writeArgument(SimpleDateFormatUtil.getRevisionFormat().format(date));
     }
 
     @Override
     public void startDefaultNode(final String string) {
-        writer.startStatement(Rfc6020Mapping.Default);
+        writer.startStatement(Rfc6020Mapping.DEFAULT);
         writer.writeArgument(string);
     }
 
     @Override
     public void startMustNode(final RevisionAwareXPath xpath) {
-        writer.startStatement(Rfc6020Mapping.Must);
+        writer.startStatement(Rfc6020Mapping.MUST);
         writer.writeArgument(xpath);
     }
 
     @Override
     public void startErrorMessageNode(final String input) {
-        writer.startStatement(Rfc6020Mapping.ErrorMessage);
+        writer.startStatement(Rfc6020Mapping.ERROR_MESSAGE);
         writer.writeArgument(input);
     }
 
     @Override
     public void startErrorAppTagNode(final String input) {
-        writer.startStatement(Rfc6020Mapping.ErrorAppTag);
+        writer.startStatement(Rfc6020Mapping.ERROR_APP_TAG);
         writer.writeArgument(input);
     }
 
     @Override
     public void startPatternNode(final String regularExpression) {
-        writer.startStatement(Rfc6020Mapping.Pattern);
+        writer.startStatement(Rfc6020Mapping.PATTERN);
         writer.writeArgument(regularExpression);
     }
 
     @Override
     public void startValueNode(final Integer integer) {
-        writer.startStatement(Rfc6020Mapping.Value);
+        writer.startStatement(Rfc6020Mapping.VALUE);
         writer.writeArgument(integer.toString());
     }
 
     @Override
     public void startEnumNode(final String name) {
-        writer.startStatement(Rfc6020Mapping.Enum);
+        writer.startStatement(Rfc6020Mapping.ENUM);
         writer.writeArgument(name);
     }
 
     @Override
     public void startRequireInstanceNode(final boolean require) {
-        writer.startStatement(Rfc6020Mapping.RequireInstance);
+        writer.startStatement(Rfc6020Mapping.REQUIRE_INSTANCE);
         writer.writeArgument(Boolean.toString(require));
     }
 
     @Override
     public void startPathNode(final RevisionAwareXPath revisionAwareXPath) {
-        writer.startStatement(Rfc6020Mapping.Path);
+        writer.startStatement(Rfc6020Mapping.PATH);
         writer.writeArgument(revisionAwareXPath);
     }
 
     @Override
     public void startBitNode(final String name) {
-        writer.startStatement(Rfc6020Mapping.Bit);
+        writer.startStatement(Rfc6020Mapping.BIT);
         writer.writeArgument(name);
     }
 
     @Override
     public void startPositionNode(final UnsignedInteger position) {
-        writer.startStatement(Rfc6020Mapping.Position);
+        writer.startStatement(Rfc6020Mapping.POSITION);
         writer.writeArgument(position.toString());
     }
 
     @Override
     public void startImportNode(final String moduleName) {
-        writer.startStatement(Rfc6020Mapping.Import);
+        writer.startStatement(Rfc6020Mapping.IMPORT);
         writer.writeArgument(moduleName);
     }
 
     @Override
     public void startRevisionDateNode(final Date date) {
-        writer.startStatement(Rfc6020Mapping.RevisionDate);
+        writer.startStatement(Rfc6020Mapping.REVISION_DATE);
         writer.writeArgument(SimpleDateFormatUtil.getRevisionFormat().format(date));
     }
 
     @Override
     public void startUsesNode(final QName groupingName) {
-        writer.startStatement(Rfc6020Mapping.Uses);
+        writer.startStatement(Rfc6020Mapping.USES);
         writer.writeArgument(groupingName);
     }
 
     @Override
     public void startAugmentNode(final SchemaPath targetPath) {
-        writer.startStatement(Rfc6020Mapping.Augment);
+        writer.startStatement(Rfc6020Mapping.AUGMENT);
         writer.writeArgument(targetPath);
     }
 
     @Override
     public void startConfigNode(final boolean config) {
-        writer.startStatement(Rfc6020Mapping.Config);
+        writer.startStatement(Rfc6020Mapping.CONFIG);
         writer.writeArgument(Boolean.toString(config));
     }
 
     @Override
     public void startLengthNode(final String lengthString) {
-        writer.startStatement(Rfc6020Mapping.Length);
+        writer.startStatement(Rfc6020Mapping.LENGTH);
         writer.writeArgument(lengthString);
     }
 
     @Override
     public void startMaxElementsNode(final Integer max) {
-        writer.startStatement(Rfc6020Mapping.MaxElements);
+        writer.startStatement(Rfc6020Mapping.MAX_ELEMENTS);
         writer.writeArgument(max.toString());
     }
 
     @Override
     public void startMinElementsNode(final Integer min) {
-        writer.startStatement(Rfc6020Mapping.MinElements);
+        writer.startStatement(Rfc6020Mapping.MIN_ELEMENTS);
         writer.writeArgument(min.toString());
     }
 
     @Override
     public void startPresenceNode(final boolean presence) {
-        writer.startStatement(Rfc6020Mapping.Presence);
+        writer.startStatement(Rfc6020Mapping.PRESENCE);
         writer.writeArgument(Boolean.toString(presence));
     }
 
     @Override
     public void startOrderedByNode(final String ordering) {
-        writer.startStatement(Rfc6020Mapping.OrderedBy);
+        writer.startStatement(Rfc6020Mapping.ORDERED_BY);
         writer.writeArgument(ordering);
     }
 
     @Override
     public void startRangeNode(final String rangeString) {
-        writer.startStatement(Rfc6020Mapping.Range);
+        writer.startStatement(Rfc6020Mapping.RANGE);
         writer.writeArgument(rangeString);
     }
 
     @Override
     public void startFractionDigitsNode(final Integer fractionDigits) {
-        writer.startStatement(Rfc6020Mapping.FractionDigits);
+        writer.startStatement(Rfc6020Mapping.FRACTION_DIGITS);
         writer.writeArgument(fractionDigits.toString());
     }
 
     @Override
     public void startRefineNode(final SchemaPath path) {
-        writer.startStatement(Rfc6020Mapping.Refine);
+        writer.startStatement(Rfc6020Mapping.REFINE);
         writer.writeArgument(path);
     }
 
     @Override
     public void startMandatoryNode(final boolean mandatory) {
-        writer.startStatement(Rfc6020Mapping.Mandatory);
+        writer.startStatement(Rfc6020Mapping.MANDATORY);
         writer.writeArgument(Boolean.toString(mandatory));
     }
 
     @Override
     public void startAnyxmlNode(final QName qName) {
-        writer.startStatement(Rfc6020Mapping.Anyxml);
+        writer.startStatement(Rfc6020Mapping.ANYXML);
         writer.writeArgument(qName);
     }
 
@@ -392,13 +392,13 @@ final class SchemaToStatementWriterAdaptor implements Rfc6020ModuleWriter {
 
     @Override
     public void startYinElementNode(final boolean yinElement) {
-        writer.startStatement(Rfc6020Mapping.YinElement);
+        writer.startStatement(Rfc6020Mapping.YIN_ELEMENT);
         writer.writeArgument(Boolean.toString(yinElement));
     }
 
     @Override
     public void startWhenNode(final RevisionAwareXPath revisionAwareXPath) {
-        writer.startStatement(Rfc6020Mapping.When);
+        writer.startStatement(Rfc6020Mapping.WHEN);
         writer.writeArgument(revisionAwareXPath);
     }
 }

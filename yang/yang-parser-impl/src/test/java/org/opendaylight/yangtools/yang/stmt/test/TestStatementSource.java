@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.stmt.test;
 
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Import;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Module;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Namespace;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Prefix;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.IMPORT;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.MODULE;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.NAMESPACE;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.PREFIX;
 
 import java.util.Arrays;
 import java.util.List;
@@ -52,10 +52,7 @@ class TestStatementSource implements StatementStreamSource {
         extensions();
         body();
         end();
-
     }
-
-
 
     @Override
     public void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef) throws SourceException {
@@ -70,7 +67,6 @@ class TestStatementSource implements StatementStreamSource {
         header();
         extensions();
         end();
-
     }
 
     protected void extensions() {
@@ -83,12 +79,12 @@ class TestStatementSource implements StatementStreamSource {
     }
 
     TestStatementSource header() throws SourceException {
-        stmt(Module).arg(name); {
-            stmt(Namespace).arg(getNamespace()).end();
-            stmt(Prefix).arg(name).end();
-            for(String imp : imports)  {
-                stmt(Import).arg(imp);
-                    stmt(Prefix).arg(imp).end();
+        stmt(MODULE).arg(name); {
+            stmt(NAMESPACE).arg(getNamespace()).end();
+            stmt(PREFIX).arg(name).end();
+            for(String imp : imports) {
+                stmt(IMPORT).arg(imp);
+                    stmt(PREFIX).arg(imp).end();
                 end();
             }
         }
@@ -113,6 +109,4 @@ class TestStatementSource implements StatementStreamSource {
         writer.endStatement(REF);
         return this;
     }
-
-
 }

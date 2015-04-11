@@ -45,7 +45,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
             AbstractStatementSupport<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Uses);
+            super(Rfc6020Mapping.USES);
         }
 
         @Override

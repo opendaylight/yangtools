@@ -37,7 +37,7 @@ public class ImportStatementDefinition extends
         AbstractStatementSupport<String, ImportStatement, EffectiveStatement<String, ImportStatement>> {
 
     public ImportStatementDefinition() {
-        super(Rfc6020Mapping.Import);
+        super(Rfc6020Mapping.IMPORT);
     }
 
     @Override
