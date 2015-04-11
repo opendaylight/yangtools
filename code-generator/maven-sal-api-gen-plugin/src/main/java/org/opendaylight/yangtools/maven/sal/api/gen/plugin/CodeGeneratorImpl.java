@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 import org.sonatype.plexus.build.incremental.BuildContext;
 
 public final class CodeGeneratorImpl implements BasicCodeGenerator, BuildContextAware, MavenProjectAware {
-    private static final Logger logger = LoggerFactory.getLogger(CodeGeneratorImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CodeGeneratorImpl.class);
     private static final String FS = File.separator;
     private BuildContext buildContext;
     private File projectBaseDir;
@@ -87,7 +87,7 @@ public final class CodeGeneratorImpl implements BasicCodeGenerator, BuildContext
             // TODO: do not mutate parameters, output of a method is defined by its return value
             Set<File> moduleInfoProviders = generateYangModuleInfo(outputBaseDir, module, context, currentProvidersBuilder);
             ImmutableSet<String> currentProviders = currentProvidersBuilder.build();
-            logger.info("Adding ModuleInfo providers {}", currentProviders);
+            LOG.info("Adding ModuleInfo providers {}", currentProviders);
             bindingProviders.addAll(currentProviders);
             result.addAll(moduleInfoProviders);
         }
@@ -114,7 +114,7 @@ public final class CodeGeneratorImpl implements BasicCodeGenerator, BuildContext
         File outputBaseDir;
         outputBaseDir = new File(DEFAULT_OUTPUT_BASE_DIR_PATH);
         setOutputBaseDirAsSourceFolder(outputBaseDir, mavenProject);
-        logger.debug("Adding " + outputBaseDir.getPath() + " as compile source root");
+        LOG.debug("Adding " + outputBaseDir.getPath() + " as compile source root");
         return outputBaseDir;
     }
 
@@ -183,10 +183,10 @@ public final class CodeGeneratorImpl implements BasicCodeGenerator, BuildContext
                     bw.write(source);
                 }
             } catch (Exception e) {
-                logger.error("Could not write file: {}",file,e);
+                LOG.error("Could not write file: {}",file,e);
             }
         } catch (Exception e) {
-            logger.error("Could not create file: {}",file,e);
+            LOG.error("Could not create file: {}",file,e);
         }
         return file;
     }

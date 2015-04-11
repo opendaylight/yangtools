@@ -31,8 +31,8 @@ final class BasicValidations {
 
     static final String SUPPORTED_YANG_VERSION = "1";
     private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings();
-    private static final Pattern identifierPattern = Pattern.compile("[a-zA-Z_][a-zA-Z0-9_.-]*");
-    private static final Pattern prefixedIdentifierPattern = Pattern.compile("(.+):(.+)");
+    private static final Pattern IDENTIFIER_PATTERN = Pattern.compile("[a-zA-Z_][a-zA-Z0-9_.-]*");
+    private static final Pattern PREFIX_IDENTIFIER_PATTERN = Pattern.compile("(.+):(.+)");
 
     /**
      * It isn't desirable to create instance of this class.
@@ -109,10 +109,10 @@ final class BasicValidations {
     }
 
     static void checkIdentifierInternal(final ParseTree statement, final String name) {
-        if (!identifierPattern.matcher(name).matches()) {
+        if (!IDENTIFIER_PATTERN.matcher(name).matches()) {
 
             String message = ValidationUtil.f("%s statement identifier:%s is not in required format:%s",
-                    ValidationUtil.getSimpleStatementName(statement.getClass()), name, identifierPattern.toString());
+                    ValidationUtil.getSimpleStatementName(statement.getClass()), name, IDENTIFIER_PATTERN.toString());
             String parent = ValidationUtil.getRootParentName(statement);
             message = parent.equals(name) ? message : ValidationUtil.f("(In (sub)module:%s) %s", parent, message);
 
@@ -129,7 +129,7 @@ final class BasicValidations {
     }
 
     private static void checkPrefixedIdentifierInternal(final ParseTree statement, final String id) {
-        Matcher matcher = prefixedIdentifierPattern.matcher(id);
+        Matcher matcher = PREFIX_IDENTIFIER_PATTERN.matcher(id);
 
         if (matcher.matches()) {
             try {

@@ -31,9 +31,9 @@ import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinit
 
 abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N>, T extends TypeDefinition<T>> extends TypeDefinitionAwareCodec<N, T>{
 
-    private static final Pattern intPattern = Pattern.compile("[+-]?[1-9][0-9]*$");
-    private static final Pattern hexPattern = Pattern.compile("[+-]?0[xX][0-9a-fA-F]+");
-    private static final Pattern octalPattern = Pattern.compile("[+-]?0[1-7][0-7]*$");
+    private static final Pattern INT_PATTERN = Pattern.compile("[+-]?[1-9][0-9]*$");
+    private static final Pattern HEX_PATTERN = Pattern.compile("[+-]?0[xX][0-9a-fA-F]+");
+    private static final Pattern OCT_PATTERN = Pattern.compile("[+-]?0[1-7][0-7]*$");
 
     // For up to two characters, this is very fast
     private static final CharMatcher X_MATCHER = CharMatcher.anyOf("xX");
@@ -168,15 +168,15 @@ abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N>, T ex
             return 10;
         }
 
-        final Matcher intMatcher = intPattern.matcher(integer);
+        final Matcher intMatcher = INT_PATTERN.matcher(integer);
         if (intMatcher.matches()) {
             return 10;
         }
-        final Matcher hexMatcher = hexPattern.matcher(integer);
+        final Matcher hexMatcher = HEX_PATTERN.matcher(integer);
         if (hexMatcher.matches()) {
             return 16;
         }
-        final Matcher octMatcher = octalPattern.matcher(integer);
+        final Matcher octMatcher = OCT_PATTERN.matcher(integer);
         if (octMatcher.matches()) {
             return 8;
         }

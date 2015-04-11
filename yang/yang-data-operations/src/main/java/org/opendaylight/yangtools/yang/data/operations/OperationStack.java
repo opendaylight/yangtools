@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  */
 final class OperationStack {
 
-    private static final Logger logger = LoggerFactory.getLogger(OperationStack.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OperationStack.class);
     private static final QName OPERATION_NAME = new QName(URI.create("urn:ietf:params:xml:ns:netconf:base:1.0"), "operation");
 
     private final Deque<ModifyAction> operations = new LinkedList<>();
@@ -65,7 +65,7 @@ final class OperationStack {
     private void addOperation(ModifyAction operation) {
         // Add check for permitted operation
         operations.add(operation);
-        logger.trace("Operation added {}, {}", operation, this);
+        LOG.trace("Operation added {}, {}", operation, this);
     }
 
     public ModifyAction getCurrentOperation() {
@@ -93,7 +93,7 @@ final class OperationStack {
                 operations.peekLast(), operation);
 
         ModifyAction removed = operations.removeLast();
-        logger.trace("Operation removed {}, {}", removed, this);
+        LOG.trace("Operation removed {}, {}", removed, this);
     }
 
     @Override

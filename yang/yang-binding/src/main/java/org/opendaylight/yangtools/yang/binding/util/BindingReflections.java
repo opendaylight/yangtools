@@ -57,7 +57,7 @@ public class BindingReflections {
     private static final Pattern ROOT_PACKAGE_PATTERN = Pattern.compile(ROOT_PACKAGE_PATTERN_STRING);
     private static final Logger LOG = LoggerFactory.getLogger(BindingReflections.class);
 
-    private static final LoadingCache<Class<?>, Optional<QName>> classToQName = CacheBuilder.newBuilder() //
+    private static final LoadingCache<Class<?>, Optional<QName>> CLASS_TO_QNAME = CacheBuilder.newBuilder() //
             .weakKeys() //
             .expireAfterAccess(EXPIRATION_TIME, TimeUnit.SECONDS) //
             .build(new ClassToQNameLoader());
@@ -127,7 +127,7 @@ public class BindingReflections {
      *         May return null if QName is not present.
      */
     public static final QName findQName(final Class<?> dataType) {
-        return classToQName.getUnchecked(dataType).orNull();
+        return CLASS_TO_QNAME.getUnchecked(dataType).orNull();
     }
 
     /**
