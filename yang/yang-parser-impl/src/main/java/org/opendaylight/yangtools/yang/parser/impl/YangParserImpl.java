@@ -33,6 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
 import javax.annotation.concurrent.Immutable;
@@ -140,7 +141,7 @@ public final class YangParserImpl implements YangContextParser {
 
         // module builders sorted by dependencies
         List<ModuleBuilder> sortedBuilders = ModuleDependencySort.sort(resolved);
-        LinkedHashMap<URI, TreeMap<Date, ModuleBuilder>> modules = resolveModulesWithImports(sortedBuilders, null);
+        Map<URI, TreeMap<Date, ModuleBuilder>> modules = resolveModulesWithImports(sortedBuilders, null);
         Collection<Module> unsorted = build(modules).values();
         Set<Module> result = new LinkedHashSet<>(
                 ModuleDependencySort.sort(unsorted.toArray(new Module[unsorted.size()])));
@@ -232,9 +233,9 @@ public final class YangParserImpl implements YangContextParser {
         return resolveSchemaContext(result);
     }
 
-    private static LinkedHashMap<URI, TreeMap<Date, ModuleBuilder>> resolveModulesWithImports(final List<ModuleBuilder> sorted,
+    private static Map<URI, TreeMap<Date, ModuleBuilder>> resolveModulesWithImports(final List<ModuleBuilder> sorted,
             final SchemaContext context) {
-        final LinkedHashMap<URI, TreeMap<Date, ModuleBuilder>> modules = orderModules(sorted);
+        final Map<URI, TreeMap<Date, ModuleBuilder>> modules = orderModules(sorted);
         for (ModuleBuilder module : sorted) {
             if (module != null) {
                 for (ModuleImport imp : module.getImports().values()) {
@@ -480,7 +481,7 @@ public final class YangParserImpl implements YangContextParser {
             final Map<String, TreeMap<Date, ModuleBuilder>> submodules) {
         Map<String, Date> includes = module.getIncludedModules();
         for (Map.Entry<String, Date> entry : includes.entrySet()) {
-            TreeMap<Date, ModuleBuilder> subs = submodules.get(entry.getKey());
+            NavigableMap<Date, ModuleBuilder> subs = submodules.get(entry.getKey());
             if (subs == null) {
                 throw new YangParseException("Failed to find references submodule " + entry.getKey() + " in module "
                         + module.getName());
@@ -562,8 +563,8 @@ public final class YangParserImpl implements YangContextParser {
      *            topologically sorted modules
      * @return modules ordered by namespace and revision
      */
-    private static LinkedHashMap<URI, TreeMap<Date, ModuleBuilder>> orderModules(final List<ModuleBuilder> modules) {
-        final LinkedHashMap<URI, TreeMap<Date, ModuleBuilder>> result = new LinkedHashMap<>();
+    private static Map<URI, TreeMap<Date, ModuleBuilder>> orderModules(final List<ModuleBuilder> modules) {
+        final Map<URI, TreeMap<Date, ModuleBuilder>> result = new LinkedHashMap<>();
         for (final ModuleBuilder builder : modules) {
             if (builder == null) {
                 continue;
