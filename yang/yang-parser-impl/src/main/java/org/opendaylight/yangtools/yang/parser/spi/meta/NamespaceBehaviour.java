@@ -29,15 +29,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 public abstract class NamespaceBehaviour<K,V, N extends IdentifierNamespace<K, V>> implements Identifiable<Class<N>>{
 
     public enum StorageNodeType {
-        Global,
-        SourceLocalSpecial,
-        StatementLocal
+        GLOBAL,
+        SOURCE_LOCAL_SPECIAL,
+        STATEMENT_LOCAL,
     }
 
     public interface Registry {
-
-        abstract <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(Class<N> type);
-
+        <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(Class<N> type);
     }
 
     public interface NamespaceStorageNode {
@@ -54,7 +52,6 @@ public abstract class NamespaceBehaviour<K,V, N extends IdentifierNamespace<K, V
 
     private final Class<N> identifier;
 
-
     protected NamespaceBehaviour(Class<N> identifier) {
         this.identifier = Preconditions.checkNotNull(identifier);
     }
@@ -64,13 +61,13 @@ public abstract class NamespaceBehaviour<K,V, N extends IdentifierNamespace<K, V
      * Creates global namespace behaviour for supplied namespace type.
      *
      * Global behaviour stores and loads all values from root {@link NamespaceStorageNode}
-     * with type of {@link StorageNodeType#Global}.
+     * with type of {@link StorageNodeType#GLOBAL}.
      *
      * @param identifier Namespace identifier.
      * @return global namespace behaviour for supplied namespace type.
      */
     public static @Nonnull <K,V, N extends IdentifierNamespace<K, V>>  NamespaceBehaviour<K,V,N> global(Class<N> identifier) {
-        return new StorageSpecific<>(identifier, StorageNodeType.Global);
+        return new StorageSpecific<>(identifier, StorageNodeType.GLOBAL);
     }
 
     /**
@@ -79,13 +76,13 @@ public abstract class NamespaceBehaviour<K,V, N extends IdentifierNamespace<K, V
      *
      * Source-local namespace behaviour stores and loads all values from closest
      * {@link NamespaceStorageNode} ancestor with type of
-     * {@link StorageNodeType#SourceLocalSpecial}.
+     * {@link StorageNodeType#SOURCE_LOCAL_SPECIAL}.
      *
      * @param identifier Namespace identifier.
      * @return source-local namespace behaviour for supplied namespace type.
      */
     public static <K,V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K,V,N> sourceLocal(Class<N> identifier) {
-        return new StorageSpecific<>(identifier, StorageNodeType.SourceLocalSpecial);
+        return new StorageSpecific<>(identifier, StorageNodeType.SOURCE_LOCAL_SPECIAL);
     }
 
     /**
@@ -104,7 +101,6 @@ public abstract class NamespaceBehaviour<K,V, N extends IdentifierNamespace<K, V
 
     public abstract V getFrom(NamespaceStorageNode storage, K key);
     public abstract void addTo(NamespaceStorageNode storage,K key,V value);
-
 
     @Override
     public Class<N> getIdentifier() {
@@ -173,5 +169,4 @@ public abstract class NamespaceBehaviour<K,V, N extends IdentifierNamespace<K, V
         }
 
     }
-
 }

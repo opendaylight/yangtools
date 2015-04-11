@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.EffectiveModel;
-import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.FullDeclaration;
+import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.EFFECTIVE_MODEL;
+import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.FULL_DECLARATION;
 
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
@@ -125,7 +125,7 @@ class ModifierImpl implements ModelActionBuilder {
         try {
             PhaseFinished<C> phaseFin = new PhaseFinished<C>();
             addReq(phaseFin);
-            contextImpl(context).addPhaseCompletedListener(FullDeclaration,phaseFin);
+            contextImpl(context).addPhaseCompletedListener(FULL_DECLARATION,phaseFin);
             return phaseFin;
         } catch (SourceException e) {
             throw shouldNotHappenProbablyBug(e);
@@ -172,37 +172,37 @@ class ModifierImpl implements ModelActionBuilder {
 
     @Override
     public <D extends DeclaredStatement<?>> Prerequisite<D> requiresDeclared(StmtContext<?, ? extends D, ?> context) {
-        return requiresCtxImpl(context,FullDeclaration).transform(StmtContextUtils.<D>buildDeclared());
+        return requiresCtxImpl(context,FULL_DECLARATION).transform(StmtContextUtils.<D>buildDeclared());
     }
 
     @Override
     public <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>> AbstractPrerequisite<StmtContext<?, D, ?>> requiresDeclaredCtx(
             StmtContext<?, ?, ?> context, Class<N> namespace, K key) {
-        return requiresCtxImpl(context, namespace, key,FullDeclaration);
+        return requiresCtxImpl(context, namespace, key,FULL_DECLARATION);
     }
 
     @Override
     public <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>> Prerequisite<D> requiresDeclared(
             StmtContext<?, ?, ?> context, Class<N> namespace, K key) {
-        final AbstractPrerequisite<StmtContext<?,D,?>> rawContext = requiresCtxImpl(context, namespace, key,FullDeclaration);
+        final AbstractPrerequisite<StmtContext<?,D,?>> rawContext = requiresCtxImpl(context, namespace, key,FULL_DECLARATION);
         return rawContext.transform(StmtContextUtils.<D>buildDeclared());
     }
 
     @Override
     public <E extends EffectiveStatement<?, ?>> Prerequisite<E> requiresEffective(StmtContext<?, ?, ? extends E> stmt) {
-        return requiresCtxImpl(stmt,EffectiveModel).transform(StmtContextUtils.<E>buildEffective());
+        return requiresCtxImpl(stmt,EFFECTIVE_MODEL).transform(StmtContextUtils.<E>buildEffective());
     }
 
     @Override
     public <K, E extends EffectiveStatement<?, ?>, N extends StatementNamespace<K, ?, ? extends E>> AbstractPrerequisite<StmtContext<?, ?, E>> requiresEffectiveCtx(
             StmtContext<?, ?, ?> context, Class<N> namespace, K key) {
-        return requiresCtxImpl(contextImpl(context),namespace,key,EffectiveModel);
+        return requiresCtxImpl(contextImpl(context),namespace,key,EFFECTIVE_MODEL);
     }
 
     @Override
     public <K, E extends EffectiveStatement<?, ?>, N extends StatementNamespace<K, ?, ? extends E>> Prerequisite<E> requiresEffective(
             StmtContext<?, ?, ?> context, Class<N> namespace, K key) {
-        final AbstractPrerequisite<StmtContext<?,?,E>> rawContext = requiresCtxImpl(context, namespace, key,EffectiveModel);
+        final AbstractPrerequisite<StmtContext<?,?,E>> rawContext = requiresCtxImpl(context, namespace, key,EFFECTIVE_MODEL);
         return rawContext.transform(StmtContextUtils.<E>buildEffective());
     }
 
@@ -219,14 +219,14 @@ class ModifierImpl implements ModelActionBuilder {
 
     @Override
     public <T extends Mutable<?, ?, ?>> Prerequisite<T> mutatesEffectiveCtx(T stmt) {
-        return mutatesCtx(stmt, EffectiveModel);
+        return mutatesCtx(stmt, EFFECTIVE_MODEL);
     }
 
 
    @Override
     public <K, E extends EffectiveStatement<?, ?>, N extends StatementNamespace<K, ?, ? extends E>> AbstractPrerequisite<Mutable<?, ?, E>> mutatesEffectiveCtx(
             StmtContext<?, ?, ?> context, Class<N> namespace, K key) {
-        return mutatesCtxImpl(context, namespace, key, EffectiveModel);
+        return mutatesCtxImpl(context, namespace, key, EFFECTIVE_MODEL);
     }
 
 

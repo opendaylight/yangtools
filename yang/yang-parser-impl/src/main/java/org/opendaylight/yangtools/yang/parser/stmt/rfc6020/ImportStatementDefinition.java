@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 
-import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SourceLinkage;
+import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import com.google.common.base.Optional;
@@ -37,7 +37,7 @@ public class ImportStatementDefinition extends
         AbstractStatementSupport<String, ImportStatement, EffectiveStatement<String, ImportStatement>> {
 
     public ImportStatementDefinition() {
-        super(Rfc6020Mapping.Import);
+        super(Rfc6020Mapping.IMPORT);
     }
 
     @Override
@@ -60,11 +60,11 @@ public class ImportStatementDefinition extends
     public void onLinkageDeclared(final Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt)
             throws InferenceException, SourceException {
         final ModuleIdentifier impIdentifier = getImportedModuleIdentifier(stmt);
-        ModelActionBuilder importAction = stmt.newInferenceAction(SourceLinkage);
+        ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_LINKAGE);
         final Prerequisite<StmtContext<?, ?, ?>> imported;
         final Prerequisite<Mutable<?, ?, ?>> linkageTarget;
-        imported = importAction.requiresCtx(stmt, ModuleNamespace.class, impIdentifier, SourceLinkage);
-        linkageTarget = importAction.mutatesCtx(stmt.getRoot(),SourceLinkage);
+        imported = importAction.requiresCtx(stmt, ModuleNamespace.class, impIdentifier, SOURCE_LINKAGE);
+        linkageTarget = importAction.mutatesCtx(stmt.getRoot(),SOURCE_LINKAGE);
 
         importAction.apply(new InferenceAction() {
 

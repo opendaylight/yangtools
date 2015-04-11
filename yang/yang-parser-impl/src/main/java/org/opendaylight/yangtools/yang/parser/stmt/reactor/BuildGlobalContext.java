@@ -39,10 +39,10 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceSpecificContext
 class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBehaviour.Registry {
 
     private static final List<ModelProcessingPhase> PHASE_EXECUTION_ORDER = ImmutableList.<ModelProcessingPhase>builder()
-            .add(ModelProcessingPhase.SourceLinkage)
-            .add(ModelProcessingPhase.StatementDefinition)
-            .add(ModelProcessingPhase.FullDeclaration)
-            .add(ModelProcessingPhase.EffectiveModel)
+            .add(ModelProcessingPhase.SOURCE_LINKAGE)
+            .add(ModelProcessingPhase.STATEMENT_DEFINITION)
+            .add(ModelProcessingPhase.FULL_DECLARATION)
+            .add(ModelProcessingPhase.EFFECTIVE_MODEL)
             .build();
 
     private final Map<QName,StatementDefinitionContext<?,?,?>> definitions = new HashMap<>();
@@ -66,7 +66,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     @Override
     public StorageNodeType getStorageNodeType() {
-        return StorageNodeType.Global;
+        return StorageNodeType.GLOBAL;
     }
 
     @Override
@@ -126,7 +126,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     }
 
     private EffectiveModelContext transform() {
-        Preconditions.checkState(finishedPhase == ModelProcessingPhase.EffectiveModel);
+        Preconditions.checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         List<DeclaredStatement<?>> rootStatements = new ArrayList<>();
         for(SourceSpecificContext source : sources) {
             DeclaredStatement<?> root = source.getRoot().buildDeclared();

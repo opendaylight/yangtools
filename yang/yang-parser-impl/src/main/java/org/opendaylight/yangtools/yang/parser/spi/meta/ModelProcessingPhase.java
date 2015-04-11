@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import javax.annotation.Nullable;
 
 public enum ModelProcessingPhase {
-
     /**
      *
      * Cross-source relationship resolution phase.
@@ -24,11 +23,10 @@ public enum ModelProcessingPhase {
      * visibility of custom defined statements in following
      * phases.
      */
-    SourceLinkage(null),
-    StatementDefinition(SourceLinkage),
-    FullDeclaration(StatementDefinition),
-    EffectiveModel(FullDeclaration);
-
+    SOURCE_LINKAGE(null),
+    STATEMENT_DEFINITION(SOURCE_LINKAGE),
+    FULL_DECLARATION(STATEMENT_DEFINITION),
+    EFFECTIVE_MODEL(FULL_DECLARATION);
 
     private final ModelProcessingPhase previousPhase;
 
@@ -39,5 +37,4 @@ public enum ModelProcessingPhase {
     public ModelProcessingPhase getPreviousPhase() {
         return previousPhase;
     }
-
 }
