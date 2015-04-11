@@ -56,10 +56,10 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     /**
      *
      * Invoked when statement is closed during
-     * {@link ModelProcessingPhase#StatementDefinition} phase.
+     * {@link ModelProcessingPhase#STATEMENT_DEFINITION} phase.
      *
      * Invoked when statement is closed during
-     * {@link ModelProcessingPhase#StatementDefinition} phase, only substatements from
+     * {@link ModelProcessingPhase#STATEMENT_DEFINITION} phase, only substatements from
      * this and previous phase are available.
      *
      * Implementation may use method to perform actions on this event or
@@ -75,10 +75,10 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     /**
      *
      * Invoked when statement is closed during
-     * {@link ModelProcessingPhase#StatementDefinition} phase.
+     * {@link ModelProcessingPhase#STATEMENT_DEFINITION} phase.
      *
      * Invoked when statement is closed during
-     * {@link ModelProcessingPhase#StatementDefinition} phase, only substatements from
+     * {@link ModelProcessingPhase#STATEMENT_DEFINITION} phase, only substatements from
      * this phase are available.
      *
      * Implementation may use method to perform actions on this event or
@@ -95,10 +95,10 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     /**
      *
      * Invoked when statement is closed during
-     * {@link ModelProcessingPhase#FullDeclaration} phase.
+     * {@link ModelProcessingPhase#FULL_DECLARATION} phase.
      *
      * Invoked when statement is closed during
-     * {@link ModelProcessingPhase#FullDeclaration} phase, only substatements
+     * {@link ModelProcessingPhase#FULL_DECLARATION} phase, only substatements
      * from this phase are available.
      *
      * Implementation may use method to perform actions on this event or

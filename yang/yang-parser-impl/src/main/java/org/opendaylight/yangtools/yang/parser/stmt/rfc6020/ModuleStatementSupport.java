@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public class ModuleStatementSupport extends AbstractStatementSupport<String, ModuleStatement, EffectiveStatement<String,ModuleStatement>> {
 
     public ModuleStatementSupport() {
-        super(Rfc6020Mapping.Module);
+        super(Rfc6020Mapping.MODULE);
     }
 
     @Override

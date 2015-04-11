@@ -45,7 +45,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
             AbstractStatementSupport<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Uses);
+            super(Rfc6020Mapping.USES);
         }
 
         @Override
@@ -54,7 +54,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
         }
 
         public void onStatementDeclared(Mutable<QName, UsesStatement, ?> usesNode) throws InferenceException {
-            ModelActionBuilder modifier = usesNode.newInferenceAction(ModelProcessingPhase.EffectiveModel);
+            ModelActionBuilder modifier = usesNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
             final QName groupingName = usesNode.getStatementArgument();
             final StatementSourceReference usesSource = usesNode.getStatementSourceReference();
             final Prerequisite<?> targetPre = modifier.mutatesEffectiveCtx(usesNode.getParentContext());

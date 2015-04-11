@@ -189,12 +189,12 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     public StorageNodeType getStorageNodeType() {
-        return StorageNodeType.StatementLocal;
+        return StorageNodeType.STATEMENT_LOCAL;
     }
 
     @Override
     public D buildDeclared() {
-        Preconditions.checkArgument(completedPhase == ModelProcessingPhase.FullDeclaration || completedPhase == ModelProcessingPhase.EffectiveModel);
+        Preconditions.checkArgument(completedPhase == ModelProcessingPhase.FULL_DECLARATION || completedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         if (declaredInstance == null) {
             declaredInstance = definition().getFactory().createDeclared(this);
         }
@@ -203,7 +203,7 @@ abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     public E buildEffective() {
-        Preconditions.checkArgument(completedPhase == ModelProcessingPhase.EffectiveModel);
+        Preconditions.checkArgument(completedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         if (effectiveInstance == null) {
             effectiveInstance = definition().getFactory().createEffective(this);
         }
