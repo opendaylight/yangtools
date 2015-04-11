@@ -130,13 +130,13 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @Override
-    public void leafNode(final NodeIdentifier name, final Object value) throws IllegalArgumentException {
+    public void leafNode(final NodeIdentifier name, final Object value) {
         checkDataNodeContainer();
         writeChild(ImmutableNodes.leafNode(name, value));
     }
 
     @Override
-    public void startLeafSet(final NodeIdentifier name, final int childSizeHint) throws IllegalArgumentException {
+    public void startLeafSet(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
         ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = UNKNOWN_SIZE == childSizeHint ?
                 ImmutableLeafSetNodeBuilder.create() : ImmutableLeafSetNodeBuilder.create(childSizeHint);
@@ -145,7 +145,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @Override
-    public void leafSetEntryNode(final Object value) throws IllegalArgumentException {
+    public void leafSetEntryNode(final Object value) {
         Preconditions.checkArgument(getCurrent() instanceof ImmutableLeafSetNodeBuilder<?>);
         @SuppressWarnings("unchecked")
         ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = ((ImmutableLeafSetNodeBuilder<Object>) getCurrent());
@@ -153,12 +153,12 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @Override
-    public void anyxmlNode(final NodeIdentifier name, final Object value) throws IllegalArgumentException {
+    public void anyxmlNode(final NodeIdentifier name, final Object value) {
         checkDataNodeContainer();
     }
 
     @Override
-    public void startContainerNode(final NodeIdentifier name, final int childSizeHint) throws IllegalArgumentException {
+    public void startContainerNode(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
 
         final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> builder = UNKNOWN_SIZE == childSizeHint ?
@@ -167,7 +167,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @Override
-    public void startUnkeyedList(final NodeIdentifier name, final int childSizeHint) throws IllegalArgumentException {
+    public void startUnkeyedList(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
 
         final CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> builder = UNKNOWN_SIZE == childSizeHint ?
@@ -176,7 +176,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @Override
-    public void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) throws IllegalStateException {
+    public void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) {
         Preconditions.checkArgument(getCurrent() instanceof ImmutableUnkeyedListNodeBuilder);
 
         final DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> builder = UNKNOWN_SIZE == childSizeHint ?
@@ -185,7 +185,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @Override
-    public void startMapNode(final NodeIdentifier name, final int childSizeHint) throws IllegalArgumentException {
+    public void startMapNode(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
 
         final CollectionNodeBuilder<MapEntryNode, MapNode> builder = UNKNOWN_SIZE == childSizeHint ?
@@ -194,7 +194,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @Override
-    public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint) throws IllegalArgumentException {
+    public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint) {
         if(!(getCurrent() instanceof NormalizedNodeResultBuilder)) {
             Preconditions.checkArgument(getCurrent() instanceof ImmutableMapNodeBuilder || getCurrent() instanceof ImmutableOrderedMapNodeBuilder);
         }
@@ -205,7 +205,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @Override
-    public void startOrderedMapNode(final NodeIdentifier name, final int childSizeHint) throws IllegalArgumentException {
+    public void startOrderedMapNode(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
 
         final CollectionNodeBuilder<MapEntryNode, OrderedMapNode> builder = UNKNOWN_SIZE == childSizeHint ?
@@ -214,7 +214,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @Override
-    public void startChoiceNode(final NodeIdentifier name, final int childSizeHint) throws IllegalArgumentException {
+    public void startChoiceNode(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
 
         final DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> builder = UNKNOWN_SIZE == childSizeHint ?
@@ -223,7 +223,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @Override
-    public void startAugmentationNode(final AugmentationIdentifier identifier) throws IllegalArgumentException {
+    public void startAugmentationNode(final AugmentationIdentifier identifier) {
         checkDataNodeContainer();
         Preconditions.checkArgument(!(getCurrent() instanceof ImmutableAugmentationNodeBuilder));
         enter(Builders.augmentationBuilder().withNodeIdentifier(identifier));
@@ -232,8 +232,8 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     private void checkDataNodeContainer() {
         @SuppressWarnings("rawtypes")
         NormalizedNodeContainerBuilder current = getCurrent();
-        if(!(current instanceof NormalizedNodeResultBuilder)) {
-        Preconditions.checkArgument(current instanceof DataContainerNodeBuilder<?, ?>, "Invalid nesting of data.");
+        if (!(current instanceof NormalizedNodeResultBuilder)) {
+            Preconditions.checkArgument(current instanceof DataContainerNodeBuilder<?, ?>, "Invalid nesting of data.");
         }
     }
 

@@ -107,54 +107,51 @@ class BindingToNormalizedStreamWriter implements BindingStreamEventWriter, Deleg
     }
 
     @Override
-    public void leafNode(final String localName, final Object value) throws IOException, IllegalArgumentException {
+    public void leafNode(final String localName, final Object value) throws IOException {
         Entry<NodeIdentifier, Object> dom = serializeLeaf(localName, value);
         getDelegate().leafNode(dom.getKey(), dom.getValue());
     }
 
     @Override
-    public void anyxmlNode(final String name, final Object value) throws IOException, IllegalArgumentException {
+    public void anyxmlNode(final String name, final Object value) throws IOException {
         Entry<NodeIdentifier, Object> dom = serializeLeaf(name, value);
         getDelegate().anyxmlNode(dom.getKey(), dom.getValue());
     }
 
     @Override
-    public void leafSetEntryNode(final Object value) throws IOException, IllegalArgumentException {
+    public void leafSetEntryNode(final Object value) throws IOException {
         LeafNodeCodecContext<?> ctx = (LeafNodeCodecContext<?>) current();
         getDelegate().leafSetEntryNode(ctx.getValueCodec().serialize(value));
     }
 
     @Override
-    public void startAugmentationNode(final Class<? extends Augmentation<?>> augmentationType)
-            throws IOException, IllegalArgumentException {
+    public void startAugmentationNode(final Class<? extends Augmentation<?>> augmentationType) throws IOException {
         getDelegate().startAugmentationNode(enter(augmentationType, AugmentationIdentifier.class));
     }
 
     @Override
-    public void startCase(final Class<? extends DataObject> caze, final int childSizeHint)
-            throws IllegalArgumentException {
+    public void startCase(final Class<? extends DataObject> caze, final int childSizeHint) {
         enter(caze, NodeIdentifier.class);
     }
 
     @Override
-    public void startChoiceNode(final Class<? extends DataContainer> type, final int childSizeHint)
-            throws IOException, IllegalArgumentException {
+    public void startChoiceNode(final Class<? extends DataContainer> type, final int childSizeHint) throws IOException {
         getDelegate().startChoiceNode(enter(type, NodeIdentifier.class), childSizeHint);
     }
 
     @Override
     public void startContainerNode(final Class<? extends DataObject> object, final int childSizeHint)
-            throws IOException, IllegalArgumentException {
+            throws IOException {
         getDelegate().startContainerNode(enter(object, NodeIdentifier.class), childSizeHint);
     }
 
     @Override
-    public void startLeafSet(final String localName, final int childSizeHint) throws IOException, IllegalArgumentException {
+    public void startLeafSet(final String localName, final int childSizeHint) throws IOException {
         getDelegate().startLeafSet(enter(localName, NodeIdentifier.class), childSizeHint);
     }
 
     @Override
-    public void startMapEntryNode(final Identifier<?> key, final int childSizeHint) throws IOException, IllegalArgumentException {
+    public void startMapEntryNode(final Identifier<?> key, final int childSizeHint) throws IOException {
         duplicateSchemaEnter();
         NodeIdentifierWithPredicates identifier = ((KeyedListNodeCodecContext<?>) current()).serialize(key);
         getDelegate().startMapEntryNode(identifier, childSizeHint);
@@ -162,24 +159,23 @@ class BindingToNormalizedStreamWriter implements BindingStreamEventWriter, Deleg
 
     @Override
     public <T extends DataObject & Identifiable<?>> void startMapNode(final Class<T> mapEntryType,
-            final int childSizeHint) throws IOException, IllegalArgumentException {
+            final int childSizeHint) throws IOException {
         getDelegate().startMapNode(enter(mapEntryType, NodeIdentifier.class), childSizeHint);
     }
 
     @Override
     public <T extends DataObject & Identifiable<?>> void startOrderedMapNode(final Class<T> mapEntryType,
-            final int childSizeHint) throws IOException, IllegalArgumentException {
+            final int childSizeHint) throws IOException {
         getDelegate().startOrderedMapNode(enter(mapEntryType, NodeIdentifier.class), childSizeHint);
     }
 
     @Override
-    public void startUnkeyedList(final Class<? extends DataObject> obj, final int childSizeHint)
-            throws IOException, IllegalArgumentException {
+    public void startUnkeyedList(final Class<? extends DataObject> obj, final int childSizeHint) throws IOException {
         getDelegate().startUnkeyedList(enter(obj, NodeIdentifier.class), childSizeHint);
     }
 
     @Override
-    public void startUnkeyedListItem(final int childSizeHint) throws IllegalStateException, IOException {
+    public void startUnkeyedListItem(final int childSizeHint) throws IOException {
         getDelegate().startUnkeyedListItem(duplicateSchemaEnter(), childSizeHint);
     }
 

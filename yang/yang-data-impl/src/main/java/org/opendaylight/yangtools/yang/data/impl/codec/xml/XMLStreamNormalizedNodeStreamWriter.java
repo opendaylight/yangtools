@@ -164,25 +164,25 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
     }
 
     @Override
-    public void leafSetEntryNode(final Object value, final Map<QName, String> attributes) throws IOException, IllegalArgumentException {
+    public void leafSetEntryNode(final Object value, final Map<QName, String> attributes) throws IOException {
         final LeafListSchemaNode schema = tracker.leafSetEntryNode();
         writeElement(schema.getQName(), schema, value, attributes);
     }
 
     @Override
-    public void startContainerNode(final NodeIdentifier name, final int childSizeHint, final Map<QName, String> attributes) throws IOException, IllegalArgumentException {
+    public void startContainerNode(final NodeIdentifier name, final int childSizeHint, final Map<QName, String> attributes) throws IOException {
         startContainerNode(name, childSizeHint);
         writeAttributes(attributes);
     }
 
     @Override
-    public void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint, final Map<QName, String> attributes) throws IOException, IllegalStateException {
+    public void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint, final Map<QName, String> attributes) throws IOException {
         startUnkeyedListItem(name, childSizeHint);
         writeAttributes(attributes);
     }
 
     @Override
-    public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint, final Map<QName, String> attributes) throws IOException, IllegalArgumentException {
+    public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint, final Map<QName, String> attributes) throws IOException {
         startMapEntryNode(identifier, childSizeHint);
         writeAttributes(attributes);
     }
@@ -502,7 +502,7 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
         }
 
         @Override
-        public Object getProperty(final String name) throws IllegalArgumentException {
+        public Object getProperty(final String name) {
             return writer.getProperty(name);
         }
     }
