@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
+import org.opendaylight.yangtools.yang.binding.BindingSerializer;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializerImplementation;
@@ -54,12 +55,20 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
 
     @Override
     protected CharSequence getSerializerBody() {
-        StringBuilder b = new StringBuilder();
+        final StringBuilder b = new StringBuilder();
         b.append("{\n");
         b.append(statement(assign(DataObjectSerializerRegistry.class.getName(), REGISTRY, "$1")));
         b.append(statement(assign(dtoType.getFullyQualifiedName(), INPUT,
                 cast(dtoType.getFullyQualifiedName(), "$2"))));
         b.append(statement(assign(BindingStreamEventWriter.class.getName(), STREAM, cast(BindingStreamEventWriter.class.getName(), "$3"))));
+        b.append(statement(assign(BindingSerializer.class.getName(), SERIALIZER, null)));
+        b.append("if (");
+        b.append(STREAM);
+        b.append(" instanceof ");
+        b.append(BindingSerializer.class.getName());
+        b.append(") {");
+        b.append(statement(assign(SERIALIZER, cast(BindingSerializer.class.getName(), STREAM))));
+        b.append('}');
         b.append(statement(emitStartEvent()));
 
         emitBody(b);
@@ -79,10 +88,10 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
     }
 
     private static Map<String, Type> collectAllProperties(final GeneratedType type, final Map<String, Type> hashMap) {
-        for (MethodSignature definition : type.getMethodDefinitions()) {
+        for (final MethodSignature definition : type.getMethodDefinitions()) {
             hashMap.put(definition.getName(), definition.getReturnType());
         }
-        for (Type parent : type.getImplements()) {
+        for (final Type parent : type.getImplements()) {
             if (parent instanceof GeneratedType) {
                 collectAllProperties((GeneratedType) parent, hashMap);
             }
@@ -114,11 +123,11 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
     }
 
     private void emitBody(final StringBuilder b) {
-        Map<String, Type> getterToType = collectAllProperties(dtoType, new HashMap<String, Type>());
-        for (DataSchemaNode schemaChild : schemaNode.getChildNodes()) {
+        final Map<String, Type> getterToType = collectAllProperties(dtoType, new HashMap<String, Type>());
+        for (final DataSchemaNode schemaChild : schemaNode.getChildNodes()) {
             if (!schemaChild.isAugmenting()) {
-                String getter = getGetterName(schemaChild);
-                Type childType = getterToType.get(getter);
+                final String getter = getGetterName(schemaChild);
+                final Type childType = getterToType.get(getter);
                 emitChild(b, getter, childType, schemaChild);
             }
         }
@@ -141,20 +150,32 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
             b.append(statement(anyxmlNode(child.getQName().getLocalName(), getterName)));
         } else if (child instanceof LeafListSchemaNode) {
             b.append(statement(startLeafSet(child.getQName().getLocalName(),invoke(getterName, "size"))));
-            Type valueType = ((ParameterizedType) childType).getActualTypeArguments()[0];
+            final Type valueType = ((ParameterizedType) childType).getActualTypeArguments()[0];
             b.append(forEach(getterName, valueType, statement(leafSetEntryNode(CURRENT))));
             b.append(statement(endNode()));
         } else if (child instanceof ListSchemaNode) {
-            Type valueType = ((ParameterizedType) childType).getActualTypeArguments()[0];
-            ListSchemaNode casted = (ListSchemaNode) child;
+            final Type valueType = ((ParameterizedType) childType).getActualTypeArguments()[0];
+            final ListSchemaNode casted = (ListSchemaNode) child;
             emitList(b, getterName, valueType, casted);
         } else if (child instanceof ContainerSchemaNode) {
-            b.append(statement(staticInvokeEmitter(childType, getterName)));
+            b.append(tryToUseCacheElse(getterName,statement(staticInvokeEmitter(childType, getterName))));
         } else if (child instanceof ChoiceSchemaNode) {
-            String propertyName = CHOICE_PREFIX + childType.getName();
+            final String propertyName = CHOICE_PREFIX + childType.getName();
             staticConstant(propertyName, DataObjectSerializerImplementation.class, ChoiceDispatchSerializer.from(loadClass(childType)));
-            b.append(statement(invoke(propertyName, StreamWriterGenerator.SERIALIZE_METHOD_NAME, REGISTRY, cast(DataObject.class.getName(),getterName), STREAM)));
+            b.append(tryToUseCacheElse(getterName,statement(invoke(propertyName, StreamWriterGenerator.SERIALIZE_METHOD_NAME, REGISTRY, cast(DataObject.class.getName(),getterName), STREAM))));
         }
+    }
+
+    private StringBuilder tryToUseCacheElse(final String getterName, final CharSequence statement) {
+        final StringBuilder b = new StringBuilder();
+
+        b.append("if ( ");
+        b.append(SERIALIZER).append("== null || ");
+        b.append(invoke(SERIALIZER, "serialize", getterName)).append("== null");
+        b.append(") {");
+        b.append(statement);
+        b.append("}");
+        return b;
     }
 
     private void emitList(final StringBuilder b, final String getterName, final Type valueType,
@@ -170,7 +191,7 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
             startEvent = startMapNode(classReference(valueType), "_count");
         }
         b.append(statement(startEvent));
-        b.append(forEach(getterName, valueType, statement(staticInvokeEmitter(valueType, CURRENT))));
+        b.append(forEach(getterName, valueType, tryToUseCacheElse(CURRENT,statement(staticInvokeEmitter(valueType, CURRENT)))));
         b.append(statement(endNode()));
     }
 }
