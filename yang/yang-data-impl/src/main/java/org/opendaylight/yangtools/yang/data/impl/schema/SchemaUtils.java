@@ -44,13 +44,18 @@ public final class SchemaUtils {
         if (dataSchemaNode != null && qname != null) {
             for (DataSchemaNode dsn : dataSchemaNode) {
                 if (qname.isEqualWithoutRevision(dsn.getQName())) {
-                    if (sNode == null || sNode.getQName().compareTo(dsn.getQName()) < 0) {
+                    if (sNode == null || sNode.getQName().getRevision().compareTo(dsn.getQName().getRevision()) < 0) {
                         sNode = dsn;
                     }
                 } else if (dsn instanceof ChoiceSchemaNode) {
                     for (ChoiceCaseNode choiceCase : ((ChoiceSchemaNode) dsn).getCases()) {
+
+                        final DataSchemaNode dataChildByName = choiceCase.getDataChildByName(qname);
+                        if (dataChildByName != null) {
+                            return Optional.of(dataChildByName);
+                        }
                         Optional<DataSchemaNode> foundDsn = findFirstSchema(qname, choiceCase.getChildNodes());
-                        if (foundDsn != null && foundDsn.isPresent()) {
+                        if (foundDsn.isPresent()) {
                             return foundDsn;
                         }
                     }
@@ -60,8 +65,19 @@ public final class SchemaUtils {
         return Optional.fromNullable(sNode);
     }
 
+    /**
+     *
+     * Find child schema node identified by its QName within a provided schema node
+     *
+     * @param schema schema for parent node - search root
+     * @param qname qname(with or without a revision) of a child node to be found in the parent schema
+     * @return found schema node
+     * @throws java.lang.IllegalStateException if the child was not found in parent schema node
+     */
     public static DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname) {
-        return findSchemaForChild(schema, qname, schema.getChildNodes());
+        // Try to find child schema node directly, but use a fallback that compares QNames without revisions and auto-expands choices
+        final DataSchemaNode dataChildByName = schema.getDataChildByName(qname);
+        return dataChildByName == null ? findSchemaForChild(schema, qname, schema.getChildNodes()) : dataChildByName;
     }
 
     public static DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname, final Iterable<DataSchemaNode> childNodes) {
