@@ -31,6 +31,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public class ConfigurationDataStoreImpl extends AbstractDataStore implements ConfigurationDatastore  {
 
+	private static final int STATUS_OK = 200;
+	
     @Override
     protected String getStorePrefix() {
         return ResourceUri.CONFIG.getPath();
@@ -52,7 +54,7 @@ public class ConfigurationDataStoreImpl extends AbstractDataStore implements Con
             @SuppressWarnings("unchecked")
             @Override
             public RpcResult<Boolean> apply(ClientResponse clientResponse) {
-                if (clientResponse.getStatus() != 200) {
+                if (clientResponse.getStatus() != STATUS_OK) {
                     RpcError rpcError = new RestRpcError(RpcError.ErrorSeverity.ERROR,RpcError.ErrorType.RPC,null,null,"HTTP status "+clientResponse.getStatus(),null,null);
                     Collection<RpcError> errors = new ArrayList<RpcError>();
                     errors.add(rpcError);
@@ -78,7 +80,7 @@ public class ConfigurationDataStoreImpl extends AbstractDataStore implements Con
             @SuppressWarnings("unchecked")
             @Override
             public RpcResult<Boolean> apply(ClientResponse clientResponse) {
-                if (clientResponse.getStatus() != 200) {
+                if (clientResponse.getStatus() != STATUS_OK) {
                     RpcError rpcError = new RestRpcError(RpcError.ErrorSeverity.ERROR,RpcError.ErrorType.RPC,null,null,"HTTP status "+clientResponse.getStatus(),null,null);
                     Collection<RpcError> errors = new ArrayList<RpcError>();
                     errors.add(rpcError);
