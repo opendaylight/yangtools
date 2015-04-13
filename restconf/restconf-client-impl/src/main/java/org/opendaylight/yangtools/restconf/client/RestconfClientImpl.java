@@ -67,6 +67,8 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
     private ConfigurationDataStoreImpl configurationDatastoreAccessor;
 
     private DataObjectSerializerGenerator generator;
+    
+    private static final int STATUS_OK = 200;
 
     public RestconfClientImpl(final URL url, final SchemaContextHolder schemaContextHolder) {
         Preconditions.checkArgument(url != null, "Restconf endpoint URL must be supplied.");
@@ -108,7 +110,7 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
                 new Function<ClientResponse, Set<Class<? extends RpcService>>>() {
                     @Override
                     public Set<Class<? extends RpcService>> apply(final ClientResponse clientResponse) {
-                        if (clientResponse.getStatus() != 200) {
+                        if (clientResponse.getStatus() != STATUS_OK) {
                             throw new RuntimeException("Failed : HTTP error code : " + clientResponse.getStatus());
                         }
                         return RestconfUtils.rpcServicesFromInputStream(clientResponse.getEntityInputStream(),
@@ -129,7 +131,7 @@ public class RestconfClientImpl implements RestconfClientContext, SchemaContextL
                 new Function<ClientResponse, Set<EventStreamInfo>>() {
                     @Override
                     public Set<EventStreamInfo> apply(final ClientResponse clientResponse) {
-                        if (clientResponse.getStatus() != 200) {
+                        if (clientResponse.getStatus() != STATUS_OK) {
                             throw new RuntimeException("Failed : HTTP error code : " + clientResponse.getStatus());
                         }
                         try {
