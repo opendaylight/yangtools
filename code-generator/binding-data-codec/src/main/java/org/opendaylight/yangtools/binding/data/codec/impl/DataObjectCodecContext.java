@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
+import org.opendaylight.yangtools.yang.binding.AugmentationHolder;
+
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
@@ -116,7 +118,7 @@ abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeCon
         byBindingArgClassBuilder.putAll(byStreamClass);
         this.byBindingArgClass = ImmutableMap.copyOf(byBindingArgClassBuilder);
 
-        final Class<?> proxyClass = Proxy.getProxyClass(getBindingClass().getClassLoader(),  new Class[] { getBindingClass() });
+        final Class<?> proxyClass = Proxy.getProxyClass(getBindingClass().getClassLoader(),  new Class[] { getBindingClass(), AugmentationHolder.class });
         try {
             proxyConstructor = LOOKUP.findConstructor(proxyClass, CONSTRUCTOR_TYPE).asType(DATAOBJECT_TYPE);
         } catch (NoSuchMethodException | IllegalAccessException e) {
@@ -161,7 +163,7 @@ abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeCon
     @SuppressWarnings("unchecked")
     @Override
     public <DV extends DataObject> Optional<DataContainerCodecContext<DV, ?>> possibleStreamChild(
-            Class<DV> childClass) {
+            final Class<DV> childClass) {
         final DataContainerCodecPrototype<?> childProto = byStreamClass.get(childClass);
         if(childProto != null) {
             return Optional.<DataContainerCodecContext<DV,?>>of((DataContainerCodecContext<DV,?>) childProto.get());
@@ -310,13 +312,13 @@ abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeCon
     }
 
     @Override
-    public InstanceIdentifier.PathArgument deserializePathArgument(YangInstanceIdentifier.PathArgument arg) {
+    public InstanceIdentifier.PathArgument deserializePathArgument(final YangInstanceIdentifier.PathArgument arg) {
         Preconditions.checkArgument(getDomPathArgument().equals(arg));
         return bindingArg();
     }
 
     @Override
-    public YangInstanceIdentifier.PathArgument serializePathArgument(InstanceIdentifier.PathArgument arg) {
+    public YangInstanceIdentifier.PathArgument serializePathArgument(final InstanceIdentifier.PathArgument arg) {
         Preconditions.checkArgument(bindingArg().equals(arg));
         return getDomPathArgument();
     }

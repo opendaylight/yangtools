@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.test;
 
+import static org.junit.Assert.assertEquals;
+
+import com.google.common.base.Optional;
+import java.util.Collections;
 import javassist.ClassPool;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.augment.rev140709.RpcComplexUsesAugment;
@@ -27,10 +31,6 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-import java.util.Collections;
-
-import static org.junit.Assert.assertEquals;
-
 
 public class AugmentationSubstitutionTest extends AbstractBindingRuntimeTest {
 
@@ -48,24 +48,37 @@ public class AugmentationSubstitutionTest extends AbstractBindingRuntimeTest {
     @Override
     public void setup() {
         super.setup();
-        JavassistUtils utils = JavassistUtils.forClassPool(ClassPool.getDefault());
+        final JavassistUtils utils = JavassistUtils.forClassPool(ClassPool.getDefault());
         registry = new BindingNormalizedNodeCodecRegistry(StreamWriterGenerator.create(utils));
         registry.onBindingRuntimeContextUpdated(getRuntimeContext());
     }
 
     @Test
     public void augmentationInGroupingSubstituted() {
-        TopLevelList baRpc = new TopLevelListBuilder()
+        final TopLevelList baRpc = new TopLevelListBuilder()
             .setKey(TOP_FOO_KEY)
             .addAugmentation(RpcComplexUsesAugment.class, new RpcComplexUsesAugmentBuilder(createComplexData()).build())
             .build();
-        TopLevelList baTree = new TopLevelListBuilder()
+        final TopLevelList baTree = new TopLevelListBuilder()
             .setKey(TOP_FOO_KEY)
             .addAugmentation(TreeComplexUsesAugment.class, new TreeComplexUsesAugmentBuilder(createComplexData()).build())
             .build();
-        NormalizedNode<?, ?> domTreeEntry = registry.toNormalizedNode(BA_TOP_LEVEL_LIST, baTree).getValue();
-        NormalizedNode<?, ?> domRpcEntry = registry.toNormalizedNode(BA_TOP_LEVEL_LIST, baRpc).getValue();
+        final NormalizedNode<?, ?> domTreeEntry = registry.toNormalizedNode(BA_TOP_LEVEL_LIST, baTree).getValue();
+        final NormalizedNode<?, ?> domRpcEntry = registry.toNormalizedNode(BA_TOP_LEVEL_LIST, baRpc).getValue();
         assertEquals(domTreeEntry, domRpcEntry);
+    }
+
+    @Test
+    public void copyBuilderWithAugmenationsTest() {
+        final TopLevelList manuallyConstructed = new TopLevelListBuilder()
+            .setKey(TOP_FOO_KEY)
+            .addAugmentation(TreeComplexUsesAugment.class, new TreeComplexUsesAugmentBuilder(createComplexData()).build())
+            .build();
+        final NormalizedNode<?, ?> domTreeEntry = registry.toNormalizedNode(BA_TOP_LEVEL_LIST, manuallyConstructed).getValue();
+        final TopLevelList deserialized = registry.deserializeFunction(BA_TOP_LEVEL_LIST).apply(Optional.<NormalizedNode<?, ?>>of(domTreeEntry)).get();
+        assertEquals(manuallyConstructed, deserialized);
+        final TopLevelList copiedFromDeserialized = new TopLevelListBuilder(deserialized).build();
+        assertEquals(manuallyConstructed, copiedFromDeserialized);
     }
 
     private RpcComplexUsesAugment createComplexData() {
