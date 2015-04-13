@@ -20,6 +20,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 public abstract class AbstractDataStore implements Datastore {
 
     private final RestconfClientImpl client;
+    private static final int STATUS_OK = 200;
+    private static final int STATUS_NOT_FOUND = 404;
 
     public AbstractDataStore(RestconfClientImpl client) {
         super();
@@ -50,14 +52,14 @@ public abstract class AbstractDataStore implements Datastore {
             @SuppressWarnings("unchecked")
             @Override
             public com.google.common.base.Optional<T> apply(ClientResponse response) {
-                switch (response.getStatus()) {
-                case 200: // Status OK
-                    DataObject dataObject = deserialize(domPath,response.getEntityInputStream());
-                    return (Optional<T>) Optional.of(dataObject);
-                case 404: // Status Not Found
-                    return Optional.<T> absent();
+              switch (response.getStatus()) {
+                case STATUS_OK:
+                  DataObject dataObject = deserialize(domPath,response.getEntityInputStream());
+                  return (Optional<T>) Optional.of(dataObject);
+                case STATUS_NOT_FOUND:
+                  return Optional.<T> absent();
                 default:
-                    throw new IllegalStateException("Failed : HTTP error code : " + response.getStatus());
+                  throw new IllegalStateException("Failed : HTTP error code : " + response.getStatus());
                 }
             }
 
