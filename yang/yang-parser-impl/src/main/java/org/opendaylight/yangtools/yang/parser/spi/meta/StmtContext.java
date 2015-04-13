@@ -68,7 +68,7 @@ public interface StmtContext<A,D extends DeclaredStatement<A>, E extends Effecti
 
         ModelActionBuilder newInferenceAction(ModelProcessingPhase phase);
 
-        <K,KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(Class<N> namepsace, KT key,
+        <K,KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(Class<N> namespace, KT key,
                 StmtContext<?, ?, ?> stmt);
 
     }

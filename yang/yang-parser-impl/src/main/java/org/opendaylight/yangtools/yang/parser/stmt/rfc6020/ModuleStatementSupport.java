@@ -36,9 +36,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public class ModuleStatementSupport
-        extends
+public class ModuleStatementSupport extends
         AbstractStatementSupport<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> {
+
+    private QNameModule qNameModule;
 
     public ModuleStatementSupport() {
         super(Rfc6020Mapping.Module);
@@ -50,8 +51,7 @@ public class ModuleStatementSupport
     }
 
     @Override
-    public ModuleStatement createDeclared(
-            StmtContext<String, ModuleStatement, ?> ctx) {
+    public ModuleStatement createDeclared(StmtContext<String, ModuleStatement, ?> ctx) {
         return new ModuleStatementImpl(ctx);
     }
 
@@ -62,34 +62,29 @@ public class ModuleStatementSupport
     }
 
     @Override
-    public void onLinkageDeclared(
-            Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt)
+    public void onLinkageDeclared(Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt)
             throws InferenceException, SourceException {
 
-        Optional<URI> moduleNs = Optional.fromNullable(firstAttributeOf(
-                stmt.declaredSubstatements(), NamespaceStatement.class));
+        Optional<URI> moduleNs = Optional.fromNullable(firstAttributeOf(stmt.declaredSubstatements(),
+                NamespaceStatement.class));
         if (!moduleNs.isPresent()) {
-            throw new IllegalArgumentException("Namespace of the module ["
-                    + stmt.getStatementArgument() + "] is missing.");
+            throw new IllegalArgumentException("Namespace of the module [" + stmt.getStatementArgument()
+                    + "] is missing.");
         }
 
-        Optional<Date> revisionDate = Optional.fromNullable(firstAttributeOf(
-                stmt.declaredSubstatements(), RevisionStatement.class));
+        Optional<Date> revisionDate = Optional.fromNullable(firstAttributeOf(stmt.declaredSubstatements(),
+                RevisionStatement.class));
 
-        QNameModule qNameModule = QNameModule.create(moduleNs.get(),
-                revisionDate.orNull());
-        ModuleIdentifier moduleIdentifier = new ModuleIdentifierImpl(
-                stmt.getStatementArgument(), Optional.<URI> absent(),
-                revisionDate);
+        qNameModule = QNameModule.create(moduleNs.get(), revisionDate.orNull());
+        ModuleIdentifier moduleIdentifier = new ModuleIdentifierImpl(stmt.getStatementArgument(),
+                Optional.<URI> absent(), revisionDate);
 
         stmt.addContext(ModuleNamespace.class, moduleIdentifier, stmt);
         stmt.addContext(NamespaceToModule.class, qNameModule, stmt);
 
-        String modulePrefix = firstAttributeOf(stmt.declaredSubstatements(),
-                PrefixStatement.class);
+        String modulePrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
         if (modulePrefix == null) {
-            throw new IllegalArgumentException("Prefix of the module ["
-                    + stmt.getStatementArgument() + "] is missing.");
+            throw new IllegalArgumentException("Prefix of the module [" + stmt.getStatementArgument() + "] is missing.");
         }
 
         stmt.addToNs(PrefixToModule.class, modulePrefix, qNameModule);
@@ -98,27 +93,34 @@ public class ModuleStatementSupport
         stmt.addToNs(ModuleIdentifierToModuleQName.class, moduleIdentifier, qNameModule);
 
         stmt.addToNs(ImpPrefixToModuleIdentifier.class, modulePrefix, moduleIdentifier);
-
     }
 
+    @Override
+    public void onFullDefinitionDeclared(
+            final Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt)
+            throws SourceException {
 
+        stmt.addContext(NamespaceToModule.class, qNameModule, stmt);
+    }
 
-//    @Override
-//    public void onFullDefinitionDeclared(
-//            Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt)
-//            throws InferenceException, SourceException {
-//
-//        Optional<Date> revisionDate = Optional.fromNullable(firstAttributeOf(
-//                stmt.declaredSubstatements(), RevisionStatement.class));
-//
-//        ModuleIdentifier moduleIdentifier = new ModuleIdentifierImpl(
-//                stmt.getStatementArgument(), Optional.<URI> absent(),
-//                revisionDate);
-//
-//        String modulePrefix = firstAttributeOf(stmt.declaredSubstatements(),
-//                PrefixStatement.class);
-//
-//        stmt.addToNs(ImpPrefixToModuleIdentifier.class, modulePrefix, moduleIdentifier);
-//    }
+    // @Override
+    // public void onFullDefinitionDeclared(
+    // Mutable<String, ModuleStatement, EffectiveStatement<String,
+    // ModuleStatement>> stmt)
+    // throws InferenceException, SourceException {
+    //
+    // Optional<Date> revisionDate = Optional.fromNullable(firstAttributeOf(
+    // stmt.declaredSubstatements(), RevisionStatement.class));
+    //
+    // ModuleIdentifier moduleIdentifier = new ModuleIdentifierImpl(
+    // stmt.getStatementArgument(), Optional.<URI> absent(),
+    // revisionDate);
+    //
+    // String modulePrefix = firstAttributeOf(stmt.declaredSubstatements(),
+    // PrefixStatement.class);
+    //
+    // stmt.addToNs(ImpPrefixToModuleIdentifier.class, modulePrefix,
+    // moduleIdentifier);
+    // }
 
 }

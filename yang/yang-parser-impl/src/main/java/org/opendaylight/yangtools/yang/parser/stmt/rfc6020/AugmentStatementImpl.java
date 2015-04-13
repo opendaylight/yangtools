@@ -7,19 +7,27 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.EffectiveModel;
+import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.FullDeclaration;
+
 import java.util.Collection;
 
 import javax.annotation.Nonnull;
 
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeIdentifier> implements AugmentStatement {
 
@@ -49,6 +57,51 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
         public EffectiveStatement<SchemaNodeIdentifier, AugmentStatement> createEffective(
                 StmtContext<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> ctx) {
             throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(
+                final StmtContext.Mutable<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> augmentNode)
+                throws SourceException {
+
+            final ModelActionBuilder augmentAction = augmentNode.newInferenceAction(EffectiveModel);
+
+            augmentAction.apply(new ModelActionBuilder.InferenceAction() {
+
+                @Override
+                public void apply() throws InferenceException {
+
+                    AugmentUtils.getAugmentTargetCtx(augmentNode);
+                }
+
+                @Override
+                public void prerequisiteFailed(final Collection<? extends ModelActionBuilder.Prerequisite<?>> failed)
+                        throws InferenceException {
+                    if (failed.contains(augmentAction)) {
+                        throw new InferenceException("Augment action failed", augmentNode.getStatementSourceReference());
+                    }
+                }
+
+                // public static void copyDeclaredStmts(
+                // StatementContextBase<?, ?, ?> sourceGrpStmtCtx,
+                // StatementContextBase<?, ?, ?> targetCtx, QNameModule
+                // newQNameModule)
+                // throws SourceException {
+                // Collection<? extends StatementContextBase<?, ?, ?>>
+                // declaredSubstatements = sourceGrpStmtCtx
+                // .declaredSubstatements();
+                // for (StatementContextBase<?, ?, ?> originalStmtCtx :
+                // declaredSubstatements) {
+                // if (needToCopyByAugment(originalStmtCtx)) {
+                // StatementContextBase<?, ?, ?> copy = originalStmtCtx
+                // .createCopy(newQNameModule, targetCtx);
+                // targetCtx.addEffectiveSubstatement(copy);
+                // } else if (isReusedByAugment(originalStmtCtx)) {
+                // targetCtx.addEffectiveSubstatement(originalStmtCtx);
+                // }
+                // }
+                // }
+            });
         }
     }
 
