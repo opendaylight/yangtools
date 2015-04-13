@@ -40,7 +40,8 @@ public class BindingToRestRpc implements InvocationHandler {
     private final BindingNormalizedNodeCodecRegistry mappingService;
     private final SchemaContext schcemaContext;
     private final Module module;
-
+    private static final int STATUS_OK = 200;
+    
     public BindingToRestRpc(final Class<?> proxiedInterface,final BindingNormalizedNodeCodecRegistry mappingService2,final RestconfClientImpl client,final SchemaContext schemaContext) throws Exception {
         this.mappingService = mappingService2;
         this.client  = client;
@@ -70,7 +71,7 @@ public class BindingToRestRpc implements InvocationHandler {
                 return client.post(ResourceUri.OPERATIONS.getPath() + "/" + moduleName + ":" + rpcMethodName,payloadString,new Function<ClientResponse, Object>() {
                     @Override
                     public Object apply(final ClientResponse clientResponse) {
-                        if (clientResponse.getStatus() != 200) {
+                        if (clientResponse.getStatus() != STATUS_OK) {
                             throw new IllegalStateException("Can't get data from restconf. "+clientResponse.getClientResponseStatus());
                         }
                         List<RpcError> errors =  new ArrayList<>();
