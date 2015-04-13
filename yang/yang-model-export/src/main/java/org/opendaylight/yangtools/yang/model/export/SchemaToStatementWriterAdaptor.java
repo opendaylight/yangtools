@@ -12,6 +12,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.primitives.UnsignedInteger;
 import java.net.URI;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -93,8 +94,12 @@ final class SchemaToStatementWriterAdaptor implements Rfc6020ModuleWriter {
     public void startKeyNode(final List<QName> keyList) {
         writer.startStatement(Rfc6020Mapping.KEY);
         final StringBuilder keyStr = new StringBuilder();
-        for (final QName item : keyList) {
-            keyStr.append(item.getLocalName());
+        final Iterator<QName> iter = keyList.iterator();
+        while (iter.hasNext()) {
+            keyStr.append(iter.next().getLocalName());
+            if (iter.hasNext()) {
+                keyStr.append(' ');
+            }
         }
         writer.writeArgument(keyStr.toString());
     }
