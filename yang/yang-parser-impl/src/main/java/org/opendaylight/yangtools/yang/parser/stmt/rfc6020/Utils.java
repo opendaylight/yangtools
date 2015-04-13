@@ -44,7 +44,7 @@ public class Utils {
     private static final CharMatcher DOUBLE_QUOTE_MATCHER = CharMatcher.is('"');
     private static final CharMatcher SINGLE_QUOTE_MATCHER = CharMatcher.is('\'');
 
-    private static final char SEPARATOR_QNAME = '/';
+    private static final char SEPARATOR_NODENAME = '/';
 
     private static final String REGEX_PATH_ABS = "/[^/].+";
     private static final String REGEX_PATH_REL1 = "\\.\\.?\\s*/(.+)";
@@ -57,6 +57,12 @@ public class Utils {
             return StatementSource.CONTEXT;
         }
     };
+
+    public static List<String> splitPathToNodeNames(String path) {
+
+        Splitter keySplitter = Splitter.on(SEPARATOR_NODENAME).omitEmptyStrings().trimResults();
+        return keySplitter.splitToList(path);
+    }
 
     public static void validateXPath(String path) {
 
@@ -80,8 +86,7 @@ public class Utils {
 
         validateXPath(path);
 
-        Splitter keySplitter = Splitter.on(SEPARATOR_QNAME).omitEmptyStrings().trimResults();
-        List<String> nodeNames = keySplitter.splitToList(path);
+        List<String> nodeNames = splitPathToNodeNames(path);
         List<QName> qNames = new ArrayList<>();
 
         for (String nodeName : nodeNames) {

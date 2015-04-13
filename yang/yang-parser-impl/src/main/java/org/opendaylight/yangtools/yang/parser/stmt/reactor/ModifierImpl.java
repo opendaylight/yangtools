@@ -125,7 +125,7 @@ class ModifierImpl implements ModelActionBuilder {
         try {
             PhaseFinished<C> phaseFin = new PhaseFinished<C>();
             addReq(phaseFin);
-            contextImpl(context).addPhaseCompletedListener(FullDeclaration,phaseFin);
+            contextImpl(context).addPhaseCompletedListener(phase,phaseFin);
             return phaseFin;
         } catch (SourceException e) {
             throw shouldNotHappenProbablyBug(e);
