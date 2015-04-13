@@ -55,6 +55,7 @@ public class RestListenableEventStreamContext<L extends NotificationListener> im
     private Method listenerCallbackMethod;
     private final RestconfClientImpl restconfClient;
     private final EventStreamInfo streamInfo;
+    private static final int STATUS_OK = 200;
 
     public RestListenableEventStreamContext(final EventStreamInfo streamInfo,final RestconfClientImpl restconfClient){
         this.restconfClient = restconfClient;
@@ -96,7 +97,7 @@ public class RestListenableEventStreamContext<L extends NotificationListener> im
             throw new IllegalStateException(e);
         }
         boolean success = true;
-        if (response.getStatus() != 200) {
+        if (response.getStatus() != STATUS_OK) {
             success = false;
         }
 
