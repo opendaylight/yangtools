@@ -107,6 +107,30 @@
     },
     {
       "key": {
+        "uuid": "5a93c517_462b3194",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/gen/impl/DataNodeContainerSerializerSource.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-13T07:41:17Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "5a93c517_d0b140e2",
+      "range": {
+        "startLine": 173,
+        "startChar": 11,
+        "endLine": 173,
+        "endChar": 12
+      },
+      "revId": "834202c7acd5a5e3e0b01e4914925434fb2e9c4e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "5a93c517_f0b47cd2",
         "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/BindingNormalizedNodeCache.java",
         "patchSetId": 3
