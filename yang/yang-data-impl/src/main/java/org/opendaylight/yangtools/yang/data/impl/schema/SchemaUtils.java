@@ -44,13 +44,18 @@ public final class SchemaUtils {
         if (dataSchemaNode != null && qname != null) {
             for (DataSchemaNode dsn : dataSchemaNode) {
                 if (qname.isEqualWithoutRevision(dsn.getQName())) {
-                    if (sNode == null || sNode.getQName().compareTo(dsn.getQName()) < 0) {
+                    if (sNode == null || sNode.getQName().getRevision().compareTo(dsn.getQName().getRevision()) < 0) {
                         sNode = dsn;
                     }
                 } else if (dsn instanceof ChoiceSchemaNode) {
                     for (ChoiceCaseNode choiceCase : ((ChoiceSchemaNode) dsn).getCases()) {
+
+                        final DataSchemaNode dataChildByName = choiceCase.getDataChildByName(qname);
+                        if(dataChildByName != null) {
+                            return Optional.of(dataChildByName);
+                        }
                         Optional<DataSchemaNode> foundDsn = findFirstSchema(qname, choiceCase.getChildNodes());
-                        if (foundDsn != null && foundDsn.isPresent()) {
+                        if (foundDsn.isPresent()) {
                             return foundDsn;
                         }
                     }
@@ -61,7 +66,9 @@ public final class SchemaUtils {
     }
 
     public static DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname) {
-        return findSchemaForChild(schema, qname, schema.getChildNodes());
+        // Try to find child schema node directly, but use a fallback that compares QNames without revisions and auto-expands choices
+        final DataSchemaNode dataChildByName = schema.getDataChildByName(qname);
+        return dataChildByName == null ? findSchemaForChild(schema, qname, schema.getChildNodes()) : dataChildByName;
     }
 
     public static DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname, final Iterable<DataSchemaNode> childNodes) {
