@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import org.opendaylight.yangtools.yang.binding.AugmentationHolder;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
@@ -33,6 +31,7 @@ import org.opendaylight.yangtools.sal.binding.generator.api.ClassLoadingStrategy
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
+import org.opendaylight.yangtools.yang.binding.AugmentationHolder;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
@@ -155,7 +154,7 @@ abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeCon
                 }
             }
         }
-        Preconditions.checkArgument(childProto != null, " Child %s is not valid child.",childClass);
+        Preconditions.checkArgument(childProto != null, " Child %s is not valid child of %s",childClass,getBindingClass());
         return (DataContainerCodecContext<DV, ?>) childProto.get();
     }
 
