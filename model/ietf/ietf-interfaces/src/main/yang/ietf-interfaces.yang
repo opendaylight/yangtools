@@ -5,6 +5,7 @@ module ietf-interfaces {
 
   import ietf-yang-types {
     prefix yang;
+    revision-date "2013-07-15";
   }
 
   organization
