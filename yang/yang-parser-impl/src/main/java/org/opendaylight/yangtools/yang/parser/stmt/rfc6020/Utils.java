@@ -14,7 +14,9 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import javax.annotation.Nonnull;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -27,7 +29,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
+import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
@@ -38,13 +42,14 @@ import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public class Utils {
 
     private static final CharMatcher DOUBLE_QUOTE_MATCHER = CharMatcher.is('"');
     private static final CharMatcher SINGLE_QUOTE_MATCHER = CharMatcher.is('\'');
 
-    private static final char SEPARATOR_QNAME = '/';
+    private static final char SEPARATOR_NODENAME = '/';
 
     private static final String REGEX_PATH_ABS = "/[^/].+";
     private static final String REGEX_PATH_REL1 = "\\.\\.?\\s*/(.+)";
@@ -57,6 +62,12 @@ public class Utils {
             return StatementSource.CONTEXT;
         }
     };
+
+    public static List<String> splitPathToNodeNames(String path) {
+
+        Splitter keySplitter = Splitter.on(SEPARATOR_NODENAME).omitEmptyStrings().trimResults();
+        return keySplitter.splitToList(path);
+    }
 
     public static void validateXPath(String path) {
 
@@ -80,8 +91,7 @@ public class Utils {
 
         validateXPath(path);
 
-        Splitter keySplitter = Splitter.on(SEPARATOR_QNAME).omitEmptyStrings().trimResults();
-        List<String> nodeNames = keySplitter.splitToList(path);
+        List<String> nodeNames = splitPathToNodeNames(path);
         List<QName> qNames = new ArrayList<>();
 
         for (String nodeName : nodeNames) {
@@ -174,5 +184,36 @@ public class Utils {
         }
 
         return QName.create(qNameModule, localName);
+    }
+
+    public static StatementContextBase<?, ?, ?> findCtxOfNodeInRoot(StatementContextBase<?, ?, ?> rootStmtCtx,
+            final SchemaNodeIdentifier node) {
+
+        StatementContextBase<?, ?, ?> parent = rootStmtCtx;
+        final Iterator<QName> pathIter = node.getPathFromRoot().iterator();
+
+        QName targetNode = pathIter.next();
+
+        while (pathIter.hasNext()) {
+
+            for (StatementContextBase<?, ?, ?> child : parent.declaredSubstatements()) {
+
+                if (targetNode.equals(child.getStatementArgument())) {
+                    parent = child;
+                    targetNode = pathIter.next();
+                }
+            }
+        }
+
+        StatementContextBase<?, ?, ?> targetCtx = null;
+
+        for (StatementContextBase<?, ?, ?> child : parent.declaredSubstatements()) {
+
+            if (targetNode.equals(child.getStatementArgument())) {
+                targetCtx = child;
+            }
+        }
+
+        return targetCtx;
     }
 }
