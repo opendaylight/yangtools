@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RangeEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
@@ -48,7 +50,7 @@ public class RangeStatementImpl extends AbstractDeclaredStatement<String>
         @Override
         public EffectiveStatement<String, RangeStatement> createEffective(
                 StmtContext<String, RangeStatement, EffectiveStatement<String, RangeStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new RangeEffectiveStatementImpl(ctx);
         }
 
     }

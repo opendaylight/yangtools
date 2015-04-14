@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.BitEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
@@ -48,7 +50,7 @@ public class BitStatementImpl extends AbstractDeclaredStatement<String>
         @Override
         public EffectiveStatement<String, BitStatement> createEffective(
                 StmtContext<String, BitStatement, EffectiveStatement<String, BitStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new BitEffectiveStatementImpl(ctx);
         }
 
     }

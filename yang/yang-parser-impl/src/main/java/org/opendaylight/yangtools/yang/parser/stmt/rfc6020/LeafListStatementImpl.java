@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.LeafListEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
-
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
@@ -63,7 +64,7 @@ public class LeafListStatementImpl extends AbstractDeclaredStatement<QName>
         @Override
         public EffectiveStatement<QName, LeafListStatement> createEffective(
                 StmtContext<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new LeafListEffectiveStatementImpl(ctx);
         }
     }
 

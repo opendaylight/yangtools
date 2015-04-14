@@ -31,10 +31,25 @@ public class YangFileStmtTest {
         private static final YangStatementSourceImpl EXTUSE = new YangStatementSourceImpl("/semantic-statement-parser/ext-use.yang");
 
         @Test
-        public void readAndParseYangFileTest() throws SourceException, ReactorException {
+        public void readAndParseYangFileTest1() throws SourceException, ReactorException {
                 CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
                 addSources(reactor, YANGFILE, SIMPLENODES, IMPORTEDYANGFILE, FOO);
-                addSources(reactor, FILE1, FILE2, FILE3, FILE4);
+                EffectiveModelContext result = reactor.build();
+                assertNotNull(result);
+        }
+
+        // TODO uncomment when Augment in Uses implemented
+//        @Test
+//        public void readAndParseYangFileTest2() throws SourceException, ReactorException {
+//                CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+//                addSources(reactor, FILE1, FILE2, FILE3, FILE4);
+//                EffectiveModelContext result = reactor.build();
+//                assertNotNull(result);
+//        }
+
+        @Test
+        public void readAndParseYangFileTest3() throws SourceException, ReactorException {
+                CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
                 addSources(reactor, EXTFILE, EXTUSE);
                 EffectiveModelContext result = reactor.build();
                 assertNotNull(result);

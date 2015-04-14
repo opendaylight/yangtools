@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.LeafEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -26,7 +28,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -55,7 +56,7 @@ public class LeafStatementImpl extends AbstractDeclaredStatement<QName> implemen
 
         @Override public EffectiveStatement<QName, LeafStatement> createEffective(
                 StmtContext<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new LeafEffectiveStatementImpl(ctx);
         }
     }
 
