@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3aa0d159_a5c38437",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MinMaxElementsValidation.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-14T11:05:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3aa0d159_85876861",
+      "revId": "e2f5029bb908fe495bf28af63740441f84c5429b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3aa0d159_257c5472",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MinMaxElementsValidation.java",
         "patchSetId": 13
@@ -30,6 +48,24 @@
       "writtenOn": "2015-04-14T08:30:27Z",
       "side": 1,
       "message": "space, combine the two if statements into one, perhaps by inverting the condition to return delegate?",
+      "revId": "e2f5029bb908fe495bf28af63740441f84c5429b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_c5c0102d",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MinMaxElementsValidation.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-14T11:05:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3aa0d159_257c5472",
       "revId": "e2f5029bb908fe495bf28af63740441f84c5429b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "3aa0d159_65dd7c14",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MinMaxElementsValidation.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-14T11:05:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3aa0d159_e5950c89",
+      "revId": "e2f5029bb908fe495bf28af63740441f84c5429b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3aa0d159_c58c9082",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MinMaxElementsValidation.java",
         "patchSetId": 13
@@ -64,6 +118,24 @@
       "writtenOn": "2015-04-14T08:30:27Z",
       "side": 1,
       "message": "falls through to IAE?",
+      "revId": "e2f5029bb908fe495bf28af63740441f84c5429b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_85e208d4",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MinMaxElementsValidation.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-14T11:05:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3aa0d159_c58c9082",
       "revId": "e2f5029bb908fe495bf28af63740441f84c5429b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
