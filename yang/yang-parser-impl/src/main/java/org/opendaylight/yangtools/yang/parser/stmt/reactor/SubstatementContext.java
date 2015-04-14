@@ -7,6 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.GroupingUtils;
+
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import java.util.Collection;
+import org.opendaylight.yangtools.yang.common.QName;
 import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -18,10 +23,59 @@ class SubstatementContext<A,D extends DeclaredStatement<A>, E extends EffectiveS
     extends StatementContextBase<A,D,E> {
 
     private final StatementContextBase<?,?,?> parent;
+    private final A argument;
 
     SubstatementContext(StatementContextBase<?,?,?> parent,ContextBuilder<A,D,E> builder) throws SourceException {
+        //super(builder,  builder.getDefinition().parseArgumentValue(parent, builder.getRawArgument()));
         super(builder);
         this.parent = Preconditions.checkNotNull(parent, "Parent must not be null");
+        this.argument =   builder.getDefinition().parseArgumentValue(this, builder.getRawArgument());
+    }
+
+    SubstatementContext(SubstatementContext<A,D,E> original, QNameModule newQNameModule, StatementContextBase<?, ?, ?> newParent) throws SourceException {
+        super(original);
+        this.parent = newParent;
+
+        if(newQNameModule != null && original.argument instanceof QName) {
+            QName originalQName = (QName) original.argument;
+            this.argument =  (A) QName.create(newQNameModule,originalQName.getLocalName());
+        } else {
+            this.argument = original.argument;
+        }
+
+        copyDeclaredStmts(original, newQNameModule);
+
+        copyEffectiveStmts(original, newQNameModule);
+    }
+
+    private void copyDeclaredStmts(SubstatementContext<A, D, E> original,
+            QNameModule newQNameModule) throws SourceException {
+        Collection<? extends StatementContextBase<?, ?, ?>> originalDeclaredSubstatements = original
+                .declaredSubstatements();
+        for (StatementContextBase<?, ?, ?> stmtContext : originalDeclaredSubstatements) {
+            if (GroupingUtils.needToCopyByUses(stmtContext)) {
+                StatementContextBase<?, ?, ?> copy = stmtContext
+                        .createCopy(newQNameModule,this);
+                this.addEffectiveSubstatement(copy);
+            } else if (GroupingUtils.isReusedByUses(stmtContext)) {
+                this.addEffectiveSubstatement(stmtContext);
+            }
+        }
+    }
+
+    private void copyEffectiveStmts(SubstatementContext<A, D, E> original,
+            QNameModule newQNameModule) throws SourceException {
+        Collection<? extends StatementContextBase<?, ?, ?>> originalEffectiveSubstatements = original
+                .effectiveSubstatements();
+        for (StatementContextBase<?, ?, ?> stmtContext : originalEffectiveSubstatements) {
+            if (GroupingUtils.needToCopyByUses(stmtContext)) {
+                StatementContextBase<?, ?, ?> copy = stmtContext
+                        .createCopy(newQNameModule,this);
+                this.addEffectiveSubstatement(copy);
+            } else if (GroupingUtils.isReusedByUses(stmtContext)) {
+                this.addEffectiveSubstatement(stmtContext);
+            }
+        }
     }
 
     @Override
@@ -44,4 +98,15 @@ class SubstatementContext<A,D extends DeclaredStatement<A>, E extends EffectiveS
         return parent.getRoot();
     }
 
+
+    @Override
+    public A getStatementArgument() {
+        return argument;
+    }
+
+    @Override
+    public StatementContextBase<A, D, E>  createCopy(QNameModule newQNameModule, StatementContextBase<?, ?, ?> newParent) throws SourceException {
+        StatementContextBase<A,D,E> copy = new SubstatementContext<A,D,E>(this,newQNameModule, newParent);
+        return copy;
+    }
 }

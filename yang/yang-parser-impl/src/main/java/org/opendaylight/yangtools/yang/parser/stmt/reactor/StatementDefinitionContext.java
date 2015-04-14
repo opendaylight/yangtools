@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-class StatementDefinitionContext<A,D extends DeclaredStatement<A>,E extends EffectiveStatement<A,D>> {
+public class StatementDefinitionContext<A,D extends DeclaredStatement<A>,E extends EffectiveStatement<A,D>> {
     private final StatementSupport<A,D,E> support;
     public StatementDefinitionContext(StatementSupport<A,D,E> support) {
         this.support= support;
@@ -56,8 +56,10 @@ class StatementDefinitionContext<A,D extends DeclaredStatement<A>,E extends Effe
             break;
         case STATEMENT_DEFINITION:
             support.onStatementDefinitionDeclared(statement);
+            break;
         case FULL_DECLARATION:
             support.onFullDefinitionDeclared(statement);
+            break;
         default:
             break;
         }

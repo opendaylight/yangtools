@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
-
+import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import com.google.common.base.Optional;
 import java.net.URI;
 import java.text.ParseException;
@@ -57,14 +57,18 @@ public class ImportStatementDefinition extends
     }
 
     @Override
-    public void onLinkageDeclared(final Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt)
+    public void onLinkageDeclared(
+            final Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt)
             throws InferenceException, SourceException {
         final ModuleIdentifier impIdentifier = getImportedModuleIdentifier(stmt);
         ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_LINKAGE);
         final Prerequisite<StmtContext<?, ?, ?>> imported;
         final Prerequisite<Mutable<?, ?, ?>> linkageTarget;
         imported = importAction.requiresCtx(stmt, ModuleNamespace.class, impIdentifier, SOURCE_LINKAGE);
-        linkageTarget = importAction.mutatesCtx(stmt.getRoot(),SOURCE_LINKAGE);
+        linkageTarget = importAction.mutatesCtx(stmt.getRoot(), SOURCE_LINKAGE);
+
+        String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
+        stmt.addToNs(ImpPrefixToModuleIdentifier.class, impPrefix, impIdentifier);
 
         importAction.apply(new InferenceAction() {
 
@@ -89,7 +93,9 @@ public class ImportStatementDefinition extends
         });
     }
 
-    private static ModuleIdentifier getImportedModuleIdentifier(Mutable<String, ImportStatement, ?> stmt) throws SourceException {
+    private static ModuleIdentifier getImportedModuleIdentifier(Mutable<String, ImportStatement, ?> stmt)
+            throws SourceException {
+
         String moduleName = stmt.getStatementArgument();
         String revisionArg = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
         final Optional<Date> revision;
@@ -97,12 +103,11 @@ public class ImportStatementDefinition extends
             try {
                 revision = Optional.of(SimpleDateFormatUtil.getRevisionFormat().parse(revisionArg));
             } catch (ParseException e) {
-                throw new SourceException(
-                        String.format("Revision value %s is not in required format yyyy-MM-dd", revisionArg),
-                        stmt.getStatementSourceReference(), e);
+                throw new SourceException(String.format("Revision value %s is not in required format yyyy-MM-dd",
+                        revisionArg), stmt.getStatementSourceReference(), e);
             }
         } else {
-            revision = Optional.absent();
+            revision = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_IMP);
         }
         return new ModuleIdentifierImpl(moduleName, Optional.<URI> absent(), revision);
     }

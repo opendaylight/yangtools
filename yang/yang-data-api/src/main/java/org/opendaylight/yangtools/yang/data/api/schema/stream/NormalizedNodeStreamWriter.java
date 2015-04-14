@@ -52,7 +52,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * {@link #endNode()}. Leaf list entries are emmited using
  * {@link #leafSetEntryNode(Object)}.
  *
- * <li><code>anyxml - Anyxml node event is emitted using
+ * <li><code>anyxml - AN node event is emitted using
  * {@link #leafNode(NodeIdentifier, Object)}. {@link #endNode()} MUST NOT BE emitted
  * for anyxml node.</code></li>
  *

@@ -23,5 +23,4 @@ public class EffectiveModelContext implements Immutable {
     public ImmutableList<DeclaredStatement<?>> getRootStatements() {
         return rootStatements;
     }
-
 }

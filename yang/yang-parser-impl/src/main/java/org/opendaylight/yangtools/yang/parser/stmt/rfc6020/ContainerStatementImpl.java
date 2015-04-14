@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ContainerEffectiveStatementImpl;
+
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -28,9 +30,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class ContainerStatementImpl extends AbstractDeclaredStatement<QName> implements ContainerStatement {
+    //private QName qname;
 
     protected ContainerStatementImpl(StmtContext<QName, ContainerStatement,?> context) {
         super(context);
+        //this.qname =
     }
 
     public static class Definition extends AbstractStatementSupport<QName,ContainerStatement,EffectiveStatement<QName,ContainerStatement>> {
@@ -51,7 +55,7 @@ public class ContainerStatementImpl extends AbstractDeclaredStatement<QName> imp
 
         @Override
         public EffectiveStatement<QName,ContainerStatement> createEffective(StmtContext<QName,ContainerStatement,EffectiveStatement<QName,ContainerStatement>> ctx) {
-           throw new UnsupportedOperationException();
+           return new ContainerEffectiveStatementImpl(ctx);
         }
 
     }

@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
+
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
@@ -58,6 +61,10 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     public BuildGlobalContext(Map<ModelProcessingPhase, StatementSupportBundle> supports) {
         super();
         this.supports = supports;
+    }
+
+    public StatementSupportBundle getSupportsForPhase(ModelProcessingPhase currentPhase) {
+        return supports.get(currentPhase);
     }
 
     public void addSource(@Nonnull StatementStreamSource source) {
@@ -133,6 +140,32 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
             rootStatements.add(root);
         }
         return new EffectiveModelContext(rootStatements);
+    }
+
+    public EffectiveSchemaContext buildEffective() throws SourceException, ReactorException {
+        for(ModelProcessingPhase phase : PHASE_EXECUTION_ORDER) {
+            startPhase(phase);
+            loadPhaseStatements();
+            completePhaseActions();
+            endPhase(phase);
+        }
+        return transformEffective();
+    }
+
+    private EffectiveSchemaContext transformEffective() {
+        Preconditions.checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
+        List<DeclaredStatement<?>> rootStatements = new ArrayList<>();
+        List<EffectiveStatement<?,?>> rootEffectiveStatements = new ArrayList<>();
+
+        for(SourceSpecificContext source : sources) {
+            DeclaredStatement<?> root = source.getRoot().buildDeclared();
+            rootStatements.add(root);
+
+            EffectiveStatement<?,?> rootEffective = source.getRoot().buildEffective();
+            rootEffectiveStatements.add(rootEffective);
+        }
+
+        return new EffectiveSchemaContext(rootStatements,rootEffectiveStatements);
     }
 
     private void startPhase(ModelProcessingPhase phase) {

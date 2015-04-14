@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
- * Anyxml normalizedNode.
+ * AN normalizedNode.
  */
 public interface AnyXmlNode extends AttributesContainer, DataContainerChild<NodeIdentifier, DOMSource> {
 

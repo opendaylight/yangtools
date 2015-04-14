@@ -7,18 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Objects;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImportedNamespaceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -27,8 +30,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinitionMap;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
@@ -51,6 +56,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     private ModelProcessingPhase inProgressPhase;
     private ModelProcessingPhase finishedPhase;
+    private QNameToStatementDefinitionMap qNameToStmtDefMap = new QNameToStatementDefinitionMap();
 
 
     SourceSpecificContext(BuildGlobalContext currentContext,StatementStreamSource source) {
@@ -68,7 +74,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         if(current == null) {
             return createDeclaredRoot(def,ref);
         }
-        return current.substatementBuilder(def,ref);
+        return current.substatementBuilder(def, ref);
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -80,7 +86,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                 if(root == null) {
                     root = new RootStatementContext(this, SourceSpecificContext.this);
                 } else {
-                    Preconditions.checkState(root.getIdentifier().equals(getIdentifier()), "Root statement was already defined.");
+                    Preconditions.checkState(root.getIdentifier().equals(getIdentifier()), "Root statement was already defined as %s.", root.getIdentifier());
                 }
                 root.resetLists();
                 return root;
@@ -97,7 +103,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         return root.buildDeclared();
     }
 
-    EffectiveStatement<?,?> build() {
+    EffectiveStatement<?,?> buildEffective() {
         return root.buildEffective();
     }
 
@@ -148,15 +154,14 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     PhaseCompletionProgress tryToCompletePhase(ModelProcessingPhase phase) throws SourceException {
         Collection<ModifierImpl> currentPhaseModifiers = modifiers.get(phase);
-        Iterator<ModifierImpl> modifier = currentPhaseModifiers.iterator();
-        boolean hasProgressed = false;
-        while(modifier.hasNext()) {
-            if(modifier.next().isApplied()) {
-                modifier.remove();
-                hasProgressed = true;
-            }
-        }
-        if(root.tryToCompletePhase(phase) && currentPhaseModifiers.isEmpty()) {
+
+        boolean hasProgressed = hasProgress(currentPhaseModifiers);
+
+        boolean phaseCompleted = root.tryToCompletePhase(phase);
+
+        hasProgressed = hasProgress(currentPhaseModifiers);
+
+        if(phaseCompleted && (currentPhaseModifiers.isEmpty())) {
             finishedPhase = phase;
             return PhaseCompletionProgress.FINISHED;
 
@@ -165,6 +170,22 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             return PhaseCompletionProgress.PROGRESS;
         }
         return PhaseCompletionProgress.NO_PROGRESS;
+    }
+
+
+    private boolean hasProgress(Collection<ModifierImpl> currentPhaseModifiers) {
+
+        Iterator<ModifierImpl> modifier = currentPhaseModifiers.iterator();
+        boolean hasProgressed = false;
+        while(modifier.hasNext()) {
+            if(modifier.next().isApplied()) {
+                modifier.remove();
+                hasProgressed = true;
+            }
+        }
+
+        return hasProgressed;
+
     }
 
     ModelActionBuilder newInferenceAction(ModelProcessingPhase phase) {
@@ -200,9 +221,10 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             break;
         case STATEMENT_DEFINITION:
             source.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes());
+            break;
         case FULL_DECLARATION:
             source.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes());
-
+            break;
         default:
             break;
         }
@@ -214,8 +236,11 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     private QNameToStatementDefinition stmtDef() {
-        // TODO Auto-generated method stub
-        return null;
+        ImmutableMap<QName, StatementSupport<?, ?, ?>> definitions = currentContext.getSupportsForPhase(
+                inProgressPhase).getDefinitions();
+        for (Map.Entry<QName, StatementSupport<?,?,?>> entry : definitions.entrySet()) {
+            qNameToStmtDefMap.put(entry.getKey(), entry.getValue());
+        }
+        return qNameToStmtDefMap;
     }
-
 }
