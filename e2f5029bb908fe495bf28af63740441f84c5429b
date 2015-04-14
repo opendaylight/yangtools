@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3aa0d159_85876861",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MinMaxElementsValidation.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-14T08:30:27Z",
+      "side": 1,
+      "message": "package-private, final",
+      "revId": "e2f5029bb908fe495bf28af63740441f84c5429b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_257c5472",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MinMaxElementsValidation.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-14T08:30:27Z",
+      "side": 1,
+      "message": "space, combine the two if statements into one, perhaps by inverting the condition to return delegate?",
+      "revId": "e2f5029bb908fe495bf28af63740441f84c5429b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_e5950c89",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MinMaxElementsValidation.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-14T08:30:27Z",
+      "side": 1,
+      "message": "emit a debug?",
+      "revId": "e2f5029bb908fe495bf28af63740441f84c5429b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_c58c9082",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MinMaxElementsValidation.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-14T08:30:27Z",
+      "side": 1,
+      "message": "falls through to IAE?",
+      "revId": "e2f5029bb908fe495bf28af63740441f84c5429b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
