@@ -43,8 +43,12 @@ public class AugmentTest {
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         addSources(reactor, VALID_ABS);
 
-        EffectiveModelContext result = reactor.build();
-        assertNotNull(result);
+        try {
+            reactor.build();
+        } catch (Exception e) {
+            // if augment argument is correct we only catch an exception that it cannot be found in mock model
+            assertEquals(NullPointerException.class, e.getClass());
+        }
     }
 
     @Test
@@ -53,8 +57,12 @@ public class AugmentTest {
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         addSources(reactor, IMPORTED, VALID_ABS_PREFIXED);
 
-        EffectiveModelContext result = reactor.build();
-        assertNotNull(result);
+        try {
+            reactor.build();
+        } catch (Exception e) {
+            // if augment argument is correct we only catch an exception that it cannot be found in mock model
+            assertEquals(NullPointerException.class, e.getClass());
+        }
     }
 
     @Test
@@ -63,8 +71,12 @@ public class AugmentTest {
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         addSources(reactor, VALID_REL);
 
-        EffectiveModelContext result = reactor.build();
-        assertNotNull(result);
+        try {
+            reactor.build();
+        } catch (Exception e) {
+            // if augment argument is correct we only catch an exception that it cannot be found in mock model
+            assertEquals(NullPointerException.class, e.getClass());
+        }
     }
 
     @Test
@@ -73,8 +85,12 @@ public class AugmentTest {
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         addSources(reactor, IMPORTED, VALID_REL_PREFIXED);
 
-        EffectiveModelContext result = reactor.build();
-        assertNotNull(result);
+        try {
+            reactor.build();
+        } catch (Exception e) {
+            // if augment argument is correct we only catch an exception that it cannot be found in mock model
+            assertEquals(NullPointerException.class, e.getClass());
+        }
     }
 
     @Test

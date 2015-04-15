@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -37,23 +39,23 @@ public class ModuleEffectiveStatementImpl extends
         AbstractEffectiveDocumentedDataNodeContainer<String, ModuleStatement>
         implements Module, Immutable {
 
-    private QNameModule qnameModule;
-    private String name;
+    private final QNameModule qnameModule;
+    private final String name;
     private String sourcePath;
     private String prefix;
     private String yangVersion;
     private String organization;
     private String contact;
-    private Set<ModuleImport> imports;
-    private Set<Module> submodules;
-    private Set<FeatureDefinition> features;
-    private Set<NotificationDefinition> notifications;
-    private Set<AugmentationSchema> augmentations;
-    private Set<RpcDefinition> rpcs;
-    private Set<Deviation> deviations;
-    private List<ExtensionDefinition> extensionNodes;
-    private Set<IdentitySchemaNode> identities;
-    private List<UnknownSchemaNode> unknownNodes;
+    private ImmutableSet<ModuleImport> imports;
+    private ImmutableSet<Module> submodules;
+    private ImmutableSet<FeatureDefinition> features;
+    private ImmutableSet<NotificationDefinition> notifications;
+    private ImmutableSet<AugmentationSchema> augmentations;
+    private ImmutableSet<RpcDefinition> rpcs;
+    private ImmutableSet<Deviation> deviations;
+    private ImmutableList<ExtensionDefinition> extensionNodes;
+    private ImmutableSet<IdentitySchemaNode> identities;
+    private ImmutableList<UnknownSchemaNode> unknownNodes;
     private String source;
 
     public ModuleEffectiveStatementImpl(
@@ -62,17 +64,17 @@ public class ModuleEffectiveStatementImpl extends
 
         name = argument();
         qnameModule = ctx.getFromNamespace(ModuleNameToModuleQName.class, name);
+        // :TODO init other fields
 
         initSubstatementCollections();
 
-        // :TODO init other fields
     }
 
     private void initSubstatementCollections() {
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
-        unknownNodes = new LinkedList<UnknownSchemaNode>();
-        augmentations = new HashSet<AugmentationSchema>();
+        LinkedList<UnknownSchemaNode> unknownNodes = new LinkedList<UnknownSchemaNode>();
+        HashSet<AugmentationSchema> augmentations = new HashSet<AugmentationSchema>();
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
@@ -84,6 +86,9 @@ public class ModuleEffectiveStatementImpl extends
                 augmentations.add(augmentationSchema);
             }
         }
+
+        this.unknownNodes = ImmutableList.copyOf(unknownNodes);
+        this.augmentations = ImmutableSet.copyOf(augmentations);
 
         // :TODO other substatement collections ...
     }

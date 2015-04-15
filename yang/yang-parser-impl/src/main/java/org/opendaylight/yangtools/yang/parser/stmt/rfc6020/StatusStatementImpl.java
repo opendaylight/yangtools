@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.StatusEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
@@ -44,7 +46,7 @@ public class StatusStatementImpl extends AbstractDeclaredStatement<String>
         @Override
         public EffectiveStatement<String, StatusStatement> createEffective(
                 StmtContext<String, StatusStatement, EffectiveStatement<String, StatusStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new StatusEffectiveStatementImpl(ctx);
         }
 
     }

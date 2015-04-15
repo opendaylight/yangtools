@@ -9,6 +9,9 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
+
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ImportEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import com.google.common.base.Optional;
@@ -53,7 +56,7 @@ public class ImportStatementDefinition extends
     @Override
     public EffectiveStatement<String, ImportStatement> createEffective(
             StmtContext<String, ImportStatement, EffectiveStatement<String, ImportStatement>> ctx) {
-        throw new UnsupportedOperationException();
+        return new ImportEffectiveStatementImpl(ctx);
     }
 
     @Override

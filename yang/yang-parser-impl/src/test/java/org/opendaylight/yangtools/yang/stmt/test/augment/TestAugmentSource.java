@@ -57,7 +57,7 @@ public class TestAugmentSource implements StatementStreamSource {
 
     @Override
     public void writeLinkageAndStatementDefinitions(StatementWriter writer, QNameToStatementDefinition stmtDef,
-            PrefixToModule prefixes) throws SourceException {
+                                                    PrefixToModule prefixes) throws SourceException {
         this.writer = writer;
         header();
         extensions();

@@ -10,11 +10,12 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IncludeEffectiveStatementImpl;
+
 import java.net.URI;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
-
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -33,7 +34,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-
 import com.google.common.base.Optional;
 
 public class IncludeStatementImpl extends AbstractDeclaredStatement<String> implements IncludeStatement {
@@ -62,7 +62,7 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
         @Override
         public EffectiveStatement<String, IncludeStatement> createEffective(
                 StmtContext<String, IncludeStatement, EffectiveStatement<String, IncludeStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new IncludeEffectiveStatementImpl(ctx);
         }
 
         @Override
