@@ -28,7 +28,7 @@ public class ReferenceStatementImpl extends AbstractDeclaredStatement<String> im
     public static class Definition extends AbstractStatementSupport<String,ReferenceStatement,EffectiveStatement<String,ReferenceStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Reference);
+            super(Rfc6020Mapping.REFERENCE);
         }
 
         @Override

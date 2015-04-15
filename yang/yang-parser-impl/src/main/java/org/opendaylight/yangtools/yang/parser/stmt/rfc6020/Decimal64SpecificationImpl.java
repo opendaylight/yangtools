@@ -27,7 +27,7 @@ public class Decimal64SpecificationImpl extends AbstractDeclaredStatement<String
     public static class Definition extends AbstractStatementSupport<String,TypeStatement.Decimal64Specification,EffectiveStatement<String,TypeStatement.Decimal64Specification>> {
 
         public Definition() {
-            super(Rfc6020Mapping.FractionDigits);
+            super(Rfc6020Mapping.FRACTION_DIGITS);
         }
 
         @Override public String parseArgumentValue(StmtContext<?, ?, ?> ctx,

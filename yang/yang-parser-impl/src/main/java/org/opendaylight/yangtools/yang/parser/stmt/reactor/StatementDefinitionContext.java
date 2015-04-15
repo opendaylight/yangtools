@@ -51,13 +51,13 @@ public class StatementDefinitionContext<A,D extends DeclaredStatement<A>,E exten
 
     public void onDeclarationFinished(Mutable<A,D,E> statement, ModelProcessingPhase phase) throws SourceException {
         switch (phase) {
-        case SourceLinkage:
+        case SOURCE_LINKAGE:
             support.onLinkageDeclared(statement);
             break;
-        case StatementDefinition:
+        case STATEMENT_DEFINITION:
             support.onStatementDefinitionDeclared(statement);
             break;
-        case FullDeclaration:
+        case FULL_DECLARATION:
             support.onFullDefinitionDeclared(statement);
             break;
         default:

@@ -14,19 +14,26 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+
+import javax.annotation.Nullable;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -36,6 +43,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModul
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 
@@ -44,11 +53,9 @@ public class Utils {
     private static final CharMatcher DOUBLE_QUOTE_MATCHER = CharMatcher.is('"');
     private static final CharMatcher SINGLE_QUOTE_MATCHER = CharMatcher.is('\'');
 
-    private static final char SEPARATOR_QNAME = '/';
+    private static final char SEPARATOR_NODENAME = '/';
 
     private static final String REGEX_PATH_ABS = "/[^/].+";
-    private static final String REGEX_PATH_REL1 = "\\.\\.?\\s*/(.+)";
-    private static final String REGEX_PATH_REL2 = "//.*";
 
     public static final StatementSourceReference CONTEXT_REF = new StatementSourceReference() {
 
@@ -57,6 +64,12 @@ public class Utils {
             return StatementSource.CONTEXT;
         }
     };
+
+    public static List<String> splitPathToNodeNames(String path) {
+
+        Splitter keySplitter = Splitter.on(SEPARATOR_NODENAME).omitEmptyStrings().trimResults();
+        return keySplitter.splitToList(path);
+    }
 
     public static void validateXPath(String path) {
 
@@ -80,8 +93,7 @@ public class Utils {
 
         validateXPath(path);
 
-        Splitter keySplitter = Splitter.on(SEPARATOR_QNAME).omitEmptyStrings().trimResults();
-        List<String> nodeNames = keySplitter.splitToList(path);
+        List<String> nodeNames = splitPathToNodeNames(path);
         List<QName> qNames = new ArrayList<>();
 
         for (String nodeName : nodeNames) {
@@ -94,16 +106,6 @@ public class Utils {
         }
 
         return qNames;
-    }
-
-    public static Iterable<QName> parseAugmentPath(StmtContext<?, ?, ?> ctx, String path) {
-
-        if (path.matches(REGEX_PATH_REL1) || path.matches(REGEX_PATH_REL2)) {
-            throw new IllegalArgumentException(
-                    "An argument for augment can be only absolute path; or descendant if used in uses");
-        }
-
-        return parseXPath(ctx, path);
     }
 
     public static String stringFromStringContext(final YangStatementParser.ArgumentContext context) {
@@ -174,5 +176,61 @@ public class Utils {
         }
 
         return QName.create(qNameModule, localName);
+    }
+
+    @Nullable
+    public static StatementContextBase<?, ?, ?> findCtxOfNodeInRoot(StatementContextBase<?, ?, ?> rootStmtCtx,
+            final SchemaNodeIdentifier node) {
+
+        StatementContextBase<?, ?, ?> parent = rootStmtCtx;
+        final Iterator<QName> pathIter = node.getPathFromRoot().iterator();
+
+        QName targetNode = pathIter.next();
+
+        while (pathIter.hasNext()) {
+
+            for (StatementContextBase<?, ?, ?> child : parent.declaredSubstatements()) {
+
+                if (targetNode.equals(child.getStatementArgument())) {
+                    parent = child;
+                    targetNode = pathIter.next();
+                }
+            }
+
+            if (parent.equals(rootStmtCtx)) {
+
+                return null;
+            }
+        }
+
+        StatementContextBase<?, ?, ?> targetCtx = null;
+
+        for (StatementContextBase<?, ?, ?> child : parent.declaredSubstatements()) {
+
+            if (targetNode.equals(child.getStatementArgument())) {
+                targetCtx = child;
+            }
+        }
+
+        return targetCtx;
+    }
+
+    public static SchemaPath getSchemaPath(StmtContext<?, ?, ?> ctx) {
+
+        Iterator<Object> argumentsIterator = ctx.getArgumentsFromRoot().iterator();
+        argumentsIterator.next(); // skip root argument
+
+        List<QName> qNamesFromRoot = new LinkedList<>();
+
+        while (argumentsIterator.hasNext()) {
+            Object argument = argumentsIterator.next();
+            if (argument instanceof QName) {
+                QName qname = (QName) argument;
+                qNamesFromRoot.add(qname);
+            } else
+                return SchemaPath.SAME;
+        }
+
+        return SchemaPath.create(qNamesFromRoot, true);
     }
 }

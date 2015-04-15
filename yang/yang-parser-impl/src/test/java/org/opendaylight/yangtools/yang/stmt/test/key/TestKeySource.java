@@ -1,9 +1,9 @@
 package org.opendaylight.yangtools.yang.stmt.test.key;
 
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Key;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Module;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Namespace;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Prefix;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.KEY;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.MODULE;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.NAMESPACE;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.PREFIX;
 
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
@@ -67,19 +67,19 @@ public class TestKeySource implements StatementStreamSource {
 
     protected void body() throws SourceException {
 
-        stmt(Rfc6020Mapping.List).arg("lst");
+        stmt(Rfc6020Mapping.LIST).arg("lst");
         {
-            stmt(Key).arg(key).end();
+            stmt(KEY).arg(key).end();
         }
         end();
     }
 
     TestKeySource header() throws SourceException {
 
-        stmt(Module).arg(name);
+        stmt(MODULE).arg(name);
         {
-            stmt(Namespace).arg(getNamespace()).end();
-            stmt(Prefix).arg(name).end();
+            stmt(NAMESPACE).arg(getNamespace()).end();
+            stmt(PREFIX).arg(name).end();
         }
 
         return this;

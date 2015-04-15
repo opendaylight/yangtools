@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PositionEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
@@ -27,7 +29,7 @@ public class PositionStatementImpl extends AbstractDeclaredStatement<String>
             AbstractStatementSupport<String, PositionStatement, EffectiveStatement<String, PositionStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Position);
+            super(Rfc6020Mapping.POSITION);
         }
 
         @Override
@@ -44,7 +46,7 @@ public class PositionStatementImpl extends AbstractDeclaredStatement<String>
         @Override
         public EffectiveStatement<String, PositionStatement> createEffective(
                 StmtContext<String, PositionStatement, EffectiveStatement<String, PositionStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new PositionEffectiveStatementImpl(ctx);
         }
 
     }

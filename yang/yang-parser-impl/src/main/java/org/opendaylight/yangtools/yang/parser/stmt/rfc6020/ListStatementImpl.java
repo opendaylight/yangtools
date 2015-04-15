@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ListEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
@@ -16,7 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -47,7 +48,7 @@ public class ListStatementImpl extends AbstractDeclaredStatement<QName>
             AbstractStatementSupport<QName, ListStatement, EffectiveStatement<QName, ListStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.List);
+            super(Rfc6020Mapping.LIST);
         }
 
         @Override
@@ -65,7 +66,7 @@ public class ListStatementImpl extends AbstractDeclaredStatement<QName>
         @Override
         public EffectiveStatement<QName, ListStatement> createEffective(
                 StmtContext<QName, ListStatement, EffectiveStatement<QName, ListStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new ListEffectiveStatementImpl(ctx);
         }
     }
 

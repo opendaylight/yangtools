@@ -57,7 +57,7 @@ public class ImportResolutionBasicTest {
             fail("reactor.process should fail doe to misssing imported source");
         } catch (ReactorException e) {
             assertTrue(e instanceof SomeModifiersUnresolvedException);
-            assertEquals(ModelProcessingPhase.SourceLinkage,e.getPhase());
+            assertEquals(ModelProcessingPhase.SOURCE_LINKAGE,e.getPhase());
         }
 
     }
@@ -71,7 +71,7 @@ public class ImportResolutionBasicTest {
             fail("reactor.process should fail doe to circular import");
         } catch (ReactorException e) {
             assertTrue(e instanceof SomeModifiersUnresolvedException);
-            assertEquals(ModelProcessingPhase.SourceLinkage,e.getPhase());
+            assertEquals(ModelProcessingPhase.SOURCE_LINKAGE,e.getPhase());
         }
     }
 
@@ -84,7 +84,7 @@ public class ImportResolutionBasicTest {
             fail("reactor.process should fail doe to self import");
         } catch (ReactorException e) {
             assertTrue(e instanceof SomeModifiersUnresolvedException);
-            assertEquals(ModelProcessingPhase.SourceLinkage,e.getPhase());
+            assertEquals(ModelProcessingPhase.SOURCE_LINKAGE,e.getPhase());
         }
     }
 

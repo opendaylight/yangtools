@@ -36,7 +36,7 @@ public class TypedefStatementImpl extends AbstractDeclaredStatement<QName>
             AbstractStatementSupport<QName, TypedefStatement, EffectiveStatement<QName, TypedefStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Typedef);
+            super(Rfc6020Mapping.TYPEDEF);
         }
 
         @Override

@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RequireInstanceEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
@@ -27,7 +29,7 @@ public class RequireInstanceStatementImpl extends
             AbstractStatementSupport<Boolean, RequireInstanceStatement, EffectiveStatement<Boolean, RequireInstanceStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.RequireInstance);
+            super(Rfc6020Mapping.REQUIRE_INSTANCE);
         }
 
         @Override
@@ -44,7 +46,7 @@ public class RequireInstanceStatementImpl extends
         @Override
         public EffectiveStatement<Boolean, RequireInstanceStatement> createEffective(
                 StmtContext<Boolean, RequireInstanceStatement, EffectiveStatement<Boolean, RequireInstanceStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new RequireInstanceEffectiveStatementImpl(ctx);
         }
 
     }

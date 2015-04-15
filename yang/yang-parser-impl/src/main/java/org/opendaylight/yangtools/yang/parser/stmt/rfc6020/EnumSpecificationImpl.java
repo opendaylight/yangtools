@@ -31,7 +31,7 @@ public class EnumSpecificationImpl extends AbstractDeclaredStatement<String>
             AbstractStatementSupport<String, TypeStatement.EnumSpecification, EffectiveStatement<String, TypeStatement.EnumSpecification>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Enum);
+            super(Rfc6020Mapping.ENUM);
         }
 
         @Override

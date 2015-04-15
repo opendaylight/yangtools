@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ChoiceEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -24,7 +26,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -41,7 +42,7 @@ public class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
             AbstractStatementSupport<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Choice);
+            super(Rfc6020Mapping.CHOICE);
         }
 
         @Override
@@ -59,7 +60,7 @@ public class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
         @Override
         public EffectiveStatement<QName, ChoiceStatement> createEffective(
                 StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new ChoiceEffectiveStatementImpl(ctx);
         }
     }
 

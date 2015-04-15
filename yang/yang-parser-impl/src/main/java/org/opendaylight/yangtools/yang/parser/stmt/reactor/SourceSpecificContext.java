@@ -216,13 +216,13 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     void loadStatements() throws SourceException {
         switch (inProgressPhase) {
-        case SourceLinkage:
+        case SOURCE_LINKAGE:
             source.writeLinkage(new StatementContextWriter(this, inProgressPhase),stmtDef());
             break;
-        case StatementDefinition:
+        case STATEMENT_DEFINITION:
             source.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes());
             break;
-        case FullDeclaration:
+        case FULL_DECLARATION:
             source.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes());
             break;
         default:

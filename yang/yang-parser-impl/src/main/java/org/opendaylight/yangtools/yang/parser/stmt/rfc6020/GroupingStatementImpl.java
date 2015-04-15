@@ -40,7 +40,7 @@ public class GroupingStatementImpl extends AbstractDeclaredStatement<QName>
             AbstractStatementSupport<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Grouping);
+            super(Rfc6020Mapping.GROUPING);
         }
 
         @Override

@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.MinElementsEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
@@ -27,7 +29,7 @@ public class MinElementsStatementImpl extends AbstractDeclaredStatement<String>
             AbstractStatementSupport<String, MinElementsStatement, EffectiveStatement<String, MinElementsStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.MinElements);
+            super(Rfc6020Mapping.MIN_ELEMENTS);
         }
 
         @Override
@@ -44,7 +46,7 @@ public class MinElementsStatementImpl extends AbstractDeclaredStatement<String>
         @Override
         public EffectiveStatement<String, MinElementsStatement> createEffective(
                 StmtContext<String, MinElementsStatement, EffectiveStatement<String, MinElementsStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new MinElementsEffectiveStatementImpl(ctx);
         }
 
     }

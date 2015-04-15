@@ -29,7 +29,7 @@ public class IdentityRefSpecificationImpl extends
             AbstractStatementSupport<String, TypeStatement.IdentityRefSpecification, EffectiveStatement<String, TypeStatement.IdentityRefSpecification>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Base);
+            super(Rfc6020Mapping.BASE);
         }
 
         @Override

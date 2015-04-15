@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.MandatoryEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-
 import javax.annotation.Nonnull;
 
 public class MandatoryStatementImpl extends AbstractDeclaredStatement<Boolean> implements
@@ -29,7 +29,7 @@ public class MandatoryStatementImpl extends AbstractDeclaredStatement<Boolean> i
     public static class Definition extends AbstractStatementSupport<Boolean,MandatoryStatement,EffectiveStatement<Boolean,MandatoryStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Mandatory);
+            super(Rfc6020Mapping.MANDATORY);
         }
 
         @Override public Boolean parseArgumentValue(
@@ -44,7 +44,7 @@ public class MandatoryStatementImpl extends AbstractDeclaredStatement<Boolean> i
 
         @Override public EffectiveStatement<Boolean, MandatoryStatement> createEffective(
                 StmtContext<Boolean, MandatoryStatement, EffectiveStatement<Boolean, MandatoryStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new MandatoryEffectiveStatementImpl(ctx);
         }
     }
 

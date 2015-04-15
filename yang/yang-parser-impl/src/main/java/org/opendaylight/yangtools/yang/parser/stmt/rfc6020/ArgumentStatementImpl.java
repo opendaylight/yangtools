@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ArgumentEffectiveStatementImpl;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -30,7 +31,7 @@ public class ArgumentStatementImpl extends AbstractDeclaredStatement<QName>
             AbstractStatementSupport<QName, ArgumentStatement, EffectiveStatement<QName, ArgumentStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Argument);
+            super(Rfc6020Mapping.ARGUMENT);
         }
 
         @Override
@@ -47,7 +48,7 @@ public class ArgumentStatementImpl extends AbstractDeclaredStatement<QName>
         @Override
         public EffectiveStatement<QName, ArgumentStatement> createEffective(
                 StmtContext<QName, ArgumentStatement, EffectiveStatement<QName, ArgumentStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new ArgumentEffectiveStatementImpl(ctx);
         }
 
     }

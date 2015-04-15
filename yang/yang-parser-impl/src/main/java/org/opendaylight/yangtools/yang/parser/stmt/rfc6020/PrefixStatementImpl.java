@@ -21,7 +21,7 @@ public class PrefixStatementImpl extends AbstractDeclaredStatement<String> imple
     public static class Definition extends AbstractStatementSupport<String,PrefixStatement,EffectiveStatement<String,PrefixStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Prefix);
+            super(Rfc6020Mapping.PREFIX);
         }
 
         @Override

@@ -29,7 +29,7 @@ public class PresenceStatementImpl extends AbstractDeclaredStatement<String>
             AbstractStatementSupport<String, PresenceStatement, EffectiveStatement<String, PresenceStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Presence);
+            super(Rfc6020Mapping.PRESENCE);
         }
 
         @Override

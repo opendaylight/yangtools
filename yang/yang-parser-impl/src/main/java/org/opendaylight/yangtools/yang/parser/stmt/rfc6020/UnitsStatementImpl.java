@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnitsEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
@@ -26,7 +28,7 @@ public class UnitsStatementImpl extends AbstractDeclaredStatement<String>
             AbstractStatementSupport<String, UnitsStatement, EffectiveStatement<String, UnitsStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Units);
+            super(Rfc6020Mapping.UNITS);
         }
 
         @Override
@@ -43,7 +45,7 @@ public class UnitsStatementImpl extends AbstractDeclaredStatement<String>
         @Override
         public EffectiveStatement<String, UnitsStatement> createEffective(
                 StmtContext<String, UnitsStatement, EffectiveStatement<String, UnitsStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new UnitsEffectiveStatementImpl(ctx);
         }
 
     }

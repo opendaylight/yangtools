@@ -30,7 +30,7 @@ public class LeafrefSpecificationImpl extends AbstractDeclaredStatement<String>
             AbstractStatementSupport<String, TypeStatement.LeafrefSpecification, EffectiveStatement<String, TypeStatement.LeafrefSpecification>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Path);
+            super(Rfc6020Mapping.PATH);
         }
 
         @Override

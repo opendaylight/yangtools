@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RefineEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -17,7 +19,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-
 import javax.annotation.Nullable;
 
 public class RefineStatementImpl extends AbstractDeclaredStatement<SchemaNodeIdentifier> implements RefineStatement {
@@ -31,7 +32,7 @@ public class RefineStatementImpl extends AbstractDeclaredStatement<SchemaNodeIde
             AbstractStatementSupport<SchemaNodeIdentifier, RefineStatement, EffectiveStatement<SchemaNodeIdentifier, RefineStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Refine);
+            super(Rfc6020Mapping.REFINE);
         }
 
         @Override
@@ -46,7 +47,7 @@ public class RefineStatementImpl extends AbstractDeclaredStatement<SchemaNodeIde
 
         @Override
         public EffectiveStatement<SchemaNodeIdentifier, RefineStatement> createEffective(StmtContext<SchemaNodeIdentifier, RefineStatement, EffectiveStatement<SchemaNodeIdentifier, RefineStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new RefineEffectiveStatementImpl(ctx);
         }
     }
 

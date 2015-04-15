@@ -7,12 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.FullDeclaration;
+import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.FULL_DECLARATION;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UsesEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import java.util.Collection;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -35,20 +33,21 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UsesEffectiveStatementImpl;
 
-public class UsesStatementImpl extends AbstractDeclaredStatement<QName>
-        implements UsesStatement {
+public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implements UsesStatement {
 
     protected UsesStatementImpl(StmtContext<QName, UsesStatement, ?> context) {
         super(context);
     }
 
-    public static class Definition
-            extends
+    public static class Definition extends
             AbstractStatementSupport<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Uses);
+            super(Rfc6020Mapping.USES);
         }
 
         @Override
@@ -57,23 +56,29 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public void onFullDefinitionDeclared(final StmtContext.Mutable<QName,UsesStatement,EffectiveStatement<QName,UsesStatement>> usesNode) throws InferenceException ,SourceException {
+        public void onFullDefinitionDeclared(
+                final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode)
+                throws InferenceException, SourceException {
 
-            ModelActionBuilder usesAction = usesNode.newInferenceAction(FullDeclaration);
+            ModelActionBuilder usesAction = usesNode.newInferenceAction(FULL_DECLARATION);
             final QName groupingName = usesNode.getStatementArgument();
 
-            final Prerequisite<StmtContext<?, ?, ?>> sourceGroupingPre = usesAction.requiresCtx(usesNode, GroupingNamespace.class, groupingName,FullDeclaration);
-            final Prerequisite< ?extends StmtContext.Mutable<?,?,?>> targetNodePre = usesAction.mutatesCtx(usesNode.getParentContext(),FullDeclaration);
+            final Prerequisite<StmtContext<?, ?, ?>> sourceGroupingPre = usesAction.requiresCtx(usesNode,
+                    GroupingNamespace.class, groupingName, FULL_DECLARATION);
+            final Prerequisite<? extends StmtContext.Mutable<?, ?, ?>> targetNodePre = usesAction.mutatesCtx(
+                    usesNode.getParentContext(), FULL_DECLARATION);
 
             usesAction.apply(new InferenceAction() {
 
                 @Override
                 public void apply() throws InferenceException {
-                    StatementContextBase<?, ?, ?> targetNodeStmtCtx =  (StatementContextBase<?, ?, ?>) targetNodePre.get();
-                    StatementContextBase<?, ?, ?> sourceGrpStmtCtx = (StatementContextBase<?, ?, ?>) sourceGroupingPre.get();
+                    StatementContextBase<?, ?, ?> targetNodeStmtCtx = (StatementContextBase<?, ?, ?>) targetNodePre
+                            .get();
+                    StatementContextBase<?, ?, ?> sourceGrpStmtCtx = (StatementContextBase<?, ?, ?>) sourceGroupingPre
+                            .get();
 
                     try {
-                        GroupingUtils.copyFromSourceToTarget(sourceGrpStmtCtx,targetNodeStmtCtx);
+                        GroupingUtils.copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx);
                         GroupingUtils.resolveUsesNode(usesNode, targetNodeStmtCtx);
                     } catch (SourceException e) {
                         // TODO Auto-generated catch block
@@ -83,10 +88,11 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName>
 
                 @Override
                 public void prerequisiteFailed(Collection<? extends Prerequisite<?>> failed) throws InferenceException {
-                    if(failed.contains(sourceGroupingPre)) {
-                        throw new InferenceException("Grouping " + groupingName + " was not resoled.", usesNode.getStatementSourceReference());
+                    if (failed.contains(sourceGroupingPre)) {
+                        throw new InferenceException("Grouping " + groupingName + " was not resovled.", usesNode
+                                .getStatementSourceReference());
                     }
-                    throw new InferenceException("Unknown error occured.", usesNode.getStatementSourceReference());
+                    throw new InferenceException("Unknown error occurred.", usesNode.getStatementSourceReference());
                 }
 
             });
@@ -94,8 +100,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public UsesStatement createDeclared(
-                StmtContext<QName, UsesStatement, ?> ctx) {
+        public UsesStatement createDeclared(StmtContext<QName, UsesStatement, ?> ctx) {
             return new UsesStatementImpl(ctx);
         }
 

@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.LengthEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
-
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
@@ -32,7 +33,7 @@ public class LengthStatementImpl extends AbstractDeclaredStatement<String>
             AbstractStatementSupport<String, LengthStatement, EffectiveStatement<String, LengthStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Length);
+            super(Rfc6020Mapping.LENGTH);
         }
 
         @Override
@@ -49,7 +50,7 @@ public class LengthStatementImpl extends AbstractDeclaredStatement<String>
         @Override
         public EffectiveStatement<String, LengthStatement> createEffective(
                 StmtContext<String, LengthStatement, EffectiveStatement<String, LengthStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new LengthEffectiveStatementImpl(ctx);
         }
 
     }

@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.YinElementEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
@@ -27,7 +29,7 @@ public class YinElementStatementImpl extends AbstractDeclaredStatement<Boolean>
             AbstractStatementSupport<Boolean, YinElementStatement, EffectiveStatement<Boolean, YinElementStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.YinElement);
+            super(Rfc6020Mapping.YIN_ELEMENT);
         }
 
         @Override
@@ -44,7 +46,7 @@ public class YinElementStatementImpl extends AbstractDeclaredStatement<Boolean>
         @Override
         public EffectiveStatement<Boolean, YinElementStatement> createEffective(
                 StmtContext<Boolean, YinElementStatement, EffectiveStatement<Boolean, YinElementStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new YinElementEffectiveStatementImpl(ctx);
         }
 
     }

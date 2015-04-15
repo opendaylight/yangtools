@@ -79,10 +79,10 @@ class IncludeTestStatementSource implements StatementStreamSource {
 
         String prefix = isSubmodule ? belongsTo : name;
 
-        stmt(Container).arg(prefix+":my-container-with-prefix");
+        stmt(CONTAINER).arg(prefix+":my-container-with-prefix");
 
         end();
-        stmt(Container).arg("my-container-without-prefix").end();
+        stmt(CONTAINER).arg("my-container-without-prefix").end();
 
     }
 
@@ -98,19 +98,19 @@ class IncludeTestStatementSource implements StatementStreamSource {
      *
      */
     private void writeSubmoduleHeader() throws SourceException {
-        stmt(Submodule).arg(name); {
+        stmt(SUBMODULE).arg(name); {
 
 
-            stmt(Revision).arg("2000-01-01").end();
+            stmt(REVISION).arg("2000-01-01").end();
             if(belongsTo != null) {
-                stmt(BelongsTo).arg(belongsTo);
-                stmt(Prefix).arg(belongsTo).end();
+                stmt(BELONGS_TO).arg(belongsTo);
+                stmt(PREFIX).arg(belongsTo).end();
                 end();
             }
 
             for(String inc : includes)  {
-                stmt(Include).arg(inc);
-                    stmt(RevisionDate).arg("2000-01-01").end();
+                stmt(INCLUDE).arg(inc);
+                    stmt(REVISION_DATE).arg("2000-01-01").end();
                 end();
             }
         }
@@ -121,13 +121,13 @@ class IncludeTestStatementSource implements StatementStreamSource {
      *
      */
     private void writeModuleHeader() throws SourceException{
-        stmt(Module).arg(name); {
-            stmt(Namespace).arg(getNamespace()).end();
-            stmt(Prefix).arg(name).end();
-            stmt(Revision).arg("2000-01-01").end();
+        stmt(MODULE).arg(name); {
+            stmt(NAMESPACE).arg(getNamespace()).end();
+            stmt(PREFIX).arg(name).end();
+            stmt(REVISION).arg("2000-01-01").end();
             for(String inc : includes)  {
-                stmt(Include).arg(inc);
-                    stmt(RevisionDate).arg("2000-01-01").end();
+                stmt(INCLUDE).arg(inc);
+                    stmt(REVISION_DATE).arg("2000-01-01").end();
                 end();
             }
         }

@@ -131,17 +131,17 @@ public final class YangInferencePipeline {
 
     public static final Map<ModelProcessingPhase, StatementSupportBundle> RFC6020_BUNDLES = ImmutableMap
             .<ModelProcessingPhase, StatementSupportBundle> builder()
-            .put(ModelProcessingPhase.SourceLinkage, LINKAGE_BUNDLE)
-            .put(ModelProcessingPhase.StatementDefinition,STMT_DEF_BUNDLE)
-            .put(ModelProcessingPhase.FullDeclaration,FULL_DECL_BUNDLE)
-            .put(ModelProcessingPhase.EffectiveModel,FULL_DECL_BUNDLE)
+            .put(ModelProcessingPhase.SOURCE_LINKAGE, LINKAGE_BUNDLE)
+            .put(ModelProcessingPhase.STATEMENT_DEFINITION,STMT_DEF_BUNDLE)
+            .put(ModelProcessingPhase.FULL_DECLARATION,FULL_DECL_BUNDLE)
+            .put(ModelProcessingPhase.EFFECTIVE_MODEL,FULL_DECL_BUNDLE)
             .build();
 
     public static final CrossSourceStatementReactor RFC6020_REACTOR = CrossSourceStatementReactor.builder()
-            .setBundle(ModelProcessingPhase.SourceLinkage, LINKAGE_BUNDLE)
-            .setBundle(ModelProcessingPhase.StatementDefinition,STMT_DEF_BUNDLE)
-            .setBundle(ModelProcessingPhase.FullDeclaration,FULL_DECL_BUNDLE)
-            .setBundle(ModelProcessingPhase.EffectiveModel,FULL_DECL_BUNDLE)
+            .setBundle(ModelProcessingPhase.SOURCE_LINKAGE, LINKAGE_BUNDLE)
+            .setBundle(ModelProcessingPhase.STATEMENT_DEFINITION,STMT_DEF_BUNDLE)
+            .setBundle(ModelProcessingPhase.FULL_DECLARATION,FULL_DECL_BUNDLE)
+            .setBundle(ModelProcessingPhase.EFFECTIVE_MODEL,FULL_DECL_BUNDLE)
             .build();
 
     private YangInferencePipeline() {

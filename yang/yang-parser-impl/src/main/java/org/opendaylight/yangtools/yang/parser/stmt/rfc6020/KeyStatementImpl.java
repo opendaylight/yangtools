@@ -37,7 +37,7 @@ public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<Schem
         public static final char SEPARATOR = ' ';
 
         public Definition() {
-            super(Rfc6020Mapping.Key);
+            super(Rfc6020Mapping.KEY);
         }
 
         @Override

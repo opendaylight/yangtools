@@ -21,7 +21,7 @@ public class NamespaceStatementImpl extends AbstractDeclaredStatement<URI> imple
     public static class Definition extends AbstractStatementSupport<URI,NamespaceStatement,EffectiveStatement<URI,NamespaceStatement>> {
 
         public Definition() {
-            super(org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Namespace);
+            super(org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.NAMESPACE);
         }
 
         @Override

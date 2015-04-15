@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.stmt.test;
 
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Container;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Import;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Module;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Namespace;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Prefix;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Revision;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.RevisionDate;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.CONTAINER;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.IMPORT;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.MODULE;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.NAMESPACE;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.PREFIX;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.REVISION;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.REVISION_DATE;
 
 import java.util.Arrays;
 import java.util.List;
@@ -112,18 +112,18 @@ class TestStatementSource implements StatementStreamSource {
     protected void body() throws SourceException {
 
         if (container != null)
-            stmt(Container).arg(container).end();
+            stmt(CONTAINER).arg(container).end();
     }
 
     TestStatementSource header() throws SourceException {
 
-        stmt(Module).arg(name);
+        stmt(MODULE).arg(name);
         {
-            stmt(Namespace).arg(getNamespace()).end();
-            stmt(Prefix).arg(name).end();
+            stmt(NAMESPACE).arg(getNamespace()).end();
+            stmt(PREFIX).arg(name).end();
 
             if (revision != null) {
-                stmt(Revision).arg(revision).end();
+                stmt(REVISION).arg(revision).end();
             }
 
             for (ModuleEntry impEntry : imports) {
@@ -131,12 +131,12 @@ class TestStatementSource implements StatementStreamSource {
                 String imp = impEntry.getName();
                 String rev = impEntry.getRevision();
 
-                stmt(Import).arg(imp);
+                stmt(IMPORT).arg(imp);
                 {
-                    stmt(Prefix).arg(imp).end();
+                    stmt(PREFIX).arg(imp).end();
 
                     if (rev != null) {
-                        stmt(RevisionDate).arg(rev).end();
+                        stmt(REVISION_DATE).arg(rev).end();
                     }
                 }
                 end();

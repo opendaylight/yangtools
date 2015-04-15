@@ -108,7 +108,7 @@ public class GroupingUtils {
     public static boolean needToCopyByUses(StmtContext<?, ?, ?> stmtContext) {
 
         HashSet<StatementDefinition> noCopyDefSet = new HashSet<StatementDefinition>();
-        noCopyDefSet.add(Rfc6020Mapping.Uses);
+        noCopyDefSet.add(Rfc6020Mapping.USES);
 
         StatementDefinition def = stmtContext.getPublicDefinition();
         if (noCopyDefSet.contains(def))
@@ -120,7 +120,7 @@ public class GroupingUtils {
     public static boolean isReusedByUses(StmtContext<?, ?, ?> stmtContext) {
 
         HashSet<StatementDefinition> reusedDefSet = new HashSet<StatementDefinition>();
-        reusedDefSet.add(Rfc6020Mapping.Typedef);
+        reusedDefSet.add(Rfc6020Mapping.TYPEDEF);
 
         StatementDefinition def = stmtContext.getPublicDefinition();
         if (reusedDefSet.contains(def))

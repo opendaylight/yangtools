@@ -7,15 +7,15 @@
 */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ConfigEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-
 import javax.annotation.Nonnull;
 
 public class ConfigStatementImpl extends AbstractDeclaredStatement<Boolean> implements ConfigStatement {
@@ -28,7 +28,7 @@ public class ConfigStatementImpl extends AbstractDeclaredStatement<Boolean> impl
     public static class Definition extends AbstractStatementSupport<Boolean,ConfigStatement,EffectiveStatement<Boolean,ConfigStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Config);
+            super(Rfc6020Mapping.CONFIG);
         }
 
         @Override public Boolean parseArgumentValue(StmtContext<?, ?, ?> ctx,
@@ -41,7 +41,7 @@ public class ConfigStatementImpl extends AbstractDeclaredStatement<Boolean> impl
         }
 
         @Override public EffectiveStatement<Boolean, ConfigStatement> createEffective(StmtContext<Boolean, ConfigStatement, EffectiveStatement<Boolean, ConfigStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new ConfigEffectiveStatementImpl(ctx);
         }
     }
 

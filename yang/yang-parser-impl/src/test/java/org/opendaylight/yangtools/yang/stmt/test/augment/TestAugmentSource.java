@@ -1,10 +1,10 @@
 package org.opendaylight.yangtools.yang.stmt.test.augment;
 
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Augment;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Import;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Module;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Namespace;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Prefix;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.AUGMENT;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.IMPORT;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.MODULE;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.NAMESPACE;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.PREFIX;
 
 import java.util.Arrays;
 
@@ -57,7 +57,7 @@ public class TestAugmentSource implements StatementStreamSource {
 
     @Override
     public void writeLinkageAndStatementDefinitions(StatementWriter writer, QNameToStatementDefinition stmtDef,
-            PrefixToModule prefixes) throws SourceException {
+                                                    PrefixToModule prefixes) throws SourceException {
         this.writer = writer;
         header();
         extensions();
@@ -70,23 +70,23 @@ public class TestAugmentSource implements StatementStreamSource {
 
     protected void body() throws SourceException {
 
-        stmt(Augment).arg(augment);
+        stmt(AUGMENT).arg(augment);
         end();
     }
 
     TestAugmentSource header() throws SourceException {
 
-        stmt(Module).arg(name);
+        stmt(MODULE).arg(name);
         {
-            stmt(Namespace).arg(getNamespace()).end();
-            stmt(Prefix).arg(name).end();
+            stmt(NAMESPACE).arg(getNamespace()).end();
+            stmt(PREFIX).arg(name).end();
         }
 
         for (String impEntry : imports) {
 
-            stmt(Import).arg(impEntry);
+            stmt(IMPORT).arg(impEntry);
             {
-                stmt(Prefix).arg(impEntry).end();
+                stmt(PREFIX).arg(impEntry).end();
             }
             end();
         }

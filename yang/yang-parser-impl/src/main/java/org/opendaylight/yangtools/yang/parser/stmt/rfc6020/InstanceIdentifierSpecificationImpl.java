@@ -31,7 +31,7 @@ public class InstanceIdentifierSpecificationImpl extends
             AbstractStatementSupport<String, TypeStatement.InstanceIdentifierSpecification, EffectiveStatement<String, TypeStatement.InstanceIdentifierSpecification>> {
 
         public Definition() {
-            super(Rfc6020Mapping.RequireInstance);
+            super(Rfc6020Mapping.REQUIRE_INSTANCE);
         }
 
         @Override

@@ -74,7 +74,7 @@ public class UsesResolutionTest {
             fail("reactor.process should fail doe to cyclic uses-grouping statements");
         } catch (ReactorException e) {
             assertTrue(e instanceof SomeModifiersUnresolvedException);
-            assertEquals(ModelProcessingPhase.FullDeclaration, e.getPhase());
+            assertEquals(ModelProcessingPhase.FULL_DECLARATION, e.getPhase());
             log(e,"");
         }
     }
@@ -88,7 +88,7 @@ public class UsesResolutionTest {
             fail("reactor.process should fail doe to misssing grouping");
         } catch (ReactorException e) {
             assertTrue(e instanceof SomeModifiersUnresolvedException);
-            assertEquals(ModelProcessingPhase.FullDeclaration, e.getPhase());
+            assertEquals(ModelProcessingPhase.FULL_DECLARATION, e.getPhase());
             log(e,"");
         }
     }
@@ -102,7 +102,7 @@ public class UsesResolutionTest {
             fail("reactor.process should fail doe to misssing grouping");
         } catch (ReactorException e) {
             assertTrue(e instanceof SomeModifiersUnresolvedException);
-            assertEquals(ModelProcessingPhase.FullDeclaration, e.getPhase());
+            assertEquals(ModelProcessingPhase.FULL_DECLARATION, e.getPhase());
             log(e,"");
         }
     }

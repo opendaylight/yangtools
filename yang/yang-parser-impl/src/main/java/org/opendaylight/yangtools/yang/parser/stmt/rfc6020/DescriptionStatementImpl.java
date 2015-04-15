@@ -28,7 +28,7 @@ public class DescriptionStatementImpl extends AbstractDeclaredStatement<String> 
     public static class Definition extends AbstractStatementSupport<String,DescriptionStatement,EffectiveStatement<String,DescriptionStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Description);
+            super(Rfc6020Mapping.DESCRIPTION);
         }
 
         @Override

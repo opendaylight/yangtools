@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.BelongsEffectiveToStatementImpl;
+
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -28,7 +30,7 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
             AbstractStatementSupport<String, BelongsToStatement, EffectiveStatement<String, BelongsToStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.BelongsTo);
+            super(Rfc6020Mapping.BELONGS_TO);
         }
 
         @Override
@@ -45,7 +47,7 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
         @Override
         public EffectiveStatement<String, BelongsToStatement> createEffective(
                 StmtContext<String, BelongsToStatement, EffectiveStatement<String, BelongsToStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new BelongsEffectiveToStatementImpl(ctx);
         }
 
     }

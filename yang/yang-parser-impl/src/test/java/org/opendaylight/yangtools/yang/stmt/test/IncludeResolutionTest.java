@@ -44,7 +44,7 @@ public class IncludeResolutionTest {
             fail("reactor.process should fail doe to misssing included source");
         } catch (ReactorException e) {
             assertTrue(e instanceof SomeModifiersUnresolvedException);
-            assertEquals(ModelProcessingPhase.SourceLinkage,e.getPhase());
+            assertEquals(ModelProcessingPhase.SOURCE_LINKAGE,e.getPhase());
             log.info(e.getMessage());
         }
 
@@ -59,7 +59,7 @@ public class IncludeResolutionTest {
             fail("reactor.process should fail doe to misssing included source");
         } catch (ReactorException e) {
             assertTrue(e instanceof SomeModifiersUnresolvedException);
-            assertEquals(ModelProcessingPhase.SourceLinkage,e.getPhase());
+            assertEquals(ModelProcessingPhase.SOURCE_LINKAGE,e.getPhase());
             log.info(e.getMessage());
         }
 

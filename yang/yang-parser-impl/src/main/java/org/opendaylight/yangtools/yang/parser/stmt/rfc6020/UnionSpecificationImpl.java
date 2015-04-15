@@ -29,7 +29,7 @@ public class UnionSpecificationImpl extends AbstractDeclaredStatement<String>
             AbstractStatementSupport<String, TypeStatement.UnionSpecification, EffectiveStatement<String, TypeStatement.UnionSpecification>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Type);
+            super(Rfc6020Mapping.TYPE);
         }
 
         @Override

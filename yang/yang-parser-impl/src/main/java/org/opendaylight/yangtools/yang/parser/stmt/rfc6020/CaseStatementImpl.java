@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.CaseEffectiveStatementImpl;
+
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PresenceEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -25,7 +28,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Collection;
@@ -40,7 +42,7 @@ public class CaseStatementImpl extends AbstractDeclaredStatement<QName> implemen
     public static class Definition extends AbstractStatementSupport<QName,CaseStatement,EffectiveStatement<QName,CaseStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Case);
+            super(Rfc6020Mapping.CASE);
         }
 
         @Override public QName parseArgumentValue(StmtContext<?, ?, ?> ctx,
@@ -55,7 +57,7 @@ public class CaseStatementImpl extends AbstractDeclaredStatement<QName> implemen
 
         @Override public EffectiveStatement<QName, CaseStatement> createEffective(
                 StmtContext<QName, CaseStatement, EffectiveStatement<QName, CaseStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new CaseEffectiveStatementImpl(ctx);
         }
     }
 

@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ErrorMessageEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
@@ -27,7 +29,7 @@ public class ErrorMessageStatementImpl extends
             AbstractStatementSupport<String, ErrorMessageStatement, EffectiveStatement<String, ErrorMessageStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.ErrorMessage);
+            super(Rfc6020Mapping.ERROR_MESSAGE);
         }
 
         @Override
@@ -44,7 +46,7 @@ public class ErrorMessageStatementImpl extends
         @Override
         public EffectiveStatement<String, ErrorMessageStatement> createEffective(
                 StmtContext<String, ErrorMessageStatement, EffectiveStatement<String, ErrorMessageStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new ErrorMessageEffectiveStatementImpl(ctx);
         }
 
     }

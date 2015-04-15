@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.stmt.test;
 
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Import;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Module;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.Namespace;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.IMPORT;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.MODULE;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.NAMESPACE;
 import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.*;
 
 import java.util.Arrays;
@@ -87,7 +87,7 @@ class ImportBasicTestStatementSource implements StatementStreamSource {
 //            stmt(Reference).arg("Learn more here...");end();
 //        end();
 
-        stmt(Container).arg(name+":my-container-with-prefix");
+        stmt(CONTAINER).arg(name+":my-container-with-prefix");
 //            stmt(Leaf).arg("MyContainerLeaf");
 //                stmt(Type).arg("string");end();
 //                stmt(Config).arg("TRUE");end();
@@ -114,25 +114,25 @@ class ImportBasicTestStatementSource implements StatementStreamSource {
 //                end();
 //            end();
         end();
-        stmt(Container).arg("my-container-without-prefix").end();
+        stmt(CONTAINER).arg("my-container-without-prefix").end();
 
         int i = 0;
         for(String imp : imports)  {
             i++;
-            stmt(Container).arg(imp+":my-container-with-imported-prefix"+i).end();
+            stmt(CONTAINER).arg(imp+":my-container-with-imported-prefix"+i).end();
         }
 
     }
 
     ImportBasicTestStatementSource header() throws SourceException {
-        stmt(Module).arg(name); {
-            stmt(Namespace).arg(getNamespace()).end();
-            stmt(Prefix).arg(name).end();
-            stmt(Revision).arg("2000-01-01").end();
+        stmt(MODULE).arg(name); {
+            stmt(NAMESPACE).arg(getNamespace()).end();
+            stmt(PREFIX).arg(name).end();
+            stmt(REVISION).arg("2000-01-01").end();
             for(String imp : imports)  {
-                stmt(Import).arg(imp);
-                    stmt(Prefix).arg(imp).end();
-                    stmt(RevisionDate).arg("2000-01-01").end();
+                stmt(IMPORT).arg(imp);
+                    stmt(PREFIX).arg(imp).end();
+                    stmt(REVISION_DATE).arg("2000-01-01").end();
                 end();
             }
         }

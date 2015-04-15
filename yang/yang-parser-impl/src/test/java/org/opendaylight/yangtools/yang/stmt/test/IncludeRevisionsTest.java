@@ -53,7 +53,7 @@ public class IncludeRevisionsTest {
             fail("reactor.process should fail due to unequal revisions in include and submodule");
         } catch (ReactorException e) {
             assertTrue(e instanceof SomeModifiersUnresolvedException);
-            assertEquals(ModelProcessingPhase.SourceLinkage, e.getPhase());
+            assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, e.getPhase());
         }
     }
 
@@ -78,7 +78,7 @@ public class IncludeRevisionsTest {
             fail("reactor.process should fail due to missing revision in included submodule");
         } catch (ReactorException e) {
             assertTrue(e instanceof SomeModifiersUnresolvedException);
-            assertEquals(ModelProcessingPhase.SourceLinkage, e.getPhase());
+            assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, e.getPhase());
         }
     }
 

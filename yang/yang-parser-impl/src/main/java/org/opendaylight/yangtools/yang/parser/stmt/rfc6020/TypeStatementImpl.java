@@ -26,7 +26,7 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String> impleme
     public static class Definition extends AbstractStatementSupport<String,TypeStatement,EffectiveStatement<String,TypeStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Type);
+            super(Rfc6020Mapping.TYPE);
         }
 
         @Override public String parseArgumentValue(StmtContext<?, ?, ?> ctx,

@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ErrorAppTagEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
@@ -27,7 +29,7 @@ public class ErrorAppTagStatementImpl extends AbstractDeclaredStatement<String>
             AbstractStatementSupport<String, ErrorAppTagStatement, EffectiveStatement<String, ErrorAppTagStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.ErrorAppTag);
+            super(Rfc6020Mapping.ERROR_APP_TAG);
         }
 
         @Override
@@ -44,7 +46,7 @@ public class ErrorAppTagStatementImpl extends AbstractDeclaredStatement<String>
         @Override
         public EffectiveStatement<String, ErrorAppTagStatement> createEffective(
                 StmtContext<String, ErrorAppTagStatement, EffectiveStatement<String, ErrorAppTagStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new ErrorAppTagEffectiveStatementImpl(ctx);
         }
 
     }

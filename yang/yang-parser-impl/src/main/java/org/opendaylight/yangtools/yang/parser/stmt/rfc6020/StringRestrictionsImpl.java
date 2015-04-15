@@ -32,7 +32,7 @@ public class StringRestrictionsImpl extends AbstractDeclaredStatement<String>
             AbstractStatementSupport<String, TypeStatement.StringRestrictions, EffectiveStatement<String, TypeStatement.StringRestrictions>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Type);
+            super(Rfc6020Mapping.TYPE);
         }
 
         @Override

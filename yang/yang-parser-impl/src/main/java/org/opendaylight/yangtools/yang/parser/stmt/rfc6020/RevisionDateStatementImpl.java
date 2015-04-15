@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RevisionDateEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
@@ -27,7 +29,7 @@ public class RevisionDateStatementImpl extends
             AbstractStatementSupport<String, RevisionDateStatement, EffectiveStatement<String, RevisionDateStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.RevisionDate);
+            super(Rfc6020Mapping.REVISION_DATE);
         }
 
         @Override
@@ -44,7 +46,7 @@ public class RevisionDateStatementImpl extends
         @Override
         public EffectiveStatement<String, RevisionDateStatement> createEffective(
                 StmtContext<String, RevisionDateStatement, EffectiveStatement<String, RevisionDateStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new RevisionDateEffectiveStatementImpl(ctx);
         }
 
     }

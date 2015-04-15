@@ -31,7 +31,7 @@ public class BitsSpecificationImpl extends AbstractDeclaredStatement<String>
             AbstractStatementSupport<String, TypeStatement.BitsSpecification, EffectiveStatement<String, TypeStatement.BitsSpecification>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Type);
+            super(Rfc6020Mapping.TYPE);
         }
 
         @Override

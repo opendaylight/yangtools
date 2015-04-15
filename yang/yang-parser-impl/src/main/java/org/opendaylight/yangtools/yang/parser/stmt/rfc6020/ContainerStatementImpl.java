@@ -40,7 +40,7 @@ public class ContainerStatementImpl extends AbstractDeclaredStatement<QName> imp
     public static class Definition extends AbstractStatementSupport<QName,ContainerStatement,EffectiveStatement<QName,ContainerStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Container);
+            super(Rfc6020Mapping.CONTAINER);
         }
 
         @Override

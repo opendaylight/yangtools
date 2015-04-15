@@ -209,7 +209,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public D buildDeclared() {
-        Preconditions.checkArgument(completedPhase == ModelProcessingPhase.FullDeclaration || completedPhase == ModelProcessingPhase.EffectiveModel);
+        Preconditions.checkArgument(completedPhase == ModelProcessingPhase.FULL_DECLARATION || completedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         if (declaredInstance == null) {
             declaredInstance = definition().getFactory().createDeclared(this);
         }
@@ -218,7 +218,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public E buildEffective() {
-        Preconditions.checkArgument(completedPhase == ModelProcessingPhase.EffectiveModel);
+        Preconditions.checkArgument(completedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         if (effectiveInstance == null) {
             effectiveInstance = definition().getFactory().createEffective(this);
         }
@@ -350,7 +350,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public <K,KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(
-            Class<N> namepsace, KT key, StmtContext<?, ?, ?> stmt) {
-        addContextToNamespace(namepsace,(K) key, stmt);
+            Class<N> namespace, KT key, StmtContext<?, ?, ?> stmt) {
+        addContextToNamespace(namespace,(K) key, stmt);
     }
 }

@@ -25,7 +25,7 @@ public class NumericalRestrictionsImpl extends AbstractDeclaredStatement<String>
     public static class Definition extends AbstractStatementSupport<String,TypeStatement.NumericalRestrictions,EffectiveStatement<String,TypeStatement.NumericalRestrictions>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Range);
+            super(Rfc6020Mapping.RANGE);
         }
 
         @Override public String parseArgumentValue(StmtContext<?, ?, ?> ctx,

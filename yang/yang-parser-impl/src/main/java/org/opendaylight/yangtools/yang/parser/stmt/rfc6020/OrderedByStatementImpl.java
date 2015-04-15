@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.OrderedByEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
@@ -27,7 +29,7 @@ public class OrderedByStatementImpl extends AbstractDeclaredStatement<String>
             AbstractStatementSupport<String, OrderedByStatement, EffectiveStatement<String, OrderedByStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.OrderedBy);
+            super(Rfc6020Mapping.ORDERED_BY);
         }
 
         @Override
@@ -44,7 +46,7 @@ public class OrderedByStatementImpl extends AbstractDeclaredStatement<String>
         @Override
         public EffectiveStatement<String, OrderedByStatement> createEffective(
                 StmtContext<String, OrderedByStatement, EffectiveStatement<String, OrderedByStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new OrderedByEffectiveStatementImpl(ctx);
         }
 
     }

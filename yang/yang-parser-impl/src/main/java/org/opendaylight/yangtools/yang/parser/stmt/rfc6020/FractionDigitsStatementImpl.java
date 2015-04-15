@@ -27,7 +27,7 @@ public class FractionDigitsStatementImpl extends
             AbstractStatementSupport<String, FractionDigitsStatement, EffectiveStatement<String, FractionDigitsStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.FractionDigits);
+            super(Rfc6020Mapping.FRACTION_DIGITS);
         }
 
         @Override

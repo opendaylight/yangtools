@@ -44,7 +44,7 @@ public class SubmoduleStatementImpl extends
             AbstractStatementSupport<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Submodule);
+            super(Rfc6020Mapping.SUBMODULE);
         }
 
         @Override

@@ -53,7 +53,7 @@ public class ImportRevisionsTest {
             fail("reactor.process should fail due to unequal revisions in imported modules");
         } catch (ReactorException e) {
             assertTrue(e instanceof SomeModifiersUnresolvedException);
-            assertEquals(ModelProcessingPhase.SourceLinkage, e.getPhase());
+            assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, e.getPhase());
         }
     }
 
@@ -78,7 +78,7 @@ public class ImportRevisionsTest {
             fail("reactor.process should fail due to missing revision in imported module");
         } catch (ReactorException e) {
             assertTrue(e instanceof SomeModifiersUnresolvedException);
-            assertEquals(ModelProcessingPhase.SourceLinkage, e.getPhase());
+            assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, e.getPhase());
         }
     }
 

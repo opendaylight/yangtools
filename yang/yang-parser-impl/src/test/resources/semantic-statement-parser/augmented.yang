@@ -1,0 +1,11 @@
+module augmented {
+	prefix augmented_pref;
+	namespace augmented_ns;
+
+	container cont1 {
+		container cont2 {
+			container cont-target {
+			}
+		}
+	}
+}

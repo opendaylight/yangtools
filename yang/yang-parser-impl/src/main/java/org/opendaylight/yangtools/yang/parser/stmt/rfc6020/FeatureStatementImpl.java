@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.FeatureEffectiveStatementImpl;
+
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -34,7 +35,7 @@ public class FeatureStatementImpl extends AbstractDeclaredStatement<QName>
             AbstractStatementSupport<QName, FeatureStatement, EffectiveStatement<QName, FeatureStatement>> {
 
         public Definition() {
-            super(Rfc6020Mapping.Feature);
+            super(Rfc6020Mapping.FEATURE);
         }
 
         @Override
@@ -51,7 +52,7 @@ public class FeatureStatementImpl extends AbstractDeclaredStatement<QName>
         @Override
         public EffectiveStatement<QName, FeatureStatement> createEffective(
                 StmtContext<QName, FeatureStatement, EffectiveStatement<QName, FeatureStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new FeatureEffectiveStatementImpl(ctx);
         }
 
     }
