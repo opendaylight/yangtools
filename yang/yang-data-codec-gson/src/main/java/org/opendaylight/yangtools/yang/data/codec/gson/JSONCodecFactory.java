@@ -20,10 +20,10 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.DerivedType;
-import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
-import org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +97,7 @@ public final class JSONCodecFactory {
         final TypeDefinition<?> baseType = DerivedType.from(type);
         if (baseType instanceof LeafrefTypeDefinition) {
             return createReferencedTypeCodec(key, (LeafrefTypeDefinition) baseType);
-        } else if (baseType instanceof IdentityrefType) {
+        } else if (baseType instanceof IdentityrefTypeDefinition) {
             final JSONCodec<?> jsonStringIdentityrefCodec = new JSONStringIdentityrefCodec(schemaContext,
                     key.getQName().getModule());
             return (JSONCodec<Object>) jsonStringIdentityrefCodec;
@@ -115,7 +115,7 @@ public final class JSONCodecFactory {
 
     @SuppressWarnings("unchecked")
     private JSONCodec<Object> createFromSimpleType(final TypeDefinition<?> type) {
-        if (type instanceof InstanceIdentifierType) {
+        if (type instanceof InstanceIdentifierTypeDefinition) {
             return (JSONCodec<Object>) iidCodec;
         }
 
