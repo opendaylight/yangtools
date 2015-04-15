@@ -1,0 +1,14 @@
+module root {
+	prefix root_pref;
+	namespace root_ns;
+
+	import augmented {
+		prefix imp;
+	}
+
+	augment /imp:cont1/imp:cont2/imp:cont-target {
+		leaf added {
+			type string;
+		}
+	}
+}

@@ -1,7 +1,17 @@
+/**
+ * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import java.util.HashSet;
+import com.google.common.collect.ImmutableSet;
 
+import com.google.common.collect.ImmutableList;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -23,6 +33,7 @@ public class ContainerEffectiveStatementImpl extends
         implements ContainerSchemaNode, DerivableSchemaNode {
     private final QName qname;
     private final SchemaPath path;
+    private final boolean presence;
 
     boolean augmenting;
     boolean addedByUses;
@@ -30,34 +41,27 @@ public class ContainerEffectiveStatementImpl extends
     ContainerSchemaNode original;
     ConstraintDefinition constraints;
 
-    boolean presence;
-
-    private Set<AugmentationSchema> augmentations;
-    private List<UnknownSchemaNode> unknownNodes;
+    private ImmutableSet<AugmentationSchema> augmentations;
+    private ImmutableList<UnknownSchemaNode> unknownNodes;
 
     public ContainerEffectiveStatementImpl(
             StmtContext<QName, ContainerStatement, EffectiveStatement<QName, ContainerStatement>> ctx) {
         super(ctx);
+
         qname = ctx.getStatementArgument();
-
-        initSubstatementCollections();
-        initPresence();
-
-        // :TODO init other fields
-        path = null;
-
-    }
-
-    private void initPresence() {
+        path = Utils.getSchemaPath(ctx);
         presence = (firstEffective(PresenceEffectiveStatementImpl.class) == null) ? false
                 : true;
+        // :TODO init other fields
+
+        initSubstatementCollections();
     }
 
     private void initSubstatementCollections() {
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
-        unknownNodes = new LinkedList<UnknownSchemaNode>();
-        augmentations = new HashSet<AugmentationSchema>();
+        LinkedList<UnknownSchemaNode> unknownNodes = new LinkedList<UnknownSchemaNode>();
+        HashSet<AugmentationSchema> augmentations = new HashSet<AugmentationSchema>();
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
@@ -70,7 +74,8 @@ public class ContainerEffectiveStatementImpl extends
             }
         }
 
-        // :TODO other substatement collections ...
+        this.unknownNodes = ImmutableList.copyOf(unknownNodes);
+        this.augmentations = ImmutableSet.copyOf(augmentations);
     }
 
     @Override

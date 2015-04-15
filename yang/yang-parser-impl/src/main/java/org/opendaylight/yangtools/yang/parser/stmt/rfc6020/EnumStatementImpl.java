@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EnumEffectiveStatementImpl;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
@@ -49,7 +50,7 @@ public class EnumStatementImpl extends AbstractDeclaredStatement<String>
         @Override
         public EffectiveStatement<String, EnumStatement> createEffective(
                 StmtContext<String, EnumStatement, EffectiveStatement<String, EnumStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new EnumEffectiveStatementImpl(ctx);
         }
 
     }

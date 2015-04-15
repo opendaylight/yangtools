@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.common.QName;
+
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.OutputEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
@@ -19,38 +22,39 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class OutputStatementImpl extends AbstractDeclaredStatement<Void>
+public class OutputStatementImpl extends AbstractDeclaredStatement<QName>
         implements OutputStatement {
 
     protected OutputStatementImpl(
-            StmtContext<Void, OutputStatement, ?> context) {
+            StmtContext<QName, OutputStatement, ?> context) {
         super(context);
     }
 
     public static class Definition
             extends
-            AbstractStatementSupport<Void, OutputStatement, EffectiveStatement<Void, OutputStatement>> {
+            AbstractStatementSupport<QName, OutputStatement, EffectiveStatement<QName, OutputStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.OUTPUT);
         }
 
         @Override
-        public Void parseArgumentValue(StmtContext<?, ?, ?> ctx, String value)
+        public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value)
                 throws SourceException {
-            return null;
+            value = "output";
+            return Utils.qNameFromArgument(ctx, value);
         }
 
         @Override
         public OutputStatement createDeclared(
-                StmtContext<Void, OutputStatement, ?> ctx) {
+                StmtContext<QName, OutputStatement, ?> ctx) {
             return new OutputStatementImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<Void, OutputStatement> createEffective(
-                StmtContext<Void, OutputStatement, EffectiveStatement<Void, OutputStatement>> ctx) {
-            throw new UnsupportedOperationException();
+        public EffectiveStatement<QName, OutputStatement> createEffective(
+                StmtContext<QName, OutputStatement, EffectiveStatement<QName, OutputStatement>> ctx) {
+            return new OutputEffectiveStatementImpl(ctx);
         }
 
     }
