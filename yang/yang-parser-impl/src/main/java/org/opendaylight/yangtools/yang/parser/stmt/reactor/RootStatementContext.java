@@ -24,7 +24,6 @@ class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Effectiv
 
     private final SourceSpecificContext sourceContext;
     private final A argument;
-    private LinkedList<?> linkedList;
 
     RootStatementContext(ContextBuilder<A, D, E> builder,
             SourceSpecificContext sourceContext) throws SourceException {
@@ -107,7 +106,7 @@ class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Effectiv
 
     @Override
     public List<Object> getArgumentsFromRoot() {
-        LinkedList<Object> argumentList = new LinkedList<Object>();
+        List<Object> argumentList = new LinkedList<Object>();
         argumentList.add(argument);
         return argumentList;
     }
