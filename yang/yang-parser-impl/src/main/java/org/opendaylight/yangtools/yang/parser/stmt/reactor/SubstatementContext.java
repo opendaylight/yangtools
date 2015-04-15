@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.GroupingUtils;
+import java.util.List;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.GroupingUtils;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -109,4 +110,13 @@ class SubstatementContext<A,D extends DeclaredStatement<A>, E extends EffectiveS
         StatementContextBase<A,D,E> copy = new SubstatementContext<A,D,E>(this,newQNameModule, newParent);
         return copy;
     }
+
+    @Override
+    public List<Object> getArgumentsFromRoot() {
+        List<Object> argumentsFromRoot = parent.getArgumentsFromRoot();
+        argumentsFromRoot.add(argument);
+        return argumentsFromRoot;
+    }
+
+
 }

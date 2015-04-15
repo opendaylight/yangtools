@@ -1,0 +1,18 @@
+module augmented {
+	namespace aug;
+	prefix aug;
+
+	container aug-parent1 {
+		container aug-parent2 {
+			container cont-target {
+
+			}
+		}
+	}
+
+	grouping grp {
+		container cont-grp {
+			anyxml axml-grp;
+		}
+	}
+}

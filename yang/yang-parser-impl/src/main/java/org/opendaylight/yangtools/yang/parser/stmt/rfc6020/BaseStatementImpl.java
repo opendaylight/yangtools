@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.BaseEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -44,7 +46,7 @@ public class BaseStatementImpl extends AbstractDeclaredStatement<QName>
         @Override
         public EffectiveStatement<QName, BaseStatement> createEffective(
                 StmtContext<QName, BaseStatement, EffectiveStatement<QName, BaseStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new BaseEffectiveStatementImpl(ctx);
         }
 
     }

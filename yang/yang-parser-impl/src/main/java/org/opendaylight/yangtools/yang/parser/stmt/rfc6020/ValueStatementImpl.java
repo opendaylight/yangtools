@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ValueEffectiveStatementImpl;
+
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
@@ -43,7 +45,7 @@ public class ValueStatementImpl extends AbstractDeclaredStatement<String>
         @Override
         public EffectiveStatement<String, ValueStatement> createEffective(
                 StmtContext<String, ValueStatement, EffectiveStatement<String, ValueStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new ValueEffectiveStatementImpl(ctx);
         }
 
     }

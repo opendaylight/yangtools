@@ -1,0 +1,21 @@
+module aug-root {
+	namespace root;
+	prefix root;
+
+	import augmented {
+		prefix aug;
+	}
+
+	augment "aug:aug-parent1/aug:aug-parent2/aug:cont-target" {
+		container cont-added1 {
+			list list1 {
+			}
+		}
+
+		container cont-added2 {
+			anyxml axml;
+		}
+
+		uses aug:grp;
+	}
+}

@@ -3,7 +3,7 @@ submodule subfoo {
 
     belongs-to foo {
         prefix f;
-    } 
+    }
 
     import bar {
         prefix "br";
