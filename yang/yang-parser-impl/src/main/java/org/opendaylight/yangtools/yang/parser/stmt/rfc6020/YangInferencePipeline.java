@@ -11,6 +11,7 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.sourceLocal;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.treeScoped;
 
+import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName;
 
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
@@ -26,6 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
+import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 
 public final class YangInferencePipeline {
@@ -56,17 +58,15 @@ public final class YangInferencePipeline {
             .addSupport(sourceLocal(IncludedModuleContext.class))
             .addSupport(sourceLocal(ImpPrefixToModuleIdentifier.class))
             .addSupport(sourceLocal(BelongsToPrefixToModuleName.class))
-            //.addSupport(global(ImpPrefixToModuleIdentifier.class))
-                    .build();
+            .addSupport(sourceLocal(QNameToStatementDefinition.class))
+            .build();
 
     private static final StatementSupportBundle STMT_DEF_BUNDLE = StatementSupportBundle.
             derivedFrom(LINKAGE_BUNDLE)
             .addSupport(new YinElementStatementImpl.Definition())
             .addSupport(new ArgumentStatementImpl.Definition())
             .addSupport(new ExtensionStatementImpl.Definition())
-            //TODO: implement extension support in SourceSpecificContext
-            // in order to prepare statements for full declaration phase,
-            // when those ones are read.
+            .addSupport(global(ExtensionNamespace.class))
             .build();
 
     private static final StatementSupportBundle FULL_DECL_BUNDLE = StatementSupportBundle.

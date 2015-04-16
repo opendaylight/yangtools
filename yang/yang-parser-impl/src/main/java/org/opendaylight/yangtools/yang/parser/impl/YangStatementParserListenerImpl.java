@@ -22,6 +22,9 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
+import javax.annotation.concurrent.Immutable;
+
+@Immutable
 public class YangStatementParserListenerImpl extends YangStatementParserBaseListener {
 
     private StatementWriter writer;
@@ -54,7 +57,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
                 try {
                     QName identifier = new QName(YangConstants.RFC6020_YIN_NAMESPACE,
                             ((YangStatementParser.KeywordContext) child).children.get(0).getText());
-                    if (stmtDef != null && stmtDef.get(identifier) != null && toBeSkipped.isEmpty()) {
+                    if (stmtDef != null && Utils.isValidStatementDefinition(prefixes, stmtDef, identifier) && toBeSkipped.isEmpty()) {
                         writer.startStatement(identifier, ref);
                     } else {
                         action = false;
@@ -66,8 +69,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
             } else if (child instanceof YangStatementParser.ArgumentContext) {
                 try {
                     if (action)
-                        writer.argumentValue(
-                                Utils.stringFromStringContext((YangStatementParser.ArgumentContext) child), ref);
+                        writer.argumentValue(Utils.stringFromStringContext((YangStatementParser.ArgumentContext) child), ref);
                     else
                         action = true;
                 } catch (SourceException e) {
@@ -86,7 +88,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
                 try {
                     String statementName = ((YangStatementParser.KeywordContext) child).children.get(0).getText();
                     QName identifier = new QName(YangConstants.RFC6020_YIN_NAMESPACE, statementName);
-                    if (stmtDef != null && stmtDef.get(identifier) != null && toBeSkipped.isEmpty()) {
+                    if (stmtDef != null && Utils.isValidStatementDefinition(prefixes, stmtDef, identifier) && toBeSkipped.isEmpty()) {
                         writer.endStatement(ref);
                     }
 
