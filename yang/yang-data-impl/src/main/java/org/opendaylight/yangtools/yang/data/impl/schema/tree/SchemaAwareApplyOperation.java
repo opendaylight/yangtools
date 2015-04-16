@@ -53,8 +53,8 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
 
     public static SchemaAwareApplyOperation from(final DataNodeContainer resolvedTree,
             final AugmentationTarget augSchemas, final AugmentationIdentifier identifier) {
-        for (AugmentationSchema potential : augSchemas.getAvailableAugmentations()) {
-            for (DataSchemaNode child : potential.getChildNodes()) {
+        for (final AugmentationSchema potential : augSchemas.getAvailableAugmentations()) {
+            for (final DataSchemaNode child : potential.getChildNodes()) {
                 if (identifier.getPossibleChildNames().contains(child.getQName())) {
                     return new AugmentationModificationStrategy(potential, resolvedTree);
                 }
@@ -72,26 +72,29 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     }
 
     private static SchemaAwareApplyOperation fromListSchemaNode(final ListSchemaNode schemaNode) {
-        List<QName> keyDefinition = schemaNode.getKeyDefinition();
+        final List<QName> keyDefinition = schemaNode.getKeyDefinition();
+        final SchemaAwareApplyOperation op;
         if (keyDefinition == null || keyDefinition.isEmpty()) {
-            return new UnkeyedListModificationStrategy(schemaNode);
+            op = new UnkeyedListModificationStrategy(schemaNode);
+        } else if (schemaNode.isUserOrdered()) {
+            op =  new OrderedMapModificationStrategy(schemaNode);
+        } else {
+            op = new UnorderedMapModificationStrategy(schemaNode);
         }
-        if (schemaNode.isUserOrdered()) {
-            return new OrderedMapModificationStrategy(schemaNode);
-        }
-
-        return new UnorderedMapModificationStrategy(schemaNode);
+        return MinMaxElementsValidation.from(op, schemaNode);
     }
 
     private static SchemaAwareApplyOperation fromLeafListSchemaNode(final LeafListSchemaNode schemaNode) {
+        final SchemaAwareApplyOperation op;
         if(schemaNode.isUserOrdered()) {
-            return new OrderedLeafSetModificationStrategy(schemaNode);
+            op =  new OrderedLeafSetModificationStrategy(schemaNode);
         } else {
-            return new UnorderedLeafSetModificationStrategy(schemaNode);
+            op = new UnorderedLeafSetModificationStrategy(schemaNode);
         }
+        return MinMaxElementsValidation.from(op, schemaNode);
     }
 
-    private static final void checkNotConflicting(final YangInstanceIdentifier path, final TreeNode original, final TreeNode current) throws ConflictingModificationAppliedException {
+    protected static final void checkNotConflicting(final YangInstanceIdentifier path, final TreeNode original, final TreeNode current) throws ConflictingModificationAppliedException {
         checkConflicting(path, original.getVersion().equals(current.getVersion()),
                 "Node was replaced by other transaction.");
         checkConflicting(path, original.getSubtreeVersion().equals(current.getSubtreeVersion()),
@@ -99,7 +102,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     }
 
     protected final ModificationApplyOperation resolveChildOperation(final PathArgument child) {
-        Optional<ModificationApplyOperation> potential = getChild(child);
+        final Optional<ModificationApplyOperation> potential = getChild(child);
         Preconditions.checkArgument(potential.isPresent(), "Operation for child %s is not defined.", child);
         return potential.get();
     }
@@ -134,7 +137,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     }
 
     protected void checkMergeApplicable(final YangInstanceIdentifier path, final NodeModification modification, final Optional<TreeNode> current) throws DataValidationFailedException {
-        Optional<TreeNode> original = modification.getOriginal();
+        final Optional<TreeNode> original = modification.getOriginal();
         if (original.isPresent() && current.isPresent()) {
             /*
              * We need to do conflict detection only and only if the value of leaf changed
@@ -160,7 +163,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
      */
     protected void checkWriteApplicable(final YangInstanceIdentifier path, final NodeModification modification,
         final Optional<TreeNode> current) throws DataValidationFailedException {
-        Optional<TreeNode> original = modification.getOriginal();
+        final Optional<TreeNode> original = modification.getOriginal();
         if (original.isPresent() && current.isPresent()) {
             checkNotConflicting(path, original.get(), current.get());
         } else if(original.isPresent()) {
