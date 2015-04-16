@@ -3,6 +3,8 @@ package org.opendaylight.yangtools.yang.stmt.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.net.URI;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -17,8 +19,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
-
-import java.net.URI;
 
 public class AugmentProcessTest {
 

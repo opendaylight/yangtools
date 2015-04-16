@@ -1,0 +1,9 @@
+module root-invalid-abs {
+	namespace root;
+	prefix root;
+
+	augment "//aug1/aug11/aug111" {
+		container add {
+		}
+	}
+}

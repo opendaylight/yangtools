@@ -96,7 +96,6 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
                 }
 
             });
-
         }
 
         @Override
