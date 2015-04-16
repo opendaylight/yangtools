@@ -63,4 +63,20 @@ public abstract class ContainerNodeBaseParser<E> extends
 
     @Override
     protected abstract Map<QName, String> getAttributes(E e);
+
+    //    @Override
+//    protected DefaultParsingStrategy<ContainerNode> getStrat(final DataContainerNodeBuilder<?, ContainerNode> containerBuilder) {
+//        return new DefaultParsingStrategy<ContainerNode>(containerBuilder) {
+//            @Override
+//            public ContainerNode invoke(Op a) {
+//                ContainerNode invoke = super.applyStrategy();
+//                invoke.getAttributeValue();
+//                // callback
+//                Optional.absent();
+//                return invoke;
+//            }
+//        };
+//
+//        return super.getStrat(containerBuilder);
+//    }
 }
