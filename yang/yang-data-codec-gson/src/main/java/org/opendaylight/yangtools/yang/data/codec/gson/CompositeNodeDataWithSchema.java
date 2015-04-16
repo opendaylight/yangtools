@@ -224,4 +224,8 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
         final Collection<QName> qnames = Collections2.transform(schema.getChildNodes(), QNAME_FUNCTION);
         return new AugmentationIdentifier(ImmutableSet.copyOf(qnames));
     }
+
+    public int getChildrenCount() {
+        return children.size();
+    }
 }
