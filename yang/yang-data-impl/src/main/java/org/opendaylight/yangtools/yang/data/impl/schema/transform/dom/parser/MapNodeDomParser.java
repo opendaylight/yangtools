@@ -10,19 +10,27 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.MapNodeBaseParser;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.ParsingStrategy;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.w3c.dom.Element;
 
 final class MapNodeDomParser extends MapNodeBaseParser<Element> {
 
     private final MapEntryNodeDomParser mapEntryParser;
+    private final ParsingStrategy parsingStrategy;
 
-    MapNodeDomParser(MapEntryNodeDomParser mapEntryParser) {
+    MapNodeDomParser(MapEntryNodeDomParser mapEntryParser, ParsingStrategy parsingStrategy) {
         this.mapEntryParser = mapEntryParser;
+        this.parsingStrategy = parsingStrategy;
     }
 
     @Override
     protected ToNormalizedNodeParser<Element, MapEntryNode, ListSchemaNode> getListEntryNodeParser() {
         return mapEntryParser;
+    }
+
+    @Override
+    protected ParsingStrategy getParsingStrategy() {
+        return this.parsingStrategy;
     }
 }
