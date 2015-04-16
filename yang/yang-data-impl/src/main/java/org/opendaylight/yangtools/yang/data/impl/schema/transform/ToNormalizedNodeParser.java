@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform;
 
+import com.google.common.base.Optional;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
@@ -33,5 +35,6 @@ public interface ToNormalizedNodeParser<E, N extends NormalizedNode<?, ?>, S> {
      * @param schema
      * @return NormalizedNode as a result of parsing list of E elements with schema S
      */
+    @Nullable
     N parse(Iterable<E> xmlDom, S schema);
 }
