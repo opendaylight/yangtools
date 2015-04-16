@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3aa0d159_57d10bcc",
+        "filename": "model/ietf/ietf-inet-types/accelerate/data/Ipv4Address.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-16T16:47:37Z",
+      "side": 1,
+      "message": "should be @return - causes compilation error using Java8",
+      "range": {
+        "startLine": 168,
+        "startChar": 7,
+        "endLine": 168,
+        "endChar": 15
+      },
+      "revId": "c760fe6b7de16eabf5c196420feb0d9e0fff5eab",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_77d687c7",
+        "filename": "model/ietf/ietf-inet-types/accelerate/data/Ipv4Address.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-16T16:47:37Z",
+      "side": 1,
+      "message": "should be @return - causes compilation error using Java8",
+      "range": {
+        "startLine": 177,
+        "startChar": 7,
+        "endLine": 177,
+        "endChar": 42
+      },
+      "revId": "c760fe6b7de16eabf5c196420feb0d9e0fff5eab",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
