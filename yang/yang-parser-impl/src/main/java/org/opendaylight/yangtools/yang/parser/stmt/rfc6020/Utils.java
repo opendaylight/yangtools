@@ -17,16 +17,19 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.annotation.Nullable;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Splitter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
@@ -41,12 +44,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdenti
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
+import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
-
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Splitter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class Utils {
 
@@ -83,6 +82,36 @@ public final class Utils {
         validateXPath(path);
 
         return path.matches(REGEX_PATH_ABS);
+    }
+
+    public static QName trimPrefix(QName identifier) {
+        String prefixedLocalName = identifier.getLocalName();
+        String[] namesParts = prefixedLocalName.split(":");
+
+        if (namesParts.length == 2) {
+            String localName = namesParts[1];
+            return QName.create(identifier.getModule(), localName);
+        }
+
+        return identifier;
+    }
+
+    public static boolean isValidStatementDefinition(PrefixToModule prefixes, QNameToStatementDefinition stmtDef, QName identifier) {
+        if (stmtDef.get(identifier) != null) {
+            return true;
+        } else {
+            String prefixedLocalName = identifier.getLocalName();
+            String[] namesParts = prefixedLocalName.split(":");
+
+            if (namesParts.length == 2) {
+                String prefix = namesParts[0];
+                String localName = namesParts[1];
+                if (prefixes != null && prefixes.get(prefix) != null && stmtDef.get(new QName(YangConstants.RFC6020_YIN_NAMESPACE, localName)) != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static Iterable<QName> parseXPath(StmtContext<?, ?, ?> ctx, String path) {

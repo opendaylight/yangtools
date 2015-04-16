@@ -29,7 +29,7 @@ module simple-nodes {
 
 
     anyxml data {
-        config false;
+         config false;
          description "anyxml desc";
          if-feature has-name;
          mandatory true;
