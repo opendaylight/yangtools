@@ -1,7 +1,7 @@
-module foo {
+module foobar {
     yang-version 1;
-    namespace "urn:opendaylight.foo";
-    prefix "foo";
+    namespace "urn:opendaylight.foobar";
+    prefix "foobar";
 
     revision "2015-07-08" {
     }

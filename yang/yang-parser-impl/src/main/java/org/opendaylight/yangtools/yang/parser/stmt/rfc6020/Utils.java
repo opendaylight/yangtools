@@ -17,12 +17,14 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-
 import javax.annotation.Nullable;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Splitter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -45,11 +47,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
-import com.google.common.base.CharMatcher;
-import com.google.common.base.Splitter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 public final class Utils {
 
     private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
@@ -58,7 +55,7 @@ public final class Utils {
 
     private static final char SEPARATOR_NODENAME = '/';
 
-    private static final String REGEX_PATH_ABS = "/[^/].*";
+    private static final String REGEX_PATH_ABS = "/[^/].+";
 
     private Utils() {
     }
