@@ -13,6 +13,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -179,17 +180,18 @@ public class Utils {
     }
 
     @Nullable
-    public static StatementContextBase<?, ?, ?> findCtxOfNodeInRoot(StatementContextBase<?, ?, ?> rootStmtCtx,
-            final SchemaNodeIdentifier node) {
+    private static StatementContextBase<?, ?, ?> findCtxOfNodeInRoot(StatementContextBase<?, ?, ?> rootStmtCtx,
+            final SchemaNodeIdentifier node, boolean searchInEffective) {
 
         StatementContextBase<?, ?, ?> parent = rootStmtCtx;
-        final Iterator<QName> pathIter = node.getPathFromRoot().iterator();
+        Iterator<QName> pathIter = node.getPathFromRoot().iterator();
 
         QName targetNode = pathIter.next();
 
         while (pathIter.hasNext()) {
 
-            for (StatementContextBase<?, ?, ?> child : parent.declaredSubstatements()) {
+            for (StatementContextBase<?, ?, ?> child : searchInEffective ? parent.effectiveSubstatements() : parent
+                    .declaredSubstatements()) {
 
                 if (targetNode.equals(child.getStatementArgument())) {
                     parent = child;
@@ -205,11 +207,26 @@ public class Utils {
 
         StatementContextBase<?, ?, ?> targetCtx = null;
 
-        for (StatementContextBase<?, ?, ?> child : parent.declaredSubstatements()) {
+        for (StatementContextBase<?, ?, ?> child : searchInEffective ? parent.effectiveSubstatements() : parent
+                .declaredSubstatements()) {
 
             if (targetNode.equals(child.getStatementArgument())) {
                 targetCtx = child;
             }
+        }
+
+        return targetCtx;
+    }
+
+    @Nullable
+    public static StatementContextBase<?, ?, ?> findCtxOfNodeInRoot(StatementContextBase<?, ?, ?> rootStmtCtx,
+            final SchemaNodeIdentifier node) {
+
+        StatementContextBase<?, ?, ?> targetCtx = findCtxOfNodeInRoot(rootStmtCtx, node, false);
+
+        if (targetCtx == null) {
+
+            targetCtx = findCtxOfNodeInRoot(rootStmtCtx, node, true);
         }
 
         return targetCtx;

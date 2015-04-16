@@ -1,0 +1,39 @@
+module root-valid-aug-args {
+	namespace root;
+	prefix root;
+
+	import imported;
+
+	augment "/aug1/aug11/aug111" {
+		container add {
+		}
+	}
+
+	container aug1 {
+		container aug11 {
+			container aug111 {
+
+            }
+		}
+	}
+
+    augment "/imp:aug1/imp:aug11/imp:aug111" {
+        container add {
+        }
+    }
+
+	grouping grp {
+		container aug2 {
+			container aug22 {
+			}
+		}
+	}
+
+	uses grp {
+
+		augment "aug2/aug22" {
+			container add {
+			}
+		}
+	}
+}

@@ -1,0 +1,9 @@
+module root-invalid-xpath {
+	namespace root;
+	prefix root;
+
+	augment "/aug1/-" {
+		container add {
+		}
+	}
+}
