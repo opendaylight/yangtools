@@ -24,6 +24,28 @@
     <build>
         <plugins>
             <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <executions>
+                      <execution>
+                        <id>override sources</id>
+                        <phase>process-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <overwrite>True</overwrite>
+                            <outputDirectory>${basedir}/target/generated-sources/sal/org/opendaylight/yang/gen/v1/urn/ietf/params/xml/ns/yang/ietf/yang/types/rev100924/</outputDirectory>
+                            <resources> 
+                                <resource>
+                                    <directory>accelerate/data</directory>
+                                    <filtering>false</filtering>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
             </plugin>
             <plugin>
