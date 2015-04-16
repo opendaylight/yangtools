@@ -8,10 +8,15 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 /**
@@ -24,15 +29,21 @@ public abstract class ListNodeBaseParser<E, N extends NormalizedNode<?, ?>, O ex
         implements ToNormalizedNodeParser<E, O, S> {
 
     @Override
-    public final O parse(Iterable<E> childNodes, S schema) {
+    public O parse(Iterable<E> childNodes, S schema) {
         CollectionNodeBuilder<N, O> listBuilder = provideBuilder(schema);
+        getParsingStrategy().addListIdentifier(schema.getQName());
         for (E childNode : childNodes) {
             N listChild = getListEntryNodeParser().parse(Collections.singletonList(childNode), schema);
-            listBuilder.withChild(listChild);
+            if (listChild != null) {
+                listBuilder.withChild(listChild);
+            }
         }
+        getParsingStrategy().popListIdentifier();
 
         return listBuilder.build();
     }
+
+
 
     /**
      *
@@ -46,4 +57,6 @@ public abstract class ListNodeBaseParser<E, N extends NormalizedNode<?, ?>, O ex
      * @return prepares builder which will contain entries of list according to concrete list type
      */
     protected abstract CollectionNodeBuilder<N, O> provideBuilder(S schema);
+
+    protected abstract ParsingStrategy getParsingStrategy();
 }

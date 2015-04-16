@@ -7,22 +7,30 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 
+import java.util.Map;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParserFactory;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.LeafStrategy;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.NodeParserDispatcher;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.ParsingStrategy;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -34,6 +42,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.w3c.dom.Element;
 
 public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeParserFactory<Element> {
+    static final ParsingStrategy DEFAULT_STRATEGY = new DefaultParsingStrategy();
+
     private final AugmentationNodeDomParser augmentationNodeParser;
     private final ChoiceNodeDomParser choiceNodeParser;
     private final ContainerNodeDomParser containerNodeParser;
@@ -59,12 +69,33 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
 
         containerNodeParser = new ContainerNodeDomParser(dispatcher);
         mapEntryNodeParser = new MapEntryNodeDomParser(dispatcher);
-        mapNodeParser = new MapNodeDomParser(mapEntryNodeParser);
-        orderedListNodeParser = new OrderedListNodeDomParser(mapEntryNodeParser);
+        mapNodeParser = new MapNodeDomParser(mapEntryNodeParser, DEFAULT_STRATEGY);
+        orderedListNodeParser = new OrderedListNodeDomParser(mapEntryNodeParser, DEFAULT_STRATEGY);
         unkeyedListEntryNodeParser = new UnkeyedListEntryNodeDomParser(dispatcher);
-        unkeyedListNodeParser = new UnkeyedListNodeDomParser(unkeyedListEntryNodeParser);
+        unkeyedListNodeParser = new UnkeyedListNodeDomParser(unkeyedListEntryNodeParser, DEFAULT_STRATEGY);
         choiceNodeParser = new ChoiceNodeDomParser(dispatcher);
         augmentationNodeParser = new AugmentationNodeDomParser(dispatcher);
+    }
+
+    private DomToNormalizedNodeParserFactory(final XmlCodecProvider codecProvider, final SchemaContext schema,
+                                             final ParsingStrategy parsingStrategy, final LeafStrategy leafStrategy) {
+        leafNodeParser = new LeafNodeDomParser(codecProvider, schema, leafStrategy);
+        leafSetEntryNodeParser = new LeafSetEntryNodeDomParser(codecProvider, schema, leafStrategy);
+        leafSetNodeParser = new LeafSetNodeDomParser(leafSetEntryNodeParser);
+        anyXmlNodeParser = new AnyXmlDomParser();
+
+        final NodeParserDispatcher<Element> dispatcher = new NodeParserDispatcher.BaseNodeParserDispatcher<Element>(this) {
+
+        };
+
+        containerNodeParser = new ContainerNodeDomParser(dispatcher, parsingStrategy);
+        mapEntryNodeParser = new MapEntryNodeDomParser(dispatcher, parsingStrategy);
+        mapNodeParser = new MapNodeDomParser(mapEntryNodeParser, parsingStrategy);
+        orderedListNodeParser = new OrderedListNodeDomParser(mapEntryNodeParser, parsingStrategy);
+        unkeyedListEntryNodeParser = new UnkeyedListEntryNodeDomParser(dispatcher);
+        unkeyedListNodeParser = new UnkeyedListNodeDomParser(unkeyedListEntryNodeParser, parsingStrategy);
+        choiceNodeParser = new ChoiceNodeDomParser(dispatcher, parsingStrategy);
+        augmentationNodeParser = new AugmentationNodeDomParser(dispatcher, parsingStrategy);
     }
 
     @Deprecated
@@ -80,16 +111,21 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
 
         containerNodeParser = new ContainerNodeDomParser(dispatcher);
         mapEntryNodeParser = new MapEntryNodeDomParser(dispatcher);
-        mapNodeParser = new MapNodeDomParser(mapEntryNodeParser);
-        orderedListNodeParser = new OrderedListNodeDomParser(mapEntryNodeParser);
+        mapNodeParser = new MapNodeDomParser(mapEntryNodeParser, DEFAULT_STRATEGY);
+        orderedListNodeParser = new OrderedListNodeDomParser(mapEntryNodeParser, DEFAULT_STRATEGY);
         unkeyedListEntryNodeParser = new UnkeyedListEntryNodeDomParser(dispatcher);
-        unkeyedListNodeParser = new UnkeyedListNodeDomParser(unkeyedListEntryNodeParser);
+        unkeyedListNodeParser = new UnkeyedListNodeDomParser(unkeyedListEntryNodeParser, DEFAULT_STRATEGY);
         choiceNodeParser = new ChoiceNodeDomParser(dispatcher);
         augmentationNodeParser = new AugmentationNodeDomParser(dispatcher);
     }
 
     public static DomToNormalizedNodeParserFactory getInstance(final XmlCodecProvider codecProvider, final SchemaContext schema) {
         return new DomToNormalizedNodeParserFactory(codecProvider, schema);
+    }
+
+    public static DomToNormalizedNodeParserFactory getInstance(final XmlCodecProvider codecProvider, final SchemaContext schema,
+                                                               final ParsingStrategy parsingStrategy, final LeafStrategy leafStrategy) {
+        return new DomToNormalizedNodeParserFactory(codecProvider, schema, parsingStrategy, leafStrategy);
     }
 
     @Deprecated
@@ -155,5 +191,23 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
     @Override
     public ToNormalizedNodeParser<Element, AnyXmlNode, AnyXmlSchemaNode> getAnyXmlNodeParser() {
         return anyXmlNodeParser;
+    }
+
+    private static class DefaultParsingStrategy<N extends DataContainerNode<?>> implements ParsingStrategy<N> {
+
+        @Override
+        public void prepareAttribues(Map<QName, String> attribues, DataContainerNodeBuilder<?, N> containerBuilder) {}
+
+        @Override
+        public N applyStrategy(DataContainerNodeBuilder<?, N> containerBuilder) {
+            return containerBuilder.build();
+        }
+
+        @Override
+        public void addListIdentifier(QName listIdent) {}
+
+        @Override
+        public void popListIdentifier() {}
+
     }
 }

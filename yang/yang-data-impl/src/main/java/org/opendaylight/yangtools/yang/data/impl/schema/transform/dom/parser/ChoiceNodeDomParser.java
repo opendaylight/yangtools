@@ -7,30 +7,43 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.ChoiceNodeBaseParser;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.NodeParserDispatcher;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
-import org.w3c.dom.Element;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.LinkedListMultimap;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.ChoiceNodeBaseParser;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.NodeParserDispatcher;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.ParsingStrategy;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
+import org.w3c.dom.Element;
 
 final class ChoiceNodeDomParser extends ChoiceNodeBaseParser<Element> {
 
     private final NodeParserDispatcher<Element> dispatcher;
+    private final ParsingStrategy parsingStrategy;
 
-    ChoiceNodeDomParser(NodeParserDispatcher<Element> dispatcher) {
+    ChoiceNodeDomParser(final NodeParserDispatcher<Element> dispatcher) {
         this.dispatcher = Preconditions.checkNotNull(dispatcher);
+        this.parsingStrategy = super.getParsingStrategy();
+    }
+
+    ChoiceNodeDomParser(final NodeParserDispatcher<Element> dispatcher, final ParsingStrategy parsingStrategy) {
+        this.dispatcher = Preconditions.checkNotNull(dispatcher);
+        this.parsingStrategy = parsingStrategy;
     }
 
     @Override
-    protected LinkedListMultimap<QName, Element> mapChildElements(Iterable<Element> xml) {
+    protected LinkedListMultimap<QName, Element> mapChildElements(final Iterable<Element> xml) {
         return DomUtils.mapChildElements(xml);
     }
 
     @Override
     protected NodeParserDispatcher<Element> getDispatcher() {
         return dispatcher;
+    }
+
+    @Override
+    protected ParsingStrategy<ChoiceNode> getParsingStrategy() {
+        return this.parsingStrategy;
     }
 }
