@@ -5,6 +5,10 @@ module complexjson {
     revision "2014-08-11" {
     }
 
+    typedef wrapped-instance-identifier {
+        description "Wrapped instance Identifier";
+        type instance-identifier;
+    }
 
     identity ident;
 
@@ -31,7 +35,7 @@ module complexjson {
                 type string;
             }
             leaf lf112 {
-                type instance-identifier;
+                type wrapped-instance-identifier;
             }
             leaf lf113 {
                 type string;

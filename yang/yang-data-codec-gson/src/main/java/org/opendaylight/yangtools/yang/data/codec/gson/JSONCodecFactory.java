@@ -94,15 +94,15 @@ public final class JSONCodecFactory {
 
     @SuppressWarnings("unchecked")
     private JSONCodec<Object> createCodec(final DataSchemaNode key, final TypeDefinition<?> type) {
-        final TypeDefinition<?> baseType = DerivedType.from(type);
-        if (baseType instanceof LeafrefTypeDefinition) {
-            return createReferencedTypeCodec(key, (LeafrefTypeDefinition) baseType);
-        } else if (baseType instanceof IdentityrefTypeDefinition) {
-            final JSONCodec<?> jsonStringIdentityrefCodec = new JSONStringIdentityrefCodec(schemaContext,
-                    key.getQName().getModule());
+        final TypeDefinition<?> normalizedType = DerivedType.from(type);
+        if (normalizedType instanceof LeafrefTypeDefinition) {
+            return createReferencedTypeCodec(key, (LeafrefTypeDefinition) normalizedType);
+        } else if (normalizedType instanceof IdentityrefTypeDefinition) {
+            final JSONCodec<?> jsonStringIdentityrefCodec =
+                    new JSONStringIdentityrefCodec(schemaContext, key.getQName().getModule());
             return (JSONCodec<Object>) jsonStringIdentityrefCodec;
         }
-        return createFromSimpleType(type);
+        return createFromSimpleType(normalizedType);
     }
 
     private JSONCodec<Object> createReferencedTypeCodec(final DataSchemaNode schema,
