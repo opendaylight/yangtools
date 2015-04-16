@@ -7,21 +7,29 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.AugmentationNodeBaseParser;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.NodeParserDispatcher;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
-import org.w3c.dom.Element;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.LinkedListMultimap;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.AugmentationNodeBaseParser;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.NodeParserDispatcher;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.ParsingStrategy;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
+import org.w3c.dom.Element;
 
 final class AugmentationNodeDomParser extends AugmentationNodeBaseParser<Element> {
 
     private final NodeParserDispatcher<Element> dispatcher;
+    private final ParsingStrategy parsingStrategy;
 
     AugmentationNodeDomParser(final NodeParserDispatcher<Element> dispatcher) {
         this.dispatcher = Preconditions.checkNotNull(dispatcher);
+        this.parsingStrategy = super.getParsingStrategy();
+    }
+
+    AugmentationNodeDomParser(final NodeParserDispatcher<Element> dispatcher, final ParsingStrategy parsingStrategy) {
+        this.dispatcher = dispatcher;
+        this.parsingStrategy = parsingStrategy;
     }
 
     @Override
@@ -34,4 +42,8 @@ final class AugmentationNodeDomParser extends AugmentationNodeBaseParser<Element
         return dispatcher;
     }
 
+    @Override
+    protected ParsingStrategy<AugmentationNode> getParsingStrategy() {
+        return this.parsingStrategy;
+    }
 }
