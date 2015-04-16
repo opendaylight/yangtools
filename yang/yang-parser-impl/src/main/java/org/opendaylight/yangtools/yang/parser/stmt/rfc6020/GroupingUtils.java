@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -107,26 +108,20 @@ public class GroupingUtils {
 
     public static boolean needToCopyByUses(StmtContext<?, ?, ?> stmtContext) {
 
-        HashSet<StatementDefinition> noCopyDefSet = new HashSet<StatementDefinition>();
+        Set<StatementDefinition> noCopyDefSet = new HashSet<StatementDefinition>();
         noCopyDefSet.add(Rfc6020Mapping.USES);
 
         StatementDefinition def = stmtContext.getPublicDefinition();
-        if (noCopyDefSet.contains(def))
-            return false;
-        else
-            return true;
+        return (!noCopyDefSet.contains(def));
     }
 
     public static boolean isReusedByUses(StmtContext<?, ?, ?> stmtContext) {
 
-        HashSet<StatementDefinition> reusedDefSet = new HashSet<StatementDefinition>();
+        Set<StatementDefinition> reusedDefSet = new HashSet<StatementDefinition>();
         reusedDefSet.add(Rfc6020Mapping.TYPEDEF);
 
         StatementDefinition def = stmtContext.getPublicDefinition();
-        if (reusedDefSet.contains(def))
-            return true;
-        else
-            return false;
+        return (reusedDefSet.contains(def));
     }
 
     public static void resolveUsesNode(
