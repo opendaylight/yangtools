@@ -1,0 +1,26 @@
+/*
+ * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+
+package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
+
+import java.util.Map;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+
+public interface ParsingStrategy<N extends DataContainerNode<?>> {
+
+    void prepareAttribues(Map<QName, String> attributes, DataContainerNodeBuilder<?, N> containerBuilder);
+
+    N applyStrategy(DataContainerNodeBuilder<?, N> containerBuilder);
+
+    void addListIdentifier(QName listIdent);
+
+    void popListIdentifier();
+}

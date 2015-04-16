@@ -178,7 +178,7 @@ public class YangDataOperationsTest {
         Document currentConfigElement = readXmlToDocument(resourceAsStream);
         Preconditions.checkNotNull(currentConfigElement);
 
-        return Optional.of(DomToNormalizedNodeParserFactory.getInstance(DomUtils.defaultValueCodecProvider(), schema).getContainerNodeParser().parse(
+        return Optional.fromNullable(DomToNormalizedNodeParserFactory.getInstance(DomUtils.defaultValueCodecProvider(), schema).getContainerNodeParser().parse(
                 Collections.singletonList(currentConfigElement.getDocumentElement()), containerNode));
     }
 

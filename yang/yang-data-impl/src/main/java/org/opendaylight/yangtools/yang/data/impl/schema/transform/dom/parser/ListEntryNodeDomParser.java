@@ -25,6 +25,8 @@ abstract class ListEntryNodeDomParser<N extends DataContainerNode<?>> extends Li
         this.dispatcher = Preconditions.checkNotNull(dispatcher);
     }
 
+
+
     @Override
     protected LinkedListMultimap<QName, Element> mapChildElements(Iterable<Element> elements) {
         return DomUtils.mapChildElementsForSingletonNode(elements.iterator().next());
