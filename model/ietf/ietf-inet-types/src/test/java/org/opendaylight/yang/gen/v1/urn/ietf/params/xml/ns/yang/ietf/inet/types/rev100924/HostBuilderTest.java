@@ -22,13 +22,14 @@ public class HostBuilderTest {
 
     @Test
     public void testGetDefaultInstanceIpv6() throws Exception {
-        testIpv6("2001:db8:8s5a3:0:0:8a2e:370:7334");
-        testIpv6("2001:db8:85a3::8a2e:370:7334");
+        testIpv6("2001:db8:85a3:0:0:8a2e:370:7334","2001:db8:85a3::8a2e:370:7334");
+        testIpv6("2001:db8:85a3::8a2e:370:7334","2001:db8:85a3::8a2e:370:7334");
+        testIpv6("2001:db8:0:0:0:FFFF:192.168.0.5","2001:db8::ffff:c0a8:5");
     }
 
-    private void testIpv6(final String ivp6string) {
+    private void testIpv6(final String ivp6string, final String ivp6normstring) {
         Host host = HostBuilder.getDefaultInstance(ivp6string);
-        assertEquals(new Host(new IpAddress(new Ipv6Address(ivp6string))), host);
+        assertEquals(new Host(new IpAddress(new Ipv6Address(ivp6normstring))), host);
     }
 
     @Test
