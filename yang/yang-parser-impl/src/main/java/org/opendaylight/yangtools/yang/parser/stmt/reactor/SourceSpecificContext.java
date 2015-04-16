@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 import com.google.common.base.Preconditions;
@@ -23,6 +25,8 @@ import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImportedNamespaceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -32,12 +36,15 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Namesp
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
+import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModuleMap;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinitionMap;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase.ContextBuilder;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBehaviour.Registry, Mutable {
 
@@ -57,6 +64,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     private ModelProcessingPhase inProgressPhase;
     private ModelProcessingPhase finishedPhase;
     private QNameToStatementDefinitionMap qNameToStmtDefMap = new QNameToStatementDefinitionMap();
+    private PrefixToModuleMap prefixToModuleMap = new PrefixToModuleMap();
 
 
     SourceSpecificContext(BuildGlobalContext currentContext,StatementStreamSource source) {
@@ -70,7 +78,15 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     ContextBuilder<?, ?, ?> createDeclaredChild(StatementContextBase<?, ?, ?> current, QName name, StatementSourceReference ref) {
         StatementDefinitionContext<?,?,?> def = getDefinition(name);
-        Preconditions.checkArgument(def != null, "Statement %s does not have type mapping defined.",name);
+
+        //extensions
+        if (def == null) {
+            if (Utils.isValidStatementDefinition(prefixToModuleMap, qNameToStmtDefMap, name)) {
+                def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition(qNameToStmtDefMap.get(Utils.trimPrefix(name))));
+            }
+        }
+
+        Preconditions.checkArgument(def != null, "Statement %s does not have type mapping defined.", name);
         if(current == null) {
             return createDeclaredRoot(def,ref);
         }
@@ -216,13 +232,13 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     void loadStatements() throws SourceException {
         switch (inProgressPhase) {
-        case SOURCE_LINKAGE:
+            case SOURCE_LINKAGE:
             source.writeLinkage(new StatementContextWriter(this, inProgressPhase),stmtDef());
             break;
-        case STATEMENT_DEFINITION:
+            case STATEMENT_DEFINITION:
             source.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes());
             break;
-        case FULL_DECLARATION:
+            case FULL_DECLARATION:
             source.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes());
             break;
         default:
@@ -231,15 +247,29 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     private PrefixToModule prefixes() {
-        // TODO Auto-generated method stub
-        return null;
+        Map<String, QNameModule> prefixes = (Map<String, QNameModule>) currentContext.getAllFromNamespace(PrefixToModule.class);
+        for (Map.Entry<String, QNameModule> prefix : prefixes.entrySet()) {
+            prefixToModuleMap.put(prefix.getKey(), prefix.getValue());
+        }
+        return prefixToModuleMap;
     }
 
     private QNameToStatementDefinition stmtDef() {
+        //regular YANG statements added
         ImmutableMap<QName, StatementSupport<?, ?, ?>> definitions = currentContext.getSupportsForPhase(
                 inProgressPhase).getDefinitions();
         for (Map.Entry<QName, StatementSupport<?,?,?>> entry : definitions.entrySet()) {
             qNameToStmtDefMap.put(entry.getKey(), entry.getValue());
+        }
+
+        //extensions added
+        if (inProgressPhase.equals(ModelProcessingPhase.FULL_DECLARATION)) {
+            Map<QName, SubstatementContext<?, ?, ?>> extensions = (Map<QName, SubstatementContext<?, ?, ?>>) currentContext.getAllFromNamespace(ExtensionNamespace.class);
+            if (extensions != null) {
+                for (Map.Entry<QName, SubstatementContext<?, ?, ?>> extension : extensions.entrySet()) {
+                    qNameToStmtDefMap.put(new QName(YangConstants.RFC6020_YIN_NAMESPACE, extension.getKey().getLocalName()), (StatementDefinition) extension.getValue().definition().getFactory());
+                }
+            }
         }
         return qNameToStmtDefMap;
     }
