@@ -63,4 +63,5 @@ public abstract class ContainerNodeBaseParser<E> extends
 
     @Override
     protected abstract Map<QName, String> getAttributes(E e);
+
 }

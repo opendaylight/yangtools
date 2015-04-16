@@ -7,18 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
 import java.util.Map;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
 
 /**
  * Abstract(base) parser for LeafSetEntryNodes, parses elements of type E.
@@ -28,8 +27,16 @@ import com.google.common.collect.Iterables;
 public abstract class LeafSetEntryNodeBaseParser<E> implements
         ToNormalizedNodeParser<E, LeafSetEntryNode<?>, LeafListSchemaNode> {
 
+    private static final LeafStrategy DEFAULT_PARSING_STRATEGY = new LeafStrategy<NodeWithValue, Object, LeafSetEntryNode<Object>>() {
+
+        @Override
+        public LeafSetEntryNode<Object> applyStrategy(NormalizedNodeAttrBuilder<NodeWithValue, Object, LeafSetEntryNode<Object>> builder) {
+            return builder.build();
+        }
+    };
+
     @Override
-    public final LeafSetEntryNode<Object> parse(Iterable<E> elements, LeafListSchemaNode schema) {
+    public final LeafSetEntryNode<?> parse(Iterable<E> elements, LeafListSchemaNode schema) {
         final int size = Iterables.size(elements);
         Preconditions.checkArgument(size == 1, "Xml elements mapped to leaf node illegal count: %s", size);
 
@@ -40,7 +47,11 @@ public abstract class LeafSetEntryNodeBaseParser<E> implements
                 .leafSetEntryBuilder(schema);
         leafEntryBuilder.withAttributes(getAttributes(e));
 
-        return leafEntryBuilder.withValue(value).build();
+        return getParsingStrategy().applyStrategy(leafEntryBuilder);
+    }
+
+    protected LeafStrategy<NodeWithValue, Object, LeafSetEntryNode<Object>> getParsingStrategy() {
+        return DEFAULT_PARSING_STRATEGY;
     }
 
     /**
