@@ -80,6 +80,9 @@ public final class JsonParserStream implements Closeable, Flushable {
             isEmpty = false;
             final CompositeNodeDataWithSchema compositeNodeDataWithSchema = new CompositeNodeDataWithSchema(parentNode);
             read(reader, compositeNodeDataWithSchema);
+            if (compositeNodeDataWithSchema.getChildrenCount() > 1) {
+                throw new JsonSyntaxException("Multiple root nodes in in JSON input.");
+            }
             compositeNodeDataWithSchema.write(writer);
 
             return this;
