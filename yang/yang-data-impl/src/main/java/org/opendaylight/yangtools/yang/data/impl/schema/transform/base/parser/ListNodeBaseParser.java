@@ -28,11 +28,15 @@ public abstract class ListNodeBaseParser<E, N extends NormalizedNode<?, ?>, O ex
         CollectionNodeBuilder<N, O> listBuilder = provideBuilder(schema);
         for (E childNode : childNodes) {
             N listChild = getListEntryNodeParser().parse(Collections.singletonList(childNode), schema);
-            listBuilder.withChild(listChild);
+            if (listChild != null) {
+                listBuilder.withChild(listChild);
+            }
         }
 
         return listBuilder.build();
     }
+
+
 
     /**
      *

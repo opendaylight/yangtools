@@ -7,18 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
 import java.util.Map;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
 
 /**
  * Abstract(base) parser for LeafNodes, parses elements of type E.
@@ -27,6 +27,14 @@ import com.google.common.collect.Iterables;
  */
 public abstract class LeafNodeBaseParser<E> implements
         ToNormalizedNodeParser<E, LeafNode<?>, LeafSchemaNode> {
+
+    private static final LeafStrategy DEFAULT_PARSING_STRATEGY = new LeafStrategy<NodeIdentifier, Object, LeafNode<Object>>() {
+
+        @Override
+        public LeafNode<Object> applyStrategy(NormalizedNodeAttrBuilder<NodeIdentifier, Object, LeafNode<Object>> builder) {
+            return builder.build();
+        }
+    };
 
     @Override
     public final LeafNode<?> parse(Iterable<E> elements, LeafSchemaNode schema) {
@@ -40,7 +48,8 @@ public abstract class LeafNodeBaseParser<E> implements
 
         leafBuilder.withAttributes(getAttributes(e));
 
-        return leafBuilder.withValue(value).build();
+        return getParsingStrategy().applyStrategy(leafBuilder.withValue(value));
+        //return Optional.<LeafNode<?>>of(leafBuilder.withValue(value).build());
     }
 
     /**
@@ -59,4 +68,8 @@ public abstract class LeafNodeBaseParser<E> implements
      * @return attributes mapped to QNames
      */
     protected abstract Map<QName, String> getAttributes(E e);
+
+    protected LeafStrategy<NodeIdentifier, Object, LeafNode<Object>> getParsingStrategy() {
+        return DEFAULT_PARSING_STRATEGY;
+    }
 }

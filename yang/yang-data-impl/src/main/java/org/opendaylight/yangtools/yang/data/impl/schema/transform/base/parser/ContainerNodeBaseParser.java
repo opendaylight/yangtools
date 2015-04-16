@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
+import com.google.common.base.Optional;
 import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -63,4 +64,20 @@ public abstract class ContainerNodeBaseParser<E> extends
 
     @Override
     protected abstract Map<QName, String> getAttributes(E e);
+
+    //    @Override
+//    protected DefaultParsingStrategy<ContainerNode> getStrat(final DataContainerNodeBuilder<?, ContainerNode> containerBuilder) {
+//        return new DefaultParsingStrategy<ContainerNode>(containerBuilder) {
+//            @Override
+//            public ContainerNode invoke(Op a) {
+//                ContainerNode invoke = super.applyStrategy();
+//                invoke.getAttributeValue();
+//                // callback
+//                Optional.absent();
+//                return invoke;
+//            }
+//        };
+//
+//        return super.getStrat(containerBuilder);
+//    }
 }

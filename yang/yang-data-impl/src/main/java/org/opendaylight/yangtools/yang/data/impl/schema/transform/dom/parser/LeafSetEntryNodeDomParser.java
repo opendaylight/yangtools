@@ -12,6 +12,7 @@ import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.LeafSetEntryNodeBaseParser;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.LeafStrategy;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -23,10 +24,18 @@ final class LeafSetEntryNodeDomParser extends LeafSetEntryNodeBaseParser<Element
 
     private final XmlCodecProvider codecProvider;
     private final SchemaContext ctx;
+    private final LeafStrategy strategy;
 
-    LeafSetEntryNodeDomParser(XmlCodecProvider codecProvider, final SchemaContext schema) {
-        ctx = schema;
+    LeafSetEntryNodeDomParser(final XmlCodecProvider codecProvider, final SchemaContext schema) {
+        this.ctx = schema;
         this.codecProvider = Preconditions.checkNotNull(codecProvider);
+        this.strategy = super.getParsingStrategy();
+    }
+
+    LeafSetEntryNodeDomParser(final XmlCodecProvider codecProvider, final SchemaContext schema, final LeafStrategy strategy) {
+        this.ctx = schema;
+        this.codecProvider = Preconditions.checkNotNull(codecProvider);
+        this.strategy = strategy;
     }
 
     @Deprecated
@@ -42,5 +51,10 @@ final class LeafSetEntryNodeDomParser extends LeafSetEntryNodeBaseParser<Element
     @Override
     protected Map<QName, String> getAttributes(Element element) {
         return DomUtils.toAttributes(element.getAttributes());
+    }
+
+    @Override
+    protected LeafStrategy getParsingStrategy() {
+        return this.strategy;
     }
 }
