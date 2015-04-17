@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Map;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -92,7 +93,7 @@ public abstract class YangSourceContextResolver {
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(YangSourceContextResolver.class);
-    private final HashMap<SourceIdentifier, YangSourceContextResolver.ResolutionState> alreadyProcessed = new HashMap<>();
+    private final Map<SourceIdentifier, YangSourceContextResolver.ResolutionState> alreadyProcessed = new HashMap<>();
     private final ImmutableSet.Builder<SourceIdentifier> missingSources = ImmutableSet.builder();
     private final ImmutableMultimap.Builder<SourceIdentifier, ModuleImport> missingDependencies = ImmutableMultimap
             .builder();
