@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.concurrent.ThreadSafe;
 import org.opendaylight.yangtools.concepts.Delegator;
@@ -208,7 +209,7 @@ public class YangSourceContext implements AdvancedSchemaSourceProvider<InputStre
 
     private List<InputStream> getValidInputStreamsInternal() {
         assertNotClosed();
-        final HashSet<SourceIdentifier> sourcesToLoad = new HashSet<>();
+        final Set<SourceIdentifier> sourcesToLoad = new HashSet<>();
         sourcesToLoad.addAll(this.getValidSources());
         for (SourceIdentifier source : this.getValidSources()) {
             if (source.getRevision() != null) {
