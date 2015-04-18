@@ -5,25 +5,20 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
+package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidates;
 
 /**
  * Default utility implementation of the {@link DataTreeCandidate} contract.
- * @deprecated Use {@link DataTreeCandidates#newDataTreeCandidate} instead.
  */
-@Deprecated
-public final class DefaultDataTreeCandidate implements DataTreeCandidate {
+final class DefaultDataTreeCandidate implements DataTreeCandidate {
     private final YangInstanceIdentifier rootPath;
     private final DataTreeCandidateNode rootNode;
 
-    public DefaultDataTreeCandidate(final YangInstanceIdentifier rootPath, final DataTreeCandidateNode rootNode) {
+    DefaultDataTreeCandidate(final YangInstanceIdentifier rootPath, final DataTreeCandidateNode rootNode) {
         this.rootPath = Preconditions.checkNotNull(rootPath);
         this.rootNode = Preconditions.checkNotNull(rootNode);
     }
