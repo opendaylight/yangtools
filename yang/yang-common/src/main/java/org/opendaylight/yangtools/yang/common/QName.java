@@ -267,7 +267,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *            Local name part of QName. MUST NOT BE null.
      * @return
      * @throws NullPointerException
-     *             If any of paramaters is null.
+     *             If any of parameters is null.
      * @throws IllegalArgumentException
      *             If <code>namespace</code> is not valid URI or
      *             <code>revision</code> is not according to format
@@ -275,15 +275,34 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      */
     public static QName create(final String namespace, final String revision, final String localName)
             throws IllegalArgumentException {
-        final URI namespaceUri;
+        final URI namespaceUri = parseNamespace(namespace);
+        final Date revisionDate = parseRevision(revision);
+        return create(namespaceUri, revisionDate, localName);
+    }
+
+    private static URI parseNamespace(final String namespace) {
         try {
-            namespaceUri = new URI(namespace);
+            return new URI(namespace);
         } catch (URISyntaxException ue) {
             throw new IllegalArgumentException(String.format("Namespace '%s' is not a valid URI", namespace), ue);
         }
+    }
 
-        Date revisionDate = parseRevision(revision);
-        return create(namespaceUri, revisionDate, localName);
+    /**
+     * Creates new QName.
+     *
+     * @param namespace
+     *            Namespace of QName, MUST NOT BE Null.
+     * @param localName
+     *            Local name part of QName. MUST NOT BE null.
+     * @return
+     * @throws NullPointerException
+     *             If any of parameters is null.
+     * @throws IllegalArgumentException
+     *             If <code>namespace</code> is not valid URI.
+     */
+    public static QName create(final String namespace, final String localName) throws IllegalArgumentException {
+        return create(parseNamespace(namespace), null, localName);
     }
 
     @Override
