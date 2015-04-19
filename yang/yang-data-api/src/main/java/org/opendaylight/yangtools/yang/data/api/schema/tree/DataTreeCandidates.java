@@ -32,7 +32,13 @@ public final class DataTreeCandidates {
     }
 
     public static void applyToModification(final DataTreeModification modification, final DataTreeCandidate candidate) {
-        applyNode(modification, candidate.getRootPath(), candidate.getRootNode());
+        if (modification instanceof CursorAwareDataTreeModification) {
+            try (DataTreeModificationCursor cursor = ((CursorAwareDataTreeModification) modification).createCursor(candidate.getRootPath())) {
+                applyNode(cursor, candidate.getRootNode());
+            }
+        } else {
+            applyNode(modification, candidate.getRootPath(), candidate.getRootNode());
+        }
     }
 
     private static void applyNode(final DataTreeModification modification, final YangInstanceIdentifier path, final DataTreeCandidateNode node) {
@@ -54,6 +60,29 @@ public final class DataTreeCandidates {
         case WRITE:
             modification.write(path, node.getDataAfter().get());
             LOG.debug("Modification {} written path {}", modification, path);
+            break;
+        default:
+            throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
+        }
+    }
+
+    private static void applyNode(final DataTreeModificationCursor cursor, final DataTreeCandidateNode node) {
+        switch (node.getModificationType()) {
+        case DELETE:
+            cursor.delete(node.getIdentifier());
+            break;
+        case SUBTREE_MODIFIED:
+            cursor.enter(node.getIdentifier());
+            for (DataTreeCandidateNode child : node.getChildNodes()) {
+                applyNode(cursor, child);
+            }
+            cursor.exit();
+            break;
+        case UNMODIFIED:
+            // No-op
+            break;
+        case WRITE:
+            cursor.write(node.getIdentifier(), node.getDataAfter().get());
             break;
         default:
             throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
