@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
+import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -17,6 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModificationCursor;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
@@ -200,5 +202,50 @@ final class InMemoryDataTreeModification implements DataTreeModification {
 
     Version getVersion() {
         return version;
+    }
+
+    private static void applyChildren(final DataTreeModificationCursor cursor, final ModifiedNode node) {
+        final Collection<ModifiedNode> children = node.getChildren();
+        if (!children.isEmpty()) {
+            cursor.enter(node.getIdentifier());
+            for (ModifiedNode child : children) {
+                applyNode(cursor, child);
+            }
+            cursor.exit();
+        }
+    }
+
+    private static void applyNode(final DataTreeModificationCursor cursor, final ModifiedNode node) {
+        switch (node.getOperation()) {
+        case NONE:
+            break;
+        case DELETE:
+            cursor.delete(node.getIdentifier());
+            break;
+        case MERGE:
+            cursor.merge(node.getIdentifier(), node.getWrittenValue());
+            applyChildren(cursor, node);
+            break;
+        case TOUCH:
+            // TODO: we could improve efficiency of cursor use if we could understand
+            //       nested TOUCH operations. One way of achieving that would be a proxy
+            //       cursor, which would keep track of consecutive enter and exit calls
+            //       and coalesce them.
+            applyChildren(cursor, node);
+            break;
+        case WRITE:
+            cursor.write(node.getIdentifier(), node.getWrittenValue());
+            applyChildren(cursor, node);
+            break;
+        default:
+            throw new IllegalArgumentException("Unhandled node operation " + node.getOperation());
+        }
+    }
+
+    @Override
+    public void applyToCursor(final DataTreeModificationCursor cursor) {
+        for (ModifiedNode child : rootNode.getChildren()) {
+            applyNode(cursor, child);
+        }
     }
 }
