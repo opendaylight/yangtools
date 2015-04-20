@@ -1,0 +1,19 @@
+module imported {
+	namespace imp;
+	prefix imp;
+
+	container aug1 {
+        container aug11 {
+            container aug111 {
+
+            }
+        }
+    }
+
+    grouping grp {
+        container aug2 {
+            container aug22 {
+            }
+        }
+    }
+}

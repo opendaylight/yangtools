@@ -9,6 +9,9 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -17,9 +20,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
@@ -40,7 +45,7 @@ public class AugmentUtils {
     }
 
     public static void copyFromSourceToTarget(StatementContextBase<?, ?, ?> sourceCtx,
-            StatementContextBase<?, ?, ?> targetCtx) throws SourceException {
+                                              StatementContextBase<?, ?, ?> targetCtx) throws SourceException {
 
         QNameModule newQNameModule = getNewQNameModule(targetCtx, sourceCtx);
         copyDeclaredStmts(sourceCtx, targetCtx, newQNameModule);
@@ -49,7 +54,7 @@ public class AugmentUtils {
     }
 
     public static void copyDeclaredStmts(StatementContextBase<?, ?, ?> sourceCtx,
-            StatementContextBase<?, ?, ?> targetCtx, QNameModule newQNameModule) throws SourceException {
+                                         StatementContextBase<?, ?, ?> targetCtx, QNameModule newQNameModule) throws SourceException {
         Collection<? extends StatementContextBase<?, ?, ?>> declaredSubstatements = sourceCtx.declaredSubstatements();
         for (StatementContextBase<?, ?, ?> originalStmtCtx : declaredSubstatements) {
             if (needToCopyByAugment(originalStmtCtx)) {
@@ -62,7 +67,7 @@ public class AugmentUtils {
     }
 
     public static void copyEffectiveStmts(StatementContextBase<?, ?, ?> sourceCtx,
-            StatementContextBase<?, ?, ?> targetCtx, QNameModule newQNameModule) throws SourceException {
+                                          StatementContextBase<?, ?, ?> targetCtx, QNameModule newQNameModule) throws SourceException {
         Collection<? extends StatementContextBase<?, ?, ?>> effectiveSubstatements = sourceCtx.effectiveSubstatements();
         for (StatementContextBase<?, ?, ?> originalStmtCtx : effectiveSubstatements) {
             if (needToCopyByAugment(originalStmtCtx)) {
@@ -75,7 +80,7 @@ public class AugmentUtils {
     }
 
     public static QNameModule getNewQNameModule(StatementContextBase<?, ?, ?> targetCtx,
-            StatementContextBase<?, ?, ?> sourceCtx) {
+                                                StatementContextBase<?, ?, ?> sourceCtx) {
         Object targetStmtArgument = targetCtx.getStatementArgument();
 
         final StatementContextBase<?, ?, ?> root = sourceCtx.getRoot();
@@ -121,21 +126,49 @@ public class AugmentUtils {
     public static StatementContextBase<?, ?, ?> getAugmentTargetCtx(
             final Mutable<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> augmentNode) {
 
-        final SchemaNodeIdentifier augmentTargetPath = augmentNode.getStatementArgument();
+        final SchemaNodeIdentifier augmentTargetNode = augmentNode.getStatementArgument();
 
-        QNameModule module;
-        if (augmentTargetPath != null) {
-            module = augmentTargetPath.getPathFromRoot().iterator().next().getModule();
+        List<StatementContextBase<?, ?, ?>> rootStatementCtxList = new LinkedList<>();
+
+        if (augmentTargetNode.isAbsolute()) {
+
+            QNameModule module;
+            if (augmentTargetNode != null) {
+                module = augmentTargetNode.getPathFromRoot().iterator().next().getModule();
+            } else {
+                throw new IllegalArgumentException(
+                        "Augment argument null, something bad happened in some of previous parsing phases");
+            }
+
+            StatementContextBase<?, ?, ?> rootStatementCtx = (StatementContextBase<?, ?, ?>) augmentNode.getFromNamespace(
+                    NamespaceToModule.class, module);
+            rootStatementCtxList.add(rootStatementCtx);
+
+            final Map<?, ?> subModules = rootStatementCtx.getAllFromNamespace(IncludedModuleContext.class);
+            if (subModules != null) {
+                rootStatementCtxList.addAll((Collection<? extends StatementContextBase<?, ?, ?>>) subModules.values());
+            }
+
         } else {
-            throw new IllegalArgumentException(
-                    "Augment argument null, something bad happened in some of previous parsing phases");
+            StatementContextBase<?, ?, ?> parent = (StatementContextBase<?, ?, ?>) augmentNode.getParentContext();
+            if (StmtContextUtils.producesDeclared(parent, UsesStatement.class)) {
+                rootStatementCtxList.add(parent.getParentContext());
+            } else {
+                //error
+            }
         }
 
-        StatementContextBase<?, ?, ?> rootStatementCtx = (StatementContextBase<?, ?, ?>) augmentNode.getFromNamespace(
-                NamespaceToModule.class, module);
+        List<QName> augmentTargetPath = new LinkedList<>();
 
-        final StatementContextBase<?, ?, ?> augmentTargetCtx = Utils.findCtxOfNodeInRoot(rootStatementCtx,
-                augmentTargetPath);
+        augmentTargetPath.addAll((Collection<? extends QName>) augmentTargetNode.getPathFromRoot());
+
+        StatementContextBase<?, ?, ?> augmentTargetCtx = null;
+        for (final StatementContextBase<?, ?, ?> rootStatementCtx : rootStatementCtxList) {
+            augmentTargetCtx = Utils.findCtxOfNodeInRoot(rootStatementCtx,
+                    augmentTargetPath);
+            if (augmentTargetCtx != null) break;
+        }
+
 
         if (augmentTargetCtx == null) {
 
