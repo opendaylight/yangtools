@@ -67,7 +67,7 @@ public class SubmoduleStatementImpl extends
         @Override
         public void onLinkageDeclared(
                 Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> stmt)
-                throws InferenceException, SourceException {
+                throws SourceException {
 
             Optional<Date> revisionDate = Optional
                     .fromNullable(firstAttributeOf(

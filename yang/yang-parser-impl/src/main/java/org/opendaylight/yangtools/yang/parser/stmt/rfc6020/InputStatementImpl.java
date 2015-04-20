@@ -40,8 +40,7 @@ public class InputStatementImpl extends AbstractDeclaredStatement<QName>
         @Override
         public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value)
                 throws SourceException {
-            value = "input";
-            return Utils.qNameFromArgument(ctx, value);
+            return Utils.qNameFromArgument(ctx, "input");
         }
 
         @Override

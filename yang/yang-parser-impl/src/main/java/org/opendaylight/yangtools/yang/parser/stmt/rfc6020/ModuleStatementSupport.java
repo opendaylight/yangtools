@@ -63,7 +63,7 @@ public class ModuleStatementSupport extends
 
     @Override
     public void onLinkageDeclared(Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt)
-            throws InferenceException, SourceException {
+            throws SourceException {
 
         Optional<URI> moduleNs = Optional.fromNullable(firstAttributeOf(stmt.declaredSubstatements(),
                 NamespaceStatement.class));

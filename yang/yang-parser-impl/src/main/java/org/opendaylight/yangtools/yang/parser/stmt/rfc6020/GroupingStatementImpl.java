@@ -62,10 +62,8 @@ public class GroupingStatementImpl extends AbstractDeclaredStatement<QName>
 
         @Override
         public void onFullDefinitionDeclared(
-                Mutable<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> stmt)
-                throws InferenceException, SourceException {
+                Mutable<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> stmt) throws SourceException {
             stmt.getParentContext().addContext(GroupingNamespace.class, stmt.getStatementArgument(),stmt);
-            //
         }
 
     }

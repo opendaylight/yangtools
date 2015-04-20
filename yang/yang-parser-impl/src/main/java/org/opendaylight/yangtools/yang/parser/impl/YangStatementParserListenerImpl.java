@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
@@ -29,6 +31,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
     private QNameToStatementDefinition stmtDef;
     private PrefixToModule prefixes;
     private List<String> toBeSkipped = new ArrayList<>();
+    private static final Logger LOG = LoggerFactory.getLogger(YangStatementParserListenerImpl.class);
 
     public YangStatementParserListenerImpl(StatementSourceReference ref) {
         this.ref = ref;
@@ -61,7 +64,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
                         toBeSkipped.add(((YangStatementParser.KeywordContext) child).children.get(0).getText());
                     }
                 } catch (SourceException e) {
-                    e.printStackTrace();
+                    LOG.warn(e.getMessage(), e);
                 }
             } else if (child instanceof YangStatementParser.ArgumentContext) {
                 try {
@@ -71,7 +74,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
                     else
                         action = true;
                 } catch (SourceException e) {
-                    e.printStackTrace();
+                    LOG.warn(e.getMessage(), e);
                 }
             }
 
@@ -94,7 +97,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
                         toBeSkipped.remove(statementName);
                     }
                 } catch (SourceException e) {
-                    e.printStackTrace();
+                    LOG.warn(e.getMessage(), e);
                 }
             }
         }
