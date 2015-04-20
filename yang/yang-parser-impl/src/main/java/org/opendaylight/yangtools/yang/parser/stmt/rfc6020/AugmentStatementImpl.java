@@ -10,7 +10,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.EFFECTIVE_MODEL;
 
 import java.util.Collection;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
 
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -30,13 +31,13 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AugmentEffe
 
 public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeIdentifier> implements AugmentStatement {
 
+    private static final Logger LOG = LoggerFactory.getLogger(AugmentStatementImpl.class);
+
     protected AugmentStatementImpl(StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> context) {
         super(context);
     }
 
-    public static class Definition
-            extends
-            AbstractStatementSupport<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> {
+    public static class Definition extends AbstractStatementSupport<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.AUGMENT);
@@ -72,15 +73,13 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                 @Override
                 public void apply() throws InferenceException {
 
-                    final StatementContextBase<?, ?, ?> augmentTargetCtx = AugmentUtils
-                            .getAugmentTargetCtx(augmentNode);
-                    StatementContextBase<?, ?, ?> augmentSourceCtx = (StatementContextBase<?, ?, ?>) sourceCtxPrereq
-                            .get();
+                    final StatementContextBase<?, ?, ?> augmentTargetCtx = AugmentUtils.getAugmentTargetCtx(augmentNode);
+                    final StatementContextBase<?, ?, ?> augmentSourceCtx = (StatementContextBase<?, ?, ?>) sourceCtxPrereq.get();
 
                     try {
                         AugmentUtils.copyFromSourceToTarget(augmentSourceCtx, augmentTargetCtx);
                     } catch (SourceException e) {
-                        e.printStackTrace();
+                        LOG.warn(e.getMessage(), e);
                     }
                 }
 

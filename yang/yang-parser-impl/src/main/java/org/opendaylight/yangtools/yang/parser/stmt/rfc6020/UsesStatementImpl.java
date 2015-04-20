@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.FULL_DECLARATION;
 
 import java.util.Collection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -37,7 +39,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UsesEffectiveStatementImpl;
 
+
 public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implements UsesStatement {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UsesStatementImpl.class);
 
     protected UsesStatementImpl(StmtContext<QName, UsesStatement, ?> context) {
         super(context);
@@ -58,7 +63,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
         @Override
         public void onFullDefinitionDeclared(
                 final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode)
-                throws InferenceException, SourceException {
+                throws SourceException {
 
             ModelActionBuilder usesAction = usesNode.newInferenceAction(FULL_DECLARATION);
             final QName groupingName = usesNode.getStatementArgument();
@@ -72,31 +77,25 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
 
                 @Override
                 public void apply() throws InferenceException {
-                    StatementContextBase<?, ?, ?> targetNodeStmtCtx = (StatementContextBase<?, ?, ?>) targetNodePre
-                            .get();
-                    StatementContextBase<?, ?, ?> sourceGrpStmtCtx = (StatementContextBase<?, ?, ?>) sourceGroupingPre
-                            .get();
+                    StatementContextBase<?, ?, ?> targetNodeStmtCtx = (StatementContextBase<?, ?, ?>) targetNodePre.get();
+                    StatementContextBase<?, ?, ?> sourceGrpStmtCtx = (StatementContextBase<?, ?, ?>) sourceGroupingPre.get();
 
                     try {
                         GroupingUtils.copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx);
                         GroupingUtils.resolveUsesNode(usesNode, targetNodeStmtCtx);
                     } catch (SourceException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        LOG.warn(e.getMessage(), e);
                     }
                 }
 
                 @Override
                 public void prerequisiteFailed(Collection<? extends Prerequisite<?>> failed) throws InferenceException {
                     if (failed.contains(sourceGroupingPre)) {
-                        throw new InferenceException("Grouping " + groupingName + " was not resovled.", usesNode
-                                .getStatementSourceReference());
+                        throw new InferenceException("Grouping " + groupingName + " was not resovled.", usesNode.getStatementSourceReference());
                     }
                     throw new InferenceException("Unknown error occurred.", usesNode.getStatementSourceReference());
                 }
-
             });
-
         }
 
         @Override

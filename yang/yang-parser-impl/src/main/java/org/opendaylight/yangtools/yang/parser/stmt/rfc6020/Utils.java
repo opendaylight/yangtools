@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
@@ -42,28 +41,25 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdenti
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class Utils {
+public final class Utils {
 
+    private Utils() {
+    }
+
+    private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
     private static final CharMatcher DOUBLE_QUOTE_MATCHER = CharMatcher.is('"');
     private static final CharMatcher SINGLE_QUOTE_MATCHER = CharMatcher.is('\'');
 
     private static final char SEPARATOR_NODENAME = '/';
 
     private static final String REGEX_PATH_ABS = "/[^/].+";
-
-    public static final StatementSourceReference CONTEXT_REF = new StatementSourceReference() {
-
-        @Override
-        public StatementSource getStatementSource() {
-            return StatementSource.CONTEXT;
-        }
-    };
 
     public static List<String> splitPathToNodeNames(String path) {
 
@@ -78,7 +74,7 @@ public class Utils {
         try {
             xPath.compile(path);
         } catch (XPathExpressionException e) {
-            throw new IllegalArgumentException("An argument is not valid XPath string");
+            throw new IllegalArgumentException("Argument is not valid XPath string", e);
         }
     }
 
@@ -138,7 +134,7 @@ public class Utils {
         try {
             qNameModule = QNameModule.create(new URI(""), new Date(0));
         } catch (URISyntaxException e) {
-            e.printStackTrace();
+            LOG.warn(e.getMessage(), e);
         }
         String localName = null;
 
@@ -227,8 +223,9 @@ public class Utils {
             if (argument instanceof QName) {
                 QName qname = (QName) argument;
                 qNamesFromRoot.add(qname);
-            } else
+            } else {
                 return SchemaPath.SAME;
+            }
         }
 
         return SchemaPath.create(qNamesFromRoot, true);
