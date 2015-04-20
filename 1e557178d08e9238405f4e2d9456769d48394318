@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3aa0d159_68d1c1cc",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImpl.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 1224,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-20T13:28:37Z",
+      "side": 1,
+      "message": "use !Iterables.isEmpty(...) for more clarity",
+      "revId": "1e557178d08e9238405f4e2d9456769d48394318",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_28dbb9ee",
+        "filename": "code-generator/binding-generator-impl/src/test/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImplTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-20T13:28:37Z",
+      "side": 1,
+      "message": "wrong year, missing copyright",
+      "revId": "1e557178d08e9238405f4e2d9456769d48394318",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_48d885ef",
+        "filename": "code-generator/binding-generator-impl/src/test/java/org/opendaylight/yangtools/sal/binding/generator/impl/BindingGeneratorImplTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-20T13:28:37Z",
+      "side": 1,
+      "message": "fix your editor: no wildcard imports, no lines between \u0027groups\u0027",
+      "revId": "1e557178d08e9238405f4e2d9456769d48394318",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
