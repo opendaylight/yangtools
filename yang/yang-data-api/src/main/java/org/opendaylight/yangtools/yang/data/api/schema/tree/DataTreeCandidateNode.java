@@ -53,18 +53,18 @@ public interface DataTreeCandidateNode {
     @Nonnull ModificationType getModificationType();
 
     /**
-     * Return the before-image of data corresponding to the node.
-     *
-     * @return Node data as they were present in the tree before
-     *         the modification was applied.
-     */
-    Optional<NormalizedNode<?, ?>> getDataAfter();
-
-    /**
      * Return the after-image of data corresponding to the node.
      *
      * @return Node data as they will be present in the tree after
      *         the modification is applied.
      */
-    Optional<NormalizedNode<?, ?>> getDataBefore();
+    @Nonnull Optional<NormalizedNode<?, ?>> getDataAfter();
+
+    /**
+     * Return the before-image of data corresponding to the node.
+     *
+     * @return Node data as they were present in the tree before
+     *         the modification was applied.
+     */
+    @Nonnull Optional<NormalizedNode<?, ?>> getDataBefore();
 }
