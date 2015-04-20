@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3aa0d159_63fec26d",
+        "filename": "model/ietf/ietf-inet-types/accelerate/data/Ipv6Address.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2015-04-20T15:56:43Z",
+      "side": 1,
+      "message": "UnknownHostException\nIf we get some other Exception, we do not want to swallow it.",
+      "range": {
+        "startLine": 277,
+        "startChar": 23,
+        "endLine": 277,
+        "endChar": 32
+      },
+      "revId": "4b73c467562b6bbbca3b71750cd9386d7ba36fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_233f5a27",
+        "filename": "model/ietf/ietf-inet-types/accelerate/data/Ipv6Address.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 278,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2015-04-20T15:56:43Z",
+      "side": 1,
+      "message": "Then we should log that the impossible has just happened here.",
+      "range": {
+        "startLine": 278,
+        "startChar": 15,
+        "endLine": 278,
+        "endChar": 27
+      },
+      "revId": "4b73c467562b6bbbca3b71750cd9386d7ba36fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_03749efb",
+        "filename": "model/ietf/ietf-inet-types/accelerate/data/Ipv6Address.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 296,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2015-04-20T15:56:43Z",
+      "side": 1,
+      "message": "Is toAddrString ready to be called with null argument?",
+      "range": {
+        "startLine": 296,
+        "startChar": 39,
+        "endLine": 296,
+        "endChar": 57
+      },
+      "revId": "4b73c467562b6bbbca3b71750cd9386d7ba36fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_e3f17296",
+        "filename": "model/ietf/ietf-inet-types/accelerate/data/Ipv6Address.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 310,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2015-04-20T15:56:43Z",
+      "side": 1,
+      "message": "A line involving _zone is missing, and it needs to be here as we are checking _zone in equals().",
+      "range": {
+        "startLine": 310,
+        "startChar": 8,
+        "endLine": 310,
+        "endChar": 21
+      },
+      "revId": "4b73c467562b6bbbca3b71750cd9386d7ba36fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
