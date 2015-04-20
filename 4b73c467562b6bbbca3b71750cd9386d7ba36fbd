@@ -73,6 +73,30 @@
     },
     {
       "key": {
+        "uuid": "3aa0d159_f5d5a543",
+        "filename": "model/ietf/ietf-inet-types/accelerate/data/Ipv6Address.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 277,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2015-04-20T17:21:46Z",
+      "side": 1,
+      "message": "OutOfMemoryErrpr is an unchecked JVM Error and can occur anywhere - you can\u0027t possibly be defensive abut it everywhere. However you typically don\u0027t want to catch OutOfMemoryErrpr as OutOfMemoryErrpr has some special handling in the JVM, e.g. dumping the heap with -XX:+HeapDumpOnOutOfMemoryError. In any event, OutOfMemoryErrpr is not derived from Exception so this would not catch it anyway.\n\nThat said, the getByAddress signature only declares UnknownHostException so I would suggest to only catch that type to make it clear in the code. I also agree with Vratko to just throw unchecked IllegalArgumentException with the UnknownHostException as the cause even if UnknownHostException is impossible here (currently anyway). Then you don\u0027t have to worry about null returned at call sites.",
+      "parentUuid": "3aa0d159_f52b6580",
+      "range": {
+        "startLine": 277,
+        "startChar": 23,
+        "endLine": 277,
+        "endChar": 32
+      },
+      "revId": "4b73c467562b6bbbca3b71750cd9386d7ba36fbd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3aa0d159_233f5a27",
         "filename": "model/ietf/ietf-inet-types/accelerate/data/Ipv6Address.java",
         "patchSetId": 6
