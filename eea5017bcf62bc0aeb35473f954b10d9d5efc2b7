@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3aa0d159_b881544c",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/BindingToRestRpc.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-20T20:03:47Z",
+      "side": 1,
+      "message": "some whitespace here",
+      "revId": "eea5017bcf62bc0aeb35473f954b10d9d5efc2b7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_58961096",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/RestListenableEventStreamContext.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-20T20:03:47Z",
+      "side": 1,
+      "message": "and here",
+      "revId": "eea5017bcf62bc0aeb35473f954b10d9d5efc2b7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_7893cca3",
+        "filename": "restconf/restconf-client-impl/src/main/java/org/opendaylight/yangtools/restconf/client/RestconfClientImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-20T20:03:47Z",
+      "side": 1,
+      "message": "and here :)",
+      "revId": "eea5017bcf62bc0aeb35473f954b10d9d5efc2b7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
