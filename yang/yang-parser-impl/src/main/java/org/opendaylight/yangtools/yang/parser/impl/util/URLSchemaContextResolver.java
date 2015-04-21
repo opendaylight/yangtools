@@ -146,7 +146,7 @@ public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<In
         YangSourceContext yangSourceContext = YangSourceContext.createFrom(sourcesMap, this);
         LOG.debug("Trying to create schema context from {}", sourcesMap.keySet());
 
-        if (yangSourceContext.getMissingDependencies().size() != 0) {
+        if (!yangSourceContext.getMissingDependencies().isEmpty()) {
             LOG.debug("Omitting {} because of unresolved dependencies", yangSourceContext.getMissingDependencies().keySet());
             LOG.debug("Missing model sources for {}", yangSourceContext.getMissingSources());
         }

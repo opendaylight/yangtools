@@ -730,19 +730,19 @@ public final class BuilderUtils {
         final SchemaPath schemaPath = parentPath.createChild(qname);
 
         if (node instanceof AnyXmlSchemaNode) {
-            return new AnyXmlBuilder(moduleName, line, qname, schemaPath, ((AnyXmlSchemaNode) node));
+            return new AnyXmlBuilder(moduleName, line, qname, schemaPath, (AnyXmlSchemaNode) node);
         } else if (node instanceof ChoiceSchemaNode) {
-            return new ChoiceBuilder(moduleName, line, qname, schemaPath, ((ChoiceSchemaNode) node));
+            return new ChoiceBuilder(moduleName, line, qname, schemaPath, (ChoiceSchemaNode) node);
         } else if (node instanceof ContainerSchemaNode) {
-            return new ContainerSchemaNodeBuilder(moduleName, line, qname, schemaPath, ((ContainerSchemaNode) node));
+            return new ContainerSchemaNodeBuilder(moduleName, line, qname, schemaPath, (ContainerSchemaNode) node);
         } else if (node instanceof LeafSchemaNode) {
-            return new LeafSchemaNodeBuilder(moduleName, line, qname, schemaPath, ((LeafSchemaNode) node));
+            return new LeafSchemaNodeBuilder(moduleName, line, qname, schemaPath, (LeafSchemaNode) node);
         } else if (node instanceof LeafListSchemaNode) {
-            return new LeafListSchemaNodeBuilder(moduleName, line, qname, schemaPath, ((LeafListSchemaNode) node));
+            return new LeafListSchemaNodeBuilder(moduleName, line, qname, schemaPath, (LeafListSchemaNode) node);
         } else if (node instanceof ListSchemaNode) {
-            return new ListSchemaNodeBuilder(moduleName, line, qname, schemaPath, ((ListSchemaNode) node));
+            return new ListSchemaNodeBuilder(moduleName, line, qname, schemaPath, (ListSchemaNode) node);
         } else if (node instanceof ChoiceCaseNode) {
-            return new ChoiceCaseBuilder(moduleName, line, qname, schemaPath, ((ChoiceCaseNode) node));
+            return new ChoiceCaseBuilder(moduleName, line, qname, schemaPath, (ChoiceCaseNode) node);
         } else {
             throw new YangParseException(moduleName, line, "Failed to copy node: Unknown type of DataSchemaNode: "
                     + node);
@@ -767,7 +767,7 @@ public final class BuilderUtils {
         for (TypeDefinition<?> node : nodes) {
             QName qname = QName.create(parentQName, node.getQName().getLocalName());
             SchemaPath schemaPath = parentPath.createChild(qname);
-            result.add(new TypeDefinitionBuilderImpl(moduleName, line, qname, schemaPath, ((ExtendedType) node)));
+            result.add(new TypeDefinitionBuilderImpl(moduleName, line, qname, schemaPath, (ExtendedType) node));
         }
         return result;
     }

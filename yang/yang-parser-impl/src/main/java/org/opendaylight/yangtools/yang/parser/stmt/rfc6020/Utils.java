@@ -107,7 +107,7 @@ public final class Utils {
     public static String stringFromStringContext(final YangStatementParser.ArgumentContext context) {
         StringBuilder sb = new StringBuilder();
         List<TerminalNode> strings = context.STRING();
-        if (strings.size() == 0) {
+        if (strings.isEmpty()) {
             strings = Arrays.asList(context.IDENTIFIER());
         }
         for (TerminalNode stringNode : strings) {

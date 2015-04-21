@@ -26,7 +26,7 @@ public final class TopologicalSort {
 
     /**
      * Topological sort of dependent nodes in acyclic graphs.
-     * 
+     *
      * @return Sorted {@link List} of {@link Node}s. Order: Nodes with no
      *         dependencies starting.
      * @throws IllegalStateException
@@ -61,7 +61,7 @@ public final class TopologicalSort {
     private static Set<Node> getDependentNodes(Set<Node> nodes) {
         Set<Node> dependentNodes = Sets.newHashSet();
         for (Node n : nodes) {
-            if (n.getOutEdges().size() == 0) {
+            if (n.getOutEdges().isEmpty()) {
                 dependentNodes.add(n);
             }
         }

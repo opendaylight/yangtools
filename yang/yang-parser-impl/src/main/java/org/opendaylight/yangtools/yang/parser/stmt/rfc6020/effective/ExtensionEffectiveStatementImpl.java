@@ -54,8 +54,9 @@ public class ExtensionEffectiveStatementImpl extends
 
         if (yinElement != null) {
             this.yin = yinElement.argument();
-        } else
-            yin = false;
+        } else {
+            this.yin = false;
+        }
 
     }
 

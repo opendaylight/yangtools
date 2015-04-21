@@ -49,9 +49,9 @@ public class RpcEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
     private void initSubstatements() {
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
-        LinkedList<UnknownSchemaNode> unknownNodes = new LinkedList<UnknownSchemaNode>();
-        HashSet<GroupingDefinition> groupings = new HashSet<GroupingDefinition>();
-        HashSet<TypeDefinition<?>> typeDefinitions = new HashSet<TypeDefinition<?>>();
+        List<UnknownSchemaNode> unknownNodes = new LinkedList<>();
+        Set<GroupingDefinition> groupings = new HashSet<>();
+        Set<TypeDefinition<?>> typeDefinitions = new HashSet<>();
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {

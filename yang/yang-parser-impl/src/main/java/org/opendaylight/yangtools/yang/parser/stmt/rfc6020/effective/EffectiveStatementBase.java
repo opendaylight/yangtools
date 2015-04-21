@@ -127,7 +127,7 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
             result = Collection.class.cast(Collections2.filter(substatements,
                     Predicates.instanceOf(type)));
         } catch (NoSuchElementException e) {
-            result = Collections.EMPTY_LIST;
+            result = Collections.emptyList();
         }
         return result;
     }
@@ -152,7 +152,7 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
             result = Collection.class.cast(Collections2.filter(substatements,
                     Predicates.instanceOf(type)));
         } catch (NoSuchElementException e) {
-            result = Collections.EMPTY_LIST;
+            result = Collections.emptyList();
         }
         return result;
     }

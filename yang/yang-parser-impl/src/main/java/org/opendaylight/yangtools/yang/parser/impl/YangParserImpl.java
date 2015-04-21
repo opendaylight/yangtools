@@ -499,7 +499,7 @@ public final class YangParserImpl implements YangContextParser {
                 }
             }
 
-            if (submodule.getIncludedModules().size() > 0) {
+            if (!submodule.getIncludedModules().isEmpty()) {
                 resolveSubmodules(submodule, submodules);
             }
             addSubmoduleToModule(submodule, module);
