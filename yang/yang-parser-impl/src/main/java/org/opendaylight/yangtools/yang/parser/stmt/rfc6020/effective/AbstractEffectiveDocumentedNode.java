@@ -26,14 +26,16 @@ public abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredState
         DescriptionEffectiveStatementImpl descStmt = firstEffective(DescriptionEffectiveStatementImpl.class);
         if (descStmt != null) {
             description = descStmt.argument();
-        } else
+        } else {
             description = "";
+        }
 
         ReferenceEffectiveStatementImpl refStmt = firstEffective(ReferenceEffectiveStatementImpl.class);
         if (refStmt != null) {
             reference = refStmt.argument();
-        } else
+        } else {
             reference = "";
+        }
 
         // :TODO
         status = null;

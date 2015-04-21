@@ -68,11 +68,12 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
                 }
             } else if (child instanceof YangStatementParser.ArgumentContext) {
                 try {
-                    if (action)
+                    if (action) {
                         writer.argumentValue(
                                 Utils.stringFromStringContext((YangStatementParser.ArgumentContext) child), ref);
-                    else
+                    } else {
                         action = true;
+                    }
                 } catch (SourceException e) {
                     LOG.warn(e.getMessage(), e);
                 }
