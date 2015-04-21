@@ -68,6 +68,30 @@
       "revId": "1b5d4e567891bad0369111d6f1f58d878936abc9",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_eec156e5",
+        "filename": "model/ietf/ietf-inet-types/accelerate/data/Ipv6Address.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 322,
+      "author": {
+        "id": 2774
+      },
+      "writtenOn": "2015-04-21T11:17:00Z",
+      "side": 1,
+      "message": "Fixed version on its way.",
+      "parentUuid": "3aa0d159_0e4e02c2",
+      "range": {
+        "startLine": 322,
+        "startChar": 8,
+        "endLine": 322,
+        "endChar": 12
+      },
+      "revId": "1b5d4e567891bad0369111d6f1f58d878936abc9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
