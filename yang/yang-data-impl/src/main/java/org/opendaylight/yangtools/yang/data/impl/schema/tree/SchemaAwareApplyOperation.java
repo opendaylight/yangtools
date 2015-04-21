@@ -192,7 +192,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
             modification.resolveModificationType(ModificationType.DELETE);
             return modification.setSnapshot(Optional.<TreeNode> absent());
         case TOUCH:
-            Preconditions.checkArgument(currentMeta.isPresent(), "Metadata not available for modification",
+            Preconditions.checkArgument(currentMeta.isPresent(), "Metadata not available for modification %s",
                     modification);
             return modification.setSnapshot(Optional.of(applyTouch(modification, currentMeta.get(),
                     version)));
