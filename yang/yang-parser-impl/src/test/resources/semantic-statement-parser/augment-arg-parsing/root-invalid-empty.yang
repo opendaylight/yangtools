@@ -1,0 +1,9 @@
+module root-invalid-empty {
+	namespace root;
+	prefix root;
+
+	augment "" {
+		container add {
+		}
+	}
+}

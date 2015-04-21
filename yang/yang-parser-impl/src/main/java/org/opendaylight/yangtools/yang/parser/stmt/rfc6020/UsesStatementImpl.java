@@ -89,14 +89,12 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
                 @Override
                 public void prerequisiteFailed(Collection<? extends Prerequisite<?>> failed) throws InferenceException {
                     if (failed.contains(sourceGroupingPre)) {
-                        throw new InferenceException("Grouping " + groupingName + " was not resovled.", usesNode
+                        throw new InferenceException("Grouping " + groupingName + " was not resolved.", usesNode
                                 .getStatementSourceReference());
                     }
                     throw new InferenceException("Unknown error occurred.", usesNode.getStatementSourceReference());
                 }
-
             });
-
         }
 
         @Override
@@ -151,35 +149,4 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
     public Collection<? extends RefineStatement> getRefines() {
         return allDeclared(RefineStatement.class);
     }
-
-    @Override
-    public QName argument() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String rawArgument() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public StatementDefinition statementDefinition() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public StatementSource getStatementSource() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }
