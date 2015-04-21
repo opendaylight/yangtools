@@ -16,6 +16,74 @@
       "revId": "61cb648bda4438ddcd18ac1e9b512ca1b5cd4601",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_8983eccb",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/InstanceIdToNodes.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 65,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-21T13:33:11Z",
+      "side": 1,
+      "message": "should not be public -- factory methods at the end should be moved to NormalizedNodes with better names",
+      "revId": "61cb648bda4438ddcd18ac1e9b512ca1b5cd4601",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_29c1782e",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/InstanceIdToNodes.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-21T13:33:11Z",
+      "side": 1,
+      "message": "add javadocs to abstract methods",
+      "revId": "61cb648bda4438ddcd18ac1e9b512ca1b5cd4601",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_a98828e8",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/InstanceIdToNodes.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 148,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-21T13:33:11Z",
+      "side": 1,
+      "message": "extract into package-private top-level classes",
+      "revId": "61cb648bda4438ddcd18ac1e9b512ca1b5cd4601",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_c9dd7416",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/InstanceIdToNodes.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 336,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-21T13:33:11Z",
+      "side": 1,
+      "message": "commented-out code",
+      "revId": "61cb648bda4438ddcd18ac1e9b512ca1b5cd4601",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
