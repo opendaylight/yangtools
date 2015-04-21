@@ -29,9 +29,9 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.DerivedType;
-import org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -128,7 +128,7 @@ public final class DomUtils {
             final LeafrefTypeDefinition leafrefTypeDefinition = (LeafrefTypeDefinition) baseType;
             baseType = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypeDefinition, schemaCtx, schema);
             value = parseXmlValue(xml, codecProvider, schema, baseType, schemaCtx);
-        } else if (baseType instanceof InstanceIdentifierType) {
+        } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
             value = InstanceIdentifierForXmlCodec.deserialize(xml, schemaCtx);
         } else if (baseType instanceof IdentityrefTypeDefinition) {
             value = InstanceIdentifierForXmlCodec.toIdentity(text, xml, schemaCtx);
