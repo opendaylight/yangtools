@@ -100,7 +100,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
 
     public Entry<YangInstanceIdentifier, BindingStreamEventWriter> newWriter(final InstanceIdentifier<?> path,
             final NormalizedNodeStreamWriter domWriter) {
-        final LinkedList<YangInstanceIdentifier.PathArgument> yangArgs = new LinkedList<>();
+        final List<YangInstanceIdentifier.PathArgument> yangArgs = new LinkedList<>();
         final DataContainerCodecContext<?,?> codecContext = getCodecContextNode(path, yangArgs);
         return new SimpleEntry<>(YangInstanceIdentifier.create(yangArgs), codecContext.createWriter(domWriter));
     }
@@ -220,7 +220,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
     @Override
     public ImmutableMap<String, LeafNodeCodecContext<?>> getLeafNodes(final Class<?> parentClass,
             final DataNodeContainer childSchema) {
-        final HashMap<String, DataSchemaNode> getterToLeafSchema = new HashMap<>();
+        final Map<String, DataSchemaNode> getterToLeafSchema = new HashMap<>();
         for (final DataSchemaNode leaf : childSchema.getChildNodes()) {
             final TypeDefinition<?> typeDef;
             if (leaf instanceof LeafSchemaNode) {
