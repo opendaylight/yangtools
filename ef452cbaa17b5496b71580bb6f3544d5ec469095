@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3aa0d159_c4823952",
+        "filename": "model/ietf/ietf-inet-types/accelerate/data/Ipv6Address.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 320,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2015-04-21T15:01:50Z",
+      "side": 1,
+      "message": "exception\nBut that is just nitpicking.",
+      "range": {
+        "startLine": 320,
+        "startChar": 28,
+        "endLine": 320,
+        "endChar": 39
+      },
+      "revId": "ef452cbaa17b5496b71580bb6f3544d5ec469095",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_64da457a",
+        "filename": "model/ietf/ietf-inet-types/src/test/java/org/opendaylight/yang/gen/v1/urn/ietf/params/xml/ns/yang/ietf/inet/types/rev100924/HostBuilderTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2015-04-21T15:01:50Z",
+      "side": 1,
+      "message": "Maybe some tests with zone index should be added.\nPerhaps we want some negative tests (to see regexps still work as expected) too.",
+      "range": {
+        "startLine": 27,
+        "startChar": 75,
+        "endLine": 27,
+        "endChar": 76
+      },
+      "revId": "ef452cbaa17b5496b71580bb6f3544d5ec469095",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
