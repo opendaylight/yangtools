@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -24,7 +25,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
-public class AugmentUtils {
+public final class AugmentUtils {
+
+    private AugmentUtils() {
+    }
 
     private static final String REGEX_PATH_REL1 = "\\.\\.?\\s*/(.+)";
     private static final String REGEX_PATH_REL2 = "//.*";
@@ -86,24 +90,23 @@ public class AugmentUtils {
             QName targetQName = (QName) targetStmtArgument;
             QNameModule targetQNameModule = targetQName.getModule();
 
-            if (targetQNameModule.equals(sourceQNameModule))
+            if (targetQNameModule.equals(sourceQNameModule)) {
                 return null;
-            else
+            } else {
                 return targetQNameModule;
-        } else
+            }
+        } else {
             return null;
+        }
     }
 
     public static boolean needToCopyByAugment(StmtContext<?, ?, ?> stmtContext) {
 
-        HashSet<StatementDefinition> noCopyDefSet = new HashSet<>();
+        Set<StatementDefinition> noCopyDefSet = new HashSet<>();
         noCopyDefSet.add(Rfc6020Mapping.USES);
 
         StatementDefinition def = stmtContext.getPublicDefinition();
-        if (noCopyDefSet.contains(def))
-            return false;
-        else
-            return true;
+        return (!noCopyDefSet.contains(def));
     }
 
     public static boolean isReusedByAugment(StmtContext<?, ?, ?> stmtContext) {

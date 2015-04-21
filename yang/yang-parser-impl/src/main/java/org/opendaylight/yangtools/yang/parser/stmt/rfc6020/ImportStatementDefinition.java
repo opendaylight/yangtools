@@ -62,7 +62,7 @@ public class ImportStatementDefinition extends
     @Override
     public void onLinkageDeclared(
             final Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt)
-            throws InferenceException, SourceException {
+            throws SourceException {
         final ModuleIdentifier impIdentifier = getImportedModuleIdentifier(stmt);
         ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_LINKAGE);
         final Prerequisite<StmtContext<?, ?, ?>> imported;
@@ -78,13 +78,7 @@ public class ImportStatementDefinition extends
             @Override
             public void apply() throws InferenceException {
                 StmtContext<?, ?, ?> importedModule = imported.get();
-                // URI importedNs =
-                // importedModule.firstSubstatement(NamespaceStatement.class).argument();
-                // String prefix =
-                // stmt.firstSubstatement(PrefixStatement.class).argument();
                 linkageTarget.get().addToNs(ImportedModuleContext.class, impIdentifier, importedModule);
-                // prefixTarget.get().addToNs(PrefixToModule.class, prefix,
-                // QNameModule.create(importedNs, null));
             }
 
             @Override

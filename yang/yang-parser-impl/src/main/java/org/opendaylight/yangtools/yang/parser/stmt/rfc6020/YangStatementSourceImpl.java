@@ -14,11 +14,14 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 
 /**
  *
@@ -27,11 +30,20 @@ import java.io.InputStream;
  *
  */
 
-public class YangStatementSourceImpl implements StatementStreamSource {
+public final class YangStatementSourceImpl implements StatementStreamSource {
 
     private YangStatementParserListenerImpl yangStatementModelParser;
     private YangStatementParser.StatementContext statementContext;
     private ParseTreeWalker walker;
+    private static final Logger LOG = LoggerFactory.getLogger(YangStatementSourceImpl.class);
+
+    private static final StatementSourceReference REF = new StatementSourceReference() {
+
+        @Override
+        public StatementSource getStatementSource() {
+            return StatementSource.DECLARATION;
+        }
+    };
 
     public YangStatementSourceImpl(String fileName) {
         try {
@@ -39,17 +51,9 @@ public class YangStatementSourceImpl implements StatementStreamSource {
             walker = new ParseTreeWalker();
             yangStatementModelParser = new YangStatementParserListenerImpl(REF);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.warn(e.getMessage(), e);
         }
     }
-
-    private StatementSourceReference REF = new StatementSourceReference() {
-
-        @Override
-        public StatementSource getStatementSource() {
-            return StatementSource.DECLARATION;
-        }
-    };
 
     @Override
     public void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef) throws SourceException {
@@ -69,7 +73,7 @@ public class YangStatementSourceImpl implements StatementStreamSource {
         walker.walk(yangStatementModelParser, statementContext);
     }
 
-    private FileInputStream loadFile(String fileName) throws Exception {
+    private FileInputStream loadFile(String fileName) throws URISyntaxException, FileNotFoundException {
         return new FileInputStream(new File(getClass().getResource(fileName).toURI()));
     }
 
@@ -77,7 +81,6 @@ public class YangStatementSourceImpl implements StatementStreamSource {
         final YangStatementLexer lexer = new YangStatementLexer(new ANTLRInputStream(stream));
         final CommonTokenStream tokens = new CommonTokenStream(lexer);
         final YangStatementParser parser = new YangStatementParser(tokens);
-        final YangStatementParser.StatementContext result = parser.statement();
-        return result;
+        return parser.statement();
     }
 }

@@ -68,7 +68,7 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
         @Override
         public void onLinkageDeclared(
                 final Mutable<String, IncludeStatement, EffectiveStatement<String, IncludeStatement>> stmt)
-                throws InferenceException, SourceException {
+                throws SourceException {
             final ModuleIdentifier includeSubmoduleIdentifier = getIncludeSubmoduleIdentifier(stmt);
 
             ModelActionBuilder includeAction = stmt.newInferenceAction(SOURCE_LINKAGE);
@@ -89,7 +89,6 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
 
                 @Override
                 public void prerequisiteFailed(Collection<? extends Prerequisite<?>> failed) throws InferenceException {
-                    System.out.println("");
                     if (failed.contains(requiresCtxPrerequisite)) {
                         throw new InferenceException("Included submodule was not found.", stmt
                                 .getStatementSourceReference());
