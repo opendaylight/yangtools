@@ -12,9 +12,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 public final class CompositeObjectRegistration<T> extends AbstractObjectRegistration<T> {
 
     private final Set<Registration> registrations;
+    private static final Logger LOG = LoggerFactory.getLogger(CompositeObjectRegistration.class);
 
     public CompositeObjectRegistration(final T instance, final Collection<? extends Registration> registrations) {
         super(instance);
@@ -30,6 +35,7 @@ public final class CompositeObjectRegistration<T> extends AbstractObjectRegistra
             try {
                 registration.close();
             } catch (Exception e) {
+                LOG.info(" Error in removing registration", e);
                 e.printStackTrace();
             }
         }

@@ -8,25 +8,36 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import java.util.Collections;
-
 import java.util.NoSuchElementException;
+
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+
 import com.google.common.collect.Collections2;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
+
 import java.util.LinkedList;
+
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+
 import com.google.common.collect.FluentIterable;
+
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+
 import com.google.common.collect.ImmutableList;
+
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+
 import java.util.Collection;
 import java.util.Map;
+
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
         implements EffectiveStatement<A, D> {
@@ -38,6 +49,8 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
     private D declaredInstance;
 
     private final A argument;
+
+    private static final Logger LOG = LoggerFactory.getLogger(EffectiveStatementBase.class);
 
     public EffectiveStatementBase(StmtContext<A, D, ?> ctx) {
 
@@ -113,6 +126,7 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
             result = type.cast(Iterables.find(substatements,
                     Predicates.instanceOf(type)));
         } catch (NoSuchElementException e) {
+            LOG.info("firstEffective ", e);
             result = null;
         }
         return result;
@@ -127,6 +141,7 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
             result = Collection.class.cast(Collections2.filter(substatements,
                     Predicates.instanceOf(type)));
         } catch (NoSuchElementException e) {
+            LOG.info("allEffective ", e);
             result = Collections.EMPTY_LIST;
         }
         return result;
@@ -138,6 +153,7 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
             result = type.cast(Iterables.find(substatements,
                     Predicates.instanceOf(type)));
         } catch (NoSuchElementException e) {
+            LOG.info("firstSchemaNode ", e);
             result = null;
         }
         return result;
@@ -152,6 +168,7 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
             result = Collection.class.cast(Collections2.filter(substatements,
                     Predicates.instanceOf(type)));
         } catch (NoSuchElementException e) {
+            LOG.info("allSchemaNodes ", e);
             result = Collections.EMPTY_LIST;
         }
         return result;
