@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3aa0d159_0976fc3e",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/InstanceIdToNodes.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-04-21T12:31:06Z",
+      "side": 1,
+      "message": "Add more generic javadoc ... not just from netconf point of view.",
+      "revId": "61cb648bda4438ddcd18ac1e9b512ca1b5cd4601",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
