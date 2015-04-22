@@ -7,7 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.ModifyAction;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
@@ -15,6 +20,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
@@ -22,6 +28,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableCo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public final class ImmutableNodes {
 
@@ -82,5 +90,47 @@ public final class ImmutableNodes {
 
     public static ChoiceNode choiceNode(final QName name) {
         return ImmutableChoiceNodeBuilder.create().withNodeIdentifier(new NodeIdentifier(name)).build();
+    }
+
+    /**
+     * Convert YangInstanceIdentifier into a normalized node structure
+     *
+     * @param ctx schema context to used during serialization
+     * @param id instance identifier to convert to node structure starting from root
+     * @return serialized normalized node for provided instance Id
+     */
+    public static NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id) {
+        return fromInstanceId(ctx, id, Optional.<NormalizedNode<?, ?>>absent(), Optional.<Map.Entry<QName, ModifyAction>>absent());
+    }
+
+    /**
+     * Convert YangInstanceIdentifier into a normalized node structure
+     *
+     * @param ctx schema context to used during serialization
+     * @param id instance identifier to convert to node structure starting from root
+     * @param deepestElement pre-built deepest child that will be inserted at the last path argument of provided instance Id
+     * @return serialized normalized node for provided instance Id with overridden last child.
+     */
+    public static NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id, final NormalizedNode<?, ?> deepestElement) {
+        return fromInstanceId(ctx, id, Optional.<NormalizedNode<?, ?>>of(deepestElement), Optional.<Map.Entry<QName, ModifyAction>>absent());
+    }
+
+    /**
+     * Convert YangInstanceIdentifier into a normalized node structure
+     *
+     * @param ctx schema context to used during serialization
+     * @param id instance identifier to convert to node structure starting from root
+     * @param deepestElement pre-built deepest child that will be inserted at the last path argument of provided instance Id
+     * @param operation modify operation attribute to be added to the deepest child. QName is the operation attribute key and ModifyAction is the value.
+     * @return serialized normalized node for provided instance Id with (optionally) overridden last child and (optionally) marked with specific operation attribute.
+     */
+    public static NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id, final Optional<NormalizedNode<?, ?>> deepestElement, final Optional<Map.Entry<QName, ModifyAction>> operation) {
+        Preconditions.checkNotNull(ctx);
+        Preconditions.checkNotNull(id);
+        final YangInstanceIdentifier.PathArgument topLevelElement = id.getPathArguments().iterator().next();
+        final DataSchemaNode dataChildByName = ctx.getDataChildByName(topLevelElement.getNodeType());
+        Preconditions.checkNotNull(dataChildByName, "Cannot find %s node in schema context. Instance identifier has to start from root", topLevelElement);
+        final InstanceIdToNodes<?> instanceIdToNodes = InstanceIdToNodes.fromSchemaAndQNameChecked(ctx, topLevelElement.getNodeType());
+        return instanceIdToNodes.create(id, deepestElement, operation);
     }
 }
