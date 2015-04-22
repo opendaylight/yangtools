@@ -26,7 +26,7 @@ public final class TopologicalSort {
 
     /**
      * Topological sort of dependent nodes in acyclic graphs.
-     * 
+     *
      * @return Sorted {@link List} of {@link Node}s. Order: Nodes with no
      *         dependencies starting.
      * @throws IllegalStateException
@@ -61,7 +61,7 @@ public final class TopologicalSort {
     private static Set<Node> getDependentNodes(Set<Node> nodes) {
         Set<Node> dependentNodes = Sets.newHashSet();
         for (Node n : nodes) {
-            if (n.getOutEdges().size() == 0) {
+            if (n.getOutEdges().isEmpty()) {
                 dependentNodes.add(n);
             }
         }
@@ -108,6 +108,11 @@ public final class TopologicalSort {
         private final Set<Edge> inEdges;
         private final Set<Edge> outEdges;
 
+        public NodeImpl() {
+            inEdges = Sets.newHashSet();
+            outEdges = Sets.newHashSet();
+        }
+
         @Override
         public Set<Edge> getInEdges() {
             return inEdges;
@@ -123,11 +128,6 @@ public final class TopologicalSort {
             outEdges.add(e);
             to.getInEdges().add(e);
         }
-
-        public NodeImpl() {
-            inEdges = Sets.newHashSet();
-            outEdges = Sets.newHashSet();
-        }
     }
 
     /**
@@ -137,6 +137,11 @@ public final class TopologicalSort {
         private final Node from;
         private final Node to;
 
+        public EdgeImpl(Node from, Node to) {
+            this.from = from;
+            this.to = to;
+        }
+
         @Override
         public Node getFrom() {
             return from;
@@ -145,12 +150,6 @@ public final class TopologicalSort {
         @Override
         public Node getTo() {
             return to;
-        }
-
-        public EdgeImpl(Node from, Node to) {
-            this.from = from;
-            this.to = to;
-
         }
 
         @Override

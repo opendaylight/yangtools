@@ -27,11 +27,11 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public final class AugmentUtils {
 
-    private AugmentUtils() {
-    }
-
     private static final String REGEX_PATH_REL1 = "\\.\\.?\\s*/(.+)";
     private static final String REGEX_PATH_REL2 = "//.*";
+
+    private AugmentUtils() {
+    }
 
     public static Iterable<QName> parseAugmentPath(StmtContext<?, ?, ?> ctx, String path) {
 
@@ -106,7 +106,7 @@ public final class AugmentUtils {
         noCopyDefSet.add(Rfc6020Mapping.USES);
 
         StatementDefinition def = stmtContext.getPublicDefinition();
-        return (!noCopyDefSet.contains(def));
+        return !noCopyDefSet.contains(def);
     }
 
     public static boolean isReusedByAugment(StmtContext<?, ?, ?> stmtContext) {
@@ -115,10 +115,8 @@ public final class AugmentUtils {
         reusedDefSet.add(Rfc6020Mapping.TYPEDEF);
 
         StatementDefinition def = stmtContext.getPublicDefinition();
-        if (reusedDefSet.contains(def))
-            return true;
-        else
-            return false;
+
+        return reusedDefSet.contains(def);
     }
 
     public static StatementContextBase<?, ?, ?> getAugmentTargetCtx(

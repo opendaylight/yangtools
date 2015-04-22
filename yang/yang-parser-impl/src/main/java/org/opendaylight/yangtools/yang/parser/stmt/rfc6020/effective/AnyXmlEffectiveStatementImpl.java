@@ -49,16 +49,16 @@ public class AnyXmlEffectiveStatementImpl extends
     private void initSubstatementCollections() {
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
-        LinkedList<UnknownSchemaNode> unknownNodes = new LinkedList<UnknownSchemaNode>();
+        LinkedList<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
-                unknownNodes.add(unknownNode);
+                unknownNodesInit.add(unknownNode);
             }
         }
 
-        this.unknownNodes = ImmutableList.copyOf(unknownNodes);
+        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
     }
 
     @Override

@@ -150,35 +150,4 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
     public Collection<? extends RefineStatement> getRefines() {
         return allDeclared(RefineStatement.class);
     }
-
-    @Override
-    public QName argument() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String rawArgument() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public StatementDefinition statementDefinition() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public StatementSource getStatementSource() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }

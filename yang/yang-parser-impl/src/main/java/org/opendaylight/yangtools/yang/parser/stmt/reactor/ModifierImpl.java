@@ -65,7 +65,8 @@ class ModifierImpl implements ModelActionBuilder {
 
     private void tryToResolve() throws InferenceException {
         if(action == null) {
-            return; // Action was not yet defined
+            // Action was not yet defined
+            return;
         }
         if(removeSatisfied()) {
             applyAction();
@@ -77,7 +78,8 @@ class ModifierImpl implements ModelActionBuilder {
         boolean allSatisfied = true;
         while(prereq.hasNext()) {
             if(prereq.next().isDone()) {
-                prereq.remove(); // We are removing current prerequisite from list.
+                // We are removing current prerequisite from list.
+                prereq.remove();
             } else {
                 allSatisfied  = false;
             }

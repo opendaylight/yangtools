@@ -261,7 +261,7 @@ final class BasicValidations {
         Iterable<String> keyList = ValidationUtil.listKeysFromId(key);
         Set<String> duplicates = ValidationUtil.getDuplicates(keyList);
 
-        if (duplicates.size() != 0) {
+        if (!duplicates.isEmpty()) {
             ValidationUtil.ex(ValidationUtil.f("(In (sub)module:%s) %s:%s, %s:%s contains duplicates:%s",
                     rootParentName, ValidationUtil.getSimpleStatementName(parent.getClass()),
                     ValidationUtil.getName(parent), ValidationUtil.getSimpleStatementName(ctx.getClass()), key,

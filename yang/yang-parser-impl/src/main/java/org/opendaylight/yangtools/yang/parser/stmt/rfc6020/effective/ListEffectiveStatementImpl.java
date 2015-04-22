@@ -54,38 +54,38 @@ public class ListEffectiveStatementImpl extends
      *
      */
     private void initKeyDefinition() {
-        List<QName> keyDefinition = new LinkedList<QName>();
+        List<QName> keyDefinitionInit = new LinkedList<QName>();
         KeyEffectiveStatementImpl key = firstEffective(KeyEffectiveStatementImpl.class);
 
         if (key != null) {
             Collection<SchemaNodeIdentifier> keyParts = key.argument();
             for (SchemaNodeIdentifier keyPart : keyParts) {
-                keyDefinition.add(keyPart.getLastComponent());
+                keyDefinitionInit.add(keyPart.getLastComponent());
             }
         }
 
-        this.keyDefinition = ImmutableList.copyOf(keyDefinition);
+        this.keyDefinition = ImmutableList.copyOf(keyDefinitionInit);
     }
 
     private void initSubstatementCollections() {
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
-        LinkedList<UnknownSchemaNode> unknownNodes = new LinkedList<UnknownSchemaNode>();
-        HashSet<AugmentationSchema> augmentations = new HashSet<AugmentationSchema>();
+        LinkedList<UnknownSchemaNode> unknownNodesInit = new LinkedList<UnknownSchemaNode>();
+        HashSet<AugmentationSchema> augmentationsInit = new HashSet<AugmentationSchema>();
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
-                unknownNodes.add(unknownNode);
+                unknownNodesInit.add(unknownNode);
             }
             if (effectiveStatement instanceof AugmentationSchema) {
                 AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
-                augmentations.add(augmentationSchema);
+                augmentationsInit.add(augmentationSchema);
             }
         }
 
-        this.unknownNodes = ImmutableList.copyOf(unknownNodes);
-        this.augmentations = ImmutableSet.copyOf(augmentations);
+        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
+        this.augmentations = ImmutableSet.copyOf(augmentationsInit);
     }
 
     @Override

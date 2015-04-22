@@ -36,7 +36,7 @@ public class StatementDefinitionContext<A,D extends DeclaredStatement<A>,E exten
     }
 
 
-    public void checkNamespaceAllowed(Class<? extends IdentifierNamespace<?,?>> namespace) throws NamespaceNotAvailableException {
+    public void checkNamespaceAllowed(Class<? extends IdentifierNamespace<?,?>> namespace) {
         // Noop
     }
 

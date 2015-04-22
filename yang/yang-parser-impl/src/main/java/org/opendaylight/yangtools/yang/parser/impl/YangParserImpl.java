@@ -499,7 +499,7 @@ public final class YangParserImpl implements YangContextParser {
                 }
             }
 
-            if (submodule.getIncludedModules().size() > 0) {
+            if (!submodule.getIncludedModules().isEmpty()) {
                 resolveSubmodules(submodule, submodules);
             }
             addSubmoduleToModule(submodule, module);
@@ -626,11 +626,9 @@ public final class YangParserImpl implements YangContextParser {
                             filterImports(builder, other, filtered);
                         }
                     } else {
-                        if (mi.getRevision().equals(builder.getRevision())) {
-                            if (!filtered.contains(builder)) {
-                                filtered.add(builder);
-                                filterImports(builder, other, filtered);
-                            }
+                        if (!filtered.contains(builder) && mi.getRevision().equals(builder.getRevision())) {
+                            filtered.add(builder);
+                            filterImports(builder, other, filtered);
                         }
                     }
                 }
@@ -1177,11 +1175,9 @@ public final class YangParserImpl implements YangContextParser {
 
         DataSchemaNodeBuilder nextNodeAfterUses = null;
         for (DataSchemaNodeBuilder childNode : childNodes) {
-            if (!(childNode.isAddedByUses()) && !(childNode.isAugmenting())) {
-                if (childNode.getLine() > usesLine) {
-                    nextNodeAfterUses = childNode;
-                    break;
-                }
+            if (!childNode.isAddedByUses() && !childNode.isAugmenting() && childNode.getLine() > usesLine) {
+                nextNodeAfterUses = childNode;
+                break;
             }
         }
 

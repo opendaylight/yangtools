@@ -51,11 +51,11 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
         Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements = ctx
                 .effectiveSubstatements();
 
-        Collection<StatementContextBase<?, ?, ?>> substatements = new LinkedList<StatementContextBase<?, ?, ?>>();
-        substatements.addAll(declaredSubstatements);
-        substatements.addAll(effectiveSubstatements);
+        Collection<StatementContextBase<?, ?, ?>> substatementsInit = new LinkedList<>();
+        substatementsInit.addAll(declaredSubstatements);
+        substatementsInit.addAll(effectiveSubstatements);
 
-        this.substatements = FluentIterable.from(substatements)
+        this.substatements = FluentIterable.from(substatementsInit)
                 .transform(StmtContextUtils.buildEffective()).toList();
     }
 
@@ -127,7 +127,7 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
             result = Collection.class.cast(Collections2.filter(substatements,
                     Predicates.instanceOf(type)));
         } catch (NoSuchElementException e) {
-            result = Collections.EMPTY_LIST;
+            result = Collections.emptyList();
         }
         return result;
     }
@@ -152,7 +152,7 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
             result = Collection.class.cast(Collections2.filter(substatements,
                     Predicates.instanceOf(type)));
         } catch (NoSuchElementException e) {
-            result = Collections.EMPTY_LIST;
+            result = Collections.emptyList();
         }
         return result;
     }

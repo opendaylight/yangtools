@@ -83,6 +83,7 @@ public final class BuilderUtils {
     private static final Date NULL_DATE = new Date(0L);
     private static final String INPUT = "input";
     private static final String OUTPUT = "output";
+    private static final String CHILD_NOT_FOUND_IN_NODE_STR = "Child {} not found in node {}";
 
     private BuilderUtils() {
     }
@@ -378,9 +379,9 @@ public final class BuilderUtils {
                     node = findUnknownNode(name, parent);
                 }
             } else if (parent instanceof RpcDefinitionBuilder) {
-                if ("input".equals(name)) {
+                if (INPUT.equals(name)) {
                     node = ((RpcDefinitionBuilder) parent).getInput();
-                } else if ("output".equals(name)) {
+                } else if (OUTPUT.equals(name)) {
                     node = ((RpcDefinitionBuilder) parent).getOutput();
                 } else {
                     if (node == null) {
@@ -457,9 +458,8 @@ public final class BuilderUtils {
             return castOptional(SchemaNodeBuilder.class, findCaseInChoice((ChoiceBuilder) parent, child));
         } else if (parent instanceof RpcDefinitionBuilder) {
             return castOptional(SchemaNodeBuilder.class, findContainerInRpc((RpcDefinitionBuilder) parent, child));
-
         } else {
-            LOG.trace("Child {} not found in node {}", child, parent);
+            LOG.trace(CHILD_NOT_FOUND_IN_NODE_STR, child, parent);
             return Optional.absent();
         }
     }
@@ -504,7 +504,7 @@ public final class BuilderUtils {
             final QName child) {
         if (INPUT.equals(child.getLocalName())) {
             if (parent.getInput() == null) {
-                QName qname = QName.create(parent.getQName().getModule(), "input");
+                QName qname = QName.create(parent.getQName().getModule(), INPUT);
                 final ContainerSchemaNodeBuilder inputBuilder = new ContainerSchemaNodeBuilder(parent.getModuleName(),
                         parent.getLine(), qname, parent.getPath().createChild(qname));
                 inputBuilder.setParent(parent);
@@ -514,7 +514,7 @@ public final class BuilderUtils {
             return Optional.of(parent.getInput());
         } else if (OUTPUT.equals(child.getLocalName())) {
             if (parent.getOutput() == null) {
-                QName qname = QName.create(parent.getQName().getModule(), "output");
+                QName qname = QName.create(parent.getQName().getModule(), OUTPUT);
                 final ContainerSchemaNodeBuilder outputBuilder = new ContainerSchemaNodeBuilder(parent.getModuleName(),
                         parent.getLine(), qname, parent.getPath().createChild(qname));
                 outputBuilder.setParent(parent);
@@ -523,7 +523,7 @@ public final class BuilderUtils {
             }
             return Optional.of(parent.getOutput());
         }
-        LOG.trace("Child {} not found in node {}", child, parent);
+        LOG.trace(CHILD_NOT_FOUND_IN_NODE_STR, child, parent);
         return Optional.absent();
     }
 
@@ -544,7 +544,7 @@ public final class BuilderUtils {
                 return Optional.of(caze);
             }
         }
-        LOG.trace("Child {} not found in node {}", child, parent);
+        LOG.trace(CHILD_NOT_FOUND_IN_NODE_STR, child, parent);
         return Optional.absent();
     }
 
@@ -565,7 +565,7 @@ public final class BuilderUtils {
                 return Optional.of(childNode);
             }
         }
-        LOG.trace("Child {} not found in node {}", child, parent);
+        LOG.trace(CHILD_NOT_FOUND_IN_NODE_STR, child, parent);
         return Optional.absent();
     }
 
@@ -625,7 +625,7 @@ public final class BuilderUtils {
                 return Optional.<SchemaNodeBuilder> of(childNode);
             }
         }
-        LOG.trace("Child {} not found in node {}", child, builder);
+        LOG.trace(CHILD_NOT_FOUND_IN_NODE_STR, child, builder);
         return Optional.absent();
     }
 
@@ -730,19 +730,19 @@ public final class BuilderUtils {
         final SchemaPath schemaPath = parentPath.createChild(qname);
 
         if (node instanceof AnyXmlSchemaNode) {
-            return new AnyXmlBuilder(moduleName, line, qname, schemaPath, ((AnyXmlSchemaNode) node));
+            return new AnyXmlBuilder(moduleName, line, qname, schemaPath, (AnyXmlSchemaNode) node);
         } else if (node instanceof ChoiceSchemaNode) {
-            return new ChoiceBuilder(moduleName, line, qname, schemaPath, ((ChoiceSchemaNode) node));
+            return new ChoiceBuilder(moduleName, line, qname, schemaPath, (ChoiceSchemaNode) node);
         } else if (node instanceof ContainerSchemaNode) {
-            return new ContainerSchemaNodeBuilder(moduleName, line, qname, schemaPath, ((ContainerSchemaNode) node));
+            return new ContainerSchemaNodeBuilder(moduleName, line, qname, schemaPath, (ContainerSchemaNode) node);
         } else if (node instanceof LeafSchemaNode) {
-            return new LeafSchemaNodeBuilder(moduleName, line, qname, schemaPath, ((LeafSchemaNode) node));
+            return new LeafSchemaNodeBuilder(moduleName, line, qname, schemaPath, (LeafSchemaNode) node);
         } else if (node instanceof LeafListSchemaNode) {
-            return new LeafListSchemaNodeBuilder(moduleName, line, qname, schemaPath, ((LeafListSchemaNode) node));
+            return new LeafListSchemaNodeBuilder(moduleName, line, qname, schemaPath, (LeafListSchemaNode) node);
         } else if (node instanceof ListSchemaNode) {
-            return new ListSchemaNodeBuilder(moduleName, line, qname, schemaPath, ((ListSchemaNode) node));
+            return new ListSchemaNodeBuilder(moduleName, line, qname, schemaPath, (ListSchemaNode) node);
         } else if (node instanceof ChoiceCaseNode) {
-            return new ChoiceCaseBuilder(moduleName, line, qname, schemaPath, ((ChoiceCaseNode) node));
+            return new ChoiceCaseBuilder(moduleName, line, qname, schemaPath, (ChoiceCaseNode) node);
         } else {
             throw new YangParseException(moduleName, line, "Failed to copy node: Unknown type of DataSchemaNode: "
                     + node);
@@ -767,7 +767,7 @@ public final class BuilderUtils {
         for (TypeDefinition<?> node : nodes) {
             QName qname = QName.create(parentQName, node.getQName().getLocalName());
             SchemaPath schemaPath = parentPath.createChild(qname);
-            result.add(new TypeDefinitionBuilderImpl(moduleName, line, qname, schemaPath, ((ExtendedType) node)));
+            result.add(new TypeDefinitionBuilderImpl(moduleName, line, qname, schemaPath, (ExtendedType) node));
         }
         return result;
     }

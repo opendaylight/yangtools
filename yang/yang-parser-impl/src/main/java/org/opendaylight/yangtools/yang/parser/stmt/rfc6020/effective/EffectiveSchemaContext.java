@@ -42,21 +42,21 @@ public class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
         this.rootEffectiveStatements = ImmutableList
                 .copyOf(rootEffectiveStatements);
 
-        HashSet<Module> modules = new HashSet<Module>();
+        HashSet<Module> modulesInit = new HashSet<>();
         for (EffectiveStatement<?, ?> rootEffectiveStatement : rootEffectiveStatements) {
             if (rootEffectiveStatement instanceof Module) {
                 Module module = (Module) rootEffectiveStatement;
-                modules.add(module);
+                modulesInit.add(module);
             }
         }
-        this.modules = ImmutableSet.copyOf(modules);
+        this.modules = ImmutableSet.copyOf(modulesInit);
 
         final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(
                 new TreeMap<URI, Collection<Module>>(), MODULE_SET_SUPPLIER);
         final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(
                 new TreeMap<String, Collection<Module>>(), MODULE_SET_SUPPLIER);
 
-        for (Module m : modules) {
+        for (Module m : modulesInit) {
             nameMap.put(m.getName(), m);
             nsMap.put(m.getNamespace(), m);
         }

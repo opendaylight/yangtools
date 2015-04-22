@@ -22,9 +22,6 @@ import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.pa
 import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.parseYinValue;
 import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.stringFromNode;
 
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -36,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser;
@@ -103,6 +101,9 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
 
 public final class YangParserListenerImpl extends YangParserBaseListener {
     private static final Logger LOG = LoggerFactory.getLogger(YangParserListenerImpl.class);
@@ -110,7 +111,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
     private static final String AUGMENT_STR = "augment";
 
-    private final DateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    private static final String IMPORT_STR = "import";
+    private static final String UNION_STR = "union";
+    private static final String UNKNOWN_NODE_STR = "unknown-node";
     private final SchemaPathStack stack = new SchemaPathStack();
     private final Map<String, TreeMap<Date, URI>> namespaceContext;
     private final String sourcePath;
@@ -144,8 +148,6 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         walker.walk(ret, tree);
         return ret;
     }
-
-
 
     @Override
     public void enterModule_stmt(final YangParser.Module_stmtContext ctx) {
@@ -339,7 +341,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     public void enterImport_stmt(final Import_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String importName = stringFromNode(ctx);
-        enterLog("import", importName, line);
+        enterLog(IMPORT_STR, importName, line);
 
         String importPrefix = null;
         Date importRevision = null;
@@ -363,14 +365,14 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
     @Override
     public void exitImport_stmt(final Import_stmtContext ctx) {
-        exitLog("import");
+        exitLog(IMPORT_STR);
     }
 
     @Override
     public void enterInclude_stmt(YangParser.Include_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String includeName = stringFromNode(ctx);
-        enterLog("import", includeName, line);
+        enterLog(IMPORT_STR, includeName, line);
 
         Date includeRevision = null;
         for (int i = 0; i < ctx.getChildCount(); i++) {
@@ -387,7 +389,8 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         moduleBuilder.addInclude(includeName, includeRevision);
     }
 
-    @Override public void exitInclude_stmt(YangParser.Include_stmtContext ctx) {
+    @Override
+    public void exitInclude_stmt(YangParser.Include_stmtContext ctx) {
         exitLog("include");
     }
 
@@ -399,7 +402,8 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         stack.push();
 
         final SchemaPath targetPath = parseXPathString(augmentPath, line);
-        final AugmentationSchemaBuilder builder = moduleBuilder.addAugment(line, augmentPath, targetPath, augmentOrder++);
+        final AugmentationSchemaBuilder builder = moduleBuilder.addAugment(line, augmentPath, targetPath,
+                augmentOrder++);
 
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree child = ctx.getChild(i);
@@ -508,7 +512,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
             } else {
                 QName qname;
                 switch (typeName) {
-                case "union":
+                case UNION_STR:
                     qname = BaseTypes.UNION_QNAME;
                     stack.addNodeToPath(qname);
                     final UnionTypeBuilder unionBuilder = moduleBuilder.addUnionType(line, moduleQName.getModule());
@@ -534,23 +538,28 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                 parent.setTypeQName(typeQName);
                 moduleBuilder.markActualNodeDirty();
             } else {
-                ParserListenerUtils.parseUnknownTypeWithBody(typeBody, parent, typeQName, moduleBuilder,
-                        moduleQName, stack.currentSchemaPath());
+                ParserListenerUtils.parseUnknownTypeWithBody(typeBody, parent, typeQName, moduleBuilder, moduleQName,
+                        stack.currentSchemaPath());
             }
             stack.addNodeToPath(QName.create(moduleQName.getModule(), typeQName.getLocalName()));
         }
     }
 
     /**
-     * Method transforms string representation of yang element (i.e. leaf name, container name etc.) into QName.
-     * The namespace of QName is assigned from parent module same as revision date of module. If String qname parameter
-     * contains ":" the string is evaluated as prefix:name of element. In this case method will look into import map
-     * and extract correct ModuleImport. If such import is not present in import map the method will throw {@link YangParseException}
-     * <br>
-     * If ModuleImport is present but the value of namespace in ModuleImport is <code>null</code> the method will throw {@link YangParseException}
+     * Method transforms string representation of yang element (i.e. leaf name,
+     * container name etc.) into QName. The namespace of QName is assigned from
+     * parent module same as revision date of module. If String qname parameter
+     * contains ":" the string is evaluated as prefix:name of element. In this
+     * case method will look into import map and extract correct ModuleImport.
+     * If such import is not present in import map the method will throw
+     * {@link YangParseException} <br>
+     * If ModuleImport is present but the value of namespace in ModuleImport is
+     * <code>null</code> the method will throw {@link YangParseException}
      *
-     * @param qnameString QName value as String
-     * @param line line in Yang model document where QName occur.
+     * @param qnameString
+     *            QName value as String
+     * @param line
+     *            line in Yang model document where QName occur.
      * @return transformed string qname parameter as QName structure.
      *
      * @throws YangParseException
@@ -570,7 +579,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                 if (imp == null) {
                     LOG.debug("Error in module {} at line {}: No import found with prefix {}", moduleName, line, prefix);
                     throw new YangParseException(moduleName, line, "Error in module " + moduleName
-                        + " No import found with prefix " + prefix + " not found.");
+                            + " No import found with prefix " + prefix + " not found.");
                 }
                 Date revision = imp.getRevision();
                 TreeMap<Date, URI> namespaces = namespaceContext.get(imp.getModuleName());
@@ -583,9 +592,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                     revision = namespaces.lastEntry().getKey();
                     namespace = namespaces.lastEntry().getValue();
                 } else {
-                    // FIXME: this lookup does not look right, as we will end up with
-                    //        a qname which does not have a namespace. At any rate we
-                    //        should arrive at a QNameModule!
+                    // FIXME: this lookup does not look right, as we will end up
+                    // with
+                    // a qname which does not have a namespace. At any rate we
+                    // should arrive at a QNameModule!
                     namespace = namespaces.get(revision);
                 }
 
@@ -599,7 +609,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     @Override
     public void exitType_stmt(final YangParser.Type_stmtContext ctx) {
         final String typeName = stringFromNode(ctx);
-        if ("union".equals(typeName)) {
+        if (UNION_STR.equals(typeName)) {
             moduleBuilder.exitNode();
         }
         exitLog("type", stack.removeNodeFromPath());
@@ -718,7 +728,8 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         stack.push();
 
         final SchemaPath targetPath = parseXPathString(augmentPath, line);
-        final AugmentationSchemaBuilder builder = moduleBuilder.addAugment(line, augmentPath, targetPath, augmentOrder++);
+        final AugmentationSchemaBuilder builder = moduleBuilder.addAugment(line, augmentPath, targetPath,
+                augmentOrder++);
 
         for (int i = 0; i < ctx.getChildCount(); i++) {
             final ParseTree child = ctx.getChild(i);
@@ -816,10 +827,9 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
             } else if (childNode instanceof Key_stmtContext) {
                 final Set<String> key = createListKey((Key_stmtContext) childNode);
                 builder.setKeys(key);
-            } else if (childNode instanceof YangParser.Identifier_stmtContext) {
-                if (childNode.getChild(0).toString().equals("union")) {
-                    throw new YangParseException(moduleName, line, "Union statement is not allowed inside a list statement");
-                }
+            } else if (childNode instanceof YangParser.Identifier_stmtContext
+                    && UNION_STR.equals(childNode.getChild(0).toString())) {
+                throw new YangParseException(moduleName, line, "Union statement is not allowed inside a list statement");
             }
         }
     }
@@ -938,16 +948,18 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     @Override
     public void exitIdentifier_stmt(final YangParser.Identifier_stmtContext ctx) {
         moduleBuilder.exitNode();
-        exitLog("unknown-node", stack.removeNodeFromPath());
+        exitLog(UNKNOWN_NODE_STR, stack.removeNodeFromPath());
     }
 
-    @Override public void enterUnknown_statement(final YangParser.Unknown_statementContext ctx) {
+    @Override
+    public void enterUnknown_statement(final YangParser.Unknown_statementContext ctx) {
         handleUnknownNode(ctx.getStart().getLine(), ctx);
     }
 
-    @Override public void exitUnknown_statement(final YangParser.Unknown_statementContext ctx) {
+    @Override
+    public void exitUnknown_statement(final YangParser.Unknown_statementContext ctx) {
         moduleBuilder.exitNode();
-        exitLog("unknown-node", stack.removeNodeFromPath());
+        exitLog(UNKNOWN_NODE_STR, stack.removeNodeFromPath());
     }
 
     @Override
@@ -1146,16 +1158,19 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
     private void handleUnknownNode(final int line, final ParseTree ctx) {
         final String nodeParameter = stringFromNode(ctx);
-        enterLog("unknown-node", nodeParameter, line);
+        enterLog(UNKNOWN_NODE_STR, nodeParameter, line);
 
         final String nodeTypeStr = ctx.getChild(0).getText();
         final QName nodeType = parseQName(nodeTypeStr, line);
 
         QName qname = null;
         try {
-            //FIXME: rewrite whole method to handle unknown nodes properly.
-            // This should be bugfix for bug https://bugs.opendaylight.org/show_bug.cgi?id=1539
-            // After this fix bug https://bugs.opendaylight.org/show_bug.cgi?id=1538 MUST be fixed since
+            // FIXME: rewrite whole method to handle unknown nodes properly.
+            // This should be bugfix for bug
+            // https://bugs.opendaylight.org/show_bug.cgi?id=1539
+            // After this fix bug
+            // https://bugs.opendaylight.org/show_bug.cgi?id=1538 MUST be fixed
+            // since
             // they are dependent!!!
             if (Strings.isNullOrEmpty(nodeParameter)) {
                 qname = nodeType;
