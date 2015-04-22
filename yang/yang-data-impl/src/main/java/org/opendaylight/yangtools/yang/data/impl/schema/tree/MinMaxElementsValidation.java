@@ -46,6 +46,26 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
 
     }
 
+    private final int findChildrenBefore(final Optional<TreeNode> current) {
+        final int children;
+        if (current.isPresent()) {
+          children = numOfChildrenFromValue(current.get().getData());
+        } else {
+          children = 0;
+        }
+        return children;
+    }
+
+    private final int findChildrenAfter(final ModifiedNode modification) {
+      final int children;
+      if (modification.getWrittenValue() != null) {
+        children = numOfChildrenFromValue(modification.getWrittenValue());
+      } else {
+        children = 0;
+      }
+      return children;
+  }
+
     private void checkMinMaxElements(final YangInstanceIdentifier path, final NodeModification nodeMod,
             final Optional<TreeNode> current) throws DataValidationFailedException {
         if (!(nodeMod instanceof ModifiedNode)) {
@@ -53,19 +73,10 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
             return;
         }
         final ModifiedNode modification = (ModifiedNode) nodeMod;
-        final int childrenBefore;
-        if (current.isPresent()) {
-            childrenBefore = numOfChildrenFromValue(current.get().getData());
-        } else {
-            childrenBefore = 0;
-        }
 
-        final int childrenAfter;
-        if (modification.getWrittenValue() != null) {
-            childrenAfter = numOfChildrenFromValue(modification.getWrittenValue());
-        } else {
-            childrenAfter = 0;
-        }
+        final int childrenBefore = findChildrenBefore(current);
+
+        final int childrenAfter = findChildrenAfter(modification);
 
         final int childrenTotal = childrenBefore + childrenAfter + numOfChildrenFromChildMods(modification, current);
         if (minElements != null && minElements > childrenTotal) {
