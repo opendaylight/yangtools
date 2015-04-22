@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
@@ -33,7 +32,9 @@ public class NormalizedNodeResult {
     }
 
     void setResult(final NormalizedNode<?, ?> result) {
-        Preconditions.checkState(!this.finished, "Result was already set.");
+        if (finished) {
+            throw new ResultAlreadySetException("Normalized Node result was already set.", this.result);
+        }
         this.finished = true;
         this.result = result;
     }
