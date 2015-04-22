@@ -1,0 +1,9 @@
+module root-invalid-rel2 {
+	namespace root;
+	prefix root;
+
+	augment "../aug1/aug11" {
+		container add {
+		}
+	}
+}

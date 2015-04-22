@@ -22,6 +22,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 
 class ImportBasicTestStatementSource implements StatementStreamSource {
 
@@ -157,6 +159,4 @@ class ImportBasicTestStatementSource implements StatementStreamSource {
         writer.endStatement(REF);
         return this;
     }
-
-
 }

@@ -9,7 +9,10 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
 import java.util.HashSet;
+<<<<<<< HEAD
 import java.util.Set;
+=======
+>>>>>>> tests for arguments parsing
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;

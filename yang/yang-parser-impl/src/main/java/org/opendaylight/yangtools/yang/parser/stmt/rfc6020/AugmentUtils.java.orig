@@ -9,9 +9,13 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
 import java.util.HashSet;
+<<<<<<< HEAD
+import java.util.Set;
+=======
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+>>>>>>> tests for arguments parsing
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;

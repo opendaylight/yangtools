@@ -42,7 +42,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdenti
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
+<<<<<<< HEAD
+=======
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
+>>>>>>> tests for arguments parsing
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 import com.google.common.base.CharMatcher;
