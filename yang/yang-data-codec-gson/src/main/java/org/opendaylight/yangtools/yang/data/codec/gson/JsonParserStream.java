@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.ResultAlreadySetException;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -99,6 +100,9 @@ public final class JsonParserStream implements Closeable, Flushable {
             throw new JsonSyntaxException(e);
         } catch (StackOverflowError | OutOfMemoryError e) {
             throw new JsonParseException("Failed parsing JSON source: " + reader + " to Json", e);
+        } catch (final ResultAlreadySetException e) {
+            throw new JsonSyntaxException("Failed to create new parse result. Are you creating multiple resources/subresources in POST?, "
+                    + e);
         } finally {
             reader.setLenient(lenient);
         }
