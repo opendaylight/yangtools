@@ -110,32 +110,58 @@ public class AnyXmlEffectiveStatementImpl extends
         return result;
     }
 
+    private boolean checkQname(AnyXmlEffectiveStatementImpl other) {
+      if (qname == null) {
+        if (other.qname != null) {
+          return false;
+        }
+      } else if (!qname.equals(other.qname)) {
+        return false;
+      }
+      return true;
+    }
+
+    private boolean checkPath(AnyXmlEffectiveStatementImpl other) {
+      if (path == null) {
+        if (other.path != null) {
+            return false;
+        }
+      } else if (!path.equals(other.path)) {
+        return false;
+      }
+      return true;
+    }
+
+    private boolean checkObject(final Object obj) {
+      if (obj == null) {
+        return false;
+      }
+      if (getClass() != obj.getClass()) {
+        return false;
+      }
+      return true;
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
+
+        if (!checkObject(obj)) {
+          return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
+
         AnyXmlEffectiveStatementImpl other = (AnyXmlEffectiveStatementImpl) obj;
-        if (qname == null) {
-            if (other.qname != null) {
-                return false;
-            }
-        } else if (!qname.equals(other.qname)) {
+
+        if (!checkQname(other)) {
             return false;
         }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
+
+        if (!checkPath(other)) {
             return false;
         }
+
         return true;
     }
 
