@@ -17,13 +17,26 @@ import org.w3c.dom.Element;
 
 final class MapEntryNodeDomParser extends ListEntryNodeDomParser<MapEntryNode> {
 
+    private final boolean strictParsing;
+
     MapEntryNodeDomParser(final NodeParserDispatcher<Element> dispatcher) {
         super(dispatcher);
+        this.strictParsing = super.strictParsing();
+    }
+
+    MapEntryNodeDomParser(final NodeParserDispatcher<Element> dispatcher, final boolean strictParsing) {
+        super(dispatcher);
+        this.strictParsing = strictParsing;
     }
 
     @Override
     protected final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> getBuilder(
             ListSchemaNode schema) {
         return Builders.mapEntryBuilder(schema);
+    }
+
+    @Override
+    protected boolean strictParsing() {
+        return strictParsing;
     }
 }

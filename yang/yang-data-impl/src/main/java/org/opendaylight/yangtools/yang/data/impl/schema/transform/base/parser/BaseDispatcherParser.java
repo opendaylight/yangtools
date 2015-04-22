@@ -109,6 +109,10 @@ public abstract class BaseDispatcherParser<E, N extends DataContainerNode<?>, S>
         // process Child nodes
         for (QName childPartialQName : mappedChildElements.keySet()) {
             DataSchemaNode childSchema = getSchemaForChild(schema, childPartialQName);
+            //with strict parsing an exception would be already thrown, with nonstrict we want to ignore this node
+            if (childSchema == null) {
+                continue;
+            }
             List<E> childrenForQName = mappedChildElements.get(childPartialQName);
 
             // Augment
@@ -151,6 +155,10 @@ public abstract class BaseDispatcherParser<E, N extends DataContainerNode<?>, S>
 
     protected Map<QName, String> getAttributes(final E e) {
         return Collections.emptyMap();
+    }
+
+    protected boolean strictParsing() {
+        return true;
     }
 
     private boolean isMarkedAs(final Map<QName, ?> mappedAugmentChildNodes, final QName qName) {
