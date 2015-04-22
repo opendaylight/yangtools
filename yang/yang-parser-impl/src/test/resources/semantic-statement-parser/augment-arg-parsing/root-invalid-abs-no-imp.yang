@@ -1,0 +1,9 @@
+module root-invalid-abs-no-imp {
+	namespace root;
+	prefix root;
+
+	augment "imp:aug1/imp:aug11/imp:aug111" {
+		container add {
+		}
+	}
+}

@@ -27,6 +27,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
@@ -41,6 +42,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdenti
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
+import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 import com.google.common.base.CharMatcher;
@@ -59,7 +61,7 @@ public final class Utils {
 
     private static final char SEPARATOR_NODENAME = '/';
 
-    private static final String REGEX_PATH_ABS = "/[^/].+";
+    private static final String REGEX_PATH_ABS = "/[^/].*";
 
     public static List<String> splitPathToNodeNames(String path) {
 
@@ -83,6 +85,38 @@ public final class Utils {
         validateXPath(path);
 
         return path.matches(REGEX_PATH_ABS);
+    }
+
+    public static QName trimPrefix(QName identifier) {
+        String prefixedLocalName = identifier.getLocalName();
+        String[] namesParts = prefixedLocalName.split(":");
+
+        if (namesParts.length == 2) {
+            String localName = namesParts[1];
+            return QName.create(identifier.getModule(), localName);
+        }
+
+        return identifier;
+    }
+
+    public static boolean isValidStatementDefinition(PrefixToModule prefixes, QNameToStatementDefinition stmtDef,
+            QName identifier) {
+        if (stmtDef.get(identifier) != null) {
+            return true;
+        } else {
+            String prefixedLocalName = identifier.getLocalName();
+            String[] namesParts = prefixedLocalName.split(":");
+
+            if (namesParts.length == 2) {
+                String prefix = namesParts[0];
+                String localName = namesParts[1];
+                if (prefixes != null && prefixes.get(prefix) != null
+                        && stmtDef.get(new QName(YangConstants.RFC6020_YIN_NAMESPACE, localName)) != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public static Iterable<QName> parseXPath(StmtContext<?, ?, ?> ctx, String path) {
@@ -175,17 +209,18 @@ public final class Utils {
     }
 
     @Nullable
-    public static StatementContextBase<?, ?, ?> findCtxOfNodeInRoot(StatementContextBase<?, ?, ?> rootStmtCtx,
-            final SchemaNodeIdentifier node) {
+    private static StatementContextBase<?, ?, ?> findCtxOfNodeInSubstatements(
+            StatementContextBase<?, ?, ?> rootStmtCtx, final Iterable<QName> path, boolean searchInEffective) {
 
         StatementContextBase<?, ?, ?> parent = rootStmtCtx;
-        final Iterator<QName> pathIter = node.getPathFromRoot().iterator();
 
+        Iterator<QName> pathIter = path.iterator();
         QName targetNode = pathIter.next();
 
         while (pathIter.hasNext()) {
 
-            for (StatementContextBase<?, ?, ?> child : parent.declaredSubstatements()) {
+            for (StatementContextBase<?, ?, ?> child : searchInEffective ? parent.effectiveSubstatements() : parent
+                    .declaredSubstatements()) {
 
                 if (targetNode.equals(child.getStatementArgument())) {
                     parent = child;
@@ -201,11 +236,43 @@ public final class Utils {
 
         StatementContextBase<?, ?, ?> targetCtx = null;
 
-        for (StatementContextBase<?, ?, ?> child : parent.declaredSubstatements()) {
+        for (StatementContextBase<?, ?, ?> child : searchInEffective ? parent.effectiveSubstatements() : parent
+                .declaredSubstatements()) {
 
             if (targetNode.equals(child.getStatementArgument())) {
                 targetCtx = child;
             }
+        }
+
+        return targetCtx;
+    }
+
+    @Nullable
+    public static StatementContextBase<?, ?, ?> findCtxOfNodeInRoot(StatementContextBase<?, ?, ?> rootStmtCtx,
+            final SchemaNodeIdentifier node) {
+
+        System.out.println(node.getPathFromRoot());
+
+        StatementContextBase<?, ?, ?> targetCtx = findCtxOfNodeInSubstatements(rootStmtCtx, node.getPathFromRoot(),
+                false);
+
+        if (targetCtx == null) {
+
+            targetCtx = findCtxOfNodeInSubstatements(rootStmtCtx, node.getPathFromRoot(), true);
+        }
+
+        return targetCtx;
+    }
+
+    @Nullable
+    public static StatementContextBase<?, ?, ?> findCtxOfNodeInRoot(StatementContextBase<?, ?, ?> rootStmtCtx,
+            final Iterable<QName> path) {
+
+        StatementContextBase<?, ?, ?> targetCtx = findCtxOfNodeInSubstatements(rootStmtCtx, path, false);
+
+        if (targetCtx == null) {
+
+            targetCtx = findCtxOfNodeInSubstatements(rootStmtCtx, path, true);
         }
 
         return targetCtx;
