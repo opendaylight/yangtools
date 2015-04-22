@@ -173,7 +173,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         }
     }
 
-    private void checkDeleteApplicable(final NodeModification modification, final Optional<TreeNode> current) {
+    private static void checkDeleteApplicable(final NodeModification modification, final Optional<TreeNode> current) {
         // Delete is always applicable, we do not expose it to subclasses
         if (current.isPresent()) {
             LOG.trace("Delete operation turned to no-op on missing node {}", modification);
