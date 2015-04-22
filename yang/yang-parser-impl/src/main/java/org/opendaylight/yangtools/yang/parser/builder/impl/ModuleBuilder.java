@@ -61,6 +61,8 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
  */
 public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder implements DocumentedNodeBuilder {
 
+    private static final String GROUPING_STR = "Grouping";
+    private static final String TYPEDEF_STR = "typedef";
     private ModuleImpl instance;
     private final String name;
     private final String sourcePath;
@@ -443,8 +445,8 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
 
     public ExtensionBuilder addExtension(final QName qname, final int line, final SchemaPath path) {
         checkNotSealed();
-        Builder parent = getActualNode();
-        if (!(parent.equals(this))) {
+        Builder parentBuilder = getActualNode();
+        if (!(parentBuilder.equals(this))) {
             throw new YangParseException(name, line, "extension can be defined only in module or submodule");
         }
 
@@ -455,7 +457,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
             }
         }
         final ExtensionBuilder builder = new ExtensionBuilderImpl(name, line, qname, path);
-        builder.setParent(parent);
+        builder.setParent(parentBuilder);
         addedExtensions.add(builder);
         return builder;
     }
@@ -464,9 +466,9 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         checkNotSealed();
         final ContainerSchemaNodeBuilder builder = new ContainerSchemaNodeBuilder(name, line, qname, schemaPath);
 
-        Builder parent = getActualNode();
-        builder.setParent(parent);
-        addChildToParent(parent, builder, qname.getLocalName());
+        Builder parentBuilder = getActualNode();
+        builder.setParent(parentBuilder);
+        addChildToParent(parentBuilder, builder, qname.getLocalName());
 
         return builder;
     }
@@ -475,9 +477,9 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         checkNotSealed();
         final ListSchemaNodeBuilder builder = new ListSchemaNodeBuilder(name, line, qname, schemaPath);
 
-        Builder parent = getActualNode();
-        builder.setParent(parent);
-        addChildToParent(parent, builder, qname.getLocalName());
+        Builder parentBuilder = getActualNode();
+        builder.setParent(parentBuilder);
+        addChildToParent(parentBuilder, builder, qname.getLocalName());
         allLists.add(builder);
 
         return builder;
@@ -487,9 +489,9 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         checkNotSealed();
         final LeafSchemaNodeBuilder builder = new LeafSchemaNodeBuilder(name, line, qname, schemaPath);
 
-        Builder parent = getActualNode();
-        builder.setParent(parent);
-        addChildToParent(parent, builder, qname.getLocalName());
+        Builder parentBuilder = getActualNode();
+        builder.setParent(parentBuilder);
+        addChildToParent(parentBuilder, builder, qname.getLocalName());
 
         return builder;
     }
@@ -498,9 +500,9 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         checkNotSealed();
         final LeafListSchemaNodeBuilder builder = new LeafListSchemaNodeBuilder(name, line, qname, schemaPath);
 
-        Builder parent = getActualNode();
-        builder.setParent(parent);
-        addChildToParent(parent, builder, qname.getLocalName());
+        Builder parentBuilder = getActualNode();
+        builder.setParent(parentBuilder);
+        addChildToParent(parentBuilder, builder, qname.getLocalName());
 
         return builder;
     }
@@ -509,31 +511,31 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         checkNotSealed();
         final GroupingBuilder builder = new GroupingBuilderImpl(name, line, qname, path);
 
-        Builder parent = getActualNode();
-        builder.setParent(parent);
+        Builder parentBuilder = getActualNode();
+        builder.setParent(parentBuilder);
 
         String groupingName = qname.getLocalName();
-        if (parent.equals(this)) {
+        if (parentBuilder.equals(this)) {
             for (GroupingBuilder addedGrouping : getGroupingBuilders()) {
                 if (addedGrouping.getQName().getLocalName().equals(groupingName)) {
-                    raiseYangParserException("", "Grouping", groupingName, line, addedGrouping.getLine());
+                    raiseYangParserException("", GROUPING_STR, groupingName, line, addedGrouping.getLine());
                 }
             }
             addGrouping(builder);
         } else {
-            if (parent instanceof DataNodeContainerBuilder) {
-                DataNodeContainerBuilder parentNode = (DataNodeContainerBuilder) parent;
+            if (parentBuilder instanceof DataNodeContainerBuilder) {
+                DataNodeContainerBuilder parentNode = (DataNodeContainerBuilder) parentBuilder;
                 for (GroupingBuilder addedGrouping : parentNode.getGroupingBuilders()) {
                     if (addedGrouping.getQName().getLocalName().equals(groupingName)) {
-                        raiseYangParserException("", "Grouping", groupingName, line, addedGrouping.getLine());
+                        raiseYangParserException("", GROUPING_STR, groupingName, line, addedGrouping.getLine());
                     }
                 }
                 parentNode.addGrouping(builder);
-            } else if (parent instanceof RpcDefinitionBuilder) {
-                RpcDefinitionBuilder parentNode = (RpcDefinitionBuilder) parent;
+            } else if (parentBuilder instanceof RpcDefinitionBuilder) {
+                RpcDefinitionBuilder parentNode = (RpcDefinitionBuilder) parentBuilder;
                 for (GroupingBuilder child : parentNode.getGroupings()) {
                     if (child.getQName().getLocalName().equals(groupingName)) {
-                        raiseYangParserException("", "Grouping", groupingName, line, child.getLine());
+                        raiseYangParserException("", GROUPING_STR, groupingName, line, child.getLine());
                     }
                 }
                 parentNode.addGrouping(builder);
@@ -552,10 +554,10 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         final AugmentationSchemaBuilder builder = new AugmentationSchemaBuilderImpl(name, line, augmentTargetStr,
                 targetPath, order);
 
-        Builder parent = getActualNode();
-        builder.setParent(parent);
+        Builder parentBuilder = getActualNode();
+        builder.setParent(parentBuilder);
 
-        if (parent.equals(this)) {
+        if (parentBuilder.equals(this)) {
             // augment can be declared only under 'module' ...
             if (!(augmentTargetStr.startsWith("/"))) {
                 throw new YangParseException(
@@ -566,13 +568,13 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
             augmentBuilders.add(builder);
         } else {
             // ... or 'uses' statement
-            if (parent instanceof UsesNodeBuilder) {
+            if (parentBuilder instanceof UsesNodeBuilder) {
                 if (augmentTargetStr.startsWith("/")) {
                     throw new YangParseException(name, line,
                             "If 'augment' statement is a substatement to the 'uses' statement, it cannot contain absolute path ("
                                     + augmentTargetStr + ")");
                 }
-                ((UsesNodeBuilder) parent).addAugment(builder);
+                ((UsesNodeBuilder) parentBuilder).addAugment(builder);
             } else {
                 throw new YangParseException(name, line, "Augment can be declared only under module or uses statement.");
             }
@@ -586,18 +588,18 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         checkNotSealed();
         final UsesNodeBuilder usesBuilder = new UsesNodeBuilderImpl(name, line, grouping);
 
-        Builder parent = getActualNode();
-        usesBuilder.setParent(parent);
+        Builder parentBuilder = getActualNode();
+        usesBuilder.setParent(parentBuilder);
 
-        if (parent.equals(this)) {
+        if (parentBuilder.equals(this)) {
             addUsesNode(usesBuilder);
         } else {
-            if (!(parent instanceof DataNodeContainerBuilder)) {
+            if (!(parentBuilder instanceof DataNodeContainerBuilder)) {
                 throw new YangParseException(name, line, "Unresolved parent of uses '" + grouping + "'.");
             }
-            ((DataNodeContainerBuilder) parent).addUsesNode(usesBuilder);
+            ((DataNodeContainerBuilder) parentBuilder).addUsesNode(usesBuilder);
         }
-        if (parent instanceof AugmentationSchemaBuilder) {
+        if (parentBuilder instanceof AugmentationSchemaBuilder) {
             usesBuilder.setAugmenting(true);
         }
 
@@ -607,23 +609,23 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
 
     public void addRefine(final RefineHolderImpl refine) {
         checkNotSealed();
-        final Builder parent = getActualNode();
-        if (!(parent instanceof UsesNodeBuilder)) {
+        final Builder parentBuilder = getActualNode();
+        if (!(parentBuilder instanceof UsesNodeBuilder)) {
             throw new YangParseException(name, refine.getLine(), "refine can be defined only in uses statement");
         }
-        ((UsesNodeBuilder) parent).addRefine(refine);
-        refine.setParent(parent);
+        ((UsesNodeBuilder) parentBuilder).addRefine(refine);
+        refine.setParent(parentBuilder);
     }
 
     public RpcDefinitionBuilder addRpc(final int line, final QName qname, final SchemaPath path) {
         checkNotSealed();
-        Builder parent = getActualNode();
-        if (!(parent.equals(this))) {
+        Builder parentBuilder = getActualNode();
+        if (!(parentBuilder.equals(this))) {
             throw new YangParseException(name, line, "rpc can be defined only in module or submodule");
         }
 
         final RpcDefinitionBuilder rpcBuilder = new RpcDefinitionBuilder(name, line, qname, path);
-        rpcBuilder.setParent(parent);
+        rpcBuilder.setParent(parentBuilder);
 
         String rpcName = qname.getLocalName();
         checkNotConflictingInDataNamespace(rpcName, line);
@@ -651,11 +653,11 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
 
     public ContainerSchemaNodeBuilder addRpcInput(final int line, final QName qname, final SchemaPath schemaPath) {
         checkNotSealed();
-        final Builder parent = getActualNode();
-        if (!(parent instanceof RpcDefinitionBuilder)) {
+        final Builder parentBuilder = getActualNode();
+        if (!(parentBuilder instanceof RpcDefinitionBuilder)) {
             throw new YangParseException(name, line, "input can be defined only in rpc statement");
         }
-        final RpcDefinitionBuilder rpc = (RpcDefinitionBuilder) parent;
+        final RpcDefinitionBuilder rpc = (RpcDefinitionBuilder) parentBuilder;
 
         final ContainerSchemaNodeBuilder inputBuilder = new ContainerSchemaNodeBuilder(name, line, qname, schemaPath);
         inputBuilder.setParent(rpc);
@@ -666,11 +668,11 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
 
     public ContainerSchemaNodeBuilder addRpcOutput(final SchemaPath schemaPath, final QName qname, final int line) {
         checkNotSealed();
-        final Builder parent = getActualNode();
-        if (!(parent instanceof RpcDefinitionBuilder)) {
+        final Builder parentBuilder = getActualNode();
+        if (!(parentBuilder instanceof RpcDefinitionBuilder)) {
             throw new YangParseException(name, line, "output can be defined only in rpc statement");
         }
-        final RpcDefinitionBuilder rpc = (RpcDefinitionBuilder) parent;
+        final RpcDefinitionBuilder rpc = (RpcDefinitionBuilder) parentBuilder;
 
         final ContainerSchemaNodeBuilder outputBuilder = new ContainerSchemaNodeBuilder(name, line, qname, schemaPath);
         outputBuilder.setParent(rpc);
@@ -686,8 +688,8 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
 
     public NotificationBuilder addNotification(final int line, final QName qname, final SchemaPath path) {
         checkNotSealed();
-        final Builder parent = getActualNode();
-        if (!(parent.equals(this))) {
+        final Builder parentBuilder = getActualNode();
+        if (!(parentBuilder.equals(this))) {
             throw new YangParseException(name, line, "notification can be defined only in module or submodule");
         }
 
@@ -695,20 +697,20 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         checkNotConflictingInDataNamespace(notificationName, line);
 
         final NotificationBuilder builder = new NotificationBuilder(name, line, qname, path);
-        builder.setParent(parent);
+        builder.setParent(parentBuilder);
         addedNotifications.add(builder);
 
         return builder;
     }
 
     public FeatureBuilder addFeature(final int line, final QName qname, final SchemaPath path) {
-        Builder parent = getActualNode();
-        if (!(parent.equals(this))) {
+        Builder parentBuilder = getActualNode();
+        if (!(parentBuilder.equals(this))) {
             throw new YangParseException(name, line, "feature can be defined only in module or submodule");
         }
 
         final FeatureBuilder builder = new FeatureBuilder(name, line, qname, path);
-        builder.setParent(parent);
+        builder.setParent(parentBuilder);
 
         String featureName = qname.getLocalName();
         for (FeatureBuilder addedFeature : addedFeatures) {
@@ -723,26 +725,26 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     public ChoiceBuilder addChoice(final int line, final QName qname, final SchemaPath path) {
         final ChoiceBuilder builder = new ChoiceBuilder(name, line, qname, path);
 
-        Builder parent = getActualNode();
-        builder.setParent(parent);
-        addChildToParent(parent, builder, qname.getLocalName());
+        Builder parentBuilder = getActualNode();
+        builder.setParent(parentBuilder);
+        addChildToParent(parentBuilder, builder, qname.getLocalName());
 
         return builder;
     }
 
     public ChoiceCaseBuilder addCase(final int line, final QName qname, final SchemaPath path) {
-        Builder parent = getActualNode();
-        if (parent == null || parent.equals(this)) {
+        Builder parentBuilder = getActualNode();
+        if (parentBuilder == null || parentBuilder.equals(this)) {
             throw new YangParseException(name, line, "'case' parent not found");
         }
 
         final ChoiceCaseBuilder builder = new ChoiceCaseBuilder(name, line, qname, path);
-        builder.setParent(parent);
+        builder.setParent(parentBuilder);
 
-        if (parent instanceof ChoiceBuilder) {
-            ((ChoiceBuilder) parent).addCase(builder);
-        } else if (parent instanceof AugmentationSchemaBuilder) {
-            ((AugmentationSchemaBuilder) parent).addChildNode(builder);
+        if (parentBuilder instanceof ChoiceBuilder) {
+            ((ChoiceBuilder) parentBuilder).addCase(builder);
+        } else if (parentBuilder instanceof AugmentationSchemaBuilder) {
+            ((AugmentationSchemaBuilder) parentBuilder).addChildNode(builder);
         } else {
             throw new YangParseException(name, line, "Unresolved parent of 'case' " + qname.getLocalName());
         }
@@ -753,9 +755,9 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     public AnyXmlBuilder addAnyXml(final int line, final QName qname, final SchemaPath schemaPath) {
         final AnyXmlBuilder builder = new AnyXmlBuilder(name, line, qname, schemaPath);
 
-        Builder parent = getActualNode();
-        builder.setParent(parent);
-        addChildToParent(parent, builder, qname.getLocalName());
+        Builder parentBuilder = getActualNode();
+        builder.setParent(parentBuilder);
+        addChildToParent(parentBuilder, builder, qname.getLocalName());
 
         return builder;
     }
@@ -765,7 +767,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         String nodeName = typedefBuilder.getQName().getLocalName();
         for (TypeDefinitionBuilder tdb : getTypeDefinitionBuilders()) {
             if (tdb.getQName().getLocalName().equals(nodeName)) {
-                raiseYangParserException("", "typedef", nodeName, typedefBuilder.getLine(), tdb.getLine());
+                raiseYangParserException("", TYPEDEF_STR, nodeName, typedefBuilder.getLine(), tdb.getLine());
             }
         }
         super.addTypedef(typedefBuilder);
@@ -774,26 +776,26 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     public TypeDefinitionBuilderImpl addTypedef(final int line, final QName qname, final SchemaPath path) {
         final TypeDefinitionBuilderImpl builder = new TypeDefinitionBuilderImpl(name, line, qname, path);
 
-        Builder parent = getActualNode();
-        builder.setParent(parent);
+        Builder parentBuilder = getActualNode();
+        builder.setParent(parentBuilder);
 
         String typedefName = qname.getLocalName();
-        if (parent.equals(this)) {
+        if (parentBuilder.equals(this)) {
             addTypedef(builder);
         } else {
-            if (parent instanceof DataNodeContainerBuilder) {
-                DataNodeContainerBuilder parentNode = (DataNodeContainerBuilder) parent;
+            if (parentBuilder instanceof DataNodeContainerBuilder) {
+                DataNodeContainerBuilder parentNode = (DataNodeContainerBuilder) parentBuilder;
                 for (TypeDefinitionBuilder child : parentNode.getTypeDefinitionBuilders()) {
                     if (child.getQName().getLocalName().equals(typedefName)) {
-                        raiseYangParserException("", "typedef", typedefName, line, child.getLine());
+                        raiseYangParserException("", TYPEDEF_STR, typedefName, line, child.getLine());
                     }
                 }
                 parentNode.addTypedef(builder);
-            } else if (parent instanceof RpcDefinitionBuilder) {
-                RpcDefinitionBuilder rpcParent = (RpcDefinitionBuilder) parent;
+            } else if (parentBuilder instanceof RpcDefinitionBuilder) {
+                RpcDefinitionBuilder rpcParent = (RpcDefinitionBuilder) parentBuilder;
                 for (TypeDefinitionBuilder tdb : rpcParent.getTypeDefinitions()) {
                     if (tdb.getQName().getLocalName().equals(builder.getQName().getLocalName())) {
-                        raiseYangParserException("", "typedef", typedefName, line, tdb.getLine());
+                        raiseYangParserException("", TYPEDEF_STR, typedefName, line, tdb.getLine());
                     }
                 }
                 rpcParent.addTypedef(builder);
@@ -806,22 +808,22 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public void setType(final TypeDefinition<?> type) {
-        Builder parent = getActualNode();
-        if (!(parent instanceof TypeAwareBuilder)) {
+        Builder parentBuilder = getActualNode();
+        if (!(parentBuilder instanceof TypeAwareBuilder)) {
             throw new YangParseException("Failed to set type '" + type.getQName().getLocalName()
-                    + "'. Invalid parent node: " + parent);
+                    + "'. Invalid parent node: " + parentBuilder);
         }
-        ((TypeAwareBuilder) parent).setType(type);
+        ((TypeAwareBuilder) parentBuilder).setType(type);
     }
 
     public UnionTypeBuilder addUnionType(final int line, final QNameModule module) {
-        final Builder parent = getActualNode();
-        if (parent == null) {
+        final Builder parentBuilder = getActualNode();
+        if (parentBuilder == null) {
             throw new YangParseException(name, line, "Unresolved parent of union type");
         } else {
             final UnionTypeBuilder union = new UnionTypeBuilder(name, line);
-            if (parent instanceof TypeAwareBuilder) {
-                ((TypeAwareBuilder) parent).setTypedef(union);
+            if (parentBuilder instanceof TypeAwareBuilder) {
+                ((TypeAwareBuilder) parentBuilder).setTypedef(union);
                 return union;
             } else {
                 throw new YangParseException(name, line, "Invalid parent of union type.");
@@ -832,12 +834,12 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     public void addIdentityrefType(final int line, final SchemaPath schemaPath, final String baseString) {
         final IdentityrefTypeBuilder identityref = new IdentityrefTypeBuilder(name, line, baseString, schemaPath);
 
-        final Builder parent = getActualNode();
-        if (parent == null) {
+        final Builder parentBuilder = getActualNode();
+        if (parentBuilder == null) {
             throw new YangParseException(name, line, "Unresolved parent of identityref type.");
         } else {
-            if (parent instanceof TypeAwareBuilder) {
-                final TypeAwareBuilder typeParent = (TypeAwareBuilder) parent;
+            if (parentBuilder instanceof TypeAwareBuilder) {
+                final TypeAwareBuilder typeParent = (TypeAwareBuilder) parentBuilder;
                 typeParent.setTypedef(identityref);
                 dirtyNodes.add(typeParent);
             } else {
@@ -847,20 +849,20 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public DeviationBuilder addDeviation(final int line, final SchemaPath targetPath) {
-        Builder parent = getActualNode();
-        if (!(parent.equals(this))) {
+        Builder parentBuilder = getActualNode();
+        if (!(parentBuilder.equals(this))) {
             throw new YangParseException(name, line, "deviation can be defined only in module or submodule");
         }
 
         final DeviationBuilder builder = new DeviationBuilder(name, line, targetPath);
-        builder.setParent(parent);
+        builder.setParent(parentBuilder);
         deviationBuilders.add(builder);
         return builder;
     }
 
     public IdentitySchemaNodeBuilder addIdentity(final QName qname, final int line, final SchemaPath path) {
-        Builder parent = getActualNode();
-        if (!(parent.equals(this))) {
+        Builder parentBuilder = getActualNode();
+        if (!(parentBuilder.equals(this))) {
             throw new YangParseException(name, line, "identity can be defined only in module or submodule");
         }
         String identityName = qname.getLocalName();
@@ -871,7 +873,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         }
 
         final IdentitySchemaNodeBuilder builder = new IdentitySchemaNodeBuilder(name, line, qname, path);
-        builder.setParent(parent);
+        builder.setParent(parentBuilder);
         addedIdentities.add(builder);
         return builder;
     }
@@ -883,20 +885,20 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public UnknownSchemaNodeBuilderImpl addUnknownSchemaNode(final int line, final QName qname, final SchemaPath path) {
-        final Builder parent = getActualNode();
+        final Builder parentBuilder = getActualNode();
         final UnknownSchemaNodeBuilderImpl builder = new UnknownSchemaNodeBuilderImpl(name, line, qname, path);
-        builder.setParent(parent);
+        builder.setParent(parentBuilder);
         allUnknownNodes.add(builder);
 
-        if (parent.equals(this)) {
+        if (parentBuilder.equals(this)) {
             addedUnknownNodes.add(builder);
         } else {
-            if (parent instanceof SchemaNodeBuilder) {
-                parent.addUnknownNodeBuilder(builder);
-            } else if (parent instanceof DataNodeContainerBuilder) {
-                parent.addUnknownNodeBuilder(builder);
-            } else if (parent instanceof RefineHolderImpl) {
-                parent.addUnknownNodeBuilder(builder);
+            if (parentBuilder instanceof SchemaNodeBuilder) {
+                parentBuilder.addUnknownNodeBuilder(builder);
+            } else if (parentBuilder instanceof DataNodeContainerBuilder) {
+                parentBuilder.addUnknownNodeBuilder(builder);
+            } else if (parentBuilder instanceof RefineHolderImpl) {
+                parentBuilder.addUnknownNodeBuilder(builder);
             } else {
                 throw new YangParseException(name, line, "Unresolved parent of unknown node '" + qname.getLocalName()
                         + "'");

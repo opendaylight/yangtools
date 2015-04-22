@@ -16,6 +16,8 @@ import java.util.HashSet;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+
+import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -40,38 +42,38 @@ public abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends 
 
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
-        HashMap<QName, DataSchemaNode> childNodes = new HashMap<QName, DataSchemaNode>();
-        HashSet<GroupingDefinition> groupings = new HashSet<GroupingDefinition>();
-        HashSet<UsesNode> uses = new HashSet<UsesNode>();
-        HashSet<TypeDefinition<?>> typeDefinitions = new HashSet<TypeDefinition<?>>();
-        HashSet<DataSchemaNode> publicChildNodes = new HashSet<DataSchemaNode>();
+        Map<QName, DataSchemaNode> childNodesInit = new HashMap<>();
+        Set<GroupingDefinition> groupingsInit = new HashSet<>();
+        Set<UsesNode> usesInit = new HashSet<>();
+        Set<TypeDefinition<?>> typeDefinitionsInit = new HashSet<>();
+        Set<DataSchemaNode> publicChildNodesInit = new HashSet<>();
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof DataSchemaNode) {
                 DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;
 
-                childNodes.put(dataSchemaNode.getQName(), dataSchemaNode);
-                publicChildNodes.add(dataSchemaNode);
+                childNodesInit.put(dataSchemaNode.getQName(), dataSchemaNode);
+                publicChildNodesInit.add(dataSchemaNode);
             }
             if (effectiveStatement instanceof UsesNode) {
                 UsesNode usesNode = (UsesNode) effectiveStatement;
-                uses.add(usesNode);
+                usesInit.add(usesNode);
             }
             if (effectiveStatement instanceof TypeDefinition) {
                 TypeDefinition<?> typeDef = (TypeDefinition<?>) effectiveStatement;
-                typeDefinitions.add(typeDef);
+                typeDefinitionsInit.add(typeDef);
             }
             if (effectiveStatement instanceof GroupingDefinition) {
                 GroupingDefinition grp = (GroupingDefinition) effectiveStatement;
-                groupings.add(grp);
+                groupingsInit.add(grp);
             }
         }
 
-        this.childNodes = ImmutableMap.copyOf(childNodes);
-        this.groupings = ImmutableSet.copyOf(groupings);
-        this.publicChildNodes = ImmutableSet.copyOf(publicChildNodes);
-        this.typeDefinitions = ImmutableSet.copyOf(typeDefinitions);
-        this.uses = ImmutableSet.copyOf(uses);
+        this.childNodes = ImmutableMap.copyOf(childNodesInit);
+        this.groupings = ImmutableSet.copyOf(groupingsInit);
+        this.publicChildNodes = ImmutableSet.copyOf(publicChildNodesInit);
+        this.typeDefinitions = ImmutableSet.copyOf(typeDefinitionsInit);
+        this.uses = ImmutableSet.copyOf(usesInit);
     }
 
     @Override

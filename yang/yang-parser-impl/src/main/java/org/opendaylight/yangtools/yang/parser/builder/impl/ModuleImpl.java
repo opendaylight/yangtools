@@ -8,6 +8,7 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -220,7 +221,7 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
     }
 
     private static <T extends SchemaNode> Set<T> toImmutableSortedSet(final Set<T> original) {
-        TreeSet<T> sorted = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
+        NavigableSet<T> sorted = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
         sorted.addAll(original);
         return Collections.unmodifiableSet(sorted);
     }

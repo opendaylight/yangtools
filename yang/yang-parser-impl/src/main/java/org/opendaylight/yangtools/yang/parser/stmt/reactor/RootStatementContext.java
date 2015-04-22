@@ -99,9 +99,7 @@ class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Effectiv
     public StatementContextBase<A, D, E> createCopy(QNameModule newQNameModule, StatementContextBase<?, ?, ?> newParent)
             throws SourceException {
 
-        StatementContextBase<A, D, E> copy = new RootStatementContext<A, D, E>(
-                this, newQNameModule);
-        return copy;
+        return new RootStatementContext<>(this, newQNameModule);
     }
 
     @Override

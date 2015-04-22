@@ -10,15 +10,10 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.FULL_DECLARATION;
 
 import java.util.Collection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
@@ -38,6 +33,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UsesEffectiveStatementImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implements UsesStatement {
@@ -150,35 +147,4 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
     public Collection<? extends RefineStatement> getRefines() {
         return allDeclared(RefineStatement.class);
     }
-
-    @Override
-    public QName argument() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public String rawArgument() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public StatementDefinition statementDefinition() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public StatementSource getStatementSource() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }

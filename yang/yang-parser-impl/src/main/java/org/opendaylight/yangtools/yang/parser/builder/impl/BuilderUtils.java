@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Set;
 import java.util.TreeMap;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -83,6 +84,7 @@ public final class BuilderUtils {
     private static final Date NULL_DATE = new Date(0L);
     private static final String INPUT = "input";
     private static final String OUTPUT = "output";
+    private static final String CHILD_NOT_FOUND_IN_NODE_STR = "Child {} not found in node {}";
 
     private BuilderUtils() {
     }
@@ -148,7 +150,7 @@ public final class BuilderUtils {
      *            current line in yang model
      * @return module builder if found, null otherwise
      */
-    public static ModuleBuilder findModuleFromBuilders(final Map<String, TreeMap<Date, ModuleBuilder>> modules,
+    public static ModuleBuilder findModuleFromBuilders(final Map<String, NavigableMap<Date, ModuleBuilder>> modules,
             final ModuleBuilder module, final String prefix, final int line) {
         ModuleBuilder dependentModule;
         Date dependentModuleRevision;
@@ -165,7 +167,7 @@ public final class BuilderUtils {
             String dependentModuleName = dependentModuleImport.getModuleName();
             dependentModuleRevision = dependentModuleImport.getRevision();
 
-            TreeMap<Date, ModuleBuilder> moduleBuildersByRevision = modules.get(dependentModuleName);
+            NavigableMap<Date, ModuleBuilder> moduleBuildersByRevision = modules.get(dependentModuleName);
             if (moduleBuildersByRevision == null) {
                 return null;
             }
@@ -181,12 +183,10 @@ public final class BuilderUtils {
     public static ModuleBuilder findModuleFromBuilders(ModuleImport imp, Iterable<ModuleBuilder> modules) {
         String name = imp.getModuleName();
         Date revision = imp.getRevision();
-        TreeMap<Date, ModuleBuilder> map = new TreeMap<>();
+        NavigableMap<Date, ModuleBuilder> map = new TreeMap<>();
         for (ModuleBuilder module : modules) {
-            if (module != null) {
-                if (module.getName().equals(name)) {
-                    map.put(module.getRevision(), module);
-                }
+            if (module != null && module.getName().equals(name)) {
+                map.put(module.getRevision(), module);
             }
         }
         if (map.isEmpty()) {
@@ -216,7 +216,7 @@ public final class BuilderUtils {
      */
     public static Module findModuleFromContext(final SchemaContext context, final ModuleBuilder currentModule,
             final String prefix, final int line) {
-        TreeMap<Date, Module> modulesByRevision = new TreeMap<>();
+        NavigableMap<Date, Module> modulesByRevision = new TreeMap<>();
 
         ModuleImport dependentModuleImport = currentModule.getImport(prefix);
         if (dependentModuleImport == null) {
@@ -378,9 +378,9 @@ public final class BuilderUtils {
                     node = findUnknownNode(name, parent);
                 }
             } else if (parent instanceof RpcDefinitionBuilder) {
-                if ("input".equals(name)) {
+                if (INPUT.equals(name)) {
                     node = ((RpcDefinitionBuilder) parent).getInput();
-                } else if ("output".equals(name)) {
+                } else if (OUTPUT.equals(name)) {
                     node = ((RpcDefinitionBuilder) parent).getOutput();
                 } else {
                     if (node == null) {
@@ -457,9 +457,8 @@ public final class BuilderUtils {
             return castOptional(SchemaNodeBuilder.class, findCaseInChoice((ChoiceBuilder) parent, child));
         } else if (parent instanceof RpcDefinitionBuilder) {
             return castOptional(SchemaNodeBuilder.class, findContainerInRpc((RpcDefinitionBuilder) parent, child));
-
         } else {
-            LOG.trace("Child {} not found in node {}", child, parent);
+            LOG.trace(CHILD_NOT_FOUND_IN_NODE_STR, child, parent);
             return Optional.absent();
         }
     }
@@ -504,7 +503,7 @@ public final class BuilderUtils {
             final QName child) {
         if (INPUT.equals(child.getLocalName())) {
             if (parent.getInput() == null) {
-                QName qname = QName.create(parent.getQName().getModule(), "input");
+                QName qname = QName.create(parent.getQName().getModule(), INPUT);
                 final ContainerSchemaNodeBuilder inputBuilder = new ContainerSchemaNodeBuilder(parent.getModuleName(),
                         parent.getLine(), qname, parent.getPath().createChild(qname));
                 inputBuilder.setParent(parent);
@@ -514,7 +513,7 @@ public final class BuilderUtils {
             return Optional.of(parent.getInput());
         } else if (OUTPUT.equals(child.getLocalName())) {
             if (parent.getOutput() == null) {
-                QName qname = QName.create(parent.getQName().getModule(), "output");
+                QName qname = QName.create(parent.getQName().getModule(), OUTPUT);
                 final ContainerSchemaNodeBuilder outputBuilder = new ContainerSchemaNodeBuilder(parent.getModuleName(),
                         parent.getLine(), qname, parent.getPath().createChild(qname));
                 outputBuilder.setParent(parent);
@@ -523,7 +522,7 @@ public final class BuilderUtils {
             }
             return Optional.of(parent.getOutput());
         }
-        LOG.trace("Child {} not found in node {}", child, parent);
+        LOG.trace(CHILD_NOT_FOUND_IN_NODE_STR, child, parent);
         return Optional.absent();
     }
 
@@ -544,7 +543,7 @@ public final class BuilderUtils {
                 return Optional.of(caze);
             }
         }
-        LOG.trace("Child {} not found in node {}", child, parent);
+        LOG.trace(CHILD_NOT_FOUND_IN_NODE_STR, child, parent);
         return Optional.absent();
     }
 
@@ -565,7 +564,7 @@ public final class BuilderUtils {
                 return Optional.of(childNode);
             }
         }
-        LOG.trace("Child {} not found in node {}", child, parent);
+        LOG.trace(CHILD_NOT_FOUND_IN_NODE_STR, child, parent);
         return Optional.absent();
     }
 
@@ -625,7 +624,7 @@ public final class BuilderUtils {
                 return Optional.<SchemaNodeBuilder> of(childNode);
             }
         }
-        LOG.trace("Child {} not found in node {}", child, builder);
+        LOG.trace(CHILD_NOT_FOUND_IN_NODE_STR, child, builder);
         return Optional.absent();
     }
 
@@ -730,19 +729,19 @@ public final class BuilderUtils {
         final SchemaPath schemaPath = parentPath.createChild(qname);
 
         if (node instanceof AnyXmlSchemaNode) {
-            return new AnyXmlBuilder(moduleName, line, qname, schemaPath, ((AnyXmlSchemaNode) node));
+            return new AnyXmlBuilder(moduleName, line, qname, schemaPath, (AnyXmlSchemaNode) node);
         } else if (node instanceof ChoiceSchemaNode) {
-            return new ChoiceBuilder(moduleName, line, qname, schemaPath, ((ChoiceSchemaNode) node));
+            return new ChoiceBuilder(moduleName, line, qname, schemaPath, (ChoiceSchemaNode) node);
         } else if (node instanceof ContainerSchemaNode) {
-            return new ContainerSchemaNodeBuilder(moduleName, line, qname, schemaPath, ((ContainerSchemaNode) node));
+            return new ContainerSchemaNodeBuilder(moduleName, line, qname, schemaPath, (ContainerSchemaNode) node);
         } else if (node instanceof LeafSchemaNode) {
-            return new LeafSchemaNodeBuilder(moduleName, line, qname, schemaPath, ((LeafSchemaNode) node));
+            return new LeafSchemaNodeBuilder(moduleName, line, qname, schemaPath, (LeafSchemaNode) node);
         } else if (node instanceof LeafListSchemaNode) {
-            return new LeafListSchemaNodeBuilder(moduleName, line, qname, schemaPath, ((LeafListSchemaNode) node));
+            return new LeafListSchemaNodeBuilder(moduleName, line, qname, schemaPath, (LeafListSchemaNode) node);
         } else if (node instanceof ListSchemaNode) {
-            return new ListSchemaNodeBuilder(moduleName, line, qname, schemaPath, ((ListSchemaNode) node));
+            return new ListSchemaNodeBuilder(moduleName, line, qname, schemaPath, (ListSchemaNode) node);
         } else if (node instanceof ChoiceCaseNode) {
-            return new ChoiceCaseBuilder(moduleName, line, qname, schemaPath, ((ChoiceCaseNode) node));
+            return new ChoiceCaseBuilder(moduleName, line, qname, schemaPath, (ChoiceCaseNode) node);
         } else {
             throw new YangParseException(moduleName, line, "Failed to copy node: Unknown type of DataSchemaNode: "
                     + node);
@@ -767,7 +766,7 @@ public final class BuilderUtils {
         for (TypeDefinition<?> node : nodes) {
             QName qname = QName.create(parentQName, node.getQName().getLocalName());
             SchemaPath schemaPath = parentPath.createChild(qname);
-            result.add(new TypeDefinitionBuilderImpl(moduleName, line, qname, schemaPath, ((ExtendedType) node)));
+            result.add(new TypeDefinitionBuilderImpl(moduleName, line, qname, schemaPath, (ExtendedType) node));
         }
         return result;
     }
@@ -806,8 +805,8 @@ public final class BuilderUtils {
         }
     }
 
-    public static ModuleBuilder findModule(final QName qname, final Map<URI, TreeMap<Date, ModuleBuilder>> modules) {
-        TreeMap<Date, ModuleBuilder> map = modules.get(qname.getNamespace());
+    public static ModuleBuilder findModule(final QName qname, final Map<URI, NavigableMap<Date, ModuleBuilder>> modules) {
+        NavigableMap<Date, ModuleBuilder> map = modules.get(qname.getNamespace());
         if (map == null) {
             return null;
         }
@@ -817,9 +816,9 @@ public final class BuilderUtils {
         return map.get(qname.getRevision());
     }
 
-    public static Map<String, TreeMap<Date, URI>> createYangNamespaceContext(
+    public static Map<String, NavigableMap<Date, URI>> createYangNamespaceContext(
             final Collection<? extends ParseTree> modules, final Optional<SchemaContext> context) {
-        Map<String, TreeMap<Date, URI>> namespaceContext = new HashMap<>();
+        Map<String, NavigableMap<Date, URI>> namespaceContext = new HashMap<>();
         Set<Submodule_stmtContext> submodules = new HashSet<>();
         // first read ParseTree collection and separate modules and submodules
         for (ParseTree module : modules) {
@@ -858,7 +857,7 @@ public final class BuilderUtils {
                         }
                     }
                     // update namespaceContext
-                    TreeMap<Date, URI> revToNs = namespaceContext.get(moduleName);
+                    NavigableMap<Date, URI> revToNs = namespaceContext.get(moduleName);
                     if (revToNs == null) {
                         revToNs = new TreeMap<>();
                         revToNs.put(rev, namespace);
@@ -872,7 +871,7 @@ public final class BuilderUtils {
         // from SchemaContext
         if (context.isPresent()) {
             for (Module module : context.get().getModules()) {
-                TreeMap<Date, URI> revToNs = namespaceContext.get(module.getName());
+                NavigableMap<Date, URI> revToNs = namespaceContext.get(module.getName());
                 if (revToNs == null) {
                     revToNs = new TreeMap<>();
                     revToNs.put(module.getRevision(), module.getNamespace());
@@ -892,13 +891,13 @@ public final class BuilderUtils {
                         ParseTree belongsCtx = subHeaderCtx.getChild(j);
                         if (belongsCtx instanceof Belongs_to_stmtContext) {
                             final String belongsTo = ParserListenerUtils.stringFromNode(belongsCtx);
-                            TreeMap<Date, URI> ns = namespaceContext.get(belongsTo);
+                            NavigableMap<Date, URI> ns = namespaceContext.get(belongsTo);
                             if (ns == null) {
                                 throw new YangParseException(moduleName, submodule.getStart().getLine(), String.format(
                                         "Unresolved belongs-to statement: %s", belongsTo));
                             }
                             // submodule get namespace and revision from module
-                            TreeMap<Date, URI> subNs = new TreeMap<>();
+                            NavigableMap<Date, URI> subNs = new TreeMap<>();
                             subNs.put(ns.firstKey(), ns.firstEntry().getValue());
                             namespaceContext.put(moduleName, subNs);
                         }

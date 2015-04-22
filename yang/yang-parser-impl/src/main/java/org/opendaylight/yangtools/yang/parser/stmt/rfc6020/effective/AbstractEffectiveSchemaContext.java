@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -40,9 +41,9 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 public abstract class AbstractEffectiveSchemaContext implements SchemaContext {
 
-    protected static final Supplier<TreeSet<Module>> MODULE_SET_SUPPLIER = new Supplier<TreeSet<Module>>() {
+    protected static final Supplier<NavigableSet<Module>> MODULE_SET_SUPPLIER = new Supplier<NavigableSet<Module>>() {
         @Override
-        public TreeSet<Module> get() {
+        public NavigableSet<Module> get() {
             return new TreeSet<>(REVISION_COMPARATOR);
         }
     };

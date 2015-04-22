@@ -12,8 +12,8 @@ import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.f
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Set;
-import java.util.TreeMap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
@@ -49,7 +49,7 @@ public final class TypeUtils {
      *            current module
      */
     public static void resolveType(final TypeAwareBuilder nodeToResolve,
-            final Map<URI, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
+            final Map<URI, NavigableMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
         QName unknownTypeQName = nodeToResolve.getTypeQName();
         final ModuleBuilder dependentModuleBuilder = BuilderUtils.findModule(unknownTypeQName, modules);
         if (dependentModuleBuilder == null) {
@@ -72,7 +72,7 @@ public final class TypeUtils {
      *            current module
      */
     public static void resolveTypeUnion(final UnionTypeBuilder union,
-            final Map<URI, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
+            final Map<URI, NavigableMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
         // special handling for identityref types under union
         for (TypeDefinitionBuilder unionType : union.getTypedefs()) {
             if (unionType instanceof IdentityrefTypeBuilder) {
@@ -111,7 +111,7 @@ public final class TypeUtils {
      * @return TypeDefinitionBuilder of node type
      */
     private static TypeDefinitionBuilder findUnknownTypeDefinition(final TypeAwareBuilder nodeToResolve,
-            final ModuleBuilder dependentModuleBuilder, final Map<URI, TreeMap<Date, ModuleBuilder>> modules,
+            final ModuleBuilder dependentModuleBuilder, final Map<URI, NavigableMap<Date, ModuleBuilder>> modules,
             final ModuleBuilder module) {
         final int line = nodeToResolve.getLine();
         final QName unknownTypeQName = nodeToResolve.getTypeQName();
@@ -175,7 +175,7 @@ public final class TypeUtils {
     }
 
     private static TypeConstraints findConstraintsFromTypeBuilder(final TypeAwareBuilder nodeToResolve,
-            final TypeConstraints constraints, final Map<URI, TreeMap<Date, ModuleBuilder>> modules,
+            final TypeConstraints constraints, final Map<URI, NavigableMap<Date, ModuleBuilder>> modules,
             final ModuleBuilder builder) {
 
         // union and identityref types cannot be restricted

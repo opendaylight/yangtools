@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.EventListener;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -101,7 +102,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private final StatementIdentifier identifier;
     private final StatementSourceReference statementDeclSource;
 
-    private LinkedHashMap<StatementIdentifier, StatementContextBase<?, ?, ?> > substatements = new LinkedHashMap<>();
+    private Map<StatementIdentifier, StatementContextBase<?, ?, ?> > substatements = new LinkedHashMap<>();
 
     private Collection<StatementContextBase<?, ?, ?>> declared = new ArrayList<>();
     private Collection<StatementContextBase<?, ?, ?>> effective = new ArrayList<>();
