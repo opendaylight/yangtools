@@ -21,8 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
@@ -36,27 +36,22 @@ public final class GroupingUtils {
      * @param targetCtx
      * @throws SourceException
      */
-    public static void copyFromSourceToTarget(
-            StatementContextBase<?, ?, ?> sourceGrpStmtCtx,
+    public static void copyFromSourceToTarget(StatementContextBase<?, ?, ?> sourceGrpStmtCtx,
             StatementContextBase<?, ?, ?> targetCtx) throws SourceException {
 
-        QNameModule newQNameModule = getNewQNameModule(targetCtx,
-                sourceGrpStmtCtx);
+        QNameModule newQNameModule = getNewQNameModule(targetCtx, sourceGrpStmtCtx);
         copyDeclaredStmts(sourceGrpStmtCtx, targetCtx, newQNameModule);
         copyEffectiveStmts(sourceGrpStmtCtx, targetCtx, newQNameModule);
 
     }
 
-    public static void copyDeclaredStmts(
-            StatementContextBase<?, ?, ?> sourceGrpStmtCtx,
-            StatementContextBase<?, ?, ?> targetCtx, QNameModule newQNameModule)
-            throws SourceException {
+    public static void copyDeclaredStmts(StatementContextBase<?, ?, ?> sourceGrpStmtCtx,
+            StatementContextBase<?, ?, ?> targetCtx, QNameModule newQNameModule) throws SourceException {
         Collection<? extends StatementContextBase<?, ?, ?>> declaredSubstatements = sourceGrpStmtCtx
                 .declaredSubstatements();
         for (StatementContextBase<?, ?, ?> originalStmtCtx : declaredSubstatements) {
             if (needToCopyByUses(originalStmtCtx)) {
-                StatementContextBase<?, ?, ?> copy = originalStmtCtx
-                        .createCopy(newQNameModule, targetCtx);
+                StatementContextBase<?, ?, ?> copy = originalStmtCtx.createCopy(newQNameModule, targetCtx);
                 targetCtx.addEffectiveSubstatement(copy);
             } else if (isReusedByUses(originalStmtCtx)) {
                 targetCtx.addEffectiveSubstatement(originalStmtCtx);
@@ -64,16 +59,13 @@ public final class GroupingUtils {
         }
     }
 
-    public static void copyEffectiveStmts(
-            StatementContextBase<?, ?, ?> sourceGrpStmtCtx,
-            StatementContextBase<?, ?, ?> targetCtx, QNameModule newQNameModule)
-            throws SourceException {
+    public static void copyEffectiveStmts(StatementContextBase<?, ?, ?> sourceGrpStmtCtx,
+            StatementContextBase<?, ?, ?> targetCtx, QNameModule newQNameModule) throws SourceException {
         Collection<? extends StatementContextBase<?, ?, ?>> effectiveSubstatements = sourceGrpStmtCtx
                 .effectiveSubstatements();
         for (StatementContextBase<?, ?, ?> originalStmtCtx : effectiveSubstatements) {
             if (needToCopyByUses(originalStmtCtx)) {
-                StatementContextBase<?, ?, ?> copy = originalStmtCtx
-                        .createCopy(newQNameModule, targetCtx);
+                StatementContextBase<?, ?, ?> copy = originalStmtCtx.createCopy(newQNameModule, targetCtx);
                 targetCtx.addEffectiveSubstatement(copy);
             } else if (isReusedByUses(originalStmtCtx)) {
                 targetCtx.addEffectiveSubstatement(originalStmtCtx);
@@ -81,14 +73,12 @@ public final class GroupingUtils {
         }
     }
 
-    public static QNameModule getNewQNameModule(
-            StatementContextBase<?, ?, ?> targetCtx,
+    public static QNameModule getNewQNameModule(StatementContextBase<?, ?, ?> targetCtx,
             StmtContext<?, ?, ?> stmtContext) {
         if (needToCreateNewQName(stmtContext.getPublicDefinition())) {
             Object targetStmtArgument = targetCtx.getStatementArgument();
             Object sourceStmtArgument = stmtContext.getStatementArgument();
-            if (targetStmtArgument instanceof QName
-                    && sourceStmtArgument instanceof QName) {
+            if (targetStmtArgument instanceof QName && sourceStmtArgument instanceof QName) {
                 QName targetQName = (QName) targetStmtArgument;
                 QNameModule targetQNameModule = targetQName.getModule();
 
@@ -109,8 +99,7 @@ public final class GroupingUtils {
         }
     }
 
-    public static boolean needToCreateNewQName(
-            StatementDefinition publicDefinition) {
+    public static boolean needToCreateNewQName(StatementDefinition publicDefinition) {
         return true;
     }
 
@@ -134,26 +123,18 @@ public final class GroupingUtils {
 
     public static void resolveUsesNode(
             Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode,
-            StatementContextBase<?, ?, ?> targetNodeStmtCtx)
-            throws SourceException {
+            StatementContextBase<?, ?, ?> targetNodeStmtCtx) throws SourceException {
 
-        Collection<StatementContextBase<?, ?, ?>> declaredSubstatements = usesNode
-                .declaredSubstatements();
+        Collection<StatementContextBase<?, ?, ?>> declaredSubstatements = usesNode.declaredSubstatements();
         for (StatementContextBase<?, ?, ?> subStmtCtx : declaredSubstatements) {
-            if (StmtContextUtils.producesDeclared(subStmtCtx,
-                    WhenStatement.class)) {
-                StatementContextBase<?, ?, ?> copy = subStmtCtx.createCopy(
-                        null, targetNodeStmtCtx);
+            if (StmtContextUtils.producesDeclared(subStmtCtx, WhenStatement.class)) {
+                StatementContextBase<?, ?, ?> copy = subStmtCtx.createCopy(null, targetNodeStmtCtx);
                 targetNodeStmtCtx.addEffectiveSubstatement(copy);
             }
-            if (StmtContextUtils.producesDeclared(subStmtCtx,
-                    RefineStatement.class)) {
+            if (StmtContextUtils.producesDeclared(subStmtCtx, RefineStatement.class)) {
                 // :TODO resolve and perform refine statement
             }
-            if (StmtContextUtils.producesDeclared(subStmtCtx,
-                    AugmentStatement.class)) {
-                // :TODO find target node and perform augmentation
-            }
+
             // :TODO resolve other uses substatements
         }
     }

@@ -6,7 +6,7 @@ module aug-root {
 		prefix aug;
 	}
 
-	augment "aug:aug-parent1/aug:aug-parent2/aug:cont-target" {
+	augment "/aug:aug-parent1/aug:aug-parent2/aug:cont-target" {
 		container cont-added1 {
 			list list1 {
 			}
@@ -17,5 +17,23 @@ module aug-root {
 		}
 
 		uses aug:grp;
+	}
+
+	grouping grp2 {
+        container grp-cont2 {
+            container grp-cont22 {
+            }
+        }
+    }
+
+	container aug-cont1 {
+		container aug-cont2 {
+		    uses grp2 {
+		        augment "grp-cont2/grp-cont22" {
+		            container grp-add {
+		            }
+		        }
+		    }
+	    }
 	}
 }
