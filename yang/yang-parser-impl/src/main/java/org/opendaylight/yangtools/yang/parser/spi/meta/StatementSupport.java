@@ -69,8 +69,7 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      * @param stmt
      *            Context of added statement.
      */
-     void onLinkageDeclared(StmtContext.Mutable<A, D, E> stmt) throws InferenceException,
-            SourceException;
+     void onLinkageDeclared(StmtContext.Mutable<A, D, E> stmt) throws SourceException;
 
     /**
      *
@@ -89,8 +88,7 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      *            Context of added statement. Argument and statement parent is
      *            accessible.
      */
-     void onStatementDefinitionDeclared(StmtContext.Mutable<A, D, E> stmt) throws InferenceException,
-            SourceException;
+     void onStatementDefinitionDeclared(StmtContext.Mutable<A, D, E> stmt) throws SourceException;
 
     /**
      *
@@ -110,7 +108,6 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      *            Context of added statement. Argument and statement parent is
      *            accessible.
      */
-     void onFullDefinitionDeclared(StmtContext.Mutable<A, D, E> stmt) throws InferenceException,
-            SourceException;
+     void onFullDefinitionDeclared(StmtContext.Mutable<A, D, E> stmt) throws SourceException;
 
 }

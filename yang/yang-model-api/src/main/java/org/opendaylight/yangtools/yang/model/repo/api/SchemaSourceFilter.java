@@ -24,12 +24,12 @@ public interface SchemaSourceFilter {
      * A {@link SchemaSourceFilter} which accepts any schema source it is presented with.
      */
     public static final SchemaSourceFilter ALWAYS_ACCEPT = new SchemaSourceFilter() {
-        private final Iterable<Class<? extends SchemaSourceRepresentation>> REPRESENTATIONS =
+        private final Iterable<Class<? extends SchemaSourceRepresentation>> Representations =
                 Collections.<Class<? extends SchemaSourceRepresentation>>singletonList(SchemaSourceRepresentation.class);
 
         @Override
         public Iterable<Class<? extends SchemaSourceRepresentation>> supportedRepresentations() {
-            return REPRESENTATIONS;
+            return Representations;
         }
 
         @Override

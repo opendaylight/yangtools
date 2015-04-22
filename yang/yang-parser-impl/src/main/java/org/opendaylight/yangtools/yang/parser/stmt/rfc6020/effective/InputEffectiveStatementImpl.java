@@ -59,22 +59,22 @@ public class InputEffectiveStatementImpl extends
     private void initSubstatementCollections() {
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
-        LinkedList<UnknownSchemaNode> unknownNodes = new LinkedList<UnknownSchemaNode>();
-        HashSet<AugmentationSchema> augmentations = new HashSet<AugmentationSchema>();
+        List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
+        Set<AugmentationSchema> augmentationsInit = new HashSet<>();
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
-                unknownNodes.add(unknownNode);
+                unknownNodesInit.add(unknownNode);
             }
             if (effectiveStatement instanceof AugmentationSchema) {
                 AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
-                augmentations.add(augmentationSchema);
+                augmentationsInit.add(augmentationSchema);
             }
         }
 
-        this.unknownNodes = ImmutableList.copyOf(unknownNodes);
-        this.augmentations = ImmutableSet.copyOf(augmentations);
+        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
+        this.augmentations = ImmutableSet.copyOf(augmentationsInit);
     }
 
     @Override

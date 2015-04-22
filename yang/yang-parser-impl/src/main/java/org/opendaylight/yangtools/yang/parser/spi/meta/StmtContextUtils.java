@@ -81,18 +81,20 @@ public final class StmtContextUtils {
     public static final StmtContext<?, ?, ?> findFirstDeclaredSubstatement(
             StmtContext<?, ?, ?> stmtContext, int startIndex, Class<? extends DeclaredStatement<?>>... types) {
 
-        if (startIndex >= types.length)
+        if (startIndex >= types.length) {
             return null;
+        }
 
         Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements = stmtContext
                 .declaredSubstatements();
         for (StmtContext<?, ?, ?> subStmtContext : declaredSubstatements) {
             if (producesDeclared(subStmtContext,types[startIndex])) {
-                if (startIndex + 1 == types.length)
+                if (startIndex + 1 == types.length) {
                     return subStmtContext;
-                else
+                } else {
                     return findFirstDeclaredSubstatement(subStmtContext,
                             ++startIndex, types);
+                }
             }
         }
         return null;
@@ -110,8 +112,9 @@ public final class StmtContextUtils {
                 if (sublevel > 1) {
                     StmtContext<?, ?, ?> result = findFirstDeclaredSubstatementOnSublevel(
                             subStmtContext, declaredType, --sublevel);
-                    if (result != null)
+                    if (result != null) {
                         return result;
+                    }
                 }
             }
         }
@@ -130,8 +133,9 @@ public final class StmtContextUtils {
             } else {
                 StmtContext<?, ?, ?> result = findDeepFirstDeclaredSubstatement(
                         subStmtContext, declaredType);
-                if (result != null)
+                if (result != null) {
                     return result;
+                }
 
             }
         }

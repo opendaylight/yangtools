@@ -77,7 +77,7 @@ public final class CopyUtils {
         copy.setAddedByUses(old.isAddedByUses());
         copy.setConfiguration(old.isConfiguration());
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
-            copy.addUnknownNodeBuilder((copy(un, copy, updateQName)));
+            copy.addUnknownNodeBuilder(copy(un, copy, updateQName));
         }
 
         return copy;
@@ -105,7 +105,7 @@ public final class CopyUtils {
             copy.addAugmentation(copyAugment(augment, copy));
         }
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
-            copy.addUnknownNodeBuilder((copy(un, copy, updateQName)));
+            copy.addUnknownNodeBuilder(copy(un, copy, updateQName));
         }
 
         return copy;
@@ -133,7 +133,7 @@ public final class CopyUtils {
             copy.addUsesNode(copyUses(oldUses, copy));
         }
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
-            copy.addUnknownNodeBuilder((copy(un, copy, updateQName)));
+            copy.addUnknownNodeBuilder(copy(un, copy, updateQName));
         }
 
         return copy;
@@ -174,7 +174,7 @@ public final class CopyUtils {
             copy.addAugmentation(copyAugment(augment, copy));
         }
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
-            copy.addUnknownNodeBuilder((copy(un, copy, updateQName)));
+            copy.addUnknownNodeBuilder(copy(un, copy, updateQName));
         }
 
         return copy;
@@ -198,7 +198,7 @@ public final class CopyUtils {
         copy.setAddedByUses(old.isAddedByUses());
         copy.setConfiguration(old.isConfiguration());
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
-            copy.addUnknownNodeBuilder((copy(un, copy, updateQName)));
+            copy.addUnknownNodeBuilder(copy(un, copy, updateQName));
         }
 
         if (old.getType() == null) {
@@ -231,7 +231,7 @@ public final class CopyUtils {
         copy.setAddedByUses(old.isAddedByUses());
         copy.setConfiguration(old.isConfiguration());
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
-            copy.addUnknownNodeBuilder((copy(un, copy, updateQName)));
+            copy.addUnknownNodeBuilder(copy(un, copy, updateQName));
         }
 
         if (old.getType() == null) {
@@ -279,7 +279,7 @@ public final class CopyUtils {
             copy.addAugmentation(copyAugment(augment, copy));
         }
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
-            copy.addUnknownNodeBuilder((copy(un, copy, updateQName)));
+            copy.addUnknownNodeBuilder(copy(un, copy, updateQName));
         }
 
         copy.setUserOrdered(old.isUserOrdered());
@@ -314,7 +314,7 @@ public final class CopyUtils {
             copy.addUsesNode(copyUses(oldUses, copy));
         }
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
-            copy.addUnknownNodeBuilder((copy(un, copy, updateQName)));
+            copy.addUnknownNodeBuilder(copy(un, copy, updateQName));
         }
 
         return copy;
@@ -352,7 +352,7 @@ public final class CopyUtils {
             }
 
             for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
-                type.addUnknownNodeBuilder((copy(un, type, updateQName)));
+                type.addUnknownNodeBuilder(copy(un, type, updateQName));
             }
 
             type.setRanges(old.getRanges());
@@ -410,7 +410,7 @@ public final class CopyUtils {
             copy.addUsesNode(copyUses(oldUses, copy));
         }
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
-            copy.addUnknownNodeBuilder((copy(un, copy, false)));
+            copy.addUnknownNodeBuilder(copy(un, copy, false));
         }
 
         return copy;
@@ -433,7 +433,7 @@ public final class CopyUtils {
         c.setStatus(old.getStatus());
         c.setAddedByUses(old.isAddedByUses());
         for (UnknownSchemaNodeBuilder un : old.getUnknownNodes()) {
-            c.addUnknownNodeBuilder((copy(un, c, updateQName)));
+            c.addUnknownNodeBuilder(copy(un, c, updateQName));
         }
         c.setExtensionBuilder(old.getExtensionBuilder());
         c.setExtensionDefinition(old.getExtensionDefinition());

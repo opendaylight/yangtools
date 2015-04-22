@@ -62,9 +62,9 @@ public abstract class YangModelDependencyInfo {
         this.revision = formattedRevision == null ? null : QName.parseRevision(formattedRevision);
         this.moduleImports = imports;
         this.submoduleIncludes = includes;
-        this.dependencies = ImmutableSet.<ModuleImport> builder() //
-                .addAll(moduleImports) //
-                .addAll(submoduleIncludes) //
+        this.dependencies = ImmutableSet.<ModuleImport> builder()
+                .addAll(moduleImports)
+                .addAll(submoduleIncludes)
                 .build();
     }
 
@@ -214,8 +214,8 @@ public abstract class YangModelDependencyInfo {
         return builder.build();
     }
 
-    public static String getLatestRevision(final Revision_stmtsContext revision_stmts) {
-        List<Revision_stmtContext> revisions = revision_stmts.getRuleContexts(Revision_stmtContext.class);
+    public static String getLatestRevision(final Revision_stmtsContext revisionStmts) {
+        List<Revision_stmtContext> revisions = revisionStmts.getRuleContexts(Revision_stmtContext.class);
         String latestRevision = null;
         for (Revision_stmtContext revisionStmt : revisions) {
             String currentRevision = getArgumentString(revisionStmt);
@@ -248,11 +248,11 @@ public abstract class YangModelDependencyInfo {
         return builder.build();
     }
 
-    private static Date getRevision(final Revision_date_stmtContext revision_date_stmt) {
-        if (revision_date_stmt == null) {
+    private static Date getRevision(final Revision_date_stmtContext revisionDateStmt) {
+        if (revisionDateStmt == null) {
             return null;
         }
-        String formatedDate = getArgumentString(revision_date_stmt);
+        String formatedDate = getArgumentString(revisionDateStmt);
         return QName.parseRevision(formatedDate);
     }
 
@@ -285,18 +285,18 @@ public abstract class YangModelDependencyInfo {
 
         private final String belongsTo;
 
+        private SubmoduleDependencyInfo(final String name, final String latestRevision, final String belongsTo,
+                                        final ImmutableSet<ModuleImport> imports, final ImmutableSet<ModuleImport> includes) {
+            super(name, latestRevision, imports, includes);
+            this.belongsTo = belongsTo;
+        }
+
         /**
          * Returns name of parent module.
          *
          */
         public String getParentModule() {
             return belongsTo;
-        }
-
-        private SubmoduleDependencyInfo(final String name, final String latestRevision, final String belongsTo,
-                final ImmutableSet<ModuleImport> imports, final ImmutableSet<ModuleImport> includes) {
-            super(name, latestRevision, imports, includes);
-            this.belongsTo = belongsTo;
         }
 
         @Override

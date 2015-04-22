@@ -103,9 +103,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
              * Safe cast, previous checkState checks equivalence of key from
              * which type argument are derived
              */
-            @SuppressWarnings("unchecked")
-            NamespaceBehaviourWithListeners<K, V, N> casted = (NamespaceBehaviourWithListeners<K, V, N>) potential;
-            return casted;
+            return (NamespaceBehaviourWithListeners<K, V, N>) potential;
         }
         throw new NamespaceNotAvailableException("Namespace " + type + "is not available in phase " + currentPhase);
     }
@@ -185,7 +183,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     private  void completePhaseActions() throws ReactorException {
         Preconditions.checkState(currentPhase != null);
-        ArrayList<SourceSpecificContext> sourcesToProgress = Lists.newArrayList(sources);
+        List<SourceSpecificContext> sourcesToProgress = Lists.newArrayList(sources);
         try {
             boolean progressing = true;
             while(progressing) {
