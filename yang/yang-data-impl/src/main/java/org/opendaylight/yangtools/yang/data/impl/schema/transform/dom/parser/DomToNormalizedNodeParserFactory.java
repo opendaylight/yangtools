@@ -47,7 +47,7 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
     private final OrderedListNodeDomParser orderedListNodeParser;
     private final AnyXmlDomParser anyXmlNodeParser;
 
-    private DomToNormalizedNodeParserFactory(final XmlCodecProvider codecProvider, final SchemaContext schema) {
+    private DomToNormalizedNodeParserFactory(final XmlCodecProvider codecProvider, final SchemaContext schema, final boolean strictParsing) {
         leafNodeParser = new LeafNodeDomParser(codecProvider, schema);
         leafSetEntryNodeParser = new LeafSetEntryNodeDomParser(codecProvider, schema);
         leafSetNodeParser = new LeafSetNodeDomParser(leafSetEntryNodeParser);
@@ -57,14 +57,14 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
 
         };
 
-        containerNodeParser = new ContainerNodeDomParser(dispatcher);
-        mapEntryNodeParser = new MapEntryNodeDomParser(dispatcher);
+        containerNodeParser = new ContainerNodeDomParser(dispatcher, strictParsing);
+        mapEntryNodeParser = new MapEntryNodeDomParser(dispatcher, strictParsing);
         mapNodeParser = new MapNodeDomParser(mapEntryNodeParser);
         orderedListNodeParser = new OrderedListNodeDomParser(mapEntryNodeParser);
         unkeyedListEntryNodeParser = new UnkeyedListEntryNodeDomParser(dispatcher);
         unkeyedListNodeParser = new UnkeyedListNodeDomParser(unkeyedListEntryNodeParser);
         choiceNodeParser = new ChoiceNodeDomParser(dispatcher);
-        augmentationNodeParser = new AugmentationNodeDomParser(dispatcher);
+        augmentationNodeParser = new AugmentationNodeDomParser(dispatcher, strictParsing);
     }
 
     @Deprecated
@@ -88,8 +88,12 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
         augmentationNodeParser = new AugmentationNodeDomParser(dispatcher);
     }
 
+    public static DomToNormalizedNodeParserFactory getInstance(final XmlCodecProvider codecProvider, final SchemaContext schema, final boolean strictParsing) {
+        return new DomToNormalizedNodeParserFactory(codecProvider, schema, strictParsing);
+    }
+
     public static DomToNormalizedNodeParserFactory getInstance(final XmlCodecProvider codecProvider, final SchemaContext schema) {
-        return new DomToNormalizedNodeParserFactory(codecProvider, schema);
+        return new DomToNormalizedNodeParserFactory(codecProvider, schema, true);
     }
 
     @Deprecated

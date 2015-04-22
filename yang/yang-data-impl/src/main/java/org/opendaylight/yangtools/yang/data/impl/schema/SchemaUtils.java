@@ -18,10 +18,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
+import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -78,6 +80,19 @@ public final class SchemaUtils {
         // Try to find child schema node directly, but use a fallback that compares QNames without revisions and auto-expands choices
         final DataSchemaNode dataChildByName = schema.getDataChildByName(qname);
         return dataChildByName == null ? findSchemaForChild(schema, qname, schema.getChildNodes()) : dataChildByName;
+    }
+
+    @Nullable
+    public static DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname, final boolean strictMode) {
+        if (strictMode) {
+            return findSchemaForChild(schema, qname);
+        }
+
+        Optional<DataSchemaNode> childSchemaOptional = findFirstSchema(qname, schema.getChildNodes());
+        if (!childSchemaOptional.isPresent()) {
+            return null;
+        }
+        return childSchemaOptional.get();
     }
 
     public static DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname, final Iterable<DataSchemaNode> childNodes) {

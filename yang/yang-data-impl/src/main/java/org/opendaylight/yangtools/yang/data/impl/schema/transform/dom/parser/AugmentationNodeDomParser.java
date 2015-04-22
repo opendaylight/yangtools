@@ -19,9 +19,16 @@ import com.google.common.collect.LinkedListMultimap;
 final class AugmentationNodeDomParser extends AugmentationNodeBaseParser<Element> {
 
     private final NodeParserDispatcher<Element> dispatcher;
+    private final boolean strictParsing;
 
     AugmentationNodeDomParser(final NodeParserDispatcher<Element> dispatcher) {
         this.dispatcher = Preconditions.checkNotNull(dispatcher);
+        this.strictParsing = super.strictParsing();
+    }
+
+    AugmentationNodeDomParser(final NodeParserDispatcher<Element> dispatcher, final boolean strictParsing) {
+        this.dispatcher = Preconditions.checkNotNull(dispatcher);
+        this.strictParsing = strictParsing;
     }
 
     @Override
@@ -34,4 +41,8 @@ final class AugmentationNodeDomParser extends AugmentationNodeBaseParser<Element
         return dispatcher;
     }
 
+    @Override
+    protected boolean strictParsing() {
+        return strictParsing;
+    }
 }

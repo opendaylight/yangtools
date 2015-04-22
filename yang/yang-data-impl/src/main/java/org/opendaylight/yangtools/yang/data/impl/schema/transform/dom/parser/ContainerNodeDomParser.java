@@ -21,9 +21,16 @@ import com.google.common.collect.LinkedListMultimap;
 final class ContainerNodeDomParser extends ContainerNodeBaseParser<Element> {
 
     private final NodeParserDispatcher<Element> dispatcher;
+    private final boolean strictParsing;
 
     ContainerNodeDomParser(final NodeParserDispatcher<Element> dispatcher) {
         this.dispatcher = Preconditions.checkNotNull(dispatcher);
+        this.strictParsing = super.strictParsing();
+    }
+
+    ContainerNodeDomParser(final NodeParserDispatcher<Element> dispatcher, final boolean strictParsing) {
+        this.dispatcher = Preconditions.checkNotNull(dispatcher);
+        this.strictParsing = strictParsing;
     }
 
     @Override
@@ -39,5 +46,10 @@ final class ContainerNodeDomParser extends ContainerNodeBaseParser<Element> {
     @Override
     protected LinkedListMultimap<QName, Element> mapChildElements(Iterable<Element> elements) {
         return DomUtils.mapChildElementsForSingletonNode(elements.iterator().next());
+    }
+
+    @Override
+    protected boolean strictParsing() {
+        return this.strictParsing;
     }
 }

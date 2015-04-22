@@ -41,7 +41,7 @@ public abstract class AugmentationNodeBaseParser<E> extends
 
     @Override
     protected final DataSchemaNode getSchemaForChild(final AugmentationSchema schema, final QName childQName) {
-        return SchemaUtils.findSchemaForChild(schema, childQName);
+        return SchemaUtils.findSchemaForChild(schema, childQName, strictParsing());
     }
 
     @Override

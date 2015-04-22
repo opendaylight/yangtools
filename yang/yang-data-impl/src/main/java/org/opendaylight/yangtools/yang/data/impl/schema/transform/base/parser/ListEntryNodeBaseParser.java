@@ -34,7 +34,7 @@ public abstract class ListEntryNodeBaseParser<E, N extends DataContainerNode<?>>
 
     @Override
     protected final DataSchemaNode getSchemaForChild(final ListSchemaNode schema, final QName childQName) {
-        return SchemaUtils.findSchemaForChild(schema, childQName);
+        return SchemaUtils.findSchemaForChild(schema, childQName, strictParsing());
     }
 
     @Override
