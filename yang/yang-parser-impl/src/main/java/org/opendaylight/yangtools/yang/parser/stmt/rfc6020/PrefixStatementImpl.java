@@ -26,7 +26,7 @@ public class PrefixStatementImpl extends AbstractDeclaredStatement<String> imple
 
         @Override
         public String parseArgumentValue(StmtContext<?, ?,?> ctx, String value) {
-            return (value);
+            return value;
         }
 
         @Override

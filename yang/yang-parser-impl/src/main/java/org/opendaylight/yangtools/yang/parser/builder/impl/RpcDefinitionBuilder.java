@@ -32,17 +32,17 @@ public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
     private final Set<TypeDefinitionBuilder> addedTypedefs = new HashSet<>();
     private final Set<GroupingBuilder> addedGroupings = new HashSet<>();
 
+    RpcDefinitionBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
+        super(moduleName, line, qname);
+        this.schemaPath = Preconditions.checkNotNull(path, "Schema Path must not be null");
+    }
+
     public ContainerSchemaNodeBuilder getInput() {
         return inputBuilder;
     }
 
     public ContainerSchemaNodeBuilder getOutput() {
         return outputBuilder;
-    }
-
-    RpcDefinitionBuilder(final String moduleName, final int line, final QName qname, final SchemaPath path) {
-        super(moduleName, line, qname);
-        this.schemaPath = Preconditions.checkNotNull(path, "Schema Path must not be null");
     }
 
     @Override

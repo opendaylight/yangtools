@@ -13,7 +13,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -36,7 +35,7 @@ public class StatementDefinitionContext<A,D extends DeclaredStatement<A>,E exten
     }
 
 
-    public void checkNamespaceAllowed(Class<? extends IdentifierNamespace<?,?>> namespace) throws NamespaceNotAvailableException {
+    public void checkNamespaceAllowed(Class<? extends IdentifierNamespace<?,?>> namespace) {
         // Noop
     }
 

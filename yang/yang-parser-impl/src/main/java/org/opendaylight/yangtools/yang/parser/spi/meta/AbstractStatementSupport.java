@@ -81,7 +81,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
      *
      */
     @Override
-    public void onLinkageDeclared(StmtContext.Mutable<A, D, E> stmt) throws InferenceException, SourceException {
+    public void onLinkageDeclared(StmtContext.Mutable<A, D, E> stmt) throws SourceException {
         // NOOP for most implementations
     }
 
@@ -95,8 +95,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
      *
      */
     @Override
-    public void onStatementDefinitionDeclared(StmtContext.Mutable<A, D, E> stmt) throws InferenceException,
-            SourceException {
+    public void onStatementDefinitionDeclared(StmtContext.Mutable<A, D, E> stmt) throws SourceException {
         // NOOP for most implementations
     }
 
@@ -110,7 +109,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
      *
      */
     @Override
-    public void onFullDefinitionDeclared(StmtContext.Mutable<A, D, E> stmt) throws InferenceException, SourceException {
+    public void onFullDefinitionDeclared(StmtContext.Mutable<A, D, E> stmt) throws SourceException {
         // NOOP for most implementations
     }
 

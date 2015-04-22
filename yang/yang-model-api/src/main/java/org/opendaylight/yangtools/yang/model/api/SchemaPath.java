@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  * Represents unique path to the every node inside the module.
  */
 public abstract class SchemaPath implements Immutable {
+
     /**
      * An absolute SchemaPath.
      */
@@ -97,6 +98,18 @@ public abstract class SchemaPath implements Immutable {
      */
     private volatile ImmutableList<QName> legacyPath;
 
+    protected SchemaPath(final SchemaPath parent, final QName qname) {
+        this.parent = parent;
+        this.qname = qname;
+
+        int h = parent == null ? 0 : parent.hashCode();
+        if (qname != null) {
+            h = h * 31 + qname.hashCode();
+        }
+
+        hash = h;
+    }
+
     private ImmutableList<QName> getLegacyPath() {
         ImmutableList<QName> ret = legacyPath;
         if (ret == null) {
@@ -118,18 +131,6 @@ public abstract class SchemaPath implements Immutable {
     @Deprecated
     public List<QName> getPath() {
         return getLegacyPath();
-    }
-
-    protected SchemaPath(final SchemaPath parent, final QName qname) {
-        this.parent = parent;
-        this.qname = qname;
-
-        int h = parent == null ? 0 : parent.hashCode();
-        if (qname != null) {
-            h = h * 31 + qname.hashCode();
-        }
-
-        hash = h;
     }
 
     /**
@@ -185,12 +186,12 @@ public abstract class SchemaPath implements Immutable {
             return this;
         }
 
-        SchemaPath parent = this;
+        SchemaPath parentPath = this;
         for (QName qname : relative) {
-            parent = parent.createInstance(parent, qname);
+            parentPath = parentPath.createInstance(parentPath, qname);
         }
 
-        return parent;
+        return parentPath;
     }
 
     /**
@@ -202,12 +203,12 @@ public abstract class SchemaPath implements Immutable {
     public SchemaPath createChild(final SchemaPath relative) {
         Preconditions.checkArgument(!relative.isAbsolute(), "Child creation requires relative path");
 
-        SchemaPath parent = this;
+        SchemaPath parentPath = this;
         for (QName qname : relative.getPathFromRoot()) {
-            parent = parent.createInstance(parent, qname);
+            parentPath = parentPath.createInstance(parentPath, qname);
         }
 
-        return parent;
+        return parentPath;
     }
 
     /**

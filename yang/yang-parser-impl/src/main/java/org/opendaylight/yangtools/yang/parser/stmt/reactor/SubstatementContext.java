@@ -107,8 +107,7 @@ class SubstatementContext<A,D extends DeclaredStatement<A>, E extends EffectiveS
 
     @Override
     public StatementContextBase<A, D, E>  createCopy(QNameModule newQNameModule, StatementContextBase<?, ?, ?> newParent) throws SourceException {
-        StatementContextBase<A,D,E> copy = new SubstatementContext<A,D,E>(this,newQNameModule, newParent);
-        return copy;
+        return new SubstatementContext<>(this,newQNameModule, newParent);
     }
 
     @Override

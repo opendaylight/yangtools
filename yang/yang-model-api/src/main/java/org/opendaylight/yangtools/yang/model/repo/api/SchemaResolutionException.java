@@ -23,6 +23,9 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
  */
 @Beta
 public class SchemaResolutionException extends SchemaSourceException {
+
+    private static final String MESSAGE_BLUEPRINT = "%s, resolved sources: %s, unsatisfied imports: %s";
+
     private static final long serialVersionUID = 1L;
     private final Multimap<SourceIdentifier, ModuleImport> unsatisfiedImports;
     private final Collection<SourceIdentifier> resolvedSources;
@@ -48,7 +51,6 @@ public class SchemaResolutionException extends SchemaSourceException {
         this.resolvedSources = ImmutableList.copyOf(resolvedSources);
     }
 
-    private static final String MESSAGE_BLUEPRINT = "%s, resolved sources: %s, unsatisfied imports: %s";
     private static String formatMessage(final String message, final Collection<SourceIdentifier> resolvedSources, final Multimap<SourceIdentifier, ModuleImport> unsatisfiedImports) {
         return String.format(MESSAGE_BLUEPRINT, message, resolvedSources, unsatisfiedImports);
     }

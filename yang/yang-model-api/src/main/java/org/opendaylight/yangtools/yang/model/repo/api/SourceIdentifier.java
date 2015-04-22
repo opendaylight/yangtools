@@ -56,11 +56,21 @@ public final class SourceIdentifier implements Identifier, Immutable {
      */
     public static final Pattern REVISION_PATTERN = Pattern.compile("\\d\\d\\d\\d-\\d\\d-\\d\\d");
 
-
     private static final ObjectCache CACHE = ObjectCacheFactory.getObjectCache(SourceIdentifier.class);
     private static final long serialVersionUID = 1L;
     private final String revision;
     private final String name;
+
+    /**
+     *
+     * Creates new YANG Schema source identifier for sources without revision.
+     * {@link SourceIdentifier#NOT_PRESENT_FORMATTED_REVISION} as default revision.
+     *
+     * @param name Name of schema
+     */
+    public SourceIdentifier(final String name) {
+        this(name, NOT_PRESENT_FORMATTED_REVISION);
+    }
 
     /**
      * Creates new YANG Schema source identifier.
@@ -91,17 +101,6 @@ public final class SourceIdentifier implements Identifier, Immutable {
      */
     public SourceIdentifier cachedReference() {
         return CACHE.getReference(this);
-    }
-
-    /**
-     *
-     * Creates new YANG Schema source identifier for sources without revision.
-     * {@link SourceIdentifier#NOT_PRESENT_FORMATTED_REVISION} as default revision.
-     *
-     * @param name Name of schema
-     */
-    public SourceIdentifier(final String name) {
-        this(name, NOT_PRESENT_FORMATTED_REVISION);
     }
 
     /**

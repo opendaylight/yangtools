@@ -23,16 +23,16 @@ public final class StatementSupportBundle implements Immutable,NamespaceBehaviou
     private final ImmutableMap<QName, StatementSupport<?,?,?>> definitions;
     private final ImmutableMap<Class<?>, NamespaceBehaviour<?, ?, ?>> namespaceDefinitions;
 
-    public ImmutableMap<QName, StatementSupport<?, ?, ?>> getDefinitions() {
-        return definitions;
-    }
-
     private StatementSupportBundle(StatementSupportBundle parent,
-            ImmutableMap<QName, StatementSupport<?, ?, ?>> statements,
-            ImmutableMap<Class<?>, NamespaceBehaviour<?, ?, ?>> namespaces) {
+                                   ImmutableMap<QName, StatementSupport<?, ?, ?>> statements,
+                                   ImmutableMap<Class<?>, NamespaceBehaviour<?, ?, ?>> namespaces) {
         this.parent = parent;
         this.definitions = statements;
         this.namespaceDefinitions = namespaces;
+    }
+
+    public ImmutableMap<QName, StatementSupport<?, ?, ?>> getDefinitions() {
+        return definitions;
     }
 
     public static Builder builder() {
@@ -54,9 +54,7 @@ public final class StatementSupportBundle implements Immutable,NamespaceBehaviou
              * Safe cast, previous checkState checks equivalence of key from
              * which type argument are derived
              */
-            @SuppressWarnings("unchecked")
-            NamespaceBehaviour<K, V, N> casted = (NamespaceBehaviour<K, V, N>) potential;
-            return casted;
+            return (NamespaceBehaviour<K, V, N>) potential;
         }
         if (parent != null) {
             return parent.getNamespaceBehaviour(namespace);

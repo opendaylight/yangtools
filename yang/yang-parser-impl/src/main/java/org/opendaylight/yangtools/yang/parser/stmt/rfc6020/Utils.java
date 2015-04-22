@@ -52,9 +52,6 @@ import org.slf4j.LoggerFactory;
 
 public final class Utils {
 
-    private Utils() {
-    }
-
     private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
     private static final CharMatcher DOUBLE_QUOTE_MATCHER = CharMatcher.is('"');
     private static final CharMatcher SINGLE_QUOTE_MATCHER = CharMatcher.is('\'');
@@ -62,6 +59,9 @@ public final class Utils {
     private static final char SEPARATOR_NODENAME = '/';
 
     private static final String REGEX_PATH_ABS = "/[^/].*";
+
+    private Utils() {
+    }
 
     public static List<String> splitPathToNodeNames(String path) {
 
@@ -141,7 +141,7 @@ public final class Utils {
     public static String stringFromStringContext(final YangStatementParser.ArgumentContext context) {
         StringBuilder sb = new StringBuilder();
         List<TerminalNode> strings = context.STRING();
-        if (strings.size() == 0) {
+        if (strings.isEmpty()) {
             strings = Arrays.asList(context.IDENTIFIER());
         }
         for (TerminalNode stringNode : strings) {
@@ -163,7 +163,7 @@ public final class Utils {
 
     public static QName qNameFromArgument(StmtContext<?, ?, ?> ctx, String value) {
 
-        String prefix = null;
+        String prefix;
         QNameModule qNameModule = null;
         try {
             qNameModule = QNameModule.create(new URI(""), new Date(0));

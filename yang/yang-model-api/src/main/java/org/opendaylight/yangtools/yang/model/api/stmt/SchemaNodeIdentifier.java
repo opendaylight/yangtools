@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  *
  */
 public abstract class SchemaNodeIdentifier implements Immutable {
+
     /**
      * An absolute schema node identifier.
      */
@@ -99,6 +100,18 @@ public abstract class SchemaNodeIdentifier implements Immutable {
      */
     private volatile ImmutableList<QName> legacyPath;
 
+    protected SchemaNodeIdentifier(final SchemaNodeIdentifier parent, final QName qname) {
+        this.parent = parent;
+        this.qname = qname;
+
+        int h = parent == null ? 0 : parent.hashCode();
+        if (qname != null) {
+            h = h * 31 + qname.hashCode();
+        }
+
+        hash = h;
+    }
+
     private ImmutableList<QName> getLegacyPath() {
         ImmutableList<QName> ret = legacyPath;
         if (ret == null) {
@@ -120,18 +133,6 @@ public abstract class SchemaNodeIdentifier implements Immutable {
     @Deprecated
     public List<QName> getPath() {
         return getLegacyPath();
-    }
-
-    protected SchemaNodeIdentifier(final SchemaNodeIdentifier parent, final QName qname) {
-        this.parent = parent;
-        this.qname = qname;
-
-        int h = parent == null ? 0 : parent.hashCode();
-        if (qname != null) {
-            h = h * 31 + qname.hashCode();
-        }
-
-        hash = h;
     }
 
     /**
@@ -187,12 +188,12 @@ public abstract class SchemaNodeIdentifier implements Immutable {
             return this;
         }
 
-        SchemaNodeIdentifier parent = this;
+        SchemaNodeIdentifier parentNode = this;
         for (QName qname : relative) {
-            parent = parent.createInstance(parent, qname);
+            parentNode = parentNode.createInstance(parentNode, qname);
         }
 
-        return parent;
+        return parentNode;
     }
 
     /**
@@ -204,12 +205,12 @@ public abstract class SchemaNodeIdentifier implements Immutable {
     public SchemaNodeIdentifier createChild(final SchemaNodeIdentifier relative) {
         Preconditions.checkArgument(!relative.isAbsolute(), "Child creation requires relative path");
 
-        SchemaNodeIdentifier parent = this;
+        SchemaNodeIdentifier parentNode = this;
         for (QName qname : relative.getPathFromRoot()) {
-            parent = parent.createInstance(parent, qname);
+            parentNode = parentNode.createInstance(parentNode, qname);
         }
 
-        return parent;
+        return parentNode;
     }
 
     /**

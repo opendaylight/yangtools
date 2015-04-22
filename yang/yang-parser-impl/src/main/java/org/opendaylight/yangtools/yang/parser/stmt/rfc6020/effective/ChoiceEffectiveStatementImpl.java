@@ -58,28 +58,28 @@ public class ChoiceEffectiveStatementImpl extends AbstractEffectiveDocumentedNod
     private void initSubstatementCollections() {
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
-        LinkedList<UnknownSchemaNode> unknownNodes = new LinkedList<UnknownSchemaNode>();
-        HashSet<AugmentationSchema> augmentations = new HashSet<AugmentationSchema>();
-        HashSet<ChoiceCaseNode> cases = new HashSet<ChoiceCaseNode>();
+        List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
+        Set<AugmentationSchema> augmentationsInit = new HashSet<>();
+        Set<ChoiceCaseNode> casesInit = new HashSet<>();
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
-                unknownNodes.add(unknownNode);
+                unknownNodesInit.add(unknownNode);
             }
             if (effectiveStatement instanceof AugmentationSchema) {
                 AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
-                augmentations.add(augmentationSchema);
+                augmentationsInit.add(augmentationSchema);
             }
             if (effectiveStatement instanceof ChoiceCaseNode) {
                 ChoiceCaseNode choiceCaseNode = (ChoiceCaseNode) effectiveStatement;
-                cases.add(choiceCaseNode);
+                casesInit.add(choiceCaseNode);
             }
         }
 
-        this.unknownNodes = ImmutableList.copyOf(unknownNodes);
-        this.augmentations = ImmutableSet.copyOf(augmentations);
-        this.cases = ImmutableSet.copyOf(cases);
+        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
+        this.augmentations = ImmutableSet.copyOf(augmentationsInit);
+        this.cases = ImmutableSet.copyOf(casesInit);
     }
 
     @Override

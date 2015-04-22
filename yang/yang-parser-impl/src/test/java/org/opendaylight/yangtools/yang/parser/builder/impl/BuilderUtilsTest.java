@@ -6,21 +6,44 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
-import com.google.common.base.Optional;
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
+import java.util.TreeMap;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.Uint16;
-import org.opendaylight.yangtools.yang.parser.builder.api.*;
+import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
+import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
+
+import com.google.common.base.Optional;
 
 /**
  * Test suite for increasing of test coverage of BuilderUtils implementation.
@@ -67,7 +90,7 @@ public class BuilderUtilsTest {
 
     @Test
     public void testFindModuleFromBuildersWithNullPrefix() throws Exception {
-        final Map<String, TreeMap<Date, ModuleBuilder>> testModules = initModuleBuildersForTest();
+        final Map<String, NavigableMap<Date, ModuleBuilder>> testModules = initModuleBuildersForTest();
 
         ModuleBuilder result = BuilderUtils.findModuleFromBuilders(testModules, masterModule, null, 12);
         assertEquals(masterModule, result);
@@ -79,8 +102,8 @@ public class BuilderUtilsTest {
         assertEquals(dependentModule, result);
     }
 
-    private Map<String, TreeMap<Date, ModuleBuilder>> initModuleBuildersForTest() throws Exception {
-        final Map<String, TreeMap<Date, ModuleBuilder>> modules = new HashMap<>();
+    private Map<String, NavigableMap<Date, ModuleBuilder>> initModuleBuildersForTest() throws Exception {
+        final Map<String, NavigableMap<Date, ModuleBuilder>> modules = new HashMap<>();
         final String module3Name = "Module3";
 
         ModuleBuilder module3 = new ModuleBuilder(module3Name, "test/module/path/module3.yang");
@@ -92,13 +115,13 @@ public class BuilderUtilsTest {
 
         dependentModule.addModuleImport(module3.getModuleName(), module3.getRevision(), "ter");
 
-        final TreeMap<Date, ModuleBuilder> module1Map = new TreeMap<>();
+        final NavigableMap<Date, ModuleBuilder> module1Map = new TreeMap<>();
         module1Map.put(masterModule.getRevision(), masterModule);
 
-        final TreeMap<Date, ModuleBuilder> module2Map = new TreeMap<>();
+        final NavigableMap<Date, ModuleBuilder> module2Map = new TreeMap<>();
         module2Map.put(dependentModule.getRevision(), dependentModule);
 
-        final TreeMap<Date, ModuleBuilder> module3Map = new TreeMap<>();
+        final NavigableMap<Date, ModuleBuilder> module3Map = new TreeMap<>();
         module3Map.put(module3.getRevision(), module3);
 
         modules.put(masterModule.getName(), module1Map);
@@ -110,7 +133,7 @@ public class BuilderUtilsTest {
 
     @Test(expected = YangParseException.class)
     public void testFindModuleFromBuildersWithNoImportedModule() throws Exception {
-        final Map<String, TreeMap<Date, ModuleBuilder>> testModules = initModuleBuildersForTest();
+        final Map<String, NavigableMap<Date, ModuleBuilder>> testModules = initModuleBuildersForTest();
 
         BuilderUtils.findModuleFromBuilders(testModules, masterModule, "eth", 12);
     }
@@ -379,8 +402,8 @@ public class BuilderUtilsTest {
 
     @Test
     public void testFindModule() {
-        final Map<URI, TreeMap<Date, ModuleBuilder>> modules = new HashMap<>(1);
-        final TreeMap<Date, ModuleBuilder> masterModuleMap = new TreeMap<>();
+        final Map<URI, NavigableMap<Date, ModuleBuilder>> modules = new HashMap<>(1);
+        final NavigableMap<Date, ModuleBuilder> masterModuleMap = new TreeMap<>();
         masterModuleMap.put(masterModule.getRevision(), masterModule);
         modules.put(masterModule.getNamespace(), masterModuleMap);
 

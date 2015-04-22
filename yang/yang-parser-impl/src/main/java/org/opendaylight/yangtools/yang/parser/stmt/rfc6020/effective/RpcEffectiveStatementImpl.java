@@ -49,22 +49,22 @@ public class RpcEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
     private void initSubstatements() {
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
-        LinkedList<UnknownSchemaNode> unknownNodes = new LinkedList<UnknownSchemaNode>();
-        HashSet<GroupingDefinition> groupings = new HashSet<GroupingDefinition>();
-        HashSet<TypeDefinition<?>> typeDefinitions = new HashSet<TypeDefinition<?>>();
+        List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
+        Set<GroupingDefinition> groupingsInit = new HashSet<>();
+        Set<TypeDefinition<?>> typeDefinitionsInit = new HashSet<>();
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
-                unknownNodes.add(unknownNode);
+                unknownNodesInit.add(unknownNode);
             }
             if (effectiveStatement instanceof GroupingDefinition) {
                 GroupingDefinition groupingDefinition = (GroupingDefinition) effectiveStatement;
-                groupings.add(groupingDefinition);
+                groupingsInit.add(groupingDefinition);
             }
             if (effectiveStatement instanceof TypeDefinition) {
                 TypeDefinition<?> typeDefinition = (TypeDefinition<?>) effectiveStatement;
-                typeDefinitions.add(typeDefinition);
+                typeDefinitionsInit.add(typeDefinition);
             }
             if (this.input == null && effectiveStatement instanceof InputEffectiveStatementImpl) {
                 this.input = (InputEffectiveStatementImpl) effectiveStatement;
@@ -74,9 +74,9 @@ public class RpcEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
             }
         }
 
-        this.unknownNodes = ImmutableList.copyOf(unknownNodes);
-        this.groupings = ImmutableSet.copyOf(groupings);
-        this.typeDefinitions = ImmutableSet.copyOf(typeDefinitions);
+        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
+        this.groupings = ImmutableSet.copyOf(groupingsInit);
+        this.typeDefinitions = ImmutableSet.copyOf(typeDefinitionsInit);
     }
 
     @Override

@@ -87,8 +87,7 @@ public final class GroupingUtils {
 
                 if (targetQNameModule.equals(sourceQNameModule)) {
                     return null;
-                }
-                else {
+                } else {
                     return targetQNameModule;
                 }
             } else {
@@ -109,7 +108,7 @@ public final class GroupingUtils {
         noCopyDefSet.add(Rfc6020Mapping.USES);
 
         StatementDefinition def = stmtContext.getPublicDefinition();
-        return (!noCopyDefSet.contains(def));
+        return !noCopyDefSet.contains(def);
     }
 
     public static boolean isReusedByUses(StmtContext<?, ?, ?> stmtContext) {
@@ -118,7 +117,7 @@ public final class GroupingUtils {
         reusedDefSet.add(Rfc6020Mapping.TYPEDEF);
 
         StatementDefinition def = stmtContext.getPublicDefinition();
-        return (reusedDefSet.contains(def));
+        return reusedDefSet.contains(def);
     }
 
     public static void resolveUsesNode(
@@ -134,7 +133,9 @@ public final class GroupingUtils {
             if (StmtContextUtils.producesDeclared(subStmtCtx, RefineStatement.class)) {
                 // :TODO resolve and perform refine statement
             }
-
+            if (StmtContextUtils.producesDeclared(subStmtCtx, AugmentStatement.class)) {
+                // :TODO find target node and perform augmentation
+            }
             // :TODO resolve other uses substatements
         }
     }

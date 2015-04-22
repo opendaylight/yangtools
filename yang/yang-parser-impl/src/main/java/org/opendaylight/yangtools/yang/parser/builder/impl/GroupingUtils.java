@@ -12,8 +12,8 @@ import java.net.URI;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Set;
-import java.util.TreeMap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory;
 public final class GroupingUtils {
     private static final Logger LOG = LoggerFactory.getLogger(GroupingUtils.class);
 
-    private static final Splitter COLON_SPLITTER = Splitter.on(':');
     private static final Splitter SLASH_SPLITTER = Splitter.on('/');
 
     private GroupingUtils() {
@@ -49,7 +48,7 @@ public final class GroupingUtils {
      *             if no grouping found
      */
     public static GroupingBuilder getTargetGroupingFromModules(final UsesNodeBuilder usesBuilder,
-            final Map<URI, TreeMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
+            final Map<URI, NavigableMap<Date, ModuleBuilder>> modules, final ModuleBuilder module) {
         final int line = usesBuilder.getLine();
 
         SchemaPath groupingPath = usesBuilder.getTargetGroupingPath();

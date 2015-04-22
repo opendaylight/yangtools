@@ -81,8 +81,9 @@ public final class StmtContextUtils {
     public static final StmtContext<?, ?, ?> findFirstDeclaredSubstatement(
             StmtContext<?, ?, ?> stmtContext, int startIndex, Class<? extends DeclaredStatement<?>>... types) {
 
-        if (startIndex >= types.length)
+        if (startIndex >= types.length) {
             return null;
+        }
 
         Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements = stmtContext
                 .declaredSubstatements();
