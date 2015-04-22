@@ -10,12 +10,15 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree;
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class holding methods useful when dealing with {@link DataTreeCandidate} instances.
  */
 @Beta
 public final class DataTreeCandidates {
+    private static final Logger LOG = LoggerFactory.getLogger(DataTreeCandidates.class);
     private DataTreeCandidates() {
         throw new UnsupportedOperationException();
     }
@@ -36,17 +39,21 @@ public final class DataTreeCandidates {
         switch (node.getModificationType()) {
         case DELETE:
             modification.delete(path);
+            LOG.debug("Modification {} deleted path {}", modification, path);
             break;
         case SUBTREE_MODIFIED:
+            LOG.debug("Modification {} modified path {}", modification, path);
             for (DataTreeCandidateNode child : node.getChildNodes()) {
                 applyNode(modification, path.node(child.getIdentifier()), child);
             }
             break;
         case UNMODIFIED:
+            LOG.debug("Modification {} unmodified path {}", modification, path);
             // No-op
             break;
         case WRITE:
             modification.write(path, node.getDataAfter().get());
+            LOG.debug("Modification {} written path {}", modification, path);
             break;
         default:
             throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
