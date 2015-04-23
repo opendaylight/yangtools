@@ -8,18 +8,20 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ExtensionEffectiveStatementImpl;
-
-import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> implements ExtensionStatement {
 
@@ -35,7 +37,7 @@ public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> imp
 
         @Override
         public QName parseArgumentValue(StmtContext<?,?,?> ctx, String value) {
-            return Utils.qNameFromArgument(ctx,value);
+            return Utils.qNameFromArgument(ctx, value);
         }
 
         @Override
@@ -48,6 +50,10 @@ public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> imp
            return new ExtensionEffectiveStatementImpl(ctx);
         }
 
+        @Override
+        public void onStatementDefinitionDeclared(final StmtContext.Mutable<QName, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> stmt) throws InferenceException, SourceException {
+            stmt.addContext(ExtensionNamespace.class, stmt.getStatementArgument(), stmt);
+        }
     }
 
     @Override
