@@ -22,6 +22,9 @@ import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.pa
 import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.parseYinValue;
 import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.stringFromNode;
 
+import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
+import com.google.common.collect.Iterables;
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -33,8 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.Set;
-import java.util.TreeMap;
-
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser;
@@ -102,20 +103,20 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Splitter;
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
-
 public final class YangParserListenerImpl extends YangParserBaseListener {
     private static final Logger LOG = LoggerFactory.getLogger(YangParserListenerImpl.class);
     private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings();
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
     private static final String AUGMENT_STR = "augment";
 
-    private static final DateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     private static final String IMPORT_STR = "import";
     private static final String UNION_STR = "union";
     private static final String UNKNOWN_NODE_STR = "unknown-node";
+
+    /**
+     * Date Format is not thread-safe so we cannot make constant from it.
+     */
+    private final DateFormat revisionFormat = new SimpleDateFormat("yyyy-MM-dd");
     private final SchemaPathStack stack = new SchemaPathStack();
     private final Map<String, NavigableMap<Date, URI>> namespaceContext;
     private final String sourcePath;
@@ -162,7 +163,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         String description = null;
         String reference = null;
         for (int i = 0; i < ctx.getChildCount(); i++) {
-            ParseTree child = ctx.getChild(i);
+            final ParseTree child = ctx.getChild(i);
             if (child instanceof Description_stmtContext) {
                 description = stringFromNode(child);
             } else if (child instanceof Reference_stmtContext) {
@@ -195,7 +196,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         String description = null;
         String reference = null;
         for (int i = 0; i < ctx.getChildCount(); i++) {
-            ParseTree child = ctx.getChild(i);
+            final ParseTree child = ctx.getChild(i);
             if (child instanceof Description_stmtContext) {
                 description = stringFromNode(child);
             } else if (child instanceof Reference_stmtContext) {
@@ -219,7 +220,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     @Override
     public void enterBelongs_to_stmt(final YangParser.Belongs_to_stmtContext ctx) {
         final String belongsTo = stringFromNode(ctx);
-        NavigableMap<Date, URI> context = namespaceContext.get(belongsTo);
+        final NavigableMap<Date, URI> context = namespaceContext.get(belongsTo);
         final Map.Entry<Date, URI> entry = context.firstEntry();
         // TODO
         // Submodule will contain namespace and revision from module to which it
@@ -321,19 +322,19 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     private void updateRevisionForRevisionStatement(final ParseTree treeNode) {
         final String revisionDateStr = stringFromNode(treeNode);
         try {
-            final Date revisionDate = SIMPLE_DATE_FORMAT.parse(revisionDateStr);
+            final Date revisionDate = revisionFormat.parse(revisionDateStr);
             if ((revisionDate != null) && (this.moduleQName.getRevision().compareTo(revisionDate) < 0)) {
                 this.moduleQName = QName.create(moduleQName.getNamespace(), revisionDate, moduleQName.getLocalName());
                 moduleBuilder.setQNameModule(moduleQName.getModule());
                 setLog("revision", revisionDate.toString());
                 for (int i = 0; i < treeNode.getChildCount(); ++i) {
-                    ParseTree child = treeNode.getChild(i);
+                    final ParseTree child = treeNode.getChild(i);
                     if (child instanceof Reference_stmtContext) {
                         moduleBuilder.setReference(stringFromNode(child));
                     }
                 }
             }
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             LOG.warn("Failed to parse revision string: {}", revisionDateStr, e);
         }
     }
@@ -352,10 +353,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
             if (treeNode instanceof Prefix_stmtContext) {
                 importPrefix = stringFromNode(treeNode);
             } else if (treeNode instanceof Revision_date_stmtContext) {
-                String importRevisionStr = stringFromNode(treeNode);
+                final String importRevisionStr = stringFromNode(treeNode);
                 try {
-                    importRevision = SIMPLE_DATE_FORMAT.parse(importRevisionStr);
-                } catch (ParseException e) {
+                    importRevision = revisionFormat.parse(importRevisionStr);
+                } catch (final ParseException e) {
                     LOG.warn("Failed to parse import revision-date at line {}: {}", line, importRevisionStr, e);
                 }
             }
@@ -370,7 +371,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void enterInclude_stmt(YangParser.Include_stmtContext ctx) {
+    public void enterInclude_stmt(final YangParser.Include_stmtContext ctx) {
         final int line = ctx.getStart().getLine();
         final String includeName = stringFromNode(ctx);
         enterLog(IMPORT_STR, includeName, line);
@@ -381,8 +382,8 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
             if (treeNode instanceof Revision_date_stmtContext) {
                 final String importRevisionStr = stringFromNode(treeNode);
                 try {
-                    includeRevision = SIMPLE_DATE_FORMAT.parse(importRevisionStr);
-                } catch (ParseException e) {
+                    includeRevision = revisionFormat.parse(importRevisionStr);
+                } catch (final ParseException e) {
                     LOG.warn("Failed to parse import revision-date at line {}: {}", line, importRevisionStr, e);
                 }
             }
@@ -391,7 +392,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
     }
 
     @Override
-    public void exitInclude_stmt(YangParser.Include_stmtContext ctx) {
+    public void exitInclude_stmt(final YangParser.Include_stmtContext ctx) {
         exitLog("include");
     }
 
@@ -407,7 +408,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                 augmentOrder++);
 
         for (int i = 0; i < ctx.getChildCount(); i++) {
-            ParseTree child = ctx.getChild(i);
+            final ParseTree child = ctx.getChild(i);
             if (child instanceof Description_stmtContext) {
                 builder.setDescription(stringFromNode(child));
             } else if (child instanceof Reference_stmtContext) {
@@ -582,7 +583,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                             + " No import found with prefix " + prefix + " not found.");
                 }
                 Date revision = imp.getRevision();
-                NavigableMap<Date, URI> namespaces = namespaceContext.get(imp.getModuleName());
+                final NavigableMap<Date, URI> namespaces = namespaceContext.get(imp.getModuleName());
                 if (namespaces == null) {
                     throw new YangParseException(moduleName, line, String.format("Imported module %s not found",
                             imp.getModuleName()));
@@ -1068,7 +1069,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         moduleBuilder.enterNode(builder);
 
         for (int i = 0; i < ctx.getChildCount(); i++) {
-            ParseTree child = ctx.getChild(i);
+            final ParseTree child = ctx.getChild(i);
             if (child instanceof Reference_stmtContext) {
                 reference = stringFromNode(child);
             } else if (child instanceof Deviate_not_supported_stmtContext) {
@@ -1089,7 +1090,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         final boolean absolute = !xpathString.isEmpty() && xpathString.charAt(0) == '/';
 
         final List<QName> path = new ArrayList<>();
-        for (String pathElement : SLASH_SPLITTER.split(xpathString)) {
+        for (final String pathElement : SLASH_SPLITTER.split(xpathString)) {
             final Iterator<String> it = COLON_SPLITTER.split(pathElement).iterator();
             final String s = it.next();
             if (it.hasNext()) {
@@ -1124,7 +1125,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
         for (int i = 0; i < ctx.getChildCount(); i++) {
             final ParseTree child = ctx.getChild(i);
             if (child instanceof Base_stmtContext) {
-                String baseIdentityName = stringFromNode(child);
+                final String baseIdentityName = stringFromNode(child);
                 builder.setBaseIdentityName(baseIdentityName);
             }
         }
