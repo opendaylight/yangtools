@@ -290,15 +290,10 @@ class ClassTemplate extends BaseTemplate {
 
             «FOR c : consts»
                 «IF c.name == TypeConstants.PATTERN_CONSTANT_NAME && c.value instanceof List<?>»
-            boolean valid = false;
             for (Pattern p : patterns) {
-                if (p.matcher(_value).matches()) {
-                    valid = true;
-                    break;
-                }
+                «Preconditions.importedName».checkArgument(p.matcher(_value).matches(), "Supplied value \"%s\" does not match any of the permitted patterns %s", _value, «TypeConstants.PATTERN_CONSTANT_NAME»);
             }
 
-            «Preconditions.importedName».checkArgument(valid, "Supplied value \"%s\" does not match any of the permitted patterns %s", _value, «TypeConstants.PATTERN_CONSTANT_NAME»);
                 «ENDIF»
             «ENDFOR»
         «ENDIF»
