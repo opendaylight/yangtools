@@ -71,12 +71,16 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  * @see <a href="http://tools.ietf.org/html/rfc6020#section-9.13">RFC6020</a>
  */
 public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier>, Immutable, Serializable {
+    /**
+     * An empty {@link YangInstanceIdentifier}. It corresponds to the path of the conceptual
+     * root of the YANG namespace.
+     */
+    public static final YangInstanceIdentifier EMPTY = trustedCreate(Collections.<PathArgument>emptyList());
     @SuppressWarnings("rawtypes")
     private static final AtomicReferenceFieldUpdater<YangInstanceIdentifier, ImmutableList> LEGACYPATH_UPDATER =
             AtomicReferenceFieldUpdater.newUpdater(YangInstanceIdentifier.class, ImmutableList.class, "legacyPath");
     private static final AtomicReferenceFieldUpdater<YangInstanceIdentifier, String> TOSTRINGCACHE_UPDATER =
             AtomicReferenceFieldUpdater.newUpdater(YangInstanceIdentifier.class, String.class, "toStringCache");
-    private static final YangInstanceIdentifier EMPTY = trustedCreate(Collections.<PathArgument>emptyList());
     private static final Field PATHARGUMENTS_FIELD;
 
     private static final long serialVersionUID = 3L;
