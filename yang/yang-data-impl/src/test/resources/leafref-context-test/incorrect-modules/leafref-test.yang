@@ -1,0 +1,114 @@
+module leafref-test {
+    namespace "test";
+    prefix test;
+
+    container odl-contributor {
+        list contributor {
+            key "login";
+            leaf login {
+                type string;
+            }
+            leaf contributor-name {
+                type string;
+            }
+            leaf odl-project-name {
+                type leafref {
+                    path ".../odl-project/project/name";
+                }
+            }
+        }
+        list noleafref-contributor {
+            leaf foo {
+                type string;
+            }
+        }
+    }
+
+    container odl-project {
+        list project {
+            key "name";
+            leaf name {
+                type string;
+            }
+            leaf project-lead {
+                type leafref {
+                    path "/odl-contributor/contributor/login";
+                }
+            }
+        }
+        list noleafref-project {
+            leaf foo {
+                type string;
+            }
+        }
+    }
+
+    container con1 {
+        container con2 {
+            container con3 {
+                leaf l1 {
+                    type leafref {
+                        path "/odl-project/project/name";
+                    }
+                }
+                leaf l2 {
+                    type leafref {
+                        path "/odl-project/project/name";
+                    }
+                }
+                leaf l3-noleafref {
+                    type int16;
+                }
+            }
+            leaf l4 {
+                type leafref {
+                    path "/odl-project/project/name";
+                }
+            }
+            leaf l5-noleafref {
+                type int16;
+            }
+        }
+        leaf l6 {
+            type leafref {
+                path "/odl-project/project/name";
+            }
+        }
+        leaf l7-noleafref {
+            type int16;
+        }
+    }
+
+    leaf l8 {
+        type leafref {
+            path "/odl-project/project/name";
+        }
+    }
+
+    container no-leafrefcontainer {
+        list no-leafreflist {
+            leaf bar {
+                type string;
+            }
+        }
+        container no-leafrefcontainer2 {
+            leaf baz {
+                type string;
+            }
+        }
+    }
+
+    container no-leafrefcontainer2 {
+        list no-leafreflist {
+            leaf bar {
+                type string;
+            }
+        }
+        container no-leafrefcontainer2 {
+            leaf baz {
+                type string;
+            }
+        }
+    }
+
+}
