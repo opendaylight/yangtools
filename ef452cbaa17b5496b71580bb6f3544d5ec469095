@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "3aa0d159_754bc6b0",
+        "filename": "model/ietf/ietf-inet-types/accelerate/data/Ipv4Address.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 2774
+      },
+      "writtenOn": "2015-04-23T16:13:03Z",
+      "side": 1,
+      "message": "jmx does not like this interface. It will have to be moved to a utility class - same in other 3 inet files.\n\nThis does not show up on yangtools test cases - you have to reach the point of building the controller for this to show up.",
+      "revId": "ef452cbaa17b5496b71580bb6f3544d5ec469095",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3aa0d159_69e219a1",
         "filename": "model/ietf/ietf-inet-types/accelerate/data/Ipv4Prefix.java",
         "patchSetId": 10
