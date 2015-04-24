@@ -66,7 +66,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
 
             final ModelActionBuilder augmentAction = augmentNode.newInferenceAction(EFFECTIVE_MODEL);
             final ModelActionBuilder.Prerequisite<StmtContext<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>>> sourceCtxPrereq = augmentAction
-                    .requiresCtx(augmentNode, ModelProcessingPhase.FULL_DECLARATION);
+                    .requiresCtx(augmentNode, ModelProcessingPhase.EFFECTIVE_MODEL);
 
             augmentAction.apply(new ModelActionBuilder.InferenceAction() {
 
@@ -74,6 +74,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                 public void apply() throws InferenceException {
 
                     final StatementContextBase<?, ?, ?> augmentTargetCtx = AugmentUtils.getAugmentTargetCtx(augmentNode);
+                    if(augmentTargetCtx == null) return;
                     final StatementContextBase<?, ?, ?> augmentSourceCtx = (StatementContextBase<?, ?, ?>) sourceCtxPrereq.get();
 
                     try {
