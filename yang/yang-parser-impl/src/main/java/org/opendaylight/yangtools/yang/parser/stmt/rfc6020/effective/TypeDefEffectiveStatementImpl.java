@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class BitEffectiveStatementImpl extends
-        EffectiveStatementBase<String, BitStatement> {
+public class TypeDefEffectiveStatementImpl extends EffectiveStatementBase<QName, TypedefStatement> {
 
-    public BitEffectiveStatementImpl(StmtContext<String, BitStatement, ?> ctx) {
+    public TypeDefEffectiveStatementImpl(StmtContext<QName, TypedefStatement, ?> ctx) {
         super(ctx);
     }
-
 }

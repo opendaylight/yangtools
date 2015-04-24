@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -28,9 +28,7 @@ public class BitStatementImpl extends AbstractDeclaredStatement<String>
         super(context);
     }
 
-    public static class Definition
-            extends
-            AbstractStatementSupport<String, BitStatement, EffectiveStatement<String, BitStatement>> {
+    public static class Definition extends AbstractStatementSupport<String, BitStatement, EffectiveStatement<String, BitStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.BIT);
