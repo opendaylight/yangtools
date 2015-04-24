@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+
 import java.util.Collection;
 import java.util.LinkedList;
-
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -25,7 +26,9 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
-public class LeafListEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, LeafListStatement> implements LeafListSchemaNode, DerivableSchemaNode {
+public class LeafListEffectiveStatementImpl extends
+        AbstractEffectiveDocumentedNode<QName, LeafListStatement> implements
+        LeafListSchemaNode, DerivableSchemaNode {
     private final QName qname;
     private final SchemaPath path;
 
@@ -39,13 +42,35 @@ public class LeafListEffectiveStatementImpl extends AbstractEffectiveDocumentedN
 
     private ImmutableList<UnknownSchemaNode> unknownNodes;
 
-    public LeafListEffectiveStatementImpl(StmtContext<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> ctx) {
+    public LeafListEffectiveStatementImpl(
+            StmtContext<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> ctx) {
         super(ctx);
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
-        //:TODO init other fields
+        // :TODO init other fields
 
         initSubstatementCollections();
+        initCopyType(ctx);
+    }
+
+    private void initCopyType(
+            StmtContext<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> ctx) {
+
+        TypeOfCopy typeOfCopy = ctx.getTypeOfCopy();
+        switch (typeOfCopy) {
+        case ADDED_BY_AUGMENTATION:
+            augmenting = true;
+            original = (LeafListSchemaNode) ctx.getOriginalCtx()
+                    .buildEffective();
+            break;
+        case ADDED_BY_USES:
+            addedByUses = true;
+            original = (LeafListSchemaNode) ctx.getOriginalCtx()
+                    .buildEffective();
+            break;
+        default:
+            break;
+        }
     }
 
     private void initSubstatementCollections() {
@@ -153,7 +178,8 @@ public class LeafListEffectiveStatementImpl extends AbstractEffectiveDocumentedN
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(LeafListEffectiveStatementImpl.class.getSimpleName());
+        StringBuilder sb = new StringBuilder(
+                LeafListEffectiveStatementImpl.class.getSimpleName());
         sb.append("[");
         sb.append(qname);
         sb.append("]");
