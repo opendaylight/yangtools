@@ -1,0 +1,5 @@
+submodule submod {
+	belongs-to "root" {
+		prefix root;
+	}
+}

@@ -1,0 +1,45 @@
+module root {
+	namespace root-ns;
+	prefix root-pref;
+
+	yang-version 1;
+	organization "kisko";
+	contact "kisko emajl";
+
+	import imported {
+		prefix imp-pref;
+		revision "2000-01-01";
+	}
+	include submod;
+
+	container cont {
+	}
+
+	augment "/cont" {
+		container cont-aug {
+		}
+	}
+
+	notification notif1 {
+	}
+
+	rpc rpc1 {
+	}
+
+	deviation /cont {
+		deviate add {
+			container subcont{
+			}
+		}
+		reference "deviate reference";
+	}
+
+	identity identity1 {
+	}
+
+	feature feature1 {
+	}
+
+	extension ext1 {
+	}
+}

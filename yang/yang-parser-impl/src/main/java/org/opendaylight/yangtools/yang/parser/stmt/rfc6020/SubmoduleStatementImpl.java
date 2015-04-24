@@ -28,19 +28,18 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SubmoduleNameToSubmoduleQName;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.SubmoduleEffectiveStatementImpl;
 
 import com.google.common.base.Optional;
 
-public class SubmoduleStatementImpl extends
-        AbstractRootStatement<SubmoduleStatement> implements SubmoduleStatement {
+public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleStatement> implements SubmoduleStatement {
 
-    protected SubmoduleStatementImpl(
-            StmtContext<String, SubmoduleStatement, ?> context) {
+    protected SubmoduleStatementImpl(StmtContext<String, SubmoduleStatement, ?> context) {
         super(context);
     }
 
-    public static class Definition
-            extends
+    public static class Definition extends
             AbstractStatementSupport<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> {
 
         public Definition() {
@@ -53,15 +52,14 @@ public class SubmoduleStatementImpl extends
         }
 
         @Override
-        public SubmoduleStatement createDeclared(
-                StmtContext<String, SubmoduleStatement, ?> ctx) {
+        public SubmoduleStatement createDeclared(StmtContext<String, SubmoduleStatement, ?> ctx) {
             return new SubmoduleStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<String, SubmoduleStatement> createEffective(
                 StmtContext<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new SubmoduleEffectiveStatementImpl(ctx);
         }
 
         @Override
@@ -69,31 +67,29 @@ public class SubmoduleStatementImpl extends
                 Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> stmt)
                 throws SourceException {
 
-            Optional<Date> revisionDate = Optional
-                    .fromNullable(firstAttributeOf(
-                            stmt.declaredSubstatements(),
-                            RevisionStatement.class));
+            Optional<Date> revisionDate = Optional.fromNullable(firstAttributeOf(stmt.declaredSubstatements(),
+                    RevisionStatement.class));
 
-            ModuleIdentifier submoduleIdentifier = new ModuleIdentifierImpl(
-                    stmt.getStatementArgument(), Optional.<URI> absent(),
-                    revisionDate);
+            ModuleIdentifier submoduleIdentifier = new ModuleIdentifierImpl(stmt.getStatementArgument(),
+                    Optional.<URI> absent(), revisionDate);
 
             stmt.addContext(SubmoduleNamespace.class, submoduleIdentifier, stmt);
 
-            String belongsToModuleName = firstAttributeOf(
-                    stmt.declaredSubstatements(), BelongsToStatement.class);
-            StmtContext<?, ?, ?> prefixSubStmtCtx = findFirstDeclaredSubstatement(
-                    stmt, 0, BelongsToStatement.class, PrefixStatement.class);
+            String belongsToModuleName = firstAttributeOf(stmt.declaredSubstatements(), BelongsToStatement.class);
+            StmtContext<?, ?, ?> prefixSubStmtCtx = findFirstDeclaredSubstatement(stmt, 0, BelongsToStatement.class,
+                    PrefixStatement.class);
 
-            if(prefixSubStmtCtx == null) {
+            if (prefixSubStmtCtx == null) {
                 throw new IllegalArgumentException("Prefix of belongsTo statement is missing in submodule ["
                         + stmt.getStatementArgument() + "].");
             }
 
             String prefix = (String) prefixSubStmtCtx.getStatementArgument();
 
-            stmt.addToNs(BelongsToPrefixToModuleName.class, prefix,
-                    belongsToModuleName);
+            stmt.addToNs(BelongsToPrefixToModuleName.class, prefix, belongsToModuleName);
+
+            // TODO add Submodule to Namespace to it can be gathered later
+            stmt.addToNs(SubmoduleNameToSubmoduleQName.class, stmt.getStatementArgument(), qNameModule);
         }
 
     }

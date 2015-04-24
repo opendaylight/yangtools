@@ -23,6 +23,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
+import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -293,5 +294,19 @@ public final class Utils {
         }
 
         return SchemaPath.create(qNamesFromRoot, true);
+    }
+
+    public static Deviation.Deviate parseDeviateFromString(final String deviate) {
+        if ("not-supported".equals(deviate)) {
+            return Deviation.Deviate.NOT_SUPPORTED;
+        } else if ("add".equals(deviate)) {
+            return  Deviation.Deviate.ADD;
+        } else if ("replace".equals(deviate)) {
+            return  Deviation.Deviate.REPLACE;
+        } else if ("delete".equals(deviate)) {
+            return  Deviation.Deviate.DELETE;
+        } else {
+            throw new IllegalArgumentException("String %s is not valid deviate argument");
+        }
     }
 }

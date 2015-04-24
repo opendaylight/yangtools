@@ -7,39 +7,39 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
+import java.net.URI;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedList;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import java.net.URI;
-import java.util.Date;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleImpl;
 import java.util.List;
 import java.util.Set;
+
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleImpl;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 
-public class ModuleEffectiveStatementImpl extends
-        AbstractEffectiveDocumentedDataNodeContainer<String, ModuleStatement>
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+
+public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedDataNodeContainer<String, ModuleStatement>
         implements Module, Immutable {
 
-    private final QNameModule qnameModule;
+    private final QNameModule qNameModule;
     private final String name;
     private String sourcePath;
     private String prefix;
@@ -58,16 +58,30 @@ public class ModuleEffectiveStatementImpl extends
     private ImmutableList<UnknownSchemaNode> unknownNodes;
     private String source;
 
-    public ModuleEffectiveStatementImpl(
-            StmtContext<String, ModuleStatement, ?> ctx) {
+    public ModuleEffectiveStatementImpl(StmtContext<String, ModuleStatement, ?> ctx) {
         super(ctx);
 
         name = argument();
-        qnameModule = ctx.getFromNamespace(ModuleNameToModuleQName.class, name);
-        // :TODO init other fields
+        qNameModule = ctx.getFromNamespace(ModuleNameToModuleQName.class, name);
+
+        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
+            if (effectiveStatement instanceof PrefixEffectiveStatementImpl) {
+                prefix = ((PrefixEffectiveStatementImpl) effectiveStatement).argument();
+            }
+            if (effectiveStatement instanceof YangVersionEffectiveStatementImpl) {
+                yangVersion = ((YangVersionEffectiveStatementImpl) effectiveStatement).argument();
+            }
+            if (effectiveStatement instanceof OrganizationEffectiveStatementImpl) {
+                organization = ((OrganizationEffectiveStatementImpl) effectiveStatement).argument();
+            }
+            if (effectiveStatement instanceof ContactEffectiveStatementImpl) {
+                contact = ((ContactEffectiveStatementImpl) effectiveStatement).argument();
+            }
+        }
+
+        source = ctx.getStatementSource().name();
 
         initSubstatementCollections();
-
     }
 
     private void initSubstatementCollections() {
@@ -75,22 +89,58 @@ public class ModuleEffectiveStatementImpl extends
 
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
         Set<AugmentationSchema> augmentationsInit = new HashSet<>();
+        Set<ModuleImport> importsInit = new HashSet<>();
+        Set<Module> submodulesInit = new HashSet<>();
+        Set<NotificationDefinition> notificationsInit = new HashSet<>();
+        Set<RpcDefinition> rpcsInit = new HashSet<>();
+        Set<Deviation> deviationsInit = new HashSet<>();
+        Set<IdentitySchemaNode> identitiesInit = new HashSet<>();
+        Set<FeatureDefinition> featuresInit = new HashSet<>();
+        List<ExtensionDefinition> extensionNodesInit = new LinkedList<>();
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
-                UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
-                unknownNodesInit.add(unknownNode);
+                unknownNodesInit.add((UnknownSchemaNode) effectiveStatement);
             }
             if (effectiveStatement instanceof AugmentationSchema) {
-                AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
-                augmentationsInit.add(augmentationSchema);
+                augmentationsInit.add((AugmentationSchema) effectiveStatement);
+            }
+            if (effectiveStatement instanceof ModuleImport) {
+                importsInit.add((ModuleImport) effectiveStatement);
+            }
+            if (effectiveStatement instanceof Module) {
+                submodulesInit.add((Module) effectiveStatement);
+            }
+            if (effectiveStatement instanceof NotificationDefinition) {
+                notificationsInit.add((NotificationDefinition) effectiveStatement);
+            }
+            if (effectiveStatement instanceof RpcDefinition) {
+                rpcsInit.add((RpcDefinition) effectiveStatement);
+            }
+            if (effectiveStatement instanceof Deviation) {
+                deviationsInit.add((Deviation) effectiveStatement);
+            }
+            if (effectiveStatement instanceof IdentitySchemaNode) {
+                identitiesInit.add((IdentitySchemaNode) effectiveStatement);
+            }
+            if (effectiveStatement instanceof FeatureDefinition) {
+                featuresInit.add((FeatureDefinition) effectiveStatement);
+            }
+            if (effectiveStatement instanceof ExtensionDefinition) {
+                extensionNodesInit.add((ExtensionDefinition) effectiveStatement);
             }
         }
 
         this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
-
-        // :TODO other substatement collections ...
+        this.imports = ImmutableSet.copyOf(importsInit);
+        this.submodules = ImmutableSet.copyOf(submodulesInit);
+        this.notifications = ImmutableSet.copyOf(notificationsInit);
+        this.rpcs = ImmutableSet.copyOf(rpcsInit);
+        this.deviations = ImmutableSet.copyOf(deviationsInit);
+        this.identities = ImmutableSet.copyOf(identitiesInit);
+        this.features = ImmutableSet.copyOf(featuresInit);
+        this.extensionNodes = ImmutableList.copyOf(extensionNodesInit);
     }
 
     @Override
@@ -100,7 +150,7 @@ public class ModuleEffectiveStatementImpl extends
 
     @Override
     public URI getNamespace() {
-        return qnameModule.getNamespace();
+        return qNameModule.getNamespace();
     }
 
     @Override
@@ -110,7 +160,7 @@ public class ModuleEffectiveStatementImpl extends
 
     @Override
     public Date getRevision() {
-        return qnameModule.getRevision();
+        return qNameModule.getRevision();
     }
 
     @Override
@@ -193,9 +243,8 @@ public class ModuleEffectiveStatementImpl extends
         final int prime = 31;
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result
-                + ((yangVersion == null) ? 0 : yangVersion.hashCode());
-        result = prime * result + qnameModule.hashCode();
+        result = prime * result + ((yangVersion == null) ? 0 : yangVersion.hashCode());
+        result = prime * result + qNameModule.hashCode();
         return result;
     }
 
@@ -218,7 +267,7 @@ public class ModuleEffectiveStatementImpl extends
         } else if (!name.equals(other.name)) {
             return false;
         }
-        if (!qnameModule.equals(other.qnameModule)) {
+        if (!qNameModule.equals(other.qNameModule)) {
             return false;
         }
         if (yangVersion == null) {
@@ -230,13 +279,6 @@ public class ModuleEffectiveStatementImpl extends
         }
         return true;
     }
-
-    // private static <T extends SchemaNode> Set<T> toImmutableSortedSet(final
-    // Set<T> original) {
-    // TreeSet<T> sorted = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
-    // sorted.addAll(original);
-    // return Collections.unmodifiableSet(sorted);
-    // }
 
     @Override
     public String toString() {
@@ -253,7 +295,7 @@ public class ModuleEffectiveStatementImpl extends
 
     @Override
     public QNameModule getQNameModule() {
-        return qnameModule;
+        return qNameModule;
     }
 
 }
