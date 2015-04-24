@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+
 import java.util.Collection;
 import java.util.LinkedList;
-
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -50,6 +51,25 @@ public class LeafEffectiveStatementImpl extends
         // :TODO init other fields
 
         initSubstatementCollections();
+        initCopyType(ctx);
+    }
+
+    private void initCopyType(
+            StmtContext<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
+
+        TypeOfCopy typeOfCopy = ctx.getTypeOfCopy();
+        switch (typeOfCopy) {
+        case ADDED_BY_AUGMENTATION:
+            augmenting = true;
+            original = (LeafSchemaNode) ctx.getOriginalCtx().buildEffective();
+            break;
+        case ADDED_BY_USES:
+            addedByUses = true;
+            original = (LeafSchemaNode) ctx.getOriginalCtx().buildEffective();
+            break;
+        default:
+            break;
+        }
     }
 
     private void initSubstatementCollections() {
