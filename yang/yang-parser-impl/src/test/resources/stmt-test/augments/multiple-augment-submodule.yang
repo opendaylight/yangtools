@@ -1,0 +1,11 @@
+submodule multiple-augment-submodule {
+    
+    belongs-to multiple-augment-root {
+     prefix rt;   
+    }
+    
+    grouping grp-from-include{
+        container container-from-grp-from-include {
+        }
+    }
+}

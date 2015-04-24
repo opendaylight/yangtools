@@ -64,7 +64,7 @@ class ModifierImpl implements ModelActionBuilder {
     }
 
     private void tryToResolve() throws InferenceException {
-        if(action == null) {
+        if(action == null || isApplied()) {
             // Action was not yet defined
             return;
         }
@@ -104,8 +104,13 @@ class ModifierImpl implements ModelActionBuilder {
 
     private void applyAction() throws InferenceException {
 
-        action.apply();
-        // Mark all mutations as performed, so context node could move to next.
+        try {
+            action.apply();
+        } catch (InferenceException e) {
+            actionApplied = false;
+            return;
+        }
+        //  Mark all mutations as performed, so context node could move to next.
         actionApplied = true;
     }
 
@@ -255,11 +260,11 @@ class ModifierImpl implements ModelActionBuilder {
             return done;
         }
 
-        protected void resolvePrereq(T value) throws InferenceException {
-            Preconditions.checkState(!isDone());
+        protected boolean resolvePrereq(T value) throws InferenceException {
             this.value = value;
             this.done = true;
             tryToResolve();
+            return isApplied();
         }
 
         protected <O> Prerequisite<O> transform(final Function<? super T,O> transformation) {
@@ -300,8 +305,8 @@ class ModifierImpl implements ModelActionBuilder {
 
         @SuppressWarnings("unchecked")
         @Override
-        public void phaseFinished(StatementContextBase<?, ?, ?> context, ModelProcessingPhase phase) throws SourceException {
-            resolvePrereq((C) (context));
+        public boolean phaseFinished(StatementContextBase<?, ?, ?> context, ModelProcessingPhase phase) throws SourceException {
+            return resolvePrereq((C) (context));
         }
     }
 
@@ -330,8 +335,8 @@ class ModifierImpl implements ModelActionBuilder {
 
         @SuppressWarnings("unchecked")
         @Override
-        public void phaseFinished(StatementContextBase<?, ?, ?> context, ModelProcessingPhase phase) throws SourceException {
-            resolvePrereq((C) context);
+        public boolean phaseFinished(StatementContextBase<?, ?, ?> context, ModelProcessingPhase phase) throws SourceException {
+            return resolvePrereq((C) context);
         }
 
     }

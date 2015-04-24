@@ -90,7 +90,7 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
                 @Override
                 public void prerequisiteFailed(Collection<? extends Prerequisite<?>> failed) throws InferenceException {
                     if (failed.contains(requiresCtxPrerequisite)) {
-                        throw new InferenceException("Included submodule was not found.", stmt
+                        throw new InferenceException("Included submodule was not found: "+stmt.getStatementArgument(), stmt
                                 .getStatementSourceReference());
                     }
                 }

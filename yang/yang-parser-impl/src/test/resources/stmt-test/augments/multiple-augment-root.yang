@@ -1,0 +1,54 @@
+module multiple-augment-root {
+
+    namespace "multiple-augment-root";
+    prefix root;
+
+    import multiple-augment-imported { prefix imp; revision-date 1970-01-01; }
+    
+    include multiple-augment-submodule { revision-date 1970-01-01; }
+
+    augment /imp:root-container/imp:container-from-grp1/imp:sub-container-from-grp1/imp:container-in-uses-augment/imp:sub-container-from-augment2 {
+        container sub-container-from-augment3 {
+        }
+    }
+
+    augment /imp:root-container/imp:container-from-grp1/imp:sub-container-from-grp1 {
+        container sub-container-from-augment {
+        }
+    }
+
+    augment /imp:root-container/imp:container-from-grp1/imp:sub-container-from-grp1/imp:container-from-grp2/imp:sub-container-from-grp2/imp:augmented-container-in-uses-grp2 {
+        container sub-container-from-augment6 {
+        }
+    }
+
+    augment /imp:root-container/imp:container-from-grp1/imp:sub-container-from-grp1/imp:container-from-grp2/imp:sub-container-from-grp2/imp:sub-container-from-augment5 {
+        container sub-container-from-augment7 {
+        }
+    }
+
+    augment /imp:root-container/imp:container-from-grp1/imp:sub-container-from-grp1/imp:container-from-grp2/imp:sub-container-from-grp2 {
+        container sub-container-from-augment5 {
+        }
+    }
+
+    augment /imp:root-container {
+        container added-container-1 {
+        }
+    }
+    
+    container container-with-multiple-uses {
+        uses imp:grp-from-import{
+            augment container-from-grp-from-import {
+                container new {
+                }
+            }
+        }
+        uses grp-from-include{
+            augment container-from-grp-from-include {
+                container new {
+                }
+            }
+        }
+    }
+}

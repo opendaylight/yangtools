@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
+import java.util.Collection;
+
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
+import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -51,7 +54,8 @@ public final class Utils {
 
     private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
     private static final CharMatcher DOUBLE_QUOTE_MATCHER = CharMatcher.is('"');
-    private static final CharMatcher SINGLE_QUOTE_MATCHER = CharMatcher.is('\'');
+    private static final CharMatcher SINGLE_QUOTE_MATCHER = CharMatcher
+            .is('\'');
 
     private static final char SEPARATOR_NODENAME = '/';
 
@@ -62,7 +66,8 @@ public final class Utils {
 
     public static List<String> splitPathToNodeNames(String path) {
 
-        Splitter keySplitter = Splitter.on(SEPARATOR_NODENAME).omitEmptyStrings().trimResults();
+        Splitter keySplitter = Splitter.on(SEPARATOR_NODENAME)
+                .omitEmptyStrings().trimResults();
         return keySplitter.splitToList(path);
     }
 
@@ -73,7 +78,8 @@ public final class Utils {
         try {
             xPath.compile(path);
         } catch (XPathExpressionException e) {
-            throw new IllegalArgumentException("Argument is not valid XPath string", e);
+            throw new IllegalArgumentException(
+                    "Argument is not valid XPath string", e);
         }
     }
 
@@ -96,8 +102,8 @@ public final class Utils {
         return identifier;
     }
 
-    public static boolean isValidStatementDefinition(PrefixToModule prefixes, QNameToStatementDefinition stmtDef,
-            QName identifier) {
+    public static boolean isValidStatementDefinition(PrefixToModule prefixes,
+            QNameToStatementDefinition stmtDef, QName identifier) {
         if (stmtDef.get(identifier) != null) {
             return true;
         } else {
@@ -107,8 +113,12 @@ public final class Utils {
             if (namesParts.length == 2) {
                 String prefix = namesParts[0];
                 String localName = namesParts[1];
-                if (prefixes != null && prefixes.get(prefix) != null
-                        && stmtDef.get(new QName(YangConstants.RFC6020_YIN_NAMESPACE, localName)) != null) {
+                if (prefixes != null
+                        && prefixes.get(prefix) != null
+                        && stmtDef
+                                .get(new QName(
+                                        YangConstants.RFC6020_YIN_NAMESPACE,
+                                        localName)) != null) {
                     return true;
                 }
             }
@@ -116,7 +126,8 @@ public final class Utils {
         return false;
     }
 
-    public static Iterable<QName> parseXPath(StmtContext<?, ?, ?> ctx, String path) {
+    public static Iterable<QName> parseXPath(StmtContext<?, ?, ?> ctx,
+            String path) {
 
         validateXPath(path);
 
@@ -135,7 +146,8 @@ public final class Utils {
         return qNames;
     }
 
-    public static String stringFromStringContext(final YangStatementParser.ArgumentContext context) {
+    public static String stringFromStringContext(
+            final YangStatementParser.ArgumentContext context) {
         StringBuilder sb = new StringBuilder();
         List<TerminalNode> strings = context.STRING();
         if (strings.isEmpty()) {
@@ -174,27 +186,38 @@ public final class Utils {
         case 1:
             localName = namesParts[0];
 
-            if (StmtContextUtils.producesDeclared(ctx.getRoot(), ModuleStatement.class)) {
-                prefix = firstAttributeOf(ctx.getRoot().declaredSubstatements(), PrefixStatement.class);
-                qNameModule = ctx.getFromNamespace(PrefixToModule.class, prefix);
+            if (StmtContextUtils.producesDeclared(ctx.getRoot(),
+                    ModuleStatement.class)) {
+                prefix = firstAttributeOf(
+                        ctx.getRoot().declaredSubstatements(),
+                        PrefixStatement.class);
+                qNameModule = ctx
+                        .getFromNamespace(PrefixToModule.class, prefix);
 
-            } else if (StmtContextUtils.producesDeclared(ctx.getRoot(), SubmoduleStatement.class)) {
-                String belongsToModuleName = firstAttributeOf(ctx.getRoot().declaredSubstatements(),
-                        BelongsToStatement.class);
-                qNameModule = ctx.getFromNamespace(ModuleNameToModuleQName.class, belongsToModuleName);
+            } else if (StmtContextUtils.producesDeclared(ctx.getRoot(),
+                    SubmoduleStatement.class)) {
+                String belongsToModuleName = firstAttributeOf(ctx.getRoot()
+                        .declaredSubstatements(), BelongsToStatement.class);
+                qNameModule = ctx.getFromNamespace(
+                        ModuleNameToModuleQName.class, belongsToModuleName);
             }
             break;
         case 2:
             prefix = namesParts[0];
             localName = namesParts[1];
 
-            ModuleIdentifier impModIdentifier = ctx.getRoot().getFromNamespace(ImpPrefixToModuleIdentifier.class,
-                    prefix);
-            qNameModule = ctx.getFromNamespace(ModuleIdentifierToModuleQName.class, impModIdentifier);
+            ModuleIdentifier impModIdentifier = ctx.getRoot().getFromNamespace(
+                    ImpPrefixToModuleIdentifier.class, prefix);
+            qNameModule = ctx.getFromNamespace(
+                    ModuleIdentifierToModuleQName.class, impModIdentifier);
 
-            if (qNameModule == null && StmtContextUtils.producesDeclared(ctx.getRoot(), SubmoduleStatement.class)) {
-                String moduleName = ctx.getRoot().getFromNamespace(BelongsToPrefixToModuleName.class, prefix);
-                qNameModule = ctx.getFromNamespace(ModuleNameToModuleQName.class, moduleName);
+            if (qNameModule == null
+                    && StmtContextUtils.producesDeclared(ctx.getRoot(),
+                            SubmoduleStatement.class)) {
+                String moduleName = ctx.getRoot().getFromNamespace(
+                        BelongsToPrefixToModuleName.class, prefix);
+                qNameModule = ctx.getFromNamespace(
+                        ModuleNameToModuleQName.class, moduleName);
             }
 
             break;
@@ -206,78 +229,63 @@ public final class Utils {
     }
 
     @Nullable
-    private static StatementContextBase<?, ?, ?> findCtxOfNodeInSubstatements(
-            StatementContextBase<?, ?, ?> rootStmtCtx, final Iterable<QName> path, boolean searchInEffective) {
+    public static StatementContextBase<?, ?, ?> findCtxOfNodeInSubstatements(
+            StatementContextBase<?, ?, ?> rootStmtCtx,
+            final Iterable<QName> path) {
 
         StatementContextBase<?, ?, ?> parent = rootStmtCtx;
 
         Iterator<QName> pathIter = path.iterator();
-        QName targetNode = pathIter.next();
-
         while (pathIter.hasNext()) {
+            QName nextPathQName = pathIter.next();
+            StatementContextBase<?, ?, ?> foundSubstatement = getSubstatementByQName(
+                    parent, nextPathQName);
 
-            for (StatementContextBase<?, ?, ?> child : searchInEffective ? parent.effectiveSubstatements() : parent
-                    .declaredSubstatements()) {
-
-                if (targetNode.equals(child.getStatementArgument())) {
-                    parent = child;
-                    targetNode = pathIter.next();
-                }
-            }
-
-            if (parent.equals(rootStmtCtx)) {
-
+            if (foundSubstatement == null) {
                 return null;
             }
+            if (!pathIter.hasNext()) {
+                return foundSubstatement;
+            }
+
+            parent = foundSubstatement;
         }
 
-        StatementContextBase<?, ?, ?> targetCtx = null;
+        return null;
+    }
 
-        for (StatementContextBase<?, ?, ?> child : searchInEffective ? parent.effectiveSubstatements() : parent
-                .declaredSubstatements()) {
+    public static StatementContextBase<?, ?, ?> getSubstatementByQName(
+            StatementContextBase<?, ?, ?> parent, QName nextPathQName) {
 
-            if (targetNode.equals(child.getStatementArgument())) {
-                targetCtx = child;
+        Collection<StatementContextBase<?, ?, ?>> declaredSubstatement = parent
+                .declaredSubstatements();
+        Collection<StatementContextBase<?, ?, ?>> effectiveSubstatement = parent
+                .effectiveSubstatements();
+
+        Collection<StatementContextBase<?, ?, ?>> allSubstatements = new LinkedList<>();
+        allSubstatements.addAll(declaredSubstatement);
+        allSubstatements.addAll(effectiveSubstatement);
+
+        for (StatementContextBase<?, ?, ?> substatement : allSubstatements) {
+            if (nextPathQName.equals(substatement.getStatementArgument())) {
+                return substatement;
             }
         }
 
-        return targetCtx;
+        return null;
     }
 
     @Nullable
-    public static StatementContextBase<?, ?, ?> findCtxOfNodeInRoot(StatementContextBase<?, ?, ?> rootStmtCtx,
+    public static StatementContextBase<?, ?, ?> findCtxOfNodeInRoot(
+            StatementContextBase<?, ?, ?> rootStmtCtx,
             final SchemaNodeIdentifier node) {
-
-        System.out.println(node.getPathFromRoot());
-
-        StatementContextBase<?, ?, ?> targetCtx = findCtxOfNodeInSubstatements(rootStmtCtx, node.getPathFromRoot(),
-                false);
-
-        if (targetCtx == null) {
-
-            targetCtx = findCtxOfNodeInSubstatements(rootStmtCtx, node.getPathFromRoot(), true);
-        }
-
-        return targetCtx;
-    }
-
-    @Nullable
-    public static StatementContextBase<?, ?, ?> findCtxOfNodeInRoot(StatementContextBase<?, ?, ?> rootStmtCtx,
-            final Iterable<QName> path) {
-
-        StatementContextBase<?, ?, ?> targetCtx = findCtxOfNodeInSubstatements(rootStmtCtx, path, false);
-
-        if (targetCtx == null) {
-
-            targetCtx = findCtxOfNodeInSubstatements(rootStmtCtx, path, true);
-        }
-
-        return targetCtx;
+        return findCtxOfNodeInSubstatements(rootStmtCtx, node.getPathFromRoot());
     }
 
     public static SchemaPath getSchemaPath(StmtContext<?, ?, ?> ctx) {
 
-        Iterator<Object> argumentsIterator = ctx.getArgumentsFromRoot().iterator();
+        Iterator<Object> argumentsIterator = ctx.getArgumentsFromRoot()
+                .iterator();
         argumentsIterator.next(); // skip root argument
 
         List<QName> qNamesFromRoot = new LinkedList<>();
@@ -293,5 +301,20 @@ public final class Utils {
         }
 
         return SchemaPath.create(qNamesFromRoot, true);
+    }
+
+    public static Deviation.Deviate parseDeviateFromString(final String deviate) {
+        if ("not-supported".equals(deviate)) {
+            return Deviation.Deviate.NOT_SUPPORTED;
+        } else if ("add".equals(deviate)) {
+            return Deviation.Deviate.ADD;
+        } else if ("replace".equals(deviate)) {
+            return Deviation.Deviate.REPLACE;
+        } else if ("delete".equals(deviate)) {
+            return Deviation.Deviate.DELETE;
+        } else {
+            throw new IllegalArgumentException(
+                    "String %s is not valid deviate argument");
+        }
     }
 }

@@ -7,13 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.EFFECTIVE_MODEL;
-
 import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.annotation.Nonnull;
-
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
@@ -29,27 +26,37 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AugmentEffectiveStatementImpl;
 
-public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeIdentifier> implements AugmentStatement {
+public class AugmentStatementImpl extends
+        AbstractDeclaredStatement<SchemaNodeIdentifier> implements
+        AugmentStatement {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AugmentStatementImpl.class);
+    private static final Logger LOG = LoggerFactory
+            .getLogger(AugmentStatementImpl.class);
 
-    protected AugmentStatementImpl(StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> context) {
+    protected AugmentStatementImpl(
+            StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> context) {
         super(context);
     }
 
-    public static class Definition extends AbstractStatementSupport<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> {
+    public static class Definition
+            extends
+            AbstractStatementSupport<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.AUGMENT);
         }
 
         @Override
-        public SchemaNodeIdentifier parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) throws SourceException {
-            return SchemaNodeIdentifier.create(AugmentUtils.parseAugmentPath(ctx, value), Utils.isXPathAbsolute(value));
+        public SchemaNodeIdentifier parseArgumentValue(
+                StmtContext<?, ?, ?> ctx, String value) throws SourceException {
+            return SchemaNodeIdentifier.create(
+                    AugmentUtils.parseAugmentPath(ctx, value),
+                    Utils.isXPathAbsolute(value));
         }
 
         @Override
-        public AugmentStatement createDeclared(StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> ctx) {
+        public AugmentStatement createDeclared(
+                StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> ctx) {
             return new AugmentStatementImpl(ctx);
         }
 
@@ -64,31 +71,42 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                 final StmtContext.Mutable<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> augmentNode)
                 throws SourceException {
 
-            final ModelActionBuilder augmentAction = augmentNode.newInferenceAction(EFFECTIVE_MODEL);
+            final ModelActionBuilder augmentAction = augmentNode
+                    .newInferenceAction(ModelProcessingPhase.FULL_DECLARATION);
             final ModelActionBuilder.Prerequisite<StmtContext<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>>> sourceCtxPrereq = augmentAction
-                    .requiresCtx(augmentNode, ModelProcessingPhase.FULL_DECLARATION);
+                    .requiresCtx(augmentNode,
+                            ModelProcessingPhase.FULL_DECLARATION);
 
             augmentAction.apply(new ModelActionBuilder.InferenceAction() {
 
                 @Override
                 public void apply() throws InferenceException {
 
-                    final StatementContextBase<?, ?, ?> augmentTargetCtx = AugmentUtils.getAugmentTargetCtx(augmentNode);
-                    final StatementContextBase<?, ?, ?> augmentSourceCtx = (StatementContextBase<?, ?, ?>) sourceCtxPrereq.get();
+                    final StatementContextBase<?, ?, ?> augmentTargetCtx = AugmentUtils
+                            .getAugmentTargetCtx(augmentNode);
+
+                    if (augmentTargetCtx == null) {
+                        throw new InferenceException("Augment target not found: "+augmentNode.getStatementArgument(), augmentNode.getStatementSourceReference());
+                    }
+
+                    final StatementContextBase<?, ?, ?> augmentSourceCtx = (StatementContextBase<?, ?, ?>) sourceCtxPrereq
+                            .get();
 
                     try {
-                        AugmentUtils.copyFromSourceToTarget(augmentSourceCtx, augmentTargetCtx);
+                        AugmentUtils.copyFromSourceToTarget(augmentSourceCtx,
+                                augmentTargetCtx);
                     } catch (SourceException e) {
                         LOG.warn(e.getMessage(), e);
                     }
+
                 }
 
                 @Override
-                public void prerequisiteFailed(final Collection<? extends ModelActionBuilder.Prerequisite<?>> failed)
+                public void prerequisiteFailed(
+                        final Collection<? extends ModelActionBuilder.Prerequisite<?>> failed)
                         throws InferenceException {
-                    if (failed.contains(augmentAction)) {
-                        throw new InferenceException("Augment action failed", augmentNode.getStatementSourceReference());
-                    }
+                        throw new InferenceException("Augment target not found: "+augmentNode.getStatementArgument(),
+                                augmentNode.getStatementSourceReference());
                 }
             });
         }
