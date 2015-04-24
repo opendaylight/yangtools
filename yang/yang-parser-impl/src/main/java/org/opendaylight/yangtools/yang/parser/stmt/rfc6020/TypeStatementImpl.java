@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -7,13 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.util.BaseTypes;
+import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.TypeEffectiveStatementImpl;
 
 import javax.annotation.Nonnull;
 
@@ -41,7 +46,17 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String> impleme
 
         @Override public EffectiveStatement<String, TypeStatement> createEffective(
                 StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new TypeEffectiveStatementImpl(ctx);
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(StmtContext.Mutable<String, TypeStatement, EffectiveStatement<String, TypeStatement>> stmt) throws SourceException {
+            if (!BaseTypes.isYangBuildInType(stmt.getStatementArgument())) {
+                if (stmt.getParentContext() != null) {
+                    StatementContextBase<?, ?, ?> stmtCtx = (StatementContextBase<?, ?, ?>) stmt.getParentContext().getFromNamespace(TypeNamespace.class, Utils.qNameFromArgument(stmt, stmt.getStatementArgument()));
+                    Preconditions.checkArgument(stmtCtx != null, "Typedef '%s' doesn't exist in given scope", stmt.getStatementArgument());
+                }
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParserBaseListener;
@@ -23,6 +22,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 
 import javax.annotation.concurrent.Immutable;
 
@@ -34,6 +34,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
     private QNameToStatementDefinition stmtDef;
     private PrefixToModule prefixes;
     private List<String> toBeSkipped = new ArrayList<>();
+    private boolean isType = false;
     private static final Logger LOG = LoggerFactory.getLogger(YangStatementParserListenerImpl.class);
 
     public YangStatementParserListenerImpl(StatementSourceReference ref) {
@@ -51,17 +52,31 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
         this.prefixes = prefixes;
     }
 
+    private static boolean hasNotEmptyBody(List<ParseTree> children) {
+        for (ParseTree child : children) {
+            if (child instanceof YangStatementParser.StatementContext) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void enterStatement(YangStatementParser.StatementContext ctx) {
         boolean action = true;
+        QName identifier;
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree child = ctx.getChild(i);
             if (child instanceof YangStatementParser.KeywordContext) {
                 try {
-                    QName identifier = new QName(YangConstants.RFC6020_YIN_NAMESPACE,
+                    identifier = new QName(YangConstants.RFC6020_YIN_NAMESPACE,
                             ((YangStatementParser.KeywordContext) child).children.get(0).getText());
                     if (stmtDef != null && Utils.isValidStatementDefinition(prefixes, stmtDef, identifier) && toBeSkipped.isEmpty()) {
-                        writer.startStatement(identifier, ref);
+                        if (identifier.equals(Rfc6020Mapping.TYPE.getStatementName()) && hasNotEmptyBody(((YangStatementParser.KeywordContext) child).getParent().children)) {
+                            isType = true;
+                        } else {
+                            writer.startStatement(identifier, ref);
+                        }
                     } else {
                         action = false;
                         toBeSkipped.add(((YangStatementParser.KeywordContext) child).children.get(0).getText());
@@ -71,9 +86,13 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
                 }
             } else if (child instanceof YangStatementParser.ArgumentContext) {
                 try {
-                    if (action) {
-                        writer.argumentValue(
-                                Utils.stringFromStringContext((YangStatementParser.ArgumentContext) child), ref);
+                    final String argument = Utils.stringFromStringContext((YangStatementParser.ArgumentContext) child);
+                    if (isType) {
+                        writer.startStatement(new QName(YangConstants.RFC6020_YIN_NAMESPACE, argument), ref);
+                        writer.argumentValue(argument, ref);
+                        isType = false;
+                    } else if (action) {
+                        writer.argumentValue(Utils.stringFromStringContext((YangStatementParser.ArgumentContext) child), ref);
                     } else {
                         action = true;
                     }

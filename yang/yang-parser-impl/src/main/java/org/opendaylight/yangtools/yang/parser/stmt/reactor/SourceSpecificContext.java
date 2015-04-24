@@ -7,25 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.YangConstants;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
-import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImportedNamespaceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -43,8 +37,24 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase.ContextBuilder;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.BitsSpecificationImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Decimal64SpecificationImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.EnumSpecificationImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.IdentityRefSpecificationImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.InstanceIdentifierSpecificationImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.LeafrefSpecificationImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.NumericalRestrictionsImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.StringRestrictionsImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnionSpecificationImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Objects;
 
 public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBehaviour.Registry, Mutable {
 
@@ -79,8 +89,11 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     ContextBuilder<?, ?, ?> createDeclaredChild(StatementContextBase<?, ?, ?> current, QName name, StatementSourceReference ref) {
         StatementDefinitionContext<?,?,?> def = getDefinition(name);
 
-        //extensions
-        if (def == null) {
+        if (def == null && BaseTypes.isYangBuildInType(name.getLocalName())) {
+            //type-body-stmts
+            def = resolveTypeBodyStmts(name.getLocalName());
+        } else if (def == null) {
+            //extensions
             if (Utils.isValidStatementDefinition(prefixToModuleMap, qNameToStmtDefMap, name)) {
                 def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition(qNameToStmtDefMap.get(Utils.trimPrefix(name))));
             }
@@ -245,6 +258,32 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             break;
         }
     }
+
+    private StatementDefinitionContext<?,?,?> resolveTypeBodyStmts(String typeArgument) {
+        switch (typeArgument) {
+            case "int8": case "int16": case "int32": case "int64": case "uint8": case "uint16": case "uint32": case "uint64":
+                return new StatementDefinitionContext<>(new NumericalRestrictionsImpl.Definition());
+            case "decimal64":
+                return new StatementDefinitionContext<>(new Decimal64SpecificationImpl.Definition());
+            case "union":
+                return new StatementDefinitionContext<>(new UnionSpecificationImpl.Definition());
+            case "string":
+                return new StatementDefinitionContext<>(new StringRestrictionsImpl.Definition());
+            case "enumeration":
+                return new StatementDefinitionContext<>(new EnumSpecificationImpl.Definition());
+            case "leafref":
+                return new StatementDefinitionContext<>(new LeafrefSpecificationImpl.Definition());
+            case "bits":
+                return new StatementDefinitionContext<>(new BitsSpecificationImpl.Definition());
+            case "identityref":
+                return new StatementDefinitionContext<>(new IdentityRefSpecificationImpl.Definition());
+            case "instance-identifier":
+                return new StatementDefinitionContext<>(new InstanceIdentifierSpecificationImpl.Definition());
+            default:
+                return null;
+        }
+    }
+
 
     private PrefixToModule prefixes() {
         Map<String, QNameModule> prefixes = (Map<String, QNameModule>) currentContext.getAllFromNamespace(PrefixToModule.class);
