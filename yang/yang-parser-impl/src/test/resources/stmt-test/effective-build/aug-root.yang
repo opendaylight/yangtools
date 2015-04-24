@@ -1,39 +1,37 @@
 module aug-root {
-	namespace root;
-	prefix root;
+    namespace root;
+    prefix root;
 
-	import augmented {
-		prefix aug;
-	}
+    import augmented { prefix aug; }
 
-	augment "/aug:aug-parent1/aug:aug-parent2/aug:cont-target" {
-		container cont-added1 {
-			list list1 {
-			}
-		}
+    augment "/aug:aug-parent1/aug:aug-parent2/aug:cont-target" {
+        container cont-added1 {
+            list list1 {
+            }
+        }
 
-		container cont-added2 {
-			anyxml axml;
-		}
+        container cont-added2 {
+            anyxml axml;
+        }
 
-		uses aug:grp;
-	}
+        uses aug:grp;
+    }
 
-	grouping grp2 {
+    grouping grp2 {
         container grp-cont2 {
             container grp-cont22 {
             }
         }
     }
 
-	container aug-cont1 {
-		container aug-cont2 {
-		    uses grp2 {
-		        augment "grp-cont2/grp-cont22" {
-		            container grp-add {
-		            }
-		        }
-		    }
-	    }
-	}
+    container aug-cont1 {
+        container aug-cont2 {
+            uses grp2 {
+                augment "grp-cont2/grp-cont22" {
+                    container grp-add {
+                    }
+                }
+            }
+        }
+    }
 }
