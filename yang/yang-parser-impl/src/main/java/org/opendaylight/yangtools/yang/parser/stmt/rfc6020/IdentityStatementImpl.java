@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -7,8 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
+import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IdentityEffectiveStatementImpl;
-
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -29,9 +32,7 @@ public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
         super(context);
     }
 
-    public static class Definition
-            extends
-            AbstractStatementSupport<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> {
+    public static class Definition extends AbstractStatementSupport<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.IDENTITY);
@@ -54,6 +55,10 @@ public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
             return new IdentityEffectiveStatementImpl(ctx);
         }
 
+        @Override
+        public void onStatementDefinitionDeclared(final StmtContext.Mutable<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> stmt) throws SourceException {
+            stmt.addToNs(IdentityNamespace.class, stmt.getStatementArgument(), stmt);
+        }
     }
 
     @Override
