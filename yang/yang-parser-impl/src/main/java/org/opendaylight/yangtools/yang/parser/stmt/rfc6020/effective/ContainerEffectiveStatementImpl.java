@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import com.google.common.collect.ImmutableSet;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import java.util.HashSet;
@@ -31,15 +32,16 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 public class ContainerEffectiveStatementImpl extends
         AbstractEffectiveDocumentedDataNodeContainer<QName, ContainerStatement>
         implements ContainerSchemaNode, DerivableSchemaNode {
+
     private final QName qname;
     private final SchemaPath path;
-    private final boolean presence;
 
-    boolean augmenting;
-    boolean addedByUses;
-    boolean configuration;
-    ContainerSchemaNode original;
-    ConstraintDefinition constraints;
+    private boolean presence;
+    private boolean augmenting;
+    private boolean addedByUses;
+    private boolean configuration;
+    private ContainerSchemaNode original;
+    private ConstraintDefinition constraints;
 
     private ImmutableSet<AugmentationSchema> augmentations;
     private ImmutableList<UnknownSchemaNode> unknownNodes;
@@ -50,27 +52,50 @@ public class ContainerEffectiveStatementImpl extends
 
         qname = ctx.getStatementArgument();
         path = Utils.getSchemaPath(ctx);
-        presence = (firstEffective(PresenceEffectiveStatementImpl.class) == null) ? false
-                : true;
-        // :TODO init other fields
 
-        initSubstatementCollections();
+        initCopyType(ctx);
+        initFields();
+        // :TODO init other fields
     }
 
-    private void initSubstatementCollections() {
+    private void initCopyType(
+            StmtContext<QName, ContainerStatement, EffectiveStatement<QName, ContainerStatement>> ctx) {
+
+        TypeOfCopy typeOfCopy = ctx.getTypeOfCopy();
+        switch (typeOfCopy) {
+        case ADDED_BY_AUGMENTATION:
+            augmenting = true;
+            // original =
+            break;
+        case ADDED_BY_USES:
+            addedByUses = true;
+            break;
+        default:
+            break;
+        }
+    }
+
+    private void initFields() {
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
         Set<AugmentationSchema> augmentationsInit = new HashSet<>();
 
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
-            if (effectiveStatement instanceof UnknownSchemaNode) {
-                UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
+        for (EffectiveStatement<?, ?> effectiveSubstatement : effectiveSubstatements) {
+            if (effectiveSubstatement instanceof UnknownSchemaNode) {
+                UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveSubstatement;
                 unknownNodesInit.add(unknownNode);
             }
-            if (effectiveStatement instanceof AugmentationSchema) {
-                AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
+            if (effectiveSubstatement instanceof AugmentationSchema) {
+                AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveSubstatement;
                 augmentationsInit.add(augmentationSchema);
+            }
+            if (effectiveSubstatement instanceof PresenceEffectiveStatementImpl) {
+                presence = true;
+            }
+            if (effectiveSubstatement instanceof ConfigEffectiveStatementImpl) {
+                ConfigEffectiveStatementImpl config = (ConfigEffectiveStatementImpl) effectiveSubstatement;
+                this.configuration = config.argument();
             }
         }
 

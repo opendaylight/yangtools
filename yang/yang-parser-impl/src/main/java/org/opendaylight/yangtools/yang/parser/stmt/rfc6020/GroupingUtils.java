@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -51,7 +52,7 @@ public final class GroupingUtils {
                 .declaredSubstatements();
         for (StatementContextBase<?, ?, ?> originalStmtCtx : declaredSubstatements) {
             if (needToCopyByUses(originalStmtCtx)) {
-                StatementContextBase<?, ?, ?> copy = originalStmtCtx.createCopy(newQNameModule, targetCtx);
+                StatementContextBase<?, ?, ?> copy = originalStmtCtx.createCopy(newQNameModule, targetCtx, TypeOfCopy.ADDED_BY_USES);
                 targetCtx.addEffectiveSubstatement(copy);
             } else if (isReusedByUses(originalStmtCtx)) {
                 targetCtx.addEffectiveSubstatement(originalStmtCtx);
@@ -65,7 +66,7 @@ public final class GroupingUtils {
                 .effectiveSubstatements();
         for (StatementContextBase<?, ?, ?> originalStmtCtx : effectiveSubstatements) {
             if (needToCopyByUses(originalStmtCtx)) {
-                StatementContextBase<?, ?, ?> copy = originalStmtCtx.createCopy(newQNameModule, targetCtx);
+                StatementContextBase<?, ?, ?> copy = originalStmtCtx.createCopy(newQNameModule, targetCtx, TypeOfCopy.ADDED_BY_USES);
                 targetCtx.addEffectiveSubstatement(copy);
             } else if (isReusedByUses(originalStmtCtx)) {
                 targetCtx.addEffectiveSubstatement(originalStmtCtx);
@@ -127,7 +128,7 @@ public final class GroupingUtils {
         Collection<StatementContextBase<?, ?, ?>> declaredSubstatements = usesNode.declaredSubstatements();
         for (StatementContextBase<?, ?, ?> subStmtCtx : declaredSubstatements) {
             if (StmtContextUtils.producesDeclared(subStmtCtx, WhenStatement.class)) {
-                StatementContextBase<?, ?, ?> copy = subStmtCtx.createCopy(null, targetNodeStmtCtx);
+                StatementContextBase<?, ?, ?> copy = subStmtCtx.createCopy(null, targetNodeStmtCtx, TypeOfCopy.ADDED_BY_USES);
                 targetNodeStmtCtx.addEffectiveSubstatement(copy);
             }
             if (StmtContextUtils.producesDeclared(subStmtCtx, RefineStatement.class)) {

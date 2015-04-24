@@ -20,43 +20,52 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Namesp
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-class SubstatementContext<A,D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-    extends StatementContextBase<A,D,E> {
+class SubstatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+        extends StatementContextBase<A, D, E> {
 
-    private final StatementContextBase<?,?,?> parent;
+    private final StatementContextBase<?, ?, ?> parent;
     private final A argument;
 
-    SubstatementContext(StatementContextBase<?,?,?> parent,ContextBuilder<A,D,E> builder) throws SourceException {
-        //super(builder,  builder.getDefinition().parseArgumentValue(parent, builder.getRawArgument()));
+    SubstatementContext(StatementContextBase<?, ?, ?> parent,
+            ContextBuilder<A, D, E> builder) throws SourceException {
+        // super(builder, builder.getDefinition().parseArgumentValue(parent,
+        // builder.getRawArgument()));
         super(builder);
-        this.parent = Preconditions.checkNotNull(parent, "Parent must not be null");
-        this.argument =   builder.getDefinition().parseArgumentValue(this, builder.getRawArgument());
+        this.parent = Preconditions.checkNotNull(parent,
+                "Parent must not be null");
+        this.argument = builder.getDefinition().parseArgumentValue(this,
+                builder.getRawArgument());
     }
 
-    SubstatementContext(SubstatementContext<A,D,E> original, QNameModule newQNameModule, StatementContextBase<?, ?, ?> newParent) throws SourceException {
+    SubstatementContext(SubstatementContext<A, D, E> original,
+            QNameModule newQNameModule,
+            StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
+            throws SourceException {
         super(original);
         this.parent = newParent;
 
-        if(newQNameModule != null && original.argument instanceof QName) {
+        if (newQNameModule != null && original.argument instanceof QName) {
             QName originalQName = (QName) original.argument;
-            this.argument =  (A) QName.create(newQNameModule,originalQName.getLocalName());
+            this.argument = (A) QName.create(newQNameModule,
+                    originalQName.getLocalName());
         } else {
             this.argument = original.argument;
         }
 
-        copyDeclaredStmts(original, newQNameModule);
+        copyDeclaredStmts(original, newQNameModule, typeOfCopy);
 
-        copyEffectiveStmts(original, newQNameModule);
+        copyEffectiveStmts(original, newQNameModule, typeOfCopy);
     }
 
     private void copyDeclaredStmts(SubstatementContext<A, D, E> original,
-            QNameModule newQNameModule) throws SourceException {
+            QNameModule newQNameModule, TypeOfCopy typeOfCopy)
+            throws SourceException {
         Collection<? extends StatementContextBase<?, ?, ?>> originalDeclaredSubstatements = original
                 .declaredSubstatements();
         for (StatementContextBase<?, ?, ?> stmtContext : originalDeclaredSubstatements) {
             if (GroupingUtils.needToCopyByUses(stmtContext)) {
-                StatementContextBase<?, ?, ?> copy = stmtContext
-                        .createCopy(newQNameModule,this);
+                StatementContextBase<?, ?, ?> copy = stmtContext.createCopy(
+                        newQNameModule, this, typeOfCopy);
                 this.addEffectiveSubstatement(copy);
             } else if (GroupingUtils.isReusedByUses(stmtContext)) {
                 this.addEffectiveSubstatement(stmtContext);
@@ -65,13 +74,14 @@ class SubstatementContext<A,D extends DeclaredStatement<A>, E extends EffectiveS
     }
 
     private void copyEffectiveStmts(SubstatementContext<A, D, E> original,
-            QNameModule newQNameModule) throws SourceException {
+            QNameModule newQNameModule, TypeOfCopy typeOfCopy)
+            throws SourceException {
         Collection<? extends StatementContextBase<?, ?, ?>> originalEffectiveSubstatements = original
                 .effectiveSubstatements();
         for (StatementContextBase<?, ?, ?> stmtContext : originalEffectiveSubstatements) {
             if (GroupingUtils.needToCopyByUses(stmtContext)) {
-                StatementContextBase<?, ?, ?> copy = stmtContext
-                        .createCopy(newQNameModule,this);
+                StatementContextBase<?, ?, ?> copy = stmtContext.createCopy(
+                        newQNameModule, this, typeOfCopy);
                 this.addEffectiveSubstatement(copy);
             } else if (GroupingUtils.isReusedByUses(stmtContext)) {
                 this.addEffectiveSubstatement(stmtContext);
@@ -80,7 +90,7 @@ class SubstatementContext<A,D extends DeclaredStatement<A>, E extends EffectiveS
     }
 
     @Override
-    public StatementContextBase<?,?,?> getParentContext() {
+    public StatementContextBase<?, ?, ?> getParentContext() {
         return parent;
     }
 
@@ -99,15 +109,20 @@ class SubstatementContext<A,D extends DeclaredStatement<A>, E extends EffectiveS
         return parent.getRoot();
     }
 
-
     @Override
     public A getStatementArgument() {
         return argument;
     }
 
     @Override
-    public StatementContextBase<A, D, E>  createCopy(QNameModule newQNameModule, StatementContextBase<?, ?, ?> newParent) throws SourceException {
-        return new SubstatementContext<>(this,newQNameModule, newParent);
+    public StatementContextBase<A, D, E> createCopy(QNameModule newQNameModule,
+            StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
+            throws SourceException {
+        SubstatementContext<A, D, E> copy = new SubstatementContext<>(this,
+                newQNameModule, newParent, typeOfCopy);
+        copy.setTypeOfCopy(typeOfCopy);
+        copy.setOriginalCtx(this);
+        return copy;
     }
 
     @Override
@@ -116,6 +131,5 @@ class SubstatementContext<A,D extends DeclaredStatement<A>, E extends EffectiveS
         argumentsFromRoot.add(argument);
         return argumentsFromRoot;
     }
-
 
 }

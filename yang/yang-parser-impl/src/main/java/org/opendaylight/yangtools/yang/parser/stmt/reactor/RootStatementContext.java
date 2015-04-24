@@ -34,35 +34,38 @@ class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Effectiv
     }
 
     RootStatementContext(RootStatementContext<A, D, E> original,
-            QNameModule newQNameModule) throws SourceException {
+            QNameModule newQNameModule, TypeOfCopy typeOfCopy)
+            throws SourceException {
         super(original);
 
         sourceContext = original.sourceContext;
         this.argument = original.argument;
 
-        copyDeclaredStmts(original, newQNameModule);
+        copyDeclaredStmts(original, newQNameModule, typeOfCopy);
 
-        copyEffectiveStmts(original, newQNameModule);
+        copyEffectiveStmts(original, newQNameModule, typeOfCopy);
 
     }
 
     private void copyDeclaredStmts(RootStatementContext<A, D, E> original,
-            QNameModule newQNameModule) throws SourceException {
+            QNameModule newQNameModule, TypeOfCopy typeOfCopy)
+            throws SourceException {
         Collection<? extends StmtContext<?, ?, ?>> originalDeclaredSubstatements = original
                 .declaredSubstatements();
         for (StmtContext<?, ?, ?> stmtContext : originalDeclaredSubstatements) {
-            this.addEffectiveSubstatement(stmtContext
-                    .createCopy(newQNameModule,this));
+            this.addEffectiveSubstatement(stmtContext.createCopy(
+                    newQNameModule, this, typeOfCopy));
         }
     }
 
     private void copyEffectiveStmts(RootStatementContext<A, D, E> original,
-            QNameModule newQNameModule) throws SourceException {
+            QNameModule newQNameModule, TypeOfCopy typeOfCopy)
+            throws SourceException {
         Collection<? extends StmtContext<?, ?, ?>> originalEffectiveSubstatements = original
                 .effectiveSubstatements();
         for (StmtContext<?, ?, ?> stmtContext : originalEffectiveSubstatements) {
-            this.addEffectiveSubstatement(stmtContext
-                    .createCopy(newQNameModule,this));
+            this.addEffectiveSubstatement(stmtContext.createCopy(
+                    newQNameModule, this, typeOfCopy));
         }
     }
 
@@ -96,10 +99,14 @@ class RootStatementContext<A, D extends DeclaredStatement<A>, E extends Effectiv
     }
 
     @Override
-    public StatementContextBase<A, D, E> createCopy(QNameModule newQNameModule, StatementContextBase<?, ?, ?> newParent)
+    public StatementContextBase<A, D, E> createCopy(QNameModule newQNameModule,
+            StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
             throws SourceException {
-
-        return new RootStatementContext<>(this, newQNameModule);
+        RootStatementContext<A, D, E> copy = new RootStatementContext<>(this,
+                newQNameModule, typeOfCopy);
+        copy.setTypeOfCopy(typeOfCopy);
+        copy.setOriginalCtx(this);
+        return copy;
     }
 
     @Override
