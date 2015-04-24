@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -80,6 +81,7 @@ public class ModuleStatementSupport extends
                 Optional.<URI> absent(), revisionDate);
 
         stmt.addContext(ModuleNamespace.class, moduleIdentifier, stmt);
+        stmt.addContext(ModuleNamespaceForBelongsTo.class, stmt.getStatementArgument(), stmt);
         stmt.addContext(NamespaceToModule.class, qNameModule, stmt);
 
         String modulePrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);

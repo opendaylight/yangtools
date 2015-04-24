@@ -19,12 +19,14 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.Nullable;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSet;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +62,34 @@ public final class Utils {
     private static final char SEPARATOR_NODENAME = '/';
 
     private static final String REGEX_PATH_ABS = "/[^/].*";
+
+    public static final String BOOLEAN = "boolean";
+    public static final String DECIMAL64 = "decimal64";
+    public static final String EMPTY = "empty";
+    public static final String INT8 = "int8";
+    public static final String INT16 = "int16";
+    public static final String INT32 = "int32";
+    public static final String INT64 = "int64";
+    public static final String STRING = "string";
+    public static final String UINT8 = "uint8";
+    public static final String UINT16 = "uint16";
+    public static final String UINT32 = "uint32";
+    public static final String UINT64 = "uint64";
+
+    private static final Set<String> STATEMENT_BUILD_IN_TYPES = ImmutableSet.<String> builder()
+            .add(BOOLEAN)
+            .add(DECIMAL64)
+            .add(EMPTY)
+            .add(INT8)
+            .add(INT16)
+            .add(INT32)
+            .add(INT64)
+            .add(STRING)
+            .add(UINT8)
+            .add(UINT16)
+            .add(UINT32)
+            .add(UINT64)
+            .build();
 
     private Utils() {
     }
@@ -102,6 +132,14 @@ public final class Utils {
         return identifier;
     }
 
+    public static String getPrefixFromArgument(String prefixedLocalName) {
+        String[] namesParts = prefixedLocalName.split(":");
+        if (namesParts.length == 2) {
+            return namesParts[0];
+        }
+        return null;
+    }
+
     public static boolean isValidStatementDefinition(PrefixToModule prefixes,
             QNameToStatementDefinition stmtDef, QName identifier) {
         if (stmtDef.get(identifier) != null) {
@@ -113,13 +151,12 @@ public final class Utils {
             if (namesParts.length == 2) {
                 String prefix = namesParts[0];
                 String localName = namesParts[1];
-                if (prefixes != null
-                        && prefixes.get(prefix) != null
-                        && stmtDef
-                                .get(new QName(
-                                        YangConstants.RFC6020_YIN_NAMESPACE,
-                                        localName)) != null) {
+                if (prefixes != null && prefixes.get(prefix) != null && stmtDef.get(new QName(YangConstants.RFC6020_YIN_NAMESPACE, localName)) != null) {
                     return true;
+                } else {
+                    if (stmtDef.get(new QName(YangConstants.RFC6020_YIN_NAMESPACE, localName)) != null) {
+                        return true;
+                    }
                 }
             }
         }
@@ -316,5 +353,9 @@ public final class Utils {
             throw new IllegalArgumentException(
                     "String %s is not valid deviate argument");
         }
+    }
+
+    public static boolean isYangStatementBuildInType(final String type) {
+        return STATEMENT_BUILD_IN_TYPES.contains(type);
     }
 }
