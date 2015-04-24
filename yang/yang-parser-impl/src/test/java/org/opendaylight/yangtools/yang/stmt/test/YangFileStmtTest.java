@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
-
 import static org.junit.Assert.assertNotNull;
 
 public class YangFileStmtTest {
@@ -27,6 +26,21 @@ public class YangFileStmtTest {
     //extension statement to parse and write
     private static final YangStatementSourceImpl EXTFILE = new YangStatementSourceImpl("/semantic-statement-parser/ext-typedef.yang");
     private static final YangStatementSourceImpl EXTUSE = new YangStatementSourceImpl("/semantic-statement-parser/ext-use.yang");
+
+
+    private static final YangStatementSourceImpl BAR = new YangStatementSourceImpl("/model-new/bar.yang");
+    private static final YangStatementSourceImpl BAZ = new YangStatementSourceImpl("/model-new/baz.yang");
+    private static final YangStatementSourceImpl FOO = new YangStatementSourceImpl("/model-new/foo.yang");
+    private static final YangStatementSourceImpl SUBFOO = new YangStatementSourceImpl("/model-new/subfoo.yang");
+
+    @Test
+    public void readAndParseYangFileTestModel() throws SourceException, ReactorException {
+        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+
+        addSources(reactor, BAZ,FOO,BAR,SUBFOO);
+        EffectiveModelContext result = reactor.build();
+        assertNotNull(result);
+    }
 
     @Test
     public void readAndParseYangFileTest() throws SourceException, ReactorException {

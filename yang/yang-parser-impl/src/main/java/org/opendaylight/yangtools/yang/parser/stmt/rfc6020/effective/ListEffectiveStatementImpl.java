@@ -1,7 +1,8 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -48,6 +49,25 @@ public class ListEffectiveStatementImpl extends
 
         initKeyDefinition();
         initSubstatementCollections();
+        initCopyType(ctx);
+    }
+
+    private void initCopyType(
+            StmtContext<QName, ListStatement, EffectiveStatement<QName, ListStatement>> ctx) {
+
+        TypeOfCopy typeOfCopy = ctx.getTypeOfCopy();
+        switch (typeOfCopy) {
+        case ADDED_BY_AUGMENTATION:
+            augmenting = true;
+            original = (ListSchemaNode) ctx.getOriginalCtx().buildEffective();
+            break;
+        case ADDED_BY_USES:
+            addedByUses = true;
+            original = (ListSchemaNode) ctx.getOriginalCtx().buildEffective();
+            break;
+        default:
+            break;
+        }
     }
 
     /**
