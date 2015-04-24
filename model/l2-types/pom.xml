@@ -18,7 +18,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>opendaylight-l2-types</artifactId>
-    <version>2013.08.27.7-SNAPSHOT</version>
+    <version>2013.08.27.8-SNAPSHOT</version>
 
     <build>
         <plugins>

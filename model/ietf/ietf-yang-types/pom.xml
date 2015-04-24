@@ -17,7 +17,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>ietf-yang-types</artifactId>
-    <version>2010.09.24.7-SNAPSHOT</version>
+    <version>2010.09.24.8-SNAPSHOT</version>
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
 

@@ -18,7 +18,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>ietf-yang-types-20130715</artifactId>
-    <version>2013.07.15.7-SNAPSHOT</version>
+    <version>2013.07.15.8-SNAPSHOT</version>
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
 

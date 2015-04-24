@@ -18,7 +18,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>iana-afn-safi</artifactId>
-    <version>2013.07.04.7-SNAPSHOT</version>
+    <version>2013.07.04.8-SNAPSHOT</version>
 
     <build>
         <plugins>
