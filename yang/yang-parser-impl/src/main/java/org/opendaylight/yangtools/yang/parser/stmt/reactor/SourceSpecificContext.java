@@ -175,7 +175,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
         boolean phaseCompleted = root.tryToCompletePhase(phase);
 
-        hasProgressed = hasProgress(currentPhaseModifiers);
+        hasProgressed = (hasProgress(currentPhaseModifiers) | hasProgressed);
 
         if(phaseCompleted && (currentPhaseModifiers.isEmpty())) {
             finishedPhase = phase;
