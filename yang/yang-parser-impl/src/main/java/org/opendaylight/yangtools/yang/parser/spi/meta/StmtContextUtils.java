@@ -38,7 +38,6 @@ public final class StmtContextUtils {
     }
 
     @SuppressWarnings("unchecked")
-
     public static final <E extends EffectiveStatement<?, ?>> Function<StmtContext<?, ?, ? extends E>, E> buildEffective() {
         return Function.class.cast(BUILD_EFFECTIVE);
     }

@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+
 import java.util.HashSet;
 import java.util.LinkedList;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.List;
@@ -54,6 +55,27 @@ public class InputEffectiveStatementImpl extends
         // :TODO init other fields
 
         initSubstatementCollections();
+        initCopyType(ctx);
+    }
+
+    private void initCopyType(
+            StmtContext<QName, InputStatement, EffectiveStatement<QName, InputStatement>> ctx) {
+
+        TypeOfCopy typeOfCopy = ctx.getTypeOfCopy();
+        switch (typeOfCopy) {
+        case ADDED_BY_AUGMENTATION:
+            augmenting = true;
+            original = (ContainerSchemaNode) ctx.getOriginalCtx()
+                    .buildEffective();
+            break;
+        case ADDED_BY_USES:
+            addedByUses = true;
+            original = (ContainerSchemaNode) ctx.getOriginalCtx()
+                    .buildEffective();
+            break;
+        default:
+            break;
+        }
     }
 
     private void initSubstatementCollections() {

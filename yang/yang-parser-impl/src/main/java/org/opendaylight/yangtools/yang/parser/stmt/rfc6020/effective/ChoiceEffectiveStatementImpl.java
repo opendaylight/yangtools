@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
-
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
@@ -52,7 +53,25 @@ public class ChoiceEffectiveStatementImpl extends AbstractEffectiveDocumentedNod
         //:TODO init other fields
 
         initSubstatementCollections();
+        initCopyType(ctx);
+    }
 
+    private void initCopyType(
+            StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
+
+        TypeOfCopy typeOfCopy = ctx.getTypeOfCopy();
+        switch (typeOfCopy) {
+        case ADDED_BY_AUGMENTATION:
+            augmenting = true;
+            original = (ChoiceSchemaNode) ctx.getOriginalCtx().buildEffective();
+            break;
+        case ADDED_BY_USES:
+            addedByUses = true;
+            original = (ChoiceSchemaNode) ctx.getOriginalCtx().buildEffective();
+            break;
+        default:
+            break;
+        }
     }
 
     private void initSubstatementCollections() {

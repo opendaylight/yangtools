@@ -1,0 +1,6 @@
+submodule submod {
+	belongs-to "root" {
+		prefix root;
+	}
+	revision "2000-01-01";
+}

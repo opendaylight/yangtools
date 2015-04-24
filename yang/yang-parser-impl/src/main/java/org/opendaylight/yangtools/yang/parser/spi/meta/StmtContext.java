@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import java.util.List;
-
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -23,32 +22,44 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
+public interface StmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
 
-public interface StmtContext<A,D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
+    @Nonnull
+    StatementSource getStatementSource();
 
-    @Nonnull StatementSource getStatementSource();
+    @Nonnull
+    StatementSourceReference getStatementSourceReference();
 
-    @Nonnull StatementSourceReference getStatementSourceReference();
+    @Nonnull
+    StatementDefinition getPublicDefinition();
 
-    @Nonnull StatementDefinition getPublicDefinition();
+    @Nullable
+    StmtContext<?, ?, ?> getParentContext();
 
-    @Nullable StmtContext<?,?,?> getParentContext();
+    @Nullable
+    String rawStatementArgument();
 
-    @Nullable String rawStatementArgument();
+    @Nullable
+    A getStatementArgument();
 
-    @Nullable A getStatementArgument();
+    @Nullable
+    List<Object> getArgumentsFromRoot();
 
-    @Nullable List<Object> getArgumentsFromRoot();
+    // <K,VT, V extends VT,N extends IdentifierNamespace<K, V>>
+    // <K, VT, V extends VT ,N extends IdentifierNamespace<K, V>> VT
+    // getFromNamespace(Class<N> type, K key)
+    @Nonnull
+    <K, V, N extends IdentifierNamespace<K, V>> V getFromNamespace(
+            Class<N> type, K key) throws NamespaceNotAvailableException;
 
-    //<K,VT, V extends VT,N extends IdentifierNamespace<K, V>>
-    //       <K, VT, V extends VT ,N extends IdentifierNamespace<K, V>> VT getFromNamespace(Class<N> type, K key)
-    @Nonnull <K,V,N extends IdentifierNamespace<K, V>> V getFromNamespace(Class<N> type, K key) throws NamespaceNotAvailableException;
+    <K, V, N extends IdentifierNamespace<K, V>> Map<?, ?> getAllFromNamespace(
+            Class<N> type);
 
-    <K, V, N extends IdentifierNamespace<K, V>> Map<?, ?> getAllFromNamespace(Class<N> type);
+    @Nonnull
+    StmtContext<?, ?, ?> getRoot();
 
-    @Nonnull StmtContext<?,?,?> getRoot();
-
-    @Nonnull Collection<StatementContextBase<?,?,?>> declaredSubstatements();
+    @Nonnull
+    Collection<StatementContextBase<?, ?, ?>> declaredSubstatements();
 
     public Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements();
 
@@ -56,26 +67,48 @@ public interface StmtContext<A,D extends DeclaredStatement<A>, E extends Effecti
 
     E buildEffective();
 
-    public StatementContextBase<?, ?, ?>  createCopy(QNameModule newQNameModule,StatementContextBase<?, ?, ?> newParent) throws SourceException;
+    public StatementContextBase<?, ?, ?> createCopy(QNameModule newQNameModule,
+            StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
+            throws SourceException;
 
-    interface Mutable<A,D extends DeclaredStatement<A>,E extends EffectiveStatement<A, D>> extends StmtContext<A,D,E> {
+    public static enum TypeOfCopy {
+        ORIGINAL, ADDED_BY_USES, ADDED_BY_AUGMENTATION
+    }
+
+    public TypeOfCopy getTypeOfCopy();
+
+    public void setTypeOfCopy(TypeOfCopy typeOfCopy);
+
+    public StatementContextBase<?, ?, ?> getOriginalCtx();
+
+    public void setOriginalCtx(StatementContextBase<?, ?, ?> originalCtx);
+
+    public boolean isRootContext();
+
+    public void setCompletedPhase(ModelProcessingPhase completedPhase);
+
+    public ModelProcessingPhase getCompletedPhase();
+
+    interface Mutable<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+            extends StmtContext<A, D, E> {
 
         @Override
-        StmtContext.Mutable<?,?,?> getParentContext();
+        StmtContext.Mutable<?, ?, ?> getParentContext();
 
-        //<K,V,VT extends V,N extends IdentifierNamespace<K, V>> void addToNs(Class<N> type, K key, VT value)
-        <K,V,VT extends V,N extends IdentifierNamespace<K, V>> void addToNs(Class<N> type, K key, VT value) throws NamespaceNotAvailableException;
+        // <K,V,VT extends V,N extends IdentifierNamespace<K, V>> void
+        // addToNs(Class<N> type, K key, VT value)
+        <K, V, VT extends V, N extends IdentifierNamespace<K, V>> void addToNs(
+                Class<N> type, K key, VT value)
+                throws NamespaceNotAvailableException;
 
         @Override
-        StmtContext.Mutable<?,?,?> getRoot();
+        StmtContext.Mutable<?, ?, ?> getRoot();
 
         ModelActionBuilder newInferenceAction(ModelProcessingPhase phase);
 
-        <K,KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(Class<N> namespace, KT key,
-                StmtContext<?, ?, ?> stmt);
+        <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(
+                Class<N> namespace, KT key, StmtContext<?, ?, ?> stmt);
 
     }
-
-
 
 }

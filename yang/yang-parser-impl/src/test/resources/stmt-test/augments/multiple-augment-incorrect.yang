@@ -1,0 +1,80 @@
+module multiple-augment-incorrect {
+
+    namespace "multiple-augment-test";
+    prefix mpa;
+    
+    augment /root-container/container-from-grp1/sub-container-from-grp1/container-in-uses-augment/sub-container-from-augment2/sub-container-from-augment3 {
+        container sub-container-from-augment4 {
+        }
+    }
+    
+    augment /root-container/container-from-grp1/sub-container-from-grp1/container-in-uses-augment/sub-container-from-augment2 {
+        container sub-container-from-augment3 {
+        }
+    }
+
+    augment /root-container/container-from-grp1/sub-container-from-grp1 {
+        container sub-container-from-augment {
+        }
+    }
+
+    augment /root-container/container-from-grp1/sub-container-from-grp1/container-from-grp2/sub-container-from-grp2/augmented-container-in-uses-grp2 {
+        container sub-container-from-augment6 {
+        }
+    }
+    
+    augment /root-container/container-from-grp1/sub-container-from-grp1/container-from-grp2/sub-container-from-grp2/sub-container-from-augment5 {
+        container sub-container-from-augment7 {
+        }
+    }
+    
+    augment /root-container/container-from-grp1/sub-container-from-grp1/container-from-grp2/sub-container-from-grp2 {
+        container sub-container-from-augment5 {
+        }
+    }
+
+    augment /root-container/added-container-1 {
+        container added-container-2 {
+        }
+    }
+
+    augment /root-container {
+        container added-container-1 {
+        }
+    }
+
+    grouping grp1 {
+        container container-from-grp1 {
+            container sub-container-from-grp1 {
+                uses grp2 {
+                    augment container-from-grp2/sub-container-from-grp2 {
+                        container augmented-container-in-uses-grp2;
+                    }
+                }
+            }
+        }
+    }
+
+    grouping grp2 {
+        container container-from-grp2 {
+            container sub-container-from-grp2 {
+            }
+        }
+        uses grp3;
+    }
+    
+    grouping grp3 {
+      container container-from-grp3 {
+          
+      }
+    }
+    
+    container root-container {
+        uses grp1 {
+            augment container-from-grp1/sub-container-from-grp1 {
+                container container-in-uses-augment {
+                }
+            }
+        }
+    }
+}

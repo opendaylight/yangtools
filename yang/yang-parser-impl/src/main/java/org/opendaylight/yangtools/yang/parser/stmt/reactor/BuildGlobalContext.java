@@ -105,7 +105,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
              */
             return (NamespaceBehaviourWithListeners<K, V, N>) potential;
         }
-        throw new NamespaceNotAvailableException("Namespace " + type + "is not available in phase " + currentPhase);
+        throw new NamespaceNotAvailableException("Namespace " + type + " is not available in phase " + currentPhase);
     }
 
     public StatementDefinitionContext<?, ?, ?> getStatementDefinition(QName name) {
