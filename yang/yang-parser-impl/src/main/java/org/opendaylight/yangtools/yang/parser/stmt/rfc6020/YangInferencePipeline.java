@@ -12,8 +12,13 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.treeScoped;
 
 import java.util.Map;
-
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName;
+
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
@@ -24,9 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModule
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
-import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 
 import com.google.common.collect.ImmutableMap;
@@ -43,6 +46,7 @@ public final class YangInferencePipeline {
             .addSupport(new ContactStatementImpl.Definition()).addSupport(new OrganizationStatementImpl.Definition())
             .addSupport(new BelongsToStatementImpl.Definition())
             .addSupport(global(ModuleNamespace.class))
+            .addSupport(global(ModuleNamespaceForBelongsTo.class))
             .addSupport(global(SubmoduleNamespace.class))
             .addSupport(global(NamespaceToModule.class))
             .addSupport(global(ModuleNameToModuleQName.class))
@@ -52,59 +56,70 @@ public final class YangInferencePipeline {
             .addSupport(sourceLocal(ImportedModuleContext.class))
             .addSupport(sourceLocal(IncludedModuleContext.class))
             .addSupport(sourceLocal(ImpPrefixToModuleIdentifier.class))
-            .addSupport(sourceLocal(BelongsToPrefixToModuleName.class))
-            .addSupport(sourceLocal(QNameToStatementDefinition.class)).build();
+            .addSupport(sourceLocal(BelongsToModuleContext.class))
+            .addSupport(sourceLocal(BelongsToPrefixToModuleName.class)).build();
 
-    private static final StatementSupportBundle STMT_DEF_BUNDLE = StatementSupportBundle.derivedFrom(LINKAGE_BUNDLE)
-            .addSupport(new YinElementStatementImpl.Definition()).addSupport(new ArgumentStatementImpl.Definition())
-            .addSupport(new ExtensionStatementImpl.Definition()).addSupport(global(ExtensionNamespace.class)).build();
+    private static final StatementSupportBundle STMT_DEF_BUNDLE = StatementSupportBundle.
+            derivedFrom(LINKAGE_BUNDLE)
+            .addSupport(new YinElementStatementImpl.Definition())
+            .addSupport(new ArgumentStatementImpl.Definition())
+            .addSupport(new ExtensionStatementImpl.Definition())
+            .addSupport(global(ExtensionNamespace.class))
+            .addSupport(new TypedefStatementImpl.Definition())
+            .addSupport(treeScoped(TypeNamespace.class))
+            .addSupport(new IdentityStatementImpl.Definition())
+            .addSupport(global(IdentityNamespace.class))
+            .addSupport(new DefaultStatementImpl.Definition())
+            .addSupport(new StatusStatementImpl.Definition())
+            .addSupport(new TypeStatementImpl.Definition())
+            .addSupport(new UnitsStatementImpl.Definition())
+            .addSupport(new RequireInstanceStatementImpl.Definition())
+            .addSupport(new BitStatementImpl.Definition())
+            .addSupport(new PathStatementImpl.Definition())
+            .addSupport(new EnumStatementImpl.Definition())
+            .addSupport(new LengthStatementImpl.Definition())
+            .addSupport(new PatternStatementImpl.Definition())
+            .addSupport(new RangeStatementImpl.Definition())
+            .addSupport(new ContainerStatementImpl.Definition())
+            .addSupport(new GroupingStatementImpl.Definition())
+            .addSupport(new ListStatementImpl.Definition())
+            .addSupport(new RpcStatementImpl.Definition())
+            .addSupport(new InputStatementImpl.Definition())
+            .addSupport(new OutputStatementImpl.Definition())
+            .addSupport(new NotificationStatementImpl.Definition())
+
+            .build();
 
     private static final StatementSupportBundle FULL_DECL_BUNDLE = StatementSupportBundle
             .derivedFrom(STMT_DEF_BUNDLE)
-            .addSupport(new ContainerStatementImpl.Definition())
             .addSupport(new LeafStatementImpl.Definition())
-            .addSupport(new TypeStatementImpl.Definition())
             .addSupport(new ConfigStatementImpl.Definition())
             .addSupport(new DeviationStatementImpl.Definition())
             .addSupport(new DeviateStatementImpl.Definition())
             .addSupport(new ChoiceStatementImpl.Definition())
             .addSupport(new CaseStatementImpl.Definition())
-            .addSupport(new DefaultStatementImpl.Definition())
             .addSupport(new MustStatementImpl.Definition())
             .addSupport(new MandatoryStatementImpl.Definition())
-            .addSupport(new TypedefStatementImpl.Definition())
             .addSupport(new AnyxmlStatementImpl.Definition())
             .addSupport(new IfFeatureStatementImpl.Definition())
             .addSupport(new UsesStatementImpl.Definition())
-            .addSupport(new GroupingStatementImpl.Definition())
-            .addSupport(treeScoped(GroupingNamespace.class))
-            // treeScoped
-            .addSupport(new StatusStatementImpl.Definition()).addSupport(new ErrorMessageStatementImpl.Definition())
-            .addSupport(new ErrorAppTagStatementImpl.Definition()).addSupport(new LeafListStatementImpl.Definition())
-            .addSupport(new ListStatementImpl.Definition()).addSupport(new PresenceStatementImpl.Definition())
-            .addSupport(new KeyStatementImpl.Definition()).addSupport(new MaxElementsStatementImpl.Definition())
-            .addSupport(new MinElementsStatementImpl.Definition()).addSupport(new OrderedByStatementImpl.Definition())
-            .addSupport(new WhenStatementImpl.Definition()).addSupport(new AugmentStatementImpl.Definition())
-            .addSupport(new RefineStatementImpl.Definition()).addSupport(new IdentityStatementImpl.Definition())
-            .addSupport(new BaseStatementImpl.Definition()).addSupport(new FractionDigitsStatementImpl.Definition())
-            .addSupport(new EnumStatementImpl.Definition()).addSupport(new FeatureStatementImpl.Definition())
-            .addSupport(new RpcStatementImpl.Definition()).addSupport(new InputStatementImpl.Definition())
-            .addSupport(new OutputStatementImpl.Definition()).addSupport(new LengthStatementImpl.Definition())
-            .addSupport(new NotificationStatementImpl.Definition()).addSupport(new PatternStatementImpl.Definition())
-            .addSupport(new PositionStatementImpl.Definition()).addSupport(new RangeStatementImpl.Definition())
-            .addSupport(new ValueStatementImpl.Definition()).addSupport(new UnitsStatementImpl.Definition())
-            .addSupport(new RequireInstanceStatementImpl.Definition())
-            // TODO: add mapping to Rfc6020Mapping class and uncomment
-            // following. Please test it.
-            // .addSupport(new EnumSpecificationImpl.Definition())
-            // .addSupport(new Decimal64SpecificationImpl.Definition())
-            // .addSupport(new IdentityRefSpecificationImpl.Definition())
-            // .addSupport(new InstanceIdentifierSpecificationImpl.Definition())
-            // .addSupport(new LeafrefSpecificationImpl.Definition())
-            // .addSupport(new NumericalRestrictionsImpl.Definition())
-            // .addSupport(new StringRestrictionsImpl.Definition())
-            // .addSupport(new UnionSpecificationImpl.Definition())
-            // .addSupport(new BitStatementImpl.Definition())
+            .addSupport(treeScoped(GroupingNamespace.class)) //treeScoped
+            .addSupport(new ErrorMessageStatementImpl.Definition())
+            .addSupport(new ErrorAppTagStatementImpl.Definition())
+            .addSupport(new LeafListStatementImpl.Definition())
+            .addSupport(new PresenceStatementImpl.Definition())
+            .addSupport(new KeyStatementImpl.Definition())
+            .addSupport(new MaxElementsStatementImpl.Definition())
+            .addSupport(new MinElementsStatementImpl.Definition())
+            .addSupport(new OrderedByStatementImpl.Definition())
+            .addSupport(new WhenStatementImpl.Definition())
+            .addSupport(new AugmentStatementImpl.Definition())
+            .addSupport(new RefineStatementImpl.Definition())
+            .addSupport(new BaseStatementImpl.Definition())
+            .addSupport(new FractionDigitsStatementImpl.Definition())
+            .addSupport(new FeatureStatementImpl.Definition())
+            .addSupport(new PositionStatementImpl.Definition())
+            .addSupport(new ValueStatementImpl.Definition())
             .build();
 
     public static final Map<ModelProcessingPhase, StatementSupportBundle> RFC6020_BUNDLES = ImmutableMap

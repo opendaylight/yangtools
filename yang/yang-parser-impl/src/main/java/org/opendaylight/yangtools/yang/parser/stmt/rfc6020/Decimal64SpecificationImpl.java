@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
-
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
@@ -17,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.Decimal64SpecificationEffectiveStatementImpl;
 
 public class Decimal64SpecificationImpl extends AbstractDeclaredStatement<String> implements TypeStatement.Decimal64Specification{
 
@@ -27,7 +27,7 @@ public class Decimal64SpecificationImpl extends AbstractDeclaredStatement<String
     public static class Definition extends AbstractStatementSupport<String,TypeStatement.Decimal64Specification,EffectiveStatement<String,TypeStatement.Decimal64Specification>> {
 
         public Definition() {
-            super(Rfc6020Mapping.FRACTION_DIGITS);
+            super(Rfc6020Mapping.TYPE);
         }
 
         @Override public String parseArgumentValue(StmtContext<?, ?, ?> ctx,
@@ -42,7 +42,7 @@ public class Decimal64SpecificationImpl extends AbstractDeclaredStatement<String
 
         @Override public EffectiveStatement<String, TypeStatement.Decimal64Specification> createEffective(
                 StmtContext<String, TypeStatement.Decimal64Specification, EffectiveStatement<String, TypeStatement.Decimal64Specification>> ctx) {
-            throw new UnsupportedOperationException();
+            return new Decimal64SpecificationEffectiveStatementImpl(ctx);
         }
     }
 
