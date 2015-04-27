@@ -35,6 +35,22 @@ final class OperationWithModification {
         if (data instanceof NormalizedNodeContainer<?,?,?>) {
             @SuppressWarnings({ "rawtypes", "unchecked" })
             NormalizedNodeContainer<?,?,NormalizedNode<PathArgument, ?>> dataContainer = (NormalizedNodeContainer) data;
+
+            /*
+            * if there was write before on this node and it is of NormalizedNodeContainer type
+            * merge would overwrite our changes. So we create write modifications from data children to
+            * retain children created by past write operation.
+            * These writes will then be pushed down in the tree while there are merge modifications on these children
+            */
+            if (modification.getOperation().equals(LogicalOperation.WRITE)) {
+                @SuppressWarnings({ "rawtypes", "unchecked" })
+                NormalizedNodeContainer<?,?,NormalizedNode<PathArgument, ?>> odlDataContainer =
+                        (NormalizedNodeContainer) modification.getWrittenValue();
+                for (NormalizedNode<PathArgument, ?> child : odlDataContainer.getValue()) {
+                    PathArgument childId = child.getIdentifier();
+                    forChild(childId).write(child);
+                }
+            }
             for (NormalizedNode<PathArgument, ?> child : dataContainer.getValue()) {
                 PathArgument childId = child.getIdentifier();
                 forChild(childId).recursiveMerge(child);
