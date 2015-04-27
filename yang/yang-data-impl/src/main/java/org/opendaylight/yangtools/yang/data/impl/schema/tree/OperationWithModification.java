@@ -40,6 +40,19 @@ final class OperationWithModification {
                 forChild(childId).recursiveMerge(child);
             }
         }
+        /*
+        * if there was write before on this node and it is of NormalizedNodeContainer type
+        * merge would overwrite our changes. So we create write modifications from data and
+        * retain children created by past write operation
+        */
+        if (modification.getOperation().equals(LogicalOperation.WRITE)) {
+            if (modification.getWrittenValue() instanceof NormalizedNodeContainer) {
+                for (final NormalizedNode<?, ?> child :
+                        ((NormalizedNodeContainer<?,?,?>) modification.getWrittenValue()).getValue()) {
+                    forChild(child.getIdentifier()).write(child);
+                }
+            }
+        }
 
         modification.merge(data);
     }

@@ -150,7 +150,7 @@ public class DataTreeCandidateValidatorTest3 {
         final YangInstanceIdentifier devicesPath = YangInstanceIdentifier.of(devices);
         final DataTreeModification mergeModification = inMemoryDataTree
                 .takeSnapshot().newModification();
-        // mergeModification.write(devicesPath, devicesContainer);
+        mergeModification.write(devicesPath, devicesContainer);
         mergeModification.merge(devicesPath, devicesContainer);
 
         final DataTreeCandidate mergeDevicesCandidate = inMemoryDataTree
