@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
@@ -20,6 +21,13 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  *            type of elements to be parsed
  */
 public abstract class MapNodeBaseParser<E> extends ListNodeBaseParser<E, MapEntryNode, MapNode, ListSchemaNode> {
+
+    public MapNodeBaseParser() {
+    }
+
+    public MapNodeBaseParser(final BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, MapNode> buildingStrategy) {
+        super(buildingStrategy);
+    }
 
     protected CollectionNodeBuilder<MapEntryNode, MapNode> provideBuilder(ListSchemaNode schema) {
         return Builders.mapBuilder(schema);

@@ -7,14 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.LinkedListMultimap;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.AugmentationNodeBaseParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.NodeParserDispatcher;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
 import org.w3c.dom.Element;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.LinkedListMultimap;
 
 final class AugmentationNodeDomParser extends AugmentationNodeBaseParser<Element> {
 
@@ -27,6 +28,13 @@ final class AugmentationNodeDomParser extends AugmentationNodeBaseParser<Element
     }
 
     AugmentationNodeDomParser(final NodeParserDispatcher<Element> dispatcher, final boolean strictParsing) {
+        this.dispatcher = Preconditions.checkNotNull(dispatcher);
+        this.strictParsing = strictParsing;
+    }
+
+    public AugmentationNodeDomParser(final BuildingStrategy<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> buildingStrategy,
+                                     final NodeParserDispatcher<Element> dispatcher, final boolean strictParsing) {
+        super(buildingStrategy);
         this.dispatcher = Preconditions.checkNotNull(dispatcher);
         this.strictParsing = strictParsing;
     }

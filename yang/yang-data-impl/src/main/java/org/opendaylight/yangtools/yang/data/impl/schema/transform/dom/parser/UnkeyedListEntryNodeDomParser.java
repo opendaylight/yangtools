@@ -16,10 +16,14 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.No
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.w3c.dom.Element;
 
-final class UnkeyedListEntryNodeDomParser extends ListEntryNodeDomParser<UnkeyedListEntryNode> {
+final class UnkeyedListEntryNodeDomParser extends ListEntryNodeDomParser<YangInstanceIdentifier.NodeIdentifier, UnkeyedListEntryNode> {
 
     UnkeyedListEntryNodeDomParser(final NodeParserDispatcher<Element> dispatcher) {
         super(dispatcher);
+    }
+
+    UnkeyedListEntryNodeDomParser(final BuildingStrategy<NodeIdentifier, UnkeyedListEntryNode> buildingStrategy, final NodeParserDispatcher<Element> dispatcher) {
+        super(buildingStrategy, dispatcher);
     }
 
     @Override

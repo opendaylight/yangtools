@@ -22,6 +22,14 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  */
 public abstract class UnkeyedListNodeBaseParser<E> extends
         ListNodeBaseParser<E, UnkeyedListEntryNode, UnkeyedListNode, ListSchemaNode> {
+
+    public UnkeyedListNodeBaseParser(final BuildingStrategy<NodeIdentifier, UnkeyedListNode> buildingStrategy) {
+        super(buildingStrategy);
+    }
+
+    public UnkeyedListNodeBaseParser() {
+    }
+
     @Override
     protected CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> provideBuilder(ListSchemaNode schema) {
         CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> listBuilder = Builders.unkeyedListBuilder();
