@@ -27,7 +27,6 @@ class SubstatementContext<A,D extends DeclaredStatement<A>, E extends EffectiveS
     private final A argument;
 
     SubstatementContext(StatementContextBase<?,?,?> parent,ContextBuilder<A,D,E> builder) throws SourceException {
-        //super(builder,  builder.getDefinition().parseArgumentValue(parent, builder.getRawArgument()));
         super(builder);
         this.parent = Preconditions.checkNotNull(parent, "Parent must not be null");
         this.argument =   builder.getDefinition().parseArgumentValue(this, builder.getRawArgument());

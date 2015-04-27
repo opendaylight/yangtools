@@ -43,10 +43,7 @@ public abstract class AbstractImmutableNormalizedValueAttrNode<K extends YangIns
     @Override
     protected int valueHashCode() {
         final int result = getValue() != null ? getValue().hashCode() : 1;
-// FIXME: are attributes part of hashCode/equals?
-//        for (final Entry<?, ?> a : attributes.entrySet()) {
-//            result = 31 * result + a.hashCode();
-//        }
+        // FIXME: are attributes part of hashCode/equals?
         return result;
     }
 
@@ -60,11 +57,6 @@ public abstract class AbstractImmutableNormalizedValueAttrNode<K extends YangIns
         }
 
         // FIXME: are attributes part of hashCode/equals?
-        // final Set<Entry<QName, String>> tas = getAttributes().entrySet();
-        // final Set<Entry<QName, String>> oas =
-        // container.getAttributes().entrySet();
-        //
-        // return tas.containsAll(oas) && oas.containsAll(tas);
         return true;
     }
 
