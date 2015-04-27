@@ -27,9 +27,9 @@ import com.google.common.collect.ImmutableList;
 public class AugmentProcessTest {
 
     private static final YangStatementSourceImpl AUGMENTED = new YangStatementSourceImpl(
-            "/stmt-test/effective-build/augmented.yang");
+            "/stmt-test/effective-build/augmented.yang", false);
     private static final YangStatementSourceImpl ROOT = new YangStatementSourceImpl(
-            "/stmt-test/effective-build/aug-root.yang");
+            "/stmt-test/effective-build/aug-root.yang", false);
 
     private static final QNameModule ROOT_QNAME_MODULE = QNameModule.create(URI.create("root"), null);
     private static final QNameModule AUGMENTED_QNAME_MODULE = QNameModule.create(URI.create("aug"), null);

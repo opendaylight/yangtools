@@ -54,7 +54,7 @@ submodule subfoo {
         status obsolete;
     }
 
-    augment "/br:interfaces/br:ifEntry/bz:augment-holder" {
+    augment "/br:interfaces/br:ifEntry/br:augment-holder" {
         when "if:ifType='ds0'";
         leaf subleaf {
             type string;
