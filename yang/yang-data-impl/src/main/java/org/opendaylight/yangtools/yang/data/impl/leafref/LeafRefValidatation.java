@@ -40,14 +40,14 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LeafRefValidatation {
+public final class LeafRefValidatation {
 
     private static final Logger LOG = LoggerFactory.getLogger(LeafRefValidatation.class);
     private static final String NEW_LINE = System.getProperty("line.separator");
 
     private final DataTreeCandidate tree;
-    private final LinkedList<String> errorsMessages =  new LinkedList<String>();
-    private final HashSet<LeafRefContext> validatedLeafRefCtx =  new HashSet<LeafRefContext>();
+    private final List<String> errorsMessages =  new LinkedList<String>();
+    private final Set<LeafRefContext> validatedLeafRefCtx =  new HashSet<LeafRefContext>();
 
     private LeafRefValidatation(final DataTreeCandidate tree) {
         this.tree = tree;
@@ -357,28 +357,28 @@ public class LeafRefValidatation {
     private void validateLeafRefTargetNodeData(final NormalizedNode<?, ?> leaf,
             final LeafRefContext referencedByCtx, final ModificationType modificationType) {
 
-        final StringBuilder header_log = new StringBuilder();
+        final StringBuilder headerLog = new StringBuilder();
         final StringBuilder log = new StringBuilder();
-        header_log.append("Operation [" + modificationType
+        headerLog.append("Operation [" + modificationType
                 + "] validate data of leafref TARGET node: name["
                 + referencedByCtx.getNodeName() + "] = value["
                 + leaf.getValue() + "]");
 
         if (validatedLeafRefCtx.contains(referencedByCtx)) {
-            header_log.append(" -> SKIP: Already validated");
-            LOG.debug(header_log.toString());
+            headerLog.append(" -> SKIP: Already validated");
+            LOG.debug(headerLog.toString());
             return;
         }
 
         final Map<QName, LeafRefContext> allReferencedByLeafRefCtxs = referencedByCtx
                 .getAllReferencedByLeafRefCtxs();
 
-        final HashMap<LeafRefContext, HashSet> leafRefsValues = new HashMap<LeafRefContext, HashSet>();
+        final Map<LeafRefContext, Set> leafRefsValues = new HashMap<LeafRefContext, Set>();
         final Collection<LeafRefContext> leafrefs = allReferencedByLeafRefCtxs
                 .values();
         for (final LeafRefContext leafRefContext : leafrefs) {
             if (leafRefContext.isReferencing()) {
-                final HashSet<Object> values = new HashSet<>();
+                final Set<Object> values = new HashSet<>();
 
                 final SchemaPath leafRefNodeSchemaPath = leafRefContext
                         .getCurrentNodePath();
@@ -393,7 +393,7 @@ public class LeafRefValidatation {
             }
         }
 
-        final HashSet<Object> leafRefTargetNodeValues = new HashSet<>();
+        final Set<Object> leafRefTargetNodeValues = new HashSet<>();
         final SchemaPath nodeSchemaPath = referencedByCtx.getCurrentNodePath();
         final LeafRefPath nodePath = LeafRefUtils.schemaPathToLeafRefPath(
                 nodeSchemaPath, referencedByCtx.getLeafRefContextModule());
@@ -401,11 +401,11 @@ public class LeafRefValidatation {
                 nodePath.getPathFromRoot(), null, QNameWithPredicate.ROOT);
 
         boolean valid = true;
-        final Set<Entry<LeafRefContext, HashSet>> entrySet = leafRefsValues
+        final Set<Entry<LeafRefContext, Set>> entrySet = leafRefsValues
                 .entrySet();
-        for (final Entry<LeafRefContext, HashSet> entry : entrySet) {
+        for (final Entry<LeafRefContext, Set> entry : entrySet) {
             final LeafRefContext leafRefContext = entry.getKey();
-            final HashSet leafRefValuesSet = entry.getValue();
+            final Set leafRefValuesSet = entry.getValue();
             for (final Object leafRefsValue : leafRefValuesSet) {
                 if (!leafRefTargetNodeValues.contains(leafRefsValue)) {
 
@@ -430,14 +430,14 @@ public class LeafRefValidatation {
             }
         }
 
-        header_log.append(valid ? " -> OK" : " -> FAILED");
-        LOG.debug(header_log.append(log.toString()).toString());
+        headerLog.append(valid ? " -> OK" : " -> FAILED");
+        LOG.debug(headerLog.append(log.toString()).toString());
 
         validatedLeafRefCtx.add(referencedByCtx);
     }
 
     private StringBuilder createInvalidTargetMessage(final NormalizedNode<?, ?> leaf,
-            final HashSet<?> leafRefTargetNodeValues, final LeafRefContext leafRefContext,
+            final Set<?> leafRefTargetNodeValues, final LeafRefContext leafRefContext,
             final Object leafRefsValue) {
         final StringBuilder sb = new StringBuilder();
         sb.append("Invalid leafref value [");
@@ -459,14 +459,14 @@ public class LeafRefValidatation {
             final YangInstanceIdentifier current) {
 
         final StringBuilder header_log = new StringBuilder();
-        final StringBuilder log = new StringBuilder();
+        final StringBuilder logMessage = new StringBuilder();
 
         header_log.append("Operation [" + modificationType
                 + "] validate data of LEAFREF node: name["
                 + referencingCtx.getNodeName() + "] = value["
                 + leaf.getValue() + "]");
 
-        final HashSet<Object> values = new HashSet<>();
+        final Set<Object> values = new HashSet<>();
         final LeafRefPath targetPath = referencingCtx.getAbsoluteLeafRefTargetPath();
         final Iterable<QNameWithPredicate> pathFromRoot = targetPath
                 .getPathFromRoot();
@@ -480,14 +480,15 @@ public class LeafRefValidatation {
             errorsMessages.add(sb.toString());
 
             header_log.append(" -> FAILED");
-            log.append(sb.toString());
+            logMessage.append(sb.toString());
         } else {
             header_log.append(" -> OK");
         }
 
         LOG.debug(header_log.toString());
-        if (!log.toString().equals(""))
-            LOG.debug(log.toString());
+        if (!logMessage.toString().equals("")) {
+            LOG.debug(logMessage.toString());
+        }
     }
 
     private StringBuilder createInvalidLeafRefMessage(

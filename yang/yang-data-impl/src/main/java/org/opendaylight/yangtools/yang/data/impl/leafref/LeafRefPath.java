@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
-import org.opendaylight.yangtools.concepts.Immutable;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -16,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+import org.opendaylight.yangtools.concepts.Immutable;
 
 public abstract class LeafRefPath implements Immutable {
 
@@ -192,12 +192,12 @@ public abstract class LeafRefPath implements Immutable {
             return this;
         }
 
-        LeafRefPath parent = this;
-        for (QNameWithPredicate qname : relative) {
-            parent = parent.createInstance(parent, qname);
+        LeafRefPath current = this;
+        for (final QNameWithPredicate qname : relative) {
+            current = current.createInstance(current, qname);
         }
 
-        return parent;
+        return current;
     }
 
     /**
@@ -212,12 +212,12 @@ public abstract class LeafRefPath implements Immutable {
         Preconditions.checkArgument(!relative.isAbsolute(),
                 "Child creation requires relative path");
 
-        LeafRefPath parent = this;
-        for (QNameWithPredicate qname : relative.getPathFromRoot()) {
-            parent = parent.createInstance(parent, qname);
+        LeafRefPath current = this;
+        for (final QNameWithPredicate qname : relative.getPathFromRoot()) {
+            current = current.createInstance(current, qname);
         }
 
-        return parent;
+        return current;
     }
 
     /**
@@ -347,28 +347,16 @@ public abstract class LeafRefPath implements Immutable {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        Iterable<QNameWithPredicate> pathFromRoot = this.getPathFromRoot();
-
+        final StringBuilder sb = new StringBuilder();
+        final Iterable<QNameWithPredicate> pathFromRoot = this.getPathFromRoot();
         sb.append(isAbsolute() ? "Absolute path:" : "Relative path:");
-
-        for (QNameWithPredicate qName : pathFromRoot) {
-            sb.append("/" + qName);
+        for (final QNameWithPredicate qName : pathFromRoot) {
+            sb.append('/');
+            sb.append(qName);
         }
-
         return sb.toString();
 
     }
 
-    // @Override
-    // public final String toString() {
-    // return addToStringAttributes(Objects.toStringHelper(this)).toString();
-    // }
-    //
-    // protected ToStringHelper addToStringAttributes(final ToStringHelper
-    // toStringHelper) {
-    // return toStringHelper.add("path", getPathFromRoot());
-    // }
 
 }

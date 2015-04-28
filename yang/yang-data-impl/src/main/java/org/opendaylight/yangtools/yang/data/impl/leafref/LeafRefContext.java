@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 import java.util.Map;
@@ -15,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
-final public class LeafRefContext {
+public final class LeafRefContext {
 
     private final QName currentNodeQName;
     private final SchemaPath currentNodePath;
@@ -55,7 +56,7 @@ final public class LeafRefContext {
         try {
             return new LeafRefContextTreeBuilder(ctx).buildLeafRefContextTree();
         } catch (IOException | LeafRefYangSyntaxErrorException e) {
-            throw new RuntimeException(e);
+            throw Throwables.propagate(e);
         }
     }
 
