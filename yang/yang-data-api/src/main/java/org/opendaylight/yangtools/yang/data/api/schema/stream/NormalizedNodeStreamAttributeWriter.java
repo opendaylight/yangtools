@@ -17,13 +17,13 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
  */
 public interface NormalizedNodeStreamAttributeWriter extends NormalizedNodeStreamWriter {
 
-    void leafNode(YangInstanceIdentifier.NodeIdentifier name, Object value, Map<QName, String> attributes) throws IOException, IllegalArgumentException;
+    void leafNode(YangInstanceIdentifier.NodeIdentifier name, Object value, Map<QName, String> attributes) throws IOException;
 
-    void leafSetEntryNode(Object value, Map<QName, String> attributes) throws IOException, IllegalArgumentException;
+    void leafSetEntryNode(Object value, Map<QName, String> attributes) throws IOException;
 
-    void startContainerNode(YangInstanceIdentifier.NodeIdentifier name, int childSizeHint, Map<QName, String> attributes) throws IOException, IllegalArgumentException;
+    void startContainerNode(YangInstanceIdentifier.NodeIdentifier name, int childSizeHint, Map<QName, String> attributes) throws IOException;
 
-    void startUnkeyedListItem(YangInstanceIdentifier.NodeIdentifier name, int childSizeHint, Map<QName, String> attributes) throws IOException, IllegalStateException;
+    void startUnkeyedListItem(YangInstanceIdentifier.NodeIdentifier name, int childSizeHint, Map<QName, String> attributes) throws IOException;
 
-    void startMapEntryNode(YangInstanceIdentifier.NodeIdentifierWithPredicates identifier, int childSizeHint, Map<QName, String> attributes) throws IOException, IllegalArgumentException;
+    void startMapEntryNode(YangInstanceIdentifier.NodeIdentifierWithPredicates identifier, int childSizeHint, Map<QName, String> attributes) throws IOException;
 }
