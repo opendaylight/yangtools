@@ -13,13 +13,13 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 
 public interface QNameWithPredicate {
 
-    static final QNameWithPredicate UP_PARENT = new QNameWithPredicateBuilder(
+    final QNameWithPredicate UP_PARENT = new QNameWithPredicateBuilder(
             null, "..").build();
 
-    static final QNameWithPredicate ROOT = new QNameWithPredicateBuilder(
+    final QNameWithPredicate ROOT = new QNameWithPredicateBuilder(
             null, "").build();
 
-    public List<QNamePredicate> getQNamePredicates();
+    List<QNamePredicate> getQNamePredicates();
 
     public QNameModule getModuleQname();
 

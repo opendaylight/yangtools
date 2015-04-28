@@ -8,11 +8,12 @@
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
 import java.util.LinkedList;
+import java.util.List;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
 class QNameWithPredicateBuilder {
 
-    private LinkedList<QNamePredicate> qnamePredicates;
+    private List<QNamePredicate> qnamePredicates;
     private QNameModule moduleQname;
     private String localName;
 
@@ -39,7 +40,7 @@ class QNameWithPredicateBuilder {
         return qNameWithPredicateImpl;
     }
 
-    public LinkedList<QNamePredicate> getQNamePredicates() {
+    public List<QNamePredicate> getQNamePredicates() {
         return qnamePredicates;
     }
 
@@ -63,33 +64,15 @@ class QNameWithPredicateBuilder {
         this.localName = localName;
     }
 
-    // FIXME: check also predicates ...
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof QNameWithPredicateBuilder)) {
-            return false;
-        }
-        final QNameWithPredicateBuilder other = (QNameWithPredicateBuilder) obj;
-        if (localName == null) {
-            if (other.localName != null) {
-                return false;
-            }
-        } else if (!localName.equals(other.localName)) {
-            return false;
-        }
-        return moduleQname.equals(other.moduleQname);
-    }
-
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
 
         if (moduleQname != null) {
-            sb.append("(" + moduleQname.getNamespace());
-            sb.append("?revision=" + moduleQname.getRevision());
+            sb.append("(");
+            sb.append(moduleQname.getNamespace());
+            sb.append("?revision=");
+            sb.append(moduleQname.getRevision());
             sb.append(")");
         }
 

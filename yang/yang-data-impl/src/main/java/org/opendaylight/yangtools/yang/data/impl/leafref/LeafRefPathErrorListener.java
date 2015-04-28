@@ -48,11 +48,11 @@ class LeafRefPathErrorListener extends BaseErrorListener {
         }
 
         final StringBuilder sb = new StringBuilder();
-        String module = null;
+        String errorModule = null;
         boolean first = true;
         for (final LeafRefPathSyntaxErrorException e : exceptions) {
-            if (module == null) {
-                module = e.getModule();
+            if (errorModule == null) {
+                errorModule = e.getModule();
             }
             if (first) {
                 first = false;
@@ -63,7 +63,7 @@ class LeafRefPathErrorListener extends BaseErrorListener {
             sb.append(e.getFormattedMessage());
         }
 
-        throw new LeafRefPathSyntaxErrorException(module, 0, 0, sb.toString());
+        throw new LeafRefPathSyntaxErrorException(errorModule, 0, 0, sb.toString());
     }
 
 }

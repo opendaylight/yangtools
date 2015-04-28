@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -199,7 +200,7 @@ class LeafRefContextTreeBuilder {
         } else if (node instanceof LeafSchemaNode
                 || node instanceof LeafListSchemaNode) {
 
-            final LinkedList<LeafRefContext> foundLeafRefs = getLeafRefsFor(node,
+            final List<LeafRefContext> foundLeafRefs = getLeafRefsFor(node,
                     currentModule);
             if (!foundLeafRefs.isEmpty()) {
                 currentLeafRefContextBuilder.setReferencedBy(true);
@@ -213,12 +214,12 @@ class LeafRefContextTreeBuilder {
         return currentLeafRefContextBuilder.build();
     }
 
-    private LinkedList<LeafRefContext> getLeafRefsFor(final DataSchemaNode node,
+    private List<LeafRefContext> getLeafRefsFor(final DataSchemaNode node,
             final Module module) {
         final LeafRefPath nodeXPath = LeafRefUtils.schemaPathToLeafRefPath(
                 node.getPath(), module);
 
-        final LinkedList<LeafRefContext> foundLeafRefs = new LinkedList<LeafRefContext>();
+        final List<LeafRefContext> foundLeafRefs = new LinkedList<LeafRefContext>();
 
         for (final LeafRefContext leafref : leafRefs) {
             final LeafRefPath leafRefTargetPath = leafref
@@ -230,28 +231,5 @@ class LeafRefContextTreeBuilder {
 
         return foundLeafRefs;
     }
-
-    // private LeafRefContext buildLeafRefContextTreeFor(LeafRefContext parent,
-    // Module module) {
-    //
-    // Collection<DataSchemaNode> childNodes = module.getChildNodes();
-    // for (DataSchemaNode childNode : childNodes) {
-    // LeafRefContext childLeafRefContext = buildLeafRefContextTreeFor(parent,
-    // childNode);
-    //
-    // if(childLeafRefContext.hasReferencedByChild() ||
-    // childLeafRefContext.isReferencedBy()) {
-    // parent.addReferencedByChild(childLeafRefContext,
-    // childLeafRefContext.getCurrentNodeQName());
-    // }
-    // if(childLeafRefContext.hasReferencingChild() ||
-    // childLeafRefContext.isReferencing()) {
-    // parent.addReferencingChild(childLeafRefContext,
-    // childLeafRefContext.getCurrentNodeQName());
-    // }
-    // }
-    //
-    // return node;
-    // }
 
 }

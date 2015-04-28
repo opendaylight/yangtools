@@ -11,8 +11,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 
 public interface QNamePredicate {
 
-    public QName getIdentifier();
+    QName getIdentifier();
 
-    public LeafRefPath getPathKeyExpression();
+    LeafRefPath getPathKeyExpression();
 
 }

@@ -54,7 +54,8 @@ class QNamePredicateBuilder {
                 .getPathFromRoot();
 
         for (final QNameWithPredicate qName : pathFromRoot) {
-            sb.append("/" + qName);
+            sb.append("/");
+            sb.append(qName);
         }
 
         sb.append("]");

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.leafref;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -30,10 +31,11 @@ public class LeafRefUtils {
             final LeafRefPath leafRefPath, final SchemaPath contextNodeSchemaPath,
             final Module module) {
 
-        if (leafRefPath.isAbsolute())
+        if (leafRefPath.isAbsolute()) {
             return leafRefPath;
+        }
 
-        final LinkedList<QNameWithPredicate> absoluteLeafRefTargetPathList = schemaPathToXPathQNames(
+        final List<QNameWithPredicate> absoluteLeafRefTargetPathList = schemaPathToXPathQNames(
                 contextNodeSchemaPath, module);
 
         final Iterable<QNameWithPredicate> leafRefTargetPathFromRoot = leafRefPath
@@ -44,7 +46,7 @@ public class LeafRefUtils {
         while (leafRefTgtPathFromRootIterator.hasNext()) {
             final QNameWithPredicate qname = leafRefTgtPathFromRootIterator.next();
             if (qname.equals(QNameWithPredicate.UP_PARENT)) {
-                absoluteLeafRefTargetPathList.removeLast();
+                absoluteLeafRefTargetPathList.remove(absoluteLeafRefTargetPathList.size()-1);
             } else {
                 absoluteLeafRefTargetPathList.add(qname);
             }
@@ -58,10 +60,10 @@ public class LeafRefUtils {
      * @param module
      * @param absoluteLeafRefTargetPathList
      */
-    private static LinkedList<QNameWithPredicate> schemaPathToXPathQNames(
+    private static List<QNameWithPredicate> schemaPathToXPathQNames(
             final SchemaPath nodePath, final Module module) {
 
-        final LinkedList<QNameWithPredicate> xpath = new LinkedList<QNameWithPredicate>();
+        final List<QNameWithPredicate> xpath = new LinkedList<QNameWithPredicate>();
 
         final Iterator<QName> nodePathIterator = nodePath.getPathFromRoot()
                 .iterator();
@@ -110,7 +112,7 @@ public class LeafRefUtils {
 
     public static LeafRefPath schemaPathToLeafRefPath(final SchemaPath nodePath,
             final Module module) {
-        final LinkedList<QNameWithPredicate> xpathQNames = schemaPathToXPathQNames(
+        final List<QNameWithPredicate> xpathQNames = schemaPathToXPathQNames(
                 nodePath, module);
         return LeafRefPath.create(xpathQNames, true);
     }

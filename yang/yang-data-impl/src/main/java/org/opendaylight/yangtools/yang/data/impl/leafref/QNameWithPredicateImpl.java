@@ -8,7 +8,8 @@
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
 import java.io.Serializable;
-import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -18,19 +19,19 @@ final class QNameWithPredicateImpl implements Immutable, Serializable,
 
     private static final long serialVersionUID = 1L;
 
-    private final LinkedList<QNamePredicate> qnamePredicates;
+    private final List<QNamePredicate> qnamePredicates;
     private final QNameModule moduleQname;
     private final String localName;
 
     public QNameWithPredicateImpl(final QNameModule moduleQname, final String localName,
-            final LinkedList<QNamePredicate> qnamePredicates) {
+            final List<QNamePredicate> qnamePredicates) {
         this.moduleQname = moduleQname;
         this.localName = localName;
         this.qnamePredicates = qnamePredicates;
     }
 
     @Override
-    public LinkedList<QNamePredicate> getQNamePredicates() {
+    public List<QNamePredicate> getQNamePredicates() {
         return qnamePredicates;
     }
 
@@ -49,24 +50,38 @@ final class QNameWithPredicateImpl implements Immutable, Serializable,
         return QName.create(moduleQname, localName);
     }
 
-    // FIXME: check also predicates ...
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((localName == null) ? 0 : localName.hashCode());
+        result = prime * result + ((moduleQname == null) ? 0 : moduleQname.hashCode());
+        result = prime * result + ((qnamePredicates == null) ? 0 : qnamePredicates.hashCode());
+        return result;
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof QNameWithPredicateImpl)) {
+        if (obj == null) {
             return false;
         }
-        final QNameWithPredicateImpl other = (QNameWithPredicateImpl) obj;
-        if (localName == null) {
-            if (other.localName != null) {
-                return false;
-            }
-        } else if (!localName.equals(other.localName)) {
+        if (!(obj instanceof QNameWithPredicate)) {
             return false;
         }
-        return moduleQname.equals(other.moduleQname);
+        final QNameWithPredicate other = (QNameWithPredicate) obj;
+        if (!Objects.equals(localName, other.getLocalName())) {
+            return false;
+        }
+        if (!Objects.equals(moduleQname, other.getModuleQname())) {
+            return false;
+        }
+        if (!Objects.equals(qnamePredicates, other.getQNamePredicates())) {
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -74,9 +89,11 @@ final class QNameWithPredicateImpl implements Immutable, Serializable,
         final StringBuilder sb = new StringBuilder();
 
         if (moduleQname != null) {
-            sb.append("(" + moduleQname.getNamespace());
-            sb.append("?revision=" + moduleQname.getRevision());
-            sb.append(")");
+            sb.append('(');
+            sb.append(moduleQname.getNamespace());
+            sb.append("?revision=");
+            sb.append(moduleQname.getRevision());
+            sb.append(')');
         }
 
         sb.append(localName);
