@@ -93,5 +93,4 @@ public class EffectiveBuildTest {
             reactor.addSource(source);
         }
     }
-
 }
