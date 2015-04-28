@@ -165,7 +165,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
      * @throws IOException when the writer reports it
      */
     protected final boolean writeChildren(final Iterable<? extends NormalizedNode<?, ?>> children) throws IOException {
-        for (NormalizedNode<?, ?> child : children) {
+        for (final NormalizedNode<?, ?> child : children) {
             write(child);
         }
 
@@ -245,16 +245,16 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
 
         @Override
         protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
-            final NormalizedNodeStreamWriter writer = getWriter();
-            if(writer instanceof NormalizedNodeStreamAttributeWriter) {
-                ((NormalizedNodeStreamAttributeWriter) writer).startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()), node.getAttributes());
+            final NormalizedNodeStreamWriter nnWriter = getWriter();
+            if(nnWriter instanceof NormalizedNodeStreamAttributeWriter) {
+                ((NormalizedNodeStreamAttributeWriter) nnWriter).startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()), node.getAttributes());
             } else {
-                writer.startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()));
+                nnWriter.startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()));
             }
 
             final Set<QName> qnames = node.getIdentifier().getKeyValues().keySet();
             // Write out all the key children
-            for (QName qname : qnames) {
+            for (final QName qname : qnames) {
                 final Optional<? extends NormalizedNode<?, ?>> child = node.getChild(new NodeIdentifier(qname));
                 if (child.isPresent()) {
                     write(child.get());
