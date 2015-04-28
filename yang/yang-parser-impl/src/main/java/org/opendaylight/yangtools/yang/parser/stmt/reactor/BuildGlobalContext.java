@@ -195,10 +195,15 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
                     switch (sourceProgress) {
                         case FINISHED:
                             currentSource.remove();
+                            // Fallback to progress, since we were able to make progress in computation
                         case PROGRESS:
                             progressing = true;
+                            break;
                         case NO_PROGRESS:
-                            // Noop;
+                            // Noop
+                            break;
+                        default:
+                           throw new IllegalStateException("Unsupported phase progress " + sourceProgress);
                     }
                 }
             }

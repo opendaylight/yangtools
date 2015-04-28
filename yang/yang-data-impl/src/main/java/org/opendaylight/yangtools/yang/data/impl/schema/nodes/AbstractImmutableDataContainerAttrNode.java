@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 
+// FIXME: are attributes part of hashCode/equals?
 public abstract class AbstractImmutableDataContainerAttrNode<K extends YangInstanceIdentifier.PathArgument>
         extends AbstractImmutableDataContainerNode<K>
     implements AttributesContainer {
@@ -44,26 +45,4 @@ public abstract class AbstractImmutableDataContainerAttrNode<K extends YangInsta
         return super.addToStringAttributes(toStringHelper).add("attributes", attributes);
     }
 
-// FIXME: are attributes part of hashCode/equals?
-//    @Override
-//    protected int valueHashCode() {
-//        int result = super.valueHashCode();
-//        for (final Entry<?, ?> a : attributes.entrySet()) {
-//            result = 31 * result + a.hashCode();
-//        }
-//        return result;
-//    }
-
- // FIXME: are attributes part of hashCode/equals?
-//    @Override
-//    protected boolean valueEquals(final NormalizedNode<?, ?> other) {
-//        if (!super.valueEquals(other)) {
-//            return false;
-//        }
-//        final Set<Entry<QName, String>> tas = getAttributes().entrySet();
-//        final Set<Entry<QName, String>> oas = container.getAttributes().entrySet();
-//
-//        return tas.containsAll(oas) && oas.containsAll(tas);
-//        return true;
-//    }
 }
