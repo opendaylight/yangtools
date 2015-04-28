@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 
+import com.google.common.base.Preconditions;
 import java.util.Map;
-
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.LeafNodeBaseParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
@@ -17,14 +19,18 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.w3c.dom.Element;
 
-import com.google.common.base.Preconditions;
-
 final class LeafNodeDomParser extends LeafNodeBaseParser<Element> {
 
     private final XmlCodecProvider codecProvider;
     private final SchemaContext ctx;
 
     LeafNodeDomParser(XmlCodecProvider codecProvider, final SchemaContext schema) {
+        this.ctx = schema;
+        this.codecProvider = Preconditions.checkNotNull(codecProvider);
+    }
+
+    LeafNodeDomParser(XmlCodecProvider codecProvider, final SchemaContext schema, final BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, LeafNode<?>> strategy) {
+        super(strategy);
         this.ctx = schema;
         this.codecProvider = Preconditions.checkNotNull(codecProvider);
     }
@@ -43,4 +49,5 @@ final class LeafNodeDomParser extends LeafNodeBaseParser<Element> {
     protected Map<QName, String> getAttributes(Element element) {
         return DomUtils.toAttributes(element.getAttributes());
     }
+
 }

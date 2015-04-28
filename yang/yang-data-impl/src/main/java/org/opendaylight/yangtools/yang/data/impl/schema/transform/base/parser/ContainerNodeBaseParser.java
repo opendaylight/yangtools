@@ -27,7 +27,13 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * @param <E> type of elements to be parsed
  */
 public abstract class ContainerNodeBaseParser<E> extends
-        BaseDispatcherParser<E, ContainerNode, ContainerSchemaNode> {
+        BaseDispatcherParser<E, YangInstanceIdentifier.NodeIdentifier, ContainerNode, ContainerSchemaNode> {
+
+    public ContainerNodeBaseParser() {}
+
+    public ContainerNodeBaseParser(final BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, ContainerNode> buildingStrategy) {
+        super(buildingStrategy);
+    }
 
     @Override
     protected final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> getBuilder(
@@ -63,4 +69,5 @@ public abstract class ContainerNodeBaseParser<E> extends
 
     @Override
     protected abstract Map<QName, String> getAttributes(E e);
+
 }

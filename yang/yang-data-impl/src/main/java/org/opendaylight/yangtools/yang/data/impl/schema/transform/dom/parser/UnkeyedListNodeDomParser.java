@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.UnkeyedListNodeBaseParser;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -21,8 +23,14 @@ final class UnkeyedListNodeDomParser extends UnkeyedListNodeBaseParser<Element> 
         this.unkeyedListEntryNodeParser = unkeyedListEntryNodeParser;
     }
 
+    UnkeyedListNodeDomParser(final BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, UnkeyedListNode> buildingStrategy, final UnkeyedListEntryNodeDomParser unkeyedListEntryNodeParser) {
+        super(buildingStrategy);
+        this.unkeyedListEntryNodeParser = unkeyedListEntryNodeParser;
+    }
+
     @Override
     protected ToNormalizedNodeParser<Element, UnkeyedListEntryNode, ListSchemaNode> getListEntryNodeParser() {
         return unkeyedListEntryNodeParser;
     }
+
 }
