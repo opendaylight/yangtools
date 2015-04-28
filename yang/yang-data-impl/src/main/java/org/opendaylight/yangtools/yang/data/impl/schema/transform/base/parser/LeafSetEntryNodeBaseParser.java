@@ -7,29 +7,38 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
 import java.util.Map;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
 
 /**
  * Abstract(base) parser for LeafSetEntryNodes, parses elements of type E.
  *
  * @param <E> type of elements to be parsed
  */
-public abstract class LeafSetEntryNodeBaseParser<E> implements
-        ToNormalizedNodeParser<E, LeafSetEntryNode<?>, LeafListSchemaNode> {
+public abstract class LeafSetEntryNodeBaseParser<E> implements ExtensibleParser<YangInstanceIdentifier.NodeWithValue, E, LeafSetEntryNode<?>, LeafListSchemaNode> {
 
+    private final BuildingStrategy<YangInstanceIdentifier.NodeWithValue, LeafSetEntryNode<?>> buildingStrategy;
+
+    public LeafSetEntryNodeBaseParser() {
+        buildingStrategy = new SimpleLeafSetEntryBuildingStrategy();
+    }
+
+    public LeafSetEntryNodeBaseParser(final BuildingStrategy<YangInstanceIdentifier.NodeWithValue, LeafSetEntryNode<?>> buildingStrategy) {
+        this.buildingStrategy = buildingStrategy;
+    }
+
+    @SuppressWarnings("unchecked")
     @Override
-    public final LeafSetEntryNode<Object> parse(Iterable<E> elements, LeafListSchemaNode schema) {
+    public final LeafSetEntryNode<?> parse(Iterable<E> elements, LeafListSchemaNode schema) {
         final int size = Iterables.size(elements);
         Preconditions.checkArgument(size == 1, "Xml elements mapped to leaf node illegal count: %s", size);
 
@@ -39,8 +48,15 @@ public abstract class LeafSetEntryNodeBaseParser<E> implements
         NormalizedNodeAttrBuilder<YangInstanceIdentifier.NodeWithValue, Object, LeafSetEntryNode<Object>> leafEntryBuilder = Builders
                 .leafSetEntryBuilder(schema);
         leafEntryBuilder.withAttributes(getAttributes(e));
+        leafEntryBuilder.withValue(value);
 
-        return leafEntryBuilder.withValue(value).build();
+        final BuildingStrategy rawBuildingStrat = buildingStrategy;
+        return (LeafSetEntryNode<?>) rawBuildingStrat.build(leafEntryBuilder);
+    }
+
+    @Override
+    public BuildingStrategy<NodeWithValue, LeafSetEntryNode<?>> getBuildingStrategy() {
+        return buildingStrategy;
     }
 
     /**
@@ -60,4 +76,15 @@ public abstract class LeafSetEntryNodeBaseParser<E> implements
      */
     protected abstract Map<QName, String> getAttributes(E e);
 
+    public static class SimpleLeafSetEntryBuildingStrategy implements BuildingStrategy<YangInstanceIdentifier.NodeWithValue, LeafSetEntryNode<?>> {
+
+        @Override
+        public LeafSetEntryNode<?> build(final NormalizedNodeBuilder<NodeWithValue, ?, LeafSetEntryNode<?>> builder) {
+            return builder.build();
+        }
+
+        @Override
+        public void prepareAttributes(final Map<QName, String> attributes, final NormalizedNodeBuilder<NodeWithValue, ?, LeafSetEntryNode<?>> containerBuilder) {
+        }
+    }
 }

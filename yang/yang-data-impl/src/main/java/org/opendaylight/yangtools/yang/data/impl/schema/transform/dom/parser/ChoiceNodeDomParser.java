@@ -7,25 +7,31 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.LinkedListMultimap;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.ChoiceNodeBaseParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.NodeParserDispatcher;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
 import org.w3c.dom.Element;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.LinkedListMultimap;
-
 final class ChoiceNodeDomParser extends ChoiceNodeBaseParser<Element> {
 
     private final NodeParserDispatcher<Element> dispatcher;
 
-    ChoiceNodeDomParser(NodeParserDispatcher<Element> dispatcher) {
+    ChoiceNodeDomParser(final NodeParserDispatcher<Element> dispatcher) {
+        this.dispatcher = Preconditions.checkNotNull(dispatcher);
+    }
+
+    ChoiceNodeDomParser(final NodeParserDispatcher<Element> dispatcher, final BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, ChoiceNode> buildingStrategy) {
+        super(buildingStrategy);
         this.dispatcher = Preconditions.checkNotNull(dispatcher);
     }
 
     @Override
-    protected LinkedListMultimap<QName, Element> mapChildElements(Iterable<Element> xml) {
+    protected LinkedListMultimap<QName, Element> mapChildElements(final Iterable<Element> xml) {
         return DomUtils.mapChildElements(xml);
     }
 
@@ -33,4 +39,5 @@ final class ChoiceNodeDomParser extends ChoiceNodeBaseParser<Element> {
     protected NodeParserDispatcher<Element> getDispatcher() {
         return dispatcher;
     }
+
 }

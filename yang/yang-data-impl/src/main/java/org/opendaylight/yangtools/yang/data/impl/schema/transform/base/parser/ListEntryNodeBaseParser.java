@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -24,8 +25,15 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  * @param <E>
  *            type of elements to be parsed
  */
-public abstract class ListEntryNodeBaseParser<E, N extends DataContainerNode<?>> extends
-        BaseDispatcherParser<E, N, ListSchemaNode> {
+public abstract class ListEntryNodeBaseParser<P extends YangInstanceIdentifier.PathArgument, E, N extends DataContainerNode<P>> extends
+        BaseDispatcherParser<E, P, N, ListSchemaNode> {
+
+    public ListEntryNodeBaseParser(final BuildingStrategy<P, N> buildingStrategy) {
+        super(buildingStrategy);
+    }
+
+    public ListEntryNodeBaseParser() {
+    }
 
     @Override
     protected final Set<DataSchemaNode> getRealSchemasForAugment(final ListSchemaNode schema, final AugmentationSchema augmentSchema) {

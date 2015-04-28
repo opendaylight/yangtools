@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.OrderedListNodeBaseParser;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -17,7 +19,12 @@ final class OrderedListNodeDomParser extends OrderedListNodeBaseParser<Element> 
 
     private final MapEntryNodeDomParser mapEntryNodeParser;
 
-    OrderedListNodeDomParser(MapEntryNodeDomParser mapEntryNodeParser) {
+    OrderedListNodeDomParser(final MapEntryNodeDomParser mapEntryNodeParser) {
+        this.mapEntryNodeParser = mapEntryNodeParser;
+    }
+
+    OrderedListNodeDomParser(MapEntryNodeDomParser mapEntryNodeParser, final BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, OrderedMapNode> strategy) {
+        super(strategy);
         this.mapEntryNodeParser = mapEntryNodeParser;
     }
 
@@ -25,4 +32,5 @@ final class OrderedListNodeDomParser extends OrderedListNodeBaseParser<Element> 
     protected ToNormalizedNodeParser<Element, MapEntryNode, ListSchemaNode> getListEntryNodeParser() {
         return mapEntryNodeParser;
     }
+
 }

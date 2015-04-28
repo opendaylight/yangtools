@@ -8,9 +8,12 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
 import java.util.Collections;
+import java.util.Map;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
@@ -21,17 +24,32 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  *            type of elements to be parsed
  */
 public abstract class ListNodeBaseParser<E, N extends NormalizedNode<?, ?>, O extends NormalizedNode<YangInstanceIdentifier.NodeIdentifier, ?>, S extends ListSchemaNode>
-        implements ToNormalizedNodeParser<E, O, S> {
+        implements ExtensibleParser<YangInstanceIdentifier.NodeIdentifier, E, O, S> {
+
+    private final BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, O> buildingStrategy;
+
+    public ListNodeBaseParser() {
+        buildingStrategy = new SimpleListNodeBuildingStrategy<>();
+    }
+
+    public ListNodeBaseParser(final BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, O> buildingStrategy) {
+        this.buildingStrategy = buildingStrategy;
+    }
 
     @Override
-    public final O parse(Iterable<E> childNodes, S schema) {
+    public O parse(Iterable<E> childNodes, S schema) {
         CollectionNodeBuilder<N, O> listBuilder = provideBuilder(schema);
+
+        buildingStrategy.prepareAttributes(Collections.<QName, String>emptyMap(), listBuilder);
+
         for (E childNode : childNodes) {
             N listChild = getListEntryNodeParser().parse(Collections.singletonList(childNode), schema);
-            listBuilder.withChild(listChild);
+            if (listChild != null) {
+                listBuilder.withChild(listChild);
+            }
         }
 
-        return listBuilder.build();
+        return buildingStrategy.build(listBuilder);
     }
 
     /**
@@ -46,4 +64,21 @@ public abstract class ListNodeBaseParser<E, N extends NormalizedNode<?, ?>, O ex
      * @return prepares builder which will contain entries of list according to concrete list type
      */
     protected abstract CollectionNodeBuilder<N, O> provideBuilder(S schema);
+
+    @Override
+    public BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, O> getBuildingStrategy() {
+        return buildingStrategy;
+    }
+
+    public static class SimpleListNodeBuildingStrategy<O extends NormalizedNode<YangInstanceIdentifier.NodeIdentifier, ?>> implements BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, O> {
+        @Override
+        public O build(final NormalizedNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ?, O> builder) {
+            return builder.build();
+        }
+
+        @Override
+        public void prepareAttributes(final Map<QName, String> attributes, final NormalizedNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ?, O> containerBuilder) {
+            // NOOP
+        }
+    }
 }
