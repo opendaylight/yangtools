@@ -109,7 +109,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
             throw new IllegalArgumentException("Parameter 'localName' must be a non-empty string.");
         }
 
-        for (char c : ILLEGAL_CHARACTERS) {
+        for (final char c : ILLEGAL_CHARACTERS) {
             if (localName.indexOf(c) != -1) {
                 throw new IllegalArgumentException(String.format(
                         "Parameter 'localName':'%s' contains illegal character '%s'", localName, c));
@@ -121,20 +121,20 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     public static QName create(final String input) {
         Matcher matcher = QNAME_PATTERN_FULL.matcher(input);
         if (matcher.matches()) {
-            String namespace = matcher.group(1);
-            String revision = matcher.group(2);
-            String localName = matcher.group(3);
+            final String namespace = matcher.group(1);
+            final String revision = matcher.group(2);
+            final String localName = matcher.group(3);
             return create(namespace, revision, localName);
         }
         matcher = QNAME_PATTERN_NO_REVISION.matcher(input);
         if (matcher.matches()) {
-            URI namespace = URI.create(matcher.group(1));
-            String localName = matcher.group(2);
+            final URI namespace = URI.create(matcher.group(1));
+            final String localName = matcher.group(2);
             return new QName(namespace, localName);
         }
         matcher = QNAME_PATTERN_NO_NAMESPACE_NO_REVISION.matcher(input);
         if (matcher.matches()) {
-            String localName = matcher.group(1);
+            final String localName = matcher.group(1);
             return new QName((URI) null, localName);
         }
         throw new IllegalArgumentException("Invalid input:" + input);
@@ -273,8 +273,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *             <code>revision</code> is not according to format
      *             <code>YYYY-mm-dd</code>.
      */
-    public static QName create(final String namespace, final String revision, final String localName)
-            throws IllegalArgumentException {
+    public static QName create(final String namespace, final String revision, final String localName) {
         final URI namespaceUri = parseNamespace(namespace);
         final Date revisionDate = parseRevision(revision);
         return create(namespaceUri, revisionDate, localName);
@@ -283,7 +282,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     private static URI parseNamespace(final String namespace) {
         try {
             return new URI(namespace);
-        } catch (URISyntaxException ue) {
+        } catch (final URISyntaxException ue) {
             throw new IllegalArgumentException(String.format("Namespace '%s' is not a valid URI", namespace), ue);
         }
     }
@@ -301,13 +300,13 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @throws IllegalArgumentException
      *             If <code>namespace</code> is not valid URI.
      */
-    public static QName create(final String namespace, final String localName) throws IllegalArgumentException {
+    public static QName create(final String namespace, final String localName) {
         return create(parseNamespace(namespace), null, localName);
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         if (getNamespace() != null) {
             sb.append(QNAME_LEFT_PARENTHESIS + getNamespace());
 

@@ -17,16 +17,16 @@ public final class SimpleDateFormatUtil {
     private static final String REVISION_SIMPLE_DATE = "yyyy-MM-dd";
     private static final String DEFAULT_DATE = "1970-01-01";
 
-    public static Date DEFAULT_DATE_REV;
-    public static Date DEFAULT_DATE_IMP;
+    public static final Date DEFAULT_DATE_REV;
+    public static final Date DEFAULT_DATE_IMP;
 
     static {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(REVISION_SIMPLE_DATE);
+        final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(REVISION_SIMPLE_DATE);
 
         try {
             DEFAULT_DATE_REV = simpleDateFormat.parse(DEFAULT_DATE);
             DEFAULT_DATE_IMP = simpleDateFormat.parse(DEFAULT_DATE);
-        } catch (ParseException e) {
+        } catch (final ParseException e) {
             throw new ExceptionInInitializerError(e);
         }
     }
@@ -43,7 +43,7 @@ public final class SimpleDateFormatUtil {
         }
 
         @Override
-        public void set(SimpleDateFormat value) {
+        public void set(final SimpleDateFormat value) {
             throw new UnsupportedOperationException();
         }
 

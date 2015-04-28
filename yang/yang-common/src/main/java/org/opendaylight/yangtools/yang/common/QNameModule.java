@@ -12,6 +12,7 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
+import java.util.Objects;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.objcache.ObjectCache;
 import org.opendaylight.yangtools.objcache.ObjectCacheFactory;
@@ -114,18 +115,10 @@ public final class QNameModule implements Immutable, Serializable {
             return false;
         }
         final QNameModule other = (QNameModule) obj;
-        if (revision == null) {
-            if (other.revision != null) {
-                return false;
-            }
-        } else if (!revision.equals(other.revision)) {
+        if (!Objects.equals(revision, other.revision)) {
             return false;
         }
-        if (namespace == null) {
-            if (other.namespace != null) {
-                return false;
-            }
-        } else if (!namespace.equals(other.namespace)) {
+        if (!Objects.equals(namespace, other.namespace)) {
             return false;
         }
         return true;
@@ -157,7 +150,7 @@ public final class QNameModule implements Immutable, Serializable {
         try {
             compositeURI = new URI(namespace.getScheme(), namespace.getUserInfo(), namespace.getHost(),
                     namespace.getPort(), namespace.getPath(), query, namespace.getFragment());
-        } catch (URISyntaxException e) {
+        } catch (final URISyntaxException e) {
             LOG.error("", e);
         }
         return compositeURI;
