@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3aa0d159_a773564c",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/base/parser/ExtensibleParser.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-04-28T15:15:32Z",
+      "side": 1,
+      "message": "Missing header",
+      "revId": "d7d7dd949c442b8cf358a9316e3b7ffbbd744d21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
