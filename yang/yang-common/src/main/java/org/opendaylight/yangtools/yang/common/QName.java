@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.common;
 
 import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.getRevisionFormat;
+
+import com.google.common.base.Preconditions;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -233,10 +235,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @return Instance of QName
      */
     public static QName create(final QNameModule qnameModule, final String localName) {
-        if (qnameModule == null) {
-            throw new NullPointerException("module may not be null");
-        }
-        return new QName(qnameModule, localName);
+        return new QName(Preconditions.checkNotNull(qnameModule,"module may not be null"), localName);
     }
 
     /**

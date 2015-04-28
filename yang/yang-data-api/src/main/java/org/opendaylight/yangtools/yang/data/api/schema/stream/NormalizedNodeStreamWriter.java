@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.api.schema.stream;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
-
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -111,7 +110,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void leafNode(NodeIdentifier name, Object value) throws IOException, IllegalArgumentException;
+    void leafNode(NodeIdentifier name, Object value) throws IOException;
 
     /**
      *
@@ -137,7 +136,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void startLeafSet(NodeIdentifier name, int childSizeHint) throws IOException, IllegalArgumentException;
+    void startLeafSet(NodeIdentifier name, int childSizeHint) throws IOException;
 
     /**
      * Emits a leaf set entry node
@@ -150,7 +149,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *             If node was emitted outside <code>leaf set</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void leafSetEntryNode(Object value) throws IOException, IllegalArgumentException;
+    void leafSetEntryNode(Object value) throws IOException;
 
     /**
      *
@@ -187,7 +186,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void startContainerNode(NodeIdentifier name, int childSizeHint) throws IOException, IllegalArgumentException;
+    void startContainerNode(NodeIdentifier name, int childSizeHint) throws IOException;
 
     /**
      *
@@ -214,7 +213,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void startUnkeyedList(NodeIdentifier name, int childSizeHint) throws IOException, IllegalArgumentException;
+    void startUnkeyedList(NodeIdentifier name, int childSizeHint) throws IOException;
 
     /**
      * Emits start of new unkeyed list item.
@@ -242,7 +241,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *             If node was emitted outside <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void startUnkeyedListItem(NodeIdentifier name, int childSizeHint) throws IOException, IllegalStateException;
+    void startUnkeyedListItem(NodeIdentifier name, int childSizeHint) throws IOException;
 
     /**
      *
@@ -264,7 +263,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void startMapNode(NodeIdentifier name, int childSizeHint) throws IOException, IllegalArgumentException;
+    void startMapNode(NodeIdentifier name, int childSizeHint) throws IOException;
 
     /**
      *
@@ -294,7 +293,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *             If node was emitted outside <code>map entry</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void startMapEntryNode(NodeIdentifierWithPredicates identifier, int childSizeHint) throws IOException, IllegalArgumentException;
+    void startMapEntryNode(NodeIdentifierWithPredicates identifier, int childSizeHint) throws IOException;
 
     /**
      *
@@ -315,7 +314,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void startOrderedMapNode(NodeIdentifier name, int childSizeHint) throws IOException, IllegalArgumentException;
+    void startOrderedMapNode(NodeIdentifier name, int childSizeHint) throws IOException;
 
     /**
      *
@@ -331,7 +330,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void startChoiceNode(NodeIdentifier name, int childSizeHint) throws IOException, IllegalArgumentException;
+    void startChoiceNode(NodeIdentifier name, int childSizeHint) throws IOException;
 
     /**
      * Emits start of augmentation node.
@@ -357,7 +356,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *             If augmentation is invalid in current context.
      * @throws IOException if an underlying IO error occurs
      */
-    void startAugmentationNode(AugmentationIdentifier identifier) throws IOException, IllegalArgumentException;
+    void startAugmentationNode(AugmentationIdentifier identifier) throws IOException;
 
     /**
      * Emits anyxml node event.
@@ -370,7 +369,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void anyxmlNode(NodeIdentifier name, Object value) throws IOException, IllegalArgumentException;
+    void anyxmlNode(NodeIdentifier name, Object value) throws IOException;
 
     /**
      * Emits end event for node.
@@ -378,7 +377,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      * @throws IllegalStateException If there is no start* event to be closed.
      * @throws IOException if an underlying IO error occurs
      */
-    void endNode() throws IOException, IllegalStateException;
+    void endNode() throws IOException;
 
     @Override
     void close() throws IOException;
