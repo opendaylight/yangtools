@@ -26,7 +26,13 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * @param <E> type of elements to be parsed
  */
 public abstract class AugmentationNodeBaseParser<E> extends
-        BaseDispatcherParser<E,AugmentationNode, AugmentationSchema> {
+        BaseDispatcherParser<E, YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode, AugmentationSchema> {
+
+    public AugmentationNodeBaseParser(final BuildingStrategy<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> buildingStrategy) {
+        super(buildingStrategy);
+    }
+
+    public AugmentationNodeBaseParser() {}
 
     @Override
     protected final DataContainerNodeBuilder<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> getBuilder(final AugmentationSchema schema) {
