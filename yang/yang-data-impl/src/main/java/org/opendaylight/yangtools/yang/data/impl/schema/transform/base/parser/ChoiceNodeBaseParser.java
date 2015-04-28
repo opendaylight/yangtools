@@ -28,7 +28,13 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  *
  * @param <E> type of elements to be parsed
  */
-public abstract class ChoiceNodeBaseParser<E> extends BaseDispatcherParser<E, ChoiceNode, ChoiceSchemaNode> {
+public abstract class ChoiceNodeBaseParser<E> extends BaseDispatcherParser<E, YangInstanceIdentifier.NodeIdentifier, ChoiceNode, ChoiceSchemaNode> {
+
+    protected ChoiceNodeBaseParser() {}
+
+    protected ChoiceNodeBaseParser(final BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, ChoiceNode> buildingStrategy) {
+        super(buildingStrategy);
+    }
 
     @Override
     protected final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ChoiceNode> getBuilder(

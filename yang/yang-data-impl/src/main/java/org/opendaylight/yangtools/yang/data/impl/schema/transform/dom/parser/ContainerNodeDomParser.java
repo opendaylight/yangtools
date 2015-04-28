@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.LinkedListMultimap;
 import java.util.Map;
-
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.ContainerNodeBaseParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.NodeParserDispatcher;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
 import org.w3c.dom.Element;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.LinkedListMultimap;
 
 final class ContainerNodeDomParser extends ContainerNodeBaseParser<Element> {
 
@@ -25,10 +25,16 @@ final class ContainerNodeDomParser extends ContainerNodeBaseParser<Element> {
 
     ContainerNodeDomParser(final NodeParserDispatcher<Element> dispatcher) {
         this.dispatcher = Preconditions.checkNotNull(dispatcher);
-        this.strictParsing = super.strictParsing();
+        strictParsing = super.strictParsing();
     }
 
-    ContainerNodeDomParser(final NodeParserDispatcher<Element> dispatcher, final boolean strictParsing) {
+    public ContainerNodeDomParser(final NodeParserDispatcher<Element> dispatcher, final boolean strictParsing) {
+        this.dispatcher = dispatcher;
+        this.strictParsing = strictParsing;
+    }
+
+    ContainerNodeDomParser(final NodeParserDispatcher<Element> dispatcher, final BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, ContainerNode> parsingStrategy, final boolean strictParsing) {
+        super(parsingStrategy);
         this.dispatcher = Preconditions.checkNotNull(dispatcher);
         this.strictParsing = strictParsing;
     }

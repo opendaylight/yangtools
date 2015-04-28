@@ -15,17 +15,25 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.No
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.w3c.dom.Element;
 
-final class MapEntryNodeDomParser extends ListEntryNodeDomParser<MapEntryNode> {
+final class MapEntryNodeDomParser extends ListEntryNodeDomParser<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> {
 
     private final boolean strictParsing;
 
     MapEntryNodeDomParser(final NodeParserDispatcher<Element> dispatcher) {
         super(dispatcher);
+        // TODO strict parsing attribute should be injected into superclass via a constructor
+        // WIth current approach (getter) we have to call super.strictParsing in constructor and cannot reuse constructors
         this.strictParsing = super.strictParsing();
     }
 
     MapEntryNodeDomParser(final NodeParserDispatcher<Element> dispatcher, final boolean strictParsing) {
         super(dispatcher);
+        this.strictParsing = strictParsing;
+    }
+
+    MapEntryNodeDomParser(final NodeParserDispatcher<Element> dispatcher, final BuildingStrategy<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> strategy,
+                          final boolean strictParsing) {
+        super(strategy, dispatcher);
         this.strictParsing = strictParsing;
     }
 
