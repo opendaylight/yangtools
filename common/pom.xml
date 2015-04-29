@@ -25,7 +25,6 @@
         <module>checkstyle-logging</module>
         <module>concepts</module>
         <module>features</module>
-        <module>features-test</module>
         <module>mockito-configuration</module>
         <module>object-cache-api</module>
         <module>object-cache-guava</module>
