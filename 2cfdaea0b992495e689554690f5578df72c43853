@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3aa0d159_efb6148a",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/leafref/LeafRefValidatation.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 489,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-29T07:47:23Z",
+      "side": 1,
+      "message": "change .equals(\"\") to .isEmpty()",
+      "revId": "2cfdaea0b992495e689554690f5578df72c43853",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_0fbca068",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/leafref/QNamePredicateBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 57,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-29T07:47:23Z",
+      "side": 1,
+      "message": "append a single character (it\u0027s slightly faster)",
+      "revId": "2cfdaea0b992495e689554690f5578df72c43853",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
