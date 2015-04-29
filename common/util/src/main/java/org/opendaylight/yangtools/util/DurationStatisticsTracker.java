@@ -11,6 +11,7 @@ import static java.util.concurrent.TimeUnit.MICROSECONDS;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.NANOSECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
+
 import com.google.common.annotations.Beta;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -218,9 +219,9 @@ public abstract class DurationStatisticsTracker {
             return "h";
         case DAYS:
             return "d";
+        default:
+            LOG.warn("Unhandled time unit {}", unit);
+            return "";
         }
-
-        LOG.warn("Unhandled time unit {}", unit);
-        return "";
     }
 }
