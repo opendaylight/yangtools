@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3aa0d159_8f1d10c0",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 3
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-29T07:14:35Z",
+      "side": 1,
+      "message": "Do not mention bug name, but describe shortly what you changed in yangtools - e.g:\n\nThrows ResultAlreadySet instead of IllegalStateException",
+      "range": {
+        "startLine": 7,
+        "startChar": 11,
+        "endLine": 7,
+        "endChar": 60
+      },
+      "revId": "ccd097281cf3d0b05510bc2ec68363460e5692fe",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_6f20c4f7",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/ResultAlreadySetException.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-29T07:14:35Z",
+      "side": 1,
+      "message": "License info",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 1,
+        "endChar": 57
+      },
+      "revId": "ccd097281cf3d0b05510bc2ec68363460e5692fe",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
