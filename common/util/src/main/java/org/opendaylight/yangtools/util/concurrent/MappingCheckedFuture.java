@@ -8,15 +8,14 @@
 
 package org.opendaylight.yangtools.util.concurrent;
 
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.util.concurrent.AbstractCheckedFuture;
 import com.google.common.util.concurrent.ListenableFuture;
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * An implementation of CheckedFuture that provides similar behavior for the <code>get</code> methods
@@ -33,11 +32,11 @@ import com.google.common.util.concurrent.ListenableFuture;
  * @param <V> The result type returned by this Future's get method
  * @param <X> The checked exception type
  */
-public class MappingCheckedFuture<V, X extends Exception> extends AbstractCheckedFuture<V, X> {
+public final class MappingCheckedFuture<V, X extends Exception> extends AbstractCheckedFuture<V, X> {
 
     private final Function<Exception, X> mapper;
 
-    private MappingCheckedFuture( ListenableFuture<V> delegate, Function<Exception, X> mapper ) {
+    private MappingCheckedFuture( final ListenableFuture<V> delegate, final Function<Exception, X> mapper ) {
         super( delegate );
         this.mapper = Preconditions.checkNotNull( mapper );
     }
@@ -51,16 +50,16 @@ public class MappingCheckedFuture<V, X extends Exception> extends AbstractChecke
      * @return a new <code>MappingCheckedFuture</code>
      */
     public static <V, X extends Exception> MappingCheckedFuture<V, X> create(
-            ListenableFuture<V> delegate, Function<Exception, X> mapper ) {
+            final ListenableFuture<V> delegate, final Function<Exception, X> mapper ) {
         return new MappingCheckedFuture<V, X>( delegate, mapper );
     }
 
     @Override
-    protected X mapException( Exception e ) {
+    protected X mapException( final Exception e ) {
         return mapper.apply( e );
     }
 
-    private ExecutionException wrapInExecutionException( String message, final Exception e ) {
+    private ExecutionException wrapInExecutionException( final String message, final Exception e ) {
         return new ExecutionException( message, mapException( e ) );
     }
 
@@ -68,27 +67,27 @@ public class MappingCheckedFuture<V, X extends Exception> extends AbstractChecke
     public V get() throws InterruptedException, ExecutionException {
         try {
             return super.get();
-        } catch( InterruptedException e ) {
+        } catch( final InterruptedException e ) {
             Thread.currentThread().interrupt();
             throw wrapInExecutionException( "Operation was interrupted", e );
-        } catch( CancellationException e ) {
+        } catch( final CancellationException e ) {
             throw wrapInExecutionException( "Operation was cancelled", e );
-        } catch( ExecutionException e ) {
+        } catch( final ExecutionException e ) {
             throw wrapInExecutionException( e.getMessage(), e );
         }
     }
 
     @Override
-    public V get( long timeout, TimeUnit unit )
+    public V get( final long timeout, final TimeUnit unit )
             throws InterruptedException, ExecutionException, TimeoutException {
         try {
             return super.get( timeout, unit );
-        } catch( InterruptedException e ) {
+        } catch( final InterruptedException e ) {
             Thread.currentThread().interrupt();
             throw wrapInExecutionException( "Operation was interrupted", e );
-        } catch( CancellationException e ) {
+        } catch( final CancellationException e ) {
             throw wrapInExecutionException( "Operation was cancelled", e );
-        } catch( ExecutionException e ) {
+        } catch( final ExecutionException e ) {
             throw wrapInExecutionException( e.getMessage(), e );
         }
     }

@@ -7,16 +7,15 @@
  */
 package org.opendaylight.yangtools.util;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 
-import com.google.common.base.Function;
-
 public final class Identifiables {
     private static final Function<Identifiable<Object>, Object> EXTRACT_IDENTIFIER = new Function<Identifiable<Object>, Object>() {
         @Override
-        public Object apply(final @Nonnull Identifiable<Object> input) {
+        public Object apply(@Nonnull final Identifiable<Object> input) {
             Preconditions.checkNotNull(input);
             return input.getIdentifier();
         }
