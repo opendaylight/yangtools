@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.util.List;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
@@ -19,6 +20,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializer;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -144,6 +146,36 @@ abstract class DataContainerCodecContext<D extends DataObject,T> extends NodeCod
 
     BindingStreamEventWriter createWriter(final NormalizedNodeStreamWriter domWriter) {
         return  new BindingToNormalizedStreamWriter(this, domWriter);
+    }
+
+    @Nonnull
+    protected final <V> V childNonNull(@Nullable final V nullable, final YangInstanceIdentifier.PathArgument child,
+            final String message, final Object... args) {
+        if (nullable != null) {
+            return nullable;
+        }
+        MissingSchemaException.checkModulePresent(factory().getRuntimeContext().getSchemaContext(), child);
+        throw IncorrectNestingException.create(message, args);
+    }
+
+    @Nonnull
+    protected final <V> V childNonNull(@Nullable final V nullable, final QName child, final String message,
+            final Object... args) {
+        if (nullable != null) {
+            return nullable;
+        }
+        MissingSchemaException.checkModulePresent(factory().getRuntimeContext().getSchemaContext(), child);
+        throw IncorrectNestingException.create(message, args);
+    }
+
+    @Nonnull
+    protected final <V> V childNonNull(@Nullable final V nullable, final Class<?> childClass, final String message,
+            final Object... args) {
+        if (nullable != null) {
+            return nullable;
+        }
+        MissingSchemaForClassException.check(factory().getRuntimeContext(), childClass);
+        throw IncorrectNestingException.create(message, args);
     }
 
     DataObjectSerializer eventStreamSerializer() {
