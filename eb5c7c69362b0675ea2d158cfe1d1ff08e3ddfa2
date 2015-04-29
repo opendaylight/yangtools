@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3aa0d159_6ffc443f",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/QName.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-04-29T07:39:09Z",
+      "side": 1,
+      "message": "this empty line should not be here according to coding style, I think",
+      "revId": "eb5c7c69362b0675ea2d158cfe1d1ff08e3ddfa2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
