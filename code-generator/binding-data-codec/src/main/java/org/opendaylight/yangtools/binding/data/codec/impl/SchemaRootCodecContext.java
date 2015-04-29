@@ -9,9 +9,11 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.ChildOf;
@@ -70,9 +72,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
                 @Override
                 public DataContainerCodecContext<?,?> load(final QName qname) {
                     final DataSchemaNode childSchema = schema().getDataChildByName(qname);
-                    Preconditions.checkArgument(childSchema != null, "Argument %s is not valid child of %s", qname,
-                            schema());
-
+                    childNonNull(childSchema, qname,"Argument %s is not valid child of %s", qname,schema());
                     if (childSchema instanceof DataNodeContainer || childSchema instanceof ChoiceSchemaNode) {
                         @SuppressWarnings("rawtypes")
                         final Class childCls = factory().getRuntimeContext().getClassForSchema(childSchema);
@@ -126,7 +126,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
 
     @SuppressWarnings("unchecked")
     @Override
-    public <DV extends DataObject> DataContainerCodecContext<DV, ?> streamChild(Class<DV> childClass)
+    public <DV extends DataObject> DataContainerCodecContext<DV, ?> streamChild(final Class<DV> childClass)
             throws IllegalArgumentException {
         /* FIXME: This is still not solved for RPCs
          * TODO: Probably performance wise RPC, Data and Notification loading cache
@@ -136,7 +136,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         if (Notification.class.isAssignableFrom(childClass)) {
             return (DataContainerCodecContext<DV, ?>) getNotification((Class<? extends Notification>)childClass);
         }
-        return (DataContainerCodecContext<DV, ?>) childrenByClass.getUnchecked(childClass);
+        return (DataContainerCodecContext<DV, ?>) getOrRethrow(childrenByClass,childClass);
     }
 
     @Override
@@ -146,7 +146,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
 
     @Override
     public DataContainerCodecContext<?,?> yangPathArgumentChild(final PathArgument arg) {
-        return childrenByQName.getUnchecked(arg.getNodeType());
+        return getOrRethrow(childrenByQName,arg.getNodeType());
     }
 
     @Override
@@ -157,26 +157,26 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
 
 
     ContainerNodeCodecContext<?> getRpc(final Class<? extends DataContainer> rpcInputOrOutput) {
-        return rpcDataByClass.getUnchecked(rpcInputOrOutput);
+        return getOrRethrow(rpcDataByClass, rpcInputOrOutput);
     }
 
     NotificationCodecContext<?> getNotification(final Class<? extends Notification> notification) {
-        return notificationsByClass.getUnchecked(notification);
+        return getOrRethrow(notificationsByClass, notification);
     }
 
     NotificationCodecContext<?> getNotification(final SchemaPath notification) {
-        return notificationsByPath.getUnchecked(notification);
+        return getOrRethrow(notificationsByPath, notification);
     }
 
     ContainerNodeCodecContext<?> getRpc(final SchemaPath notification) {
-        return rpcDataByPath.getUnchecked(notification);
+        return getOrRethrow(rpcDataByPath, notification);
     }
 
     private DataContainerCodecContext<?,?> createDataTreeChildContext(final Class<?> key) {
         final Class<Object> parent = ClassLoaderUtils.findFirstGenericArgument(key, ChildOf.class);
-        Preconditions.checkArgument(DataRoot.class.isAssignableFrom(parent));
+        IncorrectNestingException.check(DataRoot.class.isAssignableFrom(parent), "Class %s is not top level item.", key);
         final QName qname = BindingReflections.findQName(key);
-        final DataSchemaNode childSchema = schema().getDataChildByName(qname);
+        final DataSchemaNode childSchema = childNonNull(schema().getDataChildByName(qname),key,"%s is not top-level item.",key);
         return DataContainerCodecPrototype.from(key, childSchema, factory()).get();
     }
 
@@ -226,20 +226,32 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     }
 
     @Override
-    protected Object deserializeObject(NormalizedNode<?, ?> normalizedNode) {
+    protected Object deserializeObject(final NormalizedNode<?, ?> normalizedNode) {
         throw new UnsupportedOperationException("Unable to deserialize root");
     }
 
     @Override
-    public InstanceIdentifier.PathArgument deserializePathArgument(YangInstanceIdentifier.PathArgument arg) {
+    public InstanceIdentifier.PathArgument deserializePathArgument(final YangInstanceIdentifier.PathArgument arg) {
         Preconditions.checkArgument(arg == null);
         return null;
     }
 
     @Override
-    public YangInstanceIdentifier.PathArgument serializePathArgument(InstanceIdentifier.PathArgument arg) {
+    public YangInstanceIdentifier.PathArgument serializePathArgument(final InstanceIdentifier.PathArgument arg) {
         Preconditions.checkArgument(arg == null);
         return null;
+    }
+
+    private static <K,V> V getOrRethrow(final LoadingCache<K, V> cache, final K key) {
+        try {
+            return cache.getUnchecked(key);
+        } catch (final UncheckedExecutionException e) {
+            final Throwable cause = e.getCause();
+            if(cause != null) {
+                Throwables.propagateIfPossible(cause);
+            }
+            throw e;
+        }
     }
 
 }
