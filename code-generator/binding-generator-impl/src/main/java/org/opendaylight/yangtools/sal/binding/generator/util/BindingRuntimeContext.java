@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.sal.binding.generator.api.ClassLoadingStrategy;
@@ -40,7 +41,6 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTy
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.AugmentationSchemaProxy;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -51,6 +51,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -163,14 +164,12 @@ public class BindingRuntimeContext implements Immutable {
      * schema.
      *
      * @param augClass Augmentation class
-     * @return Schema of augmentation
-     * @throws IllegalArgumentException If supplied class is not an augmentation or current context does not contain schema for augmentation.
+     * @return Schema of augmentation or null if augmentaiton is not known in this context
+     * @throws IllegalArgumentException If supplied class is not an augmentation
      */
-    public AugmentationSchema getAugmentationDefinition(final Class<?> augClass) throws IllegalArgumentException {
+    public @Nullable AugmentationSchema getAugmentationDefinition(final Class<?> augClass) throws IllegalArgumentException {
         Preconditions.checkArgument(Augmentation.class.isAssignableFrom(augClass), "Class %s does not represent augmentation", augClass);
-        final AugmentationSchema ret = augmentationToSchema.get(referencedType(augClass));
-        Preconditions.checkArgument(ret != null, "Supplied augmentation %s is not valid in current context", augClass);
-        return ret;
+        return augmentationToSchema.get(referencedType(augClass));
     }
 
     /**
@@ -195,6 +194,7 @@ public class BindingRuntimeContext implements Immutable {
     public Entry<AugmentationIdentifier, AugmentationSchema> getResolvedAugmentationSchema(final DataNodeContainer target,
             final Class<? extends Augmentation<?>> aug) {
         final AugmentationSchema origSchema = getAugmentationDefinition(aug);
+        Preconditions.checkArgument(origSchema != null, "Augmentation %s is not known in current schema context",aug);
         /*
          * FIXME: Validate augmentation schema lookup
          *
@@ -215,7 +215,7 @@ public class BindingRuntimeContext implements Immutable {
         }
 
         final AugmentationIdentifier identifier = new AugmentationIdentifier(childNames);
-        final AugmentationSchema proxy = new AugmentationSchemaProxy(origSchema, realChilds);
+        final AugmentationSchema proxy = new EffectiveAugmentationSchema(origSchema, realChilds);
         return new AbstractMap.SimpleEntry<>(identifier, proxy);
     }
 

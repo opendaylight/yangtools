@@ -64,58 +64,57 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
     }
 
     @Override
-    public BindingCodecTreeNode<?> bindingPathArgumentChild(PathArgument arg,
-            List<YangInstanceIdentifier.PathArgument> builder) {
-        return null;
+    public BindingCodecTreeNode<?> bindingPathArgumentChild(final PathArgument arg,
+            final List<YangInstanceIdentifier.PathArgument> builder) {
+        throw new IllegalArgumentException("Leaf does not have children");
     }
 
     @Override
     public BindingNormalizedNodeCachingCodec<D> createCachingCodec(
-            ImmutableCollection<Class<? extends DataObject>> cacheSpecifier) {
-        return null;
+            final ImmutableCollection<Class<? extends DataObject>> cacheSpecifier) {
+        throw new UnsupportedOperationException("Leaves does not support caching codec.");
     }
 
     @Override
     public Class<D> getBindingClass() {
-        return null;
+        throw new UnsupportedOperationException("Leaf does not have DataObject representation");
     }
 
     @Override
-    public NormalizedNode<?, ?> serialize(D data) {
+    public NormalizedNode<?, ?> serialize(final D data) {
         throw new UnsupportedOperationException("Separete serialization of leaf node is not supported.");
     }
 
     @Override
-    public void writeAsNormalizedNode(D data, NormalizedNodeStreamWriter writer) {
+    public void writeAsNormalizedNode(final D data, final NormalizedNodeStreamWriter writer) {
         throw new UnsupportedOperationException("Separete serialization of leaf node is not supported.");
     }
 
     @Override
-    public <E extends DataObject> BindingCodecTreeNode<E> streamChild(Class<E> childClass) {
-        return null;
+    public <E extends DataObject> BindingCodecTreeNode<E> streamChild(final Class<E> childClass) {
+        throw new IllegalArgumentException("Leaf does not have children");
     }
 
     @Override
     public <E extends DataObject> Optional<? extends BindingCodecTreeNode<E>> possibleStreamChild(
-            Class<E> childClass) {
-        return null;
+            final Class<E> childClass) {
+        throw new IllegalArgumentException("Leaf does not have children");
     }
 
     @Override
-    public BindingCodecTreeNode<?> yangPathArgumentChild(
-            org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument child) {
-        return null;
+    public BindingCodecTreeNode<?> yangPathArgumentChild(final YangInstanceIdentifier.PathArgument child) {
+        throw new IllegalArgumentException("Leaf does not have children");
     }
 
     @Override
-    protected Object deserializeObject(NormalizedNode<?, ?> normalizedNode) {
+    protected Object deserializeObject(final NormalizedNode<?, ?> normalizedNode) {
         if (normalizedNode instanceof LeafNode<?>) {
             return valueCodec.deserialize(normalizedNode.getValue());
         } else if(normalizedNode instanceof LeafSetNode<?>) {
             @SuppressWarnings("unchecked")
-            Collection<LeafSetEntryNode<Object>> domValues = ((LeafSetNode<Object>) normalizedNode).getValue();
-            List<Object> result = new ArrayList<>(domValues.size());
-            for (LeafSetEntryNode<Object> valueNode : domValues) {
+            final Collection<LeafSetEntryNode<Object>> domValues = ((LeafSetNode<Object>) normalizedNode).getValue();
+            final List<Object> result = new ArrayList<>(domValues.size());
+            for (final LeafSetEntryNode<Object> valueNode : domValues) {
                 result.add(valueCodec.deserialize(valueNode.getValue()));
             }
             return result;
@@ -124,13 +123,13 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
     }
 
     @Override
-    public InstanceIdentifier.PathArgument deserializePathArgument(YangInstanceIdentifier.PathArgument arg) {
+    public InstanceIdentifier.PathArgument deserializePathArgument(final YangInstanceIdentifier.PathArgument arg) {
         Preconditions.checkArgument(getDomPathArgument().equals(arg));
         return null;
     }
 
     @Override
-    public YangInstanceIdentifier.PathArgument serializePathArgument(InstanceIdentifier.PathArgument arg) {
+    public YangInstanceIdentifier.PathArgument serializePathArgument(final InstanceIdentifier.PathArgument arg) {
         return getDomPathArgument();
     }
 
