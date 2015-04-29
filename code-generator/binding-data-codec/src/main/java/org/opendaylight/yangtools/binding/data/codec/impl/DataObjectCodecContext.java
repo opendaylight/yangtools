@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import org.opendaylight.yangtools.yang.binding.AugmentationHolder;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
@@ -33,6 +31,7 @@ import org.opendaylight.yangtools.sal.binding.generator.api.ClassLoadingStrategy
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
+import org.opendaylight.yangtools.yang.binding.AugmentationHolder;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
@@ -155,8 +154,7 @@ abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeCon
                 }
             }
         }
-        Preconditions.checkArgument(childProto != null, " Child %s is not valid child.",childClass);
-        return (DataContainerCodecContext<DV, ?>) childProto.get();
+        return (DataContainerCodecContext<DV, ?>) childNonNull(childProto, childClass, " Child %s is not valid child.").get();
     }
 
 
@@ -177,23 +175,17 @@ abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeCon
 
         final Class<? extends DataObject> argType = arg.getType();
         final DataContainerCodecPrototype<?> ctxProto = byBindingArgClass.get(argType);
-        if(ctxProto != null) {
-            final DataContainerCodecContext<?,?> context = ctxProto.get();
-            if(context instanceof ChoiceNodeCodecContext) {
-                final ChoiceNodeCodecContext<?> choice = (ChoiceNodeCodecContext<?>) context;
-                final DataContainerCodecContext<?,?> caze = choice.getCazeByChildClass(arg.getType());
-                if(caze != null) {
-                    choice.addYangPathArgument(arg, builder);
-                    caze.addYangPathArgument(arg, builder);
-                    return caze.bindingPathArgumentChild(arg, builder);
-                }
-                return null;
-            }
-            context.addYangPathArgument(arg, builder);
-            return context;
+        final DataContainerCodecContext<?, ?> context =
+                childNonNull(ctxProto, argType, "Class %s is not valid child of %s", argType, getBindingClass()).get();
+        if (context instanceof ChoiceNodeCodecContext) {
+            final ChoiceNodeCodecContext<?> choice = (ChoiceNodeCodecContext<?>) context;
+            final DataContainerCodecContext<?, ?> caze = choice.getCazeByChildClass(arg.getType());
+            choice.addYangPathArgument(arg, builder);
+            caze.addYangPathArgument(arg, builder);
+            return caze.bindingPathArgumentChild(arg, builder);
         }
-        // Argument is not valid child.
-        return null;
+        context.addYangPathArgument(arg, builder);
+        return context;
     }
 
     @SuppressWarnings("unchecked")
@@ -203,14 +195,13 @@ abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeCon
             arg = new NodeIdentifier(arg.getNodeType());
         }
         final NodeContextSupplier childSupplier = byYang.get(arg);
-        Preconditions.checkArgument(childSupplier != null, "Argument %s is not valid child of %s", arg, schema());
+        childNonNull(childSupplier != null, arg, "Argument %s is not valid child of %s", arg, schema());
         return (NodeCodecContext<D>) childSupplier.get();
     }
 
     protected final LeafNodeCodecContext<?> getLeafChild(final String name) {
         final LeafNodeCodecContext<?> value = leafChild.get(name);
-        Preconditions.checkArgument(value != null, "Leaf %s is not valid for %s", name, getBindingClass());
-        return value;
+        return IncorrectNestingException.checkNonNull(value, "Leaf %s is not valid for %s", name, getBindingClass());
     }
 
     private DataContainerCodecPrototype<?> loadChildPrototype(final Class<?> childClass) {
@@ -248,8 +239,9 @@ abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeCon
                 childSchema = null;
             }
         }
-        Preconditions.checkArgument(childSchema != null, "Node %s does not have child named %s", schema(), childClass);
-        return DataContainerCodecPrototype.from(childClass, childSchema, factory());
+        final DataSchemaNode nonNullChild =
+                childNonNull(childSchema, childClass, "Node %s does not have child named %s", schema(), childClass);
+        return DataContainerCodecPrototype.from(childClass, nonNullChild, factory());
     }
 
     private DataContainerCodecPrototype<?> getAugmentationPrototype(final Type value) {
