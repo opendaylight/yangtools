@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -39,27 +40,28 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
 
     public ChoiceNodeCodecContext(final DataContainerCodecPrototype<ChoiceSchemaNode> prototype) {
         super(prototype);
-        Map<YangInstanceIdentifier.PathArgument, DataContainerCodecPrototype<?>> byYangCaseChildBuilder = new HashMap<>();
-        Map<Class<?>, DataContainerCodecPrototype<?>> byClassBuilder = new HashMap<>();
-        Map<Class<?>, DataContainerCodecPrototype<?>> byCaseChildClassBuilder = new HashMap<>();
-        Set<Class<?>> potentialSubstitutions = new HashSet<>();
+        final Map<YangInstanceIdentifier.PathArgument, DataContainerCodecPrototype<?>> byYangCaseChildBuilder = new HashMap<>();
+        final Map<Class<?>, DataContainerCodecPrototype<?>> byClassBuilder = new HashMap<>();
+        final Map<Class<?>, DataContainerCodecPrototype<?>> byCaseChildClassBuilder = new HashMap<>();
+        final Set<Class<?>> potentialSubstitutions = new HashSet<>();
         // Walks all cases for supplied choice in current runtime context
-        for (Class<?> caze : factory().getRuntimeContext().getCases(getBindingClass())) {
+        for (final Class<?> caze : factory().getRuntimeContext().getCases(getBindingClass())) {
             // We try to load case using exact match thus name
             // and original schema must equals
-            DataContainerCodecPrototype<ChoiceCaseNode> cazeDef = loadCase(caze);
+            final DataContainerCodecPrototype<ChoiceCaseNode> cazeDef = loadCase(caze);
             // If we have case definition, this case is instantiated
             // at current location and thus is valid in context of parent choice
             if (cazeDef != null) {
                 byClassBuilder.put(cazeDef.getBindingClass(), cazeDef);
                 // Updates collection of case children
                 @SuppressWarnings("unchecked")
+                final
                 Class<? extends DataObject> cazeCls = (Class<? extends DataObject>) caze;
-                for (Class<? extends DataObject> cazeChild : BindingReflections.getChildrenClasses(cazeCls)) {
+                for (final Class<? extends DataObject> cazeChild : BindingReflections.getChildrenClasses(cazeCls)) {
                     byCaseChildClassBuilder.put(cazeChild, cazeDef);
                 }
                 // Updates collection of YANG instance identifier to case
-                for (DataSchemaNode cazeChild : cazeDef.getSchema().getChildNodes()) {
+                for (final DataSchemaNode cazeChild : cazeDef.getSchema().getChildNodes()) {
                     byYangCaseChildBuilder.put(new NodeIdentifier(cazeChild.getQName()), cazeDef);
                 }
             } else {
@@ -71,7 +73,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
             }
         }
 
-        Map<Class<?>, DataContainerCodecPrototype<?>> bySubstitutionBuilder = new HashMap<>();
+        final Map<Class<?>, DataContainerCodecPrototype<?>> bySubstitutionBuilder = new HashMap<>();
         /*
          * Walks all cases which are not directly instantiated and
          * tries to match them to instantiated cases - represent same data as instantiated case,
@@ -79,8 +81,8 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
          * binding specification, that if choice is in grouping schema path location is lost,
          * and users may use incorrect case class using copy builders.
          */
-        for(Class<?> substitution : potentialSubstitutions) {
-            search: for(Entry<Class<?>, DataContainerCodecPrototype<?>> real : byClassBuilder.entrySet()) {
+        for(final Class<?> substitution : potentialSubstitutions) {
+            search: for(final Entry<Class<?>, DataContainerCodecPrototype<?>> real : byClassBuilder.entrySet()) {
                 if(BindingReflections.isSubstitutionFor(substitution, real.getKey())) {
                     bySubstitutionBuilder.put(substitution, real.getValue());
                     break search;
@@ -96,18 +98,17 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
 
     @SuppressWarnings("unchecked")
     @Override
-    public <DV extends DataObject> DataContainerCodecContext<DV, ?> streamChild(Class<DV> childClass) {
-        DataContainerCodecPrototype<?> child = byClass.get(childClass);
-        Preconditions.checkArgument(child != null,"Supplied class is not valid case",childClass);
-        return (DataContainerCodecContext<DV, ?>) child.get();
+    public <DV extends DataObject> DataContainerCodecContext<DV, ?> streamChild(final Class<DV> childClass) {
+        final DataContainerCodecPrototype<?> child = byClass.get(childClass);
+        return (DataContainerCodecContext<DV, ?>) childNonNull(child,childClass,"Supplied class %s is not valid case").get();
     }
 
 
     @SuppressWarnings("unchecked")
     @Override
     public <DV extends DataObject> Optional<DataContainerCodecContext<DV, ?>> possibleStreamChild(
-            Class<DV> childClass) {
-        DataContainerCodecPrototype<?> child = byClass.get(childClass);
+            final Class<DV> childClass) {
+        final DataContainerCodecPrototype<?> child = byClass.get(childClass);
         if(child != null) {
             return Optional.<DataContainerCodecContext<DV,?>>of((DataContainerCodecContext<DV, ?>) child.get());
         }
@@ -119,7 +120,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
     }
 
     protected DataContainerCodecPrototype<ChoiceCaseNode> loadCase(final Class<?> childClass) {
-        Optional<ChoiceCaseNode> childSchema = factory().getRuntimeContext().getCaseSchemaDefinition(schema(), childClass);
+        final Optional<ChoiceCaseNode> childSchema = factory().getRuntimeContext().getCaseSchemaDefinition(schema(), childClass);
         if (childSchema.isPresent()) {
             return DataContainerCodecPrototype.from(childClass, childSchema.get(), factory());
         }
@@ -130,48 +131,47 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
 
     @Override
     public NodeCodecContext<?> yangPathArgumentChild(final YangInstanceIdentifier.PathArgument arg) {
-        DataContainerCodecPrototype<?> cazeProto = byYangCaseChild.get(arg);
-        Preconditions.checkArgument(cazeProto != null, "Argument %s is not valid child of %s", arg, schema());
+        final DataContainerCodecPrototype<?> cazeProto = byYangCaseChild.get(arg);
+        childNonNull(cazeProto != null, arg,"Argument %s is not valid child of %s", arg, schema());
         return cazeProto.get().yangPathArgumentChild(arg);
     }
 
     @SuppressWarnings("unchecked")
     @Override
+    @Nullable
     public D deserialize(final NormalizedNode<?, ?> data) {
-        Preconditions
-                .checkArgument(data instanceof org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode);
-        NormalizedNodeContainer<?, ?, NormalizedNode<?,?>> casted = (NormalizedNodeContainer<?, ?, NormalizedNode<?,?>>) data;
-        NormalizedNode<?, ?> first = Iterables.getFirst(casted.getValue(), null);
+        Preconditions.checkArgument(data instanceof ChoiceNode);
+        final NormalizedNodeContainer<?, ?, NormalizedNode<?,?>> casted = (NormalizedNodeContainer<?, ?, NormalizedNode<?,?>>) data;
+        final NormalizedNode<?, ?> first = Iterables.getFirst(casted.getValue(), null);
 
         if (first == null) {
             return null;
         }
-        DataContainerCodecPrototype<?> caze = byYangCaseChild.get(first.getIdentifier());
+        final DataContainerCodecPrototype<?> caze = byYangCaseChild.get(first.getIdentifier());
         return (D) caze.get().deserialize(data);
     }
 
-    @Nullable DataContainerCodecContext<?,?> getCazeByChildClass(final @Nonnull Class<? extends DataObject> type) {
-        final DataContainerCodecPrototype<?> protoCtx = byCaseChildClass.get(type);
-        if(protoCtx != null) {
-            return protoCtx.get();
-        }
-        return null;
+    DataContainerCodecContext<?, ?> getCazeByChildClass(final @Nonnull Class<? extends DataObject> type) {
+        final DataContainerCodecPrototype<?> protoCtx =
+                childNonNull(byCaseChildClass.get(type), type, "Class %s is not child of any cases for %s", type,
+                        bindingArg());
+        return protoCtx.get();
     }
 
     @Override
-    protected Object deserializeObject(NormalizedNode<?, ?> normalizedNode) {
+    protected Object deserializeObject(final NormalizedNode<?, ?> normalizedNode) {
         return deserialize(normalizedNode);
     }
 
     @Override
-    public PathArgument deserializePathArgument(YangInstanceIdentifier.PathArgument arg) {
+    public PathArgument deserializePathArgument(final YangInstanceIdentifier.PathArgument arg) {
         Preconditions.checkArgument(getDomPathArgument().equals(arg));
         return null;
     }
 
     @Override
     public YangInstanceIdentifier.PathArgument serializePathArgument(
-            PathArgument arg) {
+            final PathArgument arg) {
         // FIXME: check for null, since binding container is null.
         return getDomPathArgument();
     }
