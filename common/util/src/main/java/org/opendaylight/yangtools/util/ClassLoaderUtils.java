@@ -12,7 +12,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
@@ -20,7 +19,6 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,21 +102,36 @@ public final class ClassLoaderUtils {
         if ("char[]".equals(name)) {
             return char[].class;
         }
+        return loadClass0(cls,name);
+    }
 
+    private static Class<?> loadClass0(final ClassLoader cls, final String name) throws ClassNotFoundException {
         try {
             return cls.loadClass(name);
-        } catch (ClassNotFoundException e) {
-            String[] components = name.split("\\.");
-            String potentialOuter;
-            int length = components.length;
-            if (length > 2 && (potentialOuter = components[length - 2]) != null && Character.isUpperCase(potentialOuter.charAt(0))) {
-                String outerName = Joiner.on(".").join(Arrays.asList(components).subList(0, length - 1));
-                String innerName = outerName + "$" + components[length-1];
+        } catch (final ClassNotFoundException e) {
+            final String[] components = name.split("\\.");
+
+            if (isInnerClass(components)) {
+                final int length = components.length;
+                final String outerName = Joiner.on(".").join(Arrays.asList(components).subList(0, length - 1));
+                final String innerName = outerName + "$" + components[length-1];
                 return cls.loadClass(innerName);
             } else {
                 throw e;
             }
         }
+    }
+
+    private static boolean isInnerClass(final String[] components) {
+        final int length = components.length;
+        if(length < 2) {
+            return false;
+        }
+        final String potentialOuter = components[length - 2];
+        if(potentialOuter == null) {
+            return false;
+        }
+        return Character.isUpperCase(potentialOuter.charAt(0));
     }
 
     public static Class<?> loadClassWithTCCL(final String name) throws ClassNotFoundException {
@@ -128,7 +141,7 @@ public final class ClassLoaderUtils {
     public static Class<?> tryToLoadClassWithTCCL(final String fullyQualifiedName) {
         try {
             return loadClassWithTCCL(fullyQualifiedName);
-        } catch (ClassNotFoundException e) {
+        } catch (final ClassNotFoundException e) {
             LOG.debug("Failed to load class {}", fullyQualifiedName, e);
             return null;
         }
@@ -156,7 +169,7 @@ public final class ClassLoaderUtils {
         Preconditions.checkNotNull(subclass);
         Preconditions.checkNotNull(genericType);
 
-        for (Type type : subclass.getGenericInterfaces()) {
+        for (final Type type : subclass.getGenericInterfaces()) {
             if (type instanceof ParameterizedType && genericType.equals(((ParameterizedType) type).getRawType())) {
                 return (ParameterizedType) type;
             }
