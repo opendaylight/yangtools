@@ -32,7 +32,7 @@ public class ListEffectiveStatementImpl extends
     boolean augmenting;
     boolean addedByUses;
     ListSchemaNode original;
-    boolean configuration;
+    boolean configuration = true;
     ConstraintDefinition constraints;
     boolean userOrdered;
 
@@ -45,10 +45,10 @@ public class ListEffectiveStatementImpl extends
         super(ctx);
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
-        // :TODO init other fields
+        this.constraints = new EffectiveConstraintDefinitionImpl(this);
 
         initKeyDefinition();
-        initSubstatementCollections();
+        initSubstatementCollectionsAndFields();
         initCopyType(ctx);
     }
 
@@ -70,9 +70,6 @@ public class ListEffectiveStatementImpl extends
         }
     }
 
-    /**
-     *
-     */
     private void initKeyDefinition() {
         List<QName> keyDefinitionInit = new LinkedList<QName>();
         KeyEffectiveStatementImpl key = firstEffective(KeyEffectiveStatementImpl.class);
@@ -87,12 +84,14 @@ public class ListEffectiveStatementImpl extends
         this.keyDefinition = ImmutableList.copyOf(keyDefinitionInit);
     }
 
-    private void initSubstatementCollections() {
+    private void initSubstatementCollectionsAndFields() {
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<UnknownSchemaNode>();
         Set<AugmentationSchema> augmentationsInit = new HashSet<AugmentationSchema>();
 
+        boolean configurationInit = false;
+        boolean userOrderedInit = false;
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
@@ -101,6 +100,19 @@ public class ListEffectiveStatementImpl extends
             if (effectiveStatement instanceof AugmentationSchema) {
                 AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
                 augmentationsInit.add(augmentationSchema);
+            }
+            if (!configurationInit
+                    && effectiveStatement instanceof ConfigEffectiveStatementImpl) {
+                ConfigEffectiveStatementImpl configStmt = (ConfigEffectiveStatementImpl) effectiveStatement;
+                this.configuration = configStmt.argument();
+                configurationInit = true;
+            }
+            if (!userOrderedInit
+                    && effectiveStatement instanceof OrderedByEffectiveStatementImpl) {
+                OrderedByEffectiveStatementImpl orderedByStmt = (OrderedByEffectiveStatementImpl) effectiveStatement;
+                this.userOrdered = orderedByStmt.argument().equals("user") ? true
+                        : false;
+                userOrderedInit = true;
             }
         }
 

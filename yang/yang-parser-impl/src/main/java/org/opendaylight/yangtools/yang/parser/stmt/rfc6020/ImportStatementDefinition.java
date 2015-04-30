@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdenti
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import com.google.common.base.Optional;
 import java.net.URI;
-import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
@@ -94,19 +93,12 @@ public class ImportStatementDefinition extends
             throws SourceException {
 
         String moduleName = stmt.getStatementArgument();
-        String revisionArg = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
-        final Optional<Date> revision;
-        if (revisionArg != null) {
-            try {
-                revision = Optional.of(SimpleDateFormatUtil.getRevisionFormat().parse(revisionArg));
-            } catch (ParseException e) {
-                throw new SourceException(String.format("Revision value %s is not in required format yyyy-MM-dd",
-                        revisionArg), stmt.getStatementSourceReference(), e);
-            }
-        } else {
-            revision = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_IMP);
+        Date revision = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
+        if (revision == null) {
+            revision = SimpleDateFormatUtil.DEFAULT_DATE_IMP;
         }
-        return new ModuleIdentifierImpl(moduleName, Optional.<URI> absent(), revision);
+
+        return new ModuleIdentifierImpl(moduleName, Optional.<URI> absent(), Optional.<Date> of(revision));
     }
 
 }

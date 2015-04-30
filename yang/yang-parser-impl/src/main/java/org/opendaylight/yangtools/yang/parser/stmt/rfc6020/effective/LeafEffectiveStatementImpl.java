@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
-
 import java.util.Collection;
 import java.util.LinkedList;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
@@ -32,14 +31,14 @@ public class LeafEffectiveStatementImpl extends
     private final QName qname;
     private final SchemaPath path;
 
-    boolean augmenting;
-    boolean addedByUses;
-    LeafSchemaNode original;
-    boolean configuration;
-    ConstraintDefinition constraintsDef;
-    TypeDefinition<?> type;
-    String defaultStr;
-    String unitsStr;
+    private boolean augmenting;
+    private boolean addedByUses;
+    private LeafSchemaNode original;
+    private boolean configuration = true;
+    private ConstraintDefinition constraintsDef;
+    private TypeDefinition<?> type;
+    private String defaultStr;
+    private String unitsStr;
 
     private ImmutableList<UnknownSchemaNode> unknownNodes;
 
@@ -48,7 +47,9 @@ public class LeafEffectiveStatementImpl extends
         super(ctx);
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
-        // :TODO init other fields
+        this.constraintsDef = new EffectiveConstraintDefinitionImpl(this);
+
+        // :TODO init TypeDefinition
 
         initSubstatementCollections();
         initCopyType(ctx);
@@ -77,10 +78,33 @@ public class LeafEffectiveStatementImpl extends
 
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
 
+        boolean configurationInit = false;
+        boolean defaultInit = false;
+        boolean unitsInit = false;
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
-                UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
-                unknownNodesInit.add(unknownNode);
+                unknownNodesInit.add((UnknownSchemaNode) effectiveStatement);
+            }
+            if (effectiveStatement instanceof TypeDefinition) {
+                type = ((TypeDefinition) effectiveStatement);
+            }
+            if (!configurationInit
+                    && effectiveStatement instanceof ConfigEffectiveStatementImpl) {
+                ConfigEffectiveStatementImpl configStmt = (ConfigEffectiveStatementImpl) effectiveStatement;
+                this.configuration = configStmt.argument();
+                configurationInit = true;
+            }
+            if (!defaultInit
+                    && effectiveStatement instanceof DefaultEffectiveStatementImpl) {
+                DefaultEffectiveStatementImpl defStmt = (DefaultEffectiveStatementImpl) effectiveStatement;
+                this.defaultStr = defStmt.argument();
+                defaultInit = true;
+            }
+            if (!unitsInit
+                    && effectiveStatement instanceof UnitsEffectiveStatementImpl) {
+                UnitsEffectiveStatementImpl unitStmt = (UnitsEffectiveStatementImpl) effectiveStatement;
+                this.unitsStr = unitStmt.argument();
+                unitsInit = true;
             }
         }
 

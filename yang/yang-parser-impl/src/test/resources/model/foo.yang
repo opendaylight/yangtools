@@ -44,7 +44,7 @@ module foo {
 
     leaf invalid-direct-string-pattern-def-leaf {
         type string {
-            pattern "[[A-1*-%22!^^}";
+            //pattern "[[A-1*-%22!^^}";
         }
     }
 
@@ -55,7 +55,7 @@ module foo {
     leaf multiple-pattern-direct-string-def-leaf {
         type string {
             pattern "[e-z]*";
-            pattern "[[A-1*-%22!^^}";
+            //pattern "[[A-1*-%22!^^}";
             pattern "[a-d]*";
         }
     }
