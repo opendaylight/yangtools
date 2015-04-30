@@ -1,6 +1,5 @@
 package org.opendaylight.yangtools.yang.stmt.effective.build.test;
 
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -40,19 +39,21 @@ public class EffectiveModuleTest {
     private static final YangStatementSourceImpl SUBMODULE = new YangStatementSourceImpl(
             "/semantic-statement-parser/effective-module/submod.yang");
 
-    private static final QNameModule ROOT_MODULE_QNAME = QNameModule.create(URI.create("root-ns"), null);
+    private static final QNameModule ROOT_MODULE_QNAME = QNameModule.create(
+            URI.create("root-ns"), SimpleDateFormatUtil.DEFAULT_DATE_REV);
 
     private static final QName cont = QName.create(ROOT_MODULE_QNAME, "cont");
 
-    private static final SchemaPath contSchemaPath = SchemaPath.create(true, cont);
+    private static final SchemaPath contSchemaPath = SchemaPath.create(true,
+            cont);
 
     private static Date revision;
 
     @BeforeClass
     public static void init() {
         try {
-            revision = SimpleDateFormatUtil.getRevisionFormat()
-                    .parse("2000-01-01");
+            revision = SimpleDateFormatUtil.getRevisionFormat().parse(
+                    "2000-01-01");
         } catch (ParseException e) {
             throw new IllegalArgumentException(e);
         }
@@ -60,7 +61,8 @@ public class EffectiveModuleTest {
 
     @Test
     public void effectiveBuildTest() throws SourceException, ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
+                .newBuild();
         addSources(reactor, ROOT_MODULE, IMPORTED_MODULE, SUBMODULE);
         EffectiveSchemaContext result = reactor.buildEffective();
 
@@ -74,9 +76,11 @@ public class EffectiveModuleTest {
         assertEquals("kisko", rootModule.getOrganization());
         assertEquals("kisko email", rootModule.getContact());
 
-        final Set<AugmentationSchema> augmentations = rootModule.getAugmentations();
+        final Set<AugmentationSchema> augmentations = rootModule
+                .getAugmentations();
         assertEquals(1, augmentations.size());
-        assertEquals(contSchemaPath, augmentations.iterator().next().getTargetPath());
+        assertEquals(contSchemaPath, augmentations.iterator().next()
+                .getTargetPath());
 
         final Set<ModuleImport> imports = rootModule.getImports();
         assertEquals(1, imports.size());
@@ -87,12 +91,14 @@ public class EffectiveModuleTest {
         assertEquals("imp-pref", importStmt.getPrefix());
 
         final Set<Module> submodules = rootModule.getSubmodules();
-        //assertEquals(1, submodules.size());
-        //assertEquals("submod", submodules.iterator().next().getName());
+        assertEquals(1, submodules.size());
+        assertEquals("submod", submodules.iterator().next().getName());
 
-        final Set<NotificationDefinition> notifications = rootModule.getNotifications();
+        final Set<NotificationDefinition> notifications = rootModule
+                .getNotifications();
         assertEquals(1, notifications.size());
-        assertEquals("notif1", notifications.iterator().next().getQName().getLocalName());
+        assertEquals("notif1", notifications.iterator().next().getQName()
+                .getLocalName());
 
         final Set<RpcDefinition> rpcs = rootModule.getRpcs();
         assertEquals(1, rpcs.size());
@@ -108,18 +114,23 @@ public class EffectiveModuleTest {
 
         final Set<IdentitySchemaNode> identities = rootModule.getIdentities();
         assertEquals(1, identities.size());
-        assertEquals("identity1", identities.iterator().next().getQName().getLocalName());
+        assertEquals("identity1", identities.iterator().next().getQName()
+                .getLocalName());
 
-//        final Set<FeatureDefinition> features = rootModule.getFeatures();
-//        assertEquals(1, features.size());
-//        assertEquals("feature1", features.iterator().next().getQName().getLocalName());
+        // final Set<FeatureDefinition> features = rootModule.getFeatures();
+        // assertEquals(1, features.size());
+        // assertEquals("feature1",
+        // features.iterator().next().getQName().getLocalName());
 
-        final List<ExtensionDefinition> extensionSchemaNodes = rootModule.getExtensionSchemaNodes();
+        final List<ExtensionDefinition> extensionSchemaNodes = rootModule
+                .getExtensionSchemaNodes();
         assertEquals(1, extensionSchemaNodes.size());
-        assertEquals("ext1", extensionSchemaNodes.iterator().next().getQName().getLocalName());
+        assertEquals("ext1", extensionSchemaNodes.iterator().next().getQName()
+                .getLocalName());
     }
 
-    private void addSources(CrossSourceStatementReactor.BuildAction reactor, YangStatementSourceImpl... sources) {
+    private void addSources(CrossSourceStatementReactor.BuildAction reactor,
+            YangStatementSourceImpl... sources) {
         for (YangStatementSourceImpl source : sources) {
             reactor.addSource(source);
         }
