@@ -1,7 +1,8 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import java.util.Collection;
 import java.util.LinkedList;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -28,9 +29,23 @@ public class GroupingEffectiveStatementImpl extends
 
         qname = ctx.getStatementArgument();
         path = Utils.getSchemaPath(ctx);
-        // :TODO init other fields
 
+        initCopyType(ctx);
         initSubstatementCollections();
+    }
+
+    private void initCopyType(
+            StmtContext<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> ctx) {
+
+        TypeOfCopy typeOfCopy = ctx.getTypeOfCopy();
+        switch (typeOfCopy) {
+        case ADDED_BY_USES:
+            addedByUses = true;
+            break;
+        default:
+            addedByUses = false;
+            break;
+        }
     }
 
     private void initSubstatementCollections() {

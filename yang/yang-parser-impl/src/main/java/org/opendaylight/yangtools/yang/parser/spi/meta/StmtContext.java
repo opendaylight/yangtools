@@ -52,7 +52,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     <K, V, N extends IdentifierNamespace<K, V>> V getFromNamespace(
             Class<N> type, K key) throws NamespaceNotAvailableException;
 
-    <K, V, N extends IdentifierNamespace<K, V>> Map<?, ?> getAllFromNamespace(
+    <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromNamespace(
             Class<N> type);
 
     @Nonnull
@@ -61,13 +61,17 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     @Nonnull
     Collection<StatementContextBase<?, ?, ?>> declaredSubstatements();
 
-    Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements();
+    public Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements();
 
     D buildDeclared();
 
     E buildEffective();
 
-    StatementContextBase<?, ?, ?> createCopy(QNameModule newQNameModule,
+    public StatementContextBase<?, ?, ?> createCopy(
+            StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
+            throws SourceException;
+
+    public StatementContextBase<?, ?, ?> createCopy(QNameModule newQNameModule,
             StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
             throws SourceException;
 
@@ -75,19 +79,19 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         ORIGINAL, ADDED_BY_USES, ADDED_BY_AUGMENTATION
     }
 
-    TypeOfCopy getTypeOfCopy();
+    public TypeOfCopy getTypeOfCopy();
 
-    void setTypeOfCopy(TypeOfCopy typeOfCopy);
+    public void setTypeOfCopy(TypeOfCopy typeOfCopy);
 
     public StatementContextBase<?, ?, ?> getOriginalCtx();
 
-    void setOriginalCtx(StatementContextBase<?, ?, ?> originalCtx);
+    public void setOriginalCtx(StatementContextBase<?, ?, ?> originalCtx);
 
-    boolean isRootContext();
+    public boolean isRootContext();
 
-    void setCompletedPhase(ModelProcessingPhase completedPhase);
+    public void setCompletedPhase(ModelProcessingPhase completedPhase);
 
-    ModelProcessingPhase getCompletedPhase();
+    public ModelProcessingPhase getCompletedPhase();
 
     interface Mutable<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
             extends StmtContext<A, D, E> {

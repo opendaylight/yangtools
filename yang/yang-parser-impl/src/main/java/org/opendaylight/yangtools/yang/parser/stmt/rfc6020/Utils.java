@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
-
+import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import java.util.Collection;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -225,11 +225,15 @@ public final class Utils {
             break;
         }
 
-        return QName.create(qNameModule, localName);
+        QNameModule resultQNameModule = qNameModule.getRevision() == null ? QNameModule
+                .create(qNameModule.getNamespace(),
+                        SimpleDateFormatUtil.DEFAULT_DATE_REV) : qNameModule;
+
+        return QName.create(resultQNameModule, localName);
     }
 
     @Nullable
-    public static StatementContextBase<?, ?, ?> findCtxOfNodeInSubstatements(
+    public static StatementContextBase<?, ?, ?> findNode(
             StatementContextBase<?, ?, ?> rootStmtCtx,
             final Iterable<QName> path) {
 
@@ -276,10 +280,10 @@ public final class Utils {
     }
 
     @Nullable
-    public static StatementContextBase<?, ?, ?> findCtxOfNodeInRoot(
+    public static StatementContextBase<?, ?, ?> findNode(
             StatementContextBase<?, ?, ?> rootStmtCtx,
             final SchemaNodeIdentifier node) {
-        return findCtxOfNodeInSubstatements(rootStmtCtx, node.getPathFromRoot());
+        return findNode(rootStmtCtx, node.getPathFromRoot());
     }
 
     public static SchemaPath getSchemaPath(StmtContext<?, ?, ?> ctx) {
@@ -316,5 +320,29 @@ public final class Utils {
             throw new IllegalArgumentException(
                     "String %s is not valid deviate argument");
         }
+    }
+
+    public static Status parseStatus(String value) {
+
+        Status status = null;
+        switch (value) {
+        case "current":
+            status = Status.CURRENT;
+            break;
+        case "deprecated":
+            status = Status.DEPRECATED;
+            break;
+        case "obsolete":
+            status = Status.OBSOLETE;
+            break;
+        default:
+            LOG.warn("Invalid 'status' statement: " + value);
+        }
+
+        return status;
+    }
+
+    public static SchemaPath SchemaNodeIdentifierToSchemaPath(SchemaNodeIdentifier identifier) {
+        return SchemaPath.create(identifier.getPathFromRoot(), identifier.isAbsolute());
     }
 }

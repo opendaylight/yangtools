@@ -7,8 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.BaseEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedIdentitiesNamespace;
 
+import java.util.LinkedList;
+import java.util.List;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.BaseEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -49,6 +56,20 @@ public class BaseStatementImpl extends AbstractDeclaredStatement<QName>
             return new BaseEffectiveStatementImpl(ctx);
         }
 
+        @Override
+        public void onFullDefinitionDeclared(
+                Mutable<QName, BaseStatement, EffectiveStatement<QName, BaseStatement>> stmt)
+                throws SourceException {
+            Mutable<?, ?, ?> parentCtx = stmt.getParentContext();
+            if(StmtContextUtils.producesDeclared(parentCtx, IdentityStatement.class)) {
+                List<StmtContext<?, ?, ?>> derivedIdentities = stmt.getFromNamespace(DerivedIdentitiesNamespace.class, stmt.getStatementArgument());
+                if(derivedIdentities == null) {
+                    derivedIdentities = new LinkedList<>();
+                    stmt.addToNs(DerivedIdentitiesNamespace.class, stmt.getStatementArgument(), derivedIdentities);
+                }
+                derivedIdentities.add(parentCtx);
+            }
+        }
     }
 
     @Override
