@@ -22,6 +22,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -87,7 +88,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
     private final transient Iterable<PathArgument> pathArguments;
     private final int hash;
 
-    private volatile ImmutableList<PathArgument> legacyPath = null;
+    private transient volatile ImmutableList<PathArgument> legacyPath = null;
     private transient volatile String toStringCache = null;
 
     static {
@@ -805,6 +806,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
 
     private void readObject(final ObjectInputStream inputStream) throws IOException, ClassNotFoundException {
         inputStream.defaultReadObject();
+        legacyPath = ImmutableList.copyOf((Collection<PathArgument>)inputStream.readObject());
 
         try {
             PATHARGUMENTS_FIELD.set(this, legacyPath);
@@ -825,7 +827,8 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
          * it out. The read path does the opposite -- it reads the legacyPath and then
          * uses invocation API to set the field.
          */
-        getLegacyPath();
+        ImmutableList<PathArgument> pathArguments = getLegacyPath();
         outputStream.defaultWriteObject();
+        outputStream.writeObject(pathArguments);
     }
 }
