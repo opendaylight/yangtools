@@ -44,7 +44,7 @@ public class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
 
         Set<Module> modulesInit = new HashSet<>();
         for (EffectiveStatement<?, ?> rootEffectiveStatement : rootEffectiveStatements) {
-            if (rootEffectiveStatement instanceof Module) {
+            if (rootEffectiveStatement instanceof ModuleEffectiveStatementImpl) {
                 Module module = (Module) rootEffectiveStatement;
                 modulesInit.add(module);
             }
@@ -64,9 +64,7 @@ public class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
         namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
         nameToModules = ImmutableSetMultimap.copyOf(nameMap);
 
-        // :TODO
-        // this.identifiersToSources =
-        // ImmutableMap.copyOf(identifiersToSources);
+        // :TODO init identifiersToSources
         this.identifiersToSources = null;
 
     }
