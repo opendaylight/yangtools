@@ -1,0 +1,8 @@
+module imported-module {
+    namespace "imported-module";
+    prefix imp;
+
+    container container-in-imported-module {
+    }
+
+}
