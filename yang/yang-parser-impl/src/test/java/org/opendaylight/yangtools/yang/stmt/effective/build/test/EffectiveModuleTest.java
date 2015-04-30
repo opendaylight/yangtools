@@ -87,8 +87,8 @@ public class EffectiveModuleTest {
         assertEquals("imp-pref", importStmt.getPrefix());
 
         final Set<Module> submodules = rootModule.getSubmodules();
-        //assertEquals(1, submodules.size());
-        //assertEquals("submod", submodules.iterator().next().getName());
+        assertEquals(1, submodules.size());
+        assertEquals("submod", submodules.iterator().next().getName());
 
         final Set<NotificationDefinition> notifications = rootModule.getNotifications();
         assertEquals(1, notifications.size());

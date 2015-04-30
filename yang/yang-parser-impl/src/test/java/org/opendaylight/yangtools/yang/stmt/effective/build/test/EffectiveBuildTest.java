@@ -78,16 +78,6 @@ public class EffectiveBuildTest {
 
     }
 
-    private void log(Throwable e, String indent) {
-        System.out.println(indent + e.getMessage());
-
-        Throwable[] suppressed = e.getSuppressed();
-        for (Throwable throwable : suppressed) {
-            log(throwable, indent + "        ");
-        }
-
-    }
-
     private void addSources(BuildAction reactor, YangStatementSourceImpl... sources) {
         for (YangStatementSourceImpl source : sources) {
             reactor.addSource(source);

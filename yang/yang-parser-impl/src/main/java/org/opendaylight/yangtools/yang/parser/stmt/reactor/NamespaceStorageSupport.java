@@ -41,8 +41,8 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this,key);
     }
 
-    public final <K, V, N extends IdentifierNamespace<K, V>> Map<?, ?> getAllFromNamespace(Class<N> type){
-        return namespaces.get(type);
+    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromNamespace(Class<N> type){
+        return (Map<K,V>) namespaces.get(type);
     }
 
     public final <K,V,VT extends V,N extends IdentifierNamespace<K, V>> void addToNs(Class<N> type, K key, VT value)
