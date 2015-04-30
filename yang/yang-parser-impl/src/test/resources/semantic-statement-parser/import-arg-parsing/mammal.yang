@@ -1,0 +1,8 @@
+module mammal {
+    namespace mammal;
+    prefix mam;
+
+    import nature {
+        prefix nature;
+    }
+}
