@@ -10,8 +10,9 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IncludeEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IncludeEffectiveStatementImpl;
 import java.net.URI;
 import java.text.ParseException;
 import java.util.Collection;
@@ -74,17 +75,17 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
             ModelActionBuilder includeAction = stmt.newInferenceAction(SOURCE_LINKAGE);
             final Prerequisite<StmtContext<?, ?, ?>> requiresCtxPrerequisite = includeAction.requiresCtx(stmt,
                     SubmoduleNamespace.class, includeSubmoduleIdentifier, SOURCE_LINKAGE);
-            final Prerequisite<Mutable<?, ?, ?>> mutatesCtxPrerequisite = includeAction.mutatesCtx(stmt.getRoot(),
-                    SOURCE_LINKAGE);
 
             includeAction.apply(new InferenceAction() {
 
                 @Override
                 public void apply() throws InferenceException {
-                    StmtContext<?, ?, ?> includedSubmoduleStmt = requiresCtxPrerequisite.get();
+                    StmtContext<?, ?, ?> includedSubModuleContext = requiresCtxPrerequisite.get();
 
-                    mutatesCtxPrerequisite.get().addToNs(IncludedModuleContext.class, includeSubmoduleIdentifier,
-                            includedSubmoduleStmt);
+                    stmt.addToNs(IncludedModuleContext.class, includeSubmoduleIdentifier,
+                            includedSubModuleContext);
+                    stmt.addToNs(IncludedSubmoduleNameToIdentifier.class,
+                            stmt.getStatementArgument(), includeSubmoduleIdentifier);
                 }
 
                 @Override
