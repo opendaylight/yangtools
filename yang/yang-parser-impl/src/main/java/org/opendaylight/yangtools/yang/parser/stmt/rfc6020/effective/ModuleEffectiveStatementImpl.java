@@ -7,6 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
+import java.util.Map;
+import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Date;
@@ -14,7 +22,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -28,18 +35,15 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.IncludedModuleContext;
 
-public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedDataNodeContainer<String, ModuleStatement>
+public class ModuleEffectiveStatementImpl extends
+        AbstractEffectiveDocumentedDataNodeContainer<String, ModuleStatement>
         implements Module, Immutable {
 
     private final QNameModule qNameModule;
@@ -61,32 +65,66 @@ public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedDat
     private ImmutableList<UnknownSchemaNode> unknownNodes;
     private String source;
 
-    public ModuleEffectiveStatementImpl(StmtContext<String, ModuleStatement, ?> ctx) {
+    public ModuleEffectiveStatementImpl(
+            StmtContext<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> ctx) {
         super(ctx);
 
         name = argument();
-        qNameModule = ctx.getFromNamespace(ModuleNameToModuleQName.class, name);
+        QNameModule qNameModuleInit = ctx.getFromNamespace(
+                ModuleNameToModuleQName.class, name);
+        qNameModule = qNameModuleInit.getRevision() == null ? QNameModule
+                .create(qNameModuleInit.getNamespace(),
+                        SimpleDateFormatUtil.DEFAULT_DATE_REV)
+                : qNameModuleInit;
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof PrefixEffectiveStatementImpl) {
-                prefix = ((PrefixEffectiveStatementImpl) effectiveStatement).argument();
+                prefix = ((PrefixEffectiveStatementImpl) effectiveStatement)
+                        .argument();
             }
             if (effectiveStatement instanceof YangVersionEffectiveStatementImpl) {
-                yangVersion = ((YangVersionEffectiveStatementImpl) effectiveStatement).argument();
+                yangVersion = ((YangVersionEffectiveStatementImpl) effectiveStatement)
+                        .argument();
             }
             if (effectiveStatement instanceof OrganizationEffectiveStatementImpl) {
-                organization = ((OrganizationEffectiveStatementImpl) effectiveStatement).argument();
+                organization = ((OrganizationEffectiveStatementImpl) effectiveStatement)
+                        .argument();
             }
             if (effectiveStatement instanceof ContactEffectiveStatementImpl) {
-                contact = ((ContactEffectiveStatementImpl) effectiveStatement).argument();
+                contact = ((ContactEffectiveStatementImpl) effectiveStatement)
+                        .argument();
             }
         }
 
+        // TODO init source, sourcePath
         source = ctx.getStatementSource().name();
 
-        //ctx.getFromNamespace(IncludedModuleContext.class, ) //ModuleIdentifier
-
         initSubstatementCollections();
+        initSubmodules(ctx);
+    }
+
+    private void initSubmodules(
+            StmtContext<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> ctx) {
+        Map<String, ModuleIdentifier> includedSubmodulesMap = ctx
+                .getAllFromNamespace(IncludedSubmoduleNameToIdentifier.class);
+
+        if (includedSubmodulesMap == null || includedSubmodulesMap.isEmpty()) {
+            this.submodules = ImmutableSet.of();
+            return;
+        }
+
+        Collection<ModuleIdentifier> includedSubmodules = includedSubmodulesMap
+                .values();
+
+        Set<Module> submodulesInit = new HashSet<>();
+        for (ModuleIdentifier submoduleIdentifier : includedSubmodules) {
+            Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> submoduleCtx = (Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>) ctx
+                    .getFromNamespace(SubmoduleNamespace.class,
+                            submoduleIdentifier);
+            submodulesInit.add((Module) submoduleCtx.buildEffective());
+        }
+
+        this.submodules = ImmutableSet.copyOf(submodulesInit);
     }
 
     private void initSubstatementCollections() {
@@ -95,15 +133,12 @@ public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedDat
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
         Set<AugmentationSchema> augmentationsInit = new HashSet<>();
         Set<ModuleImport> importsInit = new HashSet<>();
-        Set<Module> submodulesInit = new HashSet<>();
         Set<NotificationDefinition> notificationsInit = new HashSet<>();
         Set<RpcDefinition> rpcsInit = new HashSet<>();
         Set<Deviation> deviationsInit = new HashSet<>();
         Set<IdentitySchemaNode> identitiesInit = new HashSet<>();
         Set<FeatureDefinition> featuresInit = new HashSet<>();
         List<ExtensionDefinition> extensionNodesInit = new LinkedList<>();
-
-
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
@@ -115,11 +150,9 @@ public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedDat
             if (effectiveStatement instanceof ModuleImport) {
                 importsInit.add((ModuleImport) effectiveStatement);
             }
-            if (effectiveStatement instanceof IncludeEffectiveStatementImpl) {
-//                ((IncludeEffectiveStatementImpl) effectiveStatement).
-            }
             if (effectiveStatement instanceof NotificationDefinition) {
-                notificationsInit.add((NotificationDefinition) effectiveStatement);
+                notificationsInit
+                        .add((NotificationDefinition) effectiveStatement);
             }
             if (effectiveStatement instanceof RpcDefinition) {
                 rpcsInit.add((RpcDefinition) effectiveStatement);
@@ -134,14 +167,14 @@ public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedDat
                 featuresInit.add((FeatureDefinition) effectiveStatement);
             }
             if (effectiveStatement instanceof ExtensionDefinition) {
-                extensionNodesInit.add((ExtensionDefinition) effectiveStatement);
+                extensionNodesInit
+                        .add((ExtensionDefinition) effectiveStatement);
             }
         }
 
         this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
         this.imports = ImmutableSet.copyOf(importsInit);
-        this.submodules = ImmutableSet.copyOf(submodulesInit);
         this.notifications = ImmutableSet.copyOf(notificationsInit);
         this.rpcs = ImmutableSet.copyOf(rpcsInit);
         this.deviations = ImmutableSet.copyOf(deviationsInit);
@@ -250,7 +283,8 @@ public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedDat
         final int prime = 31;
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((yangVersion == null) ? 0 : yangVersion.hashCode());
+        result = prime * result
+                + ((yangVersion == null) ? 0 : yangVersion.hashCode());
         result = prime * result + qNameModule.hashCode();
         return result;
     }
