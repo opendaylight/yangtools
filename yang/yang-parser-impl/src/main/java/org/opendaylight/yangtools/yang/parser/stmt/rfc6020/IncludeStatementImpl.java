@@ -10,8 +10,9 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IncludeEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IncludeEffectiveStatementImpl;
 import java.net.URI;
 import java.text.ParseException;
 import java.util.Collection;
@@ -85,6 +86,8 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
 
                     mutatesCtxPrerequisite.get().addToNs(IncludedModuleContext.class, includeSubmoduleIdentifier,
                             includedSubmoduleStmt);
+                    mutatesCtxPrerequisite.get().addToNs(IncludedSubmoduleNameToIdentifier.class,
+                            stmt.getStatementArgument(), includeSubmoduleIdentifier);
                 }
 
                 @Override

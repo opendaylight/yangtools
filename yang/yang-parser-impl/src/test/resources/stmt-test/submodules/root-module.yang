@@ -1,0 +1,13 @@
+module root-module {
+    namespace "root-module";
+    prefix root;
+
+    import imported-module { prefix imp; revision-date 1970-01-01; }
+    
+    include submodule-1 { revision-date 1970-01-01; }
+    include submodule-2 { revision-date 1970-01-01; }
+
+    container container-in-root-module {
+        description "desc";
+    }
+}
