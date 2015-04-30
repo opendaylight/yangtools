@@ -7,8 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IdentityEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IdentityEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -52,6 +55,13 @@ public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
         public EffectiveStatement<QName, IdentityStatement> createEffective(
                 StmtContext<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> ctx) {
             return new IdentityEffectiveStatementImpl(ctx);
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(
+                Mutable<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> stmt)
+                throws SourceException {
+            stmt.addToNs(IdentityNamespace.class, stmt.getStatementArgument(), stmt);
         }
 
     }
