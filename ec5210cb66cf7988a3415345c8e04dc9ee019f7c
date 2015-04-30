@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3aa0d159_d4e7243f",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/ChoiceNodeCodecContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-30T13:00:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3aa0d159_a8a3229d",
+      "revId": "ec5210cb66cf7988a3415345c8e04dc9ee019f7c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3aa0d159_c8a0ee92",
         "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/ChoiceNodeCodecContext.java",
         "patchSetId": 2
@@ -59,6 +77,24 @@
     },
     {
       "key": {
+        "uuid": "3aa0d159_f4e2602e",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/IncorrectNestingException.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-30T13:00:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3aa0d159_c8c78e44",
+      "revId": "ec5210cb66cf7988a3415345c8e04dc9ee019f7c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3aa0d159_88c18630",
         "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/IncorrectNestingException.java",
         "patchSetId": 2
@@ -70,6 +106,24 @@
       "writtenOn": "2015-04-29T20:04:23Z",
       "side": 1,
       "message": "class javadocs",
+      "revId": "ec5210cb66cf7988a3415345c8e04dc9ee019f7c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_94d19c59",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/IncorrectNestingException.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-30T13:00:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3aa0d159_88c18630",
       "revId": "ec5210cb66cf7988a3415345c8e04dc9ee019f7c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -93,6 +147,24 @@
     },
     {
       "key": {
+        "uuid": "3aa0d159_b4d4d847",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/LeafNodeCodecContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-30T13:00:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3aa0d159_48e37ed9",
+      "revId": "ec5210cb66cf7988a3415345c8e04dc9ee019f7c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3aa0d159_e8e7eae2",
         "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/MissingSchemaException.java",
         "patchSetId": 2
@@ -104,6 +176,24 @@
       "writtenOn": "2015-04-29T20:04:23Z",
       "side": 1,
       "message": "copyright header",
+      "revId": "ec5210cb66cf7988a3415345c8e04dc9ee019f7c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_54cb14a5",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/MissingSchemaException.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-30T13:00:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3aa0d159_e8e7eae2",
       "revId": "ec5210cb66cf7988a3415345c8e04dc9ee019f7c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -161,6 +251,24 @@
     },
     {
       "key": {
+        "uuid": "3aa0d159_f4b90016",
+        "filename": "code-generator/binding-data-codec/src/main/java/org/opendaylight/yangtools/binding/data/codec/impl/MissingSchemaForClassException.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-30T13:00:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3aa0d159_c8ceae5a",
+      "revId": "ec5210cb66cf7988a3415345c8e04dc9ee019f7c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3aa0d159_68dbda1b",
         "filename": "code-generator/binding-data-codec/src/test/java/org/opendaylight/yangtools/binding/data/codec/test/ExceptionReportingTest.java",
         "patchSetId": 2
@@ -172,6 +280,24 @@
       "writtenOn": "2015-04-29T20:04:23Z",
       "side": 1,
       "message": "2015?",
+      "revId": "ec5210cb66cf7988a3415345c8e04dc9ee019f7c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_9438bca1",
+        "filename": "code-generator/binding-data-codec/src/test/java/org/opendaylight/yangtools/binding/data/codec/test/ExceptionReportingTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-04-30T13:00:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3aa0d159_68dbda1b",
       "revId": "ec5210cb66cf7988a3415345c8e04dc9ee019f7c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
