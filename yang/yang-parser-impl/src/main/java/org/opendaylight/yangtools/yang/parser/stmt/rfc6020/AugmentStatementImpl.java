@@ -89,8 +89,7 @@ public class AugmentStatementImpl extends
                         throw new InferenceException("Augment target not found: "+augmentNode.getStatementArgument(), augmentNode.getStatementSourceReference());
                     }
 
-                    final StatementContextBase<?, ?, ?> augmentSourceCtx = (StatementContextBase<?, ?, ?>) sourceCtxPrereq
-                            .get();
+                    final StatementContextBase<?, ?, ?> augmentSourceCtx = (StatementContextBase<?, ?, ?>) augmentNode;
 
                     try {
                         AugmentUtils.copyFromSourceToTarget(augmentSourceCtx,
