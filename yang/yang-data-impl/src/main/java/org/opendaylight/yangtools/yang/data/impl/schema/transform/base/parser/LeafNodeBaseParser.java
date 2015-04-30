@@ -7,27 +7,36 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Iterables;
 import java.util.Map;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
 
 /**
  * Abstract(base) parser for LeafNodes, parses elements of type E.
  *
  * @param <E> type of elements to be parsed
  */
-public abstract class LeafNodeBaseParser<E> implements
-        ToNormalizedNodeParser<E, LeafNode<?>, LeafSchemaNode> {
+public abstract class LeafNodeBaseParser<E> implements ExtensibleParser<NodeIdentifier, E, LeafNode<?>, LeafSchemaNode> {
 
+    private final BuildingStrategy<NodeIdentifier, LeafNode<?>> buildingStrategy;
+
+    public LeafNodeBaseParser() {
+        buildingStrategy = new SimpleLeafBuildingStrategy();
+    }
+
+    public LeafNodeBaseParser(final BuildingStrategy<NodeIdentifier, LeafNode<?>> buildingStrategy) {
+        this.buildingStrategy = buildingStrategy;
+    }
+
+    @SuppressWarnings("unchecked")
     @Override
     public final LeafNode<?> parse(Iterable<E> elements, LeafSchemaNode schema) {
         final int size = Iterables.size(elements);
@@ -36,11 +45,13 @@ public abstract class LeafNodeBaseParser<E> implements
         final E e = elements.iterator().next();
         Object value = parseLeaf(e, schema);
 
-        NormalizedNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier,Object,LeafNode<Object>> leafBuilder = Builders.leafBuilder(schema);
+        NormalizedNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, Object, LeafNode<Object>> leafBuilder =
+                Builders.leafBuilder(schema);
 
         leafBuilder.withAttributes(getAttributes(e));
 
-        return leafBuilder.withValue(value).build();
+        final BuildingStrategy rawBuildingStrat = buildingStrategy;
+        return (LeafNode<?>) rawBuildingStrat.build(leafBuilder.withValue(value));
     }
 
     /**
@@ -59,4 +70,21 @@ public abstract class LeafNodeBaseParser<E> implements
      * @return attributes mapped to QNames
      */
     protected abstract Map<QName, String> getAttributes(E e);
+
+    @Override
+    public BuildingStrategy<NodeIdentifier, LeafNode<?>> getBuildingStrategy() {
+        return buildingStrategy;
+    }
+
+    public static class SimpleLeafBuildingStrategy implements BuildingStrategy<NodeIdentifier, LeafNode<?>> {
+        @Override
+        public LeafNode<?> build(final NormalizedNodeBuilder<NodeIdentifier, ?, LeafNode<?>> builder) {
+            return builder.build();
+        }
+
+        @Override
+        public void prepareAttributes(final Map<QName, String> attributes, final NormalizedNodeBuilder<NodeIdentifier, ?, LeafNode<?>> containerBuilder) {
+            // NOOP
+        }
+    }
 }

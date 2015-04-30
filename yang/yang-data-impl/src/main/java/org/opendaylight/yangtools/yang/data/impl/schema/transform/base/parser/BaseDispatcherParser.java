@@ -14,30 +14,42 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.AttributesBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
 /**
  * Abstract(base) Parser for DataContainerNodes e.g. ContainerNode, AugmentationNode.
  */
-public abstract class BaseDispatcherParser<E, N extends DataContainerNode<?>, S>
-        implements ToNormalizedNodeParser<E, N, S> {
+public abstract class BaseDispatcherParser<E, P extends YangInstanceIdentifier.PathArgument, N extends DataContainerNode<P>, S>
+        implements ExtensibleParser<P, E, N, S> {
+
+    private final BuildingStrategy<P, N> buildingStrategy;
+
+    public BaseDispatcherParser(final BuildingStrategy<P, N> buildingStrategy) {
+        this.buildingStrategy = buildingStrategy;
+    }
+
+    public BaseDispatcherParser() {
+        this.buildingStrategy = new SimpleBuildingStrategy<>();
+    }
 
     /**
      *
      * @param schema
      * @return New(empty) instance of a builder to build node identified by schema.
      */
-    protected abstract DataContainerNodeBuilder<?, N> getBuilder(S schema);
+    protected abstract DataContainerNodeBuilder<P, N> getBuilder(S schema);
 
     /**
      *
@@ -88,12 +100,19 @@ public abstract class BaseDispatcherParser<E, N extends DataContainerNode<?>, S>
      */
     protected abstract NodeParserDispatcher<E> getDispatcher();
 
+    /**
+     * can return null only if you override ParsingStrategy and explicitely return null
+     * @param elements
+     * @param schema
+     * @return
+     */
+    @Nullable
     @Override
     public N parse(final Iterable<E> elements, final S schema) {
 
         checkAtLeastOneNode(schema, elements);
 
-        DataContainerNodeBuilder<?, N> containerBuilder = getBuilder(schema);
+        DataContainerNodeBuilder<P, N> containerBuilder = getBuilder(schema);
 
         // Map child nodes to QName
         LinkedListMultimap<QName, E> mappedChildElements = mapChildElements(elements);
@@ -105,6 +124,36 @@ public abstract class BaseDispatcherParser<E, N extends DataContainerNode<?>, S>
         // Map child nodes from choices
         Map<QName, ChoiceSchemaNode> mappedChoiceChildNodes = mapChildElementsFromChoices(schema);
         LinkedListMultimap<ChoiceSchemaNode, E> choicesToElements = LinkedListMultimap.create();
+
+        Map<QName, String> attributes = getAttributes(elements.iterator().next());
+        if (containerBuilder instanceof AttributesBuilder) {
+            final int size = Iterables.size(elements);
+            Preconditions.checkArgument(size == 1, "Unexpected number of elements: %s, should be 1 for: %s",
+                    size, schema);
+            ((AttributesBuilder<?>) containerBuilder).withAttributes(attributes);
+        }
+
+        //parse keys first
+        if (schema instanceof ListSchemaNode) {
+            for (QName qname : ((ListSchemaNode) schema).getKeyDefinition()) {
+                if(mappedChildElements.get(qname.withoutRevision()).isEmpty()) {
+                    continue;
+                }
+
+                DataSchemaNode childSchema = getSchemaForChild(schema, qname);
+                List<E> childrenForQName = mappedChildElements.removeAll(qname.withoutRevision());
+
+
+                DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> optionalChildNode = getDispatcher()
+                        .dispatchChildElement(childSchema, childrenForQName);
+                if (optionalChildNode != null) {
+                    containerBuilder.withChild(optionalChildNode);
+                }
+            }
+        }
+
+        //stage attribues for strategy before going deeper in the recursion
+        buildingStrategy.prepareAttributes(attributes, containerBuilder);
 
         // process Child nodes
         for (QName childPartialQName : mappedChildElements.keySet()) {
@@ -125,32 +174,39 @@ public abstract class BaseDispatcherParser<E, N extends DataContainerNode<?>, S>
                 choicesToElements.putAll(choiceSchema, childrenForQName);
                 // Regular child nodes
             } else {
-                DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> builtChildNode = getDispatcher()
+                DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> optionalChildNode = getDispatcher()
                         .dispatchChildElement(childSchema, childrenForQName);
-                containerBuilder.withChild(builtChildNode);
+                if (optionalChildNode != null) {
+                    containerBuilder.withChild(optionalChildNode);
+                }
             }
         }
 
         // TODO ordering is not preserved for choice and augment elements
         for (ChoiceSchemaNode choiceSchema : choicesToElements.keySet()) {
-            containerBuilder.withChild(getDispatcher().dispatchChildElement(choiceSchema,
-                    choicesToElements.get(choiceSchema)));
+            DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> optionalChild = getDispatcher()
+                    .dispatchChildElement(choiceSchema, choicesToElements.get(choiceSchema));
+            if (optionalChild != null) {
+                containerBuilder.withChild(optionalChild);
+            }
         }
 
         for (AugmentationSchema augmentSchema : augmentsToElements.keySet()) {
             Set<DataSchemaNode> realChildSchemas = getRealSchemasForAugment(schema, augmentSchema);
             EffectiveAugmentationSchema augSchemaProxy = new EffectiveAugmentationSchema(augmentSchema, realChildSchemas);
-            containerBuilder.withChild(getDispatcher().dispatchChildElement(augSchemaProxy, augmentsToElements.get(augmentSchema)));
+            DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> optionalChild = getDispatcher()
+                    .dispatchChildElement(augSchemaProxy, augmentsToElements.get(augmentSchema));
+            if (optionalChild != null) {
+                containerBuilder.withChild(optionalChild);
+            }
         }
 
-        if (containerBuilder instanceof AttributesBuilder) {
-            final int size = Iterables.size(elements);
-            Preconditions.checkArgument(size == 1, "Unexpected number of elements: %s, should be 1 for: %s",
-                    size, schema);
-            ((AttributesBuilder<?>) containerBuilder).withAttributes(getAttributes(elements.iterator().next()));
-        }
+        return buildingStrategy.build(containerBuilder);
+    }
 
-        return containerBuilder.build();
+    @Override
+    public BuildingStrategy<P, N> getBuildingStrategy() {
+        return buildingStrategy;
     }
 
     protected Map<QName, String> getAttributes(final E e) {
@@ -174,5 +230,17 @@ public abstract class BaseDispatcherParser<E, N extends DataContainerNode<?>, S>
     private void checkAtLeastOneNode(final S schema, final Iterable<E> childNodes) {
         Preconditions.checkArgument(!Iterables.isEmpty(childNodes),
                 "Node detected 0 times, should be at least 1, identified by: %s, found: %s", schema, childNodes);
+    }
+
+    public static class SimpleBuildingStrategy<P extends YangInstanceIdentifier.PathArgument, N extends DataContainerNode<P>> implements BuildingStrategy<P, N> {
+        @Override
+        public N build(final NormalizedNodeBuilder<P, ?, N> builder) {
+            return builder.build();
+        }
+
+        @Override
+        public void prepareAttributes(final Map<QName, String> attributes, final NormalizedNodeBuilder<P, ?, N> containerBuilder) {
+            // NOOP
+        }
     }
 }

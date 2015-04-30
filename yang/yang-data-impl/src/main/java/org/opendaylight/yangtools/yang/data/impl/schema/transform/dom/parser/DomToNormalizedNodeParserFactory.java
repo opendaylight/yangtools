@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
@@ -22,6 +23,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParserFactory;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.BaseDispatcherParser;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.ExtensibleParser;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.LeafNodeBaseParser;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.LeafSetEntryNodeBaseParser;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.ListNodeBaseParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.NodeParserDispatcher;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -34,6 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.w3c.dom.Element;
 
 public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeParserFactory<Element> {
+
     private final AugmentationNodeDomParser augmentationNodeParser;
     private final ChoiceNodeDomParser choiceNodeParser;
     private final ContainerNodeDomParser containerNodeParser;
@@ -67,6 +74,31 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
         augmentationNodeParser = new AugmentationNodeDomParser(dispatcher, strictParsing);
     }
 
+    private DomToNormalizedNodeParserFactory(final XmlCodecProvider codecProvider, final SchemaContext schema,
+                                             final BuildingStrategyProvider buildingStratProvider, final boolean strictParsing) {
+        leafNodeParser = new LeafNodeDomParser(codecProvider, schema, buildingStratProvider.forLeaf());
+        leafSetEntryNodeParser = new LeafSetEntryNodeDomParser(codecProvider, schema, buildingStratProvider.forLeafSetEntry());
+
+        // no buildingStrategy for Augment (no use case for now)
+        leafSetNodeParser = new LeafSetNodeDomParser(leafSetEntryNodeParser);
+        // no buildingStrategy for anyXml (probably not necessary)
+        anyXmlNodeParser = new AnyXmlDomParser();
+
+        final NodeParserDispatcher<Element> dispatcher = new NodeParserDispatcher.BaseNodeParserDispatcher<Element>(this) {
+
+        };
+
+        containerNodeParser = new ContainerNodeDomParser(dispatcher, buildingStratProvider.forContainer(), strictParsing);
+        mapEntryNodeParser = new MapEntryNodeDomParser(dispatcher, buildingStratProvider.forMapEntry(), strictParsing);
+        mapNodeParser = new MapNodeDomParser(mapEntryNodeParser, buildingStratProvider.forMap());
+        orderedListNodeParser = new OrderedListNodeDomParser(mapEntryNodeParser, buildingStratProvider.forOrderedList());
+        unkeyedListEntryNodeParser = new UnkeyedListEntryNodeDomParser(buildingStratProvider.forUnkeyedListEntry(), dispatcher);
+        unkeyedListNodeParser = new UnkeyedListNodeDomParser(buildingStratProvider.forUnkeyedList(), unkeyedListEntryNodeParser);
+        choiceNodeParser = new ChoiceNodeDomParser(dispatcher, buildingStratProvider.forChoice());
+        // no buildingStrategy for Augment (no use case for now)
+        augmentationNodeParser = new AugmentationNodeDomParser(buildingStratProvider.forAugmentation(), dispatcher, strictParsing);
+    }
+
     @Deprecated
     private DomToNormalizedNodeParserFactory(final XmlCodecProvider codecProvider) {
         leafNodeParser = new LeafNodeDomParser(codecProvider);
@@ -94,6 +126,17 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
 
     public static DomToNormalizedNodeParserFactory getInstance(final XmlCodecProvider codecProvider, final SchemaContext schema) {
         return new DomToNormalizedNodeParserFactory(codecProvider, schema, true);
+    }
+
+    public static DomToNormalizedNodeParserFactory getInstance(final XmlCodecProvider codecProvider, final SchemaContext schema,
+                                                               final BuildingStrategyProvider buildingStratProvider) {
+        return new DomToNormalizedNodeParserFactory(codecProvider, schema, buildingStratProvider, true);
+    }
+
+    public static DomToNormalizedNodeParserFactory getInstance(final XmlCodecProvider codecProvider, final SchemaContext schema,
+                                                               final BuildingStrategyProvider buildingStratProvider,
+                                                               final boolean strictParsing) {
+        return new DomToNormalizedNodeParserFactory(codecProvider, schema, buildingStratProvider, strictParsing);
     }
 
     @Deprecated
@@ -159,5 +202,51 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
     @Override
     public ToNormalizedNodeParser<Element, AnyXmlNode, AnyXmlSchemaNode> getAnyXmlNodeParser() {
         return anyXmlNodeParser;
+    }
+
+    /**
+     * Base provider of building strategies used for customizing parsing process
+     */
+    public static abstract class BuildingStrategyProvider {
+
+        protected ExtensibleParser.BuildingStrategy<YangInstanceIdentifier.NodeIdentifier,LeafNode<?>> forLeaf() {
+            return new LeafNodeBaseParser.SimpleLeafBuildingStrategy();
+        }
+
+        protected ExtensibleParser.BuildingStrategy<YangInstanceIdentifier.NodeWithValue,LeafSetEntryNode<?>> forLeafSetEntry() {
+            return new LeafSetEntryNodeBaseParser.SimpleLeafSetEntryBuildingStrategy();
+        }
+
+        protected ExtensibleParser.BuildingStrategy<YangInstanceIdentifier.NodeIdentifier,ContainerNode> forContainer() {
+            return new BaseDispatcherParser.SimpleBuildingStrategy<>();
+        }
+
+        protected ExtensibleParser.BuildingStrategy<YangInstanceIdentifier.NodeIdentifierWithPredicates,MapEntryNode> forMapEntry() {
+            return new BaseDispatcherParser.SimpleBuildingStrategy<>();
+        }
+
+        protected ExtensibleParser.BuildingStrategy<YangInstanceIdentifier.NodeIdentifier,MapNode> forMap() {
+            return new ListNodeBaseParser.SimpleListNodeBuildingStrategy<>();
+        }
+
+        protected ExtensibleParser.BuildingStrategy<YangInstanceIdentifier.NodeIdentifier,OrderedMapNode> forOrderedList() {
+            return new ListNodeBaseParser.SimpleListNodeBuildingStrategy<>();
+        }
+
+        protected ExtensibleParser.BuildingStrategy<YangInstanceIdentifier.NodeIdentifier,UnkeyedListEntryNode> forUnkeyedListEntry() {
+            return new BaseDispatcherParser.SimpleBuildingStrategy<>();
+        }
+
+        protected ExtensibleParser.BuildingStrategy<YangInstanceIdentifier.NodeIdentifier,UnkeyedListNode> forUnkeyedList() {
+            return new ListNodeBaseParser.SimpleListNodeBuildingStrategy<>();
+        }
+
+        protected ExtensibleParser.BuildingStrategy<YangInstanceIdentifier.NodeIdentifier,ChoiceNode> forChoice() {
+            return new BaseDispatcherParser.SimpleBuildingStrategy<>();
+        }
+
+        public ExtensibleParser.BuildingStrategy<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> forAugmentation() {
+            return new BaseDispatcherParser.SimpleBuildingStrategy<>();
+        }
     }
 }
