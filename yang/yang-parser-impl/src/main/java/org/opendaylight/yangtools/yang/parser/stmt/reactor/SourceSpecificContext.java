@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
@@ -264,10 +266,17 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
         //extensions added
         if (inProgressPhase.equals(ModelProcessingPhase.FULL_DECLARATION)) {
-            Map<QName, SubstatementContext<?, ?, ?>> extensions = (Map<QName, SubstatementContext<?, ?, ?>>) currentContext.getAllFromNamespace(ExtensionNamespace.class);
+            Map<QName, StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>>> extensions = currentContext
+                    .getAllFromNamespace(ExtensionNamespace.class);
             if (extensions != null) {
-                for (Map.Entry<QName, SubstatementContext<?, ?, ?>> extension : extensions.entrySet()) {
-                    qNameToStmtDefMap.put(new QName(YangConstants.RFC6020_YIN_NAMESPACE, extension.getKey().getLocalName()), (StatementDefinition) extension.getValue().definition().getFactory());
+                for (Map.Entry<QName, StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>>> extension : extensions
+                        .entrySet()) {
+                    qNameToStmtDefMap
+                            .put(new QName(YangConstants.RFC6020_YIN_NAMESPACE,
+                                    extension.getKey().getLocalName()),
+                                    (StatementDefinition) ((StatementContextBase<?, ?, ?>) extension
+                                            .getValue()).definition()
+                                            .getFactory());
                 }
             }
         }
