@@ -3,6 +3,9 @@ package org.opendaylight.yangtools.yang.stmt.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+
 import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -30,9 +33,9 @@ public class AugmentProcessTest {
             "/stmt-test/augments/aug-root.yang");
 
     private static final QNameModule ROOT_QNAME_MODULE = QNameModule.create(
-            URI.create("root"), null);
+            URI.create("root"), SimpleDateFormatUtil.DEFAULT_DATE_REV);
     private static final QNameModule AUGMENTED_QNAME_MODULE = QNameModule
-            .create(URI.create("aug"), null);
+            .create(URI.create("aug"), SimpleDateFormatUtil.DEFAULT_DATE_REV);
 
     private static GroupingDefinition grp2Def;
 
@@ -81,11 +84,12 @@ public class AugmentProcessTest {
             "/stmt-test/augments/multiple-augment-incorrect2.yang");
 
     @Test
-    public void multipleAugmentsAndMultipleModulesTest() throws SourceException,
-            ReactorException {
+    public void multipleAugmentsAndMultipleModulesTest()
+            throws SourceException, ReactorException {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
-        addSources(reactor, MULTIPLE_AUGMENT_ROOT, MULTIPLE_AUGMENT_IMPORTED, MULTIPLE_AUGMENT_SUBMODULE);
+        addSources(reactor, MULTIPLE_AUGMENT_ROOT, MULTIPLE_AUGMENT_IMPORTED,
+                MULTIPLE_AUGMENT_SUBMODULE);
 
         EffectiveSchemaContext result = null;
         try {
@@ -129,8 +133,8 @@ public class AugmentProcessTest {
     }
 
     @Test
-    public void multipleAugmentIncorrectPathAndGrpTest() throws SourceException,
-            ReactorException {
+    public void multipleAugmentIncorrectPathAndGrpTest()
+            throws SourceException, ReactorException {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
         addSources(reactor, MULTIPLE_AUGMENT_INCORRECT2);
