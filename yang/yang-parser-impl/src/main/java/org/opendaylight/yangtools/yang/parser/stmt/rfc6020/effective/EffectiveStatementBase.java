@@ -52,8 +52,8 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
                 .effectiveSubstatements();
 
         Collection<StatementContextBase<?, ?, ?>> substatementsInit = new LinkedList<>();
-        substatementsInit.addAll(declaredSubstatements);
         substatementsInit.addAll(effectiveSubstatements);
+        substatementsInit.addAll(declaredSubstatements);
 
         this.substatements = FluentIterable.from(substatementsInit)
                 .transform(StmtContextUtils.buildEffective()).toList();
@@ -79,12 +79,9 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
         if (declaredInstance == null) {
             declaredInstance = stmtCtx.buildDeclared();
         }
-
         return declaredInstance;
     }
 
-    // public <K, V, N extends IdentifierNamespace<? super K, ? extends V>> V
-    // get(
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> V get(
             Class<N> namespace, K identifier) {

@@ -11,8 +11,9 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.sourceLocal;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.treeScoped;
 
-import java.util.Map;
+import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
 
+import java.util.Map;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
@@ -28,7 +29,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-
 import com.google.common.collect.ImmutableMap;
 
 public final class YangInferencePipeline {
@@ -51,6 +51,7 @@ public final class YangInferencePipeline {
             .addSupport(global(ModuleIdentifierToModuleQName.class))
             .addSupport(sourceLocal(ImportedModuleContext.class))
             .addSupport(sourceLocal(IncludedModuleContext.class))
+            .addSupport(sourceLocal(IncludedSubmoduleNameToIdentifier.class))
             .addSupport(sourceLocal(ImpPrefixToModuleIdentifier.class))
             .addSupport(sourceLocal(BelongsToPrefixToModuleName.class))
             .addSupport(sourceLocal(QNameToStatementDefinition.class)).build();

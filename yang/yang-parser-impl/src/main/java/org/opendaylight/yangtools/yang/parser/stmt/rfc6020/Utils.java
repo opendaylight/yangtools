@@ -9,8 +9,9 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
-import java.util.Collection;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 
+import java.util.Collection;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -225,11 +226,15 @@ public final class Utils {
             break;
         }
 
-        return QName.create(qNameModule, localName);
+        QNameModule resultQNameModule = qNameModule.getRevision() == null ? QNameModule
+                .create(qNameModule.getNamespace(),
+                        SimpleDateFormatUtil.DEFAULT_DATE_REV) : qNameModule;
+
+        return QName.create(resultQNameModule, localName);
     }
 
     @Nullable
-    public static StatementContextBase<?, ?, ?> findCtxOfNodeInSubstatements(
+    public static StatementContextBase<?, ?, ?> findNode(
             StatementContextBase<?, ?, ?> rootStmtCtx,
             final Iterable<QName> path) {
 
@@ -276,10 +281,10 @@ public final class Utils {
     }
 
     @Nullable
-    public static StatementContextBase<?, ?, ?> findCtxOfNodeInRoot(
+    public static StatementContextBase<?, ?, ?> findNode(
             StatementContextBase<?, ?, ?> rootStmtCtx,
             final SchemaNodeIdentifier node) {
-        return findCtxOfNodeInSubstatements(rootStmtCtx, node.getPathFromRoot());
+        return findNode(rootStmtCtx, node.getPathFromRoot());
     }
 
     public static SchemaPath getSchemaPath(StmtContext<?, ?, ?> ctx) {
