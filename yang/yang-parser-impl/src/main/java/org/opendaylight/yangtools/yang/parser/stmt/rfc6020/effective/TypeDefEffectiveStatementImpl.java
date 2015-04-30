@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class EnumEffectiveStatementImpl extends
-        EffectiveStatementBase<String, EnumStatement> {
+public class TypeDefEffectiveStatementImpl extends EffectiveStatementBase<QName, TypedefStatement> {
 
-    public EnumEffectiveStatementImpl(StmtContext<String, EnumStatement, ?> ctx) {
+    public TypeDefEffectiveStatementImpl(StmtContext<QName, TypedefStatement, ?> ctx) {
         super(ctx);
-
     }
 }
