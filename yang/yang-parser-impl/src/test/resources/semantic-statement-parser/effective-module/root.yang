@@ -3,8 +3,8 @@ module root {
 	prefix root-pref;
 
 	yang-version 1;
-	organization "kisko";
-	contact "kisko email";
+	organization "cisco";
+	contact "cisco email";
 
 	import imported {
 		prefix imp-pref;
@@ -12,7 +12,19 @@ module root {
 	}
 	include submod;
 
+	container cont-helper {
+        choice cont-choice {
+            case c1 {
+            }
+            case c2 {
+            }
+        }
+	}
+
 	container cont {
+	    must "../cont-helper" {
+	        error-message "this is an error if helper not present";
+	    }
 	}
 
 	augment "/cont" {
@@ -38,6 +50,9 @@ module root {
 	}
 
 	feature feature1 {
+	    description "feature1 description";
+	    reference "feature1 reference";
+	    status "current";
 	}
 
 	extension ext1 {
