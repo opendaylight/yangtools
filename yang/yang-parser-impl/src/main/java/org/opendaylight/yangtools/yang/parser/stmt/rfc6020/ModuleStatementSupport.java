@@ -9,9 +9,10 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+
 import java.net.URI;
 import java.util.Date;
-
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -33,7 +34,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ModuleEffectiveStatementImpl;
-
 import com.google.common.base.Optional;
 
 public class ModuleStatementSupport extends
@@ -75,7 +75,7 @@ public class ModuleStatementSupport extends
         Optional<Date> revisionDate = Optional.fromNullable(firstAttributeOf(stmt.declaredSubstatements(),
                 RevisionStatement.class));
 
-        qNameModule = QNameModule.create(moduleNs.get(), revisionDate.orNull());
+        qNameModule = QNameModule.create(moduleNs.get(), revisionDate.or(SimpleDateFormatUtil.DEFAULT_DATE_REV));
         ModuleIdentifier moduleIdentifier = new ModuleIdentifierImpl(stmt.getStatementArgument(),
                 Optional.<URI> absent(), revisionDate);
 

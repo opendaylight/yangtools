@@ -42,7 +42,7 @@ public class IdentityEffectiveStatementImpl extends
 
         initSubstatementCollections();
 
-        // :TODO init other fields
+        // :TODO init derivedIdentities and baseIdentity
         this.derivedIdentities = null;
     }
 
