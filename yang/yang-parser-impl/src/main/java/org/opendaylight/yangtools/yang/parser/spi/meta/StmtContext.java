@@ -52,7 +52,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     <K, V, N extends IdentifierNamespace<K, V>> V getFromNamespace(
             Class<N> type, K key) throws NamespaceNotAvailableException;
 
-    <K, V, N extends IdentifierNamespace<K, V>> Map<?, ?> getAllFromNamespace(
+    <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromNamespace(
             Class<N> type);
 
     @Nonnull
