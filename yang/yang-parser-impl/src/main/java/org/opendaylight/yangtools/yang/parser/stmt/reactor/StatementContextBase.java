@@ -207,7 +207,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements() {
-        return Collections.unmodifiableCollection(effective);
+        return effective;
     }
 
     public void addEffectiveSubstatement(
