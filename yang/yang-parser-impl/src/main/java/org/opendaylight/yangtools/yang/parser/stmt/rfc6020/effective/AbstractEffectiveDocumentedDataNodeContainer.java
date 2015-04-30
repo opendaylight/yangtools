@@ -43,11 +43,11 @@ public abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends 
 
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
-        Map<QName, DataSchemaNode> mutableChildNodes = new HashMap<QName, DataSchemaNode>();
-        Set<GroupingDefinition> mutableGroupings = new HashSet<GroupingDefinition>();
-        Set<UsesNode> mutableUses = new HashSet<UsesNode>();
-        Set<TypeDefinition<?>> mutableTypeDefinitions = new HashSet<TypeDefinition<?>>();
-        Set<DataSchemaNode> mutablePublicChildNodes = new HashSet<DataSchemaNode>();
+        Map<QName, DataSchemaNode> mutableChildNodes = new HashMap<>();
+        Set<GroupingDefinition> mutableGroupings = new HashSet<>();
+        Set<UsesNode> mutableUses = new HashSet<>();
+        Set<TypeDefinition<?>> mutableTypeDefinitions = new HashSet<>();
+        Set<DataSchemaNode> mutablePublicChildNodes = new HashSet<>();
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof DataSchemaNode) {
