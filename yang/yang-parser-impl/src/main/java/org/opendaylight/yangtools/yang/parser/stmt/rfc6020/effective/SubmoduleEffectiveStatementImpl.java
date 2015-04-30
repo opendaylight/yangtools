@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
+
 import java.net.URI;
 import java.util.Collection;
 import java.util.Date;
@@ -30,21 +32,18 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
-
-import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 public class SubmoduleEffectiveStatementImpl extends
         AbstractEffectiveDocumentedDataNodeContainer<String, SubmoduleStatement> implements Module, Immutable {
 
     private final QNameModule qNameModule;
     private final String name;
-    private String sourcePath;
+    private String sourcePath; // TODO fill
     private String prefix;
     private String yangVersion;
     private String organization;
@@ -114,8 +113,8 @@ public class SubmoduleEffectiveStatementImpl extends
             if (effectiveStatement instanceof ModuleImport) {
                 importsInit.add((ModuleImport) effectiveStatement);
             }
-            if (effectiveStatement instanceof Module) {
-                submodulesInit.add((Module) effectiveStatement);
+            if (effectiveStatement instanceof IncludeEffectiveStatementImpl) {
+                // submodulesInit.add(TODO);
             }
             if (effectiveStatement instanceof NotificationDefinition) {
                 notificationsInit.add((NotificationDefinition) effectiveStatement);
@@ -288,7 +287,7 @@ public class SubmoduleEffectiveStatementImpl extends
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(ModuleImpl.class.getSimpleName());
+        StringBuilder sb = new StringBuilder(SubmoduleEffectiveStatementImpl.class.getSimpleName());
         sb.append("[");
         sb.append("name=").append(name);
         sb.append(", namespace=").append(getNamespace());

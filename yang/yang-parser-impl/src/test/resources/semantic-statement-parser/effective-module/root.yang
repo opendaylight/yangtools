@@ -3,8 +3,8 @@ module root {
 	prefix root-pref;
 
 	yang-version 1;
-	organization "kisko";
-	contact "kisko email";
+	organization "cisco";
+	contact "cisco email";
 
 	import imported {
 		prefix imp-pref;
@@ -38,6 +38,9 @@ module root {
 	}
 
 	feature feature1 {
+	    description "feature1 description";
+	    reference "feature1 reference";
+	    status "current";
 	}
 
 	extension ext1 {
