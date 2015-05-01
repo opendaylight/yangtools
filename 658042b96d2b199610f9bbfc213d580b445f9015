@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3aa0d159_3dfe6b39",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/DurationStatisticsTracker.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-05-01T17:56:35Z",
+      "side": 1,
+      "message": "should not be here",
+      "revId": "658042b96d2b199610f9bbfc213d580b445f9015",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
