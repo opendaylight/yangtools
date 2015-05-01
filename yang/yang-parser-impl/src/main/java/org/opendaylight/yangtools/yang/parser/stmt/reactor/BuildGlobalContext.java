@@ -181,6 +181,15 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         }
     }
 
+    private SomeModifiersUnresolvedException addSourceExceptions(SomeModifiersUnresolvedException buildFailure, 
+                        List<SourceSpecificContext> sourcesToProgress) {
+        for(SourceSpecificContext failedSource : sourcesToProgress) {
+            SourceException sourceEx = failedSource.failModifiers(currentPhase);
+            buildFailure.addSuppressed(sourceEx);
+        }
+        return buildFailure;
+    }
+    
     private  void completePhaseActions() throws ReactorException {
         Preconditions.checkState(currentPhase != null);
         List<SourceSpecificContext> sourcesToProgress = Lists.newArrayList(sources);
@@ -212,11 +221,8 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         }
         if(!sourcesToProgress.isEmpty()) {
             SomeModifiersUnresolvedException buildFailure = new SomeModifiersUnresolvedException(currentPhase);
-                for(SourceSpecificContext failedSource : sourcesToProgress) {
-                    SourceException sourceEx = failedSource.failModifiers(currentPhase);
-                    buildFailure.addSuppressed(sourceEx);
-                }
-                throw buildFailure;
+            buildFailure = addSourceExceptions(buildFailure, sourcesToProgress);
+            throw buildFailure;
         }
     }
 
