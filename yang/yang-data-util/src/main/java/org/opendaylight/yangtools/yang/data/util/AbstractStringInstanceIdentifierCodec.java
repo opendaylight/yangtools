@@ -27,6 +27,9 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
 
     @Override
     public final String serialize(final YangInstanceIdentifier data) {
+        if (data == null) {
+            return "";
+        }
         StringBuilder sb = new StringBuilder();
         DataSchemaContextNode<?> current = getDataContextTree().getRoot();
         for (PathArgument arg : data.getPathArguments()) {
