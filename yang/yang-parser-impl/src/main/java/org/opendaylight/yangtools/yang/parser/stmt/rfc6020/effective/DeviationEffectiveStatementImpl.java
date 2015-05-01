@@ -82,18 +82,7 @@ public class DeviationEffectiveStatementImpl extends EffectiveStatementBase<Sche
         return result;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        DeviationEffectiveStatementImpl other = (DeviationEffectiveStatementImpl) obj;
+    private boolean checkIfNullOrEqual(DeviationEffectiveStatementImpl other) {
         if (targetPath == null) {
             if (other.targetPath != null) {
                 return false;
@@ -113,6 +102,27 @@ public class DeviationEffectiveStatementImpl extends EffectiveStatementBase<Sche
                 return false;
             }
         } else if (!reference.equals(other.reference)) {
+            return false;
+        }
+        return true;
+    }
+    
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        DeviationEffectiveStatementImpl other = (DeviationEffectiveStatementImpl) obj;
+        
+        boolean result = checkIfNullOrEqual(other);
+        
+        if (result == false) {
             return false;
         }
         return true;
