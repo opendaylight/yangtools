@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Preconditions;
+import java.util.Iterator;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.slf4j.Logger;
@@ -67,25 +69,72 @@ public final class DataTreeCandidates {
     }
 
     private static void applyNode(final DataTreeModificationCursor cursor, final DataTreeCandidateNode node) {
-        switch (node.getModificationType()) {
-        case DELETE:
-            cursor.delete(node.getIdentifier());
-            break;
-        case SUBTREE_MODIFIED:
-            cursor.enter(node.getIdentifier());
-            for (DataTreeCandidateNode child : node.getChildNodes()) {
-                applyNode(cursor, child);
+        AbstractNodeIterator iterator = new NodeIterator(null, node);
+
+        do {
+            iterator = iterator.next(cursor);
+        } while (iterator != null);
+    }
+
+    private static abstract class AbstractNodeIterator {
+        private final AbstractNodeIterator parent;
+
+        AbstractNodeIterator(final AbstractNodeIterator parent) {
+            this.parent = parent;
+        }
+
+        final AbstractNodeIterator getParent() {
+            return parent;
+        }
+
+        abstract AbstractNodeIterator next(final DataTreeModificationCursor cursor);
+    }
+
+    private static final class NodeIterator extends AbstractNodeIterator {
+        private final DataTreeCandidateNode node;
+
+        NodeIterator(final AbstractNodeIterator parent, final DataTreeCandidateNode node) {
+            super(parent);
+            this.node = Preconditions.checkNotNull(node);
+        }
+
+        @Override
+        AbstractNodeIterator next(final DataTreeModificationCursor cursor) {
+            switch (node.getModificationType()) {
+            case DELETE:
+                cursor.delete(node.getIdentifier());
+                return getParent();
+            case SUBTREE_MODIFIED:
+                cursor.enter(node.getIdentifier());
+                return new ChildIterator(getParent(), node.getChildNodes().iterator());
+            case UNMODIFIED:
+                // No-op
+                return getParent();
+            case WRITE:
+                cursor.write(node.getIdentifier(), node.getDataAfter().get());
+                return getParent();
+            default:
+                throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
             }
-            cursor.exit();
-            break;
-        case UNMODIFIED:
-            // No-op
-            break;
-        case WRITE:
-            cursor.write(node.getIdentifier(), node.getDataAfter().get());
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
+        }
+    }
+
+    private static final class ChildIterator extends AbstractNodeIterator {
+        private final Iterator<DataTreeCandidateNode> children;
+
+        ChildIterator(final AbstractNodeIterator parent, final Iterator<DataTreeCandidateNode> children) {
+            super(parent);
+            this.children = Preconditions.checkNotNull(children);
+        }
+
+        @Override
+        AbstractNodeIterator next(final DataTreeModificationCursor cursor) {
+            if (!children.hasNext()) {
+                cursor.exit();
+                return getParent();
+            } else {
+                return new NodeIterator(this, children.next());
+            }
         }
     }
 }
