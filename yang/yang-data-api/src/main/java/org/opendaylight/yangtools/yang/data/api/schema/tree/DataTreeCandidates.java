@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Preconditions;
+import java.util.Iterator;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.slf4j.Logger;
@@ -31,17 +33,20 @@ public final class DataTreeCandidates {
         return new DefaultDataTreeCandidate(rootPath, new NormalizedNodeDataTreeCandidateNode(node));
     }
 
+    public static void applyToCursor(final DataTreeModificationCursor cursor, final DataTreeCandidate candidate) {
+        DataTreeCandidateNodes.applyToCursor(cursor, candidate.getRootNode());
+    }
+
     public static void applyToModification(final DataTreeModification modification, final DataTreeCandidate candidate) {
         if (modification instanceof CursorAwareDataTreeModification) {
             try (DataTreeModificationCursor cursor = ((CursorAwareDataTreeModification) modification).createCursor(candidate.getRootPath())) {
-                applyNode(cursor, candidate.getRootNode());
+                applyToCursor(cursor, candidate);
             }
-        } else {
-            applyNode(modification, candidate.getRootPath(), candidate.getRootNode());
+            return;
         }
-    }
 
-    private static void applyNode(final DataTreeModification modification, final YangInstanceIdentifier path, final DataTreeCandidateNode node) {
+        final DataTreeCandidateNode node = candidate.getRootNode();
+        final YangInstanceIdentifier path = candidate.getRootPath();
         switch (node.getModificationType()) {
         case DELETE:
             modification.delete(path);
@@ -49,9 +54,11 @@ public final class DataTreeCandidates {
             break;
         case SUBTREE_MODIFIED:
             LOG.debug("Modification {} modified path {}", modification, path);
-            for (DataTreeCandidateNode child : node.getChildNodes()) {
-                applyNode(modification, path.node(child.getIdentifier()), child);
-            }
+
+            NodeIterator iterator = new NodeIterator(null, path, node.getChildNodes().iterator());
+            do {
+                iterator = iterator.next(modification);
+            } while (iterator != null);
             break;
         case UNMODIFIED:
             LOG.debug("Modification {} unmodified path {}", modification, path);
@@ -66,26 +73,44 @@ public final class DataTreeCandidates {
         }
     }
 
-    private static void applyNode(final DataTreeModificationCursor cursor, final DataTreeCandidateNode node) {
-        switch (node.getModificationType()) {
-        case DELETE:
-            cursor.delete(node.getIdentifier());
-            break;
-        case SUBTREE_MODIFIED:
-            cursor.enter(node.getIdentifier());
-            for (DataTreeCandidateNode child : node.getChildNodes()) {
-                applyNode(cursor, child);
+    private static final class NodeIterator {
+        private final Iterator<DataTreeCandidateNode> iterator;
+        private final YangInstanceIdentifier path;
+        private final NodeIterator parent;
+
+        public NodeIterator(final NodeIterator parent, final YangInstanceIdentifier path, final Iterator<DataTreeCandidateNode> iterator) {
+            this.iterator = Preconditions.checkNotNull(iterator);
+            this.parent = Preconditions.checkNotNull(parent);
+            this.path = Preconditions.checkNotNull(path);
+        }
+
+        NodeIterator next(final DataTreeModification modification) {
+            while (iterator.hasNext()) {
+                final DataTreeCandidateNode node = iterator.next();
+                final YangInstanceIdentifier child = path.node(node.getIdentifier());
+
+                switch (node.getModificationType()) {
+                case DELETE:
+                    modification.delete(child);
+                    LOG.debug("Modification {} deleted path {}", modification, child);
+                    break;
+                case SUBTREE_MODIFIED:
+                    LOG.debug("Modification {} modified path {}", modification, child);
+                    return new NodeIterator(this, child, node.getChildNodes().iterator());
+                case UNMODIFIED:
+                    LOG.debug("Modification {} unmodified path {}", modification, child);
+                    // No-op
+                    break;
+                case WRITE:
+                    modification.write(child, node.getDataAfter().get());
+                    LOG.debug("Modification {} written path {}", modification, child);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
+                }
             }
-            cursor.exit();
-            break;
-        case UNMODIFIED:
-            // No-op
-            break;
-        case WRITE:
-            cursor.write(node.getIdentifier(), node.getDataAfter().get());
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
+
+            return parent;
         }
     }
 }
