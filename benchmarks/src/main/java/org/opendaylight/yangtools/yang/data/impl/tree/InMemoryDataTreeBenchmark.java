@@ -31,7 +31,7 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
  *
  * JMH is used for microbenchmarking.
  *
- * @author Lukas Sedlak <lsedlak@cisco.com>
+ * @author Lukas Sedlak &lt;lsedlak@cisco.com&gt;
  *
  * @see <a href="http://openjdk.java.net/projects/code-tools/jmh/">JMH</a>
  */
