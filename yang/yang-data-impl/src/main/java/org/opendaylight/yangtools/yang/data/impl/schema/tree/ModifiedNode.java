@@ -13,7 +13,6 @@ import com.google.common.base.Predicate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.annotation.Nonnull;
@@ -233,23 +232,10 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     }
 
     /**
-     * Seal the modification node and prune any children which has not been
-     * modified.
+     * Seal the modification node.
      */
     void seal() {
         clearSnapshot();
-
-        // Walk all child nodes and remove any children which have not
-        // been modified.
-        final Iterator<ModifiedNode> it = children.values().iterator();
-        while (it.hasNext()) {
-            final ModifiedNode child = it.next();
-            child.seal();
-
-            if (child.operation == LogicalOperation.NONE) {
-                it.remove();
-            }
-        }
 
         // A TOUCH node without any children is a no-op
         if (operation == LogicalOperation.TOUCH && children.isEmpty()) {

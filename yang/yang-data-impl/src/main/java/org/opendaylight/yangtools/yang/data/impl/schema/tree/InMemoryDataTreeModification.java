@@ -148,7 +148,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         ModifiedNode modification = rootNode;
 
         int i = 1;
-        for(PathArgument pathArg : path.getPathArguments()) {
+        for (PathArgument pathArg : path.getPathArguments()) {
             Optional<ModificationApplyOperation> potential = operation.getChild(pathArg);
             if (!potential.isPresent()) {
                 throw new IllegalArgumentException(String.format("Child %s is not present in schema tree.",
@@ -161,14 +161,6 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         }
 
         return OperationWithModification.from(operation, modification);
-    }
-
-    @Override
-    public void ready() {
-        final boolean wasRunning = UPDATER.compareAndSet(this, 0, 1);
-        Preconditions.checkState(wasRunning, "Attempted to seal an already-sealed Data Tree.");
-
-        rootNode.seal();
     }
 
     private void checkSealed() {
@@ -248,4 +240,16 @@ final class InMemoryDataTreeModification implements DataTreeModification {
             applyNode(cursor, child);
         }
     }
+
+    @Override
+    public void ready() {
+        final boolean wasRunning = UPDATER.compareAndSet(this, 0, 1);
+        Preconditions.checkState(wasRunning, "Attempted to seal an already-sealed Data Tree.");
+
+        AbstractReadyIterator current = AbstractReadyIterator.create(rootNode);
+        do {
+            current = current.process();
+        } while (current != null);
+    }
+
 }
