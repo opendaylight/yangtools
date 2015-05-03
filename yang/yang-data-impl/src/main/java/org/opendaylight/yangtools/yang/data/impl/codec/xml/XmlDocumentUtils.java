@@ -23,15 +23,12 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public final class XmlDocumentUtils {
     public static final QName OPERATION_ATTRIBUTE_QNAME = QName.create(SchemaContext.NAME, "operation");
-    private static final Logger LOG = LoggerFactory.getLogger(XmlDocumentUtils.class);
 
     private XmlDocumentUtils() {
         throw new UnsupportedOperationException("Utility class should not be instantiated");

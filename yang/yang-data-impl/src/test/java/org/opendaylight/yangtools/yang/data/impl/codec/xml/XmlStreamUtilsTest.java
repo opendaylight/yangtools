@@ -11,7 +11,6 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
 import java.io.ByteArrayOutputStream;
@@ -143,7 +142,7 @@ public class XmlStreamUtilsTest {
         return targetBaseType;
     }
 
-    private Map<String, String> mapPrefixed(final Iterable<Map.Entry<URI, String>> prefixes) {
+    private static Map<String, String> mapPrefixed(final Iterable<Map.Entry<URI, String>> prefixes) {
         final Map<String, String> mappedPrefixes = Maps.newHashMap();
         for (final Map.Entry<URI, String> prefix : prefixes) {
             mappedPrefixes.put(prefix.getKey().toString(), prefix.getValue());
@@ -151,9 +150,8 @@ public class XmlStreamUtilsTest {
         return mappedPrefixes;
     }
 
-    private QName getAttrQName(final String namespace, final String revision, final String localName, final Optional<String> prefix) {
-
-        if(prefix.isPresent()) {
+    private static QName getAttrQName(final String namespace, final String revision, final String localName, final Optional<String> prefix) {
+        if (prefix.isPresent()) {
             final QName moduleQName = QName.create(namespace, revision, "module");
             final QNameModule module = QNameModule.create(moduleQName.getNamespace(), moduleQName.getRevision());
             return QName.create(module, localName);
@@ -179,7 +177,7 @@ public class XmlStreamUtilsTest {
         return null;
     }
 
-    private LeafrefTypeDefinition findLeafrefType(final LeafSchemaNode schemaNode) {
+    private static LeafrefTypeDefinition findLeafrefType(final LeafSchemaNode schemaNode) {
         final TypeDefinition<?> type = schemaNode.getType();
         if (type instanceof LeafrefTypeDefinition) {
             return (LeafrefTypeDefinition)type;

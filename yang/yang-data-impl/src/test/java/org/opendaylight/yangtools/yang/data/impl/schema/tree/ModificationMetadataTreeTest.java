@@ -15,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntry;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
-
+import com.google.common.base.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -31,13 +31,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-
-import com.google.common.base.Optional;
-
-
-
-
-
 
 /**
  *
@@ -133,7 +126,7 @@ public class ModificationMetadataTreeTest {
 
     }
 
-    private ContainerNode createTestContainer() {
+    private static ContainerNode createTestContainer() {
         return ImmutableContainerNodeBuilder
                 .create()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))

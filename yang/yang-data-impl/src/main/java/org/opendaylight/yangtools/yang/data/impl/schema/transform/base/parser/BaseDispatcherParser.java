@@ -217,7 +217,7 @@ public abstract class BaseDispatcherParser<E, P extends YangInstanceIdentifier.P
         return true;
     }
 
-    private boolean isMarkedAs(final Map<QName, ?> mappedAugmentChildNodes, final QName qName) {
+    private static boolean isMarkedAs(final Map<QName, ?> mappedAugmentChildNodes, final QName qName) {
         return mappedAugmentChildNodes.containsKey(qName);
     }
 

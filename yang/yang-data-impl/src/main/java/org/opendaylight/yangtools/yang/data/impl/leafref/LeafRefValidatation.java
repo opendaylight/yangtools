@@ -144,7 +144,7 @@ public class LeafRefValidatation {
 
     }
 
-    private LeafRefContext getReferencingCtxChild(
+    private static LeafRefContext getReferencingCtxChild(
             final LeafRefContext referencingCtx, final DataTreeCandidateNode childNode) {
 
         LeafRefContext childReferencingCtx = null;
@@ -167,7 +167,7 @@ public class LeafRefValidatation {
         return childReferencingCtx;
     }
 
-    private LeafRefContext getReferencedByCtxChild(
+    private static LeafRefContext getReferencedByCtxChild(
             final LeafRefContext referencedByCtx, final DataTreeCandidateNode childNode) {
 
         LeafRefContext childReferencedByCtx = null;
@@ -318,7 +318,7 @@ public class LeafRefValidatation {
         // FIXME if(node instance of UnkeyedListNode ...
     }
 
-    private LeafRefContext findReferencingCtxUnderChoice(
+    private static LeafRefContext findReferencingCtxUnderChoice(
             final LeafRefContext referencingCtx, final QName qname) {
 
         final Map<QName, LeafRefContext> referencingChilds = referencingCtx
@@ -335,7 +335,7 @@ public class LeafRefValidatation {
         return null;
     }
 
-    private LeafRefContext findReferencedByCtxUnderChoice(
+    private static LeafRefContext findReferencedByCtxUnderChoice(
             final LeafRefContext referencedByCtx, final QName qname) {
 
         final Map<QName, LeafRefContext> referencedByChilds = referencedByCtx
@@ -436,14 +436,13 @@ public class LeafRefValidatation {
         validatedLeafRefCtx.add(referencedByCtx);
     }
 
-    private StringBuilder createInvalidTargetMessage(final NormalizedNode<?, ?> leaf,
+    private static StringBuilder createInvalidTargetMessage(final NormalizedNode<?, ?> leaf,
             final HashSet<?> leafRefTargetNodeValues, final LeafRefContext leafRefContext,
             final Object leafRefsValue) {
         final StringBuilder sb = new StringBuilder();
         sb.append("Invalid leafref value [");
         sb.append(leafRefsValue);
-        sb.append("]");
-        sb.append(" allowed values ");
+        sb.append("] allowed values ");
         sb.append(leafRefTargetNodeValues);
         sb.append(" by validation of leafref TARGET node: ");
         sb.append(leaf.getNodeType());
@@ -458,13 +457,16 @@ public class LeafRefValidatation {
             final LeafRefContext referencingCtx, final ModificationType modificationType,
             final YangInstanceIdentifier current) {
 
-        final StringBuilder header_log = new StringBuilder();
+        final StringBuilder headerLog = new StringBuilder();
         final StringBuilder log = new StringBuilder();
 
-        header_log.append("Operation [" + modificationType
-                + "] validate data of LEAFREF node: name["
-                + referencingCtx.getNodeName() + "] = value["
-                + leaf.getValue() + "]");
+        headerLog.append("Operation [");
+        headerLog.append(modificationType);
+        headerLog.append("] validate data of LEAFREF node: name[");
+        headerLog.append(referencingCtx.getNodeName());
+        headerLog.append("] = value[");
+        headerLog.append(leaf.getValue());
+        headerLog.append(']');
 
         final HashSet<Object> values = new HashSet<>();
         final LeafRefPath targetPath = referencingCtx.getAbsoluteLeafRefTargetPath();
@@ -479,25 +481,25 @@ public class LeafRefValidatation {
                     referencingCtx, values);
             errorsMessages.add(sb.toString());
 
-            header_log.append(" -> FAILED");
+            headerLog.append(" -> FAILED");
             log.append(sb.toString());
         } else {
-            header_log.append(" -> OK");
+            headerLog.append(" -> OK");
         }
 
-        LOG.debug(header_log.toString());
-        if (!log.toString().equals(""))
+        LOG.debug(headerLog.toString());
+        if (log.length() != 0) {
             LOG.debug(log.toString());
+        }
     }
 
-    private StringBuilder createInvalidLeafRefMessage(
+    private static StringBuilder createInvalidLeafRefMessage(
             final NormalizedNode<?, ?> leaf, final LeafRefContext referencingCtx,
             final Set<?> values) {
         final StringBuilder sb = new StringBuilder();
         sb.append("Invalid leafref value [");
         sb.append(leaf.getValue());
-        sb.append("]");
-        sb.append(" allowed values ");
+        sb.append("] allowed values ");
         sb.append(values);
         sb.append(" of LEAFREF node: ");
         sb.append(leaf.getNodeType());
@@ -615,8 +617,7 @@ public class LeafRefValidatation {
         }
     }
 
-    private Iterable<ChoiceNode> getChoiceNodes(
-            final DataContainerNode<?> dataContainerNode) {
+    private static Iterable<ChoiceNode> getChoiceNodes(final DataContainerNode<?> dataContainerNode) {
 
         final LinkedList<ChoiceNode> choiceNodes = new LinkedList<ChoiceNode>();
 
@@ -630,7 +631,7 @@ public class LeafRefValidatation {
         return choiceNodes;
     }
 
-    private boolean isMatchingPredicate(final MapEntryNode mapEntryNode,
+    private static boolean isMatchingPredicate(final MapEntryNode mapEntryNode,
             final Map<QName, Set<?>> allowedKeyValues) {
 
         final NodeIdentifierWithPredicates identifier = mapEntryNode.getIdentifier();
@@ -671,7 +672,7 @@ public class LeafRefValidatation {
         return values;
     }
 
-    private Optional<NormalizedNode<?, ?>> findParentNode(
+    private static Optional<NormalizedNode<?, ?>> findParentNode(
             final Optional<NormalizedNode<?, ?>> root, final YangInstanceIdentifier path) {
         Optional<NormalizedNode<?, ?>> currentNode = root;
         final Iterator<PathArgument> pathIterator = path.getPathArguments()
@@ -688,12 +689,11 @@ public class LeafRefValidatation {
         return Optional.absent();
     }
 
-    private Iterable<QNameWithPredicate> nextLevel(
-            final Iterable<QNameWithPredicate> path) {
+    private static Iterable<QNameWithPredicate> nextLevel(final Iterable<QNameWithPredicate> path) {
         return Iterables.skip(path, 1);
     }
 
-    private PathArgument toPathArgument(final QName qName) {
+    private static PathArgument toPathArgument(final QName qName) {
         return YangInstanceIdentifier.of(qName).getLastPathArgument();
     }
 }

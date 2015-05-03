@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
@@ -110,7 +109,6 @@ abstract class InstanceIdToCompositeNodes<T extends YangInstanceIdentifier.PathA
         return childOp;
     }
 
-    @SuppressWarnings("rawtypes")
     protected abstract NormalizedNodeContainerBuilder<?, ?, ?, ?> createBuilder(final YangInstanceIdentifier.PathArgument compositeNode);
 
     static abstract class DataContainerNormalizationOperation<T extends YangInstanceIdentifier.PathArgument> extends

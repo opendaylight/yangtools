@@ -91,15 +91,15 @@ public final class SchemaTracker {
         root = (DataNodeContainer) current;
     }
 
-    private Optional<SchemaNode> tryFindGroupings(final SchemaContext ctx, final QName qname) {
+    private static Optional<SchemaNode> tryFindGroupings(final SchemaContext ctx, final QName qname) {
         return Optional.<SchemaNode> fromNullable(Iterables.find(ctx.getGroupings(), new SchemaNodePredicate(qname), null));
     }
 
-    private Optional<SchemaNode> tryFindRpc(final SchemaContext ctx, final QName qname) {
+    private static Optional<SchemaNode> tryFindRpc(final SchemaContext ctx, final QName qname) {
         return Optional.<SchemaNode>fromNullable(Iterables.find(ctx.getOperations(), new SchemaNodePredicate(qname), null));
     }
 
-    private Optional<SchemaNode> tryFindNotification(final SchemaContext ctx, final QName qname) {
+    private static Optional<SchemaNode> tryFindNotification(final SchemaContext ctx, final QName qname) {
         return Optional.<SchemaNode>fromNullable(Iterables.find(ctx.getNotifications(), new SchemaNodePredicate(qname), null));
     }
 
@@ -155,7 +155,7 @@ public final class SchemaTracker {
         return schema;
     }
 
-    private SchemaNode findChildInCases(final ChoiceSchemaNode parent, final QName qname) {
+    private static SchemaNode findChildInCases(final ChoiceSchemaNode parent, final QName qname) {
         DataSchemaNode schema = null;
         for(final ChoiceCaseNode caze : parent.getCases()) {
             final DataSchemaNode potential = caze.getDataChildByName(qname);
@@ -167,7 +167,7 @@ public final class SchemaTracker {
         return schema;
     }
 
-    private SchemaNode findCaseByChild(final ChoiceSchemaNode parent, final QName qname) {
+    private static SchemaNode findCaseByChild(final ChoiceSchemaNode parent, final QName qname) {
         DataSchemaNode schema = null;
         for(final ChoiceCaseNode caze : parent.getCases()) {
             final DataSchemaNode potential = caze.getDataChildByName(qname);

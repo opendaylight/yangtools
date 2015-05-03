@@ -78,7 +78,7 @@ public class StoreTreeNodesTest {
 
     }
 
-    private ContainerNode createTestContainer() {
+    private static ContainerNode createTestContainer() {
         return ImmutableContainerNodeBuilder
                 .create()
                 .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TestModel.TEST_QNAME))

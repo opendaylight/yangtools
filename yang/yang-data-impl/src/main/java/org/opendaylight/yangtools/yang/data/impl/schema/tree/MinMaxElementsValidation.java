@@ -37,7 +37,7 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
         this.maxElements = maxElements;
     }
 
-    static final SchemaAwareApplyOperation from(final SchemaAwareApplyOperation delegate, final DataSchemaNode schema) {
+    static SchemaAwareApplyOperation from(final SchemaAwareApplyOperation delegate, final DataSchemaNode schema) {
         final ConstraintDefinition constraints = schema.getConstraints();
         if (constraints == null || (constraints.getMinElements() == null && constraints.getMaxElements() == null)) {
             return delegate;
@@ -46,25 +46,21 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
 
     }
 
-    private final int findChildrenBefore(final Optional<TreeNode> current) {
-        final int children;
+    private static int findChildrenBefore(final Optional<TreeNode> current) {
         if (current.isPresent()) {
-          children = numOfChildrenFromValue(current.get().getData());
+            return numOfChildrenFromValue(current.get().getData());
         } else {
-          children = 0;
+            return 0;
         }
-        return children;
     }
 
-    private final int findChildrenAfter(final ModifiedNode modification) {
-      final int children;
-      if (modification.getWrittenValue() != null) {
-        children = numOfChildrenFromValue(modification.getWrittenValue());
-      } else {
-        children = 0;
-      }
-      return children;
-  }
+    private static int findChildrenAfter(final ModifiedNode modification) {
+        if (modification.getWrittenValue() != null) {
+            return numOfChildrenFromValue(modification.getWrittenValue());
+        } else {
+            return 0;
+        }
+    }
 
     private void checkMinMaxElements(final YangInstanceIdentifier path, final NodeModification nodeMod,
             final Optional<TreeNode> current) throws DataValidationFailedException {

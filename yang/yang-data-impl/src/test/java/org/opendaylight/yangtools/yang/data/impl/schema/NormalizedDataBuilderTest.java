@@ -185,7 +185,7 @@ public class NormalizedDataBuilderTest {
         // .build());
     }
 
-    private AugmentationSchema getAugmentationSchemaForChild(final ContainerSchemaNode containerNode, final QName qName) {
+    private static AugmentationSchema getAugmentationSchemaForChild(final ContainerSchemaNode containerNode, final QName qName) {
         for (AugmentationSchema augmentationSchema : containerNode.getAvailableAugmentations()) {
             if (augmentationSchema.getDataChildByName(qName) != null) {
                 return augmentationSchema;
@@ -194,16 +194,16 @@ public class NormalizedDataBuilderTest {
         throw new IllegalStateException("Unable to find child augmentation in " + containerNode);
     }
 
-    private YangInstanceIdentifier.NodeWithValue getNodeWithValueIdentifier(final String localName, final Object value) {
+    private static YangInstanceIdentifier.NodeWithValue getNodeWithValueIdentifier(final String localName, final Object value) {
         return new YangInstanceIdentifier.NodeWithValue(getQName(localName), value);
     }
 
-    private QName getQName(final String localName) {
+    private static QName getQName(final String localName) {
         String namespace = "namespace";
         return new QName(URI.create(namespace), localName);
     }
 
-    private YangInstanceIdentifier.NodeIdentifier getNodeIdentifier(final String localName) {
+    private static YangInstanceIdentifier.NodeIdentifier getNodeIdentifier(final String localName) {
         return new YangInstanceIdentifier.NodeIdentifier(getQName(localName));
     }
 

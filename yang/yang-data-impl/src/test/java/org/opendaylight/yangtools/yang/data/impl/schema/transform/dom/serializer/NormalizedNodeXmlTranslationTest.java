@@ -278,7 +278,7 @@ public class NormalizedNodeXmlTranslationTest {
         XML_FACTORY.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, false);
     }
 
-    private void writeNormalizedNode(final NormalizedNode<?, ?> normalized, final DOMResult result, final SchemaPath schemaPath, final SchemaContext context)
+    private static void writeNormalizedNode(final NormalizedNode<?, ?> normalized, final DOMResult result, final SchemaPath schemaPath, final SchemaContext context)
             throws IOException, XMLStreamException {
         NormalizedNodeWriter normalizedNodeWriter = null;
         NormalizedNodeStreamWriter normalizedNodeStreamWriter = null;
@@ -304,7 +304,7 @@ public class NormalizedNodeXmlTranslationTest {
         }
     }
 
-    private Document loadDocument(final String xmlPath) throws Exception {
+    private static Document loadDocument(final String xmlPath) throws IOException, SAXException {
         final InputStream resourceAsStream = NormalizedDataBuilderTest.class.getResourceAsStream(xmlPath);
 
         final Document currentConfigElement = readXmlToDocument(resourceAsStream);
@@ -323,7 +323,7 @@ public class NormalizedNodeXmlTranslationTest {
         BUILDERFACTORY = factory;
     }
 
-    private Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {
+    private static Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {
         final DocumentBuilder dBuilder;
         try {
             dBuilder = BUILDERFACTORY.newDocumentBuilder();
