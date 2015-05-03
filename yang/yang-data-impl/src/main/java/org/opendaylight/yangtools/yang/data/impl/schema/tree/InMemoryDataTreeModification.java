@@ -163,14 +163,6 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         return OperationWithModification.from(operation, modification);
     }
 
-    @Override
-    public void ready() {
-        final boolean wasRunning = UPDATER.compareAndSet(this, 0, 1);
-        Preconditions.checkState(wasRunning, "Attempted to seal an already-sealed Data Tree.");
-
-        rootNode.seal();
-    }
-
     private void checkSealed() {
         Preconditions.checkState(sealed == 0, "Data Tree is sealed. No further modifications allowed.");
     }
@@ -248,4 +240,16 @@ final class InMemoryDataTreeModification implements DataTreeModification {
             applyNode(cursor, child);
         }
     }
+
+    @Override
+    public void ready() {
+        final boolean wasRunning = UPDATER.compareAndSet(this, 0, 1);
+        Preconditions.checkState(wasRunning, "Attempted to seal an already-sealed Data Tree.");
+
+        AbstractReadyIterator current = AbstractReadyIterator.create(rootNode);
+        do {
+            current = current.process();
+        } while (current != null);
+    }
+
 }
