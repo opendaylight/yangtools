@@ -16,6 +16,24 @@
       "revId": "25224ce00e3d83ab27d00b5f3c84e3c81841f2fc",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_f4b4a036",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/QName.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-05-04T07:49:23Z",
+      "side": 1,
+      "message": "Good question... need to verify if we are not already transitevely depending on it.",
+      "parentUuid": "3aa0d159_ef9ff401",
+      "revId": "25224ce00e3d83ab27d00b5f3c84e3c81841f2fc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
