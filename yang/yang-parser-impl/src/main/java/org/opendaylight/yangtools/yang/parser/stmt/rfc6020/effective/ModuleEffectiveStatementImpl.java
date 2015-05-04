@@ -99,7 +99,6 @@ public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedDat
         List<ExtensionDefinition> extensionNodesInit = new LinkedList<>();
 
 
-
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 unknownNodesInit.add((UnknownSchemaNode) effectiveStatement);
@@ -250,18 +249,7 @@ public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedDat
         return result;
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        ModuleEffectiveStatementImpl other = (ModuleEffectiveStatementImpl) obj;
+    private boolean compare(final Object obj, ModuleEffectiveStatementImpl other) {
         if (name == null) {
             if (other.name != null) {
                 return false;
@@ -277,6 +265,25 @@ public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedDat
                 return false;
             }
         } else if (!yangVersion.equals(other.yangVersion)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        ModuleEffectiveStatementImpl other = (ModuleEffectiveStatementImpl) obj;
+        boolean result = compare(obj, other);
+        if (result == false) {
             return false;
         }
         return true;
