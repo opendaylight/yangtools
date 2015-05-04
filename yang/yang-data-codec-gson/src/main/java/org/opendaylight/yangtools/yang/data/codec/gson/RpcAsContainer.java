@@ -93,8 +93,9 @@ final class RpcAsContainer implements ContainerSchemaNode {
                 return delegate.getInput();
             case "output":
                 return delegate.getOutput();
+            default:
+                return null;
         }
-        return null;
     }
 
     @Override
@@ -114,7 +115,7 @@ final class RpcAsContainer implements ContainerSchemaNode {
 
     @Override
     public Collection<DataSchemaNode> getChildNodes() {
-        final ArrayList<DataSchemaNode> ret = new ArrayList<>();
+        final List<DataSchemaNode> ret = new ArrayList<>();
         final ContainerSchemaNode input = getInput();
         final ContainerSchemaNode output = getOutput();
         if(input != null) {

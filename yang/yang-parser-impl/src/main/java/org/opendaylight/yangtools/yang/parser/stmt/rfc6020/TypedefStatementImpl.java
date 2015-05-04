@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -17,10 +17,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.TypeDefEffectiveStatementImpl;
+
 import javax.annotation.Nullable;
 
 public class TypedefStatementImpl extends AbstractDeclaredStatement<QName>
@@ -54,7 +57,14 @@ public class TypedefStatementImpl extends AbstractDeclaredStatement<QName>
         @Override
         public EffectiveStatement<QName, TypedefStatement> createEffective(
                 StmtContext<QName, TypedefStatement, EffectiveStatement<QName, TypedefStatement>> ctx) {
-            throw new UnsupportedOperationException();
+            return new TypeDefEffectiveStatementImpl(ctx);
+        }
+
+        @Override
+        public void onStatementDefinitionDeclared(StmtContext.Mutable<QName, TypedefStatement, EffectiveStatement<QName, TypedefStatement>> stmt) throws SourceException {
+            if (stmt != null && stmt.getParentContext() != null) {
+                stmt.getParentContext().addContext(TypeNamespace.class, stmt.getStatementArgument(), stmt);
+            }
         }
     }
 
