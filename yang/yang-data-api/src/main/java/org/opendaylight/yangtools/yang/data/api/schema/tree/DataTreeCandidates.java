@@ -9,7 +9,12 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+
 import java.util.Iterator;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.slf4j.Logger;
@@ -78,9 +83,10 @@ public final class DataTreeCandidates {
         private final YangInstanceIdentifier path;
         private final NodeIterator parent;
 
-        public NodeIterator(final NodeIterator parent, final YangInstanceIdentifier path, final Iterator<DataTreeCandidateNode> iterator) {
+        public NodeIterator(@Nullable final NodeIterator parent, @Nonnull final YangInstanceIdentifier path,
+                @Nonnull final Iterator<DataTreeCandidateNode> iterator) {
             this.iterator = Preconditions.checkNotNull(iterator);
-            this.parent = Preconditions.checkNotNull(parent);
+            this.parent = parent;
             this.path = Preconditions.checkNotNull(path);
         }
 
