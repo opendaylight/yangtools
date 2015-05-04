@@ -28,9 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
@@ -102,7 +100,6 @@ public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedDat
         Set<IdentitySchemaNode> identitiesInit = new HashSet<>();
         Set<FeatureDefinition> featuresInit = new HashSet<>();
         List<ExtensionDefinition> extensionNodesInit = new LinkedList<>();
-
 
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
@@ -254,19 +251,8 @@ public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedDat
         result = prime * result + qNameModule.hashCode();
         return result;
     }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        ModuleEffectiveStatementImpl other = (ModuleEffectiveStatementImpl) obj;
+    
+    private boolean compare(final Object obj, ModuleEffectiveStatementImpl other) {
         if (name == null) {
             if (other.name != null) {
                 return false;
@@ -282,6 +268,25 @@ public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedDat
                 return false;
             }
         } else if (!yangVersion.equals(other.yangVersion)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        ModuleEffectiveStatementImpl other = (ModuleEffectiveStatementImpl) obj;
+        boolean result = compare(obj, other);
+        if (result == false) {
             return false;
         }
         return true;
