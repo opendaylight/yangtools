@@ -30,8 +30,9 @@ public class LeafRefUtils {
             final LeafRefPath leafRefPath, final SchemaPath contextNodeSchemaPath,
             final Module module) {
 
-        if (leafRefPath.isAbsolute())
+        if (leafRefPath.isAbsolute()) {
             return leafRefPath;
+        }
 
         final LinkedList<QNameWithPredicate> absoluteLeafRefTargetPathList = schemaPathToXPathQNames(
                 contextNodeSchemaPath, module);
