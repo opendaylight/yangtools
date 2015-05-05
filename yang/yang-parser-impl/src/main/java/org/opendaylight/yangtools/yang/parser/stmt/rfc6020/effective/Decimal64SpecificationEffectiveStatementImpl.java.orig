@@ -7,6 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+<<<<<<< HEAD
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+
+public class Decimal64SpecificationEffectiveStatementImpl extends EffectiveStatementBase<String, TypeStatement.Decimal64Specification> {
+
+    public Decimal64SpecificationEffectiveStatementImpl(StmtContext<String, TypeStatement.Decimal64Specification, ?> ctx) {
+        super(ctx);
+=======
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -164,5 +173,6 @@ public class Decimal64SpecificationEffectiveStatementImpl extends
     public String toString() {
         return Decimal64SpecificationEffectiveStatementImpl.class.getSimpleName() + "[qName=" + QNAME
                 + ", fractionDigits=" + fractionDigits + "]";
+>>>>>>> ac00e37... Bug 2366: new parser - Types & TypeDefs support & resolution implemented
     }
 }
