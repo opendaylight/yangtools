@@ -99,7 +99,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
     @Override
     public <DV extends DataObject> DataContainerCodecContext<DV, ?> streamChild(final Class<DV> childClass) {
         final DataContainerCodecPrototype<?> child = byClass.get(childClass);
-        return (DataContainerCodecContext<DV, ?>) childNonNull(child,childClass,"Supplied class %s is not valid case").get();
+        return (DataContainerCodecContext<DV, ?>) childNonNull(child, childClass, "Supplied class %s is not valid case", childClass).get();
     }
 
 
