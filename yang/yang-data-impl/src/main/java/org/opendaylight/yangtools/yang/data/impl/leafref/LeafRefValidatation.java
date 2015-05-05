@@ -44,6 +44,8 @@ public class LeafRefValidatation {
 
     private static final Logger LOG = LoggerFactory.getLogger(LeafRefValidatation.class);
     private static final String NEW_LINE = System.getProperty("line.separator");
+    private static final String FAILED = " -> FAILED";
+    private static final String SUCCESS = " -> OK";
 
     private final DataTreeCandidate tree;
     private final List<String> errorsMessages =  new LinkedList<>();
@@ -414,7 +416,7 @@ public class LeafRefValidatation {
                             leafRefsValue);
                     log.append(NEW_LINE);
                     log.append(sb.toString());
-                    log.append(" -> FAILED");
+                    log.append(FAILED);
 
                     sb.append(NEW_LINE);
                     errorsMessages.add(sb.toString());
@@ -425,12 +427,12 @@ public class LeafRefValidatation {
                     log.append("Valid leafref value [");
                     log.append(leafRefsValue);
                     log.append("]");
-                    log.append(" -> OK");
+                    log.append(SUCCESS);
                 }
             }
         }
 
-        header_log.append(valid ? " -> OK" : " -> FAILED");
+        header_log.append(valid ? SUCCESS : FAILED);
         LOG.debug(header_log.append(log.toString()).toString());
 
         validatedLeafRefCtx.add(referencedByCtx);
@@ -481,10 +483,10 @@ public class LeafRefValidatation {
                     referencingCtx, values);
             errorsMessages.add(sb.toString());
 
-            headerLog.append(" -> FAILED");
+            headerLog.append(FAILED);
             log.append(sb.toString());
         } else {
-            headerLog.append(" -> OK");
+            headerLog.append(SUCCESS);
         }
 
         LOG.debug(headerLog.toString());
