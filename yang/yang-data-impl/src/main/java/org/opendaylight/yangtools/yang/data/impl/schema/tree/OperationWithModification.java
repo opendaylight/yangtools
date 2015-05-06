@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -95,9 +95,12 @@ final class OperationWithModification {
     }
 
     private OperationWithModification forChild(final PathArgument childId) {
-        ModificationApplyOperation childOp = applyOperation.getChild(childId).get();
+        final Optional<ModificationApplyOperation> maybeChildOp = applyOperation.getChild(childId);
+        Preconditions.checkArgument(maybeChildOp.isPresent(), "Attempted to apply operation to non-existent child %s", childId);
+
+        ModificationApplyOperation childOp = maybeChildOp.get();
         ModifiedNode childMod = modification.modifyChild(childId, childOp.getChildPolicy());
 
-        return from(childOp,childMod);
+        return from(childOp, childMod);
     }
 }
