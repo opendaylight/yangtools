@@ -195,6 +195,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
          */
         TreeNode originalSnapshotRoot = snapshot.getRootNode();
         Optional<TreeNode> tempRoot = strategyTree.apply(rootNode, Optional.of(originalSnapshotRoot), version);
+        Preconditions.checkState(tempRoot.isPresent(), "Data tree root is not present, possibly removed by previous modification");
 
         InMemoryDataTreeSnapshot tempTree = new InMemoryDataTreeSnapshot(snapshot.getSchemaContext(), tempRoot.get(), strategyTree);
         return tempTree.newModification();
