@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3aa0d159_09ca476e",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/RangeConstraintEffectiveImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 130,
+      "author": {
+        "id": 3576
+      },
+      "writtenOn": "2015-05-06T16:15:06Z",
+      "side": 1,
+      "message": "As I say in another file, it\u0027s not useful to use StringBuilder directly for non-iterative (not appending in loops, in other words) string concatenation.  String concatenation in Java is byte-compiled to StringBuilder, and what would be generated from plain string concatenation will be slightly more efficient than what you\u0027ve handcoded here, not to mention easier to read.",
+      "revId": "2fc2f2a7a02cfe2aae0cf7e8e82095388de7b514",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_49b84fe5",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/StringRestrictionsEffectiveStatementImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 3576
+      },
+      "writtenOn": "2015-05-06T16:15:06Z",
+      "side": 1,
+      "message": "There\u0027s no value using StringBuilder directly for this.  String concatenation in Java is byte-compiled to StringBuilder anyway, and in fact the result using string concatenation will be slightly more efficient than what you\u0027ve coded here, not to mention a little easier to read.",
+      "revId": "2fc2f2a7a02cfe2aae0cf7e8e82095388de7b514",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
