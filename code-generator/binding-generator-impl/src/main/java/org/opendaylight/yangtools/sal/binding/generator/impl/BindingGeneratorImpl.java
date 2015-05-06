@@ -112,6 +112,9 @@ public class BindingGeneratorImpl implements BindingGenerator {
     private static final Splitter BSDOT_SPLITTER = Splitter.on("\\.");
     private static final char NEW_LINE = '\n';
     private static final String QNAME_FQCN = QName.class.getName();
+    private static final String MODULE_NAME_NULL_MSG = "Module name cannot be NULL.";
+    private static final String BASE_PKG_NAME_NULL_MSG = "Base Package Name cannot be NULL.";
+    private static final String MODULE_REF_NULL_MSG = "Module reference cannot be NULL.";
 
     /**
      * Constant with the concrete name of identifier.
@@ -289,8 +292,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *             if set of type definitions from module is null
      */
     private void allTypeDefinitionsToGenTypes(final Module module) {
-        checkArgument(module != null, "Module reference cannot be NULL.");
-        checkArgument(module.getName() != null, "Module name cannot be NULL.");
+        checkArgument(module != null, MODULE_REF_NULL_MSG);
+        checkArgument(module.getName() != null, MODULE_NAME_NULL_MSG);
         final DataNodeIterator it = new DataNodeIterator(module);
         final List<TypeDefinition<?>> typeDefinitions = it.allTypedefs();
         checkState(typeDefinitions != null, "Type Definitions for module «module.name» cannot be NULL.");
@@ -396,8 +399,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *             if set of augmentations from module is null
      */
     private void allAugmentsToGenTypes(final Module module) {
-        checkArgument(module != null, "Module reference cannot be NULL.");
-        checkArgument(module.getName() != null, "Module name cannot be NULL.");
+        checkArgument(module != null, MODULE_REF_NULL_MSG);
+        checkArgument(module.getName() != null, MODULE_NAME_NULL_MSG);
         checkState(module.getAugmentations() != null, "Augmentations Set cannot be NULL.");
 
         final String basePackageName = BindingMapping.getRootPackageName(module.getQNameModule());
@@ -422,7 +425,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *             if set of module augmentations is null
      */
     private List<AugmentationSchema> resolveAugmentations(final Module module) {
-        checkArgument(module != null, "Module reference cannot be NULL.");
+        checkArgument(module != null, MODULE_REF_NULL_MSG);
         checkState(module.getAugmentations() != null, "Augmentations Set cannot be NULL.");
 
         final Set<AugmentationSchema> augmentations = module.getAugmentations();
@@ -443,7 +446,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *             if module is null
      */
     private GeneratedTypeBuilder moduleToDataType(final Module module) {
-        checkArgument(module != null, "Module reference cannot be NULL.");
+        checkArgument(module != null, MODULE_REF_NULL_MSG);
 
         final GeneratedTypeBuilder moduleDataTypeBuilder = moduleTypeBuilder(module, "Data");
         addImplementedInterfaceFromUses(module, moduleDataTypeBuilder);
@@ -471,8 +474,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *             if set of rpcs from module is null
      */
     private void rpcMethodsToGenType(final Module module) {
-        checkArgument(module != null, "Module reference cannot be NULL.");
-        checkArgument(module.getName() != null, "Module name cannot be NULL.");
+        checkArgument(module != null, MODULE_REF_NULL_MSG);
+        checkArgument(module.getName() != null, MODULE_NAME_NULL_MSG);
         final Set<RpcDefinition> rpcDefinitions = module.getRpcs();
         checkState(rpcDefinitions != null, "Set of rpcs from module " + module.getName() + " cannot be NULL.");
         if (rpcDefinitions.isEmpty()) {
@@ -541,8 +544,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *             if set of notifications from module is null
      */
     private void notificationsToGenType(final Module module) {
-        checkArgument(module != null, "Module reference cannot be NULL.");
-        checkArgument(module.getName() != null, "Module name cannot be NULL.");
+        checkArgument(module != null, MODULE_REF_NULL_MSG);
+        checkArgument(module.getName() != null, MODULE_NAME_NULL_MSG);
         final Set<NotificationDefinition> notifications = module.getNotifications();
         checkState(notifications != null, "Set of notification from module " + module.getName() + " cannot be NULL.");
         if (notifications.isEmpty()) {
@@ -766,7 +769,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *             if <code>module</code> is null
      */
     private GeneratedTypeBuilder moduleTypeBuilder(final Module module, final String postfix) {
-        checkArgument(module != null, "Module reference cannot be NULL.");
+        checkArgument(module != null, MODULE_REF_NULL_MSG);
         final String packageName = BindingMapping.getRootPackageName(module.getQNameModule());
         final String moduleName = BindingMapping.getClassName(module.getName()) + postfix;
 
@@ -1159,7 +1162,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      */
     private void choiceToGeneratedType(final Module module, final String basePackageName,
             final GeneratedTypeBuilder parent, final ChoiceSchemaNode choiceNode) {
-        checkArgument(basePackageName != null, "Base Package Name cannot be NULL.");
+        checkArgument(basePackageName != null, BASE_PKG_NAME_NULL_MSG);
         checkArgument(choiceNode != null, "Choice Schema Node cannot be NULL.");
 
         if (!choiceNode.isAddedByUses()) {
@@ -1202,7 +1205,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      */
     private void generateTypesFromChoiceCases(final Module module, final String basePackageName,
             final Type refChoiceType, final ChoiceSchemaNode choiceNode) {
-        checkArgument(basePackageName != null, "Base Package Name cannot be NULL.");
+        checkArgument(basePackageName != null, BASE_PKG_NAME_NULL_MSG);
         checkArgument(refChoiceType != null, "Referenced Choice Type cannot be NULL.");
         checkArgument(choiceNode != null, "ChoiceNode cannot be NULL.");
 
@@ -1285,7 +1288,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      */
     private void generateTypesFromAugmentedChoiceCases(final Module module, final String basePackageName,
             final Type targetType, final ChoiceSchemaNode targetNode, final Iterable<DataSchemaNode> augmentedNodes) {
-        checkArgument(basePackageName != null, "Base Package Name cannot be NULL.");
+        checkArgument(basePackageName != null, BASE_PKG_NAME_NULL_MSG);
         checkArgument(targetType != null, "Referenced Choice Type cannot be NULL.");
         checkArgument(augmentedNodes != null, "Set of Choice Case Nodes cannot be NULL.");
 

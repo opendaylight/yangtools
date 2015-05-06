@@ -27,6 +27,8 @@ import org.opendaylight.yangtools.util.LazyCollections;
 
 abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T>> extends AbstractBaseType implements GeneratedTypeBuilderBase<T> {
 
+    private static final String PARAM_NAME_NULL_MSG = "Parameter name can't be null";
+
     private List<AnnotationTypeBuilder> annotationBuilders = Collections.emptyList();
     private List<Type> implementsTypes = Collections.emptyList();
     private List<EnumBuilder> enumDefinitions = Collections.emptyList();
@@ -145,7 +147,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
     }
 
     public boolean containsConstant(final String name) {
-        Preconditions.checkArgument(name != null, "Parameter name can't be null");
+        Preconditions.checkArgument(name != null, PARAM_NAME_NULL_MSG);
         for (Constant constant : constants) {
             if (name.equals(constant.getName())) {
                 return true;
@@ -176,7 +178,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
 
     @Override
     public boolean containsMethod(final String name) {
-        Preconditions.checkArgument(name != null, "Parameter name can't be null");
+        Preconditions.checkArgument(name != null, PARAM_NAME_NULL_MSG);
         for (MethodSignatureBuilder methodDefinition : methodDefinitions) {
             if (name.equals(methodDefinition.getName())) {
                 return true;
@@ -187,7 +189,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
 
     @Override
     public GeneratedPropertyBuilder addProperty(final String name) {
-        Preconditions.checkArgument(name != null, "Parameter name can't be null");
+        Preconditions.checkArgument(name != null, PARAM_NAME_NULL_MSG);
         Preconditions.checkArgument(!containsProperty(name), "This generated type already contains property with the same name.");
 
         final GeneratedPropertyBuilder builder = new GeneratedPropertyBuilderImpl(name);
@@ -198,7 +200,7 @@ abstract class AbstractGeneratedTypeBuilder<T extends GeneratedTypeBuilderBase<T
 
     @Override
     public boolean containsProperty(final String name) {
-        Preconditions.checkArgument(name != null, "Parameter name can't be null");
+        Preconditions.checkArgument(name != null, PARAM_NAME_NULL_MSG);
         for (GeneratedPropertyBuilder property : properties) {
             if (name.equals(property.getName())) {
                 return true;
