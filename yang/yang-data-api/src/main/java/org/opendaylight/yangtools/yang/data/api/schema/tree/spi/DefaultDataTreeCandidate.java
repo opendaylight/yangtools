@@ -39,7 +39,7 @@ public final class DefaultDataTreeCandidate implements DataTreeCandidate {
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         return MoreObjects.toStringHelper(this).add("rootPath", getRootPath()).add("rootNode", getRootNode()).toString();
     }
 }
