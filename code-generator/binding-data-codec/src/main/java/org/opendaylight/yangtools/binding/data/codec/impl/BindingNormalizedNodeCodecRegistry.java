@@ -57,6 +57,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         BindingCodecTreeFactory, BindingNormalizedNodeWriterFactory,
         BindingNormalizedNodeSerializer {
     private static final Logger LOG = LoggerFactory.getLogger(BindingNormalizedNodeCodecRegistry.class);
+    private static final String NODE_CREATION_FAILURE = "Failed to create normalized node";
 
     private final DataObjectSerializerGenerator generator;
     private final LoadingCache<Class<? extends DataObject>, DataObjectSerializer> serializers;
@@ -106,7 +107,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
             getSerializer(path.getTargetType()).serialize(data, writeCtx.getValue());
         } catch (final IOException e) {
             LOG.error("Unexpected failure while serializing path {} data {}", path, data, e);
-            throw new IllegalStateException("Failed to create normalized node", e);
+            throw new IllegalStateException(NODE_CREATION_FAILURE, e);
         }
         return new SimpleEntry<YangInstanceIdentifier,NormalizedNode<?,?>>(writeCtx.getKey(),result.getResult());
     }
@@ -125,7 +126,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
             getSerializer(type).serialize((DataObject) data, writer);
         } catch (final IOException e) {
             LOG.error("Unexpected failure while serializing data {}", data, e);
-            throw new IllegalStateException("Failed to create normalized node", e);
+            throw new IllegalStateException(NODE_CREATION_FAILURE, e);
         }
         return (ContainerNode) result.getResult();
 
@@ -144,7 +145,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
             getSerializer(type).serialize((DataObject) data, writer);
         } catch (final IOException e) {
             LOG.error("Unexpected failure while serializing data {}", data, e);
-            throw new IllegalStateException("Failed to create normalized node", e);
+            throw new IllegalStateException(NODE_CREATION_FAILURE, e);
         }
         return (ContainerNode) result.getResult();
     }
