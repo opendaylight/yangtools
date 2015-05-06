@@ -14,6 +14,7 @@ import java.util.Collection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModifiedNodeDoesNotExistException;
@@ -181,15 +182,24 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
             throw new ModifiedNodeDoesNotExistException(path, String.format("Node %s does not exist. Cannot apply modification to its children.", path));
         }
 
-        SchemaAwareApplyOperation.checkConflicting(path, current.isPresent(), "Node was deleted by other transaction.");
-        checkChildPreconditions(path, modification, current);
+        if (!current.isPresent()) {
+            throw new ConflictingModificationAppliedException(path, "Node was deleted by other transaction.");
+        }
+
+        checkChildPreconditions(path, modification, current.get());
     }
 
-    private void checkChildPreconditions(final YangInstanceIdentifier path, final NodeModification modification, final Optional<TreeNode> current) throws DataValidationFailedException {
-        final TreeNode currentMeta = current.get();
+    /**
+     * Recursively check child preconditions.
+     *
+     * @param path current node path
+     * @param modification current modification
+     * @param current Current data tree node.
+     */
+    private void checkChildPreconditions(final YangInstanceIdentifier path, final NodeModification modification, final TreeNode current) throws DataValidationFailedException {
         for (NodeModification childMod : modification.getChildren()) {
             final YangInstanceIdentifier.PathArgument childId = childMod.getIdentifier();
-            final Optional<TreeNode> childMeta = currentMeta.getChild(childId);
+            final Optional<TreeNode> childMeta = current.getChild(childId);
 
             YangInstanceIdentifier childPath = path.node(childId);
             resolveChildOperation(childId).checkApplicable(childPath, childMod, childMeta);
@@ -199,8 +209,8 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     @Override
     protected void checkMergeApplicable(final YangInstanceIdentifier path, final NodeModification modification,
             final Optional<TreeNode> current) throws DataValidationFailedException {
-        if(current.isPresent()) {
-            checkChildPreconditions(path, modification,current);
+        if (current.isPresent()) {
+            checkChildPreconditions(path, modification,current.get());
         }
     }
 
