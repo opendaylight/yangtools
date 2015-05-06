@@ -11,6 +11,14 @@ package org.opendaylight.yangtools.checkstyle;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.xml.sax.InputSource;
+
 import com.google.common.collect.Lists;
 import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.ConfigurationLoader;
@@ -19,12 +27,6 @@ import com.puppycrawl.tools.checkstyle.PropertiesExpander;
 import com.puppycrawl.tools.checkstyle.api.AuditListener;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import com.puppycrawl.tools.checkstyle.api.Configuration;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.xml.sax.InputSource;
 
 public class CheckstyleTest {
 
@@ -34,11 +36,11 @@ public class CheckstyleTest {
     @Before
     public void setup() throws CheckstyleException {
         baos = new ByteArrayOutputStream();
-        final AuditListener listener = new DefaultLogger(baos, false);
+        AuditListener listener = new DefaultLogger(baos, false);
 
-        final InputSource inputSource = new InputSource(CheckstyleTest.class.getClassLoader().getResourceAsStream(
+        InputSource inputSource = new InputSource(CheckstyleTest.class.getClassLoader().getResourceAsStream(
                 "checkstyle-logging.xml"));
-        final Configuration configuration = ConfigurationLoader.loadConfiguration(inputSource,
+        Configuration configuration = ConfigurationLoader.loadConfiguration(inputSource,
                 new PropertiesExpander(System.getProperties()), false);
 
         checker = new Checker();
@@ -64,7 +66,7 @@ public class CheckstyleTest {
     @Test
     public void testCodingChecks() {
         verify(CheckCodingStyleTestClass.class, false, "9: Line has Windows line delimiter.", "14: Wrong order for", "24:1: Line contains a tab character.",
-                "22: Line has trailing spaces.", "22: 'ctor def' child have incorrect indentation level 16, expected level should be 8.", "17:8: Unused import",
+                "22: Line has trailing spaces.", "22: ctor def child at indentation level 16 not at correct indentation, 8", "17:8: Unused import",
                 "23: Line has trailing spaces.");
     }
 

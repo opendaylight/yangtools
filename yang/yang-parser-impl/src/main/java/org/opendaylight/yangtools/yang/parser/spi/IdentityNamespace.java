@@ -8,10 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.spi;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  *
@@ -21,6 +19,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  * identity identifier namespace.
  *
  */
-public interface IdentityNamespace extends IdentifierNamespace<QName, StmtContext.Mutable<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>>> {
+public interface IdentityNamespace extends IdentifierNamespace<QName, IdentityStatement> {
 
 }

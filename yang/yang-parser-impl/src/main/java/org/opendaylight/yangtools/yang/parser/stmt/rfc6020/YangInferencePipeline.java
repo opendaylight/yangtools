@@ -12,8 +12,6 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.treeScoped;
 
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName;
 
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
@@ -29,6 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
+import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 
 public final class YangInferencePipeline {
@@ -59,6 +58,7 @@ public final class YangInferencePipeline {
             .addSupport(sourceLocal(IncludedModuleContext.class))
             .addSupport(sourceLocal(ImpPrefixToModuleIdentifier.class))
             .addSupport(sourceLocal(BelongsToPrefixToModuleName.class))
+            .addSupport(sourceLocal(QNameToStatementDefinition.class))
             .build();
 
     private static final StatementSupportBundle STMT_DEF_BUNDLE = StatementSupportBundle.
@@ -67,10 +67,6 @@ public final class YangInferencePipeline {
             .addSupport(new ArgumentStatementImpl.Definition())
             .addSupport(new ExtensionStatementImpl.Definition())
             .addSupport(global(ExtensionNamespace.class))
-            .addSupport(new TypedefStatementImpl.Definition())
-            .addSupport(treeScoped(TypeNamespace.class))
-            .addSupport(new IdentityStatementImpl.Definition())
-            .addSupport(global(IdentityNamespace.class))
             .build();
 
     private static final StatementSupportBundle FULL_DECL_BUNDLE = StatementSupportBundle.
@@ -86,6 +82,7 @@ public final class YangInferencePipeline {
             .addSupport(new DefaultStatementImpl.Definition())
             .addSupport(new MustStatementImpl.Definition())
             .addSupport(new MandatoryStatementImpl.Definition())
+            .addSupport(new TypedefStatementImpl.Definition())
             .addSupport(new AnyxmlStatementImpl.Definition())
             .addSupport(new IfFeatureStatementImpl.Definition())
             .addSupport(new UsesStatementImpl.Definition())
@@ -104,6 +101,7 @@ public final class YangInferencePipeline {
             .addSupport(new WhenStatementImpl.Definition())
             .addSupport(new AugmentStatementImpl.Definition())
             .addSupport(new RefineStatementImpl.Definition())
+            .addSupport(new IdentityStatementImpl.Definition())
             .addSupport(new BaseStatementImpl.Definition())
             .addSupport(new FractionDigitsStatementImpl.Definition())
             .addSupport(new EnumStatementImpl.Definition())
@@ -119,8 +117,16 @@ public final class YangInferencePipeline {
             .addSupport(new ValueStatementImpl.Definition())
             .addSupport(new UnitsStatementImpl.Definition())
             .addSupport(new RequireInstanceStatementImpl.Definition())
-            .addSupport(new BitStatementImpl.Definition())
-            .addSupport(new PathStatementImpl.Definition())
+            //TODO: add mapping to Rfc6020Mapping class and uncomment following. Please test it.
+//            .addSupport(new EnumSpecificationImpl.Definition())
+//            .addSupport(new Decimal64SpecificationImpl.Definition())
+//            .addSupport(new IdentityRefSpecificationImpl.Definition())
+//            .addSupport(new InstanceIdentifierSpecificationImpl.Definition())
+//            .addSupport(new LeafrefSpecificationImpl.Definition())
+//            .addSupport(new NumericalRestrictionsImpl.Definition())
+//            .addSupport(new StringRestrictionsImpl.Definition())
+//            .addSupport(new UnionSpecificationImpl.Definition())
+//            .addSupport(new BitStatementImpl.Definition())
             .build();
 
     public static final Map<ModelProcessingPhase, StatementSupportBundle> RFC6020_BUNDLES = ImmutableMap
