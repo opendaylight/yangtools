@@ -53,7 +53,7 @@ public interface EffectiveStatement<A, S extends DeclaredStatement<A>> extends M
      */
     //<K, V, N extends IdentifierNamespace<? super K, ? extends V>> V
     @Nullable
-    public <K,V,N extends IdentifierNamespace<K, V>> V get(@Nonnull Class<N> namespace,@Nonnull  K identifier);
+    <K,V,N extends IdentifierNamespace<K, V>> V get(@Nonnull Class<N> namespace,@Nonnull  K identifier);
 
     /**
      *

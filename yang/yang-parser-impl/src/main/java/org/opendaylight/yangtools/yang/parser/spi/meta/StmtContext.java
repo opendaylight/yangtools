@@ -61,13 +61,13 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     @Nonnull
     Collection<StatementContextBase<?, ?, ?>> declaredSubstatements();
 
-    public Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements();
+    Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements();
 
     D buildDeclared();
 
     E buildEffective();
 
-    public StatementContextBase<?, ?, ?> createCopy(QNameModule newQNameModule,
+    StatementContextBase<?, ?, ?> createCopy(QNameModule newQNameModule,
             StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
             throws SourceException;
 
@@ -75,19 +75,19 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         ORIGINAL, ADDED_BY_USES, ADDED_BY_AUGMENTATION
     }
 
-    public TypeOfCopy getTypeOfCopy();
+    TypeOfCopy getTypeOfCopy();
 
-    public void setTypeOfCopy(TypeOfCopy typeOfCopy);
+    void setTypeOfCopy(TypeOfCopy typeOfCopy);
 
     public StatementContextBase<?, ?, ?> getOriginalCtx();
 
-    public void setOriginalCtx(StatementContextBase<?, ?, ?> originalCtx);
+    void setOriginalCtx(StatementContextBase<?, ?, ?> originalCtx);
 
-    public boolean isRootContext();
+    boolean isRootContext();
 
-    public void setCompletedPhase(ModelProcessingPhase completedPhase);
+    void setCompletedPhase(ModelProcessingPhase completedPhase);
 
-    public ModelProcessingPhase getCompletedPhase();
+    ModelProcessingPhase getCompletedPhase();
 
     interface Mutable<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
             extends StmtContext<A, D, E> {
