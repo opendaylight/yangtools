@@ -46,6 +46,8 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String> impleme
 
         @Override public EffectiveStatement<String, TypeStatement> createEffective(
                 StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
+
+
             return new TypeEffectiveStatementImpl(ctx);
         }
 

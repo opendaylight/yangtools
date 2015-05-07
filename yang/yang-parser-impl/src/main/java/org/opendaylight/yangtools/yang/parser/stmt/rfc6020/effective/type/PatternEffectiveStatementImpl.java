@@ -5,18 +5,17 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
+package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
+import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
-public class PatternEffectiveStatementImpl extends
-        EffectiveStatementBase<String, PatternStatement> {
+public class PatternEffectiveStatementImpl extends EffectiveStatementBase<PatternConstraint, PatternStatement> {
 
-    public PatternEffectiveStatementImpl(
-            StmtContext<String, PatternStatement, ?> ctx) {
+    public PatternEffectiveStatementImpl(StmtContext<PatternConstraint, PatternStatement, ?> ctx) {
         super(ctx);
 
     }
-
 }
