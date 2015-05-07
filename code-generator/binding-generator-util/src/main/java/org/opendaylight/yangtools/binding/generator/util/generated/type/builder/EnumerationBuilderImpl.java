@@ -92,54 +92,6 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
     /*
      * (non-Javadoc)
      *
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((packageName == null) ? 0 : packageName.hashCode());
-        return result;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EnumerationBuilderImpl other = (EnumerationBuilderImpl) obj;
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (packageName == null) {
-            if (other.packageName != null) {
-                return false;
-            }
-        } else if (!packageName.equals(other.packageName)) {
-            return false;
-        }
-        return true;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
      * @see java.lang.Object#toString()
      */
     @Override
@@ -285,11 +237,9 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
 
     }
 
-    private static final class EnumerationImpl implements Enumeration {
+    private static final class EnumerationImpl extends AbstractBaseType implements Enumeration {
 
         private final Type definingType;
-        private final String packageName;
-        private final String name;
         private final String description;
         private final String reference;
         private final String moduleName;
@@ -300,11 +250,9 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
         public EnumerationImpl(final Type definingType, final List<AnnotationTypeBuilder> annotationBuilders,
                 final String packageName, final String name, final List<Pair> values, final String description,
                 final String reference, final String moduleName, final Iterable<QName> schemaPath) {
-            super();
+            super(packageName, name);
             this.definingType = definingType;
-            this.packageName = packageName;
             this.values = values;
-            this.name = name;
             this.description = description;
             this.moduleName = moduleName;
             this.schemaPath = schemaPath;
@@ -323,21 +271,6 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
         }
 
         @Override
-        public String getPackageName() {
-            return packageName;
-        }
-
-        @Override
-        public String getName() {
-            return name;
-        }
-
-        @Override
-        public String getFullyQualifiedName() {
-            return packageName + "." + name;
-        }
-
-        @Override
         public List<Pair> getValues() {
             return values;
         }
@@ -352,7 +285,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
             StringBuilder builder = new StringBuilder();
             builder.append("public enum");
             builder.append(" ");
-            builder.append(name);
+            builder.append(getName());
             builder.append(" {");
             builder.append("\n");
 
@@ -378,70 +311,13 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
         /*
          * (non-Javadoc)
          *
-         * @see java.lang.Object#hashCode()
-         */
-        @Override
-        public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((name == null) ? 0 : name.hashCode());
-            result = prime * result + ((packageName == null) ? 0 : packageName.hashCode());
-            result = prime * result + ((values == null) ? 0 : values.hashCode());
-
-            return result;
-        }
-
-        /*
-         * (non-Javadoc)
-         *
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
-        @Override
-        public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            EnumerationImpl other = (EnumerationImpl) obj;
-            if (name == null) {
-                if (other.name != null) {
-                    return false;
-                }
-            } else if (!name.equals(other.name)) {
-                return false;
-            }
-            if (packageName == null) {
-                if (other.packageName != null) {
-                    return false;
-                }
-            } else if (!packageName.equals(other.packageName)) {
-                return false;
-            }
-            if (values == null) {
-                if (other.values != null) {
-                    return false;
-                }
-            } else if (!values.equals(other.values)) {
-                return false;
-            }
-            return true;
-        }
-
-        /*
-         * (non-Javadoc)
-         *
          * @see java.lang.Object#toString()
          */
         @Override
         public String toString() {
             StringBuilder builder = new StringBuilder();
             builder.append("Enumeration [packageName=");
-            builder.append(packageName);
+            builder.append(getPackageName());
             if (definingType != null) {
                 builder.append(", definingType=");
                 builder.append(definingType.getPackageName());
@@ -451,7 +327,7 @@ public final class EnumerationBuilderImpl extends AbstractBaseType implements En
                 builder.append(", definingType= null");
             }
             builder.append(", name=");
-            builder.append(name);
+            builder.append(getName());
             builder.append(", values=");
             builder.append(values);
             builder.append("]");

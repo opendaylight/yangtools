@@ -119,7 +119,8 @@ public class EnumerationBuilderImplTest {
         EnumerationBuilderImpl enumerationBuilderSame1 = new EnumerationBuilderImpl(packageName, name);
         Enumeration enumerationSame1 = enumerationBuilderSame1.toInstance(enumerationBuilderSame1);
         enumerationBuilderSame1.addValue(valueName, 14, valueDescription);
-        assertNotEquals(enumeration, enumerationSame1);
+        // Enums are equal thanks to same package name and local name
+        assertEquals(enumeration, enumerationSame1);
     }
 
     @Test
