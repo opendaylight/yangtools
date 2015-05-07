@@ -9,8 +9,12 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import java.util.Collection;
 import java.util.LinkedList;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -53,7 +57,12 @@ public class AugmentEffectiveStatementImpl
                 schemaNodeIdentifier.getPathFromRoot(),
                 schemaNodeIdentifier.isAbsolute());
 
-        // :TODO namespace, revision, ? order ?
+        StmtContext<?, ?, ?> root = ctx.getRoot();
+        this.namespace = StmtContextUtils.findFirstDeclaredSubstatement(root, NamespaceStatement.class).getStatementArgument();
+
+        StmtContext<Date, ?, ?> revisionCtx = StmtContextUtils.findFirstDeclaredSubstatement(root, RevisionStatement.class);
+        this.revision = revisionCtx != null ? revisionCtx.getStatementArgument() : SimpleDateFormatUtil.DEFAULT_DATE_REV;
+
         this.order = 1;
 
         initCopyOf(ctx);

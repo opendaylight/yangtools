@@ -33,11 +33,25 @@ public class YangFileStmtTest {
     private static final YangStatementSourceImpl FOO = new YangStatementSourceImpl("/model-new/foo.yang");
     private static final YangStatementSourceImpl SUBFOO = new YangStatementSourceImpl("/model-new/subfoo.yang");
 
-    //@Test
+    private static final YangStatementSourceImpl BAR2 = new YangStatementSourceImpl("/model/bar.yang");
+    private static final YangStatementSourceImpl BAZ2 = new YangStatementSourceImpl("/model/baz.yang");
+    private static final YangStatementSourceImpl FOO2 = new YangStatementSourceImpl("/model/foo.yang");
+    private static final YangStatementSourceImpl SUBFOO2 = new YangStatementSourceImpl("/model/subfoo.yang");
+
+    @Test
     public void readAndParseYangFileTestModel() throws SourceException, ReactorException {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
 
         addSources(reactor, BAZ,FOO,BAR,SUBFOO);
+        EffectiveModelContext result = reactor.build();
+        assertNotNull(result);
+    }
+
+    @Test
+    public void readAndParseYangFileTestModel2() throws SourceException, ReactorException {
+        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+
+        addSources(reactor, BAZ2,FOO2,BAR2,SUBFOO2);
         EffectiveModelContext result = reactor.build();
         assertNotNull(result);
     }

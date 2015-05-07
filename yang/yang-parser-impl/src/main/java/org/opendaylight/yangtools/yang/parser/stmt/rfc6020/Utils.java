@@ -341,4 +341,8 @@ public final class Utils {
 
         return status;
     }
+
+    public static SchemaPath SchemaNodeIdentifierToSchemaPath(SchemaNodeIdentifier identifier) {
+        return SchemaPath.create(identifier.getPathFromRoot(), identifier.isAbsolute());
+    }
 }
