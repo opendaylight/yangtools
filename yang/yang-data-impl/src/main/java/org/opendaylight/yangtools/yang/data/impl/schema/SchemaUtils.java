@@ -11,8 +11,10 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
@@ -31,6 +33,13 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 public final class SchemaUtils {
+
+    private static final Function<DataSchemaNode, QName> QNAME_FUNCTION = new Function<DataSchemaNode, QName>() {
+        @Override
+        public QName apply(@Nonnull final DataSchemaNode input) {
+            return input.getQName();
+        }
+    };
 
     private SchemaUtils() {
         throw new UnsupportedOperationException();
@@ -356,17 +365,25 @@ public final class SchemaUtils {
         return false;
     }
 
-    public static YangInstanceIdentifier.AugmentationIdentifier getNodeIdentifierForAugmentation(final AugmentationSchema schema) {
-        return new YangInstanceIdentifier.AugmentationIdentifier(getChildQNames(schema));
-    }
-
-    public static Set<QName> getChildQNames(final AugmentationSchema schema) {
-        Set<QName> qnames = Sets.newHashSet();
-
-        for (DataSchemaNode dataSchemaNode : schema.getChildNodes()) {
-            qnames.add(dataSchemaNode.getQName());
+    /**
+     * Tries to find in {@code parent} which is dealed as augmentation target node with QName as {@code child}. If such
+     * node is found then it is returned, else null.
+     */
+    public static AugmentationSchema findCorrespondingAugment(final DataSchemaNode parent, final DataSchemaNode child) {
+        if (parent instanceof AugmentationTarget && !(parent instanceof ChoiceSchemaNode)) {
+            for (AugmentationSchema augmentation : ((AugmentationTarget) parent).getAvailableAugmentations()) {
+                DataSchemaNode childInAugmentation = augmentation.getDataChildByName(child.getQName());
+                if (childInAugmentation != null) {
+                    return augmentation;
+                }
+            }
         }
-
-        return qnames;
+        return null;
     }
+
+    public static YangInstanceIdentifier.AugmentationIdentifier getNodeIdentifierForAugmentation(final AugmentationSchema schema) {
+        final Collection<QName> qnames = Collections2.transform(schema.getChildNodes(), QNAME_FUNCTION);
+        return new YangInstanceIdentifier.AugmentationIdentifier(ImmutableSet.copyOf(qnames));
+    }
+
 }
