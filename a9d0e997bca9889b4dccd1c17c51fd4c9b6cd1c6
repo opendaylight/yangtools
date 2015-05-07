@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3aa0d159_6c199987",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/DeviationEffectiveStatementImpl.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-05-07T07:54:03Z",
+      "side": 1,
+      "message": "I think it would be better to analyze which fields are final and cannot be null.",
+      "revId": "a9d0e997bca9889b4dccd1c17c51fd4c9b6cd1c6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
