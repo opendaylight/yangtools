@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import javax.annotation.Nullable;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
@@ -304,17 +305,18 @@ public final class Utils {
     }
 
     public static Deviation.Deviate parseDeviateFromString(final String deviate) {
-        if ("not-supported".equals(deviate)) {
-            return Deviation.Deviate.NOT_SUPPORTED;
-        } else if ("add".equals(deviate)) {
-            return Deviation.Deviate.ADD;
-        } else if ("replace".equals(deviate)) {
-            return Deviation.Deviate.REPLACE;
-        } else if ("delete".equals(deviate)) {
-            return Deviation.Deviate.DELETE;
-        } else {
-            throw new IllegalArgumentException(
-                    "String %s is not valid deviate argument");
+
+        // Yang constants should be lowercase so we have throw if value does not suit this
+        String deviateUpper = deviate.toUpperCase();
+        if (Objects.equals(deviate, deviateUpper)) {
+            throw new IllegalArgumentException(String.format("String %s is not valid deviate argument", deviate));
+        }
+
+        // but Java enum is uppercase so we cannot use lowercase here
+        try {
+            return Deviation.Deviate.valueOf(deviateUpper);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(String.format("String %s is not valid deviate argument", deviate), e);
         }
     }
 }
