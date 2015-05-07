@@ -13,7 +13,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadModules;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
+import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.augmentationBuilder;
+import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
+import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
+import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 
+import com.google.common.collect.Sets;
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -169,7 +174,7 @@ public class JsonStreamToNormalizedNodeTest {
         try {
             //second parameter isn't necessary because error will be raised before it is used.
             verifyTransformationToNormalizedNode(inputJson, null);
-            fail("Expected exception not raised");
+			fail("Expected exception not raised");
         } catch (final IllegalStateException e) {
             final String errorMessage = e.getMessage();
             assertTrue(errorMessage.contains("Choose suitable module name for element lf11-namesake:"));
@@ -181,9 +186,9 @@ public class JsonStreamToNormalizedNodeTest {
     @Test
     public void emptyTypeTest() throws IOException, URISyntaxException {
         final String inputJson = loadTextFile("/complexjson/type-empty.json");
-        final ContainerNode awaitedStructure = Builders.containerBuilder()
+        final ContainerNode awaitedStructure = containerBuilder()
                 .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(CONT_1))
-                .addChild(ImmutableNodes.leafNode(EMPTY_LEAF, null))
+                .addChild(leafNode(EMPTY_LEAF, null))
                 .build();
 
         verifyTransformationToNormalizedNode(inputJson, awaitedStructure);
@@ -231,6 +236,51 @@ public class JsonStreamToNormalizedNodeTest {
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
         assertNotNull(transformedInput);
+    }
+
+   @Test
+    public void multipleChoiceAugmentation() throws IOException, URISyntaxException {
+        final String inputJson = loadTextFile("/complexjson/multiple-choice-augmentation-in-container.json");
+
+        final NormalizedNodeResult result = new NormalizedNodeResult();
+        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final SchemaNode parentNode = schemaContext.getDataChildByName("cont1");
+
+        QName augmentChoice1QName = QName.create(parentNode.getQName(), "augment-choice1");
+        QName augmentChoice2QName = QName.create(augmentChoice1QName, "augment-choice2");
+        final QName containerQName = QName.create(augmentChoice1QName, "case11-choice-case-container");
+        final QName leafQName = QName.create(augmentChoice1QName, "case11-choice-case-leaf");
+
+        final YangInstanceIdentifier.AugmentationIdentifier aug1Id =
+                new YangInstanceIdentifier.AugmentationIdentifier(Sets.newHashSet(augmentChoice1QName));
+        final YangInstanceIdentifier.AugmentationIdentifier aug2Id =
+                new YangInstanceIdentifier.AugmentationIdentifier(Sets.newHashSet(augmentChoice2QName));
+        final YangInstanceIdentifier.NodeIdentifier augmentChoice1Id =
+                new YangInstanceIdentifier.NodeIdentifier(augmentChoice1QName);
+        final YangInstanceIdentifier.NodeIdentifier augmentChoice2Id =
+                new YangInstanceIdentifier.NodeIdentifier(augmentChoice2QName);
+        final YangInstanceIdentifier.NodeIdentifier containerId =
+                new YangInstanceIdentifier.NodeIdentifier(containerQName);
+
+        final NormalizedNode<?, ?> cont1Normalized =
+                containerBuilder().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(parentNode.getQName()))
+                        .withChild(augmentationBuilder().withNodeIdentifier(aug1Id)
+                                .withChild(choiceBuilder().withNodeIdentifier(augmentChoice1Id)
+                                        .withChild(augmentationBuilder().withNodeIdentifier(aug2Id)
+                                                .withChild(choiceBuilder().withNodeIdentifier(augmentChoice2Id)
+                                                        .withChild(containerBuilder().withNodeIdentifier(containerId)
+                                                                .withChild(leafNode(leafQName, "leaf-value"))
+                                                                .build())
+                                                        .build())
+                                                .build())
+                                        .build())
+                                .build()).build();
+
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, schemaContext);
+        jsonParser.parse(new JsonReader(new StringReader(inputJson)));
+        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        assertNotNull(transformedInput);
+        assertEquals(cont1Normalized, transformedInput);
     }
 
     private void verifyTransformationToNormalizedNode(final String inputJson,
