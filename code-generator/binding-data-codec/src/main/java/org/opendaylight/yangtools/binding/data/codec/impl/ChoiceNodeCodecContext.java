@@ -26,6 +26,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
+import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -61,6 +63,13 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
                 }
                 // Updates collection of YANG instance identifier to case
                 for (final DataSchemaNode cazeChild : cazeDef.getSchema().getChildNodes()) {
+                    if (cazeChild.isAugmenting()) {
+                        final AugmentationSchema augment = SchemaUtils.findCorrespondingAugment(cazeDef.getSchema(), cazeChild);
+                        if (augment != null) {
+                            byYangCaseChildBuilder.put(SchemaUtils.getNodeIdentifierForAugmentation(augment), cazeDef);
+                            continue;
+                        }
+                    }
                     byYangCaseChildBuilder.put(new NodeIdentifier(cazeChild.getQName()), cazeDef);
                 }
             } else {

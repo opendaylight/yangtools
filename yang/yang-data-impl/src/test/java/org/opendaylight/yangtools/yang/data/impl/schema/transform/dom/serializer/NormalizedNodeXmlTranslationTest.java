@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.serializer;
 
+import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.augmentationBuilder;
+import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
+import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
+import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
@@ -86,6 +90,7 @@ public class NormalizedNodeXmlTranslationTest {
         return Arrays.asList(new Object[][]{
                 {"augment_choice_hell.yang", "augment_choice_hell_ok.xml", augmentChoiceHell()},
                 {"augment_choice_hell.yang", "augment_choice_hell_ok2.xml", null},
+                {"augment_choice_hell.yang", "augment_choice_hell_ok3.xml", augmentChoiceHell2()},
                 {"test.yang", "simple.xml", null},
                 {"test.yang", "simple2.xml", null},
                 // TODO check attributes
@@ -103,8 +108,41 @@ public class NormalizedNodeXmlTranslationTest {
         }
     }
 
+    private static ContainerNode augmentChoiceHell2() {
+        final YangInstanceIdentifier.NodeIdentifier container = getNodeIdentifier("container");
+        QName augmentChoice1QName = QName.create(container.getNodeType(), "augment-choice1");
+        QName augmentChoice2QName = QName.create(augmentChoice1QName, "augment-choice2");
+        final QName containerQName = QName.create(augmentChoice1QName, "case11-choice-case-container");
+        final QName leafQName = QName.create(augmentChoice1QName, "case11-choice-case-leaf");
+
+        final YangInstanceIdentifier.AugmentationIdentifier aug1Id =
+                new YangInstanceIdentifier.AugmentationIdentifier(Sets.newHashSet(augmentChoice1QName));
+        final YangInstanceIdentifier.AugmentationIdentifier aug2Id =
+                new YangInstanceIdentifier.AugmentationIdentifier(Sets.newHashSet(augmentChoice2QName));
+        final YangInstanceIdentifier.NodeIdentifier augmentChoice1Id =
+                new YangInstanceIdentifier.NodeIdentifier(augmentChoice1QName);
+        final YangInstanceIdentifier.NodeIdentifier augmentChoice2Id =
+                new YangInstanceIdentifier.NodeIdentifier(augmentChoice2QName);
+        final YangInstanceIdentifier.NodeIdentifier containerId =
+                new YangInstanceIdentifier.NodeIdentifier(containerQName);
+
+
+        return containerBuilder().withNodeIdentifier(container)
+                .withChild(augmentationBuilder().withNodeIdentifier(aug1Id)
+                        .withChild(choiceBuilder().withNodeIdentifier(augmentChoice1Id)
+                                .withChild(augmentationBuilder().withNodeIdentifier(aug2Id)
+                                        .withChild(choiceBuilder().withNodeIdentifier(augmentChoice2Id)
+                                                .withChild(containerBuilder().withNodeIdentifier(containerId)
+                                                        .withChild(leafNode(leafQName, "leaf-value"))
+                                                        .build())
+                                                .build())
+                                        .build())
+                                .build())
+                        .build()).build();
+    }
+
     private static ContainerNode withAttributes() {
-        final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> b = Builders.containerBuilder();
+        final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> b = containerBuilder();
         b.withNodeIdentifier(getNodeIdentifier("container"));
 
         final CollectionNodeBuilder<MapEntryNode, MapNode> listBuilder = Builders.mapBuilder().withNodeIdentifier(
@@ -146,14 +184,14 @@ public class NormalizedNodeXmlTranslationTest {
 
     private static ContainerNode augmentChoiceHell() {
 
-        final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> b = Builders.containerBuilder();
+        final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> b = containerBuilder();
         b.withNodeIdentifier(getNodeIdentifier("container"));
 
         b.withChild(
-                Builders.choiceBuilder().withNodeIdentifier(getNodeIdentifier("ch2"))
+                choiceBuilder().withNodeIdentifier(getNodeIdentifier("ch2"))
                 .withChild(Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("c2Leaf")).withValue("2").build())
                 .withChild(
-                        Builders.choiceBuilder().withNodeIdentifier(getNodeIdentifier("c2DeepChoice"))
+                        choiceBuilder().withNodeIdentifier(getNodeIdentifier("c2DeepChoice"))
                         .withChild(Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("c2DeepChoiceCase1Leaf2")).withValue("2").build())
                         .build()
                         )
@@ -161,26 +199,26 @@ public class NormalizedNodeXmlTranslationTest {
                 );
 
         b.withChild(
-                Builders.choiceBuilder().withNodeIdentifier(getNodeIdentifier("ch3")).withChild(
+                choiceBuilder().withNodeIdentifier(getNodeIdentifier("ch3")).withChild(
                         Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("c3Leaf")).withValue("3").build())
                         .build());
 
         b.withChild(
-                Builders.augmentationBuilder().withNodeIdentifier(getAugmentIdentifier("augLeaf")).withChild(
+                augmentationBuilder().withNodeIdentifier(getAugmentIdentifier("augLeaf")).withChild(
                         Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("augLeaf")).withValue("augment").build())
                         .build());
 
         b.withChild(
-                Builders.augmentationBuilder().withNodeIdentifier(getAugmentIdentifier("ch")).withChild(
-                        Builders.choiceBuilder().withNodeIdentifier(getNodeIdentifier("ch"))
+                augmentationBuilder().withNodeIdentifier(getAugmentIdentifier("ch")).withChild(
+                        choiceBuilder().withNodeIdentifier(getNodeIdentifier("ch"))
                         .withChild(
                                 Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("c1Leaf")).withValue("1").build())
                                 .withChild(
-                                        Builders.augmentationBuilder().withNodeIdentifier(getAugmentIdentifier("c1Leaf_AnotherAugment", "deepChoice"))
+                                        augmentationBuilder().withNodeIdentifier(getAugmentIdentifier("c1Leaf_AnotherAugment", "deepChoice"))
                                         .withChild(
                                                 Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("c1Leaf_AnotherAugment")).withValue("1").build())
                                                 .withChild(
-                                                        Builders.choiceBuilder().withNodeIdentifier(getNodeIdentifier("deepChoice"))
+                                                        choiceBuilder().withNodeIdentifier(getNodeIdentifier("deepChoice"))
                                                         .withChild(
                                                                 Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("deepLeafc1")).withValue("1").build()
                                                                 ).build()

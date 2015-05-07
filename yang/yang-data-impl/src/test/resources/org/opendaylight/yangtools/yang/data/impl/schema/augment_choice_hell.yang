@@ -105,5 +105,39 @@ module test {
         }
     }
 
+    augment "/container" {
+        /*ext:augment-identifier top-choice-augment1;*/
+        choice augment-choice1 {
+            case case1 {
+                container case1-container {
+                    leaf case1-leaf {
+                        type string;
+                    }
+                }
+            }
+
+            case case2 {
+                container case2-container {
+                    leaf case2-leaf {
+                        type string;
+                    }
+                }
+            }
+        }
+    }
+
+    augment "/container/augment-choice1/case1" {
+        /*ext:augment-identifier top-choice-augment2;*/
+        choice augment-choice2 {
+            case case11 {
+                container case11-choice-case-container {
+                    leaf case11-choice-case-leaf {
+                        type string;
+                    }
+                }
+            }
+        }
+    }
+
 
 }
