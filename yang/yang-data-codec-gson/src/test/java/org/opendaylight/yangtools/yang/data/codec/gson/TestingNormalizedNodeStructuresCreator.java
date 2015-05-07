@@ -68,12 +68,6 @@ public class TestingNormalizedNodeStructuresCreator {
         DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> choc12Builder = Builders.choiceBuilder()
                 .withNodeIdentifier(new NodeIdentifier(QName.create("ns:complex:json", "2014-08-11", "choc12")));
 
-//        DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> choc12Augmentation = Builders
-//                .augmentationBuilder();
-//        choc12Augmentation.withNodeIdentifier(new AugmentationIdentifier(Sets.newHashSet(QName.create(
-//                "ns:complex:json", "2014-08-11", "c12B"))));
-//        choc12Augmentation.withChild(lf17Node());
-
         choc12Builder.withChild(lf17Node());
         return choc12Builder.build();
     }
@@ -280,11 +274,11 @@ public class TestingNormalizedNodeStructuresCreator {
      * @return
      */
     public static NormalizedNode<?, ?> caseNodeAugmentationInChoiceInContainer() {
-        return cont1Node(choc11Node(lf13Node(), lf15_11Node(), lf15_12Node(), lf15_21Node()));
+        return cont1Node(choc11Node(augmentC11AWithLf15_11AndLf15_12Node(), lf13Node(), augmentC11AWithLf15_21Node()));
     }
 
     public static NormalizedNode<?, ?> caseNodeExternalAugmentationInChoiceInContainer() {
-        return cont1Node(choc11Node(lf13Node(), lf15_11Node(), lf15_12Node(), lf15_11NodeExternal(), lf15_12NodeExternal()));
+        return cont1Node(choc11Node(lf13Node(), augmentC11AWithLf15_11AndLf15_12Node(), externalAugmentC11AWithLf15_11AndLf15_12Node()));
     }
 
     public static NormalizedNode<?, ?> choiceNodeAugmentationInContainer() {

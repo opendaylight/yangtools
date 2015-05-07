@@ -1,0 +1,7 @@
+{
+  "complexjson:cont1": {
+    "case11-choice-case-container" : {
+      "case11-choice-case-leaf" : "leaf-value"
+    }
+  }
+}
