@@ -7,8 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 
+import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import java.util.HashMap;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -40,11 +45,15 @@ public class UsesEffectiveStatementImpl extends
             StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
         super(ctx);
 
-        //:TODO init groupingPath, refines
-        this.groupingPath = null;
-
+        initGroupingPath(ctx);
         initCopyType(ctx);
         initSubstatementCollections();
+    }
+
+    private void initGroupingPath(
+            StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
+        StmtContext<?, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> grpCtx = ctx.getFromNamespace(GroupingNamespace.class, ctx.getStatementArgument());
+        this.groupingPath = Utils.getSchemaPath(grpCtx);
     }
 
     private void initSubstatementCollections() {
@@ -52,6 +61,7 @@ public class UsesEffectiveStatementImpl extends
 
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
         Set<AugmentationSchema> augmentationsInit = new HashSet<>();
+        Map<SchemaPath, SchemaNode> refinesInit = new HashMap<>();
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
@@ -62,10 +72,18 @@ public class UsesEffectiveStatementImpl extends
                 AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
                 augmentationsInit.add(augmentationSchema);
             }
+            if (effectiveStatement instanceof RefineEffectiveStatementImpl) {
+                RefineEffectiveStatementImpl refineStmt = (RefineEffectiveStatementImpl) effectiveStatement;
+                SchemaNodeIdentifier identifier = refineStmt.argument();
+                refinesInit.put(
+                        Utils.SchemaNodeIdentifierToSchemaPath(identifier),
+                        refineStmt);
+            }
         }
 
         this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
+        this.refines = ImmutableMap.copyOf(refinesInit);
     }
 
     private void initCopyType(

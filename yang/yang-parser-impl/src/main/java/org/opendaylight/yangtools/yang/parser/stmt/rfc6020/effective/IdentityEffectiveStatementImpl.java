@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import com.google.common.collect.ImmutableSet;
+import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import java.util.Collection;
 import java.util.LinkedList;
-
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
@@ -29,7 +30,7 @@ public class IdentityEffectiveStatementImpl extends
     private final QName qname;
     private final SchemaPath path;
     IdentitySchemaNode baseIdentity;
-    private final Set<IdentitySchemaNode> derivedIdentities;
+    private ImmutableSet<IdentitySchemaNode> derivedIdentities;
 
     ImmutableList<UnknownSchemaNode> unknownNodes;
 
@@ -40,13 +41,26 @@ public class IdentityEffectiveStatementImpl extends
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
 
-        initSubstatementCollections();
-
-        // :TODO init derivedIdentities and baseIdentity
-        this.derivedIdentities = null;
+        initSubstatementCollectionsAndFields(ctx);
+        //:TODO bad solution rework..
+//        initDerivedIdentities(ctx);
     }
 
-    private void initSubstatementCollections() {
+//    private void initDerivedIdentities(
+//            StmtContext<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> ctx) {
+//
+//        Set<IdentitySchemaNode> derivedIdentitiesInit = new HashSet<IdentitySchemaNode>();
+//        List<StmtContext<?, ?, ?>> derivedIdentitiesCtx = ctx.getFromNamespace(
+//                DerivedIdentitiesNamespace.class, ctx.getStatementArgument());
+//        for (StmtContext<?, ?, ?> derivedIdentityCtx : derivedIdentitiesCtx) {
+//            derivedIdentitiesInit.add((IdentitySchemaNode) derivedIdentityCtx
+//                    .buildEffective());
+//        }
+//        this.derivedIdentities = ImmutableSet.copyOf(derivedIdentitiesInit);
+//    }
+
+    private void initSubstatementCollectionsAndFields(
+            StmtContext<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> ctx) {
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
@@ -55,6 +69,17 @@ public class IdentityEffectiveStatementImpl extends
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
                 unknownNodesInit.add(unknownNode);
+            }
+            if (effectiveStatement instanceof BaseEffectiveStatementImpl) {
+                BaseEffectiveStatementImpl base = (BaseEffectiveStatementImpl) effectiveStatement;
+                QName baseIdentityQName = base.argument();
+                StmtContext<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> baseIdentityCtx = ctx
+                        .getFromNamespace(IdentityNamespace.class,
+                                baseIdentityQName);
+                if (baseIdentityCtx != null) {
+                    this.baseIdentity = (IdentitySchemaNode) baseIdentityCtx
+                            .buildEffective();
+                }
             }
         }
 

@@ -46,13 +46,13 @@ public class AugmentProcessTest {
     private final QName contTarget = QName.create(AUGMENTED_QNAME_MODULE,
             "cont-target");
 
-    private final QName contAdded1 = QName.create(AUGMENTED_QNAME_MODULE,
+    private final QName contAdded1 = QName.create(ROOT_QNAME_MODULE,
             "cont-added1");
-    private final QName contAdded2 = QName.create(AUGMENTED_QNAME_MODULE,
+    private final QName contAdded2 = QName.create(ROOT_QNAME_MODULE,
             "cont-added2");
 
-    private final QName list1 = QName.create(AUGMENTED_QNAME_MODULE, "list1");
-    private final QName axml = QName.create(AUGMENTED_QNAME_MODULE, "axml");
+    private final QName list1 = QName.create(ROOT_QNAME_MODULE, "list1");
+    private final QName axml = QName.create(ROOT_QNAME_MODULE, "axml");
 
     private final QName contGrp = QName.create(AUGMENTED_QNAME_MODULE,
             "cont-grp");

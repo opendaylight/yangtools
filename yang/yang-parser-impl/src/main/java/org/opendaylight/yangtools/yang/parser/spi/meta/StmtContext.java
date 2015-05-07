@@ -67,6 +67,10 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     E buildEffective();
 
+    public StatementContextBase<?, ?, ?> createCopy(
+            StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
+            throws SourceException;
+
     public StatementContextBase<?, ?, ?> createCopy(QNameModule newQNameModule,
             StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
             throws SourceException;
