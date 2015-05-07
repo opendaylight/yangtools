@@ -65,13 +65,14 @@ public final class StmtContextUtils {
         return null;
     }
 
-    public static final <DT extends DeclaredStatement<?>> StmtContext<?, ?, ?> findFirstDeclaredSubstatement(
+    @SuppressWarnings("unchecked")
+    public static final <AT,DT extends DeclaredStatement<AT>> StmtContext<AT, ?, ?> findFirstDeclaredSubstatement(
             StmtContext<?, ?, ?> stmtContext, Class<DT> declaredType) {
         Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements = stmtContext
                 .declaredSubstatements();
         for (StmtContext<?, ?, ?> subStmtContext : declaredSubstatements) {
             if (producesDeclared(subStmtContext,declaredType)) {
-                return subStmtContext;
+                return (StmtContext<AT, ?, ?>) subStmtContext;
             }
         }
         return null;

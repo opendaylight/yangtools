@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Iterator;
 import javax.annotation.Nullable;
-
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import java.util.Collection;
 import java.util.HashSet;
@@ -56,23 +55,20 @@ public final class AugmentUtils {
             StatementContextBase<?, ?, ?> sourceCtx,
             StatementContextBase<?, ?, ?> targetCtx) throws SourceException {
 
-        QNameModule newQNameModule = getNewQNameModule(targetCtx, sourceCtx);
-        copyDeclaredStmts(sourceCtx, targetCtx, newQNameModule);
-        copyEffectiveStmts(sourceCtx, targetCtx, newQNameModule);
+        copyDeclaredStmts(sourceCtx, targetCtx);
+        copyEffectiveStmts(sourceCtx, targetCtx);
 
     }
 
     public static void copyDeclaredStmts(
             StatementContextBase<?, ?, ?> sourceCtx,
-            StatementContextBase<?, ?, ?> targetCtx, QNameModule newQNameModule)
-            throws SourceException {
+            StatementContextBase<?, ?, ?> targetCtx) throws SourceException {
         Collection<? extends StatementContextBase<?, ?, ?>> declaredSubstatements = sourceCtx
                 .declaredSubstatements();
         for (StatementContextBase<?, ?, ?> originalStmtCtx : declaredSubstatements) {
             if (needToCopyByAugment(originalStmtCtx)) {
                 StatementContextBase<?, ?, ?> copy = originalStmtCtx
-                        .createCopy(newQNameModule, targetCtx,
-                                TypeOfCopy.ADDED_BY_AUGMENTATION);
+                        .createCopy(targetCtx, TypeOfCopy.ADDED_BY_AUGMENTATION);
                 targetCtx.addEffectiveSubstatement(copy);
             } else if (isReusedByAugment(originalStmtCtx)) {
                 targetCtx.addEffectiveSubstatement(originalStmtCtx);
@@ -82,15 +78,13 @@ public final class AugmentUtils {
 
     public static void copyEffectiveStmts(
             StatementContextBase<?, ?, ?> sourceCtx,
-            StatementContextBase<?, ?, ?> targetCtx, QNameModule newQNameModule)
-            throws SourceException {
+            StatementContextBase<?, ?, ?> targetCtx) throws SourceException {
         Collection<? extends StatementContextBase<?, ?, ?>> effectiveSubstatements = sourceCtx
                 .effectiveSubstatements();
         for (StatementContextBase<?, ?, ?> originalStmtCtx : effectiveSubstatements) {
             if (needToCopyByAugment(originalStmtCtx)) {
                 StatementContextBase<?, ?, ?> copy = originalStmtCtx
-                        .createCopy(newQNameModule, targetCtx,
-                                TypeOfCopy.ADDED_BY_AUGMENTATION);
+                        .createCopy(targetCtx, TypeOfCopy.ADDED_BY_AUGMENTATION);
                 targetCtx.addEffectiveSubstatement(copy);
             } else if (isReusedByAugment(originalStmtCtx)) {
                 targetCtx.addEffectiveSubstatement(originalStmtCtx);
@@ -230,9 +224,16 @@ public final class AugmentUtils {
         allSubstatements.addAll(effectiveSubstatement);
 
         for (StatementContextBase<?, ?, ?> substatement : allSubstatements) {
+            Object substatementArgument = substatement.getStatementArgument();
+            QName substatementQName = null;
+            if(substatementArgument instanceof QName) {
+                substatementQName = (QName) substatementArgument;
+            } else {
+                continue;
+            }
             if (isAllowedAugmentTarget(substatement)
-                    && nextPathQName
-                            .equals(substatement.getStatementArgument())) {
+                    && nextPathQName.getLocalName()
+                            .equals(substatementQName.getLocalName())) {
                 return substatement;
             }
         }
@@ -247,9 +248,9 @@ public final class AugmentUtils {
          * :TODO Substatement must be allowed augment target type e.g.
          * Container, etc... and must be not for example grouping, identity etc.
          * It is problem in case when more than one substatements have the same
-         * QName, for example Grouping and Container are siblings and they have the
-         * same QName. We must find the Container and the Grouping must be ignored
-         * as disallowed augment target.
+         * QName, for example Grouping and Container are siblings and they have
+         * the same QName. We must find the Container and the Grouping must be
+         * ignored as disallowed augment target.
          */
 
         return true;

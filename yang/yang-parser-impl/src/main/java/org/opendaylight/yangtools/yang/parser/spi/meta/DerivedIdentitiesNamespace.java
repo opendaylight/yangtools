@@ -5,14 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.spi;
+package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
-import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 
 /**
  *
@@ -22,8 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
  * identity identifier namespace.
  *
  */
-public interface IdentityNamespace
-        extends
-        IdentifierNamespace<QName, StmtContext<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>>> {
+public interface DerivedIdentitiesNamespace extends IdentifierNamespace<QName, List<StmtContext<?, ?, ?>>> {
 
 }

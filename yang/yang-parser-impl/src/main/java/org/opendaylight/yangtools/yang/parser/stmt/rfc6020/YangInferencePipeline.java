@@ -11,8 +11,10 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.sourceLocal;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.treeScoped;
 
-import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedIdentitiesNamespace;
 
+import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
@@ -119,6 +121,8 @@ public final class YangInferencePipeline {
             .addSupport(new ValueStatementImpl.Definition())
             .addSupport(new UnitsStatementImpl.Definition())
             .addSupport(new RequireInstanceStatementImpl.Definition())
+            .addSupport(global(IdentityNamespace.class))
+            .addSupport(global(DerivedIdentitiesNamespace.class))
             //TODO: add mapping to Rfc6020Mapping class and uncomment following. Please test it.
 //            .addSupport(new EnumSpecificationImpl.Definition())
 //            .addSupport(new Decimal64SpecificationImpl.Definition())
