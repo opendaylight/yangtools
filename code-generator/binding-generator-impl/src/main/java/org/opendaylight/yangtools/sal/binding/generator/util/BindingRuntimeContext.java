@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
+import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -51,7 +52,10 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
+import org.opendaylight.yangtools.yang.model.util.EnumerationType;
+import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +78,7 @@ import org.slf4j.LoggerFactory;
  */
 public class BindingRuntimeContext implements Immutable {
     private static final Logger LOG = LoggerFactory.getLogger(BindingRuntimeContext.class);
+    private static final char DOT = '.';
     private final ClassLoadingStrategy strategy;
     private final SchemaContext schemaContext;
 
@@ -248,6 +253,11 @@ public class BindingRuntimeContext implements Immutable {
         return new ReferencedTypeImpl(type.getPackage().getName(), type.getSimpleName());
     }
 
+    static Type referencedType(final String type) {
+        final int packageClassSeparator = type.lastIndexOf(DOT);
+        return new ReferencedTypeImpl(type.substring(0, packageClassSeparator), type.substring(packageClassSeparator + 1));
+    }
+
     /**
      * Returns schema ({@link DataSchemaNode}, {@link AugmentationSchema} or {@link TypeDefinition})
      * from which supplied class was generated. Returned schema may be augmented with
@@ -260,16 +270,23 @@ public class BindingRuntimeContext implements Immutable {
      *     which was used to generate supplied class.
      */
     public Entry<GeneratedType, Object> getTypeWithSchema(final Class<?> type) {
-        final Object schema = typeToDefiningSchema.get(referencedType(type));
+        return getTypeWithSchema(referencedType(type));
+    }
+
+    public Entry<GeneratedType, Object> getTypeWithSchema(final String type) {
+        return getTypeWithSchema(referencedType(type));
+    }
+
+    private Entry<GeneratedType, Object> getTypeWithSchema(final Type referencedType) {
+        final Object schema = typeToDefiningSchema.get(referencedType);
         final Type definedType = typeToDefiningSchema.inverse().get(schema);
         Preconditions.checkNotNull(schema);
         Preconditions.checkNotNull(definedType);
         if(definedType instanceof GeneratedTypeBuilder) {
             return new SimpleEntry<>(((GeneratedTypeBuilder) definedType).toInstance(), schema);
         }
-        Preconditions.checkArgument(definedType instanceof GeneratedType,"Type {} is not GeneratedType",type);
+        Preconditions.checkArgument(definedType instanceof GeneratedType,"Type {} is not GeneratedType", referencedType);
         return new SimpleEntry<>((GeneratedType) definedType,schema);
-
     }
 
     public ImmutableMap<Type, Entry<Type, Type>> getChoiceCaseChildren(final DataNodeContainer schema) {
@@ -293,6 +310,47 @@ public class BindingRuntimeContext implements Immutable {
         }
         return ImmutableMap.copyOf(childToCase);
     }
+
+    /**
+     * Map enum constants: yang - java
+     *
+     * @param enumClass enum generated class
+     * @return mapped enum constants from yang with their corresponding values in generated binding classes
+     */
+    public BiMap<String, String> getEnumMapping(final Class<?> enumClass) {
+        final Map.Entry<GeneratedType, Object> typeWithSchema = getTypeWithSchema(enumClass);
+        return getEnumMapping(typeWithSchema);
+    }
+
+    /**
+     * See {@link #getEnumMapping(Class)}}
+     */
+    public BiMap<String, String> getEnumMapping(final String enumClass) {
+        final Map.Entry<GeneratedType, Object> typeWithSchema = getTypeWithSchema(enumClass);
+        return getEnumMapping(typeWithSchema);
+    }
+
+    private BiMap<String, String> getEnumMapping(final Entry<GeneratedType, Object> typeWithSchema) {
+        final TypeDefinition<?> typeDef = (TypeDefinition<?>) typeWithSchema.getValue();
+
+        final EnumerationType enumType;
+        if(typeDef instanceof ExtendedType) {
+            enumType = (EnumerationType) ((ExtendedType) typeDef).getBaseType();
+        } else {
+            Preconditions.checkArgument(typeDef instanceof EnumerationType);
+            enumType = (EnumerationType) typeDef;
+        }
+
+        final HashBiMap<String, String> mappedEnums = HashBiMap.create();
+
+        for (final EnumTypeDefinition.EnumPair enumPair : enumType.getValues()) {
+            mappedEnums.put(enumPair.getName(), BindingMapping.getClassName(enumPair.getName()));
+        }
+
+        // TODO cache these maps for future use
+        return mappedEnums;
+    }
+
 
     public Set<Class<?>> getCases(final Class<?> choice) {
         final Collection<Type> cazes = choiceToCases.get(referencedType(choice));
