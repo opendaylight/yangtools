@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import com.google.common.base.Preconditions;
+import javax.annotation.Nonnull;
+
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
@@ -19,8 +20,18 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.TypeEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BinaryEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Int16EffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Int32EffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Int64EffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Int8EffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.StringEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UInt16EffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UInt32EffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UInt64EffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UInt8EffectiveStatementImpl;
 
-import javax.annotation.Nonnull;
+import com.google.common.base.Preconditions;
 
 public class TypeStatementImpl extends AbstractDeclaredStatement<String> implements TypeStatement {
 
@@ -28,39 +39,83 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String> impleme
         super(context);
     }
 
-    public static class Definition extends AbstractStatementSupport<String,TypeStatement,EffectiveStatement<String,TypeStatement>> {
+    public static class Definition extends
+            AbstractStatementSupport<String, TypeStatement, EffectiveStatement<String, TypeStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.TYPE);
         }
 
-        @Override public String parseArgumentValue(StmtContext<?, ?, ?> ctx,
-                String value) throws SourceException {
+        @Override
+        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) throws SourceException {
             return value;
         }
 
-        @Override public TypeStatement createDeclared(
-                StmtContext<String, TypeStatement, ?> ctx) {
+        @Override
+        public TypeStatement createDeclared(StmtContext<String, TypeStatement, ?> ctx) {
             return new TypeStatementImpl(ctx);
         }
 
-        @Override public EffectiveStatement<String, TypeStatement> createEffective(
+        @Override
+        public EffectiveStatement<String, TypeStatement> createEffective(
                 StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
+
+            switch (ctx.getStatementArgument()) {
+            case Int8EffectiveStatementImpl.LOCAL_NAME:
+                return new Int8EffectiveStatementImpl(ctx);
+            case Int16EffectiveStatementImpl.LOCAL_NAME:
+                return new Int16EffectiveStatementImpl(ctx);
+            case Int32EffectiveStatementImpl.LOCAL_NAME:
+                return new Int32EffectiveStatementImpl(ctx);
+            case Int64EffectiveStatementImpl.LOCAL_NAME:
+                return new Int64EffectiveStatementImpl(ctx);
+            case UInt8EffectiveStatementImpl.LOCAL_NAME:
+                return new UInt8EffectiveStatementImpl(ctx);
+            case UInt16EffectiveStatementImpl.LOCAL_NAME:
+                return new UInt16EffectiveStatementImpl(ctx);
+            case UInt32EffectiveStatementImpl.LOCAL_NAME:
+                return new UInt32EffectiveStatementImpl(ctx);
+            case UInt64EffectiveStatementImpl.LOCAL_NAME:
+                return new UInt64EffectiveStatementImpl(ctx);
+            case "string":
+                return new StringEffectiveStatementImpl(ctx);
+
+
+            case "boolean":
+                // TODO
+                return null;
+            case "empty":
+                // TODO
+                return null;
+            case "instance-identifier":
+                // TODO
+                return null;
+            // case "leafref":
+            // case "enumeration"
+            // case "decimal64"
+
+            }
             return new TypeEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, TypeStatement, EffectiveStatement<String, TypeStatement>> stmt) throws SourceException {
+        public void onFullDefinitionDeclared(
+                StmtContext.Mutable<String, TypeStatement, EffectiveStatement<String, TypeStatement>> stmt)
+                throws SourceException {
             if (!BaseTypes.isYangBuildInType(stmt.getStatementArgument())) {
                 if (stmt.getParentContext() != null) {
-                    StatementContextBase<?, ?, ?> stmtCtx = (StatementContextBase<?, ?, ?>) stmt.getParentContext().getFromNamespace(TypeNamespace.class, Utils.qNameFromArgument(stmt, stmt.getStatementArgument()));
-                    Preconditions.checkArgument(stmtCtx != null, "Typedef '%s' doesn't exist in given scope", stmt.getStatementArgument());
+                    StatementContextBase<?, ?, ?> stmtCtx = (StatementContextBase<?, ?, ?>) stmt.getParentContext()
+                            .getFromNamespace(TypeNamespace.class,
+                                    Utils.qNameFromArgument(stmt, stmt.getStatementArgument()));
+                    Preconditions.checkArgument(stmtCtx != null, "Typedef '%s' doesn't exist in given scope",
+                            stmt.getStatementArgument());
                 }
             }
         }
     }
 
-    @Nonnull @Override
+    @Nonnull
+    @Override
     public String getName() {
         return argument();
     }
