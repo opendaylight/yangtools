@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "3aa0d159_922188fd",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/stream/LoggingNormalizedNodeStreamWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-05-12T12:56:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3aa0d159_d2de306d",
+      "revId": "dfc870edc12f1327ab56792b6894fe24e529dbd3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3aa0d159_32f8b4e4",
         "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/stream/LoggingNormalizedNodeStreamWriter.java",
         "patchSetId": 1
@@ -30,6 +48,24 @@
       "writtenOn": "2015-05-12T11:41:11Z",
       "side": 1,
       "message": "missing space",
+      "revId": "dfc870edc12f1327ab56792b6894fe24e529dbd3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_b21cc4c2",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/stream/LoggingNormalizedNodeStreamWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-05-12T12:56:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3aa0d159_32f8b4e4",
       "revId": "dfc870edc12f1327ab56792b6894fe24e529dbd3",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "3aa0d159_128578cf",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONEmptyCodec.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-05-12T12:56:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3aa0d159_b2e36432",
+      "revId": "dfc870edc12f1327ab56792b6894fe24e529dbd3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3aa0d159_32cf54b2",
         "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStream.java",
         "patchSetId": 1
@@ -64,6 +118,24 @@
       "writtenOn": "2015-05-12T11:41:11Z",
       "side": 1,
       "message": "static",
+      "revId": "dfc870edc12f1327ab56792b6894fe24e529dbd3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_d26e302f",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStream.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 191,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-05-12T12:56:14Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3aa0d159_32cf54b2",
       "revId": "dfc870edc12f1327ab56792b6894fe24e529dbd3",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
