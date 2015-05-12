@@ -2,6 +2,75 @@
   "comments": [
     {
       "key": {
+        "uuid": "3aa0d159_67520015",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/GroupingUtils.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 179,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-05-12T07:02:05Z",
+      "side": 1,
+      "message": "Could we not inline this to RefineStatementSupport?",
+      "range": {
+        "startLine": 157,
+        "startChar": 0,
+        "endLine": 179,
+        "endChar": 58
+      },
+      "revId": "a59e42fb36d3c6c1a0c7366664b3a99db58f8ed1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_8735ccdb",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/GroupingUtils.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 251,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-05-12T07:02:05Z",
+      "side": 1,
+      "message": "This should be probably some named global context configurable for parser.\n\nE.g. I want to introduce extension which is supported for refine.",
+      "range": {
+        "startLine": 236,
+        "startChar": 4,
+        "endLine": 251,
+        "endChar": 5
+      },
+      "revId": "a59e42fb36d3c6c1a0c7366664b3a99db58f8ed1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3aa0d159_e73db0bc",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/GroupingUtils.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 258,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-05-12T07:02:05Z",
+      "side": 1,
+      "message": "Also probably some configurable global context namespace.",
+      "range": {
+        "startLine": 253,
+        "startChar": 4,
+        "endLine": 258,
+        "endChar": 5
+      },
+      "revId": "a59e42fb36d3c6c1a0c7366664b3a99db58f8ed1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "3aa0d159_47282486",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/EffectiveConstraintDefinitionImpl.java",
         "patchSetId": 11
