@@ -5,14 +5,16 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
+package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
-public class LeafrefSpecificationEffectiveStatementImpl extends EffectiveStatementBase<String, TypeStatement.LeafrefSpecification> {
+public class StringRestrictionsEffectiveStatementImpl extends
+        EffectiveStatementBase<String, TypeStatement.StringRestrictions> {
 
-    public LeafrefSpecificationEffectiveStatementImpl(StmtContext<String, TypeStatement.LeafrefSpecification, ?> ctx) {
+    public StringRestrictionsEffectiveStatementImpl(StmtContext<String, TypeStatement.StringRestrictions, ?> ctx) {
         super(ctx);
     }
 }
