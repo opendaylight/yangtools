@@ -65,14 +65,14 @@ final class InMemoryDataTreeModification implements DataTreeModification {
     @Override
     public void write(final YangInstanceIdentifier path, final NormalizedNode<?, ?> data) {
         checkSealed();
-
+        checkIdentifierReferencesData(path, data);
         resolveModificationFor(path).write(data);
     }
 
     @Override
     public void merge(final YangInstanceIdentifier path, final NormalizedNode<?, ?> data) {
         checkSealed();
-
+        checkIdentifierReferencesData(path, data);
         resolveModificationFor(path).merge(data);
     }
 
@@ -96,7 +96,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
 
         final Optional<TreeNode> result = resolveSnapshot(key, mod);
         if (result.isPresent()) {
-            NormalizedNode<?, ?> data = result.get().getData();
+            final NormalizedNode<?, ?> data = result.get().getData();
             return NormalizedNodes.findNode(key, data, path);
         } else {
             return Optional.absent();
@@ -112,7 +112,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         try {
             return resolveModificationStrategy(path).apply(modification, modification.getOriginal(),
                     version);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOG.error("Could not create snapshot for {}:{}", path, modification, e);
             throw e;
         }
@@ -148,8 +148,8 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         ModifiedNode modification = rootNode;
 
         int i = 1;
-        for(PathArgument pathArg : path.getPathArguments()) {
-            Optional<ModificationApplyOperation> potential = operation.getChild(pathArg);
+        for(final PathArgument pathArg : path.getPathArguments()) {
+            final Optional<ModificationApplyOperation> potential = operation.getChild(pathArg);
             if (!potential.isPresent()) {
                 throw new IllegalArgumentException(String.format("Child %s is not present in schema tree.",
                         Iterables.toString(Iterables.limit(path.getPathArguments(), i))));
@@ -193,11 +193,11 @@ final class InMemoryDataTreeModification implements DataTreeModification {
          * We will use preallocated version, this means returned snapshot will
          * have same version each time this method is called.
          */
-        TreeNode originalSnapshotRoot = snapshot.getRootNode();
-        Optional<TreeNode> tempRoot = strategyTree.apply(rootNode, Optional.of(originalSnapshotRoot), version);
+        final TreeNode originalSnapshotRoot = snapshot.getRootNode();
+        final Optional<TreeNode> tempRoot = strategyTree.apply(rootNode, Optional.of(originalSnapshotRoot), version);
         Preconditions.checkState(tempRoot.isPresent(), "Data tree root is not present, possibly removed by previous modification");
 
-        InMemoryDataTreeSnapshot tempTree = new InMemoryDataTreeSnapshot(snapshot.getSchemaContext(), tempRoot.get(), strategyTree);
+        final InMemoryDataTreeSnapshot tempTree = new InMemoryDataTreeSnapshot(snapshot.getSchemaContext(), tempRoot.get(), strategyTree);
         return tempTree.newModification();
     }
 
@@ -209,7 +209,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         final Collection<ModifiedNode> children = node.getChildren();
         if (!children.isEmpty()) {
             cursor.enter(node.getIdentifier());
-            for (ModifiedNode child : children) {
+            for (final ModifiedNode child : children) {
                 applyNode(cursor, child);
             }
             cursor.exit();
@@ -245,8 +245,15 @@ final class InMemoryDataTreeModification implements DataTreeModification {
 
     @Override
     public void applyToCursor(final DataTreeModificationCursor cursor) {
-        for (ModifiedNode child : rootNode.getChildren()) {
+        for (final ModifiedNode child : rootNode.getChildren()) {
             applyNode(cursor, child);
         }
+    }
+
+    private static void checkIdentifierReferencesData(final YangInstanceIdentifier path,
+            final NormalizedNode<?, ?> data) {
+        final PathArgument lastArg = path.getLastPathArgument();
+        Preconditions.checkArgument(data.getIdentifier().equals(lastArg),
+                "Instance identifier references %s but data identifier is %s", lastArg, data.getIdentifier());
     }
 }
