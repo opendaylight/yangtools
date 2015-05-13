@@ -195,7 +195,7 @@ public class ListConstraintsValidationTest {
                 .withValue("goo").build();
 
         final LeafSetNode<Object> fooLeafSetNode = ImmutableLeafSetNodeBuilder.create()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(MIN_MAX_LIST_QNAME))
+                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME))
                 .withChildValue("foo").build();
 
         modificationTree.write(MIN_MAX_LEAF_LIST_PATH, fooLeafSetNode);
@@ -211,7 +211,7 @@ public class ListConstraintsValidationTest {
         final Optional<NormalizedNode<?, ?>> masterContainer = snapshotAfterCommit.readNode(MASTER_CONTAINER_PATH);
         assertTrue(masterContainer.isPresent());
         final Optional<NormalizedNodeContainer> leafList = ((NormalizedNodeContainer) masterContainer.get()).getChild(
-                new YangInstanceIdentifier.NodeIdentifier(MIN_MAX_LIST_QNAME));
+                new YangInstanceIdentifier.NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME));
         assertTrue(leafList.isPresent());
         assertTrue(leafList.get().getValue().size() == 2);
     }
@@ -237,7 +237,7 @@ public class ListConstraintsValidationTest {
                 .withValue("fuu").build();
 
         final LeafSetNode<Object> fooLeafSetNode = ImmutableLeafSetNodeBuilder.create()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(MIN_MAX_LIST_QNAME))
+                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME))
                 .withChildValue("foo").build();
 
         modificationTree.write(MIN_MAX_LEAF_LIST_PATH, fooLeafSetNode);
