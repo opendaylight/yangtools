@@ -65,14 +65,14 @@ final class InMemoryDataTreeModification implements DataTreeModification {
     @Override
     public void write(final YangInstanceIdentifier path, final NormalizedNode<?, ?> data) {
         checkSealed();
-
+        checkIdentifierReferencesData(path, data);
         resolveModificationFor(path).write(data);
     }
 
     @Override
     public void merge(final YangInstanceIdentifier path, final NormalizedNode<?, ?> data) {
         checkSealed();
-
+        checkIdentifierReferencesData(path, data);
         resolveModificationFor(path).merge(data);
     }
 
