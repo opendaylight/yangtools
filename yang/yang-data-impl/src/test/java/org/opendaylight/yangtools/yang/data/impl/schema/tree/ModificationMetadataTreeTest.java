@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
@@ -146,8 +147,8 @@ public class ModificationMetadataTreeTest {
     @Test
     public void basicReadWrites() {
         DataTreeModification modificationTree = new InMemoryDataTreeModification(new InMemoryDataTreeSnapshot(schemaContext,
-                TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper),
-                rootOper);
+                TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper,
+                TreeType.OPERATIONAL), rootOper);
         Optional<NormalizedNode<?, ?>> originalBarNode = modificationTree.readNode(OUTER_LIST_2_PATH);
         assertTrue(originalBarNode.isPresent());
         assertSame(BAR_NODE, originalBarNode.get());
