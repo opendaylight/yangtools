@@ -17,6 +17,7 @@ import java.util.concurrent.ExecutionException;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -37,19 +38,21 @@ abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeC
                 @Override
                 public ModificationApplyOperation load(final PathArgument key) {
                     if (key instanceof AugmentationIdentifier && schema instanceof AugmentationTarget) {
-                        return SchemaAwareApplyOperation.from(schema, (AugmentationTarget) schema, (AugmentationIdentifier) key);
+                        return SchemaAwareApplyOperation.from(schema, (AugmentationTarget) schema, (AugmentationIdentifier) key, treeType);
                     }
 
                     final DataSchemaNode child = schema.getDataChildByName(key.getNodeType());
                     Preconditions.checkArgument(child != null, "Schema %s does not have a node for child %s", schema, key.getNodeType());
-                    return SchemaAwareApplyOperation.from(child);
+                    return SchemaAwareApplyOperation.from(child, treeType);
                 }
             });
     private final T schema;
+    private final TreeType treeType;
 
-    protected AbstractDataNodeContainerModificationStrategy(final T schema, final Class<? extends NormalizedNode<?, ?>> nodeClass) {
+    protected AbstractDataNodeContainerModificationStrategy(final T schema, final Class<? extends NormalizedNode<?, ?>> nodeClass, final TreeType treeType) {
         super(nodeClass);
-        this.schema = Preconditions.checkNotNull(schema);
+        this.schema = Preconditions.checkNotNull(schema,"schema");
+        this.treeType = Preconditions.checkNotNull(treeType,"treeType");
     }
 
     protected final T getSchema() {

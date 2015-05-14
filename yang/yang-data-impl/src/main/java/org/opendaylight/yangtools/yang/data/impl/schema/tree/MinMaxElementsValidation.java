@@ -153,7 +153,7 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
     }
 
     @Override
-    void verifyStructure(final ModifiedNode modification) throws IllegalArgumentException {
+    protected void verifyStructure(final NormalizedNode<?, ?> modification) {
         delegate.verifyStructure(modification);
     }
 
@@ -171,11 +171,6 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
     protected TreeNode applyWrite(final ModifiedNode modification, final Optional<TreeNode> currentMeta,
             final Version version) {
         return delegate.applyWrite(modification, currentMeta, version);
-    }
-
-    @Override
-    protected void verifyWrittenStructure(final NormalizedNode<?, ?> writtenValue) {
-        delegate.verifyWrittenStructure(writtenValue);
     }
 
     @Override

@@ -8,11 +8,13 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedLeafSetNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -21,7 +23,7 @@ final class OrderedLeafSetModificationStrategy extends AbstractNodeContainerModi
     private final Optional<ModificationApplyOperation> entryStrategy;
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    OrderedLeafSetModificationStrategy(final LeafListSchemaNode schema) {
+    OrderedLeafSetModificationStrategy(final LeafListSchemaNode schema, final TreeType treeType) {
         super((Class) LeafSetNode.class);
         entryStrategy = Optional.<ModificationApplyOperation> of(new LeafSetEntryModificationStrategy(schema));
     }
