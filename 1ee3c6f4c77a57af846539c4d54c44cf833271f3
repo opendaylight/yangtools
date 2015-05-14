@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3aa0d159_7ec59b8c",
+        "filename": "code-generator/binding-generator-impl/src/main/java/org/opendaylight/yangtools/sal/binding/generator/util/BindingRuntimeContext.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 355,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-05-14T07:01:05Z",
+      "side": 1,
+      "message": "Will not work for all enums, what you really want is to convert YANG name to Binding Enum name to have that mapping.",
+      "range": {
+        "startLine": 349,
+        "startChar": 0,
+        "endLine": 355,
+        "endChar": 9
+      },
+      "revId": "1ee3c6f4c77a57af846539c4d54c44cf833271f3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
