@@ -12,16 +12,28 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
+import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
+import org.opendaylight.yangtools.yang.data.api.schema.MixinNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModificationCursor;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
+import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,12 +78,20 @@ final class InMemoryDataTreeModification implements DataTreeModification {
     public void write(final YangInstanceIdentifier path, final NormalizedNode<?, ?> data) {
         checkSealed();
 
+        if (snapshot.getTreeType().equals(TreeType.CONFIGURATION)) {
+            checkConfigStatement(path, data);
+        }
+
         resolveModificationFor(path).write(data);
     }
 
     @Override
     public void merge(final YangInstanceIdentifier path, final NormalizedNode<?, ?> data) {
         checkSealed();
+
+        if (snapshot.getTreeType().equals(TreeType.CONFIGURATION)) {
+            checkConfigStatement(path, data);
+        }
 
         resolveModificationFor(path).merge(data);
     }
@@ -196,7 +216,8 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         TreeNode originalSnapshotRoot = snapshot.getRootNode();
         Optional<TreeNode> tempRoot = strategyTree.apply(rootNode, Optional.of(originalSnapshotRoot), version);
 
-        InMemoryDataTreeSnapshot tempTree = new InMemoryDataTreeSnapshot(snapshot.getSchemaContext(), tempRoot.get(), strategyTree);
+        InMemoryDataTreeSnapshot tempTree = new InMemoryDataTreeSnapshot(snapshot.getSchemaContext(), tempRoot.get(),
+                strategyTree, snapshot.getTreeType());
         return tempTree.newModification();
     }
 
@@ -246,6 +267,67 @@ final class InMemoryDataTreeModification implements DataTreeModification {
     public void applyToCursor(final DataTreeModificationCursor cursor) {
         for (ModifiedNode child : rootNode.getChildren()) {
             applyNode(cursor, child);
+        }
+    }
+
+    private void checkConfigStatement(final YangInstanceIdentifier path, final NormalizedNode<?, ?> data) {
+        final DataSchemaNode dataSchema = checkAndGetSchemaNodeForPath(path);
+        checkConfigStatementsForData(dataSchema, data);
+    }
+
+    private DataSchemaNode checkAndGetSchemaNodeForPath(final YangInstanceIdentifier path) {
+        DataSchemaNode schemaNode = snapshot.getSchemaContext();
+        for (final PathArgument pathArgument : path.getPathArguments()) {
+            if (pathArgument instanceof YangInstanceIdentifier.NodeIdentifier) {
+                if (schemaNode instanceof DataNodeContainer) {
+                    schemaNode = ((DataNodeContainer) schemaNode).getDataChildByName(
+                            pathArgument.getNodeType());
+                } else if (schemaNode instanceof ChoiceSchemaNode) {
+                    final Set<ChoiceCaseNode> cases = ((ChoiceSchemaNode) schemaNode).getCases();
+                    schemaNode = null;
+                    for (final ChoiceCaseNode caseNode : cases) {
+                        schemaNode = caseNode.getDataChildByName(pathArgument.getNodeType());
+                        if (schemaNode != null) {
+                            break;
+                        }
+                    }
+                }
+                Preconditions.checkArgument(schemaNode != null,
+                        "Child %s is not present in schema tree.", pathArgument);
+                if (!schemaNode.isConfiguration()) {
+                    throw new DataValidationException(String.format("Node %s doesn't exist in configuration context.",
+                            schemaNode.getQName()));
+                }
+            }
+        }
+        return schemaNode;
+    }
+
+    private void checkConfigStatementsForData(final DataSchemaNode schemaNode,final NormalizedNode<?, ?> data) {
+        Preconditions.checkArgument(schemaNode != null,
+                "Child %s is not present in schema tree.", data.getIdentifier());
+        Preconditions.checkNotNull(data);
+        if (!schemaNode.isConfiguration()) {
+            throw new DataValidationException(String.format("Node %s doesn't exist in configuration context.",
+                    schemaNode.getQName()));
+        }
+        if (data instanceof NormalizedNodeContainer) {
+            for (final NormalizedNode<?, ?> child : ((NormalizedNodeContainer<?, ?, ?>) data).getValue()) {
+                DataSchemaNode childSchemaNode = schemaNode;
+                if (data instanceof ChoiceNode) {
+                    for (final ChoiceCaseNode caseNode : ((ChoiceSchemaNode) schemaNode).getCases()) {
+                        childSchemaNode = caseNode.getDataChildByName(child.getIdentifier().getNodeType());
+                        if (childSchemaNode != null) {
+                            break;
+                        }
+                    }
+                } else if (data instanceof AugmentationNode || (!(data instanceof MixinNode) &&
+                        !(child instanceof AugmentationNode))) {
+                    childSchemaNode = ((DataNodeContainer) schemaNode).getDataChildByName(
+                            child.getIdentifier().getNodeType());
+                }
+                checkConfigStatementsForData(childSchemaNode, child);
+            }
         }
     }
 }

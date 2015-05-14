@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
@@ -98,7 +99,7 @@ public class StoreTreeNodesTest {
     @Test
     public void findNodeTestNodeFound() {
         InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
-                TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper);
+                TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper, TreeType.OPERATIONAL);
         TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         Optional<TreeNode> node = StoreTreeNodes.findNode(rootNode, OUTER_LIST_1_PATH);
         assertPresentAndType(node, TreeNode.class);
@@ -107,7 +108,7 @@ public class StoreTreeNodesTest {
     @Test
     public void findNodeTestNodeNotFound() {
         InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
-                TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper);
+                TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper, TreeType.OPERATIONAL);
         TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         final YangInstanceIdentifier outerList1InvalidPath = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
                 .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 3) //
@@ -119,7 +120,7 @@ public class StoreTreeNodesTest {
     @Test
     public void findNodeCheckedTestNodeFound() {
         InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
-                TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper);
+                TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper, TreeType.OPERATIONAL);
         TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         TreeNode foundNode = null;
         try {
@@ -133,7 +134,7 @@ public class StoreTreeNodesTest {
     @Test
     public void findNodeCheckedTestNodeNotFound() {
         InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
-                TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper);
+                TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper, TreeType.OPERATIONAL);
         TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         final YangInstanceIdentifier outerList1InvalidPath = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
                 .nodeWithKey(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 3) //
@@ -149,7 +150,7 @@ public class StoreTreeNodesTest {
     @Test
     public void findClosestOrFirstMatchTestNodeExists() {
         InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
-                TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper);
+                TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper, TreeType.OPERATIONAL);
         TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         Optional<TreeNode> expectedNode = StoreTreeNodes.findNode(rootNode, TWO_TWO_PATH);
         assertPresentAndType(expectedNode, TreeNode.class);
@@ -160,7 +161,7 @@ public class StoreTreeNodesTest {
     @Test
     public void findClosestOrFirstMatchTestNodeDoesNotExist() {
         InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
-                TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper);
+                TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper, TreeType.OPERATIONAL);
         TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         final YangInstanceIdentifier outerListInnerListPath = YangInstanceIdentifier.builder(OUTER_LIST_2_PATH)
                 .node(TestModel.INNER_LIST_QNAME)
@@ -178,7 +179,7 @@ public class StoreTreeNodesTest {
     @Test
     public void getChildTestChildFound() {
         InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
-                TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper);
+                TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper, TreeType.OPERATIONAL);
         TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         Optional<TreeNode> node = StoreTreeNodes.getChild(Optional.fromNullable(rootNode),
                 TestModel.TEST_PATH.getLastPathArgument());
@@ -188,7 +189,7 @@ public class StoreTreeNodesTest {
     @Test
     public void getChildTestChildNotFound() {
         InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
-                TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper);
+                TreeNodeFactory.createTreeNodeRecursively(createDocumentOne(), Version.initial()), rootOper, TreeType.OPERATIONAL);
         TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         Optional<TreeNode> node = StoreTreeNodes.getChild(Optional.fromNullable(rootNode),
                 TestModel.OUTER_LIST_PATH.getLastPathArgument());
