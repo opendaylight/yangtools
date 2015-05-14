@@ -322,6 +322,12 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         return ret;
     }
 
+    static ModifiedNode createWriteModificationFromData(final PathArgument identifier, final NormalizedNode<?, ?> value) {
+        ModifiedNode ret = new ModifiedNode(identifier, Optional.<TreeNode>absent(), ChildTrackingPolicy.UNORDERED);
+        ret.write(value);
+        return ret;
+    }
+
     public static ModifiedNode createUnmodified(final TreeNode metadataTree, final ChildTrackingPolicy childPolicy) {
         return new ModifiedNode(metadataTree.getIdentifier(), Optional.of(metadataTree), childPolicy);
     }

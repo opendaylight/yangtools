@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
@@ -22,6 +23,7 @@ import org.slf4j.LoggerFactory;
  * Read-only snapshot of the data tree.
  */
 final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducingDataTree {
+    private static final TreeType DEFAULT_TREE_TYPE = TreeType.OPERATIONAL;
     private static final AtomicReferenceFieldUpdater<InMemoryDataTree, DataTreeState> STATE_UPDATER =
             AtomicReferenceFieldUpdater.newUpdater(InMemoryDataTree.class, DataTreeState.class, "state");
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTree.class);
@@ -31,8 +33,8 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
      */
     private volatile DataTreeState state;
 
-    public InMemoryDataTree(final TreeNode rootNode, final SchemaContext schemaContext) {
-        state = DataTreeState.createInitial(rootNode);
+    public InMemoryDataTree(final TreeNode rootNode, TreeType treeType, final SchemaContext schemaContext) {
+        state = DataTreeState.createInitial(rootNode, treeType);
         if (schemaContext != null) {
             setSchemaContext(schemaContext);
         }
@@ -67,7 +69,6 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
         if (candidate instanceof NoopDataTreeCandidate) {
             return;
         }
-
         Preconditions.checkArgument(candidate instanceof InMemoryDataTreeCandidate, "Invalid candidate class %s", candidate.getClass());
         final InMemoryDataTreeCandidate c = (InMemoryDataTreeCandidate)candidate;
 

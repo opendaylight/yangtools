@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeSnapshot;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -20,12 +21,14 @@ final class InMemoryDataTreeSnapshot implements DataTreeSnapshot {
     private final RootModificationApplyOperation applyOper;
     private final SchemaContext schemaContext;
     private final TreeNode rootNode;
+    private final TreeType treeType;
 
     InMemoryDataTreeSnapshot(final SchemaContext schemaContext, final TreeNode rootNode,
-            final RootModificationApplyOperation applyOper) {
+            final RootModificationApplyOperation applyOper, TreeType type) {
         this.schemaContext = Preconditions.checkNotNull(schemaContext);
         this.rootNode = Preconditions.checkNotNull(rootNode);
         this.applyOper = Preconditions.checkNotNull(applyOper);
+        this.treeType = Preconditions.checkNotNull(type);
     }
 
     TreeNode getRootNode() {
@@ -34,6 +37,10 @@ final class InMemoryDataTreeSnapshot implements DataTreeSnapshot {
 
     SchemaContext getSchemaContext() {
         return schemaContext;
+    }
+
+    TreeType getTreeType() {
+        return treeType;
     }
 
     @Override
