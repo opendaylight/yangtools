@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
@@ -28,7 +29,12 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
 
     @Override
     public TipProducingDataTree create() {
-        return new InMemoryDataTree(TreeNodeFactory.createTreeNode(root, Version.initial()), null);
+        return create(TreeType.OPERATIONAL);
+    }
+
+    @Override
+    public TipProducingDataTree create(TreeType treeType) {
+        return new InMemoryDataTree(TreeNodeFactory.createTreeNode(root, Version.initial()), treeType, null);
     }
 
     /**
