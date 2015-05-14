@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
@@ -75,7 +76,7 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
      * @param modification to be verified.
      * @throws IllegalArgumentException If provided NodeModification does not adhere to the structure.
      */
-    abstract void verifyStructure(ModifiedNode modification) throws IllegalArgumentException;
+    abstract void verifyStructure(NormalizedNode<?, ?> modification) throws IllegalArgumentException;
 
     /**
      * Return the tracking policy for this node's children.

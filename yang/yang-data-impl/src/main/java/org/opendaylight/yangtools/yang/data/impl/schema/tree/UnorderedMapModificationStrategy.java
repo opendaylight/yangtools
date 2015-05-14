@@ -8,10 +8,12 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -19,9 +21,9 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 final class UnorderedMapModificationStrategy extends AbstractNodeContainerModificationStrategy {
     private final Optional<ModificationApplyOperation> entryStrategy;
 
-    UnorderedMapModificationStrategy(final ListSchemaNode schema) {
+    UnorderedMapModificationStrategy(final ListSchemaNode schema, final TreeType treeType) {
         super(MapNode.class);
-        entryStrategy = Optional.<ModificationApplyOperation> of(new ListEntryModificationStrategy(schema));
+        entryStrategy = Optional.<ModificationApplyOperation>of(new ListEntryModificationStrategy(schema, treeType));
     }
 
     @SuppressWarnings("rawtypes")

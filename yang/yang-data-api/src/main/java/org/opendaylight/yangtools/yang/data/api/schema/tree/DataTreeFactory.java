@@ -12,9 +12,23 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree;
  */
 public interface DataTreeFactory {
     /**
-     * Create a new data tree.
+     * Create a new data tree, which may store all data structures
+     * modeled by particular YANG schema.
+     *
+     * The returned data tree behaves same as data tree
+     * created by invoking {@link #create(TreeType)} with {@link TreeType#OPERATIONAL}.
+     *
      *
      * @return A data tree instance.
      */
     DataTree create();
+
+    /**
+     * Create a new data tree with specified Data Tree type
+     * which affects behavior of data tree.
+     *
+     *
+     * @return A data tree instance.
+     */
+    DataTree create(TreeType type);
 }
