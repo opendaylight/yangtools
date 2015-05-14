@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
 import com.google.common.base.Optional;
 import java.io.InputStream;
 import java.util.Collections;
@@ -24,6 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -41,7 +43,7 @@ public class Bug2690FixTest {
     public void prepare() {
         schemaContext = createTestContext();
         assertNotNull("Schema context must not be null.", schemaContext);
-        rootOper = RootModificationApplyOperation.from(SchemaAwareApplyOperation.from(schemaContext));
+        rootOper = RootModificationApplyOperation.from(SchemaAwareApplyOperation.from(schemaContext, TreeType.OPERATIONAL));
         inMemoryDataTree =  (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create();
         inMemoryDataTree.setSchemaContext(schemaContext);
     }
