@@ -28,12 +28,13 @@ final class OperationWithModification {
 
     void write(final NormalizedNode<?, ?> value) {
         modification.write(value);
-        applyOperation.verifyStructure(modification);
+        applyOperation.verifyStructure(value);
     }
 
     private void recursiveMerge(final NormalizedNode<?,?> data) {
         if (data instanceof NormalizedNodeContainer<?,?,?>) {
             @SuppressWarnings({ "rawtypes", "unchecked" })
+            final
             NormalizedNodeContainer<?,?,NormalizedNode<PathArgument, ?>> dataContainer = (NormalizedNodeContainer) data;
 
             /*
@@ -44,15 +45,16 @@ final class OperationWithModification {
              */
             if (modification.getOperation().equals(LogicalOperation.WRITE)) {
                 @SuppressWarnings({ "rawtypes", "unchecked" })
+                final
                 NormalizedNodeContainer<?,?,NormalizedNode<PathArgument, ?>> odlDataContainer =
                         (NormalizedNodeContainer) modification.getWrittenValue();
-                for (NormalizedNode<PathArgument, ?> child : odlDataContainer.getValue()) {
-                    PathArgument childId = child.getIdentifier();
+                for (final NormalizedNode<PathArgument, ?> child : odlDataContainer.getValue()) {
+                    final PathArgument childId = child.getIdentifier();
                     forChild(childId).write(child);
                 }
             }
-            for (NormalizedNode<PathArgument, ?> child : dataContainer.getValue()) {
-                PathArgument childId = child.getIdentifier();
+            for (final NormalizedNode<PathArgument, ?> child : dataContainer.getValue()) {
+                final PathArgument childId = child.getIdentifier();
                 forChild(childId).recursiveMerge(child);
             }
         }
@@ -69,7 +71,7 @@ final class OperationWithModification {
          * assumption that adding the newly-validated data with the previously-validated
          * data will not result in invalid data.
          */
-        applyOperation.verifyStructure(modification.asNewlyWritten(data));
+        applyOperation.verifyStructure(data);
         recursiveMerge(data);
     }
 
@@ -98,8 +100,8 @@ final class OperationWithModification {
         final Optional<ModificationApplyOperation> maybeChildOp = applyOperation.getChild(childId);
         Preconditions.checkArgument(maybeChildOp.isPresent(), "Attempted to apply operation to non-existent child %s", childId);
 
-        ModificationApplyOperation childOp = maybeChildOp.get();
-        ModifiedNode childMod = modification.modifyChild(childId, childOp.getChildPolicy());
+        final ModificationApplyOperation childOp = maybeChildOp.get();
+        final ModifiedNode childMod = modification.modifyChild(childId, childOp.getChildPolicy());
 
         return from(childOp, childMod);
     }

@@ -14,11 +14,11 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.IncorrectDataStructureException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -30,33 +30,41 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaAwareApplyOperation.class);
 
-    public static SchemaAwareApplyOperation from(final DataSchemaNode schemaNode) {
+    static SchemaAwareApplyOperation from(final SchemaContext schemaNode, final TreeType treeType) {
+        return new ContainerModificationStrategy(schemaNode, treeType);
+    }
+
+    public static SchemaAwareApplyOperation from(final DataSchemaNode schemaNode, final TreeType treeType) {
+        if(treeType == TreeType.CONFIGURATION) {
+            Preconditions.checkArgument(schemaNode.isConfiguration(), "Supplied %s does not belongs to configuration tree.", schemaNode.getPath());
+        }
         if (schemaNode instanceof ContainerSchemaNode) {
-            return new ContainerModificationStrategy((ContainerSchemaNode) schemaNode);
+            return new ContainerModificationStrategy((ContainerSchemaNode) schemaNode, treeType);
         } else if (schemaNode instanceof ListSchemaNode) {
-            return fromListSchemaNode((ListSchemaNode) schemaNode);
+            return fromListSchemaNode((ListSchemaNode) schemaNode, treeType);
         } else if (schemaNode instanceof ChoiceSchemaNode) {
-            return new ChoiceModificationStrategy((ChoiceSchemaNode) schemaNode);
+            return new ChoiceModificationStrategy((ChoiceSchemaNode) schemaNode, treeType);
         } else if (schemaNode instanceof LeafListSchemaNode) {
-            return fromLeafListSchemaNode((LeafListSchemaNode) schemaNode);
+            return fromLeafListSchemaNode((LeafListSchemaNode) schemaNode, treeType);
         } else if (schemaNode instanceof LeafSchemaNode) {
-            return new LeafModificationStrategy((LeafSchemaNode) schemaNode);
+            return new LeafModificationStrategy((LeafSchemaNode) schemaNode, treeType);
         }
         throw new IllegalArgumentException("Not supported schema node type for " + schemaNode.getClass());
     }
 
     public static SchemaAwareApplyOperation from(final DataNodeContainer resolvedTree,
-            final AugmentationTarget augSchemas, final AugmentationIdentifier identifier) {
+            final AugmentationTarget augSchemas, final AugmentationIdentifier identifier, final TreeType treeType) {
         for (final AugmentationSchema potential : augSchemas.getAvailableAugmentations()) {
             for (final DataSchemaNode child : potential.getChildNodes()) {
                 if (identifier.getPossibleChildNames().contains(child.getQName())) {
-                    return new AugmentationModificationStrategy(potential, resolvedTree);
+                    return new AugmentationModificationStrategy(potential, resolvedTree, treeType);
                 }
             }
         }
@@ -71,25 +79,25 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         return condition;
     }
 
-    private static SchemaAwareApplyOperation fromListSchemaNode(final ListSchemaNode schemaNode) {
+    private static SchemaAwareApplyOperation fromListSchemaNode(final ListSchemaNode schemaNode, final TreeType treeType) {
         final List<QName> keyDefinition = schemaNode.getKeyDefinition();
         final SchemaAwareApplyOperation op;
         if (keyDefinition == null || keyDefinition.isEmpty()) {
-            op = new UnkeyedListModificationStrategy(schemaNode);
+            op = new UnkeyedListModificationStrategy(schemaNode, treeType);
         } else if (schemaNode.isUserOrdered()) {
-            op =  new OrderedMapModificationStrategy(schemaNode);
+            op =  new OrderedMapModificationStrategy(schemaNode, treeType);
         } else {
-            op = new UnorderedMapModificationStrategy(schemaNode);
+            op = new UnorderedMapModificationStrategy(schemaNode, treeType);
         }
         return MinMaxElementsValidation.from(op, schemaNode);
     }
 
-    private static SchemaAwareApplyOperation fromLeafListSchemaNode(final LeafListSchemaNode schemaNode) {
+    private static SchemaAwareApplyOperation fromLeafListSchemaNode(final LeafListSchemaNode schemaNode, final TreeType treeType) {
         final SchemaAwareApplyOperation op;
         if(schemaNode.isUserOrdered()) {
-            op =  new OrderedLeafSetModificationStrategy(schemaNode);
+            op =  new OrderedLeafSetModificationStrategy(schemaNode, treeType);
         } else {
-            op = new UnorderedLeafSetModificationStrategy(schemaNode);
+            op = new UnorderedLeafSetModificationStrategy(schemaNode, treeType);
         }
         return MinMaxElementsValidation.from(op, schemaNode);
     }
@@ -105,13 +113,6 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         final Optional<ModificationApplyOperation> potential = getChild(child);
         Preconditions.checkArgument(potential.isPresent(), "Operation for child %s is not defined.", child);
         return potential.get();
-    }
-
-    @Override
-    void verifyStructure(final ModifiedNode modification) throws IllegalArgumentException {
-        if (modification.getOperation() == LogicalOperation.WRITE) {
-            verifyWrittenStructure(modification.getWrittenValue());
-        }
     }
 
     @Override
@@ -258,5 +259,17 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     protected abstract void checkTouchApplicable(YangInstanceIdentifier path, final NodeModification modification,
             final Optional<TreeNode> current) throws DataValidationFailedException;
 
-    protected abstract void verifyWrittenStructure(NormalizedNode<?, ?> writtenValue);
+    /**
+     * Checks if supplied schema node belong to specified Data Tree type.
+     *
+     * @param treeType Tree Type
+     * @param node Schema node
+     * @return
+     */
+    static boolean belongsToTree(final TreeType treeType, final DataSchemaNode node) {
+        if(treeType == TreeType.CONFIGURATION) {
+            return node.isConfiguration();
+        }
+        return true;
+    }
 }
