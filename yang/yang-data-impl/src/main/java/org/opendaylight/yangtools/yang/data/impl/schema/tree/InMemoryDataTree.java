@@ -11,8 +11,9 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
@@ -30,8 +31,10 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
      * Current data store state generation.
      */
     private volatile DataTreeState state;
+    private final TreeType treeType;
 
-    public InMemoryDataTree(final TreeNode rootNode, final SchemaContext schemaContext) {
+    public InMemoryDataTree(final TreeNode rootNode, final TreeType treeType, final SchemaContext schemaContext) {
+        this.treeType = Preconditions.checkNotNull(treeType,treeType);
         state = DataTreeState.createInitial(rootNode);
         if (schemaContext != null) {
             setSchemaContext(schemaContext);
@@ -48,7 +51,7 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
 
         LOG.debug("Following schema contexts will be attempted {}", newSchemaContext);
 
-        final SchemaAwareApplyOperation operation = SchemaAwareApplyOperation.from(newSchemaContext);
+        final SchemaAwareApplyOperation operation = SchemaAwareApplyOperation.from(newSchemaContext,treeType);
 
         DataTreeState currentState, newState;
         do {
@@ -67,7 +70,6 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
         if (candidate instanceof NoopDataTreeCandidate) {
             return;
         }
-
         Preconditions.checkArgument(candidate instanceof InMemoryDataTreeCandidate, "Invalid candidate class %s", candidate.getClass());
         final InMemoryDataTreeCandidate c = (InMemoryDataTreeCandidate)candidate;
 

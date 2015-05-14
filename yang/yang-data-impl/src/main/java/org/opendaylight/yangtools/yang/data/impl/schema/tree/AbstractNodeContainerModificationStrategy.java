@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.Collection;
@@ -29,32 +30,26 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     private final Class<? extends NormalizedNode<?, ?>> nodeClass;
 
     protected AbstractNodeContainerModificationStrategy(final Class<? extends NormalizedNode<?, ?>> nodeClass) {
-        this.nodeClass = Preconditions.checkNotNull(nodeClass);
-    }
-
-    @Override
-    void verifyStructure(final ModifiedNode modification) throws IllegalArgumentException {
-        for (ModifiedNode childModification : modification.getChildren()) {
-            resolveChildOperation(childModification.getIdentifier()).verifyStructure(childModification);
-        }
+        this.nodeClass = Preconditions.checkNotNull(nodeClass , "nodeClass");
     }
 
     @SuppressWarnings("rawtypes")
     @Override
-    protected void verifyWrittenStructure(final NormalizedNode<?, ?> writtenValue) {
+    void verifyStructure(final NormalizedNode<?, ?> writtenValue) {
         checkArgument(nodeClass.isInstance(writtenValue), "Node %s is not of type %s", writtenValue, nodeClass);
         checkArgument(writtenValue instanceof NormalizedNodeContainer);
 
-        NormalizedNodeContainer container = (NormalizedNodeContainer) writtenValue;
-        for (Object child : container.getValue()) {
+        final NormalizedNodeContainer container = (NormalizedNodeContainer) writtenValue;
+        for (final Object child : container.getValue()) {
             checkArgument(child instanceof NormalizedNode);
-
-            /*
-             * FIXME: fail-fast semantics:
-             *
-             * We can validate the data structure here, aborting the commit
-             * before it ever progresses to being committed.
-             */
+            final NormalizedNode<?, ?> castedChild = (NormalizedNode<?, ?>) child;
+            final Optional<ModificationApplyOperation> childOp = getChild(castedChild.getIdentifier());
+            if(childOp.isPresent()) {
+                childOp.get().verifyStructure(castedChild);
+            } else {
+                throw new SchemaValidationFailedException(String.format("Child %s is not valid child according to schema.",
+                        castedChild.getIdentifier()));
+            }
         }
     }
 
@@ -107,11 +102,11 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     private TreeNode mutateChildren(final MutableTreeNode meta, final NormalizedNodeContainerBuilder data,
             final Version nodeVersion, final Iterable<ModifiedNode> modifications) {
 
-        for (ModifiedNode mod : modifications) {
+        for (final ModifiedNode mod : modifications) {
             final YangInstanceIdentifier.PathArgument id = mod.getIdentifier();
             final Optional<TreeNode> cm = meta.getChild(id);
 
-            Optional<TreeNode> result = resolveChildOperation(id).apply(mod, cm, nodeVersion);
+            final Optional<TreeNode> result = resolveChildOperation(id).apply(mod, cm, nodeVersion);
             if (result.isPresent()) {
                 final TreeNode tn = result.get();
                 meta.addChild(tn);
@@ -164,7 +159,7 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
          * In order to do that, though, we have to check all child operations are UNMODIFIED.
          * Let's do precisely that, stopping as soon we find a different result.
          */
-        for (ModifiedNode child : children) {
+        for (final ModifiedNode child : children) {
             if (child.getModificationType() != ModificationType.UNMODIFIED) {
                 modification.resolveModificationType(ModificationType.SUBTREE_MODIFIED);
                 return ret;
@@ -197,11 +192,11 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
      * @param current Current data tree node.
      */
     private void checkChildPreconditions(final YangInstanceIdentifier path, final NodeModification modification, final TreeNode current) throws DataValidationFailedException {
-        for (NodeModification childMod : modification.getChildren()) {
+        for (final NodeModification childMod : modification.getChildren()) {
             final YangInstanceIdentifier.PathArgument childId = childMod.getIdentifier();
             final Optional<TreeNode> childMeta = current.getChild(childId);
 
-            YangInstanceIdentifier childPath = path.node(childId);
+            final YangInstanceIdentifier childPath = path.node(childId);
             resolveChildOperation(childId).checkApplicable(childPath, childMod, childMeta);
         }
     }

@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.IncorrectDataStructureException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
@@ -27,8 +28,8 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
 
     private final Optional<ModificationApplyOperation> entryStrategy;
 
-    UnkeyedListModificationStrategy(final ListSchemaNode schema) {
-        entryStrategy = Optional.<ModificationApplyOperation> of(new UnkeyedListItemModificationStrategy(schema));
+    UnkeyedListModificationStrategy(final ListSchemaNode schema, final TreeType treeType) {
+        entryStrategy = Optional.<ModificationApplyOperation> of(new UnkeyedListItemModificationStrategy(schema, treeType));
     }
 
     @Override
@@ -94,11 +95,11 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
     private TreeNode mutateChildren(final MutableTreeNode meta, final NormalizedNodeContainerBuilder data,
         final Version nodeVersion, final Iterable<ModifiedNode> modifications) {
 
-        for (ModifiedNode mod : modifications) {
+        for (final ModifiedNode mod : modifications) {
             final PathArgument id = mod.getIdentifier();
             final Optional<TreeNode> cm = meta.getChild(id);
 
-            Optional<TreeNode> result = resolveChildOperation(id).apply(mod, cm, nodeVersion);
+            final Optional<TreeNode> result = resolveChildOperation(id).apply(mod, cm, nodeVersion);
             if (result.isPresent()) {
                 final TreeNode tn = result.get();
                 meta.addChild(tn);
@@ -122,7 +123,7 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
     }
 
     @Override
-    protected void verifyWrittenStructure(final NormalizedNode<?, ?> writtenValue) {
+    protected void verifyStructure(final NormalizedNode<?, ?> writtenValue) {
 
     }
 

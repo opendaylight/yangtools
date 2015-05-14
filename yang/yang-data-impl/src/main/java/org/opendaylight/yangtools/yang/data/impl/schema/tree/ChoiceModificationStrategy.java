@@ -8,12 +8,14 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -23,14 +25,18 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 final class ChoiceModificationStrategy extends AbstractNodeContainerModificationStrategy {
     private final Map<YangInstanceIdentifier.PathArgument, ModificationApplyOperation> childNodes;
 
-    ChoiceModificationStrategy(final ChoiceSchemaNode schemaNode) {
+    ChoiceModificationStrategy(final ChoiceSchemaNode schemaNode, final TreeType treeType) {
         super(ChoiceNode.class);
-        ImmutableMap.Builder<YangInstanceIdentifier.PathArgument, ModificationApplyOperation> child = ImmutableMap.builder();
+        final ImmutableMap.Builder<YangInstanceIdentifier.PathArgument, ModificationApplyOperation> child = ImmutableMap.builder();
 
-        for (ChoiceCaseNode caze : schemaNode.getCases()) {
-            for (DataSchemaNode cazeChild : caze.getChildNodes()) {
-                SchemaAwareApplyOperation childNode = SchemaAwareApplyOperation.from(cazeChild);
-                child.put(new YangInstanceIdentifier.NodeIdentifier(cazeChild.getQName()), childNode);
+        for (final ChoiceCaseNode caze : schemaNode.getCases()) {
+            if(SchemaAwareApplyOperation.belongsToTree(treeType,caze)) {
+                for (final DataSchemaNode cazeChild : caze.getChildNodes()) {
+                    if(SchemaAwareApplyOperation.belongsToTree(treeType,cazeChild)) {
+                        final SchemaAwareApplyOperation childNode = SchemaAwareApplyOperation.from(cazeChild,treeType);
+                        child.put(new YangInstanceIdentifier.NodeIdentifier(cazeChild.getQName()), childNode);
+                    }
+                }
             }
         }
         childNodes = child.build();
