@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a9dcd25_fb47ef1b",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/GroupingUtils.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2015-05-14T16:35:17Z",
+      "side": 1,
+      "message": "More equal \"uses\" statements can occur in the statement tree. \nTherefore we can determine the \"uses\", which is exactly the \"refine\" parent, only by references comparison \"\u003d\u003d\".\nThere is a way how to do this also with InferenceAction created in RefineStatementImpl.Definition, but equal methods can not \nbe overridden or they must return true only by references equality (i.e. \"\u003d\u003d\"). \n\nBy this solution we can be sure that \"refine\" is performed immediate after the appropriate \"uses\".\nHowever, we can move simply the refine related methods from GroupingUtils class to RefineStatementImpl.Definition class ...",
+      "range": {
+        "startLine": 160,
+        "startChar": 3,
+        "endLine": 160,
+        "endChar": 78
+      },
+      "revId": "4a48a84d15b5e73522daf85024444a74a65a9a4c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_7b63dfb1",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/EffectiveStatementBase.java",
+        "patchSetId": 13
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2015-05-14T16:35:17Z",
+      "side": 1,
+      "message": "We reverted the order, because the effective substatements should be searched first.",
+      "revId": "4a48a84d15b5e73522daf85024444a74a65a9a4c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
