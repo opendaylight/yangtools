@@ -11,7 +11,10 @@ package org.opendaylight.yangtools.yang.data.impl.test.codecs;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
+
+import static org.opendaylight.yangtools.yang.data.impl.test.codecs.TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx;
 import static org.opendaylight.yangtools.yang.data.impl.test.codecs.TypeDefinitionAwareCodecTestHelper.getCodec;
+
 import org.opendaylight.yangtools.yang.data.api.codec.BooleanCodec;
 import org.opendaylight.yangtools.yang.model.util.BooleanType;
 
@@ -41,8 +44,8 @@ public class BooleanCodecStringTest {
         assertEquals( "deserialize", Boolean.TRUE, codec.deserialize( "TRUE" ) );
         assertEquals( "deserialize", Boolean.FALSE, codec.deserialize( "FALSE" ) );
         assertEquals( "deserialize", Boolean.FALSE, codec.deserialize( "false" ) );
-        assertEquals( "deserialize", Boolean.FALSE, codec.deserialize( "foo" ) );
-        assertEquals( "deserialize", Boolean.FALSE, codec.deserialize( "" ) );
-        assertEquals( "deserialize", Boolean.FALSE, codec.deserialize( null ) );
+        assertEquals( "deserialize", null, codec.deserialize( null ) );
+        deserializeWithExpectedIllegalArgEx(codec, "foo");
+        deserializeWithExpectedIllegalArgEx(codec, "");
     }
 }
