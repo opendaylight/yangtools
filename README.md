@@ -6,7 +6,8 @@ serialization and deserialization as defined in IETF drafts and standards.
 
 ## Current Features
 
-* parsing of [YANG sources][RFC6020] and semantic inference of relationship across YANG models as defined in [RFC6020]
+* parsing of [YANG sources][RFC6020] and semantic inference of relationship 
+  across YANG models as defined in [RFC6020]
 * representation of YANG-modeled data in Java
   * **DOM-like APIs** - DOM-like tree model, which uses conceptual meta-model
   * **Java Bindings** - Concrete data model generated from YANG models
