@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
+
 import com.google.common.base.Optional;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificat
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -55,7 +57,7 @@ public class ConcurrentTreeModificationTest {
     public void prepare() {
         schemaContext = TestModel.createTestContext();
         assertNotNull("Schema context must not be null.", schemaContext);
-        rootOper = RootModificationApplyOperation.from(SchemaAwareApplyOperation.from(schemaContext));
+        rootOper = RootModificationApplyOperation.from(SchemaAwareApplyOperation.from(schemaContext,TreeType.OPERATIONAL));
         inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create();
         inMemoryDataTree.setSchemaContext(schemaContext);
     }
@@ -87,224 +89,224 @@ public class ConcurrentTreeModificationTest {
 
     @Test
     public void writeWrite1stLevelEmptyTreeTest() throws DataValidationFailedException {
-        InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
-        DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
 
         modificationTree1.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         modificationTree2.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
 
         inMemoryDataTree.validate(modificationTree1);
-        DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
+        final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
         inMemoryDataTree.commit(prepare1);
 
         try {
             inMemoryDataTree.validate(modificationTree2);
             fail("Exception should have been thrown.");
-        } catch (ConflictingModificationAppliedException ex) {
+        } catch (final ConflictingModificationAppliedException ex) {
             LOG.debug("ConflictingModificationAppliedException - '{}' was thrown as expected.");
         }
-        DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
+        final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
         inMemoryDataTree.commit(prepare2);
 
-        Optional<NormalizedNode<?, ?>> testNodeAfterCommits = modificationTree1.readNode(TestModel.TEST_PATH);
+        final Optional<NormalizedNode<?, ?>> testNodeAfterCommits = modificationTree1.readNode(TestModel.TEST_PATH);
         assertPresentAndType(testNodeAfterCommits, ContainerNode.class);
     }
 
     @Test
     public void writeMerge1stLevelEmptyTreeTest() throws DataValidationFailedException {
-        InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
-        DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
 
         modificationTree1.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         modificationTree2.merge(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
 
         inMemoryDataTree.validate(modificationTree1);
-        DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
+        final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
         inMemoryDataTree.commit(prepare1);
 
         inMemoryDataTree.validate(modificationTree2);
-        DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
+        final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
         inMemoryDataTree.commit(prepare2);
 
-        Optional<NormalizedNode<?, ?>> testNodeAfterCommits = modificationTree1.readNode(TestModel.TEST_PATH);
+        final Optional<NormalizedNode<?, ?>> testNodeAfterCommits = modificationTree1.readNode(TestModel.TEST_PATH);
         assertPresentAndType(testNodeAfterCommits, ContainerNode.class);
     }
 
     @Test
     public void writeWriteFooBar1stLevelEmptyTreeTest() throws DataValidationFailedException {
-        InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
-        DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
 
         modificationTree1.write(TestModel.TEST_PATH, createFooTestContainerNode());
         modificationTree2.write(TestModel.TEST_PATH, createBarTestContainerNode());
 
         inMemoryDataTree.validate(modificationTree1);
-        DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
+        final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
         inMemoryDataTree.commit(prepare1);
 
         try {
             inMemoryDataTree.validate(modificationTree2);
             fail("Exception should have been thrown.");
-            DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
+            final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
             inMemoryDataTree.commit(prepare2);
-        } catch (ConflictingModificationAppliedException ex) {
+        } catch (final ConflictingModificationAppliedException ex) {
             LOG.debug("ConflictingModificationAppliedException - '{}' was thrown as expected.");
         }
 
-        InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertFalse(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH).isPresent());
     }
 
     @Test
     public void writeMergeFooBar1stLevelEmptyTreeTest() throws DataValidationFailedException {
-        InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
-        DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
 
         modificationTree1.write(TestModel.TEST_PATH, createFooTestContainerNode());
         modificationTree2.merge(TestModel.TEST_PATH, createBarTestContainerNode());
 
         inMemoryDataTree.validate(modificationTree1);
-        DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
+        final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
         inMemoryDataTree.commit(prepare1);
 
         inMemoryDataTree.validate(modificationTree2);
-        DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
+        final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
         inMemoryDataTree.commit(prepare2);
 
-        InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH), MapEntryNode.class);
     }
 
     @Test
     public void mergeWriteFooBar1stLevelEmptyTreeTest() throws DataValidationFailedException {
-        InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
-        DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
 
         modificationTree1.merge(TestModel.TEST_PATH, createFooTestContainerNode());
         modificationTree2.write(TestModel.TEST_PATH, createBarTestContainerNode());
 
         inMemoryDataTree.validate(modificationTree1);
-        DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
+        final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
         inMemoryDataTree.commit(prepare1);
 
         try {
             inMemoryDataTree.validate(modificationTree2);
             fail("Exception should have been thrown.");
-            DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
+            final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
             inMemoryDataTree.commit(prepare2);
-        } catch (ConflictingModificationAppliedException ex) {
+        } catch (final ConflictingModificationAppliedException ex) {
             LOG.debug("ConflictingModificationAppliedException - '{}' was thrown as expected.");
         }
 
-        InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertFalse(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH).isPresent());
     }
 
     @Test
     public void mergeMergeFooBar1stLevelEmptyTreeTest() throws DataValidationFailedException {
-        InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
-        DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
 
         modificationTree1.merge(TestModel.TEST_PATH, createFooTestContainerNode());
         modificationTree2.merge(TestModel.TEST_PATH, createBarTestContainerNode());
 
         inMemoryDataTree.validate(modificationTree1);
-        DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
+        final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
         inMemoryDataTree.commit(prepare1);
 
         inMemoryDataTree.validate(modificationTree2);
-        DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
+        final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
         inMemoryDataTree.commit(prepare2);
 
-        InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH), MapEntryNode.class);
     }
 
     @Test
     public void writeWriteFooBar1stLevelEmptyContainerTest() throws DataValidationFailedException {
-        DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
-        DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
 
         modificationTree1.write(TestModel.TEST_PATH, createFooTestContainerNode());
         modificationTree2.write(TestModel.TEST_PATH, createBarTestContainerNode());
 
         inMemoryDataTree.validate(modificationTree1);
-        DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
+        final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
         inMemoryDataTree.commit(prepare1);
 
         try {
             inMemoryDataTree.validate(modificationTree2);
             fail("Exception should have been thrown.");
-            DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
+            final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
             inMemoryDataTree.commit(prepare2);
-        } catch (ConflictingModificationAppliedException ex) {
+        } catch (final ConflictingModificationAppliedException ex) {
             LOG.debug("ConflictingModificationAppliedException - '{}' was thrown as expected.");
         }
 
-        InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertFalse(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH).isPresent());
     }
 
     @Test
     public void writeMergeFooBar1stLevelEmptyContainerTest() throws DataValidationFailedException {
-        DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
-        DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
 
         modificationTree1.write(TestModel.TEST_PATH, createFooTestContainerNode());
         modificationTree2.merge(TestModel.TEST_PATH, createBarTestContainerNode());
 
         inMemoryDataTree.validate(modificationTree1);
-        DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
+        final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
         inMemoryDataTree.commit(prepare1);
 
         inMemoryDataTree.validate(modificationTree2);
-        DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
+        final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
         inMemoryDataTree.commit(prepare2);
 
-        InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH), MapEntryNode.class);
     }
@@ -312,305 +314,305 @@ public class ConcurrentTreeModificationTest {
 
     @Test
     public void mergeWriteFooBar1stLevelEmptyContainerTest() throws DataValidationFailedException {
-        DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
-        DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
 
         modificationTree1.merge(TestModel.TEST_PATH, createFooTestContainerNode());
         modificationTree2.write(TestModel.TEST_PATH, createBarTestContainerNode());
 
         inMemoryDataTree.validate(modificationTree1);
-        DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
+        final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
         inMemoryDataTree.commit(prepare1);
 
         try {
             inMemoryDataTree.validate(modificationTree2);
             fail("Exception should have been thrown.");
-            DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
+            final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
             inMemoryDataTree.commit(prepare2);
-        } catch (ConflictingModificationAppliedException ex) {
+        } catch (final ConflictingModificationAppliedException ex) {
             LOG.debug("ConflictingModificationAppliedException - '{}' was thrown as expected.");
         }
 
 
-        InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertFalse(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH).isPresent());
     }
 
     @Test
     public void mergeMergeFooBar1stLevelEmptyContainerTest() throws DataValidationFailedException {
-        DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
-        DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
 
         modificationTree1.merge(TestModel.TEST_PATH, createFooTestContainerNode());
         modificationTree2.merge(TestModel.TEST_PATH, createBarTestContainerNode());
 
         inMemoryDataTree.validate(modificationTree1);
-        DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
+        final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
         inMemoryDataTree.commit(prepare1);
 
         inMemoryDataTree.validate(modificationTree2);
-        DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
+        final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
         inMemoryDataTree.commit(prepare2);
 
-        InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH), MapEntryNode.class);
     }
 
     @Test
     public void deleteWriteFooBar1stLevelEmptyContainerTest() throws DataValidationFailedException {
-        DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
-        DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
 
         modificationTree1.delete(TestModel.TEST_PATH);
         modificationTree2.write(TestModel.TEST_PATH, createBarTestContainerNode());
 
         inMemoryDataTree.validate(modificationTree1);
-        DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
+        final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
         inMemoryDataTree.commit(prepare1);
 
         try {
             inMemoryDataTree.validate(modificationTree2);
             fail("Exception should have been thrown.");
-            DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
+            final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
             inMemoryDataTree.commit(prepare2);
-        } catch (ConflictingModificationAppliedException ex) {
+        } catch (final ConflictingModificationAppliedException ex) {
             LOG.debug("ConflictingModificationAppliedException - '{}' was thrown as expected.");
         }
 
 
-        InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertFalse(snapshotAfterCommits.readNode(TestModel.TEST_PATH).isPresent());
     }
 
     @Test
     public void deleteMergeFooBar1stLevelEmptyContainerTest() throws DataValidationFailedException {
-        DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
-        DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
 
         modificationTree1.delete(TestModel.TEST_PATH);
         modificationTree2.merge(TestModel.TEST_PATH, createBarTestContainerNode());
 
         inMemoryDataTree.validate(modificationTree1);
-        DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
+        final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
         inMemoryDataTree.commit(prepare1);
 
         inMemoryDataTree.validate(modificationTree2);
-        DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
+        final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
         inMemoryDataTree.commit(prepare2);
 
-        InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH), MapEntryNode.class);
     }
 
     @Test
     public void writeWriteFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
-        DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
-        DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
 
         modificationTree1.write(OUTER_LIST_1_PATH, FOO_NODE);
         modificationTree2.write(OUTER_LIST_2_PATH, BAR_NODE);
 
         inMemoryDataTree.validate(modificationTree1);
-        DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
+        final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
         inMemoryDataTree.commit(prepare1);
 
         inMemoryDataTree.validate(modificationTree2);
-        DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
+        final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
         inMemoryDataTree.commit(prepare2);
 
-        InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH), MapEntryNode.class);
     }
 
     @Test
     public void writeMergeFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
-        DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
-        DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
 
         modificationTree1.write(OUTER_LIST_1_PATH, FOO_NODE);
         modificationTree2.merge(OUTER_LIST_2_PATH, BAR_NODE);
 
         inMemoryDataTree.validate(modificationTree1);
-        DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
+        final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
         inMemoryDataTree.commit(prepare1);
 
         inMemoryDataTree.validate(modificationTree2);
-        DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
+        final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
         inMemoryDataTree.commit(prepare2);
 
-        InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH), MapEntryNode.class);
     }
 
     @Test
     public void mergeWriteFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
-        DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
-        DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
 
         modificationTree1.merge(OUTER_LIST_1_PATH, FOO_NODE);
         modificationTree2.write(OUTER_LIST_2_PATH, BAR_NODE);
 
         inMemoryDataTree.validate(modificationTree1);
-        DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
+        final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
         inMemoryDataTree.commit(prepare1);
 
         inMemoryDataTree.validate(modificationTree2);
-        DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
+        final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
         inMemoryDataTree.commit(prepare2);
 
-        InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH), MapEntryNode.class);
     }
 
     @Test
     public void mergeMergeFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
-        DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
-        DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
 
         modificationTree1.merge(OUTER_LIST_1_PATH, FOO_NODE);
         modificationTree2.merge(OUTER_LIST_2_PATH, BAR_NODE);
 
         inMemoryDataTree.validate(modificationTree1);
-        DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
+        final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
         inMemoryDataTree.commit(prepare1);
 
         inMemoryDataTree.validate(modificationTree2);
-        DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
+        final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
         inMemoryDataTree.commit(prepare2);
 
-        InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH), MapEntryNode.class);
     }
 
     @Test
     public void deleteWriteFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
-        DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
-        DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
 
         modificationTree1.delete(TestModel.TEST_PATH);
         modificationTree2.merge(OUTER_LIST_2_PATH, BAR_NODE);
 
         inMemoryDataTree.validate(modificationTree1);
-        DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
+        final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
         inMemoryDataTree.commit(prepare1);
 
         try {
             inMemoryDataTree.validate(modificationTree2);
-            DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
+            final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
             inMemoryDataTree.commit(prepare2);
             fail("Exception should have been thrown");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOG.debug("Exception was thrown because path no longer exist in tree");
         }
 
-        InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertFalse(snapshotAfterCommits.readNode(TestModel.TEST_PATH).isPresent());
     }
 
     @Test
     public void deleteMergeFooBar2ndLevelEmptyContainerTest() throws DataValidationFailedException {
-        DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         initialDataTreeModification.write(TestModel.OUTER_LIST_PATH, mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
-        DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
+        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
                 rootOper);
 
         modificationTree1.delete(TestModel.TEST_PATH);
         modificationTree2.merge(OUTER_LIST_2_PATH, BAR_NODE);
 
         inMemoryDataTree.validate(modificationTree1);
-        DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
+        final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
         inMemoryDataTree.commit(prepare1);
 
         try {
             inMemoryDataTree.validate(modificationTree2);
-            DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
+            final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
             inMemoryDataTree.commit(prepare2);
             fail("Exception should have been thrown");
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOG.debug("Exception was thrown because path no longer exist in tree");
         }
 
-        InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertFalse(snapshotAfterCommits.readNode(TestModel.TEST_PATH).isPresent());
     }
 }

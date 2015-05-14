@@ -30,7 +30,7 @@ abstract class AbstractValueNodeModificationStrategy<T extends DataSchemaNode> e
     }
 
     @Override
-    protected final void verifyWrittenStructure(final NormalizedNode<?, ?> writtenValue) {
+    protected final void verifyStructure(final NormalizedNode<?, ?> writtenValue) {
         checkArgument(nodeClass.isInstance(writtenValue), "Node should must be of type %s", nodeClass);
     }
 

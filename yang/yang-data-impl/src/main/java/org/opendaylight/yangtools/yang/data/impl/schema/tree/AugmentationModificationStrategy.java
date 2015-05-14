@@ -8,10 +8,12 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.HashSet;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -20,8 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
 final class AugmentationModificationStrategy extends AbstractDataNodeContainerModificationStrategy<AugmentationSchema> {
-    AugmentationModificationStrategy(final AugmentationSchema schema, final DataNodeContainer resolved) {
-        super(createAugmentProxy(schema,resolved), AugmentationNode.class);
+    AugmentationModificationStrategy(final AugmentationSchema schema, final DataNodeContainer resolved, final TreeType treeType) {
+        super(createAugmentProxy(schema,resolved), AugmentationNode.class, treeType);
     }
 
     @Override
@@ -32,8 +34,8 @@ final class AugmentationModificationStrategy extends AbstractDataNodeContainerMo
     }
 
     private static AugmentationSchema createAugmentProxy(final AugmentationSchema schema, final DataNodeContainer resolved) {
-        Set<DataSchemaNode> realChildSchemas = new HashSet<>();
-        for(DataSchemaNode augChild : schema.getChildNodes()) {
+        final Set<DataSchemaNode> realChildSchemas = new HashSet<>();
+        for(final DataSchemaNode augChild : schema.getChildNodes()) {
             realChildSchemas.add(resolved.getDataChildByName(augChild.getQName()));
         }
         return new EffectiveAugmentationSchema(schema, realChildSchemas);
