@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModificationCursor;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.slf4j.Logger;
@@ -144,8 +145,19 @@ final class InMemoryDataTreeModification implements DataTreeModification {
          * That is fine, as we will prune any empty TOUCH nodes in the last phase of the ready
          * process.
          */
-        ModificationApplyOperation operation = strategyTree;
+
+        ModificationApplyOperation operation;
+
+        if (snapshot.getTreeType().equals(TreeType.CONFIGURATION)) {
+            operation = new ConfigCheckingModificationApplyOp(snapshot.getSchemaContext(), strategyTree);
+        } else {
+            operation = strategyTree;
+        }
+
+
         ModifiedNode modification = rootNode;
+
+
 
         int i = 1;
         for(PathArgument pathArg : path.getPathArguments()) {
@@ -196,7 +208,8 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         TreeNode originalSnapshotRoot = snapshot.getRootNode();
         Optional<TreeNode> tempRoot = strategyTree.apply(rootNode, Optional.of(originalSnapshotRoot), version);
 
-        InMemoryDataTreeSnapshot tempTree = new InMemoryDataTreeSnapshot(snapshot.getSchemaContext(), tempRoot.get(), strategyTree);
+        InMemoryDataTreeSnapshot tempTree = new InMemoryDataTreeSnapshot(snapshot.getSchemaContext(), tempRoot.get(),
+                strategyTree, snapshot.getTreeType());
         return tempTree.newModification();
     }
 

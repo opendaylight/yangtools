@@ -17,4 +17,11 @@ public interface DataTreeFactory {
      * @return A data tree instance.
      */
     DataTree create();
+
+    /**
+     * Create a new data tree.
+     *
+     * @return A data tree instance.
+     */
+    DataTree create(TreeType type);
 }
