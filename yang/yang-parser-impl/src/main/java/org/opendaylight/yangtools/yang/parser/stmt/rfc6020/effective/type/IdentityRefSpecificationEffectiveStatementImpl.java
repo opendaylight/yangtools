@@ -5,14 +5,15 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
+package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
-public class UnionSpecificationEffectiveStatementImpl extends EffectiveStatementBase<String, TypeStatement.UnionSpecification> {
+public class IdentityRefSpecificationEffectiveStatementImpl extends EffectiveStatementBase<String, TypeStatement.IdentityRefSpecification> {
 
-    public UnionSpecificationEffectiveStatementImpl(StmtContext<String, TypeStatement.UnionSpecification, ?> ctx) {
+    public IdentityRefSpecificationEffectiveStatementImpl(StmtContext<String, TypeStatement.IdentityRefSpecification, ?> ctx) {
         super(ctx);
     }
 }

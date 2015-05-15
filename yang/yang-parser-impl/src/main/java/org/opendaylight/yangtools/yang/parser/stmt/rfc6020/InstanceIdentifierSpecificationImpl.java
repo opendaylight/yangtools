@@ -16,15 +16,15 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.InstanceIdentifierSpecificationEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.InstanceIdentifierSpecificationEffectiveStatementImpl;
 
 public class InstanceIdentifierSpecificationImpl extends
         AbstractDeclaredStatement<String> implements
         TypeStatement.InstanceIdentifierSpecification {
 
     protected InstanceIdentifierSpecificationImpl(
-            StmtContext<String, TypeStatement.InstanceIdentifierSpecification, ?> context) {
-        super(context);
+            StmtContext<String, TypeStatement.InstanceIdentifierSpecification, ?> ctx) {
+        super(ctx);
     }
 
     public static class Definition

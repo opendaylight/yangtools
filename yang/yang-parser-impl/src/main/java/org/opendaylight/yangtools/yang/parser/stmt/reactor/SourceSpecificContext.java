@@ -171,6 +171,25 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         return null;
     }
 
+    @Nullable
+    @Override
+    public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromLocalStorage(final Class<N> type) {
+        final Map<K, V> potentialLocal = getRoot().getAllFromLocalStorage(type);
+
+        if (potentialLocal != null) {
+            return potentialLocal;
+        }
+
+        for (final NamespaceStorageNode importedSource : importedNamespaces) {
+            final Map<K, V> potential = importedSource.getAllFromLocalStorage(type);
+
+            if (potential != null) {
+                return potential;
+            }
+        }
+        return null;
+    }
+
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(Class<N> type) {
         return currentContext.getNamespaceBehaviour(type);

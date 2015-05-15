@@ -7,11 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
-import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
@@ -19,11 +15,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IdentityRefSpecificationEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.IdentityRefSpecificationEffectiveStatementImpl;
 
 import javax.annotation.Nonnull;
-import java.util.Map;
 
 public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<String> implements TypeStatement.IdentityRefSpecification {
 
