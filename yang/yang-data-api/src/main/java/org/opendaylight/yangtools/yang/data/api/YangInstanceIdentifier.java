@@ -367,11 +367,10 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
     }
 
     private static abstract class AbstractPathArgument implements PathArgument {
-        private static final AtomicReferenceFieldUpdater<AbstractPathArgument, Integer> HASH_UPDATER =
-                AtomicReferenceFieldUpdater.newUpdater(AbstractPathArgument.class, Integer.class, "hash");
         private static final long serialVersionUID = -4546547994250849340L;
         private final QName nodeType;
-        private volatile transient Integer hash = null;
+        private transient int hashValue;
+        private transient volatile boolean hashGuard = false;
 
         protected AbstractPathArgument(final QName nodeType) {
             this.nodeType = Preconditions.checkNotNull(nodeType);
@@ -393,13 +392,12 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
 
         @Override
         public final int hashCode() {
-            Integer ret = hash;
-            if (ret == null) {
-                ret = hashCodeImpl();
-                HASH_UPDATER.lazySet(this, ret);
+            if (!hashGuard) {
+                hashValue = hashCodeImpl();
+                hashGuard = true;
             }
 
-            return ret;
+            return hashValue;
         }
 
         @Override
