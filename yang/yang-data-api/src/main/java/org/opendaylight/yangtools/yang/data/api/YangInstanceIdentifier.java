@@ -14,6 +14,7 @@ import com.google.common.collect.Iterables;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +64,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  *
  * @see <a href="http://tools.ietf.org/html/rfc6020#section-9.13">RFC6020</a>
  */
-public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentifier>, Immutable, Serializable {
+public abstract class YangInstanceIdentifier extends IterablePathArguments implements Path<YangInstanceIdentifier>, Immutable, Serializable {
     /**
      * An empty {@link YangInstanceIdentifier}. It corresponds to the path of the conceptual
      * root of the YANG namespace.
@@ -83,7 +84,8 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
     }
 
     @Nonnull abstract YangInstanceIdentifier createRelativeIdentifier(int skipFromRoot);
-    @Nonnull abstract Iterable<PathArgument> tryPathArguments();
+    @Nonnull abstract Collection<PathArgument> tryPathArguments();
+    @Nonnull abstract Collection<PathArgument> tryReversePathArguments();
 
     /**
      * Check if this instance identifier has empty path arguments, e.g. it is
@@ -115,7 +117,8 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      *
      * @return Immutable iteration of path arguments.
      */
-    public abstract Iterable<PathArgument> getPathArguments();
+    @Override
+    public abstract Collection<PathArgument> getPathArguments();
 
     /**
      * Returns an iterable of path arguments in reverse order. This is useful
@@ -123,7 +126,8 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      *
      * @return Immutable iterable of path arguments in reverse order.
      */
-    public abstract Iterable<PathArgument> getReversePathArguments();
+    @Override
+    public abstract Collection<PathArgument> getReversePathArguments();
 
     /**
      * Returns the last PathArgument. This is equivalent of iterating
