@@ -12,7 +12,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -20,7 +19,6 @@ import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -156,7 +154,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
         return Iterables.getFirst(getReversePathArguments(), null);
     }
 
-    private YangInstanceIdentifier(final Iterable<PathArgument> path, final int hash) {
+    YangInstanceIdentifier(final Iterable<PathArgument> path, final int hash) {
         this.pathArguments = Preconditions.checkNotNull(path, "path must not be null.");
         this.hash = hash;
     }
@@ -308,7 +306,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
      * @return new builder for InstanceIdentifier with empty path arguments.
      */
     public static InstanceIdentifierBuilder builder() {
-        return new BuilderImpl();
+        return new YangInstanceIdentifierBuilder();
     }
 
     /**
@@ -319,7 +317,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
      * @return new builder for InstanceIdentifier with path arguments copied from original instance identifier.
      */
     public static InstanceIdentifierBuilder builder(final YangInstanceIdentifier origin) {
-        return new BuilderImpl(origin.getPathArguments(), origin.hashCode());
+        return new YangInstanceIdentifierBuilder(origin.getPathArguments(), origin.hashCode());
     }
 
     /**
@@ -700,56 +698,6 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
             } else {
                 return -1;
             }
-        }
-    }
-
-    private static class BuilderImpl implements InstanceIdentifierBuilder {
-        private final HashCodeBuilder<PathArgument> hash;
-        private final List<PathArgument> path;
-
-        public BuilderImpl() {
-            this.hash = new HashCodeBuilder<>();
-            this.path = new ArrayList<>();
-        }
-
-        public BuilderImpl(final Iterable<PathArgument> prefix, final int hash) {
-            this.path = Lists.newArrayList(prefix);
-            this.hash = new HashCodeBuilder<>(hash);
-        }
-
-        @Override
-        public InstanceIdentifierBuilder node(final QName nodeType) {
-            final PathArgument arg = new NodeIdentifier(nodeType);
-            path.add(arg);
-            hash.addArgument(arg);
-            return this;
-        }
-
-        @Override
-        public InstanceIdentifierBuilder nodeWithKey(final QName nodeType, final QName key, final Object value) {
-            final PathArgument arg = new NodeIdentifierWithPredicates(nodeType, key, value);
-            path.add(arg);
-            hash.addArgument(arg);
-            return this;
-        }
-
-        @Override
-        public InstanceIdentifierBuilder nodeWithKey(final QName nodeType, final Map<QName, Object> keyValues) {
-            final PathArgument arg = new NodeIdentifierWithPredicates(nodeType, keyValues);
-            path.add(arg);
-            hash.addArgument(arg);
-            return this;
-        }
-
-        @Override
-        @Deprecated
-        public YangInstanceIdentifier toInstance() {
-            return build();
-        }
-
-        @Override
-        public YangInstanceIdentifier build() {
-            return new YangInstanceIdentifier(ImmutableList.copyOf(path), hash.build());
         }
     }
 
