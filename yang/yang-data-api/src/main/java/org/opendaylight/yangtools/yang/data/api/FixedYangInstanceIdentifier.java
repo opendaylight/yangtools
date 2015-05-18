@@ -56,6 +56,11 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier {
     }
 
     @Override
+    List<PathArgument> tryReversePathArguments() {
+        return path.reverse();
+    }
+
+    @Override
     public PathArgument getLastPathArgument() {
         return path.isEmpty()? null : path.get(path.size() - 1);
     }

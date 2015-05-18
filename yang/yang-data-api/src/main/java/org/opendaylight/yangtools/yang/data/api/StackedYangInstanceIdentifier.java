@@ -16,6 +16,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
@@ -43,8 +44,8 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier {
     private final PathArgument pathArgument;
 
     private transient volatile ImmutableList<PathArgument> legacyPath;
-    private transient volatile Iterable<PathArgument> pathArguments;
-    private transient volatile Iterable<PathArgument> reversePathArguments;
+    private transient volatile StackedPathArguments pathArguments;
+    private transient volatile StackedReversePathArguments reversePathArguments;
 
     StackedYangInstanceIdentifier(final YangInstanceIdentifier parent, final PathArgument pathArgument, final int hash) {
         super(hash);
@@ -72,16 +73,16 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier {
     }
 
     @Override
-    public Iterable<PathArgument> getPathArguments() {
-        Iterable<PathArgument> ret = tryPathArguments();
+    public Collection<PathArgument> getPathArguments() {
+        StackedPathArguments ret = tryPathArguments();
         if (ret == null) {
-            List<StackedYangInstanceIdentifier> stack = new ArrayList<>();
+            List<PathArgument> stack = new ArrayList<>();
             YangInstanceIdentifier current = this;
             while (current.tryPathArguments() == null) {
                 Verify.verify(current instanceof StackedYangInstanceIdentifier);
 
                 final StackedYangInstanceIdentifier stacked = (StackedYangInstanceIdentifier) current;
-                stack.add(stacked);
+                stack.add(stacked.getLastPathArgument());
                 current = stacked.getParent();
             }
 
@@ -93,8 +94,8 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier {
     }
 
     @Override
-    public Iterable<PathArgument> getReversePathArguments() {
-        Iterable<PathArgument> ret = reversePathArguments;
+    public Collection<PathArgument> getReversePathArguments() {
+        StackedReversePathArguments ret = tryReversePathArguments();
         if (ret == null) {
             ret = new StackedReversePathArguments(this);
             reversePathArguments = ret;
@@ -108,8 +109,13 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier {
     }
 
     @Override
-    Iterable<PathArgument> tryPathArguments() {
+    StackedPathArguments tryPathArguments() {
         return pathArguments;
+    }
+
+    @Override
+    StackedReversePathArguments tryReversePathArguments() {
+        return reversePathArguments;
     }
 
     @Override
