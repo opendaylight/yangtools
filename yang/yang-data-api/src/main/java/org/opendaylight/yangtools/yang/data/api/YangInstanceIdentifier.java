@@ -8,20 +8,12 @@ package org.opendaylight.yangtools.yang.data.api;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.ObjectStreamException;
 import java.io.Serializable;
 import java.lang.reflect.Array;
-import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +21,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
@@ -69,50 +62,27 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  *
  * @see <a href="http://tools.ietf.org/html/rfc6020#section-9.13">RFC6020</a>
  */
-public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier>, Immutable, Serializable {
+public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentifier>, Immutable, Serializable {
     /**
      * An empty {@link YangInstanceIdentifier}. It corresponds to the path of the conceptual
      * root of the YANG namespace.
      */
-    public static final YangInstanceIdentifier EMPTY = trustedCreate(Collections.<PathArgument>emptyList());
-    @SuppressWarnings("rawtypes")
-    private static final AtomicReferenceFieldUpdater<YangInstanceIdentifier, ImmutableList> LEGACYPATH_UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(YangInstanceIdentifier.class, ImmutableList.class, "legacyPath");
+    public static final YangInstanceIdentifier EMPTY = FixedYangInstanceIdentifier.EMPTY_INSTANCE;
+
     private static final AtomicReferenceFieldUpdater<YangInstanceIdentifier, String> TOSTRINGCACHE_UPDATER =
             AtomicReferenceFieldUpdater.newUpdater(YangInstanceIdentifier.class, String.class, "toStringCache");
-    private static final Field PATHARGUMENTS_FIELD;
+    private static final long serialVersionUID = 4L;
 
-    private static final long serialVersionUID = 3L;
-    private final transient Iterable<PathArgument> pathArguments;
     private final int hash;
-
-    private transient volatile ImmutableList<PathArgument> legacyPath = null;
     private transient volatile String toStringCache = null;
 
-    static {
-        final Field f;
-        try {
-            f = YangInstanceIdentifier.class.getDeclaredField("pathArguments");
-        } catch (NoSuchFieldException | SecurityException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-        f.setAccessible(true);
-
-        PATHARGUMENTS_FIELD = f;
+    // Package-private to prevent outside subclassing
+    YangInstanceIdentifier(final int hash) {
+        this.hash = hash;
     }
 
-    private ImmutableList<PathArgument> getLegacyPath() {
-        // Temporary variable saves a volatile read
-        ImmutableList<PathArgument> ret = legacyPath;
-        if (ret == null) {
-            // We could have used a synchronized block, but the window is quite
-            // small and worst that can happen is duplicate object construction.
-            ret = ImmutableList.copyOf(pathArguments);
-            LEGACYPATH_UPDATER.lazySet(this, ret);
-        }
-
-        return ret;
-    }
+    @Nonnull abstract YangInstanceIdentifier createRelativeIdentifier(int skipFromRoot);
+    @Nonnull abstract Iterable<PathArgument> tryPathArguments();
 
     /**
      * Returns a list of path arguments.
@@ -121,18 +91,14 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
      * @return Immutable list of path arguments.
      */
     @Deprecated
-    public List<PathArgument> getPath() {
-        return getLegacyPath();
-    }
+    public abstract List<PathArgument> getPath();
 
     /**
      * Returns an ordered iteration of path arguments.
      *
      * @return Immutable iteration of path arguments.
      */
-    public Iterable<PathArgument> getPathArguments() {
-        return pathArguments;
-    }
+    public abstract Iterable<PathArgument> getPathArguments();
 
     /**
      * Returns an iterable of path arguments in reverse order. This is useful
@@ -140,9 +106,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
      *
      * @return Immutable iterable of path arguments in reverse order.
      */
-    public Iterable<PathArgument> getReversePathArguments() {
-        return getLegacyPath().reverse();
-    }
+    public abstract Iterable<PathArgument> getReversePathArguments();
 
     /**
      * Returns the last PathArgument. This is equivalent of iterating
@@ -150,30 +114,19 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
      *
      * @return The last past argument, or null if there are no PathArguments.
      */
-    public PathArgument getLastPathArgument() {
-        return Iterables.getFirst(getReversePathArguments(), null);
-    }
-
-    YangInstanceIdentifier(final Iterable<PathArgument> path, final int hash) {
-        this.pathArguments = Preconditions.checkNotNull(path, "path must not be null.");
-        this.hash = hash;
-    }
-
-    private static YangInstanceIdentifier trustedCreate(final Iterable<PathArgument> path) {
-        final HashCodeBuilder<PathArgument> hash = new HashCodeBuilder<>();
-        for (PathArgument a : path) {
-            hash.addArgument(a);
-        }
-
-        return new YangInstanceIdentifier(path, hash.build());
-    }
+    public abstract PathArgument getLastPathArgument();
 
     public static YangInstanceIdentifier create(final Iterable<? extends PathArgument> path) {
         if (Iterables.isEmpty(path)) {
             return EMPTY;
         }
 
-        return trustedCreate(ImmutableList.copyOf(path));
+        final HashCodeBuilder<PathArgument> hash = new HashCodeBuilder<>();
+        for (PathArgument a : path) {
+            hash.addArgument(a);
+        }
+
+        return FixedYangInstanceIdentifier.create(path, hash.build());
     }
 
     public static YangInstanceIdentifier create(final PathArgument... path) {
@@ -182,7 +135,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         /*
          * The caching is safe, since the object contract requires
          * immutability of the object and all objects referenced from this
@@ -193,22 +146,24 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
         return hash;
     }
 
+    boolean pathArgumentsEqual(final YangInstanceIdentifier other) {
+        return Iterables.elementsEqual(getPathArguments(), other.getPathArguments());
+    }
+
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof YangInstanceIdentifier)) {
             return false;
         }
         YangInstanceIdentifier other = (YangInstanceIdentifier) obj;
         if (this.hashCode() != obj.hashCode()) {
             return false;
         }
-        return Iterables.elementsEqual(pathArguments, other.pathArguments);
+
+        return pathArgumentsEqual(other);
     }
 
     /**
@@ -217,7 +172,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
      * @param name QName of {@link NodeIdentifier}
      * @return Instance Identifier with additional path argument added to the end.
      */
-    public YangInstanceIdentifier node(final QName name) {
+    public final YangInstanceIdentifier node(final QName name) {
         return node(new NodeIdentifier(name));
     }
 
@@ -228,8 +183,8 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
      * @param arg Path argument which should be added to the end
      * @return Instance Identifier with additional path argument added to the end.
      */
-    public YangInstanceIdentifier node(final PathArgument arg) {
-        return new YangInstanceIdentifier(Iterables.concat(pathArguments, Collections.singleton(arg)), HashCodeBuilder.nextHashCode(hash, arg));
+    public final YangInstanceIdentifier node(final PathArgument arg) {
+        return new StackedYangInstanceIdentifier(this, arg, HashCodeBuilder.nextHashCode(hash, arg));
     }
 
     /**
@@ -242,8 +197,8 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
      *         the specified parent is not in fact an ancestor of this object.
      */
     public Optional<YangInstanceIdentifier> relativeTo(final YangInstanceIdentifier ancestor) {
-        final Iterator<?> lit = pathArguments.iterator();
-        final Iterator<?> oit = ancestor.pathArguments.iterator();
+        final Iterator<?> lit = getPathArguments().iterator();
+        final Iterator<?> oit = ancestor.getPathArguments().iterator();
         int common = 0;
 
         while (oit.hasNext()) {
@@ -261,7 +216,8 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
         if (!lit.hasNext()) {
             return Optional.of(EMPTY);
         }
-        return Optional.of(trustedCreate(Iterables.skip(pathArguments, common)));
+
+        return Optional.of(createRelativeIdentifier(common));
     }
 
     private static int hashCode(final Object value) {
@@ -702,11 +658,11 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
     }
 
     @Override
-    public boolean contains(final YangInstanceIdentifier other) {
+    public final boolean contains(final YangInstanceIdentifier other) {
         Preconditions.checkArgument(other != null, "other should not be null");
 
-        final Iterator<?> lit = pathArguments.iterator();
-        final Iterator<?> oit = other.pathArguments.iterator();
+        final Iterator<?> lit = getPathArguments().iterator();
+        final Iterator<?> oit = other.getPathArguments().iterator();
 
         while (lit.hasNext()) {
             if (!oit.hasNext()) {
@@ -722,7 +678,7 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         /*
          * The toStringCache is safe, since the object contract requires
          * immutability of the object and all objects referenced from this
@@ -748,33 +704,5 @@ public final class YangInstanceIdentifier implements Path<YangInstanceIdentifier
             TOSTRINGCACHE_UPDATER.lazySet(this, ret);
         }
         return ret;
-    }
-
-    private void readObject(final ObjectInputStream inputStream) throws IOException, ClassNotFoundException {
-        inputStream.defaultReadObject();
-        legacyPath = ImmutableList.copyOf((Collection<PathArgument>)inputStream.readObject());
-
-        try {
-            PATHARGUMENTS_FIELD.set(this, legacyPath);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            throw new IOException(e);
-        }
-    }
-
-    private Object readResolve() throws ObjectStreamException {
-        return legacyPath.isEmpty() ? EMPTY : this;
-    }
-
-    private void writeObject(final ObjectOutputStream outputStream) throws IOException {
-        /*
-         * This may look strange, but what we are doing here is side-stepping the fact
-         * that pathArguments is not generally serializable. We are forcing instantiation
-         * of the legacy path, which is an ImmutableList (thus Serializable) and write
-         * it out. The read path does the opposite -- it reads the legacyPath and then
-         * uses invocation API to set the field.
-         */
-        ImmutableList<PathArgument> pathArguments = getLegacyPath();
-        outputStream.defaultWriteObject();
-        outputStream.writeObject(pathArguments);
     }
 }
