@@ -8,13 +8,12 @@ package org.opendaylight.yangtools.yang.data.api;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.UnmodifiableIterator;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
-final class StackedPathArguments extends PathArgumentCollection {
-    private final Collection<PathArgument> base;
+final class StackedPathArguments extends PathArgumentList {
+    private final List<PathArgument> base;
     private final List<PathArgument> stack;
 
     public StackedPathArguments(final YangInstanceIdentifier base, final List<PathArgument> stack) {
@@ -31,6 +30,41 @@ final class StackedPathArguments extends PathArgumentCollection {
     public boolean contains(final Object o) {
         final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
         return stack.contains(srch) || base.contains(srch);
+    }
+
+    @Override
+    public final PathArgument get(final int index) {
+        if (index < base.size()) {
+            return base.get(index);
+        } else {
+            return stack.get(index - base.size());
+        }
+    }
+
+    @Override
+    public final int indexOf(final Object o) {
+        final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
+
+        int ret = base.indexOf(srch);
+        if (ret == -1) {
+            ret = stack.indexOf(srch);
+            if (ret != -1) {
+                return base.size() + ret;
+            }
+        }
+        return ret;
+    }
+
+    @Override
+    public final int lastIndexOf(final Object o) {
+        final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
+
+        final int ret = stack.lastIndexOf(srch);
+        if (ret != -1) {
+            return base.size() + ret;
+        }
+
+        return base.lastIndexOf(srch);
     }
 
     @Override
