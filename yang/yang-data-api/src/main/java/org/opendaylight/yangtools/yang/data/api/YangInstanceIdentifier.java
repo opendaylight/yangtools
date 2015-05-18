@@ -14,6 +14,7 @@ import com.google.common.collect.Iterables;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +84,8 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
     }
 
     @Nonnull abstract YangInstanceIdentifier createRelativeIdentifier(int skipFromRoot);
-    @Nonnull abstract Iterable<PathArgument> tryPathArguments();
+    @Nonnull abstract Collection<PathArgument> tryPathArguments();
+    @Nonnull abstract Collection<PathArgument> tryReversePathArguments();
 
     /**
      * Check if this instance identifier has empty path arguments, e.g. it is
@@ -115,7 +117,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      *
      * @return Immutable iteration of path arguments.
      */
-    public abstract Iterable<PathArgument> getPathArguments();
+    public abstract Collection<PathArgument> getPathArguments();
 
     /**
      * Returns an iterable of path arguments in reverse order. This is useful
@@ -123,7 +125,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      *
      * @return Immutable iterable of path arguments in reverse order.
      */
-    public abstract Iterable<PathArgument> getReversePathArguments();
+    public abstract Collection<PathArgument> getReversePathArguments();
 
     /**
      * Returns the last PathArgument. This is equivalent of iterating
