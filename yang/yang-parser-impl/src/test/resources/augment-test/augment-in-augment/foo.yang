@@ -21,7 +21,7 @@ module foo {
     }
 
 
-    augment "/br:interfaces/br:ifEntry/bz:augment-holder" {
+    augment "/br:interfaces/br:ifEntry/br:augment-holder" {
         when "if:ifType='ds0'";
         leaf ds0ChannelNumber {
             type string;

@@ -1,0 +1,6 @@
+module root-module {
+    prefix rm;
+    namespace rm;
+
+    include "submodule-1";
+}
