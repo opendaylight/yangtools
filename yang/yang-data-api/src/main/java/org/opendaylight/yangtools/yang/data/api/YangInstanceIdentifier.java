@@ -64,7 +64,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  *
  * @see <a href="http://tools.ietf.org/html/rfc6020#section-9.13">RFC6020</a>
  */
-public abstract class YangInstanceIdentifier extends IterablePathArguments implements Path<YangInstanceIdentifier>, Immutable, Serializable {
+public abstract class YangInstanceIdentifier extends CollectionPathArguments implements Path<YangInstanceIdentifier>, Immutable, Serializable {
     /**
      * An empty {@link YangInstanceIdentifier}. It corresponds to the path of the conceptual
      * root of the YANG namespace.
@@ -110,7 +110,9 @@ public abstract class YangInstanceIdentifier extends IterablePathArguments imple
      * @return Immutable list of path arguments.
      */
     @Deprecated
-    public abstract List<PathArgument> getPath();
+    public final List<PathArgument> getPath() {
+        return getPathArguments();
+    }
 
     /**
      * Returns an ordered iteration of path arguments.
@@ -118,7 +120,7 @@ public abstract class YangInstanceIdentifier extends IterablePathArguments imple
      * @return Immutable iteration of path arguments.
      */
     @Override
-    public abstract Collection<PathArgument> getPathArguments();
+    public abstract List<PathArgument> getPathArguments();
 
     /**
      * Returns an iterable of path arguments in reverse order. This is useful
@@ -127,7 +129,7 @@ public abstract class YangInstanceIdentifier extends IterablePathArguments imple
      * @return Immutable iterable of path arguments in reverse order.
      */
     @Override
-    public abstract Collection<PathArgument> getReversePathArguments();
+    public abstract List<PathArgument> getReversePathArguments();
 
     /**
      * Returns the last PathArgument. This is equivalent of iterating
