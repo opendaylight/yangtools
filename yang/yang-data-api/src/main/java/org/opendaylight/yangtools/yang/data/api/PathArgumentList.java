@@ -9,11 +9,12 @@ package org.opendaylight.yangtools.yang.data.api;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
-import java.util.AbstractCollection;
+import java.util.AbstractList;
 import java.util.Collection;
+import java.util.Iterator;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
-abstract class PathArgumentCollection extends AbstractCollection<PathArgument> {
+abstract class PathArgumentList extends AbstractList<PathArgument> {
     @Override
     public abstract UnmodifiableIterator<PathArgument> iterator();
 
@@ -26,6 +27,32 @@ abstract class PathArgumentCollection extends AbstractCollection<PathArgument> {
     public final boolean contains(final Object o) {
         final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
         return Iterators.contains(iterator(), srch);
+    }
+
+    @Override
+    public final PathArgument get(final int index) {
+        return Iterators.get(iterator(), index);
+    }
+
+    @Override
+    public final int indexOf(final Object o) {
+        final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
+        return super.indexOf(srch);
+    }
+
+    @Override
+    public final int lastIndexOf(final Object o) {
+        final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
+
+        int ret = -1;
+        final Iterator<PathArgument> it = iterator();
+        for (int i = 0; it.hasNext(); ++i) {
+            if (srch.equals(it.next())) {
+                ret = i;
+            }
+        }
+
+        return ret;
     }
 
     @Override
@@ -50,6 +77,11 @@ abstract class PathArgumentCollection extends AbstractCollection<PathArgument> {
 
     @Override
     public final void clear() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final boolean addAll(final int index, final Collection<? extends PathArgument> c) {
         throw new UnsupportedOperationException();
     }
 }
