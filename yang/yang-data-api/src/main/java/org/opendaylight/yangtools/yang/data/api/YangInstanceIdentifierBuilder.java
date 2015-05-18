@@ -6,7 +6,6 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +63,6 @@ final class YangInstanceIdentifierBuilder implements InstanceIdentifierBuilder {
 
     @Override
     public YangInstanceIdentifier build() {
-        return new YangInstanceIdentifier(ImmutableList.copyOf(path), hash.build());
+        return FixedYangInstanceIdentifier.create(path, hash.build());
     }
 }
