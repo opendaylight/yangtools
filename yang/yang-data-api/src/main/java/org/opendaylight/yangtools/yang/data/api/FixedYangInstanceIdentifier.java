@@ -48,11 +48,6 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier {
     }
 
     @Override
-    public List<PathArgument> getPath() {
-        return path;
-    }
-
-    @Override
     public List<PathArgument> getPathArguments() {
         return path;
     }
