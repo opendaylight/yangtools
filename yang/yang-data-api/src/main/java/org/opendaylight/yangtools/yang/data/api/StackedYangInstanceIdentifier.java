@@ -8,7 +8,6 @@ package org.opendaylight.yangtools.yang.data.api;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import java.io.IOException;
@@ -16,9 +15,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 final class StackedYangInstanceIdentifier extends YangInstanceIdentifier {
     private static final long serialVersionUID = 1L;
@@ -36,14 +33,9 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier {
         PARENT_FIELD = f;
     }
 
-    @SuppressWarnings("rawtypes")
-    private static final AtomicReferenceFieldUpdater<StackedYangInstanceIdentifier, ImmutableList> LEGACYPATH_UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(StackedYangInstanceIdentifier.class, ImmutableList.class, "legacyPath");
-
     private final YangInstanceIdentifier parent;
     private final PathArgument pathArgument;
 
-    private transient volatile ImmutableList<PathArgument> legacyPath;
     private transient volatile StackedPathArguments pathArguments;
     private transient volatile StackedReversePathArguments reversePathArguments;
 
@@ -64,21 +56,7 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier {
     }
 
     @Override
-    public List<PathArgument> getPath() {
-        // Temporary variable saves a volatile read
-        ImmutableList<PathArgument> ret = legacyPath;
-        if (ret == null) {
-            // We could have used a synchronized block, but the window is quite
-            // small and worst that can happen is duplicate object construction.
-            ret = ImmutableList.copyOf(getPathArguments());
-            LEGACYPATH_UPDATER.lazySet(this, ret);
-        }
-
-        return ret;
-    }
-
-    @Override
-    public Collection<PathArgument> getPathArguments() {
+    public List<PathArgument> getPathArguments() {
         StackedPathArguments ret = tryPathArguments();
         if (ret == null) {
             List<PathArgument> stack = new ArrayList<>();
@@ -99,7 +77,7 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier {
     }
 
     @Override
-    public Collection<PathArgument> getReversePathArguments() {
+    public List<PathArgument> getReversePathArguments() {
         StackedReversePathArguments ret = tryReversePathArguments();
         if (ret == null) {
             ret = new StackedReversePathArguments(this);
