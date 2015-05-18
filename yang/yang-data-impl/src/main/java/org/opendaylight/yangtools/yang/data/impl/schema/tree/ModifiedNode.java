@@ -53,7 +53,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         }
     };
 
-    private final Map<PathArgument, ModifiedNode> children;
+    private Map<PathArgument, ModifiedNode> children;
     private final Optional<TreeNode> original;
     private final PathArgument identifier;
     private LogicalOperation operation = LogicalOperation.NONE;
@@ -284,6 +284,9 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
 
     void resolveModificationType(@Nonnull final ModificationType type) {
         modType = type;
+        if (type == ModificationType.UNMODIFIED) {
+            children = Collections.emptyMap();
+        }
     }
 
     /**

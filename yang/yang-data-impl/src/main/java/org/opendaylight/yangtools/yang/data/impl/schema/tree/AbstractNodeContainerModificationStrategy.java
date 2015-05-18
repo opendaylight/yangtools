@@ -164,7 +164,7 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
          * In order to do that, though, we have to check all child operations are UNMODIFIED.
          * Let's do precisely that, stopping as soon we find a different result.
          */
-        for (ModifiedNode child : children) {
+        for (ModifiedNode child : modification.getChildren()) {
             if (child.getModificationType() != ModificationType.UNMODIFIED) {
                 modification.resolveModificationType(ModificationType.SUBTREE_MODIFIED);
                 return ret;
