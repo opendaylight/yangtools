@@ -10,20 +10,24 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.UnmodifiableIterator;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
-final class StackedPathArguments implements Iterable<PathArgument> {
-    private final List<StackedYangInstanceIdentifier> stack;
-    private final YangInstanceIdentifier base;
+final class StackedPathArguments extends PathArgumentCollection {
+    private final Collection<StackedYangInstanceIdentifier> stack;
+    private final Collection<PathArgument> base;
 
-    public StackedPathArguments(final YangInstanceIdentifier base, final List<StackedYangInstanceIdentifier> stack) {
-        this.base = Preconditions.checkNotNull(base);
+    public StackedPathArguments(final YangInstanceIdentifier base, final Collection<StackedYangInstanceIdentifier> stack) {
+        this.base = base.getPathArguments();
         this.stack = Preconditions.checkNotNull(stack);
     }
 
     @Override
-    public Iterator<PathArgument> iterator() {
+    public int size() {
+        return stack.size() + base.size();
+    }
+
+    @Override
+    public UnmodifiableIterator<PathArgument> iterator() {
         return new IteratorImpl(base, stack);
     }
 
@@ -31,8 +35,8 @@ final class StackedPathArguments implements Iterable<PathArgument> {
         private final Iterator<StackedYangInstanceIdentifier> stack;
         private final Iterator<PathArgument> base;
 
-        IteratorImpl(final YangInstanceIdentifier base, final Collection<StackedYangInstanceIdentifier> stack) {
-            this.base = base.getPathArguments().iterator();
+        IteratorImpl(final Iterable<PathArgument> base, final Iterable<StackedYangInstanceIdentifier> stack) {
+            this.base = base.iterator();
             this.stack = stack.iterator();
         }
 
