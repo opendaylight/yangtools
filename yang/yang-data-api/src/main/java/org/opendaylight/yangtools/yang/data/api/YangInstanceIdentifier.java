@@ -117,7 +117,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      *
      * @return Immutable iteration of path arguments.
      */
-    public abstract Collection<PathArgument> getPathArguments();
+    public abstract List<PathArgument> getPathArguments();
 
     /**
      * Returns an iterable of path arguments in reverse order. This is useful
@@ -125,7 +125,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      *
      * @return Immutable iterable of path arguments in reverse order.
      */
-    public abstract Collection<PathArgument> getReversePathArguments();
+    public abstract List<PathArgument> getReversePathArguments();
 
     /**
      * Returns the last PathArgument. This is equivalent of iterating
