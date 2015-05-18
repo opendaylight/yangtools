@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSc
 public class EffectiveBuildTest {
 
     private static final YangStatementSourceImpl SIMPLE_MODULE = new YangStatementSourceImpl(
-            "/stmt-test/effective-build/simple-module.yang");
+            "/stmt-test/effective-build/simple-module.yang", false);
     private static final QNameModule SIMPLE_MODULE_QNAME = QNameModule.create(URI.create("simple.yang"), null);
 
     @Test

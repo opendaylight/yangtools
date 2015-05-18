@@ -34,11 +34,11 @@ import static org.junit.Assert.assertNotNull;
 public class EffectiveModuleTest {
 
     private static final YangStatementSourceImpl ROOT_MODULE = new YangStatementSourceImpl(
-            "/semantic-statement-parser/effective-module/root.yang");
+            "/semantic-statement-parser/effective-module/root.yang", false);
     private static final YangStatementSourceImpl IMPORTED_MODULE = new YangStatementSourceImpl(
-            "/semantic-statement-parser/effective-module/imported.yang");
+            "/semantic-statement-parser/effective-module/imported.yang", false);
     private static final YangStatementSourceImpl SUBMODULE = new YangStatementSourceImpl(
-            "/semantic-statement-parser/effective-module/submod.yang");
+            "/semantic-statement-parser/effective-module/submod.yang", false);
 
     private static final QNameModule ROOT_MODULE_QNAME = QNameModule.create(URI.create("root-ns"), null);
 

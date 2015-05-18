@@ -1,0 +1,7 @@
+submodule error-submodule {
+    belongs-to "root-module" {
+        prefix "rm";
+    }
+
+    include foo;
+}
