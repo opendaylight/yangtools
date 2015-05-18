@@ -7,11 +7,11 @@
 package org.opendaylight.yangtools.yang.data.api;
 
 import com.google.common.collect.UnmodifiableIterator;
-import java.util.AbstractCollection;
+import java.util.AbstractList;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
-abstract class PathArgumentCollection extends AbstractCollection<PathArgument> {
+abstract class PathArgumentList extends AbstractList<PathArgument> {
     @Override
     public abstract UnmodifiableIterator<PathArgument> iterator();
 
@@ -42,6 +42,11 @@ abstract class PathArgumentCollection extends AbstractCollection<PathArgument> {
 
     @Override
     public final void clear() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final boolean addAll(final int index, final Collection<? extends PathArgument> c) {
         throw new UnsupportedOperationException();
     }
 }

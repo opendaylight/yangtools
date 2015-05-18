@@ -14,7 +14,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
-final class StackedReversePathArguments extends PathArgumentCollection {
+final class StackedReversePathArguments extends PathArgumentList {
     private final StackedYangInstanceIdentifier identifier;
     private int size;
     private volatile boolean haveSize;
@@ -53,6 +53,32 @@ final class StackedReversePathArguments extends PathArgumentCollection {
     public boolean contains(final Object o) {
         final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
         return Iterators.contains(iterator(), srch);
+    }
+
+    @Override
+    public PathArgument get(final int index) {
+        return Iterators.get(iterator(), index);
+    }
+
+    @Override
+    public int indexOf(final Object o) {
+        final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
+        return super.indexOf(srch);
+    }
+
+    @Override
+    public int lastIndexOf(final Object o) {
+        final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
+
+        int ret = -1;
+        final Iterator<PathArgument> it = iterator();
+        for (int i = 0; it.hasNext(); ++i) {
+            if (srch.equals(it.next())) {
+                ret = i;
+            }
+        }
+
+        return ret;
     }
 
     @Override
