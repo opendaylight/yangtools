@@ -7,19 +7,56 @@
 package org.opendaylight.yangtools.yang.data.api;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
+import java.util.Collection;
 import java.util.Iterator;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
-final class StackedReversePathArguments implements Iterable<PathArgument> {
+final class StackedReversePathArguments extends PathArgumentCollection {
     private final StackedYangInstanceIdentifier identifier;
+    private int size;
+    private volatile boolean haveSize;
 
     StackedReversePathArguments(final StackedYangInstanceIdentifier identifier) {
         this.identifier = Preconditions.checkNotNull(identifier);
     }
 
+    private int calculateSize() {
+        YangInstanceIdentifier current = identifier.getParent();
+        for (int i = 1;; ++i) {
+            final Collection<PathArgument> args = current.tryReversePathArguments();
+            if (args != null) {
+                return i + args.size();
+            }
+
+            Verify.verify(current instanceof StackedYangInstanceIdentifier);
+            current = ((StackedYangInstanceIdentifier)current).getParent();
+        }
+    }
+
     @Override
-    public Iterator<PathArgument> iterator() {
+    public int size() {
+        int ret = size;
+        if (!haveSize) {
+            ret = calculateSize();
+            size = ret;
+            haveSize = true;
+        }
+
+        return ret;
+    }
+
+
+    @Override
+    public boolean contains(final Object o) {
+        final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
+        return Iterators.contains(iterator(), srch);
+    }
+
+    @Override
+    public UnmodifiableIterator<PathArgument> iterator() {
         return new IteratorImpl(identifier);
     }
 
@@ -44,10 +81,12 @@ final class StackedReversePathArguments implements Iterable<PathArgument> {
 
             final PathArgument ret = identifier.getLastPathArgument();
             final YangInstanceIdentifier next = identifier.getParent();
-            if (!(next instanceof StackedYangInstanceIdentifier)) {
-                tail = next.getReversePathArguments().iterator();
+            final Iterable<PathArgument> args = next.tryReversePathArguments();
+            if (args != null) {
+                tail = args.iterator();
                 identifier = null;
             } else {
+                Verify.verify(next instanceof StackedYangInstanceIdentifier);
                 identifier = (StackedYangInstanceIdentifier) next;
             }
 
