@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
-final class StackedReversePathArguments extends PathArgumentCollection {
+final class StackedReversePathArguments extends PathArgumentList {
     private final StackedYangInstanceIdentifier identifier;
     private int size;
     private volatile boolean haveSize;
