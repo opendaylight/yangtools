@@ -13,26 +13,37 @@ import java.util.Iterator;
 import java.util.List;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
-final class StackedPathArguments implements Iterable<PathArgument> {
-    private final List<StackedYangInstanceIdentifier> stack;
-    private final YangInstanceIdentifier base;
+final class StackedPathArguments extends PathArgumentCollection {
+    private final Collection<PathArgument> base;
+    private final List<PathArgument> stack;
 
-    public StackedPathArguments(final YangInstanceIdentifier base, final List<StackedYangInstanceIdentifier> stack) {
-        this.base = Preconditions.checkNotNull(base);
+    public StackedPathArguments(final YangInstanceIdentifier base, final List<PathArgument> stack) {
+        this.base = base.getPathArguments();
         this.stack = Preconditions.checkNotNull(stack);
     }
 
     @Override
-    public Iterator<PathArgument> iterator() {
+    public int size() {
+        return stack.size() + base.size();
+    }
+
+    @Override
+    public boolean contains(final Object o) {
+        final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
+        return stack.contains(srch) || base.contains(srch);
+    }
+
+    @Override
+    public UnmodifiableIterator<PathArgument> iterator() {
         return new IteratorImpl(base, stack);
     }
 
     private static final class IteratorImpl extends UnmodifiableIterator<PathArgument> {
-        private final Iterator<StackedYangInstanceIdentifier> stack;
+        private final Iterator<PathArgument> stack;
         private final Iterator<PathArgument> base;
 
-        IteratorImpl(final YangInstanceIdentifier base, final Collection<StackedYangInstanceIdentifier> stack) {
-            this.base = base.getPathArguments().iterator();
+        IteratorImpl(final Iterable<PathArgument> base, final Iterable<PathArgument> stack) {
+            this.base = base.iterator();
             this.stack = stack.iterator();
         }
 
@@ -46,7 +57,7 @@ final class StackedPathArguments implements Iterable<PathArgument> {
             if (base.hasNext()) {
                 return base.next();
             }
-            return stack.next().getLastPathArgument();
+            return stack.next();
         }
     }
 }
