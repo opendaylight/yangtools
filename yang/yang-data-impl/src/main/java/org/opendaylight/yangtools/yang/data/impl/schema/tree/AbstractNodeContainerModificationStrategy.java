@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.Collection;
+import java.util.Iterator;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -107,7 +108,9 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     private TreeNode mutateChildren(final MutableTreeNode meta, final NormalizedNodeContainerBuilder data,
             final Version nodeVersion, final Iterable<ModifiedNode> modifications) {
 
-        for (ModifiedNode mod : modifications) {
+        final Iterator<ModifiedNode> iterator = modifications.iterator();
+        while (iterator.hasNext()) {
+            final ModifiedNode mod = iterator.next();
             final YangInstanceIdentifier.PathArgument id = mod.getIdentifier();
             final Optional<TreeNode> cm = meta.getChild(id);
 
@@ -119,6 +122,10 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
             } else {
                 meta.removeChild(id);
                 data.removeChild(id);
+            }
+            // remove unmodified child from modifications tree
+            if (mod.getModificationType() == ModificationType.UNMODIFIED) {
+                iterator.remove();
             }
         }
 
@@ -160,18 +167,13 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
          * which were turned into UNMODIFIED. If that is the case, we can turn this operation
          * into UNMODIFIED, too, potentially cascading it up to root. This has the benefit
          * of speeding up any users, who can skip processing child nodes.
-         *
-         * In order to do that, though, we have to check all child operations are UNMODIFIED.
-         * Let's do precisely that, stopping as soon we find a different result.
          */
-        for (ModifiedNode child : children) {
-            if (child.getModificationType() != ModificationType.UNMODIFIED) {
-                modification.resolveModificationType(ModificationType.SUBTREE_MODIFIED);
-                return ret;
-            }
+        if (children.size() == 0) {
+            modification.resolveModificationType(ModificationType.UNMODIFIED);
+        } else {
+            modification.resolveModificationType(ModificationType.SUBTREE_MODIFIED);
         }
 
-        modification.resolveModificationType(ModificationType.UNMODIFIED);
         return ret;
     }
 

@@ -53,9 +53,10 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         }
     };
 
-    private final Map<PathArgument, ModifiedNode> children;
+    private Map<PathArgument, ModifiedNode> children;
     private final Optional<TreeNode> original;
     private final PathArgument identifier;
+    private final ChildTrackingPolicy childPolicy;
     private LogicalOperation operation = LogicalOperation.NONE;
     private Optional<TreeNode> snapshotCache;
     private NormalizedNode<?, ?> value;
@@ -64,20 +65,9 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     private ModifiedNode(final PathArgument identifier, final Optional<TreeNode> original, final ChildTrackingPolicy childPolicy) {
         this.identifier = identifier;
         this.original = original;
+        this.childPolicy = childPolicy;
 
-        switch (childPolicy) {
-        case NONE:
-            children = Collections.emptyMap();
-            break;
-        case ORDERED:
-            children = new LinkedHashMap<>();
-            break;
-        case UNORDERED:
-            children = new HashMap<>();
-            break;
-        default:
-            throw new IllegalArgumentException("Unsupported child tracking policy " + childPolicy);
-        }
+        this.children = getChildrenMapForChildPolicy(childPolicy);
     }
 
     /**
@@ -324,5 +314,18 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
 
     public static ModifiedNode createUnmodified(final TreeNode metadataTree, final ChildTrackingPolicy childPolicy) {
         return new ModifiedNode(metadataTree.getIdentifier(), Optional.of(metadataTree), childPolicy);
+    }
+
+    private static Map<PathArgument, ModifiedNode> getChildrenMapForChildPolicy(final ChildTrackingPolicy childPolicy) {
+        switch (childPolicy) {
+            case NONE:
+                return Collections.emptyMap();
+            case ORDERED:
+                return new LinkedHashMap<>();
+            case UNORDERED:
+                return new HashMap<>();
+            default:
+                throw new IllegalArgumentException("Unsupported child tracking policy " + childPolicy);
+        }
     }
 }
