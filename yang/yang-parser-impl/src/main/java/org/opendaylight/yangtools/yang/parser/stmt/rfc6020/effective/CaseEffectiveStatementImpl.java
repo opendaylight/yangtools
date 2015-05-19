@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -48,7 +47,7 @@ public class CaseEffectiveStatementImpl extends
         super(ctx);
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
-        // :TODO init other fields
+        this.constraints = new EffectiveConstraintDefinitionImpl(this);
 
         initSubstatementCollections();
         initCopyType(ctx);

@@ -7,9 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
+
+import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import java.util.HashMap;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import com.google.common.collect.ImmutableList;
@@ -24,17 +33,71 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
-public class UsesEffectiveStatementImpl extends EffectiveStatementBase<QName, UsesStatement>implements UsesNode {
+public class UsesEffectiveStatementImpl extends
+        EffectiveStatementBase<QName, UsesStatement> implements UsesNode {
     private SchemaPath groupingPath;
-    ImmutableSet<AugmentationSchema> augmentations;
     private boolean addedByUses;
     ImmutableMap<SchemaPath, SchemaNode> refines;
+    ImmutableSet<AugmentationSchema> augmentations;
     ImmutableList<UnknownSchemaNode> unknownNodes;
 
-    public UsesEffectiveStatementImpl(StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
+    public UsesEffectiveStatementImpl(
+            StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
         super(ctx);
 
-        this.groupingPath = null;
+        initGroupingPath(ctx);
+        initCopyType(ctx);
+        initSubstatementCollections();
+    }
+
+    private void initGroupingPath(
+            StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
+        StmtContext<?, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> grpCtx = ctx.getFromNamespace(GroupingNamespace.class, ctx.getStatementArgument());
+        this.groupingPath = Utils.getSchemaPath(grpCtx);
+    }
+
+    private void initSubstatementCollections() {
+        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
+
+        List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
+        Set<AugmentationSchema> augmentationsInit = new HashSet<>();
+        Map<SchemaPath, SchemaNode> refinesInit = new HashMap<>();
+
+        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
+            if (effectiveStatement instanceof UnknownSchemaNode) {
+                UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
+                unknownNodesInit.add(unknownNode);
+            }
+            if (effectiveStatement instanceof AugmentationSchema) {
+                AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
+                augmentationsInit.add(augmentationSchema);
+            }
+            if (effectiveStatement instanceof RefineEffectiveStatementImpl) {
+                RefineEffectiveStatementImpl refineStmt = (RefineEffectiveStatementImpl) effectiveStatement;
+                SchemaNodeIdentifier identifier = refineStmt.argument();
+                refinesInit.put(
+                        Utils.SchemaNodeIdentifierToSchemaPath(identifier),
+                        refineStmt);
+            }
+        }
+
+        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
+        this.augmentations = ImmutableSet.copyOf(augmentationsInit);
+        this.refines = ImmutableMap.copyOf(refinesInit);
+    }
+
+    private void initCopyType(
+            StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
+
+        TypeOfCopy typeOfCopy = ctx.getTypeOfCopy();
+        switch (typeOfCopy) {
+        case ADDED_BY_USES:
+            addedByUses = true;
+            break;
+        default:
+            addedByUses = false;
+            break;
+        }
     }
 
     @Override
@@ -74,8 +137,10 @@ public class UsesEffectiveStatementImpl extends EffectiveStatementBase<QName, Us
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((groupingPath == null) ? 0 : groupingPath.hashCode());
-        result = prime * result + ((augmentations == null) ? 0 : augmentations.hashCode());
+        result = prime * result
+                + ((groupingPath == null) ? 0 : groupingPath.hashCode());
+        result = prime * result
+                + ((augmentations == null) ? 0 : augmentations.hashCode());
         return result;
     }
 
@@ -110,7 +175,8 @@ public class UsesEffectiveStatementImpl extends EffectiveStatementBase<QName, Us
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(UsesEffectiveStatementImpl.class.getSimpleName());
+        StringBuilder sb = new StringBuilder(
+                UsesEffectiveStatementImpl.class.getSimpleName());
         sb.append("[groupingPath=");
         sb.append(groupingPath);
         sb.append("]");
