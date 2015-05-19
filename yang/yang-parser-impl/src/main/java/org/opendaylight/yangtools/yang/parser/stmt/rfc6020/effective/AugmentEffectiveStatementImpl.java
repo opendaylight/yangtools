@@ -8,6 +8,13 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import java.util.Collection;
 import java.util.LinkedList;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -50,11 +57,24 @@ public class AugmentEffectiveStatementImpl
                 schemaNodeIdentifier.getPathFromRoot(),
                 schemaNodeIdentifier.isAbsolute());
 
-        // :TODO init other fields
-        this.order = 1;
-        // firstEffective(WhenEffectiveStatementImpl.class);
+        StmtContext<?, ?, ?> root = ctx.getRoot();
+        this.namespace = StmtContextUtils.findFirstDeclaredSubstatement(root, NamespaceStatement.class).getStatementArgument();
 
+        StmtContext<Date, ?, ?> revisionCtx = StmtContextUtils.findFirstDeclaredSubstatement(root, RevisionStatement.class);
+        this.revision = revisionCtx != null ? revisionCtx.getStatementArgument() : SimpleDateFormatUtil.DEFAULT_DATE_REV;
+
+        this.order = 1;
+
+        initCopyOf(ctx);
         initSubstatementCollections();
+    }
+
+    private void initCopyOf(
+            StmtContext<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> ctx) {
+        StatementContextBase<?, ?, ?> originalCtx = ctx.getOriginalCtx();
+        if (originalCtx != null) {
+            this.copyOf = (AugmentationSchema) originalCtx.buildEffective();
+        }
     }
 
     private void initSubstatementCollections() {
@@ -62,10 +82,16 @@ public class AugmentEffectiveStatementImpl
 
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
 
+        boolean initWhen = false;
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
                 unknownNodesInit.add(unknownNode);
+            }
+            if(!initWhen && effectiveStatement instanceof WhenEffectiveStatementImpl) {
+                WhenEffectiveStatementImpl whenStmt = (WhenEffectiveStatementImpl) effectiveStatement;
+                whenCondition = whenStmt.argument();
+                initWhen = true;
             }
         }
 

@@ -7,8 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 
+import java.util.Map.Entry;
+import java.util.Collection;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
@@ -55,12 +59,22 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     private final Map<ModelProcessingPhase,StatementSupportBundle> supports;
     private final Set<SourceSpecificContext> sources = new HashSet<>();
 
-    private ModelProcessingPhase currentPhase;
-    private ModelProcessingPhase finishedPhase;
+    private ModelProcessingPhase currentPhase = ModelProcessingPhase.INIT;
+    private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
 
     public BuildGlobalContext(Map<ModelProcessingPhase, StatementSupportBundle> supports) {
         super();
         this.supports = supports;
+    }
+
+    public BuildGlobalContext(Map<ModelProcessingPhase, StatementSupportBundle> supports,  Map<ValidationBundleType,Collection<?>> supportedValidation) {
+        super();
+        this.supports = supports;
+
+        Set<Entry<ValidationBundleType, Collection<?>>> validationBundles = supportedValidation.entrySet();
+        for (Entry<ValidationBundleType, Collection<?>> validationBundle : validationBundles) {
+            addToNs(ValidationBundlesNamespace.class, validationBundle.getKey(), validationBundle.getValue());
+        }
     }
 
     public StatementSupportBundle getSupportsForPhase(ModelProcessingPhase currentPhase) {
