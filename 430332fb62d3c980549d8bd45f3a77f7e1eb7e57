@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a9dcd25_706d2c04",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/ConfigCheckingModificaionApplyOp.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-05-19T08:28:24Z",
+      "side": 1,
+      "message": "Typo",
+      "range": {
+        "startLine": 21,
+        "startChar": 13,
+        "endLine": 21,
+        "endChar": 45
+      },
+      "revId": "430332fb62d3c980549d8bd45f3a77f7e1eb7e57",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_d04f6091",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/ConfigCheckingModificaionApplyOp.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-05-19T08:28:24Z",
+      "side": 1,
+      "message": "Instead of open-coded walk of nodes can not we use child operations to do checks?\n\nEg. we walk top-level children - resolve for each child op\nand let that do the verification.\n\nThis way it would share same code path as normal verification and probably would be faster.",
+      "range": {
+        "startLine": 89,
+        "startChar": 4,
+        "endLine": 115,
+        "endChar": 5
+      },
+      "revId": "430332fb62d3c980549d8bd45f3a77f7e1eb7e57",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_f0a93c25",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/InMemoryDataTree.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-05-19T08:28:24Z",
+      "side": 1,
+      "message": "since this class is not visible outside of package you can safely remove this constructor.",
+      "range": {
+        "startLine": 36,
+        "startChar": 4,
+        "endLine": 41,
+        "endChar": 5
+      },
+      "revId": "430332fb62d3c980549d8bd45f3a77f7e1eb7e57",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_10a70851",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/InMemoryDataTreeFactory.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-05-19T08:28:24Z",
+      "side": 1,
+      "message": "Use create(OPERATIONAL) instead.",
+      "range": {
+        "startLine": 32,
+        "startChar": 9,
+        "endLine": 32,
+        "endChar": 99
+      },
+      "revId": "430332fb62d3c980549d8bd45f3a77f7e1eb7e57",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_b063b419",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/InMemoryDataTreeModification.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-05-19T08:28:24Z",
+      "side": 1,
+      "message": "Typo in class name.",
+      "range": {
+        "startLine": 152,
+        "startChar": 29,
+        "endLine": 152,
+        "endChar": 60
+      },
+      "revId": "430332fb62d3c980549d8bd45f3a77f7e1eb7e57",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
