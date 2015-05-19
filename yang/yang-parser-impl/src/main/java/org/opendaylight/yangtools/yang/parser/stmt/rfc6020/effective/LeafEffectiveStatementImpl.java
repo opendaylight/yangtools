@@ -32,14 +32,14 @@ public class LeafEffectiveStatementImpl extends
     private final QName qname;
     private final SchemaPath path;
 
-    boolean augmenting;
-    boolean addedByUses;
-    LeafSchemaNode original;
-    boolean configuration;
-    ConstraintDefinition constraintsDef;
-    TypeDefinition<?> type;
-    String defaultStr;
-    String unitsStr;
+    private boolean augmenting;
+    private boolean addedByUses;
+    private LeafSchemaNode original;
+    private boolean configuration;
+    private ConstraintDefinition constraintsDef;
+    private TypeDefinition<?> type;
+    private String defaultStr;
+    private String unitsStr;
 
     private ImmutableList<UnknownSchemaNode> unknownNodes;
 
@@ -79,8 +79,10 @@ public class LeafEffectiveStatementImpl extends
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
-                UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
-                unknownNodesInit.add(unknownNode);
+                unknownNodesInit.add((UnknownSchemaNode) effectiveStatement);
+            }
+            if (effectiveStatement instanceof TypeDefinition) {
+                type = ((TypeDefinition) effectiveStatement);
             }
         }
 

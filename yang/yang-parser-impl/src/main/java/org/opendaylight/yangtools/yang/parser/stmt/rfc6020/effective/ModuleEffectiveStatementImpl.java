@@ -28,23 +28,19 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.IncludedModuleContext;
 
 public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedDataNodeContainer<String, ModuleStatement>
         implements Module, Immutable {
 
     private final QNameModule qNameModule;
     private final String name;
-    private String sourcePath;
+    private String sourcePath; // TODO fill
     private String prefix;
     private String yangVersion;
     private String organization;
@@ -84,8 +80,6 @@ public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedDat
 
         source = ctx.getStatementSource().name();
 
-        //ctx.getFromNamespace(IncludedModuleContext.class, ) //ModuleIdentifier
-
         initSubstatementCollections();
     }
 
@@ -103,8 +97,6 @@ public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedDat
         Set<FeatureDefinition> featuresInit = new HashSet<>();
         List<ExtensionDefinition> extensionNodesInit = new LinkedList<>();
 
-
-
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 unknownNodesInit.add((UnknownSchemaNode) effectiveStatement);
@@ -116,7 +108,7 @@ public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedDat
                 importsInit.add((ModuleImport) effectiveStatement);
             }
             if (effectiveStatement instanceof IncludeEffectiveStatementImpl) {
-//                ((IncludeEffectiveStatementImpl) effectiveStatement).
+                // submodulesInit.add(TODO);
             }
             if (effectiveStatement instanceof NotificationDefinition) {
                 notificationsInit.add((NotificationDefinition) effectiveStatement);
@@ -289,7 +281,7 @@ public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedDat
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(ModuleImpl.class.getSimpleName());
+        StringBuilder sb = new StringBuilder(ModuleEffectiveStatementImpl.class.getSimpleName());
         sb.append("[");
         sb.append("name=").append(name);
         sb.append(", namespace=").append(getNamespace());
