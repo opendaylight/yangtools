@@ -53,7 +53,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         }
     };
 
-    private final Map<PathArgument, ModifiedNode> children;
+    private Map<PathArgument, ModifiedNode> children;
     private final Optional<TreeNode> original;
     private final PathArgument identifier;
     private LogicalOperation operation = LogicalOperation.NONE;
@@ -284,6 +284,17 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
 
     void resolveModificationType(@Nonnull final ModificationType type) {
         modType = type;
+        if (type == ModificationType.UNMODIFIED) {
+            children = Collections.emptyMap();
+        } else if (type == ModificationType.SUBTREE_MODIFIED) {
+            final Iterator<Map.Entry<PathArgument, ModifiedNode>> iterator = children.entrySet().iterator();
+            while (iterator.hasNext()) {
+                final Map.Entry<PathArgument, ModifiedNode> next = iterator.next();
+                if (next.getValue().getModificationType() == ModificationType.UNMODIFIED) {
+                    iterator.remove();
+                }
+            }
+        }
     }
 
     /**
