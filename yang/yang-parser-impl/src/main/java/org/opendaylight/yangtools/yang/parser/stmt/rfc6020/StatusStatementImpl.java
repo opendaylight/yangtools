@@ -48,7 +48,6 @@ public class StatusStatementImpl extends AbstractDeclaredStatement<String>
                 StmtContext<String, StatusStatement, EffectiveStatement<String, StatusStatement>> ctx) {
             return new StatusEffectiveStatementImpl(ctx);
         }
-
     }
 
     @Override
