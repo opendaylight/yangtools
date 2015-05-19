@@ -1,26 +1,7 @@
 package org.opendaylight.yangtools.yang.stmt.effective.build.test;
 
-
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import org.opendaylight.yangtools.yang.model.api.Deviation;
-import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
-import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.net.URI;
 import java.text.ParseException;
@@ -28,8 +9,29 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Deviation;
+import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
+import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
+import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 public class EffectiveModuleTest {
 
@@ -43,16 +45,17 @@ public class EffectiveModuleTest {
     private static final QNameModule ROOT_MODULE_QNAME = QNameModule.create(URI.create("root-ns"), null);
 
     private static final QName cont = QName.create(ROOT_MODULE_QNAME, "cont");
+    private static final QName feature1 = QName.create(ROOT_MODULE_QNAME, "feature1");
 
     private static final SchemaPath contSchemaPath = SchemaPath.create(true, cont);
+    private static final SchemaPath feature1SchemaPath = SchemaPath.create(true, feature1);
 
     private static Date revision;
 
     @BeforeClass
     public static void init() {
         try {
-            revision = SimpleDateFormatUtil.getRevisionFormat()
-                    .parse("2000-01-01");
+            revision = SimpleDateFormatUtil.getRevisionFormat().parse("2000-01-01");
         } catch (ParseException e) {
             throw new IllegalArgumentException(e);
         }
@@ -71,8 +74,11 @@ public class EffectiveModuleTest {
 
         assertEquals("root-pref", rootModule.getPrefix());
         assertEquals("1", rootModule.getYangVersion());
-        assertEquals("kisko", rootModule.getOrganization());
-        assertEquals("kisko email", rootModule.getContact());
+        assertEquals("cisco", rootModule.getOrganization());
+        assertEquals("cisco email", rootModule.getContact());
+
+        final ContainerSchemaNode contSchemaNode = (ContainerSchemaNode) rootModule.getDataChildByName(cont);
+        assertNotNull(contSchemaNode);
 
         final Set<AugmentationSchema> augmentations = rootModule.getAugmentations();
         assertEquals(1, augmentations.size());
@@ -87,8 +93,8 @@ public class EffectiveModuleTest {
         assertEquals("imp-pref", importStmt.getPrefix());
 
         final Set<Module> submodules = rootModule.getSubmodules();
-        //assertEquals(1, submodules.size());
-        //assertEquals("submod", submodules.iterator().next().getName());
+        // assertEquals(1, submodules.size());
+        // assertEquals("submod", submodules.iterator().next().getName());
 
         final Set<NotificationDefinition> notifications = rootModule.getNotifications();
         assertEquals(1, notifications.size());
@@ -110,9 +116,15 @@ public class EffectiveModuleTest {
         assertEquals(1, identities.size());
         assertEquals("identity1", identities.iterator().next().getQName().getLocalName());
 
-//        final Set<FeatureDefinition> features = rootModule.getFeatures();
-//        assertEquals(1, features.size());
-//        assertEquals("feature1", features.iterator().next().getQName().getLocalName());
+        final Set<FeatureDefinition> features = rootModule.getFeatures();
+        assertEquals(1, features.size());
+        final FeatureDefinition featureStmt = features.iterator().next();
+        assertNotNull(featureStmt);
+        assertEquals(feature1, featureStmt.getQName());
+        assertEquals(feature1SchemaPath, featureStmt.getPath());
+        assertEquals("feature1 description", featureStmt.getDescription());
+        assertEquals("feature1 reference", featureStmt.getReference());
+        assertEquals(Status.CURRENT, featureStmt.getStatus());
 
         final List<ExtensionDefinition> extensionSchemaNodes = rootModule.getExtensionSchemaNodes();
         assertEquals(1, extensionSchemaNodes.size());
