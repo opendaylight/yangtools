@@ -42,7 +42,8 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
     }
 
     public final <K, V, N extends IdentifierNamespace<K, V>> Map<?, ?> getAllFromNamespace(Class<N> type){
-        return namespaces.get(type);
+        //return namespaces.get(type);
+        return getBehaviourRegistry().getNamespaceBehaviour(type).getAllFrom(this);
     }
 
     public final <K,V,VT extends V,N extends IdentifierNamespace<K, V>> void addToNs(Class<N> type, K key, VT value)
@@ -66,7 +67,12 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         return null;
     }
 
-
+    @Override
+    public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromLocalStorage(Class<N> type) {
+        @SuppressWarnings("unchecked")
+        Map<K, V> localNamespace = (Map<K, V>) namespaces.get(type);
+        return localNamespace;
+    }
 
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> void addToLocalStorage(Class<N> type, K key, V value) {
