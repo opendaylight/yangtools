@@ -64,7 +64,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  *
  * @see <a href="http://tools.ietf.org/html/rfc6020#section-9.13">RFC6020</a>
  */
-public abstract class YangInstanceIdentifier extends CollectionPathArguments implements Path<YangInstanceIdentifier>, Immutable, Serializable {
+public abstract class YangInstanceIdentifier extends IterablePathArguments implements Path<YangInstanceIdentifier>, Immutable, Serializable {
     /**
      * An empty {@link YangInstanceIdentifier}. It corresponds to the path of the conceptual
      * root of the YANG namespace.
