@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a9dcd25_93f802e7",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStream.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-05-19T09:29:43Z",
+      "side": 1,
+      "message": "Would not be better to provide also namespace? eg. getQName() ?",
+      "range": {
+        "startLine": 108,
+        "startChar": 141,
+        "endLine": 108,
+        "endChar": 156
+      },
+      "revId": "e270c21126291307cfe6106a29e3aa9735b5ad3b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
