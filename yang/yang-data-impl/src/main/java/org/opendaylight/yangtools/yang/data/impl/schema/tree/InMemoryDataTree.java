@@ -48,7 +48,7 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
 
         LOG.debug("Following schema contexts will be attempted {}", newSchemaContext);
 
-        final SchemaAwareApplyOperation operation = SchemaAwareApplyOperation.from(newSchemaContext);
+        final ModificationApplyOperation operation = SchemaAwareApplyOperation.from(newSchemaContext);
 
         DataTreeState currentState, newState;
         do {

@@ -36,9 +36,14 @@ import org.slf4j.LoggerFactory;
 abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaAwareApplyOperation.class);
 
-    public static SchemaAwareApplyOperation from(final DataSchemaNode schemaNode) {
+    public static ModificationApplyOperation from(final DataSchemaNode schemaNode) {
         if (schemaNode instanceof ContainerSchemaNode) {
-            return new ContainerModificationStrategy((ContainerSchemaNode) schemaNode);
+            final ContainerSchemaNode containerSchema = (ContainerSchemaNode) schemaNode;
+            if (containerSchema.isPresenceContainer()) {
+                return new PresenceContainerModificationStrategy(containerSchema);
+            } else {
+                return new StructuralContainerModificationStrategy(containerSchema);
+            }
         } else if (schemaNode instanceof ListSchemaNode) {
             return fromListSchemaNode((ListSchemaNode) schemaNode);
         } else if (schemaNode instanceof ChoiceSchemaNode) {
