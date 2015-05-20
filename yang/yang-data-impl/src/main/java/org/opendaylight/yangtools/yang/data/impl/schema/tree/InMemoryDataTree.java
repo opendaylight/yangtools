@@ -8,16 +8,19 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,23 +60,30 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
 
         LOG.debug("Following schema contexts will be attempted {}", newSchemaContext);
 
-        final ModificationApplyOperation op = SchemaAwareApplyOperation.from(newSchemaContext, treeType);
-        final Optional<ModificationApplyOperation> maybeRootNode = StoreTreeNodes.findNode(op, rootPath);
-        if (!maybeRootNode.isPresent()) {
+        final DataSchemaContextTree contextTree = DataSchemaContextTree.from(newSchemaContext);
+        final DataSchemaContextNode<?> rootContextNode = contextTree.getChild(rootPath);
+        if (rootContextNode == null) {
             LOG.debug("Could not find root {} in new schema context, not upgrading", rootPath);
             return;
         }
 
-        final ModificationApplyOperation rootNode = maybeRootNode.get();
-        if (!(rootNode instanceof AbstractNodeContainerModificationStrategy)) {
-            LOG.warn("Root {} resolves to non-container type {}, not upgrading", rootPath, rootNode);
+        final DataSchemaNode rootSchemaNode = rootContextNode.getDataSchemaNode();
+        if (!(rootSchemaNode instanceof DataNodeContainer)) {
+            LOG.warn("Root {} resolves to non-container type {}, not upgrading", rootPath, rootSchemaNode);
             return;
+        }
+
+        final ModificationApplyOperation rootNode;
+        if (rootSchemaNode instanceof ContainerSchemaNode) {
+            rootNode = new PresenceContainerModificationStrategy((ContainerSchemaNode) rootSchemaNode, treeType);
+        } else {
+            rootNode = SchemaAwareApplyOperation.from(rootSchemaNode, treeType);
         }
 
         DataTreeState currentState, newState;
         do {
             currentState = state;
-            newState = currentState.withSchemaContext(newSchemaContext, (SchemaAwareApplyOperation) rootNode);
+            newState = currentState.withSchemaContext(newSchemaContext, rootNode);
         } while (!STATE_UPDATER.compareAndSet(this, currentState, newState));
     }
 
