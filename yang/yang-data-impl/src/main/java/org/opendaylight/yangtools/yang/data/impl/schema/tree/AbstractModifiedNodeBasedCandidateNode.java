@@ -84,6 +84,8 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     @Override
     public Collection<DataTreeCandidateNode> getChildNodes() {
         switch (mod.getModificationType()) {
+        case APPEARED:
+        case DISAPPEARED:
         case SUBTREE_MODIFIED:
             return Collections2.transform(mod.getChildren(), new Function<ModifiedNode, DataTreeCandidateNode>() {
                 @Override
@@ -139,6 +141,8 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     @Override
     public final DataTreeCandidateNode getModifiedChild(final PathArgument identifier) {
         switch (mod.getModificationType()) {
+        case APPEARED:
+        case DISAPPEARED:
         case SUBTREE_MODIFIED:
             final Optional<ModifiedNode> childMod = mod.getChild(identifier);
             if (childMod.isPresent()) {
