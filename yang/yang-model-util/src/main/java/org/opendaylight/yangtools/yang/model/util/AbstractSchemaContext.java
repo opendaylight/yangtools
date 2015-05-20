@@ -243,7 +243,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
 
     @Override
     public boolean isPresenceContainer() {
-        return false;
+        return true;
     }
 
     @Override

@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.IncorrectDataStructureException;
@@ -37,16 +38,26 @@ import org.slf4j.LoggerFactory;
 abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaAwareApplyOperation.class);
 
-    static SchemaAwareApplyOperation from(final SchemaContext schemaNode, final TreeType treeType) {
-        return new ContainerModificationStrategy(schemaNode, treeType);
+    static ModificationApplyOperation from(final SchemaContext schemaNode, final TreeType treeType) {
+        final ContainerSchemaNode containerSchema = schemaNode;
+        if (containerSchema.isPresenceContainer()) {
+            return new PresenceContainerModificationStrategy(containerSchema, treeType);
+        } else {
+            return new StructuralContainerModificationStrategy(containerSchema, treeType);
+        }
     }
 
-    public static SchemaAwareApplyOperation from(final DataSchemaNode schemaNode, final TreeType treeType) {
+    public static ModificationApplyOperation from(final DataSchemaNode schemaNode, TreeType treeType) {
         if(treeType == TreeType.CONFIGURATION) {
             Preconditions.checkArgument(schemaNode.isConfiguration(), "Supplied %s does not belongs to configuration tree.", schemaNode.getPath());
         }
         if (schemaNode instanceof ContainerSchemaNode) {
-            return new ContainerModificationStrategy((ContainerSchemaNode) schemaNode, treeType);
+            final ContainerSchemaNode containerSchema = (ContainerSchemaNode) schemaNode;
+            if (containerSchema.isPresenceContainer()) {
+                return new PresenceContainerModificationStrategy(containerSchema, treeType);
+            } else {
+                return new StructuralContainerModificationStrategy(containerSchema, treeType);
+            }
         } else if (schemaNode instanceof ListSchemaNode) {
             return fromListSchemaNode((ListSchemaNode) schemaNode, treeType);
         } else if (schemaNode instanceof ChoiceSchemaNode) {
