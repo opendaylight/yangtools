@@ -127,17 +127,17 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> getDataAfter() {
+    public final Optional<NormalizedNode<?, ?>> getDataAfter() {
         return optionalData(newMeta);
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> getDataBefore() {
+    public final Optional<NormalizedNode<?, ?>> getDataBefore() {
         return optionalData(oldMeta);
     }
 
     @Override
-    public DataTreeCandidateNode getModifiedChild(final PathArgument identifier) {
+    public final DataTreeCandidateNode getModifiedChild(final PathArgument identifier) {
         switch (mod.getModificationType()) {
         case SUBTREE_MODIFIED:
             final Optional<ModifiedNode> childMod = mod.getChild(identifier);
