@@ -8,6 +8,7 @@ module odl-datastore-test {
     }
 
     container test {
+        presence true;
         choice choice1 {
             case case1 {
                 leaf case1-leaf1 {
@@ -47,7 +48,7 @@ module odl-datastore-test {
                }
            }
            list inner-list {
-               config false;
+                config false;
                 key name;
                 leaf name {
                     type string;
