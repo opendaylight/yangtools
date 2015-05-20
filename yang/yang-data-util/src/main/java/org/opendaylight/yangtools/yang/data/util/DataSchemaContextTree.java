@@ -11,18 +11,18 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.util.Iterator;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public final class DataSchemaContextTree {
-
     private static final LoadingCache<SchemaContext, DataSchemaContextTree> TREES = CacheBuilder.newBuilder()
             .weakKeys()
             .build(new CacheLoader<SchemaContext, DataSchemaContextTree>() {
 
                 @Override
-                public DataSchemaContextTree load(SchemaContext key) throws Exception {
+                public DataSchemaContextTree load(final SchemaContext key) throws Exception {
                     return new DataSchemaContextTree(key);
                 }
 
@@ -34,8 +34,7 @@ public final class DataSchemaContextTree {
         root = DataSchemaContextNode.from(ctx);
     }
 
-
-    public static DataSchemaContextTree from(SchemaContext ctx) {
+    @Nonnull public static DataSchemaContextTree from(@Nonnull final SchemaContext ctx) {
         return TREES.getUnchecked(ctx);
     }
 
@@ -51,5 +50,4 @@ public final class DataSchemaContextTree {
     public DataSchemaContextNode<?> getRoot() {
         return root;
     }
-
 }
