@@ -118,7 +118,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
         return Verify.verifyNotNull(mod.getModificationType(), "Node %s does not have resolved modification type", mod);
     }
 
-    private Optional<NormalizedNode<?, ?>> optionalData(final TreeNode meta) {
+    private static Optional<NormalizedNode<?, ?>> optionalData(final TreeNode meta) {
         if (meta != null) {
             return Optional.<NormalizedNode<?,?>>of(meta.getData());
         } else {
