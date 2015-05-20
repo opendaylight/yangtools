@@ -8,6 +8,7 @@ module list-constraints-validation-test-model  {
     }
 
     container master-container {
+        presence true;
         list min-max-list {
             min-elements 2;
             max-elements 3;
