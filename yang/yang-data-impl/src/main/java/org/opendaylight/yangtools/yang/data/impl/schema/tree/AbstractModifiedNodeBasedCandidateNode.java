@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 
 abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandidateNode {
 
-    private static final Function<NormalizedNode<?, ?>, DataTreeCandidateNode> TO_UNMODIFIED_NODES = new Function<NormalizedNode<?, ?>, DataTreeCandidateNode>() {
+    private static final Function<NormalizedNode<?, ?>, DataTreeCandidateNode> TO_UNMODIFIED_NODE = new Function<NormalizedNode<?, ?>, DataTreeCandidateNode>() {
         @Override
         public DataTreeCandidateNode apply(final NormalizedNode<?, ?> input) {
             return AbstractRecursiveCandidateNode.unmodifiedNode(input);
@@ -95,7 +95,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
             // Unmodified node, but we still need to resolve potential children. canHaveChildren returns
             // false if both arguments are null.
             if (canHaveChildren(oldMeta, newMeta)) {
-                return Collections2.transform(getContainer(newMeta != null ? newMeta : oldMeta).getValue(), TO_UNMODIFIED_NODES);
+                return Collections2.transform(getContainer(newMeta != null ? newMeta : oldMeta).getValue(), TO_UNMODIFIED_NODE);
             } else {
                 return Collections.emptyList();
             }
@@ -145,17 +145,24 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
                 return childNode(childMod.get());
             }
             return null;
-        case DELETE:
         case UNMODIFIED:
-        case WRITE:
-            // FIXME: this is a linear walk. We need a Map of these in order to
-            //        do something like getChildMap().get(identifier);
-            for (DataTreeCandidateNode c : getChildNodes()) {
-                if (identifier.equals(c.getIdentifier())) {
-                    return c;
+            if (canHaveChildren(oldMeta, newMeta)) {
+                final Optional<NormalizedNode<?, ?>> maybeChild = getContainer(newMeta != null ? newMeta : oldMeta).getChild(identifier);
+                if (maybeChild.isPresent()) {
+                    return TO_UNMODIFIED_NODE.apply(maybeChild.get());
+                } else {
+                    return null;
                 }
+            } else {
+                return null;
             }
-            return null;
+        case DELETE:
+        case WRITE:
+            if (canHaveChildren(oldMeta, newMeta)) {
+                return AbstractDataTreeCandidateNode.deltaChild(getContainer(oldMeta), getContainer(newMeta), identifier);
+            } else {
+                return null;
+            }
         default:
             throw new IllegalArgumentException("Unhandled modification type " + mod.getModificationType());
         }
