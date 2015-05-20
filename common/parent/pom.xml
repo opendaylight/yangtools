@@ -33,8 +33,25 @@
         <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
         <sonar.jacoco.reportPath>target/code-coverage/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.jacoco.itReportPath>target/code-coverage/jacoco-it.exec</sonar.jacoco.itReportPath>
+        <nexusproxy>http://nexus.opendaylight.org/content</nexusproxy>
     </properties>
 
+    <repositories>
+      <!-- To get SVNKit -->
+      <!-- OpenDayLight Released artifact -->
+      <repository>
+        <id>opendaylight-release</id>
+        <name>opendaylight-release</name>
+        <url>${nexusproxy}/repositories/opendaylight.release/</url>
+      </repository>
+      <!-- OpenDayLight Snapshot artifact -->
+      <repository>
+        <id>opendaylight-snapshot</id>
+        <name>opendaylight-snapshot</name>
+        <url>${nexusproxy}/repositories/opendaylight.snapshot/</url>
+      </repository>
+      <!-- PAX Management -->
+    </repositories>
     <dependencyManagement>
         <dependencies>
             <!-- Testing Dependencies -->
