@@ -53,7 +53,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
         return oldMeta;
     }
 
-    private static final TreeNode childMeta(final TreeNode parent, final PathArgument id) {
+    private static TreeNode childMeta(final TreeNode parent, final PathArgument id) {
         if (parent != null) {
             return parent.getChild(id).orNull();
         } else {
