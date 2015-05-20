@@ -22,25 +22,56 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateNode;
 
 abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
-    private static final Function<NormalizedNode<?, ?>, DataTreeCandidateNode> TO_DELETED_NODES = new Function<NormalizedNode<?, ?>, DataTreeCandidateNode>() {
+    private static final Function<NormalizedNode<?, ?>, DataTreeCandidateNode> TO_DELETED_NODE = new Function<NormalizedNode<?, ?>, DataTreeCandidateNode>() {
         @Override
         public DataTreeCandidateNode apply(final NormalizedNode<?, ?> input) {
             return AbstractRecursiveCandidateNode.deleteNode(input);
         }
-    };    private static final Function<NormalizedNode<?, ?>, DataTreeCandidateNode> TO_WRITTEN_NODES = new Function<NormalizedNode<?, ?>, DataTreeCandidateNode>() {
+    };
+    private static final Function<NormalizedNode<?, ?>, DataTreeCandidateNode> TO_WRITTEN_NODE = new Function<NormalizedNode<?, ?>, DataTreeCandidateNode>() {
         @Override
         public DataTreeCandidateNode apply(final NormalizedNode<?, ?> input) {
             return AbstractRecursiveCandidateNode.writeNode(input);
         }
     };
 
+    private static Optional<NormalizedNode<?, ?>> getChild(final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> container, final PathArgument identifier) {
+        if (container != null) {
+            return container.getChild(identifier);
+        } else {
+            return Optional.absent();
+        }
+    }
+
+    static DataTreeCandidateNode deltaChild(
+            final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> oldData,
+            final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> newData, final PathArgument identifier) {
+
+        final Optional<NormalizedNode<?, ?>> maybeNewChild = getChild(newData, identifier);
+        final Optional<NormalizedNode<?, ?>> maybeOldChild = getChild(oldData, identifier);
+        if (maybeOldChild.isPresent()) {
+            final NormalizedNode<?, ?> oldChild = maybeOldChild.get();
+            if (maybeNewChild.isPresent()) {
+                return AbstractRecursiveCandidateNode.replaceNode(oldChild, maybeNewChild.get());
+            } else {
+                return TO_DELETED_NODE.apply(oldChild);
+            }
+        } else {
+            if (maybeNewChild.isPresent()) {
+                return TO_WRITTEN_NODE.apply(maybeNewChild.get());
+            } else {
+                return null;
+            }
+        }
+    }
+
     static Collection<DataTreeCandidateNode> deltaChildren(@Nullable final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> oldData,
             @Nullable final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> newData) {
         if (newData == null) {
-            return Collections2.transform(oldData.getValue(), TO_DELETED_NODES);
+            return Collections2.transform(oldData.getValue(), TO_DELETED_NODE);
         }
         if (oldData == null) {
-            return Collections2.transform(newData.getValue(), TO_WRITTEN_NODES);
+            return Collections2.transform(newData.getValue(), TO_WRITTEN_NODE);
         }
 
         // Create index for fast cross-references
