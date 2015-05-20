@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -35,7 +34,6 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 public class Bug2690FixTest {
     private static final String ODL_DATASTORE_TEST_YANG = "/odl-datastore-test.yang";
     private SchemaContext schemaContext;
-    private RootModificationApplyOperation rootOper;
 
     private InMemoryDataTree inMemoryDataTree;
 
@@ -43,7 +41,6 @@ public class Bug2690FixTest {
     public void prepare() throws IOException, YangSyntaxErrorException {
         schemaContext = createTestContext();
         assertNotNull("Schema context must not be null.", schemaContext);
-        rootOper = RootModificationApplyOperation.from(SchemaAwareApplyOperation.from(schemaContext, TreeType.OPERATIONAL));
         inMemoryDataTree =  (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create();
         inMemoryDataTree.setSchemaContext(schemaContext);
     }
