@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -250,10 +251,15 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         }
     }
 
-    private static void checkIdentifierReferencesData(final YangInstanceIdentifier path,
-            final NormalizedNode<?, ?> data) {
-        final PathArgument lastArg = path.getLastPathArgument();
-        Preconditions.checkArgument(data.getIdentifier().equals(lastArg),
-                "Instance identifier references %s but data identifier is %s", lastArg, data.getIdentifier());
+    private static void checkIdentifierReferencesData(final YangInstanceIdentifier path, final NormalizedNode<?, ?> data) {
+        if (!path.isEmpty()) {
+            final PathArgument lastArg = path.getLastPathArgument();
+            Preconditions.checkArgument(lastArg != null, "Instance identifier %s has invalid null path argument", path);
+            Preconditions.checkArgument(lastArg.equals(data.getIdentifier()),
+                    "Instance identifier references %s but data identifier is %s", lastArg, data.getIdentifier());
+	} else {
+            final QName type = data.getNodeType();
+            Preconditions.checkArgument(SchemaContext.NAME.equals(type), "Incorrect name %s of root node", type);
+	}
     }
 }
