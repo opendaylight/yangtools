@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -250,10 +251,16 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         }
     }
 
-    private static void checkIdentifierReferencesData(final YangInstanceIdentifier path,
-            final NormalizedNode<?, ?> data) {
+    private static void checkIdentifierReferencesData(final YangInstanceIdentifier path, final NormalizedNode<?, ?> data) {
         final PathArgument lastArg = path.getLastPathArgument();
-        Preconditions.checkArgument(data.getIdentifier().equals(lastArg),
-                "Instance identifier references %s but data identifier is %s", lastArg, data.getIdentifier());
+        if (lastArg != null) {
+            Preconditions.checkArgument(data.getIdentifier().equals(lastArg),
+                    "Instance identifier references %s but data identifier is %s", lastArg, data.getIdentifier());
+        } else {
+            Preconditions.checkArgument(YangInstanceIdentifier.EMPTY.equals(path),
+                    "null argument is allowed only for empty instance identifier");
+            Preconditions
+                    .checkArgument(SchemaContext.NAME.equals(data.getNodeType()), "Root node have incorrect name.");
+        }
     }
 }
