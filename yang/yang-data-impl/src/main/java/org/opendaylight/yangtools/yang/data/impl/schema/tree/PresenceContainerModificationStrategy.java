@@ -17,8 +17,9 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
-final class ContainerModificationStrategy extends AbstractDataNodeContainerModificationStrategy<ContainerSchemaNode> {
-    ContainerModificationStrategy(final ContainerSchemaNode schemaNode, final TreeType treeType) {
+final class PresenceContainerModificationStrategy extends
+        AbstractDataNodeContainerModificationStrategy<ContainerSchemaNode> {
+    PresenceContainerModificationStrategy(final ContainerSchemaNode schemaNode, final TreeType treeType) {
         super(schemaNode, ContainerNode.class, treeType);
     }
 
