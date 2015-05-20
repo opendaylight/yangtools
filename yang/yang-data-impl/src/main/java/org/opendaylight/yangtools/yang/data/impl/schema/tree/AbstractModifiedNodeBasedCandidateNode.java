@@ -84,6 +84,8 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     @Override
     public Collection<DataTreeCandidateNode> getChildNodes() {
         switch (mod.getModificationType()) {
+        case APPEARED:
+        case DISAPPEARED:
         case SUBTREE_MODIFIED:
             return Collections2.transform(mod.getChildren(), new Function<ModifiedNode, DataTreeCandidateNode>() {
                 @Override
@@ -108,9 +110,9 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
             } else {
                 return Collections.emptyList();
             }
-        default:
-            throw new IllegalArgumentException("Unhandled modification type " + mod.getModificationType());
         }
+
+        throw new IllegalArgumentException("Unhandled modification type " + mod.getModificationType());
     }
 
     @Override
