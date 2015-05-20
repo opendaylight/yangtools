@@ -30,10 +30,10 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
         final ImmutableMap.Builder<YangInstanceIdentifier.PathArgument, ModificationApplyOperation> child = ImmutableMap.builder();
 
         for (final ChoiceCaseNode caze : schemaNode.getCases()) {
-            if(SchemaAwareApplyOperation.belongsToTree(treeType,caze)) {
+            if (SchemaAwareApplyOperation.belongsToTree(treeType,caze)) {
                 for (final DataSchemaNode cazeChild : caze.getChildNodes()) {
-                    if(SchemaAwareApplyOperation.belongsToTree(treeType,cazeChild)) {
-                        final SchemaAwareApplyOperation childNode = SchemaAwareApplyOperation.from(cazeChild,treeType);
+                    if (SchemaAwareApplyOperation.belongsToTree(treeType,cazeChild)) {
+                        final ModificationApplyOperation childNode = SchemaAwareApplyOperation.from(cazeChild, treeType);
                         child.put(NodeIdentifier.create(cazeChild.getQName()), childNode);
                     }
                 }
