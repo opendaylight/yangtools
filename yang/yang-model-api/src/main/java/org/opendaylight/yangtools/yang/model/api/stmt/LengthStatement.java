@@ -7,11 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import java.util.List;
+
 import javax.annotation.Nonnull;
+
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
-public interface LengthStatement extends DeclaredStatement<String>, DocumentedConstraintGroup {
+public interface LengthStatement extends DeclaredStatement<List<LengthConstraint>>, DocumentedConstraintGroup {
 
-    @Nonnull String getValue();
+    @Nonnull
+    List<LengthConstraint> getValue();
 }
-

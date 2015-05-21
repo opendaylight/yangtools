@@ -37,8 +37,12 @@ public abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredState
             reference = "";
         }
 
-        // :TODO
-        status = null;
+        StatusEffectiveStatementImpl statusStmt = firstEffective(StatusEffectiveStatementImpl.class);
+        if (statusStmt != null) {
+            status = statusStmt.argument();
+        } else {
+            status = null;
+        }
     }
 
     @Override

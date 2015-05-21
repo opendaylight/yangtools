@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
-
 import java.util.Collection;
 import java.util.LinkedList;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
@@ -32,13 +31,13 @@ public class LeafListEffectiveStatementImpl extends
     private final QName qname;
     private final SchemaPath path;
 
-    boolean augmenting;
-    boolean addedByUses;
-    LeafListSchemaNode original;
-    boolean configuration;
-    ConstraintDefinition constraintsDef;
-    TypeDefinition<?> type;
-    boolean userOrdered;
+    private boolean augmenting;
+    private boolean addedByUses;
+    private LeafListSchemaNode original;
+    private boolean configuration;
+    private ConstraintDefinition constraintsDef;
+    private TypeDefinition<?> type;
+    private boolean userOrdered;
 
     private ImmutableList<UnknownSchemaNode> unknownNodes;
 
@@ -47,7 +46,9 @@ public class LeafListEffectiveStatementImpl extends
         super(ctx);
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
-        // :TODO init other fields
+        this.constraintsDef = new EffectiveConstraintDefinitionImpl(this);
+
+        // :TODO init TypeDefinition
 
         initSubstatementCollections();
         initCopyType(ctx);
@@ -78,10 +79,27 @@ public class LeafListEffectiveStatementImpl extends
 
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
 
+        boolean configurationInit = false;
+        boolean userOrderedInit = false;
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
-                UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
-                unknownNodesInit.add(unknownNode);
+                unknownNodesInit.add((UnknownSchemaNode) effectiveStatement);
+            }
+            if (effectiveStatement instanceof TypeDefinition) {
+                type = ((TypeDefinition) effectiveStatement);
+            }
+            if (!configurationInit
+                    && effectiveStatement instanceof ConfigEffectiveStatementImpl) {
+                ConfigEffectiveStatementImpl configStmt = (ConfigEffectiveStatementImpl) effectiveStatement;
+                this.configuration = configStmt.argument();
+                configurationInit = true;
+            }
+            if (!userOrderedInit
+                    && effectiveStatement instanceof OrderedByEffectiveStatementImpl) {
+                OrderedByEffectiveStatementImpl orderedByStmt = (OrderedByEffectiveStatementImpl) effectiveStatement;
+                this.userOrdered = orderedByStmt.argument().equals("user") ? true
+                        : false;
+                userOrderedInit = true;
             }
         }
 

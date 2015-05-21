@@ -13,44 +13,61 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.FractionDigitsEffectiveStatementImpl;
 
-public class FractionDigitsStatementImpl extends
-        AbstractDeclaredStatement<String> implements FractionDigitsStatement {
+import com.google.common.collect.Range;
 
-    protected FractionDigitsStatementImpl(
-            StmtContext<String, FractionDigitsStatement, ?> context) {
+public class FractionDigitsStatementImpl extends AbstractDeclaredStatement<Integer> implements FractionDigitsStatement {
+
+    private static final Range<Integer> FRAC_DIGITS_ALLOWED = Range.closed(1, 18);
+
+    protected FractionDigitsStatementImpl(StmtContext<Integer, FractionDigitsStatement, ?> context) {
         super(context);
     }
 
     public static class Definition
             extends
-            AbstractStatementSupport<String, FractionDigitsStatement, EffectiveStatement<String, FractionDigitsStatement>> {
+            AbstractStatementSupport<Integer, FractionDigitsStatement, EffectiveStatement<Integer, FractionDigitsStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.FRACTION_DIGITS);
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
-            return value;
+        public Integer parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+
+            int fractionDigits;
+
+            try {
+                fractionDigits = Integer.parseInt(value);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException(String.format("%s is not valid fraction-digits integer argument",
+                        value), e);
+            }
+
+            if (!FRAC_DIGITS_ALLOWED.contains(fractionDigits)) {
+                throw new IllegalArgumentException(String.format("fraction-digits argument should be integer within %s",
+                        FRAC_DIGITS_ALLOWED));
+            }
+
+            return fractionDigits;
         }
 
         @Override
-        public FractionDigitsStatement createDeclared(
-                StmtContext<String, FractionDigitsStatement, ?> ctx) {
+        public FractionDigitsStatement createDeclared(StmtContext<Integer, FractionDigitsStatement, ?> ctx) {
             return new FractionDigitsStatementImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<String, FractionDigitsStatement> createEffective(
-                StmtContext<String, FractionDigitsStatement, EffectiveStatement<String, FractionDigitsStatement>> ctx) {
-            throw new UnsupportedOperationException();
+        public EffectiveStatement<Integer, FractionDigitsStatement> createEffective(
+                StmtContext<Integer, FractionDigitsStatement, EffectiveStatement<Integer, FractionDigitsStatement>> ctx) {
+            return new FractionDigitsEffectiveStatementImpl(ctx);
         }
 
     }
 
     @Override
-    public String getValue() {
+    public Integer getValue() {
         return argument();
     }
 }
