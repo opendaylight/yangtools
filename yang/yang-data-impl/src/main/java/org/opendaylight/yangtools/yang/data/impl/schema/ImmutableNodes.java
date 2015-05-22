@@ -127,7 +127,7 @@ public final class ImmutableNodes {
     public static NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id, final Optional<NormalizedNode<?, ?>> deepestElement, final Optional<Map.Entry<QName, ModifyAction>> operation) {
         Preconditions.checkNotNull(ctx);
         Preconditions.checkNotNull(id);
-        final YangInstanceIdentifier.PathArgument topLevelElement = id.getPathArguments().iterator().next();
+        final YangInstanceIdentifier.PathArgument topLevelElement = id.getPathArguments().get(0);
         final DataSchemaNode dataChildByName = ctx.getDataChildByName(topLevelElement.getNodeType());
         Preconditions.checkNotNull(dataChildByName, "Cannot find %s node in schema context. Instance identifier has to start from root", topLevelElement);
         final InstanceIdToNodes<?> instanceIdToNodes = InstanceIdToNodes.fromSchemaAndQNameChecked(ctx, topLevelElement.getNodeType());
