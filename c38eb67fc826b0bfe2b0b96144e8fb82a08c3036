@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a9dcd25_9fceb759",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/AbstractNodeContainerModificationStrategy.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-05-22T11:28:30Z",
+      "side": 1,
+      "message": "Seems as unnecessary - since on line 147 children are retrieved using modification.getChildren(), only reason would be if mutateChildren changed modification.getChildren()",
+      "range": {
+        "startLine": 167,
+        "startChar": 34,
+        "endLine": 167,
+        "endChar": 60
+      },
+      "revId": "c38eb67fc826b0bfe2b0b96144e8fb82a08c3036",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_bf35b347",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/ModifiedNode.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 286,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-05-22T11:28:30Z",
+      "side": 1,
+      "message": "Could not be this done during seal()? resolveModificationType should be fast and unmodified nodes should be removed in seal()",
+      "range": {
+        "startLine": 280,
+        "startChar": 11,
+        "endLine": 286,
+        "endChar": 13
+      },
+      "revId": "c38eb67fc826b0bfe2b0b96144e8fb82a08c3036",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
