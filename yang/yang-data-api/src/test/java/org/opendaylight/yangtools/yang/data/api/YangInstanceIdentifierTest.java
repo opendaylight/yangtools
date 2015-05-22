@@ -14,7 +14,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import java.io.ByteArrayInputStream;
@@ -24,6 +23,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -97,7 +97,7 @@ public class YangInstanceIdentifierTest {
         YangInstanceIdentifier newID = id.node( nodeName3 );
 
         assertNotNull( "InstanceIdentifier is null", newID );
-        assertEquals( "Path size", 3, Iterables.size(newID.getPathArguments()) );
+        assertEquals( "Path size", 3, newID.getPathArguments().size() );
 
         Iterator<PathArgument> it = newID.getPathArguments().iterator();
         assertEquals( "PathArg 1 node type", nodeName1, it.next().getNodeType() );
@@ -107,7 +107,7 @@ public class YangInstanceIdentifierTest {
         newID = id.node( new NodeIdentifier( nodeName3 ) );
 
         assertNotNull( "InstanceIdentifier is null", newID );
-        assertEquals( "Path size", 3, Iterables.size(newID.getPathArguments()) );
+        assertEquals( "Path size", 3, newID.getPathArguments().size() );
 
         it = newID.getPathArguments().iterator();
         assertEquals( "PathArg 1 node type", nodeName1, it.next().getNodeType() );
@@ -127,14 +127,14 @@ public class YangInstanceIdentifierTest {
         Optional<YangInstanceIdentifier> relative = id1.relativeTo( id2 );
         assertEquals( "isPresent", true, relative.isPresent() );
 
-        Iterable<PathArgument> p = relative.get().getPathArguments();
-        assertEquals( "Path size", 2, Iterables.size(p) );
-        assertEquals( "PathArg 1 node type", nodeName3, Iterables.get(p, 0).getNodeType() );
-        assertEquals( "PathArg 2 node type", nodeName4, Iterables.get(p, 1).getNodeType() );
+        List<PathArgument> p = relative.get().getPathArguments();
+        assertEquals( "Path size", 2, p.size() );
+        assertEquals( "PathArg 1 node type", nodeName3, p.get(0).getNodeType() );
+        assertEquals( "PathArg 2 node type", nodeName4, p.get(1).getNodeType() );
 
         relative = id2.relativeTo( id3 );
         assertEquals( "isPresent", true, relative.isPresent() );
-        assertEquals( "Path size", 0, Iterables.size(relative.get().getPathArguments()) );
+        assertEquals( "Path size", 0, relative.get().getPathArguments().size() );
 
         relative = id2.relativeTo( id1 );
         assertEquals( "isPresent", false, relative.isPresent() );
@@ -168,8 +168,8 @@ public class YangInstanceIdentifierTest {
         YangInstanceIdentifier newID = YangInstanceIdentifier.of( nodeName1 );
 
         assertNotNull( "InstanceIdentifier is null", newID );
-        assertEquals( "Path size", 1, Iterables.size(newID.getPathArguments()) );
-        assertEquals( "PathArg 1 node type", nodeName1, Iterables.get(newID.getPathArguments(), 0).getNodeType() );
+        assertEquals( "Path size", 1, newID.getPathArguments().size() );
+        assertEquals( "PathArg 1 node type", nodeName1, newID.getPathArguments().get(0).getNodeType() );
 
         assertNotNull( newID.toString() ); // for code coverage
     }
@@ -183,7 +183,7 @@ public class YangInstanceIdentifierTest {
                 .nodeWithKey( nodeName3, key2, "bar" ).build();
 
         assertNotNull( "InstanceIdentifier is null", newID );
-        assertEquals( "Path size", 3, Iterables.size(newID.getPathArguments()) );
+        assertEquals( "Path size", 3, newID.getPathArguments().size() );
 
         Iterator<PathArgument> it = newID.getPathArguments().iterator();
         assertEquals( "PathArg 1 node type", nodeName1, it.next().getNodeType() );
@@ -193,7 +193,7 @@ public class YangInstanceIdentifierTest {
         newID = YangInstanceIdentifier.builder( newID ).node( nodeName4 ).build();
 
         assertNotNull( "InstanceIdentifier is null", newID );
-        assertEquals( "Path size", 4, Iterables.size(newID.getPathArguments()) );
+        assertEquals( "Path size", 4, newID.getPathArguments().size() );
 
         it = newID.getPathArguments().iterator();
         assertEquals( "PathArg 1 node type", nodeName1, it.next().getNodeType() );
@@ -204,8 +204,8 @@ public class YangInstanceIdentifierTest {
         newID = YangInstanceIdentifier.builder().node( nodeName1 ).build();
 
         assertNotNull( "InstanceIdentifier is null", newID );
-        assertEquals( "Path size", 1, Iterables.size(newID.getPathArguments()) );
-        assertEquals( "PathArg 1 node type", nodeName1, Iterables.get(newID.getPathArguments(), 0).getNodeType() );
+        assertEquals( "Path size", 1, newID.getPathArguments().size() );
+        assertEquals( "PathArg 1 node type", nodeName1, newID.getPathArguments().get(0).getNodeType() );
     }
 
     private void verifyNodeIdentifierWithPredicates(final String prefix,

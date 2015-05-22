@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
@@ -35,7 +34,7 @@ abstract class InstanceIdToSimpleNodes<T extends YangInstanceIdentifier.PathArgu
     @Override
     public NormalizedNode<?, ?> create(final YangInstanceIdentifier instanceId, final Optional<NormalizedNode<?, ?>> deepestChild, final Optional<Map.Entry<QName,ModifyAction>> operation) {
         checkNotNull(instanceId);
-        final YangInstanceIdentifier.PathArgument pathArgument = Iterables.get(instanceId.getPathArguments(), 0);
+        final YangInstanceIdentifier.PathArgument pathArgument = instanceId.getPathArguments().get(0);
         final NormalizedNodeAttrBuilder<? extends YangInstanceIdentifier.PathArgument, Object, ? extends NormalizedNode<? extends YangInstanceIdentifier.PathArgument, Object>> builder = getBuilder(pathArgument);
 
         if(deepestChild.isPresent()) {
