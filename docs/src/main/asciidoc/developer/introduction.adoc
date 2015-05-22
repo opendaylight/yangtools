@@ -2,6 +2,10 @@
 
 == Overview
 
+*YANG Tools* is to _develop_ necessary tooling and libraries to provide Java runtime
+and support for *[YANG modeling language][RFC6020]*, data structures modeled by *YANG* and their
+*serialization* and *deserialization* as defined in *IETF* drafts and standards.
+
 === Architecture
 
 === Concepts
