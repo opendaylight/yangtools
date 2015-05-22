@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a9dcd25_5f8d8f7a",
+        "filename": "docs/src/main/asciidoc/developer/introduction.adoc",
+        "patchSetId": 1
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-05-22T09:59:51Z",
+      "side": 1,
+      "message": "This seems as markdown format for apendix-style links, could you change it to be Asciidoc link to YANG Rfc?",
+      "range": {
+        "startLine": 6,
+        "startChar": 17,
+        "endLine": 6,
+        "endChar": 50
+      },
+      "revId": "882c6ca0adb918201d7fe6424dbee0ea80db787c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
