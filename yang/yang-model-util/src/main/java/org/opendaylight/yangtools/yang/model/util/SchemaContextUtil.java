@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
@@ -25,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -627,13 +629,23 @@ public final class SchemaContextUtil {
         RevisionAwareXPath pathStatement = typeDefinition.getPathStatement();
         pathStatement = new RevisionAwareXPathImpl(stripConditionsFromXPathString(pathStatement), pathStatement.isAbsolute());
 
-        Module parentModule = findParentModuleByType(schemaContext, schema);
+        SchemaNode baseSchema = schema;
+        while (baseSchema instanceof DerivableSchemaNode) {
+            final Optional<? extends SchemaNode> basePotential = ((DerivableSchemaNode) baseSchema).getOriginal();
+            if (basePotential.isPresent()) {
+                baseSchema = basePotential.get();
+            } else {
+                break;
+            }
+        }
+
+        Module parentModule = findParentModuleByType(schemaContext, baseSchema);
 
         final DataSchemaNode dataSchemaNode;
         if(pathStatement.isAbsolute()) {
             dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNode(schemaContext, parentModule, pathStatement);
         } else {
-            dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNodeForRelativeXPath(schemaContext, parentModule, schema, pathStatement);
+            dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNodeForRelativeXPath(schemaContext, parentModule, baseSchema, pathStatement);
         }
 
         // FIXME this is just to preserve backwards compatibility since yangtools do not mind wrong leafref xpaths
