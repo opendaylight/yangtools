@@ -151,7 +151,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         for (PathArgument pathArg : path.getPathArguments()) {
             Optional<ModificationApplyOperation> potential = operation.getChild(pathArg);
             if (!potential.isPresent()) {
-                throw new IllegalArgumentException(String.format("Child %s is not present in schema tree.",
+                throw new SchemaValidationFailedException(String.format("Child %s is not present in schema tree.",
                         Iterables.toString(Iterables.limit(path.getPathArguments(), i))));
             }
             operation = potential.get();
