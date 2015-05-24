@@ -22,6 +22,30 @@
       "revId": "118379f2fa50e1828198d0d52b0bb56a2dc46ff6",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_08058f79",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/SchemaValidationFailed.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 795
+      },
+      "writtenOn": "2015-05-24T13:36:46Z",
+      "side": 1,
+      "message": "I\u0027ll name this one SchemaValidationFailedException. We could create more specialized exceptions which extend SchemaValidationFailed as needed. I think for now this top level exception may be enough. What do you think?",
+      "parentUuid": "1a9dcd25_a8c7bb44",
+      "range": {
+        "startLine": 11,
+        "startChar": 12,
+        "endLine": 11,
+        "endChar": 35
+      },
+      "revId": "118379f2fa50e1828198d0d52b0bb56a2dc46ff6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
