@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a9dcd25_a8c7bb44",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/SchemaValidationFailed.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-05-24T13:28:39Z",
+      "side": 1,
+      "message": "Name should read SchemaValidationFailedException, but even better would be to have correctly named - e.g. IncorrectNestingException and so on.",
+      "range": {
+        "startLine": 11,
+        "startChar": 12,
+        "endLine": 11,
+        "endChar": 35
+      },
+      "revId": "118379f2fa50e1828198d0d52b0bb56a2dc46ff6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
