@@ -1,30 +1,32 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
-
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-public class ListEffectiveStatementImpl extends
-        AbstractEffectiveDocumentedDataNodeContainer<QName, ListStatement>
+public class ListEffectiveStatementImpl extends AbstractEffectiveDocumentedDataNodeContainer<QName, ListStatement>
         implements ListSchemaNode, DerivableSchemaNode {
     private final QName qname;
     private final SchemaPath path;
@@ -32,7 +34,7 @@ public class ListEffectiveStatementImpl extends
     boolean augmenting;
     boolean addedByUses;
     ListSchemaNode original;
-    boolean configuration;
+    boolean configuration = true;
     ConstraintDefinition constraints;
     boolean userOrdered;
 
@@ -40,20 +42,18 @@ public class ListEffectiveStatementImpl extends
     ImmutableSet<AugmentationSchema> augmentations;
     ImmutableList<UnknownSchemaNode> unknownNodes;
 
-    public ListEffectiveStatementImpl(
-            StmtContext<QName, ListStatement, EffectiveStatement<QName, ListStatement>> ctx) {
+    public ListEffectiveStatementImpl(StmtContext<QName, ListStatement, EffectiveStatement<QName, ListStatement>> ctx) {
         super(ctx);
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
-        // :TODO init other fields
+        this.constraints = new EffectiveConstraintDefinitionImpl(this);
 
-        initKeyDefinition();
-        initSubstatementCollections();
+        initKeyDefinition(ctx);
+        initSubstatementCollectionsAndFields();
         initCopyType(ctx);
     }
 
-    private void initCopyType(
-            StmtContext<QName, ListStatement, EffectiveStatement<QName, ListStatement>> ctx) {
+    private void initCopyType(StmtContext<QName, ListStatement, EffectiveStatement<QName, ListStatement>> ctx) {
 
         TypeOfCopy typeOfCopy = ctx.getTypeOfCopy();
         switch (typeOfCopy) {
@@ -70,29 +70,50 @@ public class ListEffectiveStatementImpl extends
         }
     }
 
-    /**
-     *
-     */
-    private void initKeyDefinition() {
-        List<QName> keyDefinitionInit = new LinkedList<QName>();
+    private void initKeyDefinition(StmtContext<QName, ListStatement, EffectiveStatement<QName, ListStatement>> ctx) {
+        List<QName> keyDefinitionInit = new LinkedList<>();
         KeyEffectiveStatementImpl key = firstEffective(KeyEffectiveStatementImpl.class);
+
+        Set<QName> nodeQNamesForKey = new HashSet<>();
+
+        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
+            if (effectiveStatement instanceof DerivableSchemaNode) {
+                if (((DerivableSchemaNode) effectiveStatement)
+                        .getOriginal().isPresent()) {
+                    final SchemaNode originalNode = ((DerivableSchemaNode) effectiveStatement).getOriginal().get();
+                    nodeQNamesForKey.add(originalNode.getQName());
+                }
+                else {
+                    nodeQNamesForKey.add(((DataSchemaNode) effectiveStatement).getQName());
+                }
+            }
+        }
 
         if (key != null) {
             Collection<SchemaNodeIdentifier> keyParts = key.argument();
             for (SchemaNodeIdentifier keyPart : keyParts) {
-                keyDefinitionInit.add(keyPart.getLastComponent());
+                final QName keyQName = keyPart.getLastComponent();
+
+                if (!nodeQNamesForKey.contains(keyQName)) {
+                    throw new IllegalArgumentException(String.format("Key '%s' misses node '%s' in list '%s'", key
+                            .getDeclared().rawArgument(), keyQName.getLocalName(), ctx.getStatementArgument()));
+                }
+
+                keyDefinitionInit.add(keyQName);
             }
         }
 
         this.keyDefinition = ImmutableList.copyOf(keyDefinitionInit);
     }
 
-    private void initSubstatementCollections() {
+    private void initSubstatementCollectionsAndFields() {
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
-        List<UnknownSchemaNode> unknownNodesInit = new LinkedList<UnknownSchemaNode>();
-        Set<AugmentationSchema> augmentationsInit = new HashSet<AugmentationSchema>();
+        List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
+        Set<AugmentationSchema> augmentationsInit = new HashSet<>();
 
+        boolean configurationInit = false;
+        boolean userOrderedInit = false;
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
@@ -101,6 +122,16 @@ public class ListEffectiveStatementImpl extends
             if (effectiveStatement instanceof AugmentationSchema) {
                 AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
                 augmentationsInit.add(augmentationSchema);
+            }
+            if (!configurationInit && effectiveStatement instanceof ConfigEffectiveStatementImpl) {
+                ConfigEffectiveStatementImpl configStmt = (ConfigEffectiveStatementImpl) effectiveStatement;
+                this.configuration = configStmt.argument();
+                configurationInit = true;
+            }
+            if (!userOrderedInit && effectiveStatement instanceof OrderedByEffectiveStatementImpl) {
+                OrderedByEffectiveStatementImpl orderedByStmt = (OrderedByEffectiveStatementImpl) effectiveStatement;
+                this.userOrdered = orderedByStmt.argument().equals("user") ? true : false;
+                userOrderedInit = true;
             }
         }
 

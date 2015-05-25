@@ -11,7 +11,7 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 
-public interface ValueStatement extends DeclaredStatement<String> {
+public interface ValueStatement extends DeclaredStatement<Integer> {
 
-    @Nonnull String getValue();
+    @Nonnull Integer getValue();
 }
