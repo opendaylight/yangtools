@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -50,9 +49,9 @@ public class ChoiceEffectiveStatementImpl extends AbstractEffectiveDocumentedNod
 
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
-        //:TODO init other fields
+        this.constraints = new EffectiveConstraintDefinitionImpl(this);
 
-        initSubstatementCollections();
+        initSubstatementCollectionsAndFields();
         initCopyType(ctx);
     }
 
@@ -74,13 +73,15 @@ public class ChoiceEffectiveStatementImpl extends AbstractEffectiveDocumentedNod
         }
     }
 
-    private void initSubstatementCollections() {
+    private void initSubstatementCollectionsAndFields() {
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
         Set<AugmentationSchema> augmentationsInit = new HashSet<>();
         Set<ChoiceCaseNode> casesInit = new HashSet<>();
 
+        boolean configurationInit = false;
+        boolean defaultInit = false;
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
@@ -93,6 +94,18 @@ public class ChoiceEffectiveStatementImpl extends AbstractEffectiveDocumentedNod
             if (effectiveStatement instanceof ChoiceCaseNode) {
                 ChoiceCaseNode choiceCaseNode = (ChoiceCaseNode) effectiveStatement;
                 casesInit.add(choiceCaseNode);
+            }
+            if (!configurationInit
+                    && effectiveStatement instanceof ConfigEffectiveStatementImpl) {
+                ConfigEffectiveStatementImpl configStmt = (ConfigEffectiveStatementImpl) effectiveStatement;
+                this.configuration = configStmt.argument();
+                configurationInit = true;
+            }
+            if (!defaultInit
+                    && effectiveStatement instanceof DefaultEffectiveStatementImpl) {
+                DefaultEffectiveStatementImpl defaultCaseStmt = (DefaultEffectiveStatementImpl) effectiveStatement;
+                this.defaultCase = defaultCaseStmt.argument();
+                defaultInit = true;
             }
         }
 

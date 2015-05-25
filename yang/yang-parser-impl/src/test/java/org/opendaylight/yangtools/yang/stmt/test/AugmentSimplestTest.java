@@ -7,13 +7,14 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 
 import static org.junit.Assert.assertNotNull;
 
 public class AugmentSimplestTest {
 
-    private static final TestYangFileStatementSource AUGMENTED = new TestYangFileStatementSource("/semantic-statement-parser/augmented.yang");
-    private static final TestYangFileStatementSource ROOT = new TestYangFileStatementSource("/semantic-statement-parser/root.yang");
+    private static final YangStatementSourceImpl AUGMENTED = new YangStatementSourceImpl("/semantic-statement-parser/augmented.yang", false);
+    private static final YangStatementSourceImpl ROOT = new YangStatementSourceImpl("/semantic-statement-parser/root.yang", false);
 
     @Test
     public void readAndParseYangFileTest() throws SourceException, ReactorException {

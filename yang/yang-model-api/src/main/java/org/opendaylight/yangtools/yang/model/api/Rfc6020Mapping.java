@@ -156,21 +156,21 @@ public enum Rfc6020Mapping implements StatementDefinition {
     private final QName argument;
     private final boolean yinElement;
 
-    private Rfc6020Mapping(Class<? extends DeclaredStatement<?>> clz, final String nameStr) {
+    Rfc6020Mapping(Class<? extends DeclaredStatement<?>> clz, final String nameStr) {
         type = Preconditions.checkNotNull(clz);
         name = yinQName(nameStr);
         argument = null;
         yinElement = false;
     }
 
-    private Rfc6020Mapping(Class<? extends DeclaredStatement<?>> clz, final String nameStr, final String argumentStr) {
+    Rfc6020Mapping(Class<? extends DeclaredStatement<?>> clz, final String nameStr, final String argumentStr) {
         type = Preconditions.checkNotNull(clz);
         name = yinQName(nameStr);
         argument = yinQName(argumentStr);
         this.yinElement = false;
     }
 
-    private Rfc6020Mapping(Class<? extends DeclaredStatement<?>> clz, final String nameStr, final String argumentStr,
+    Rfc6020Mapping(Class<? extends DeclaredStatement<?>> clz, final String nameStr, final String argumentStr,
             final boolean yinElement) {
         type = Preconditions.checkNotNull(clz);
         name = yinQName(nameStr);
