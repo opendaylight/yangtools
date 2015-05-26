@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
-
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
@@ -39,7 +38,7 @@ public class ContainerEffectiveStatementImpl extends
     private boolean presence;
     private boolean augmenting;
     private boolean addedByUses;
-    private boolean configuration;
+    private boolean configuration = true;
     private ContainerSchemaNode original;
     private ConstraintDefinition constraints;
 
@@ -52,10 +51,10 @@ public class ContainerEffectiveStatementImpl extends
 
         qname = ctx.getStatementArgument();
         path = Utils.getSchemaPath(ctx);
+        this.constraints = new EffectiveConstraintDefinitionImpl(this);
 
         initCopyType(ctx);
-        initFields();
-        // :TODO init other fields
+        initSubstatementCollectionsAndFields();
     }
 
     private void initCopyType(
@@ -65,23 +64,26 @@ public class ContainerEffectiveStatementImpl extends
         switch (typeOfCopy) {
         case ADDED_BY_AUGMENTATION:
             augmenting = true;
-            original = (ContainerSchemaNode) ctx.getOriginalCtx().buildEffective();
+            original = (ContainerSchemaNode) ctx.getOriginalCtx()
+                    .buildEffective();
             break;
         case ADDED_BY_USES:
             addedByUses = true;
-            original = (ContainerSchemaNode) ctx.getOriginalCtx().buildEffective();
+            original = (ContainerSchemaNode) ctx.getOriginalCtx()
+                    .buildEffective();
             break;
         default:
             break;
         }
     }
 
-    private void initFields() {
+    private void initSubstatementCollectionsAndFields() {
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
         Set<AugmentationSchema> augmentationsInit = new HashSet<>();
 
+        boolean configurationInit = false;
         for (EffectiveStatement<?, ?> effectiveSubstatement : effectiveSubstatements) {
             if (effectiveSubstatement instanceof UnknownSchemaNode) {
                 UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveSubstatement;
@@ -94,9 +96,11 @@ public class ContainerEffectiveStatementImpl extends
             if (effectiveSubstatement instanceof PresenceEffectiveStatementImpl) {
                 presence = true;
             }
-            if (effectiveSubstatement instanceof ConfigEffectiveStatementImpl) {
-                ConfigEffectiveStatementImpl config = (ConfigEffectiveStatementImpl) effectiveSubstatement;
-                this.configuration = config.argument();
+            if (!configurationInit
+                    && effectiveSubstatement instanceof ConfigEffectiveStatementImpl) {
+                ConfigEffectiveStatementImpl configStmt = (ConfigEffectiveStatementImpl) effectiveSubstatement;
+                this.configuration = configStmt.argument();
+                configurationInit = true;
             }
         }
 

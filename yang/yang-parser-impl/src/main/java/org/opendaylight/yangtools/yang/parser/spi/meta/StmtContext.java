@@ -45,15 +45,16 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     @Nullable
     List<Object> getArgumentsFromRoot();
 
-    // <K,VT, V extends VT,N extends IdentifierNamespace<K, V>>
-    // <K, VT, V extends VT ,N extends IdentifierNamespace<K, V>> VT
-    // getFromNamespace(Class<N> type, K key)
+    List<StmtContext<?,?,?>> getStmtContextsFromRoot();
+
     @Nonnull
     <K, V, N extends IdentifierNamespace<K, V>> V getFromNamespace(
             Class<N> type, K key) throws NamespaceNotAvailableException;
 
-    <K, V, N extends IdentifierNamespace<K, V>> Map<?, ?> getAllFromNamespace(
+    <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromNamespace(
             Class<N> type);
+
+    <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromCurrentStmtCtxNamespace(Class<N> type);
 
     @Nonnull
     StmtContext<?, ?, ?> getRoot();
@@ -67,11 +68,15 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     E buildEffective();
 
+    StatementContextBase<?, ?, ?> createCopy(
+            StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
+            throws SourceException;
+
     StatementContextBase<?, ?, ?> createCopy(QNameModule newQNameModule,
             StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
             throws SourceException;
 
-    public static enum TypeOfCopy {
+    enum TypeOfCopy {
         ORIGINAL, ADDED_BY_USES, ADDED_BY_AUGMENTATION
     }
 
@@ -79,7 +84,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     void setTypeOfCopy(TypeOfCopy typeOfCopy);
 
-    public StatementContextBase<?, ?, ?> getOriginalCtx();
+    StatementContextBase<?, ?, ?> getOriginalCtx();
 
     void setOriginalCtx(StatementContextBase<?, ?, ?> originalCtx);
 
