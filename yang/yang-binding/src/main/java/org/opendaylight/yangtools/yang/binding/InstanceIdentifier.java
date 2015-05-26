@@ -182,7 +182,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      * @return ToStringHelper instance which was passed in
      */
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("targetType", targetType).add("path", Iterables.toString(getPathArguments()));
+        return toStringHelper.add("targetType", targetType).add("path", Iterables.toString(pathArguments));
     }
 
     /**
@@ -206,10 +206,10 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      */
     public final <I extends DataObject> InstanceIdentifier<I> firstIdentifierOf(final Class<I> type) {
         int i = 1;
-        for (final PathArgument a : getPathArguments()) {
+        for (final PathArgument a : pathArguments) {
             if (type.equals(a.getType())) {
                 @SuppressWarnings("unchecked")
-                final InstanceIdentifier<I> ret = (InstanceIdentifier<I>) internalCreate(Iterables.limit(getPathArguments(), i));
+                final InstanceIdentifier<I> ret = (InstanceIdentifier<I>) internalCreate(Iterables.limit(pathArguments, i));
                 return ret;
             }
 
@@ -229,7 +229,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      *         is not present.
      */
     public final <N extends Identifiable<K> & DataObject, K extends Identifier<N>> K firstKeyOf(final Class<N> listItem, final Class<K> listKey) {
-        for (final PathArgument i : getPathArguments()) {
+        for (final PathArgument i : pathArguments) {
             if (listItem.equals(i.getType())) {
                 @SuppressWarnings("unchecked")
                 final K ret = ((IdentifiableItem<N, K>)i).getKey();
@@ -355,7 +355,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
     @Deprecated
     public final List<PathArgument> getPath() {
         if (legacyCache == null) {
-            legacyCache = ImmutableList.<PathArgument>copyOf(getPathArguments());
+            legacyCache = ImmutableList.<PathArgument>copyOf(pathArguments);
         }
 
         return legacyCache;
