@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -48,7 +48,7 @@ public class CaseEffectiveStatementImpl extends
         super(ctx);
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
-        // :TODO init other fields
+        this.constraints = new EffectiveConstraintDefinitionImpl(this);
 
         initSubstatementCollections();
         initCopyType(ctx);
@@ -61,14 +61,19 @@ public class CaseEffectiveStatementImpl extends
         switch (typeOfCopy) {
         case ADDED_BY_AUGMENTATION:
             augmenting = true;
-            original = (ChoiceCaseNode) ctx.getOriginalCtx().buildEffective();
             break;
         case ADDED_BY_USES:
             addedByUses = true;
-            original = (ChoiceCaseNode) ctx.getOriginalCtx().buildEffective();
+            break;
+        case ADDED_BY_USES_AUGMENTATION:
+            addedByUses = augmenting = true;
             break;
         default:
             break;
+        }
+
+        if (!typeOfCopy.equals(TypeOfCopy.ORIGINAL)) {
+            original = (ChoiceCaseNode) ctx.getOriginalCtx().buildEffective();
         }
     }
 

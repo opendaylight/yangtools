@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedIdentitiesNamespace;
+
+import java.util.HashSet;
+import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.LinkedList;
-
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
@@ -29,7 +32,7 @@ public class IdentityEffectiveStatementImpl extends
     private final QName qname;
     private final SchemaPath path;
     IdentitySchemaNode baseIdentity;
-    private final Set<IdentitySchemaNode> derivedIdentities;
+    private ImmutableSet<IdentitySchemaNode> derivedIdentities;
 
     ImmutableList<UnknownSchemaNode> unknownNodes;
 
@@ -41,9 +44,32 @@ public class IdentityEffectiveStatementImpl extends
         this.path = Utils.getSchemaPath(ctx);
 
         initSubstatementCollections();
+        initDerivedIdentities(ctx);
+    }
 
-        // :TODO init other fields
-        this.derivedIdentities = null;
+    private void initDerivedIdentities(
+            StmtContext<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> ctx) {
+
+        Set<IdentitySchemaNode> derivedIdentitiesInit = new HashSet<IdentitySchemaNode>();
+        List<StmtContext<?, ?, ?>> derivedIdentitiesCtxList = ctx.getFromNamespace(
+                DerivedIdentitiesNamespace.class, ctx.getStatementArgument());
+
+        if(derivedIdentitiesCtxList == null) {
+            this.derivedIdentities = ImmutableSet.of();
+            return;
+        }
+
+        for (StmtContext<?, ?, ?> derivedIdentityCtx : derivedIdentitiesCtxList) {
+            IdentityEffectiveStatementImpl derivedIdentity = (IdentityEffectiveStatementImpl) derivedIdentityCtx
+                    .buildEffective();
+            derivedIdentity.initBaseIdentity(this);
+            derivedIdentitiesInit.add(derivedIdentity);
+        }
+        this.derivedIdentities = ImmutableSet.copyOf(derivedIdentitiesInit);
+    }
+
+    private void initBaseIdentity(IdentityEffectiveStatementImpl baseIdentity) {
+        this.baseIdentity = baseIdentity;
     }
 
     private void initSubstatementCollections() {
