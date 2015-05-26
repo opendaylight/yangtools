@@ -19,25 +19,39 @@ import static org.junit.Assert.assertNotNull;
 
 public class YangFileStmtTest {
     //basic statements to parse and write
-    private static final YangStatementSourceImpl YANGFILE = new YangStatementSourceImpl("/semantic-statement-parser/test.yang");
-    private static final YangStatementSourceImpl IMPORTEDYANGFILE = new YangStatementSourceImpl("/semantic-statement-parser/importedtest.yang");
-    private static final YangStatementSourceImpl SIMPLENODES = new YangStatementSourceImpl("/semantic-statement-parser/simple-nodes-semantic.yang");
-    private static final YangStatementSourceImpl FOOBAR = new YangStatementSourceImpl("/semantic-statement-parser/foobar.yang");
+    private static final YangStatementSourceImpl YANGFILE = new YangStatementSourceImpl("/semantic-statement-parser/test.yang", false);
+    private static final YangStatementSourceImpl IMPORTEDYANGFILE = new YangStatementSourceImpl("/semantic-statement-parser/importedtest.yang", false);
+    private static final YangStatementSourceImpl SIMPLENODES = new YangStatementSourceImpl("/semantic-statement-parser/simple-nodes-semantic.yang", false);
+    private static final YangStatementSourceImpl FOOBAR = new YangStatementSourceImpl("/semantic-statement-parser/foobar.yang", false);
     //extension statement to parse and write
-    private static final YangStatementSourceImpl EXTFILE = new YangStatementSourceImpl("/semantic-statement-parser/ext-typedef.yang");
-    private static final YangStatementSourceImpl EXTUSE = new YangStatementSourceImpl("/semantic-statement-parser/ext-use.yang");
+    private static final YangStatementSourceImpl EXTFILE = new YangStatementSourceImpl("/semantic-statement-parser/ext-typedef.yang", false);
+    private static final YangStatementSourceImpl EXTUSE = new YangStatementSourceImpl("/semantic-statement-parser/ext-use.yang", false);
 
 
-    private static final YangStatementSourceImpl BAR = new YangStatementSourceImpl("/model-new/bar.yang");
-    private static final YangStatementSourceImpl BAZ = new YangStatementSourceImpl("/model-new/baz.yang");
-    private static final YangStatementSourceImpl FOO = new YangStatementSourceImpl("/model-new/foo.yang");
-    private static final YangStatementSourceImpl SUBFOO = new YangStatementSourceImpl("/model-new/subfoo.yang");
+    private static final YangStatementSourceImpl BAR = new YangStatementSourceImpl("/model-new/bar.yang", false);
+    private static final YangStatementSourceImpl BAZ = new YangStatementSourceImpl("/model-new/baz.yang", false);
+    private static final YangStatementSourceImpl FOO = new YangStatementSourceImpl("/model-new/foo.yang", false);
+    private static final YangStatementSourceImpl SUBFOO = new YangStatementSourceImpl("/model-new/subfoo.yang", false);
+
+    private static final YangStatementSourceImpl BAR2 = new YangStatementSourceImpl("/model/bar.yang",false);
+    private static final YangStatementSourceImpl BAZ2 = new YangStatementSourceImpl("/model/baz.yang",false);
+    private static final YangStatementSourceImpl FOO2 = new YangStatementSourceImpl("/model/foo.yang",false);
+    private static final YangStatementSourceImpl SUBFOO2 = new YangStatementSourceImpl("/model/subfoo.yang",false);
 
     @Test
     public void readAndParseYangFileTestModel() throws SourceException, ReactorException {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
 
         addSources(reactor, BAZ,FOO,BAR,SUBFOO);
+        EffectiveModelContext result = reactor.build();
+        assertNotNull(result);
+    }
+
+    @Test
+    public void readAndParseYangFileTestModel2() throws SourceException, ReactorException {
+        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+
+        addSources(reactor, BAZ2,FOO2,BAR2,SUBFOO2);
         EffectiveModelContext result = reactor.build();
         assertNotNull(result);
     }
