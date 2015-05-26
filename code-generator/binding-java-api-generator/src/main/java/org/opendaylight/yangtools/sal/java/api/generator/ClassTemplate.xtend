@@ -467,7 +467,7 @@ class ClassTemplate extends BaseTemplate {
                 «IF c.name == TypeConstants.PATTERN_CONSTANT_NAME»
                     «val cValue = c.value»
                     «IF cValue instanceof List<?>»
-                        private static final «List.importedName»<«Pattern.importedName»> «Constants.MEMBER_PATTERN_LIST»;
+                        private static final «Pattern.importedName»[] «Constants.MEMBER_PATTERN_LIST»;
                         public static final «List.importedName»<String> «TypeConstants.PATTERN_CONSTANT_NAME» = «ImmutableList.importedName».of(«
                         FOR v : cValue SEPARATOR ", "»«
                             IF v instanceof String»"«
@@ -491,12 +491,13 @@ class ClassTemplate extends BaseTemplate {
      */
     def protected generateStaticInicializationBlock() '''
         static {
-            final «List.importedName»<«Pattern.importedName»> l = new «ArrayList.importedName»<«Pattern.importedName»>();
+            final «Pattern.importedName» a[] = new «Pattern.importedName»[«TypeConstants.PATTERN_CONSTANT_NAME».size()];
+            int i = 0;
             for (String regEx : «TypeConstants.PATTERN_CONSTANT_NAME») {
-                l.add(Pattern.compile(regEx));
+                a[i++] = Pattern.compile(regEx);
             }
 
-            «Constants.MEMBER_PATTERN_LIST» = «ImmutableList.importedName».copyOf(l);
+            «Constants.MEMBER_PATTERN_LIST» = a;
         }
     '''
 
