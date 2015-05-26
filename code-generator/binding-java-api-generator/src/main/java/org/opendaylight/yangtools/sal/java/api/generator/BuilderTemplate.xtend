@@ -429,7 +429,7 @@ class BuilderTemplate extends BaseTemplate {
 
     def private generateAugmentField(boolean isPrivate) '''
         «IF augmentField != null»
-            «IF isPrivate»private «ENDIF»«Map.importedName»<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> «augmentField.name» = new «HashMap.importedName»<>();
+            «IF isPrivate»private «ENDIF»«Map.importedName»<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> «augmentField.name» = «Collections.importedName».emptyMap();
         «ENDIF»
     '''
 
@@ -456,12 +456,19 @@ class BuilderTemplate extends BaseTemplate {
                 if (augmentation == null) {
                     return remove«augmentField.name.toFirstUpper»(augmentationType);
                 }
+
+                if (!(this.«augmentField.name» instanceof «HashMap.importedName»)) {
+                    this.«augmentField.name» = new «HashMap.importedName»<>();
+                }
+
                 this.«augmentField.name».put(augmentationType, augmentation);
                 return this;
             }
 
             public «type.name»«BUILDER» remove«augmentField.name.toFirstUpper»(«Class.importedName»<? extends «augmentField.returnType.importedName»> augmentationType) {
-                this.«augmentField.name».remove(augmentationType);
+                if (this.«augmentField.name» instanceof «HashMap.importedName») {
+                    this.«augmentField.name».remove(augmentationType);
+                }
                 return this;
             }
         «ENDIF»
@@ -562,9 +569,9 @@ class BuilderTemplate extends BaseTemplate {
                     case 0:
                         this.«augmentField.name» = «Collections.importedName».emptyMap();
                         break;
-                        case 1:
-                            final «Map.importedName».Entry<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> e = base.«augmentField.name».entrySet().iterator().next();
-                            this.«augmentField.name» = «Collections.importedName».<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»>singletonMap(e.getKey(), e.getValue());
+                    case 1:
+                        final «Map.importedName».Entry<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> e = base.«augmentField.name».entrySet().iterator().next();
+                        this.«augmentField.name» = «Collections.importedName».<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»>singletonMap(e.getKey(), e.getValue());
                         break;
                     default :
                         this.«augmentField.name» = new «HashMap.importedName»<>(base.«augmentField.name»);
@@ -572,11 +579,15 @@ class BuilderTemplate extends BaseTemplate {
                 «ELSE»
                     if (base instanceof «type.name»«IMPL») {
                         «type.name»«IMPL» impl = («type.name»«IMPL») base;
-                        this.«augmentField.name» = new «HashMap.importedName»<>(impl.«augmentField.name»);
+                        if (!impl.«augmentField.name».isEmpty()) {
+                            this.«augmentField.name» = new «HashMap.importedName»<>(impl.«augmentField.name»);
+                        }
                     } else if (base instanceof «AugmentationHolder.importedName») {
                         @SuppressWarnings("unchecked")
                         «AugmentationHolder.importedName»<«type.importedName»> casted =(«AugmentationHolder.importedName»<«type.importedName»>) base;
-                        this.«augmentField.name» = new «HashMap.importedName»<>(casted.augmentations());
+                        if (!casted.augmentations().isEmpty()) {
+                            this.«augmentField.name» = new «HashMap.importedName»<>(casted.augmentations());
+                        }
                     }
                 «ENDIF»
             «ENDIF»
