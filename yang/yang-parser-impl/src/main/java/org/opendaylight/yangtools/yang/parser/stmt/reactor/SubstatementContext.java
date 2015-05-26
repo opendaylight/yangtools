@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+
 import java.util.List;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.GroupingUtils;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -112,6 +114,13 @@ class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Effective
     }
 
     @Override
+    public StatementContextBase<?, ?, ?> createCopy(
+            StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
+            throws SourceException {
+        return createCopy(null, newParent, typeOfCopy);
+    }
+
+    @Override
     public StatementContextBase<A, D, E> createCopy(QNameModule newQNameModule,
             StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
             throws SourceException {
@@ -127,6 +136,13 @@ class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Effective
         List<Object> argumentsFromRoot = parent.getArgumentsFromRoot();
         argumentsFromRoot.add(argument);
         return argumentsFromRoot;
+    }
+
+    @Override
+    public List<StmtContext<?,?,?>> getStmtContextsFromRoot() {
+        List<StmtContext<?,?,?>> stmtContextsList = parent.getStmtContextsFromRoot();
+        stmtContextsList.add(this);
+        return stmtContextsList;
     }
 
     @Override
