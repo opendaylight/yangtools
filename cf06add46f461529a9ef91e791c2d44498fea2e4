@@ -16,6 +16,24 @@
       "revId": "cf06add46f461529a9ef91e791c2d44498fea2e4",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_4b5f0c0f",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/SchemaValidationFailedException.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 795
+      },
+      "writtenOn": "2015-05-26T14:56:02Z",
+      "side": 1,
+      "message": "will do",
+      "parentUuid": "1a9dcd25_1964ff20",
+      "revId": "cf06add46f461529a9ef91e791c2d44498fea2e4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
