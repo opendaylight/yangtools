@@ -36,6 +36,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 import org.junit.Test;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.java.api.generator.GeneratorJavaFile;
@@ -186,7 +187,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertFalse(stringExt1Class.isInterface());
         assertContainsField(stringExt1Class, VAL, String.class);
         assertContainsField(stringExt1Class, LENGTH, List.class);
-        assertContainsField(stringExt1Class, "patterns", List.class);
+        assertContainsField(stringExt1Class, "patterns", Pattern[].class);
         assertContainsField(stringExt1Class, "PATTERN_CONSTANTS", List.class);
         assertContainsFieldWithValue(stringExt1Class, "serialVersionUID", Long.TYPE, 6943827552297110991L, String.class);
         // assertEquals(5, stringExt1Class.getDeclaredFields().length);
