@@ -532,6 +532,27 @@ class BuilderTemplate extends BaseTemplate {
         }
     '''
 
+    def private printRangeConstraint(Type returnType, String paramName, boolean isNestedType) '''
+        «IF BigDecimal.canonicalName.equals(returnType.fullyQualifiedName)»
+            «BigDecimal.importedName» _constraint = new «BigDecimal.importedName»(«paramName»«IF isNestedType».getValue()«ENDIF».toString());
+        «ELSE»
+            «IF isNestedType»
+                «val propReturnType = findProperty(returnType as GeneratedTransferObject, "value").returnType»
+                «IF propReturnType.fullyQualifiedName.equals(BigInteger.canonicalName)»
+                    «BigInteger.importedName» _constraint = «paramName».getValue();
+                «ELSE»
+                    «BigInteger.importedName» _constraint = «BigInteger.importedName».valueOf(«paramName».getValue());
+                «ENDIF»
+            «ELSE»
+                «IF returnType.fullyQualifiedName.equals(BigInteger.canonicalName)»
+                    «BigInteger.importedName» _constraint = «paramName»;
+                «ELSE»
+                    «BigInteger.importedName» _constraint = «BigInteger.importedName».valueOf(«paramName»);
+                «ENDIF»
+            «ENDIF»
+        «ENDIF»
+    '''
+
     def private generateLengthMethod(String methodName, Type type, String className, String varName) '''
         «val Restrictions restrictions = type.restrictions»
         «IF restrictions != null && !(restrictions.lengthConstraints.empty)»
