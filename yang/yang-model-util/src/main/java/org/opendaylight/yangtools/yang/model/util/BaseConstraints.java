@@ -7,11 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
-
-import com.google.common.base.Optional;
 
 /**
  * Utility class which provides factory methods to construct Constraints.
@@ -67,13 +66,14 @@ public final class BaseConstraints {
      *
      * @see RangeConstraint
      *
+     * @param <T> Type of constraint
      * @param min value-restricting lower bound value. The value MUST NOT Be null.
      * @param max value-restricting upper bound value. The value MUST NOT Be null.
      * @param description Description associated with constraint. {@link Optional#absent()} if description is undefined.
      * @param reference Reference associated with constraint. {@link Optional#absent()} if reference is undefined.
      * @return Instance of {@link RangeConstraint}
      */
-    public static RangeConstraint newRangeConstraint(final Number min, final Number max, final Optional<String> description,
+    public static <T extends Number> RangeConstraint newRangeConstraint(final T min, final T max, final Optional<String> description,
             final Optional<String> reference) {
         return new RangeConstraintImpl(min, max, description, reference);
     }
