@@ -59,6 +59,8 @@ class ClassTemplate extends BaseTemplate {
 
     protected val GeneratedTransferObject genTO;
 
+    private val AbstractRangeGenerator<?> rangeGenerator
+
     /**
      * Creates instance of this class with concrete <code>genType</code>.
      *
@@ -83,6 +85,13 @@ class ClassTemplate extends BaseTemplate {
         this.enums = genType.enumerations
         this.consts = genType.constantDefinitions
         this.enclosedGeneratedTypes = genType.enclosedTypes
+
+        if (restrictions != null && !restrictions.rangeConstraints.nullOrEmpty) {
+            rangeGenerator = AbstractRangeGenerator.forType(findProperty(genType, "value").returnType)
+            Preconditions.checkNotNull(rangeGenerator)
+        } else {
+            rangeGenerator = null
+        }
     }
 
     /**
@@ -117,7 +126,11 @@ class ClassTemplate extends BaseTemplate {
                 !restrictions.lengthConstraints.nullOrEmpty)»
             «generateConstraints»
 
+            «IF !restrictions.rangeConstraints.nullOrEmpty»
+            «rangeGenerator.generateRangeChecker(null, restrictions.rangeConstraints)»
             «ENDIF»
+            «ENDIF»
+
             «constructors»
 
             «defaultInstance»
@@ -372,16 +385,11 @@ class ClassTemplate extends BaseTemplate {
 
     def private generateRangeRestriction(Type returnType, String paramName, boolean isNestedType) '''
         if («paramName» != null) {
-            «printRangeConstraint(returnType, paramName, isNestedType)»
-            boolean isValidRange = false;
-            for («Range.importedName»<«returnType.importedNumber»> r : «IF isNestedType»«returnType.importedName».«ENDIF»range()) {
-                if (r.contains(_constraint)) {
-                    isValidRange = true;
-                }
-            }
-            if (!isValidRange) {
-                throw new IllegalArgumentException(String.format("Invalid range: %s, expected: %s.", «paramName», «IF isNestedType»«returnType.importedName».«ENDIF»range()));
-            }
+            «IF isNestedType»
+                «rangeGenerator.generateRangeCheckerCall(null, paramName + ".getValue()")»
+            «ELSE»
+                «rangeGenerator.generateRangeCheckerCall(null, paramName)»
+            «ENDIF»
         }
     '''
 
