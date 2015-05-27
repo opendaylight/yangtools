@@ -24,11 +24,11 @@ abstract class RpcMethodInvoker {
 
     protected abstract Future<RpcResult<?>> invokeOn(RpcService impl, DataObject input);
 
-    protected static RpcMethodInvoker from(Method method) {
+    protected static RpcMethodInvoker from(final Method method) {
         Optional<Class<? extends DataContainer>> input = BindingReflections.resolveRpcInputClass(method);
         try {
             MethodHandle methodHandle = LOOKUP.unreflect(method);
-            if(input.isPresent()) {
+            if (input.isPresent()) {
                 return new RpcMethodInvokerWithInput(methodHandle);
             }
             return new RpcMethodInvokerWithoutInput(methodHandle);
