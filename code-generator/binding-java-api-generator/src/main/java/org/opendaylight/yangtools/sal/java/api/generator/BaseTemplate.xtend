@@ -334,27 +334,6 @@ abstract class BaseTemplate {
         «clazz.importedNumber» _constraint = «clazz.importedNumber».valueOf(«paramName»«IF isNestedType».getValue()«ENDIF».length«IF !isArray»()«ENDIF»);
     '''
 
-    def printRangeConstraint(Type returnType, String paramName, boolean isNestedType) '''
-        «IF BigDecimal.canonicalName.equals(returnType.fullyQualifiedName)»
-            «BigDecimal.importedName» _constraint = new «BigDecimal.importedName»(«paramName»«IF isNestedType».getValue()«ENDIF».toString());
-        «ELSE»
-            «IF isNestedType»
-                «val propReturnType = findProperty(returnType as GeneratedTransferObject, "value").returnType»
-                «IF propReturnType.fullyQualifiedName.equals(BigInteger.canonicalName)»
-                    «BigInteger.importedName» _constraint = «paramName».getValue();
-                «ELSE»
-                    «BigInteger.importedName» _constraint = «BigInteger.importedName».valueOf(«paramName».getValue());
-                «ENDIF»
-            «ELSE»
-                «IF returnType.fullyQualifiedName.equals(BigInteger.canonicalName)»
-                    «BigInteger.importedName» _constraint = «paramName»;
-                «ELSE»
-                    «BigInteger.importedName» _constraint = «BigInteger.importedName».valueOf(«paramName»);
-                «ENDIF»
-            «ENDIF»
-        «ENDIF»
-    '''
-
     def protected generateToString(Collection<GeneratedProperty> properties) '''
         «IF !properties.empty»
             @Override
@@ -462,7 +441,7 @@ abstract class BaseTemplate {
         return "new " + number + "(\"" + value + "\")"
     }
 
-    def private GeneratedProperty findProperty(GeneratedTransferObject gto, String name) {
+    def protected GeneratedProperty findProperty(GeneratedTransferObject gto, String name) {
         val props = gto.properties
         for (prop : props) {
             if (prop.name.equals(name)) {
