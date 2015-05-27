@@ -28,6 +28,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
 import com.google.common.base.Preconditions
+import org.opendaylight.yangtools.sal.binding.model.api.Type
+import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType
 
 /**
  * Template for generating JAVA class.
@@ -337,6 +339,50 @@ class ClassTemplate extends BaseTemplate {
             this.«p.fieldName» = null;
         «ENDFOR»
     }
+    '''
+
+    def private generateRestrictions(Type type, String paramName, Type returnType) '''
+        «val restrictions = type.getRestrictions»
+        «IF restrictions !== null»
+            «val boolean isNestedType = !(returnType instanceof ConcreteType)»
+            «IF !restrictions.lengthConstraints.empty»
+                «generateLengthRestriction(returnType, restrictions, paramName, isNestedType)»
+            «ENDIF»
+            «IF !restrictions.rangeConstraints.empty»
+                «generateRangeRestriction(returnType, paramName, isNestedType)»
+            «ENDIF»
+        «ENDIF»
+    '''
+
+    def private generateLengthRestriction(Type returnType, Restrictions restrictions, String paramName, boolean isNestedType) '''
+        «val clazz = restrictions.lengthConstraints.iterator.next.min.class»
+        if («paramName» != null) {
+            «printLengthConstraint(returnType, clazz, paramName, isNestedType, returnType.name.contains("["))»
+            boolean isValidLength = false;
+            for («Range.importedName»<«clazz.importedNumber»> r : «IF isNestedType»«returnType.importedName».«ENDIF»length()) {
+                if (r.contains(_constraint)) {
+                    isValidLength = true;
+                }
+            }
+            if (!isValidLength) {
+                throw new IllegalArgumentException(String.format("Invalid length: %s, expected: %s.", «paramName», «IF isNestedType»«returnType.importedName».«ENDIF»length()));
+            }
+        }
+    '''
+
+    def private generateRangeRestriction(Type returnType, String paramName, boolean isNestedType) '''
+        if («paramName» != null) {
+            «printRangeConstraint(returnType, paramName, isNestedType)»
+            boolean isValidRange = false;
+            for («Range.importedName»<«returnType.importedNumber»> r : «IF isNestedType»«returnType.importedName».«ENDIF»range()) {
+                if (r.contains(_constraint)) {
+                    isValidRange = true;
+                }
+            }
+            if (!isValidRange) {
+                throw new IllegalArgumentException(String.format("Invalid range: %s, expected: %s.", «paramName», «IF isNestedType»«returnType.importedName».«ENDIF»range()));
+            }
+        }
     '''
 
     def protected copyConstructor() '''
