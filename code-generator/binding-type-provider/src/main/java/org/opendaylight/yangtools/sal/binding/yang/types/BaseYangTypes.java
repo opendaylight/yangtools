@@ -81,7 +81,7 @@ public final class BaseYangTypes {
     /**
      * <code>Type</code> representation of <code>uint8</code> YANG type
      */
-    public static final Type UINT8_TYPE = Types.typeForClass(Short.class, singleRangeRestrictions(0, 255));
+    public static final Type UINT8_TYPE = Types.typeForClass(Short.class, singleRangeRestrictions((short)0, (short)255));
 
     /**
      * <code>Type</code> representation of <code>uint16</code> YANG type
@@ -91,13 +91,13 @@ public final class BaseYangTypes {
     /**
      * <code>Type</code> representation of <code>uint32</code> YANG type
      */
-    public static final Type UINT32_TYPE = Types.typeForClass(Long.class, singleRangeRestrictions(0, 4294967295L));
+    public static final Type UINT32_TYPE = Types.typeForClass(Long.class, singleRangeRestrictions(0L, 4294967295L));
 
     /**
      * <code>Type</code> representation of <code>uint64</code> YANG type
      */
     public static final Type UINT64_TYPE = Types.typeForClass(BigInteger.class,
-            singleRangeRestrictions(0, new BigInteger("18446744073709551615")));
+            singleRangeRestrictions(BigInteger.ZERO, new BigInteger("18446744073709551615")));
 
     public static final Type UNION_TYPE = new UnionType();
 
@@ -219,7 +219,7 @@ public final class BaseYangTypes {
         }
     };
 
-    private static Restrictions singleRangeRestrictions(final Number min, final Number max) {
+    private static <T extends Number> Restrictions singleRangeRestrictions(final T min, final T max) {
         return new Restrictions() {
             @Override
             public boolean isEmpty() {
