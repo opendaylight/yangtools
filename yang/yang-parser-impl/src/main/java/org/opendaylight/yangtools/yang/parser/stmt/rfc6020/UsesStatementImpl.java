@@ -82,6 +82,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
                         GroupingUtils.resolveUsesNode(usesNode, targetNodeStmtCtx);
                     } catch (SourceException e) {
                         LOG.warn(e.getMessage(), e);
+                        throw e;
                     }
                 }
 
