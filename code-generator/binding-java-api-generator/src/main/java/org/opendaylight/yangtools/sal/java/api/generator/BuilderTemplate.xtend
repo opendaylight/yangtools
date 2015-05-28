@@ -33,6 +33,10 @@ import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.Identifiable
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.AugmentationHolder
+import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
+import java.math.BigDecimal
+import java.math.BigInteger
+import com.google.common.collect.ImmutableList
 
 /**
  * Template for generating JAVA builder classes.
@@ -526,6 +530,56 @@ class BuilderTemplate extends BaseTemplate {
                 throw new IllegalArgumentException(String.format("Invalid range: %s, expected: %s.", «paramName», «getterName»));
             }
         }
+    '''
+
+
+    def private generateRangeMethod(String methodName, Restrictions restrictions, Type returnType, String className, String varName) '''
+        «IF restrictions != null && !(restrictions.rangeConstraints.empty)»
+            «val number = returnType.importedNumber»
+            public static «List.importedName»<«Range.importedName»<«number»>> «methodName»() {
+                «IF returnType.fullyQualifiedName.equals(BigDecimal.canonicalName)»
+                    «rangeBody(restrictions, BigDecimal, className, varName)»
+                «ELSE»
+                    «rangeBody(restrictions, BigInteger, className, varName)»
+                «ENDIF»
+            }
+        «ENDIF»
+    '''
+
+    def private rangeBody(Restrictions restrictions, Class<? extends Number> numberClass, String className, String varName) '''
+        if («varName» == null) {
+            synchronized («className».class) {
+                if («varName» == null) {
+                    «ImmutableList.importedName».Builder<«Range.importedName»<«numberClass.importedName»>> builder = «ImmutableList.importedName».builder();
+                    «FOR r : restrictions.rangeConstraints»
+                        builder.add(«Range.importedName».closed(«numericValue(numberClass, r.min)», «numericValue(numberClass, r.max)»));
+                    «ENDFOR»
+                    «varName» = builder.build();
+                }
+            }
+        }
+        return «varName»;
+    '''
+
+    def printRangeConstraint(Type returnType, String paramName, boolean isNestedType) '''
+        «IF BigDecimal.canonicalName.equals(returnType.fullyQualifiedName)»
+            «BigDecimal.importedName» _constraint = new «BigDecimal.importedName»(«paramName»«IF isNestedType».getValue()«ENDIF».toString());
+        «ELSE»
+            «IF isNestedType»
+                «val propReturnType = findProperty(returnType as GeneratedTransferObject, "value").returnType»
+                «IF propReturnType.fullyQualifiedName.equals(BigInteger.canonicalName)»
+                    «BigInteger.importedName» _constraint = «paramName».getValue();
+                «ELSE»
+                    «BigInteger.importedName» _constraint = «BigInteger.importedName».valueOf(«paramName».getValue());
+                «ENDIF»
+            «ELSE»
+                «IF returnType.fullyQualifiedName.equals(BigInteger.canonicalName)»
+                    «BigInteger.importedName» _constraint = «paramName»;
+                «ELSE»
+                    «BigInteger.importedName» _constraint = «BigInteger.importedName».valueOf(«paramName»);
+                «ENDIF»
+            «ENDIF»
+        «ENDIF»
     '''
 
     def private CharSequence generateCopyConstructor(boolean impl) '''
