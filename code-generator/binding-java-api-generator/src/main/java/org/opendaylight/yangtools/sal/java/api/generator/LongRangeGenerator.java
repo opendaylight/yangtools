@@ -14,8 +14,8 @@ final class LongRangeGenerator extends AbstractPrimitiveRangeGenerator<Long> {
     }
 
     @Override
-    protected String format(final Long number) {
-        return number.toString() + 'L';
+    protected String format(final Long value) {
+        return value.toString() + 'L';
     }
 
     @Override
