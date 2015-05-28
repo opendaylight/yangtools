@@ -336,27 +336,6 @@ abstract class BaseTemplate {
         «clazz.importedNumber» _constraint = «clazz.importedNumber».valueOf(«paramName»«IF isNestedType».getValue()«ENDIF».length«IF !isArray»()«ENDIF»);
     '''
 
-    def printRangeConstraint(Type returnType, String paramName, boolean isNestedType) '''
-        «IF BigDecimal.canonicalName.equals(returnType.fullyQualifiedName)»
-            «BigDecimal.importedName» _constraint = new «BigDecimal.importedName»(«paramName»«IF isNestedType».getValue()«ENDIF».toString());
-        «ELSE»
-            «IF isNestedType»
-                «val propReturnType = findProperty(returnType as GeneratedTransferObject, "value").returnType»
-                «IF propReturnType.fullyQualifiedName.equals(BigInteger.canonicalName)»
-                    «BigInteger.importedName» _constraint = «paramName».getValue();
-                «ELSE»
-                    «BigInteger.importedName» _constraint = «BigInteger.importedName».valueOf(«paramName».getValue());
-                «ENDIF»
-            «ELSE»
-                «IF returnType.fullyQualifiedName.equals(BigInteger.canonicalName)»
-                    «BigInteger.importedName» _constraint = «paramName»;
-                «ELSE»
-                    «BigInteger.importedName» _constraint = «BigInteger.importedName».valueOf(«paramName»);
-                «ENDIF»
-            «ENDIF»
-        «ENDIF»
-    '''
-
     def protected generateToString(Collection<GeneratedProperty> properties) '''
         «IF !properties.empty»
             @Override
@@ -451,47 +430,6 @@ abstract class BaseTemplate {
         return «varName»;
     '''
 
-    def protected generateRangeMethod(String methodName, Restrictions restrictions, Type returnType, String className, String varName) '''
-        «IF restrictions != null && !(restrictions.rangeConstraints.empty)»
-            «val number = returnType.importedNumber»
-            public static «List.importedName»<«Range.importedName»<«number»>> «methodName»() {
-                «IF returnType.fullyQualifiedName.equals(BigDecimal.canonicalName)»
-                    «rangeBody(restrictions, BigDecimal, className, varName)»
-                «ELSE»
-                    «rangeBody(restrictions, BigInteger, className, varName)»
-                «ENDIF»
-            }
-        «ENDIF»
-    '''
-
-    def protected generateRangeMethod(String methodName, Restrictions restrictions, String className, String varName, Iterable<GeneratedProperty> properties) '''
-        «IF restrictions != null && !(restrictions.rangeConstraints.empty)»
-            «val returnType = properties.iterator.next.returnType»
-            public static «List.importedName»<«Range.importedName»<«returnType.importedNumber»>> «methodName»() {
-                «IF returnType.fullyQualifiedName.equals(BigDecimal.canonicalName)»
-                    «rangeBody(restrictions, BigDecimal, className, varName)»
-                «ELSE»
-                    «rangeBody(restrictions, BigInteger, className, varName)»
-                «ENDIF»
-            }
-        «ENDIF»
-    '''
-
-    def private rangeBody(Restrictions restrictions, Class<? extends Number> numberClass, String className, String varName) '''
-        if («varName» == null) {
-            synchronized («className».class) {
-                if («varName» == null) {
-                    «ImmutableList.importedName».Builder<«Range.importedName»<«numberClass.importedName»>> builder = «ImmutableList.importedName».builder();
-                    «FOR r : restrictions.rangeConstraints»
-                        builder.add(«Range.importedName».closed(«numericValue(numberClass, r.min)», «numericValue(numberClass, r.max)»));
-                    «ENDFOR»
-                    «varName» = builder.build();
-                }
-            }
-        }
-        return «varName»;
-    '''
-
     def protected String importedNumber(Class<? extends Number> clazz) {
         if (clazz.equals(typeof(BigDecimal))) {
             return BigDecimal.importedName
@@ -534,7 +472,7 @@ abstract class BaseTemplate {
         return "new " + number + "(\"" + value + "\")"
     }
 
-    def private GeneratedProperty findProperty(GeneratedTransferObject gto, String name) {
+    def protected GeneratedProperty findProperty(GeneratedTransferObject gto, String name) {
         val props = gto.properties
         for (prop : props) {
             if (prop.name.equals(name)) {
