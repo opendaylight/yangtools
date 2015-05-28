@@ -35,6 +35,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.ValueAddedListener;
 
+// FIXME: add logging, document subinterfaces, add state transition guards as appropriate, document *ALL* methods
 public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> extends
         NamespaceStorageSupport implements StmtContext.Mutable<A, D, E>, Identifiable<StatementIdentifier> {
 
@@ -56,6 +57,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     }
 
+    // FIXME: move to a separate file
     abstract static class ContextBuilder<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
 
         private final StatementDefinitionContext<A, D, E> definition;
@@ -90,6 +92,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             return definition;
         }
 
+        // FIXME: rename to createIdentifier() to make it explicit that
+        //        the caller should be saving these
         public StatementIdentifier getIdentifier() {
             return new StatementIdentifier(definition.getStatementName(), rawArg);
         }
@@ -124,6 +128,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     StatementContextBase(StatementContextBase<A,D,E> original) {
+        // FIXME: guard against nulls
         this.definition = original.definition;
         this.identifier = original.identifier;
         this.statementDeclSource = original.statementDeclSource;
@@ -167,11 +172,14 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return Collections.unmodifiableCollection(effective);
     }
 
-    public void addEffectiveSubstatement(StatementContextBase<?, ?, ?> substatement){
+    public void addEffectiveSubstatement(StatementContextBase<?, ?, ?> substatement) {
+        // FIXME: guard against nulls
         effective.add(substatement);
     }
 
-    public void addDeclaredSubstatement(StatementContextBase<?, ?, ?> substatement){
+    public void addDeclaredSubstatement(StatementContextBase<?, ?, ?> substatement) {
+        // FIXME: add a state guard to prevent modification when called from invalid stage
+        // FIXME: guard against nulls
         declared.add(substatement);
     }
 
@@ -190,18 +198,16 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
                 potential.resetLists();
                 switch (this.getStamementSource().getStatementSource()) {
                     case DECLARATION:
-                        declared.add(potential);
+                        addDeclaredSubstatement(potential);
                         break;
                     case CONTEXT:
-                        effective.add(potential);
+                        addEffectiveSubstatement(potential);
                         break;
                 }
                 return potential;
             }
         };
     }
-
-
 
     @Override
     public StorageNodeType getStorageNodeType() {
@@ -226,8 +232,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return effectiveInstance;
     }
 
-
     void resetLists() {
+        // FIXME: add a state guard to prevent modification when called from invalid stage
+        //        alternatively remove this method altogether.
         declared.clear();
     }
 
@@ -245,10 +252,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
                 finished = false;
             }
         }
-        for(StatementContextBase<?, ?, ?> child: declared) {
+        for(StatementContextBase<?, ?, ?> child : declared) {
             finished &= child.tryToCompletePhase(phase);
         }
-        for(StatementContextBase<?, ?, ?> child: effective) {
+        for(StatementContextBase<?, ?, ?> child : effective) {
             finished &= child.tryToCompletePhase(phase);
         }
         if(finished) {
@@ -291,6 +298,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     protected <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceElementAdded(Class<N> type, K key, V value) {
+        // FIXME: commented out piece of code, do we need this?
         //definition().onNamespaceElementAdded(this, type, key, value);
     }
 
@@ -327,6 +335,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     void addPhaseCompletedListener(ModelProcessingPhase phase, OnPhaseFinished listener) throws SourceException {
+        // FIXME: guard against nulls
         ModelProcessingPhase finishedPhase = completedPhase;
         while (finishedPhase != null) {
             if(phase.equals(finishedPhase)) {
