@@ -51,7 +51,6 @@ public class TypedefCompilationTest extends BaseCompilationTest {
     private static final String GET_VAL = "getValue";
     private static final String UNITS = "_UNITS";
     private static final String LENGTH = "_length";
-    private static final String RANGE = "_range";
 
     @Test
     public void test() throws Exception {
@@ -138,7 +137,6 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         // typedef int32-ext1
         assertFalse(int32Ext1Class.isInterface());
         assertContainsField(int32Ext1Class, VAL, Integer.class);
-        assertContainsField(int32Ext1Class, RANGE, List.class);
         assertContainsFieldWithValue(int32Ext1Class, "serialVersionUID", Long.TYPE, 5351634010010233292L, Integer.class);
         // assertEquals(3, int32Ext1Class.getDeclaredFields().length);
 
@@ -161,7 +159,6 @@ public class TypedefCompilationTest extends BaseCompilationTest {
 
         // typedef int32-ext2
         assertFalse(int32Ext2Class.isInterface());
-        assertContainsField(int32Ext1Class, RANGE, List.class);
         assertContainsFieldWithValue(int32Ext2Class, UNITS, String.class, "mile", Integer.class);
         assertContainsFieldWithValue(int32Ext2Class, "serialVersionUID", Long.TYPE, 317831889060130988L, Integer.class);
         // assertEquals(3, int32Ext2Class.getDeclaredFields().length);
@@ -248,7 +245,6 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         // typedef my-decimal-type
         assertFalse(myDecimalTypeClass.isInterface());
         assertContainsField(myDecimalTypeClass, VAL, BigDecimal.class);
-        assertContainsField(myDecimalTypeClass, RANGE, List.class);
         assertContainsFieldWithValue(myDecimalTypeClass, "serialVersionUID", Long.TYPE, 3143735729419861095L,
                 BigDecimal.class);
         // assertEquals(3, myDecimalTypeClass.getDeclaredFields().length);
@@ -273,7 +269,6 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         // typedef my-decimal-type2
         assertFalse(myDecimalType2Class.isInterface());
         assertContainsField(myDecimalType2Class, VAL, BigDecimal.class);
-        assertContainsField(myDecimalType2Class, RANGE, List.class);
         assertContainsFieldWithValue(myDecimalType2Class, "serialVersionUID", Long.TYPE, -672265764962082714L, BigDecimal.class);
         // assertEquals(3, myDecimalType2Class.getDeclaredFields().length);
         assertContainsMethod(myDecimalType2Class, BigDecimal.class, "getValue");
