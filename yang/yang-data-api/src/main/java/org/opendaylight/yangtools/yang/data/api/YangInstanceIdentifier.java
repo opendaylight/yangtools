@@ -248,7 +248,7 @@ public abstract class YangInstanceIdentifier extends IterablePathArguments imple
             return 0;
         }
 
-        if (value.getClass().equals(byte[].class)) {
+        if (byte[].class.equals(value.getClass())) {
             return Arrays.hashCode((byte[]) value);
         }
 
