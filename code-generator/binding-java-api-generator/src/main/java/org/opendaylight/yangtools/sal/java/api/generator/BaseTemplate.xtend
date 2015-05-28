@@ -9,8 +9,6 @@ package org.opendaylight.yangtools.sal.java.api.generator
 
 import com.google.common.base.CharMatcher
 import com.google.common.base.Splitter
-import com.google.common.collect.ImmutableList
-import com.google.common.collect.Range
 import java.math.BigDecimal
 import java.math.BigInteger
 import java.util.Arrays
@@ -421,35 +419,6 @@ abstract class BaseTemplate {
             ENDFOR»«
         ENDIF
     »'''
-
-    def protected generateLengthMethod(String methodName, Type type, String className, String varName) '''
-        «val Restrictions restrictions = type.restrictions»
-        «IF restrictions != null && !(restrictions.lengthConstraints.empty)»
-            «val numberClass = restrictions.lengthConstraints.iterator.next.min.class»
-            public static «List.importedName»<«Range.importedName»<«numberClass.importedNumber»>> «methodName»() {
-                «IF numberClass.equals(typeof(BigDecimal))»
-                    «lengthBody(restrictions, numberClass, className, varName)»
-                «ELSE»
-                    «lengthBody(restrictions, typeof(BigInteger), className, varName)»
-                «ENDIF»
-            }
-        «ENDIF»
-    '''
-
-    def private lengthBody(Restrictions restrictions, Class<? extends Number> numberClass, String className, String varName) '''
-        if («varName» == null) {
-            synchronized («className».class) {
-                if («varName» == null) {
-                    «ImmutableList.importedName».Builder<«Range.importedName»<«numberClass.importedName»>> builder = «ImmutableList.importedName».builder();
-                    «FOR r : restrictions.lengthConstraints»
-                        builder.add(«Range.importedName».closed(«numericValue(numberClass, r.min)», «numericValue(numberClass, r.max)»));
-                    «ENDFOR»
-                    «varName» = builder.build();
-                }
-            }
-        }
-        return «varName»;
-    '''
 
     def protected String importedNumber(Class<? extends Number> clazz) {
         if (clazz.equals(typeof(BigDecimal))) {
