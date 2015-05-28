@@ -451,47 +451,6 @@ abstract class BaseTemplate {
         return «varName»;
     '''
 
-    def protected generateRangeMethod(String methodName, Restrictions restrictions, Type returnType, String className, String varName) '''
-        «IF restrictions != null && !(restrictions.rangeConstraints.empty)»
-            «val number = returnType.importedNumber»
-            public static «List.importedName»<«Range.importedName»<«number»>> «methodName»() {
-                «IF returnType.fullyQualifiedName.equals(BigDecimal.canonicalName)»
-                    «rangeBody(restrictions, BigDecimal, className, varName)»
-                «ELSE»
-                    «rangeBody(restrictions, BigInteger, className, varName)»
-                «ENDIF»
-            }
-        «ENDIF»
-    '''
-
-    def protected generateRangeMethod(String methodName, Restrictions restrictions, String className, String varName, Iterable<GeneratedProperty> properties) '''
-        «IF restrictions != null && !(restrictions.rangeConstraints.empty)»
-            «val returnType = properties.iterator.next.returnType»
-            public static «List.importedName»<«Range.importedName»<«returnType.importedNumber»>> «methodName»() {
-                «IF returnType.fullyQualifiedName.equals(BigDecimal.canonicalName)»
-                    «rangeBody(restrictions, BigDecimal, className, varName)»
-                «ELSE»
-                    «rangeBody(restrictions, BigInteger, className, varName)»
-                «ENDIF»
-            }
-        «ENDIF»
-    '''
-
-    def private rangeBody(Restrictions restrictions, Class<? extends Number> numberClass, String className, String varName) '''
-        if («varName» == null) {
-            synchronized («className».class) {
-                if («varName» == null) {
-                    «ImmutableList.importedName».Builder<«Range.importedName»<«numberClass.importedName»>> builder = «ImmutableList.importedName».builder();
-                    «FOR r : restrictions.rangeConstraints»
-                        builder.add(«Range.importedName».closed(«numericValue(numberClass, r.min)», «numericValue(numberClass, r.max)»));
-                    «ENDFOR»
-                    «varName» = builder.build();
-                }
-            }
-        }
-        return «varName»;
-    '''
-
     def protected String importedNumber(Class<? extends Number> clazz) {
         if (clazz.equals(typeof(BigDecimal))) {
             return BigDecimal.importedName
