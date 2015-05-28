@@ -78,7 +78,7 @@ public class CompilationTestUtils {
             assertEquals(type, f.getType());
             return f;
         } catch (NoSuchFieldException e) {
-            throw new AssertionError("Field " + name + " does not exists in class " + clazz.getSimpleName());
+            throw new AssertionError("Field " + name + " does not exist in class " + clazz.getSimpleName());
         }
     }
 
