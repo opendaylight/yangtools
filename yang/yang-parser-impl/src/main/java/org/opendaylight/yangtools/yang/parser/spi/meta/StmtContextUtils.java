@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
+
 import java.util.Collection;
 import com.google.common.base.Function;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -65,13 +67,14 @@ public final class StmtContextUtils {
         return null;
     }
 
-    public static final <DT extends DeclaredStatement<?>> StmtContext<?, ?, ?> findFirstDeclaredSubstatement(
+    @SuppressWarnings("unchecked")
+    public static final <AT,DT extends DeclaredStatement<AT>> StmtContext<AT, ?, ?> findFirstDeclaredSubstatement(
             StmtContext<?, ?, ?> stmtContext, Class<DT> declaredType) {
         Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements = stmtContext
                 .declaredSubstatements();
         for (StmtContext<?, ?, ?> subStmtContext : declaredSubstatements) {
             if (producesDeclared(subStmtContext,declaredType)) {
-                return subStmtContext;
+                return (StmtContext<AT, ?, ?>) subStmtContext;
             }
         }
         return null;
@@ -145,5 +148,19 @@ public final class StmtContextUtils {
             Class<? extends DeclaredStatement<?>> type) {
         return type.isAssignableFrom(ctx.getPublicDefinition()
                 .getDeclaredRepresentationClass());
+    }
+
+    public static boolean isInExtensionBody(
+            StmtContext<?,?,?> stmtCtx) {
+
+        StmtContext<?,?,?> current = stmtCtx;
+        while(!current.getParentContext().isRootContext()) {
+            current = current.getParentContext();
+            if(producesDeclared(current, ExtensionStatement.class)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
