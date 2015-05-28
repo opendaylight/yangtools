@@ -7,19 +7,14 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator;
 
-import com.google.common.base.Preconditions;
-
 abstract class AbstractSubIntegerRangeGenerator<T extends Number & Comparable<T>> extends AbstractPrimitiveRangeGenerator<T> {
-    private final String castType;
-
-    protected AbstractSubIntegerRangeGenerator(final Class<T> typeClass, final T minValue, final T maxValue, final String castType) {
-        super(typeClass, minValue, maxValue);
-        this.castType = Preconditions.checkNotNull(castType);
+    protected AbstractSubIntegerRangeGenerator(final Class<T> typeClass, final String primitiveName, final T minValue, final T maxValue) {
+        super(typeClass, primitiveName, minValue, maxValue);
     }
 
     @Override
     protected final String format(final T value) {
         // Make sure the number constant is cast to the corresponding primitive type
-        return '(' + castType + ')' + value;
+        return '(' + getPrimitiveName() + ')' + value;
     }
 }
