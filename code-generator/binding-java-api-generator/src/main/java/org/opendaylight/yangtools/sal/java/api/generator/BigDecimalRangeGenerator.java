@@ -16,19 +16,19 @@ final class BigDecimalRangeGenerator extends AbstractBigRangeGenerator<BigDecima
     }
 
     @Override
-    protected String format(final BigDecimal number) {
-        if (BigDecimal.ZERO.equals(number)) {
+    protected String format(final BigDecimal value) {
+        if (BigDecimal.ZERO.equals(value)) {
             return "java.math.BigDecimal.ZERO";
         }
-        if (BigDecimal.ONE.equals(number)) {
+        if (BigDecimal.ONE.equals(value)) {
             return "java.math.BigDecimal.ONE";
         }
-        if (BigDecimal.TEN.equals(number)) {
+        if (BigDecimal.TEN.equals(value)) {
             return "java.math.BigDecimal.TEN";
         }
 
         // FIXME: can we do something better?
-        return "new java.math.BigDecimal(\"" + number + "\")";
+        return "new java.math.BigDecimal(\"" + value + "\")";
     }
 
     @Override
