@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator
 
+import com.google.common.base.Preconditions
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.Lists
 import com.google.common.collect.Range
@@ -20,16 +21,16 @@ import java.util.Collections
 import java.util.List
 import java.util.regex.Pattern
 import org.opendaylight.yangtools.binding.generator.util.TypeConstants
+import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType
 import org.opendaylight.yangtools.sal.binding.model.api.Constant
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
-import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
-import com.google.common.base.Preconditions
 import org.opendaylight.yangtools.sal.binding.model.api.Type
-import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
+import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint
 
 /**
  * Template for generating JAVA class.
@@ -190,6 +191,13 @@ class ClassTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
+    private def rangeBody(List<RangeConstraint> restrictions, Class<? extends Number> numberClass) '''
+        «List.importedName»<«Range.importedName»<«numberClass.importedName»>> ret = new java.util.ArrayList<>(«restrictions.size»);
+        «FOR r : restrictions»
+            ret.add(«Range.importedName».closed(«numericValue(numberClass, r.min)», «numericValue(numberClass, r.max)»));
+        «ENDFOR»
+    '''
+
     def private generateRangeMethod(String methodName, String varName) '''
         «IF restrictions != null && !(restrictions.rangeConstraints.empty)»
             «val returnType = allProperties.iterator.next.returnType»
@@ -198,7 +206,12 @@ class ClassTemplate extends BaseTemplate {
              */
             @Deprecated
             public static «List.importedName»<«Range.importedName»<«returnType.importedNumber»>> «methodName»() {
-                return «varName»;
+            «IF returnType.fullyQualifiedName.equals(BigDecimal.canonicalName)»
+                «rangeBody(restrictions.rangeConstraints, BigDecimal)»
+            «ELSE»
+                «rangeBody(restrictions.rangeConstraints, BigInteger)»
+            «ENDIF»
+                return ret;
             }
         «ENDIF»
     '''
@@ -236,32 +249,10 @@ class ClassTemplate extends BaseTemplate {
 
     def private generateConstraints() '''
         static {
-            «IF !restrictions.rangeConstraints.nullOrEmpty»
-            «generateRangeConstraints»
-            «ENDIF»
             «IF !restrictions.lengthConstraints.nullOrEmpty»
             «generateLengthConstraints»
             «ENDIF»
         }
-    '''
-
-    private def generateRangeConstraints() '''
-        «IF !allProperties.nullOrEmpty»
-            «val returnType = allProperties.iterator.next.returnType»
-            «IF returnType.fullyQualifiedName.equals(BigDecimal.canonicalName)»
-                «rangeBody(restrictions, BigDecimal, genTO.importedName, "_range")»
-            «ELSE»
-                «rangeBody(restrictions, BigInteger, genTO.importedName, "_range")»
-            «ENDIF»
-        «ENDIF»
-    '''
-
-    private def rangeBody(Restrictions restrictions, Class<? extends Number> numberClass, String className, String varName) '''
-        «ImmutableList.importedName».Builder<«Range.importedName»<«numberClass.importedName»>> builder = «ImmutableList.importedName».builder();
-        «FOR r : restrictions.rangeConstraints»
-            builder.add(«Range.importedName».closed(«numericValue(numberClass, r.min)», «numericValue(numberClass, r.max)»));
-        «ENDFOR»
-        «varName» = builder.build();
     '''
 
     private def lengthBody(Restrictions restrictions, Class<? extends Number> numberClass, String className, String varName) '''
@@ -571,9 +562,6 @@ class ClassTemplate extends BaseTemplate {
             «IF prop != null»
                 «IF !(restrictions.lengthConstraints.empty)»
                     private static final «List.importedName»<«Range.importedName»<«prop.returnType.importedNumber»>> _length;
-                «ENDIF»
-                «IF !(restrictions.rangeConstraints.empty)»
-                    private static final «List.importedName»<«Range.importedName»<«prop.returnType.importedNumber»>> _range;
                 «ENDIF»
             «ENDIF»
         «ENDIF»
