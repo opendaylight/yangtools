@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.sal.java.api.generator;
 final class LongRangeGenerator extends AbstractPrimitiveRangeGenerator<Long> {
 
     protected LongRangeGenerator() {
-        super(Long.class, Long.MIN_VALUE, Long.MAX_VALUE);
+        super(Long.class, long.class.getName(), Long.MIN_VALUE, Long.MAX_VALUE);
     }
 
     @Override
