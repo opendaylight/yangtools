@@ -22,6 +22,30 @@
       "revId": "659ef46cc0d65ff32f5d6d48b3e1985bab9138ca",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_17acbe9f",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/InMemoryDataTreeModification.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 795
+      },
+      "writtenOn": "2015-05-28T13:01:12Z",
+      "side": 1,
+      "message": "ok will do",
+      "parentUuid": "1a9dcd25_71375200",
+      "range": {
+        "startLine": 153,
+        "startChar": 8,
+        "endLine": 163,
+        "endChar": 9
+      },
+      "revId": "659ef46cc0d65ff32f5d6d48b3e1985bab9138ca",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
