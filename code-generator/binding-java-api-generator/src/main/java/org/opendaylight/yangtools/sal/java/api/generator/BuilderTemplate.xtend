@@ -536,6 +536,10 @@ class BuilderTemplate extends BaseTemplate {
         «val Restrictions restrictions = type.restrictions»
         «IF restrictions != null && !(restrictions.lengthConstraints.empty)»
             «val numberClass = restrictions.lengthConstraints.iterator.next.min.class»
+            /**
+             * @deprecated This method is slated for removal in a future release. See BUG-1485 for details.
+             */
+            @Deprecated
             public static «List.importedName»<«Range.importedName»<«numberClass.importedNumber»>> «methodName»() {
                 «IF numberClass.equals(typeof(BigDecimal))»
                     «lengthBody(restrictions, numberClass, className, varName)»
@@ -564,6 +568,10 @@ class BuilderTemplate extends BaseTemplate {
     def private generateRangeMethod(String methodName, Restrictions restrictions, Type returnType, String className, String varName) '''
         «IF restrictions != null && !(restrictions.rangeConstraints.empty)»
             «val number = returnType.importedNumber»
+            /**
+             * @deprecated This method is slated for removal in a future release. See BUG-1485 for details.
+             */
+            @Deprecated
             public static «List.importedName»<«Range.importedName»<«number»>> «methodName»() {
                 «IF returnType.fullyQualifiedName.equals(BigDecimal.canonicalName)»
                     «rangeBody(restrictions, BigDecimal, className, varName)»
