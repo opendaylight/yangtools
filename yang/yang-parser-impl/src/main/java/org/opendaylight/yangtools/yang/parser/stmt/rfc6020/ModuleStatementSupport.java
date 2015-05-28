@@ -72,10 +72,12 @@ public class ModuleStatementSupport extends
                     + "] is missing.");
         }
 
+        // FIXME: this is wrong, it has to select the newest revision statement, not the first it encounters.
+        //         YANG files are not required to order revisions
         Optional<Date> revisionDate = Optional.fromNullable(firstAttributeOf(stmt.declaredSubstatements(),
                 RevisionStatement.class));
 
-        qNameModule = QNameModule.create(moduleNs.get(), revisionDate.orNull());
+        qNameModule = QNameModule.cachedReference(QNameModule.create(moduleNs.get(), revisionDate.orNull()));
         ModuleIdentifier moduleIdentifier = new ModuleIdentifierImpl(stmt.getStatementArgument(),
                 Optional.<URI> absent(), revisionDate);
 
