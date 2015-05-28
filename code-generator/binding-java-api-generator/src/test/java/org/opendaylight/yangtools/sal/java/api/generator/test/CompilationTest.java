@@ -27,7 +27,6 @@ import static org.opendaylight.yangtools.sal.java.api.generator.test.Compilation
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.cleanUp;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.getSourceFiles;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.testCompilation;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
@@ -614,7 +613,7 @@ public class CompilationTest extends BaseCompilationTest {
         generator.generateToFile(sourcesOutputDir);
     }
 
-    private void testReturnTypeIdentityref(final Class<?> clazz, final String methodName, final String returnTypeStr) throws Exception {
+    private static void testReturnTypeIdentityref(final Class<?> clazz, final String methodName, final String returnTypeStr) throws Exception {
         Method method;
         java.lang.reflect.Type returnType;
         try {
@@ -634,7 +633,7 @@ public class CompilationTest extends BaseCompilationTest {
         }
     }
 
-    private void testReturnTypeInstanceIdentitifer(final ClassLoader loader, final Class<?> clazz, final String methodName)
+    private static void testReturnTypeInstanceIdentitifer(final ClassLoader loader, final Class<?> clazz, final String methodName)
             throws Exception {
         Method method;
         Class<?> rawReturnType;
