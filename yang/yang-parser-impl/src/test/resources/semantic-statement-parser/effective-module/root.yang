@@ -1,45 +1,58 @@
 module root {
-	namespace root-ns;
-	prefix root-pref;
+    namespace root-ns;
+    prefix root-pref;
 
-	yang-version 1;
-	organization "kisko";
-	contact "kisko email";
+    yang-version 1;
+    
+    import imported { prefix imp-pref; revision-date "2000-01-01"; }
+    include submod;
+    
+    organization "cisco";
+    contact "cisco email";
 
-	import imported {
-		prefix imp-pref;
-		revision "2000-01-01";
-	}
-	include submod;
+    container cont-helper {
+        choice cont-choice {
+            case c1 {
+            }
+            case c2 {
+            }
+        }
+    }
 
-	container cont {
-	}
+    container cont {
+        must "../cont-helper" {
+            error-message "this is an error if helper not present";
+        }
+    }
 
-	augment "/cont" {
-		container cont-aug {
-		}
-	}
+    augment "/cont" {
+        container cont-aug {
+        }
+    }
 
-	notification notif1 {
-	}
+    notification notif1 {
+    }
 
-	rpc rpc1 {
-	}
+    rpc rpc1 {
+    }
 
-	deviation /cont {
-		deviate add {
-			container subcont{
-			}
-		}
-		reference "deviate reference";
-	}
+    deviation /cont {
+        deviate add {
+            container subcont {
+            }
+        }
+        reference "deviate reference";
+    }
 
-	identity identity1 {
-	}
+    identity identity1 {
+    }
 
-	feature feature1 {
-	}
+    feature feature1 {
+        description "feature1 description";
+        reference "feature1 reference";
+        status "current";
+    }
 
-	extension ext1 {
-	}
+    extension ext1 {
+    }
 }
