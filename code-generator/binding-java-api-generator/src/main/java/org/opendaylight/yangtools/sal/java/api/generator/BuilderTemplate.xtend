@@ -7,8 +7,11 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator
 
+import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableSortedSet
 import com.google.common.collect.Range
+import java.math.BigDecimal
+import java.math.BigInteger
 import java.util.ArrayList
 import java.util.Arrays
 import java.util.Collection
@@ -22,21 +25,19 @@ import java.util.Set
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl
 import org.opendaylight.yangtools.binding.generator.util.Types
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTOBuilderImpl
+import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedProperty
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature
+import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
 import org.opendaylight.yangtools.sal.binding.model.api.Type
 import org.opendaylight.yangtools.yang.binding.Augmentable
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.Identifiable
-import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.AugmentationHolder
-import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
-import java.math.BigDecimal
-import java.math.BigInteger
-import com.google.common.collect.ImmutableList
+import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint
 
 /**
  * Template for generating JAVA builder classes.
@@ -423,9 +424,6 @@ class BuilderTemplate extends BaseTemplate {
                     «IF !(restrictions.lengthConstraints.empty)»
                         private static «List.importedName»<«Range.importedName»<«f.returnType.importedNumber»>> «f.fieldName»_length;
                     «ENDIF»
-                    «IF !(restrictions.rangeConstraints.empty)»
-                        private static «List.importedName»<«Range.importedName»<«f.returnType.importedNumber»>> «f.fieldName»_range;
-                    «ENDIF»
                 «ENDIF»
             «ENDFOR»
         «ENDIF»
@@ -470,7 +468,7 @@ class BuilderTemplate extends BaseTemplate {
             }
             «generateLengthMethod(length, field.returnType, type.name+BUILDER, length)»
             «val range = field.fieldName + "_range"»
-            «generateRangeMethod(range, restrictions, field.returnType, type.name+BUILDER, range)»
+            «generateRangeMethod(range, restrictions, field.returnType)»
         «ENDFOR»
         «IF augmentField != null»
 
@@ -565,7 +563,7 @@ class BuilderTemplate extends BaseTemplate {
         return «varName»;
     '''
 
-    def private generateRangeMethod(String methodName, Restrictions restrictions, Type returnType, String className, String varName) '''
+    def private generateRangeMethod(String methodName, Restrictions restrictions, Type returnType) '''
         «IF restrictions != null && !(restrictions.rangeConstraints.empty)»
             «val number = returnType.importedNumber»
             /**
@@ -574,27 +572,20 @@ class BuilderTemplate extends BaseTemplate {
             @Deprecated
             public static «List.importedName»<«Range.importedName»<«number»>> «methodName»() {
                 «IF returnType.fullyQualifiedName.equals(BigDecimal.canonicalName)»
-                    «rangeBody(restrictions, BigDecimal, className, varName)»
+                    «rangeBody(restrictions.rangeConstraints, BigDecimal)»
                 «ELSE»
-                    «rangeBody(restrictions, BigInteger, className, varName)»
+                    «rangeBody(restrictions.rangeConstraints, BigInteger)»
                 «ENDIF»
             }
         «ENDIF»
     '''
 
-    def private rangeBody(Restrictions restrictions, Class<? extends Number> numberClass, String className, String varName) '''
-        if («varName» == null) {
-            synchronized («className».class) {
-                if («varName» == null) {
-                    «ImmutableList.importedName».Builder<«Range.importedName»<«numberClass.importedName»>> builder = «ImmutableList.importedName».builder();
-                    «FOR r : restrictions.rangeConstraints»
-                        builder.add(«Range.importedName».closed(«numericValue(numberClass, r.min)», «numericValue(numberClass, r.max)»));
-                    «ENDFOR»
-                    «varName» = builder.build();
-                }
-            }
-        }
-        return «varName»;
+    def private rangeBody(List<RangeConstraint> restrictions, Class<? extends Number> numberClass) '''
+         final «List.importedName»<«Range.importedName»<«numberClass.importedName»>> ret = new java.util.ArrayList<>(«restrictions.size»);
+         «FOR r : restrictions»
+             ret.add(«Range.importedName».closed(«numericValue(numberClass, r.min)», «numericValue(numberClass, r.max)»));
+         «ENDFOR»
+         return ret;
     '''
 
     def private CharSequence generateCopyConstructor(boolean impl) '''
