@@ -15,23 +15,23 @@ final class BigIntegerRangeGenerator extends AbstractBigRangeGenerator<BigIntege
     }
 
     @Override
-    protected String format(final BigInteger number) {
-        if (BigInteger.ZERO.equals(number)) {
+    protected String format(final BigInteger value) {
+        if (BigInteger.ZERO.equals(value)) {
             return "java.math.BigInteger.ZERO";
         }
-        if (BigInteger.ONE.equals(number)) {
+        if (BigInteger.ONE.equals(value)) {
             return "java.math.BigInteger.ONE";
         }
-        if (BigInteger.TEN.equals(number)) {
+        if (BigInteger.TEN.equals(value)) {
             return "java.math.BigInteger.TEN";
         }
 
         // Check for conversion to long
-        final long l = number.longValue();
-        if (number.equals(BigInteger.valueOf(l))) {
+        final long l = value.longValue();
+        if (value.equals(BigInteger.valueOf(l))) {
             return "java.math.BigInteger.valueOf(" + l + "L)";
         } else {
-            return "new java.math.BigInteger(\"" + number.toString() + "\")";
+            return "new java.math.BigInteger(\"" + value.toString() + "\")";
         }
     }
 
