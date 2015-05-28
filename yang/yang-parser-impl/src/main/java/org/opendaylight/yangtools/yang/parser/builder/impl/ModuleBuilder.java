@@ -60,7 +60,7 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
  * otherwise result may not be valid.
  */
 public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder implements DocumentedNodeBuilder {
-
+    private static final QNameModule EMPTY_QNAME_MODULE = QNameModule.cachedReference(QNameModule.create(null, null));
     private static final String GROUPING_STR = "Grouping";
     private static final String TYPEDEF_STR = "typedef";
     private ModuleImpl instance;
@@ -68,7 +68,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     private final String sourcePath;
     private static final SchemaPath SCHEMA_PATH = SchemaPath.create(Collections.<QName> emptyList(), true);
     private String prefix;
-    private QNameModule qnameModule = QNameModule.create(null, null);
+    private QNameModule qnameModule = EMPTY_QNAME_MODULE;
 
     private final boolean submodule;
     private String belongsTo;
@@ -346,7 +346,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public void setNamespace(final URI namespace) {
-        this.qnameModule = QNameModule.create(namespace, qnameModule.getRevision());
+        this.qnameModule = QNameModule.cachedReference(QNameModule.create(namespace, qnameModule.getRevision()));
     }
 
     public String getPrefix() {
@@ -408,7 +408,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public void setRevision(final Date revision) {
-        this.qnameModule = QNameModule.create(qnameModule.getNamespace(), revision);
+        this.qnameModule = QNameModule.cachedReference(QNameModule.create(qnameModule.getNamespace(), revision));
     }
 
     public void setPrefix(final String prefix) {
@@ -430,7 +430,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     public void addModuleImport(final String moduleName, final Date revision, final String prefix) {
         checkPrefix(prefix);
         checkNotSealed();
-        final ModuleImport moduleImport = createModuleImport(moduleName, revision, prefix);
+        final ModuleImport moduleImport = new ModuleImportImpl(moduleName, revision, prefix);
         imports.put(prefix, moduleImport);
     }
 
@@ -1047,10 +1047,6 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
         } else {
             throw new YangParseException(name, lineNum, "Unresolved parent of node '" + childName + "'.");
         }
-    }
-
-    private ModuleImport createModuleImport(final String moduleName, final Date revision, final String prefix) {
-        return new ModuleImportImpl(moduleName, revision, prefix);
     }
 
     private void raiseYangParserException(final String cantAddType, final String type, final String name,
