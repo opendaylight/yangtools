@@ -46,6 +46,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase.
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
+// FIXME: should this really be public?
 public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBehaviour.Registry, Mutable {
 
     public enum PhaseCompletionProgress {
@@ -104,6 +105,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                 } else {
                     Preconditions.checkState(root.getIdentifier().equals(getIdentifier()), "Root statement was already defined as %s.", root.getIdentifier());
                 }
+
+                // FIXME: why are we calling this?
                 root.resetLists();
                 return root;
             }
