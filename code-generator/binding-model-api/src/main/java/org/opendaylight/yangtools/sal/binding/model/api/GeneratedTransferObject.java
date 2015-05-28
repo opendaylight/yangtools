@@ -28,11 +28,12 @@ public interface GeneratedTransferObject extends GeneratedType {
     GeneratedProperty getSUID();
 
     /**
-     * Returns the extending Generated Transfer Object or <code>null</code> if
-     * there is no extending Generated Transfer Object.
+     * Returns the Generated Transfer Object from which this GTO is derived, or
+     * null if this GTO is not derived from a GTO -- e.g. it is either an union
+     * or it is derived from a concrete type.
      *
-     * @return the extending Generated Transfer Object or <code>null</code> if
-     *         there is no extending Generated Transfer Object.
+     * @return Generated Transfer Object or <code>null</code> if this GTO is
+     *         not derived from another GTO.
      */
     GeneratedTransferObject getSuperType();
 
@@ -70,7 +71,7 @@ public interface GeneratedTransferObject extends GeneratedType {
      *
      * @return Base type of Java representation of YANG typedef if set, otherwise it returns null
      */
-    TypeDefinition getBaseType();
+    TypeDefinition<?> getBaseType();
 
     /**
      * Return boolean value which describe whether Generated Transfer Object
