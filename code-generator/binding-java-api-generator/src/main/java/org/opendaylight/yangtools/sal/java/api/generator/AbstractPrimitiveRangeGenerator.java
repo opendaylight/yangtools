@@ -12,19 +12,31 @@ import com.google.common.collect.Range;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>> extends AbstractRangeGenerator<T> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPrimitiveRangeGenerator.class);
+    private final String primitiveName;
     private final T minValue;
     private final T maxValue;
 
-    protected AbstractPrimitiveRangeGenerator(final Class<T> typeClass, final T minValue, final T maxValue) {
+    protected AbstractPrimitiveRangeGenerator(final Class<T> typeClass, final String primitiveName, final T minValue, final T maxValue) {
         super(typeClass);
+        this.primitiveName = Preconditions.checkNotNull(primitiveName);
         this.minValue = Preconditions.checkNotNull(minValue);
         this.maxValue = Preconditions.checkNotNull(maxValue);
+    }
+
+    /**
+     * Return the name of the primitive type, as known by the Java language.
+     *
+     * @return Primitive type name
+     */
+    @Nonnull protected final String getPrimitiveName() {
+        return primitiveName;
     }
 
     private boolean needsMaximumEnforcement(final T maxToEnforce) {
@@ -82,7 +94,7 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
         final StringBuilder sb = new StringBuilder();
         final Collection<String> expressions = createExpressions(constraints);
 
-        sb.append("private static void ").append(checkerName).append("(final ").append(getTypeName()).append(" value) {\n");
+        sb.append("private static void ").append(checkerName).append("(final ").append(primitiveName).append(" value) {\n");
 
         if (!expressions.isEmpty()) {
             for (String exp : expressions) {
