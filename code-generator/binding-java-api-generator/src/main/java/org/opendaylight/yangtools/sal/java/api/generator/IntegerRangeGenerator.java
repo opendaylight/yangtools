@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.sal.java.api.generator;
 
 final class IntegerRangeGenerator extends AbstractPrimitiveRangeGenerator<Integer> {
     IntegerRangeGenerator() {
-        super(Integer.class, Integer.MIN_VALUE, Integer.MAX_VALUE);
+        super(Integer.class, int.class.getName(), Integer.MIN_VALUE, Integer.MAX_VALUE);
     }
 
     @Override
