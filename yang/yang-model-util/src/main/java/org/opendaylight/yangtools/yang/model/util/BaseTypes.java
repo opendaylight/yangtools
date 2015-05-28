@@ -33,7 +33,7 @@ public final class BaseTypes {
     }
 
     public static final URI BASE_TYPES_NAMESPACE = URI.create("urn:ietf:params:xml:ns:yang:1");
-    public static final QNameModule BASE_TYPES_MODULE = QNameModule.create(BASE_TYPES_NAMESPACE, null);
+    public static final QNameModule BASE_TYPES_MODULE = QNameModule.cachedReference(QNameModule.create(BASE_TYPES_NAMESPACE, null));
 
     public static final QName BINARY_QNAME = constructQName("binary");
     public static final QName BITS_QNAME = constructQName("bits");
