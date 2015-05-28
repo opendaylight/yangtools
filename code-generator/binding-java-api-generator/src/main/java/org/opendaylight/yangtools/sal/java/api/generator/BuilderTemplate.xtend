@@ -532,6 +532,34 @@ class BuilderTemplate extends BaseTemplate {
         }
     '''
 
+    def private generateLengthMethod(String methodName, Type type, String className, String varName) '''
+        «val Restrictions restrictions = type.restrictions»
+        «IF restrictions != null && !(restrictions.lengthConstraints.empty)»
+            «val numberClass = restrictions.lengthConstraints.iterator.next.min.class»
+            public static «List.importedName»<«Range.importedName»<«numberClass.importedNumber»>> «methodName»() {
+                «IF numberClass.equals(typeof(BigDecimal))»
+                    «lengthBody(restrictions, numberClass, className, varName)»
+                «ELSE»
+                    «lengthBody(restrictions, typeof(BigInteger), className, varName)»
+                «ENDIF»
+            }
+        «ENDIF»
+    '''
+
+    def private lengthBody(Restrictions restrictions, Class<? extends Number> numberClass, String className, String varName) '''
+        if («varName» == null) {
+            synchronized («className».class) {
+                if («varName» == null) {
+                    «ImmutableList.importedName».Builder<«Range.importedName»<«numberClass.importedName»>> builder = «ImmutableList.importedName».builder();
+                    «FOR r : restrictions.lengthConstraints»
+                        builder.add(«Range.importedName».closed(«numericValue(numberClass, r.min)», «numericValue(numberClass, r.max)»));
+                    «ENDFOR»
+                    «varName» = builder.build();
+                }
+            }
+        }
+        return «varName»;
+    '''
 
     def private generateRangeMethod(String methodName, Restrictions restrictions, Type returnType, String className, String varName) '''
         «IF restrictions != null && !(restrictions.rangeConstraints.empty)»
