@@ -445,14 +445,32 @@ class BuilderTemplate extends BaseTemplate {
     def private generateSetters() '''
         «FOR field : properties SEPARATOR '\n'»
             «val length = field.fieldName + "_length"»
-            «val range = field.fieldName + "_range"»
+            «val restrictions = field.returnType.restrictions»
+            «IF restrictions != null»
+                «IF !restrictions.rangeConstraints.nullOrEmpty»
+                    «val rangeGenerator = AbstractRangeGenerator.forType(field.returnType)»
+                    «rangeGenerator.generateRangeChecker(field.name.toFirstUpper, restrictions.rangeConstraints)»
+
+                «ENDIF»
+            «ENDIF»
             public «type.name»«BUILDER» set«field.name.toFirstUpper»(«field.returnType.importedName» value) {
-                «generateRestrictions(field, "value", length, range)»
+                «IF restrictions != null && !restrictions.rangeConstraints.nullOrEmpty»
+                if (value != null) {
+                    «val rangeGenerator = AbstractRangeGenerator.forType(field.returnType)»
+                    «IF field.returnType instanceof ConcreteType»
+                        «rangeGenerator.generateRangeCheckerCall(field.name.toFirstUpper, "value")»
+                    «ELSE»
+                        «rangeGenerator.generateRangeCheckerCall(field.name.toFirstUpper, "value.getValue()")»
+                    «ENDIF»
+                }
+                «ENDIF»
+                «generateRestrictions(field, "value", length)»
                 this.«field.fieldName» = value;
                 return this;
             }
             «generateLengthMethod(length, field.returnType, type.name+BUILDER, length)»
-            «generateRangeMethod(range, field.returnType.restrictions, field.returnType, type.name+BUILDER, range)»
+            «val range = field.fieldName + "_range"»
+            «generateRangeMethod(range, restrictions, field.returnType, type.name+BUILDER, range)»
         «ENDFOR»
         «IF augmentField != null»
 
@@ -478,24 +496,21 @@ class BuilderTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
-    def generateRestrictions(GeneratedProperty field, String paramName, String lengthGetter, String rangeGetter) '''
+    def private generateRestrictions(GeneratedProperty field, String paramName, String lengthGetter) '''
         «val Type type = field.returnType»
         «IF type instanceof ConcreteType»
-            «createRestrictions(type, paramName, type.name.contains("["), lengthGetter, rangeGetter)»
+            «createRestrictions(type, paramName, type.name.contains("["), lengthGetter)»
         «ELSEIF type instanceof GeneratedTransferObject»
-            «createRestrictions(type, paramName, isArrayType(type as GeneratedTransferObject), lengthGetter, rangeGetter)»
+            «createRestrictions(type, paramName, isArrayType(type as GeneratedTransferObject), lengthGetter)»
         «ENDIF»
     '''
 
-    def private createRestrictions(Type type, String paramName, boolean isArray, String lengthGetter, String rangeGetter) '''
+    def private createRestrictions(Type type, String paramName, boolean isArray, String lengthGetter) '''
         «val restrictions = type.getRestrictions»
         «IF restrictions !== null»
             «val boolean isNestedType = !(type instanceof ConcreteType)»
             «IF !restrictions.lengthConstraints.empty»
                 «generateLengthRestriction(type, paramName, lengthGetter, isNestedType, isArray)»
-            «ENDIF»
-            «IF !restrictions.rangeConstraints.empty»
-                «generateRangeRestriction(type, paramName, rangeGetter, isNestedType)»
             «ENDIF»
         «ENDIF»
     '''
@@ -515,42 +530,6 @@ class BuilderTemplate extends BaseTemplate {
                 throw new IllegalArgumentException(String.format("Invalid length: %s, expected: %s.", «paramName», «getterName»));
             }
         }
-    '''
-
-    def private generateRangeRestriction(Type type, String paramName, String getterName, boolean isNestedType) '''
-        if («paramName» != null) {
-            «printRangeConstraint(type, paramName, isNestedType)»
-            boolean isValidRange = false;
-            for («Range.importedName»<«type.importedNumber»> r : «getterName»()) {
-                if (r.contains(_constraint)) {
-                    isValidRange = true;
-                }
-            }
-            if (!isValidRange) {
-                throw new IllegalArgumentException(String.format("Invalid range: %s, expected: %s.", «paramName», «getterName»));
-            }
-        }
-    '''
-
-    def private printRangeConstraint(Type returnType, String paramName, boolean isNestedType) '''
-        «IF BigDecimal.canonicalName.equals(returnType.fullyQualifiedName)»
-            «BigDecimal.importedName» _constraint = new «BigDecimal.importedName»(«paramName»«IF isNestedType».getValue()«ENDIF».toString());
-        «ELSE»
-            «IF isNestedType»
-                «val propReturnType = findProperty(returnType as GeneratedTransferObject, "value").returnType»
-                «IF propReturnType.fullyQualifiedName.equals(BigInteger.canonicalName)»
-                    «BigInteger.importedName» _constraint = «paramName».getValue();
-                «ELSE»
-                    «BigInteger.importedName» _constraint = «BigInteger.importedName».valueOf(«paramName».getValue());
-                «ENDIF»
-            «ELSE»
-                «IF returnType.fullyQualifiedName.equals(BigInteger.canonicalName)»
-                    «BigInteger.importedName» _constraint = «paramName»;
-                «ELSE»
-                    «BigInteger.importedName» _constraint = «BigInteger.importedName».valueOf(«paramName»);
-                «ENDIF»
-            «ENDIF»
-        «ENDIF»
     '''
 
     def private generateLengthMethod(String methodName, Type type, String className, String varName) '''
