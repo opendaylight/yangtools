@@ -443,16 +443,16 @@ public class CompilationTest extends BaseCompilationTest {
         Method m = assertContainsMethod(builderClass, builderClass, "setIdBinary", b.getClass());
         final List<Range<Integer>> lengthConstraints = new ArrayList<>();
         lengthConstraints.add(Range.closed(1, 10));
-        Object arg = new byte[] {};
-        String expectedMsg = String.format("Invalid length: %s, expected: %s.", arg, lengthConstraints);
+        byte[] arg = new byte[] {};
+        String expectedMsg = String.format("Invalid length: %s, expected: %s.", Arrays.toString(arg), lengthConstraints);
         assertContainsRestrictionCheck(builderObj, m, expectedMsg, arg);
 
         m = assertContainsMethod(builderClass, builderClass, "setIdDecimal64", BigDecimal.class);
         final List<Range<BigDecimal>> rangeConstraints = new ArrayList<>();
         rangeConstraints.add(Range.closed(new BigDecimal("1.5"), new BigDecimal("5.5")));
-        arg = new BigDecimal("1.4");
-        expectedMsg = String.format("Invalid range: %s, expected: %s.", arg, rangeConstraints);
-        assertContainsRestrictionCheck(builderObj, m, expectedMsg, arg);
+        Object arg1 = new BigDecimal("1.4");
+        expectedMsg = String.format("Invalid range: %s, expected: %s.", arg1, rangeConstraints);
+        assertContainsRestrictionCheck(builderObj, m, expectedMsg, arg1);
 
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }
