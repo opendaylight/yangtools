@@ -1,0 +1,90 @@
+/*
+ * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.sal.java.api.generator;
+
+import com.google.common.collect.Range;
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+
+final class LengthGenerator {
+    private LengthGenerator() {
+        throw new UnsupportedOperationException();
+    }
+
+    private static String lengthCheckerName(final String member) {
+        final StringBuilder sb = new StringBuilder("check");
+        if (member != null) {
+            sb.append(member);
+        }
+        return sb.append("Length").toString();
+    }
+
+    private static final Collection<String> createExpressions(final Collection<LengthConstraint> constraints) {
+        final Collection<String> ret = new ArrayList<>(constraints.size());
+
+        for (LengthConstraint l : constraints) {
+            final StringBuilder sb = new StringBuilder("value >");
+
+            // We have to deal with restrictions being out of integer's range
+            if (l.getMin().longValue() <= Integer.MAX_VALUE) {
+                sb.append('=');
+            }
+            sb.append(' ').append(l.getMin().intValue());
+
+            final int max = l.getMax().intValue();
+            if (max < Integer.MAX_VALUE) {
+                sb.append(" && value <= ").append(max);
+            }
+
+            ret.add(sb.toString());
+        }
+
+        return ret;
+    }
+
+    private static String createLengthString(final Collection<LengthConstraint> constraints) {
+        final List<Range<BigInteger>> ranges = new ArrayList<>(constraints.size());
+
+        for (LengthConstraint c : constraints) {
+            ranges.add(Range.closed(new BigInteger(c.getMin().toString()), new BigInteger(c.getMax().toString())));
+        }
+
+        return ranges.toString();
+    }
+
+    static String generateLengthChecker(@Nullable final String member, @Nonnull final Collection<LengthConstraint> constraints) {
+        final StringBuilder sb = new StringBuilder();
+        final Collection<String> expressions = createExpressions(constraints);
+
+        sb.append("private static void ").append(lengthCheckerName(member)).append("(final int value) {\n");
+
+        if (!expressions.isEmpty()) {
+            for (String exp : expressions) {
+                sb.append("    if (").append(exp).append(") {\n");
+                sb.append("        return;\n");
+                sb.append("    }\n");
+            }
+
+            sb.append("    throw new IllegalArgumentException(String.format(\"Invalid length: %s, expected: ")
+              .append(createLengthString(constraints)).append(".\", value));\n");
+        }
+
+        sb.append("}\n");
+
+        return sb.toString();
+    }
+
+    static String generateLengthCheckerCall(@Nullable final String member, @Nonnull final String valueReference) {
+        return lengthCheckerName(member) + '(' + valueReference + ");\n";
+    }
+}
