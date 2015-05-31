@@ -47,10 +47,6 @@ abstract class BaseTemplate {
 
     def packageDefinition() '''package «type.packageName»;'''
 
-    protected def getFullyQualifiedName() {
-        return type.fullyQualifiedName
-    }
-
     final public def generate() {
         val _body = body()
         '''
@@ -326,14 +322,6 @@ abstract class BaseTemplate {
         return sb.toString
     }
 
-    /**
-     * Print length constraint.
-     * This should always be a BigInteger (only string and binary can have length restriction)
-     */
-    def printLengthConstraint(Type returnType, Class<? extends Number> clazz, String paramName, boolean isNestedType, boolean isArray) '''
-        «clazz.importedNumber» _constraint = «clazz.importedNumber».valueOf(«paramName»«IF isNestedType».getValue()«ENDIF».length«IF !isArray»()«ENDIF»);
-    '''
-
     def protected generateToString(Collection<GeneratedProperty> properties) '''
         «IF !properties.empty»
             @Override
@@ -371,19 +359,6 @@ abstract class BaseTemplate {
         return restrictions
     }
 
-    def boolean isArrayType(GeneratedTransferObject type) {
-        var isArray = false
-        val GeneratedProperty value = findProperty(type, "value")
-        if (value != null && value.returnType.name.contains("[")) {
-            isArray = true
-        }
-        return isArray
-    }
-
-    def String toQuote(Object obj) {
-        return "\"" + obj.toString + "\"";
-    }
-
     /**
      * Template method which generates method parameters with their types from <code>parameters</code>.
      *
@@ -399,6 +374,7 @@ abstract class BaseTemplate {
         ENDIF
     »'''
 
+    @Deprecated
     def protected String importedNumber(Class<? extends Number> clazz) {
         if (clazz.equals(typeof(BigDecimal))) {
             return BigDecimal.importedName
@@ -406,6 +382,7 @@ abstract class BaseTemplate {
         return BigInteger.importedName
     }
 
+    @Deprecated
     def protected String importedNumber(Type clazz) {
         if (clazz.fullyQualifiedName.equals(BigDecimal.canonicalName)) {
             return BigDecimal.importedName
@@ -413,6 +390,7 @@ abstract class BaseTemplate {
         return BigInteger.importedName
     }
 
+    @Deprecated
     def protected String numericValue(Class<? extends Number> clazz, Object numberValue) {
         val number = clazz.importedName;
         val value = numberValue.toString
