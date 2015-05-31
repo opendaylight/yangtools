@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator
 
-import com.google.common.collect.ImmutableList
 import com.google.common.collect.ImmutableSortedSet
 import com.google.common.collect.Range
 import java.math.BigDecimal
@@ -34,9 +33,9 @@ import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
 import org.opendaylight.yangtools.sal.binding.model.api.Type
 import org.opendaylight.yangtools.yang.binding.Augmentable
+import org.opendaylight.yangtools.yang.binding.AugmentationHolder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.Identifiable
-import org.opendaylight.yangtools.yang.binding.AugmentationHolder
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint
 
 /**
@@ -420,10 +419,8 @@ class BuilderTemplate extends BaseTemplate {
             «FOR f : properties»
                 private«IF _final» final«ENDIF» «f.returnType.importedName» «f.fieldName»;
                 «val restrictions = f.returnType.restrictions»
-                «IF !_final && restrictions != null»
-                    «IF !(restrictions.lengthConstraints.empty)»
-                        private static «List.importedName»<«Range.importedName»<«f.returnType.importedNumber»>> «f.fieldName»_length;
-                    «ENDIF»
+                «IF !_final && restrictions != null && !(restrictions.lengthConstraints.empty)»
+                    «LengthGenerator.generateLengthChecker(f.fieldName.toString, f.returnType, restrictions.lengthConstraints)»
                 «ENDIF»
             «ENDFOR»
         «ENDIF»
@@ -442,7 +439,6 @@ class BuilderTemplate extends BaseTemplate {
      */
     def private generateSetters() '''
         «FOR field : properties SEPARATOR '\n'»
-            «val length = field.fieldName + "_length"»
             «val restrictions = field.returnType.restrictions»
             «IF restrictions != null»
                 «IF !restrictions.rangeConstraints.nullOrEmpty»
@@ -462,11 +458,11 @@ class BuilderTemplate extends BaseTemplate {
                     «ENDIF»
                 }
                 «ENDIF»
-                «generateRestrictions(field, "value", length)»
+                «generateRestrictions(field, "value")»
                 this.«field.fieldName» = value;
                 return this;
             }
-            «generateLengthMethod(length, field.returnType, type.name+BUILDER, length)»
+            «generateLengthMethod(field.fieldName + "_length", field.returnType)»
             «val range = field.fieldName + "_range"»
             «generateRangeMethod(range, restrictions, field.returnType)»
         «ENDFOR»
@@ -494,43 +490,19 @@ class BuilderTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
-    def private generateRestrictions(GeneratedProperty field, String paramName, String lengthGetter) '''
+    def private generateRestrictions(GeneratedProperty field, String paramName) '''
         «val Type type = field.returnType»
-        «IF type instanceof ConcreteType»
-            «createRestrictions(type, paramName, type.name.contains("["), lengthGetter)»
-        «ELSEIF type instanceof GeneratedTransferObject»
-            «createRestrictions(type, paramName, isArrayType(type as GeneratedTransferObject), lengthGetter)»
-        «ENDIF»
-    '''
-
-    def private createRestrictions(Type type, String paramName, boolean isArray, String lengthGetter) '''
         «val restrictions = type.getRestrictions»
-        «IF restrictions !== null»
-            «val boolean isNestedType = !(type instanceof ConcreteType)»
-            «IF !restrictions.lengthConstraints.empty»
-                «generateLengthRestriction(type, paramName, lengthGetter, isNestedType, isArray)»
+        «IF restrictions !== null && !restrictions.lengthConstraints.empty»
+            «IF type instanceof ConcreteType»
+                «LengthGenerator.generateLengthCheckerCall(field.fieldName.toString, paramName)»
+            «ELSE»
+                «LengthGenerator.generateLengthCheckerCall(field.fieldName.toString, paramName + ".getValue()")»
             «ENDIF»
         «ENDIF»
     '''
 
-    def private generateLengthRestriction(Type type, String paramName, String getterName, boolean isNestedType, boolean isArray) '''
-        «val restrictions = type.getRestrictions»
-        if («paramName» != null) {
-            «val clazz = restrictions.lengthConstraints.iterator.next.min.class»
-            «printLengthConstraint(type, clazz, paramName, isNestedType, isArray)»
-            boolean isValidLength = false;
-            for («Range.importedName»<«clazz.importedNumber»> r : «getterName»()) {
-                if (r.contains(_constraint)) {
-                    isValidLength = true;
-                }
-            }
-            if (!isValidLength) {
-                throw new IllegalArgumentException(String.format("Invalid length: %s, expected: %s.", «paramName», «getterName»));
-            }
-        }
-    '''
-
-    def private generateLengthMethod(String methodName, Type type, String className, String varName) '''
+    def private generateLengthMethod(String methodName, Type type) '''
         «val Restrictions restrictions = type.restrictions»
         «IF restrictions != null && !(restrictions.lengthConstraints.empty)»
             «val numberClass = restrictions.lengthConstraints.iterator.next.min.class»
@@ -540,27 +512,20 @@ class BuilderTemplate extends BaseTemplate {
             @Deprecated
             public static «List.importedName»<«Range.importedName»<«numberClass.importedNumber»>> «methodName»() {
                 «IF numberClass.equals(typeof(BigDecimal))»
-                    «lengthBody(restrictions, numberClass, className, varName)»
+                    «lengthBody(restrictions, numberClass)»
                 «ELSE»
-                    «lengthBody(restrictions, typeof(BigInteger), className, varName)»
+                    «lengthBody(restrictions, typeof(BigInteger))»
                 «ENDIF»
             }
         «ENDIF»
     '''
 
-    def private lengthBody(Restrictions restrictions, Class<? extends Number> numberClass, String className, String varName) '''
-        if («varName» == null) {
-            synchronized («className».class) {
-                if («varName» == null) {
-                    «ImmutableList.importedName».Builder<«Range.importedName»<«numberClass.importedName»>> builder = «ImmutableList.importedName».builder();
-                    «FOR r : restrictions.lengthConstraints»
-                        builder.add(«Range.importedName».closed(«numericValue(numberClass, r.min)», «numericValue(numberClass, r.max)»));
-                    «ENDFOR»
-                    «varName» = builder.build();
-                }
-            }
-        }
-        return «varName»;
+    def private lengthBody(Restrictions restrictions, Class<? extends Number> numberClass) '''
+        «List.importedName»<«Range.importedName»<«numberClass.importedName»>> ret = new «ArrayList.importedName»<>(«restrictions.lengthConstraints.size»);
+        «FOR r : restrictions.lengthConstraints»
+            ret.add(«Range.importedName».closed(«numericValue(numberClass, r.min)», «numericValue(numberClass, r.max)»));
+        «ENDFOR»
+        return ret;
     '''
 
     def private generateRangeMethod(String methodName, Restrictions restrictions, Type returnType) '''
