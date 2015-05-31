@@ -123,13 +123,17 @@ class ClassTemplate extends BaseTemplate {
             «constantsDeclarations»
             «generateFields»
 
-            «IF restrictions != null && (!restrictions.rangeConstraints.nullOrEmpty ||
-                !restrictions.lengthConstraints.nullOrEmpty)»
-            «generateConstraints»
-
-            «IF !restrictions.rangeConstraints.nullOrEmpty»
-            «rangeGenerator.generateRangeChecker("_value", restrictions.rangeConstraints)»
-            «ENDIF»
+            «IF restrictions != null»
+                «IF !restrictions.lengthConstraints.nullOrEmpty»
+                    «IF findProperty(genTO, "value").returnType.name.contains("[")»
+                        «LengthGenerator.generateArrayLengthChecker("_value", restrictions.lengthConstraints)»
+                    «ELSE»
+                        «LengthGenerator.generateStringLengthChecker("_value", restrictions.lengthConstraints)»
+                    «ENDIF»
+                «ENDIF»
+                «IF !restrictions.rangeConstraints.nullOrEmpty»
+                    «rangeGenerator.generateRangeChecker("_value", restrictions.rangeConstraints)»
+                «ENDIF»
             «ENDIF»
 
             «constructors»
@@ -153,7 +157,7 @@ class ClassTemplate extends BaseTemplate {
 
             «generateToString(genTO.toStringIdentifiers)»
 
-            «generateLengthMethod("length", "_length")»
+            «generateLengthMethod()»
 
             «generateRangeMethod()»
 
@@ -178,15 +182,19 @@ class ClassTemplate extends BaseTemplate {
         }
     '''
 
-    def private generateLengthMethod(String methodName, String varName) '''
+    def private generateLengthMethod() '''
         «IF restrictions != null && !(restrictions.lengthConstraints.empty)»
             «val numberClass = restrictions.lengthConstraints.iterator.next.min.class»
             /**
              * @deprecated This method is slated for removal in a future release. See BUG-1485 for details.
              */
             @Deprecated
-            public static «List.importedName»<«Range.importedName»<«numberClass.importedNumber»>> «methodName»() {
-                return «varName»;
+            public static «List.importedName»<«Range.importedName»<«numberClass.importedNumber»>> length() {
+                «List.importedName»<«Range.importedName»<«numberClass.importedName»>> ret = new java.util.ArrayList<>(«restrictions.lengthConstraints.size»);
+                «FOR r : restrictions.lengthConstraints»
+                    ret.add(«Range.importedName».closed(«numericValue(numberClass, r.min)», «numericValue(numberClass, r.max)»));
+                «ENDFOR»
+                return ret;
             }
         «ENDIF»
     '''
@@ -244,33 +252,6 @@ class ClassTemplate extends BaseTemplate {
         «ENDIF»
         «IF properties.empty && !parentProperties.empty »
             «parentConstructor»
-        «ENDIF»
-    '''
-
-    def private generateConstraints() '''
-        static {
-            «IF !restrictions.lengthConstraints.nullOrEmpty»
-            «generateLengthConstraints»
-            «ENDIF»
-        }
-    '''
-
-    private def lengthBody(Restrictions restrictions, Class<? extends Number> numberClass, String className, String varName) '''
-        «ImmutableList.importedName».Builder<«Range.importedName»<«numberClass.importedName»>> builder = «ImmutableList.importedName».builder();
-        «FOR r : restrictions.lengthConstraints»
-            builder.add(«Range.importedName».closed(«numericValue(numberClass, r.min)», «numericValue(numberClass, r.max)»));
-        «ENDFOR»
-        «varName» = builder.build();
-    '''
-
-    private def generateLengthConstraints() '''
-        «IF restrictions != null && !(restrictions.lengthConstraints.empty)»
-            «val numberClass = restrictions.lengthConstraints.iterator.next.min.class»
-            «IF numberClass.equals(typeof(BigDecimal))»
-                «lengthBody(restrictions, numberClass, genTO.importedName, "_length")»
-            «ELSE»
-                «lengthBody(restrictions, typeof(BigInteger), genTO.importedName, "_length")»
-            «ENDIF»
         «ENDIF»
     '''
 
@@ -350,7 +331,13 @@ class ClassTemplate extends BaseTemplate {
         «IF restrictions !== null»
             «val boolean isNestedType = !(returnType instanceof ConcreteType)»
             «IF !restrictions.lengthConstraints.empty»
-                «generateLengthRestriction(returnType, restrictions, paramName, isNestedType)»
+                if («paramName» != null) {
+                    «IF isNestedType»
+                        «LengthGenerator.generateLengthCheckerCall(paramName, paramName + ".getValue()")»
+                    «ELSE»
+                        «LengthGenerator.generateLengthCheckerCall(paramName, paramName)»
+                    «ENDIF»
+                }
             «ENDIF»
             «IF !restrictions.rangeConstraints.empty»
                 if («paramName» != null) {
@@ -362,22 +349,6 @@ class ClassTemplate extends BaseTemplate {
                 }
             «ENDIF»
         «ENDIF»
-    '''
-
-    def private generateLengthRestriction(Type returnType, Restrictions restrictions, String paramName, boolean isNestedType) '''
-        «val clazz = restrictions.lengthConstraints.iterator.next.min.class»
-        if («paramName» != null) {
-            «printLengthConstraint(returnType, clazz, paramName, isNestedType, returnType.name.contains("["))»
-            boolean isValidLength = false;
-            for («Range.importedName»<«clazz.importedNumber»> r : «IF isNestedType»«returnType.importedName».«ENDIF»length()) {
-                if (r.contains(_constraint)) {
-                    isValidLength = true;
-                }
-            }
-            if (!isValidLength) {
-                throw new IllegalArgumentException(String.format("Invalid length: %s, expected: %s.", «paramName», «IF isNestedType»«returnType.importedName».«ENDIF»length()));
-            }
-        }
     '''
 
     def protected copyConstructor() '''
@@ -553,14 +524,6 @@ class ClassTemplate extends BaseTemplate {
      * @return string with the class attributes in JAVA format
      */
     def protected generateFields() '''
-        «IF restrictions != null»
-            «val prop = getPropByName("value")»
-            «IF prop != null»
-                «IF !(restrictions.lengthConstraints.empty)»
-                    private static final «List.importedName»<«Range.importedName»<«prop.returnType.importedNumber»>> _length;
-                «ENDIF»
-            «ENDIF»
-        «ENDIF»
         «IF !properties.empty»
             «FOR f : properties»
                 private«IF f.readOnly» final«ENDIF» «f.returnType.importedName» «f.fieldName»;
