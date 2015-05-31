@@ -345,12 +345,26 @@ class ClassTemplate extends BaseTemplate {
     }
     '''
 
+	def private lengthReference(Type type, String name) {
+		val sb = new StringBuilder(name)
+		if (!(type instanceof ConcreteType)) {
+			sb.append(".getValue()")
+		}
+		sb.append(".length")
+		if (!type.name.contains("[")) {
+			sb.append("()")
+		}
+		return sb.toString
+	}
+
     def private generateRestrictions(Type type, String paramName, Type returnType) '''
         «val restrictions = type.getRestrictions»
         «IF restrictions !== null»
             «val boolean isNestedType = !(returnType instanceof ConcreteType)»
             «IF !restrictions.lengthConstraints.empty»
-                «generateLengthRestriction(returnType, restrictions, paramName, isNestedType)»
+                if («paramName» != null) {
+                    «LengthGenerator.generateLengthCheckerCall(paramName, lengthReference(returnType, paramName))»
+                }
             «ENDIF»
             «IF !restrictions.rangeConstraints.empty»
                 if («paramName» != null) {
@@ -362,22 +376,6 @@ class ClassTemplate extends BaseTemplate {
                 }
             «ENDIF»
         «ENDIF»
-    '''
-
-    def private generateLengthRestriction(Type returnType, Restrictions restrictions, String paramName, boolean isNestedType) '''
-        «val clazz = restrictions.lengthConstraints.iterator.next.min.class»
-        if («paramName» != null) {
-            «printLengthConstraint(returnType, clazz, paramName, isNestedType, returnType.name.contains("["))»
-            boolean isValidLength = false;
-            for («Range.importedName»<«clazz.importedNumber»> r : «IF isNestedType»«returnType.importedName».«ENDIF»length()) {
-                if (r.contains(_constraint)) {
-                    isValidLength = true;
-                }
-            }
-            if (!isValidLength) {
-                throw new IllegalArgumentException(String.format("Invalid length: %s, expected: %s.", «paramName», «IF isNestedType»«returnType.importedName».«ENDIF»length()));
-            }
-        }
     '''
 
     def protected copyConstructor() '''
