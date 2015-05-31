@@ -50,7 +50,6 @@ public class TypedefCompilationTest extends BaseCompilationTest {
     private static final String VAL = "_value";
     private static final String GET_VAL = "getValue";
     private static final String UNITS = "_UNITS";
-    private static final String LENGTH = "_length";
 
     @Test
     public void test() throws Exception {
@@ -183,7 +182,6 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         // typedef string-ext1
         assertFalse(stringExt1Class.isInterface());
         assertContainsField(stringExt1Class, VAL, String.class);
-        assertContainsField(stringExt1Class, LENGTH, List.class);
         assertContainsField(stringExt1Class, "patterns", Pattern[].class);
         assertContainsField(stringExt1Class, "PATTERN_CONSTANTS", List.class);
         assertContainsFieldWithValue(stringExt1Class, "serialVersionUID", Long.TYPE, 6943827552297110991L, String.class);
@@ -208,7 +206,6 @@ public class TypedefCompilationTest extends BaseCompilationTest {
 
         // typedef string-ext2
         assertFalse(stringExt2Class.isInterface());
-        assertContainsField(stringExt2Class, LENGTH, List.class);
         assertContainsFieldWithValue(stringExt2Class, "serialVersionUID", Long.TYPE, 8100233177432072092L, String.class);
         // assertEquals(2, stringExt2Class.getDeclaredFields().length);
         expectedConstructor = assertContainsConstructor(stringExt2Class, String.class);
