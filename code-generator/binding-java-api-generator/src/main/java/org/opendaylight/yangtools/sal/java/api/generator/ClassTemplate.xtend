@@ -285,7 +285,12 @@ class ClassTemplate extends BaseTemplate {
 
         «FOR p : properties»
             «IF p.returnType.importedName.contains("[]")»
-            this.«p.fieldName» = «p.fieldName» == null ? null : «p.fieldName».clone();
+                «IF genTO.typedef && !allProperties.empty && allProperties.size == 1 && allProperties.get(0).name
+                .equals("value")»
+                this.«p.fieldName» = «p.fieldName».clone();
+                «ELSE»
+                this.«p.fieldName» = «p.fieldName» == null ? null : «p.fieldName».clone();
+                «ENDIF»
             «ELSE»
             this.«p.fieldName» = «p.fieldName»;
             «ENDIF»
