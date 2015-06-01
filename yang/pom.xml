@@ -24,18 +24,19 @@
         <module>yang-binding</module>
         <module>yang-common</module>
         <module>yang-data-api</module>
-        <module>yang-data-util</module>
+        <module>yang-data-codec-gson</module>
         <module>yang-data-impl</module>
         <module>yang-data-operations</module>
-        <module>yang-data-codec-gson</module>
-        <module>yang-model-api</module>
-        <module>yang-maven-plugin</module>
+        <module>yang-data-treetool</module>
+        <module>yang-data-util</module>
         <module>yang-maven-plugin-it</module>
+        <module>yang-maven-plugin</module>
         <module>yang-maven-plugin-spi</module>
+        <module>yang-model-api</module>
+        <module>yang-model-export</module>
         <module>yang-model-util</module>
         <module>yang-parser-api</module>
         <module>yang-parser-impl</module>
-        <module>yang-model-export</module>
     </modules>
     <build>
         <plugins>
