@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.HashMultimap;
@@ -129,6 +131,18 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private StatementContextBase<?, ?, ?> originalCtx;
     private TypeOfCopy typeOfCopy = TypeOfCopy.ORIGINAL;
 
+    private boolean isSupportedToBuildEffective = true;
+
+    @Override
+    public boolean isSupportedToBuildEffective() {
+        return isSupportedToBuildEffective;
+    }
+
+    @Override
+    public void setIsSupportedToBuildEffective(boolean isSupportedToBuildEffective) {
+        this.isSupportedToBuildEffective = isSupportedToBuildEffective;
+    }
+
     @Override
     public TypeOfCopy getTypeOfCopy() {
         return typeOfCopy;
@@ -207,7 +221,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements() {
-        return Collections.unmodifiableCollection(effective);
+        return effective;
     }
 
     public void addEffectiveSubstatement(
@@ -228,8 +242,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
             @Override
             public StatementContextBase build() throws SourceException {
-                StatementContextBase<?, ?, ?> potential = substatements
-                        .get(getIdentifier());
+                StatementContextBase<?, ?, ?> potential = null;
+
+                if (getDefinition().getPublicView() != Rfc6020Mapping.AUGMENT) {
+                    potential = substatements.get(getIdentifier());
+                }
                 if (potential == null) {
                     potential = new SubstatementContext(
                             StatementContextBase.this, this);
@@ -311,8 +328,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
                 .iterator();
         while (listener.hasNext()) {
             OnPhaseFinished next = listener.next();
-            if(next.phaseFinished(this, phase)) {
-             listener.remove();
+            if (next.phaseFinished(this, phase)) {
+                listener.remove();
             }
         }
     }

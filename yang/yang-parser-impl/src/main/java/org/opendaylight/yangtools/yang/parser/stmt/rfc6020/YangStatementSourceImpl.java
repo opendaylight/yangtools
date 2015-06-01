@@ -52,14 +52,24 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
         }
     };
 
-    public YangStatementSourceImpl(String fileName) {
+    public YangStatementSourceImpl(String fileName, boolean isAbsolute) {
         try {
-            statementContext = parseYangSource(loadFile(fileName));
+            statementContext = parseYangSource(loadFile(fileName, isAbsolute));
             walker = new ParseTreeWalker();
             yangStatementModelParser = new YangStatementParserListenerImpl(REF);
         } catch (Exception e) {
             LOG.warn(e.getMessage(), e);
         }
+    }
+
+    public YangStatementSourceImpl(InputStream inputStream) {
+        try {
+            statementContext = parseYangSource(inputStream);
+        } catch (Exception e) {
+            LOG.warn(e.getMessage(), e);
+        }
+        walker = new ParseTreeWalker();
+        yangStatementModelParser = new YangStatementParserListenerImpl(REF);
     }
 
     @Override
@@ -80,8 +90,8 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
         walker.walk(yangStatementModelParser, statementContext);
     }
 
-    private FileInputStream loadFile(String fileName) throws URISyntaxException, FileNotFoundException {
-        return new FileInputStream(new File(getClass().getResource(fileName).toURI()));
+    private FileInputStream loadFile(String fileName, boolean isAbsolute) throws URISyntaxException, FileNotFoundException {
+        return isAbsolute ? new FileInputStream(new File(fileName)) : new FileInputStream(new File(getClass().getResource(fileName).toURI()));
     }
 
     private YangStatementParser.StatementContext parseYangSource(final InputStream stream) throws IOException, YangSyntaxErrorException {

@@ -52,10 +52,10 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
                 .effectiveSubstatements();
 
         Collection<StatementContextBase<?, ?, ?>> substatementsInit = new LinkedList<>();
-        substatementsInit.addAll(declaredSubstatements);
         substatementsInit.addAll(effectiveSubstatements);
+        substatementsInit.addAll(declaredSubstatements);
 
-        this.substatements = FluentIterable.from(substatementsInit)
+        this.substatements = FluentIterable.from(substatementsInit).filter(StmtContextUtils.IS_SUPPORTED_TO_BUILD_EFFECTIVE)
                 .transform(StmtContextUtils.buildEffective()).toList();
     }
 
@@ -79,12 +79,9 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
         if (declaredInstance == null) {
             declaredInstance = stmtCtx.buildDeclared();
         }
-
         return declaredInstance;
     }
 
-    // public <K, V, N extends IdentifierNamespace<? super K, ? extends V>> V
-    // get(
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> V get(
             Class<N> namespace, K identifier) {
@@ -118,20 +115,6 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
         return result;
     }
 
-    @SuppressWarnings("unchecked")
-    protected final <S extends EffectiveStatement<?, ?>> Collection<? extends S> allEffective(
-            Class<S> type) {
-        Collection<? extends S> result = null;
-
-        try {
-            result = Collection.class.cast(Collections2.filter(substatements,
-                    Predicates.instanceOf(type)));
-        } catch (NoSuchElementException e) {
-            result = Collections.emptyList();
-        }
-        return result;
-    }
-
     protected final <S extends SchemaNode> S firstSchemaNode(Class<S> type) {
         S result = null;
         try {
@@ -144,9 +127,9 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
     }
 
     @SuppressWarnings("unchecked")
-    protected final <S extends SchemaNode> Collection<? extends S> allSchemaNodes(
-            Class<S> type) {
-        Collection<? extends S> result = null;
+    protected final <T> Collection<T> allSubstatementsOfType(
+            Class<T> type) {
+        Collection<T> result = null;
 
         try {
             result = Collection.class.cast(Collections2.filter(substatements,
@@ -157,4 +140,14 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
         return result;
     }
 
+    protected final <T> T firstSubstatementOfType(Class<T> type) {
+        T result = null;
+        try {
+            result = type.cast(Iterables.find(substatements,
+                    Predicates.instanceOf(type)));
+        } catch (NoSuchElementException e) {
+            result = null;
+        }
+        return result;
+    }
 }
