@@ -175,6 +175,11 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
 
     @Override
     public SchemaContext getSchemaContext() {
-        return tryToCreateSchemaContext().get();
+        final Optional<SchemaContext> contextOptional = tryToCreateSchemaContext();
+        if (contextOptional.isPresent()) {
+            return contextOptional.get();
+
+        }
+        throw new IllegalStateException("Unable to recreate SchemaContext, error while parsing");
     }
 }
