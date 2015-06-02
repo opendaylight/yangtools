@@ -23,7 +23,8 @@ public enum ModelProcessingPhase {
      * visibility of custom defined statements in following
      * phases.
      */
-    SOURCE_LINKAGE(null),
+    INIT(null),
+    SOURCE_LINKAGE(INIT),
     STATEMENT_DEFINITION(SOURCE_LINKAGE),
     FULL_DECLARATION(STATEMENT_DEFINITION),
     EFFECTIVE_MODEL(FULL_DECLARATION);
