@@ -18,6 +18,7 @@ import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 import javax.xml.stream.XMLStreamReader;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -47,9 +48,12 @@ import org.slf4j.LoggerFactory;
 @Beta
 public class NormalizedNodeWriter implements Closeable, Flushable {
     private final NormalizedNodeStreamWriter writer;
+    protected int currentDepth = 0;
+    protected int maxDepth;
 
-    private NormalizedNodeWriter(final NormalizedNodeStreamWriter writer) {
+    private NormalizedNodeWriter(final NormalizedNodeStreamWriter writer, final int maxDepth) {
         this.writer = Preconditions.checkNotNull(writer);
+        this.maxDepth = maxDepth;
     }
 
     protected final NormalizedNodeStreamWriter getWriter() {
@@ -67,6 +71,16 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
     }
 
     /**
+     * Create a new writer backed by a {@link NormalizedNodeStreamWriter}.
+     *
+     * @param writer Back-end writer
+     * @return A new instance.
+     */
+    public static NormalizedNodeWriter forStreamWriter(final NormalizedNodeStreamWriter writer, final int maxDepth) {
+        return forStreamWriter(writer, true,  maxDepth);
+    }
+
+    /**
      * Create a new writer backed by a {@link NormalizedNodeStreamWriter}. Unlike the simple {@link #forStreamWriter(NormalizedNodeStreamWriter)}
      * method, this allows the caller to switch off RFC6020 XML compliance, providing better
      * throughput. The reason is that the XML mapping rules in RFC6020 require the encoding
@@ -81,10 +95,15 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
      * @return A new instance.
      */
     public static NormalizedNodeWriter forStreamWriter(final NormalizedNodeStreamWriter writer, final boolean orderKeyLeaves) {
+        return forStreamWriter(writer, orderKeyLeaves, Integer.MAX_VALUE);
+    }
+
+    public static NormalizedNodeWriter forStreamWriter(final NormalizedNodeStreamWriter writer, final boolean
+            orderKeyLeaves, final int maxDepth) {
         if (orderKeyLeaves) {
-            return new OrderedNormalizedNodeWriter(writer);
+            return new OrderedNormalizedNodeWriter(writer, maxDepth);
         } else {
-            return new NormalizedNodeWriter(writer);
+            return new NormalizedNodeWriter(writer, maxDepth);
         }
     }
 
@@ -133,11 +152,13 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
 
     private boolean wasProcessAsSimpleNode(final NormalizedNode<?, ?> node) throws IOException {
         if (node instanceof LeafSetEntryNode) {
-            final LeafSetEntryNode<?> nodeAsLeafList = (LeafSetEntryNode<?>)node;
-            if(writer instanceof NormalizedNodeStreamAttributeWriter) {
-                ((NormalizedNodeStreamAttributeWriter) writer).leafSetEntryNode(nodeAsLeafList.getValue(), nodeAsLeafList.getAttributes());
-            } else {
-                writer.leafSetEntryNode(nodeAsLeafList.getValue());
+            if (currentDepth < maxDepth) {
+                final LeafSetEntryNode<?> nodeAsLeafList = (LeafSetEntryNode<?>) node;
+                if (writer instanceof NormalizedNodeStreamAttributeWriter) {
+                    ((NormalizedNodeStreamAttributeWriter) writer).leafSetEntryNode(nodeAsLeafList.getValue(), nodeAsLeafList.getAttributes());
+                } else {
+                    writer.leafSetEntryNode(nodeAsLeafList.getValue());
+                }
             }
             return true;
         } else if (node instanceof LeafNode) {
@@ -165,12 +186,30 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
      * @throws IOException when the writer reports it
      */
     protected final boolean writeChildren(final Iterable<? extends NormalizedNode<?, ?>> children) throws IOException {
-        for (NormalizedNode<?, ?> child : children) {
-            write(child);
+        if (currentDepth < maxDepth) {
+            for (NormalizedNode<?, ?> child : children) {
+                write(child);
+            }
         }
-
         writer.endNode();
         return true;
+    }
+
+    protected boolean writeMapEntryChildren(final MapEntryNode mapEntryNode) throws IOException {
+        if (currentDepth < maxDepth) {
+            writeChildren(mapEntryNode.getValue());
+        } else if (currentDepth == maxDepth) {
+            writeOnlyKeys(mapEntryNode.getIdentifier().getKeyValues());
+        }
+        return true;
+    }
+
+    private void writeOnlyKeys(Map<QName, Object> keyValues) throws IllegalArgumentException, IOException {
+        for (Map.Entry<QName, Object> entry : keyValues.entrySet()) {
+            writer.leafNode(new NodeIdentifier(entry.getKey()), entry.getValue());
+        }
+        writer.endNode();
+
     }
 
     protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
@@ -180,10 +219,14 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         } else {
             writer.startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()));
         }
-        return writeChildren(node.getValue());
+        currentDepth++;
+        writeMapEntryChildren(node);
+        currentDepth--;
+        return true;
     }
 
     private boolean wasProcessedAsCompositeNode(final NormalizedNode<?, ?> node) throws IOException {
+        boolean processedAsCompositeNode = false;
         if (node instanceof ContainerNode) {
             final ContainerNode n = (ContainerNode) node;
             if(writer instanceof NormalizedNodeStreamAttributeWriter) {
@@ -191,56 +234,62 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
             } else {
                 writer.startContainerNode(n.getIdentifier(), childSizeHint(n.getValue()));
             }
-            return writeChildren(n.getValue());
+            currentDepth++;
+            processedAsCompositeNode = writeChildren(n.getValue());
+            currentDepth--;
         }
-        if (node instanceof MapEntryNode) {
-            return writeMapEntryNode((MapEntryNode) node);
+        else if (node instanceof MapEntryNode) {
+            processedAsCompositeNode =  writeMapEntryNode((MapEntryNode) node);
         }
-        if (node instanceof UnkeyedListEntryNode) {
+        else if (node instanceof UnkeyedListEntryNode) {
             final UnkeyedListEntryNode n = (UnkeyedListEntryNode) node;
             writer.startUnkeyedListItem(n.getIdentifier(), childSizeHint(n.getValue()));
-            return writeChildren(n.getValue());
+            currentDepth++;
+            processedAsCompositeNode = writeChildren(n.getValue());
+            currentDepth--;
         }
-        if (node instanceof ChoiceNode) {
+        else if (node instanceof ChoiceNode) {
             final ChoiceNode n = (ChoiceNode) node;
             writer.startChoiceNode(n.getIdentifier(), childSizeHint(n.getValue()));
-            return writeChildren(n.getValue());
+            processedAsCompositeNode = writeChildren(n.getValue());
         }
-        if (node instanceof AugmentationNode) {
+        else if (node instanceof AugmentationNode) {
             final AugmentationNode n = (AugmentationNode) node;
             writer.startAugmentationNode(n.getIdentifier());
-            return writeChildren(n.getValue());
+            processedAsCompositeNode = writeChildren(n.getValue());
         }
-        if (node instanceof UnkeyedListNode) {
+        else if (node instanceof UnkeyedListNode) {
             final UnkeyedListNode n = (UnkeyedListNode) node;
             writer.startUnkeyedList(n.getIdentifier(), childSizeHint(n.getValue()));
-            return writeChildren(n.getValue());
+            processedAsCompositeNode = writeChildren(n.getValue());
         }
-        if (node instanceof OrderedMapNode) {
+        else if (node instanceof OrderedMapNode) {
             final OrderedMapNode n = (OrderedMapNode) node;
             writer.startOrderedMapNode(n.getIdentifier(), childSizeHint(n.getValue()));
-            return writeChildren(n.getValue());
+            processedAsCompositeNode = writeChildren(n.getValue());
         }
-        if (node instanceof MapNode) {
+        else if (node instanceof MapNode) {
             final MapNode n = (MapNode) node;
             writer.startMapNode(n.getIdentifier(), childSizeHint(n.getValue()));
-            return writeChildren(n.getValue());
+            processedAsCompositeNode = writeChildren(n.getValue());
         }
-        if (node instanceof LeafSetNode) {
+        else if (node instanceof LeafSetNode) {
             //covers also OrderedLeafSetNode for which doesn't exist start* method
             final LeafSetNode<?> n = (LeafSetNode<?>) node;
             writer.startLeafSet(n.getIdentifier(), childSizeHint(n.getValue()));
-            return writeChildren(n.getValue());
+            currentDepth++;
+            processedAsCompositeNode = writeChildren(n.getValue());
+            currentDepth--;
         }
 
-        return false;
+        return processedAsCompositeNode;
     }
 
     private static final class OrderedNormalizedNodeWriter extends NormalizedNodeWriter {
         private static final Logger LOG = LoggerFactory.getLogger(OrderedNormalizedNodeWriter.class);
 
-        OrderedNormalizedNodeWriter(final NormalizedNodeStreamWriter writer) {
-            super(writer);
+        OrderedNormalizedNodeWriter(final NormalizedNodeStreamWriter writer, final int maxDepth) {
+            super(writer, maxDepth);
         }
 
         @Override
@@ -264,7 +313,8 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
             }
 
             // Write all the rest
-            return writeChildren(Iterables.filter(node.getValue(), new Predicate<NormalizedNode<?, ?>>() {
+            currentDepth++;
+            boolean result = writeChildren(Iterables.filter(node.getValue(), new Predicate<NormalizedNode<?, ?>>() {
                 @Override
                 public boolean apply(final NormalizedNode<?, ?> input) {
                     if (input instanceof AugmentationNode) {
@@ -278,6 +328,8 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
                     return false;
                 }
             }));
+            currentDepth--;
+            return result;
         }
     }
 }
