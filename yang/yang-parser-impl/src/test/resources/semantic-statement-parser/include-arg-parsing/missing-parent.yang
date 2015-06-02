@@ -1,0 +1,5 @@
+submodule missing-parent {
+    belongs-to foo {
+        prefix "f";
+    }
+}
