@@ -92,7 +92,7 @@ public class XmlStreamUtils {
      * @param value data value
      * @throws XMLStreamException if an encoding problem occurs
      */
-    public void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final SchemaNode schemaNode, final Object value) throws XMLStreamException {
+    public void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final SchemaNode schemaNode, final Object value, final String parentNamespace) throws XMLStreamException {
         if (value == null) {
             LOG.debug("Value of {}:{} is null, not encoding it", schemaNode.getQName().getNamespace(), schemaNode.getQName().getLocalName());
             return;
@@ -112,7 +112,7 @@ public class XmlStreamUtils {
             baseType = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypeDefinition, schemaContext.get(), schemaNode);
         }
 
-        writeValue(writer, baseType, value);
+        writeValue(writer, baseType, value, parentNamespace);
     }
 
     /**
@@ -123,7 +123,7 @@ public class XmlStreamUtils {
      * @param type data type. In case of leaf ref this should be the type of leaf being referenced
      * @param value data value
      * @throws XMLStreamException if an encoding problem occurs
-     */
+    */
     public void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final TypeDefinition<?> type, final Object value) throws XMLStreamException {
         if (value == null) {
             LOG.debug("Value of {}:{} is null, not encoding it", type.getQName().getNamespace(), type.getQName().getLocalName());
@@ -136,20 +136,60 @@ public class XmlStreamUtils {
         } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
             write(writer, (InstanceIdentifierTypeDefinition) baseType, value);
         } else {
-            final TypeDefinitionAwareCodec<Object, ?> codec = codecProvider.codecFor(baseType);
-            String text;
-            if (codec != null) {
-                try {
-                    text = codec.serialize(value);
-                } catch (ClassCastException e) {
-                    LOG.error("Provided node value {} did not have type {} required by mapping. Using stream instead.", value, baseType, e);
-                    text = String.valueOf(value);
-                }
-            } else {
-                LOG.error("Failed to find codec for {}, falling back to using stream", baseType);
+            writeCommonTypeValue(writer, baseType, value);
+        }
+    }
+
+   /**
+    * writeValue handling for type not defined used for
+    * both writeValue processing and not processing parent namespace
+    *
+    * @param writer XML Stream writer
+    * @param type data type. In case of leaf ref this should be the type of leaf being referenced
+    * @param value data value
+    * @throws XMLStreamException if an encoding problem occurs
+    */
+
+    private void writeCommonTypeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final TypeDefinition<?> type, final Object value) throws XMLStreamException {
+
+        final TypeDefinitionAwareCodec<Object, ?> codec = codecProvider.codecFor(type);
+        String text;
+        if (codec != null) {
+            try {
+                text = codec.serialize(value);
+            } catch (ClassCastException e) {
+                LOG.error("Provided node value {} did not have type {} required by mapping. Using stream instead.", value, type, e);
                 text = String.valueOf(value);
             }
-            writer.writeCharacters(text);
+        } else {
+            LOG.error("Failed to find codec for {}, falling back to using stream", type);
+            text = String.valueOf(value);
+        }
+        writer.writeCharacters(text);
+    }
+
+    /**
+     * Write a value into a XML stream writer. This method assumes the start and end of element is
+     * emitted by the caller.
+     *
+     * @param writer XML Stream writer
+     * @param type data type. In case of leaf ref this should be the type of leaf being referenced
+     * @param value data value
+     * @throws XMLStreamException if an encoding problem occurs
+     */
+    public void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final TypeDefinition<?> type, final Object value, final String parentNamespace) throws XMLStreamException {
+        if (value == null) {
+            LOG.debug("Value of {}:{} is null, not encoding it", type.getQName().getNamespace(), type.getQName().getLocalName());
+            return;
+        }
+        TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(type);
+
+        if (baseType instanceof IdentityrefTypeDefinition) {
+            write(writer, (IdentityrefTypeDefinition) baseType, value, parentNamespace);
+        } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
+            write(writer, (InstanceIdentifierTypeDefinition) baseType, value);
+        } else {
+            writeCommonTypeValue(writer, baseType, value);
         }
     }
 
@@ -158,9 +198,30 @@ public class XmlStreamUtils {
             final QName qname = (QName) value;
             final String prefix = "x";
 
-            final String ns = qname.getNamespace().toString();
-            writer.writeNamespace(prefix, ns);
-            writer.writeCharacters(prefix + ':' + qname.getLocalName());
+                final String ns = qname.getNamespace().toString();
+                writer.writeNamespace(prefix, ns);
+                writer.writeCharacters(prefix + ':' + qname.getLocalName());
+
+
+        } else {
+            LOG.debug("Value of {}:{} is not a QName but {}", type.getQName().getNamespace(), type.getQName().getLocalName(), value.getClass());
+            writer.writeCharacters(String.valueOf(value));
+        }
+    }
+
+    private static void write(@Nonnull final XMLStreamWriter writer, @Nonnull final IdentityrefTypeDefinition type, @Nonnull final Object value, final String parentNamespace) throws XMLStreamException {
+        if (value instanceof QName) {
+            final QName qname = (QName) value;
+            final String prefix = "x";
+
+            if(qname.getNamespace().toString().equals(parentNamespace)){
+                writer.writeCharacters(qname.getLocalName());
+            } else {
+                final String ns = qname.getNamespace().toString();
+                writer.writeNamespace(prefix, ns);
+                writer.writeCharacters(prefix + ':' + qname.getLocalName());
+            }
+
         } else {
             LOG.debug("Value of {}:{} is not a QName but {}", type.getQName().getNamespace(), type.getQName().getLocalName(), value.getClass());
             writer.writeCharacters(String.valueOf(value));
