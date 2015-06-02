@@ -1,0 +1,165 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a9dcd25_798727d8",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-06-02T14:38:04Z",
+      "side": 1,
+      "message": "The commit message is unclear. You are in the yangtools project and mentioning netopeer server and get-schema does not make much sense ...\n\nAlso there are no details of the optimisation - which should be the main focus in the commit message.\n\nThe controller/netconf stuff should not be detailed ... a simple sentence e.g. \"Workaround for bug XXXX in controller/netconf\" would be enough",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 3
+      },
+      "revId": "d211360cbba2defce2d4105f8614bef927375f92",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_3922ff01",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-06-02T14:38:04Z",
+      "side": 1,
+      "message": "\"due to\" is the correct grammar here",
+      "range": {
+        "startLine": 10,
+        "startChar": 41,
+        "endLine": 10,
+        "endChar": 44
+      },
+      "revId": "d211360cbba2defce2d4105f8614bef927375f92",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_d9499bd1",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XmlStreamUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-06-02T14:38:04Z",
+      "side": 1,
+      "message": "changing the signature of public method should be avoided",
+      "range": {
+        "startLine": 95,
+        "startChar": 16,
+        "endLine": 95,
+        "endChar": 26
+      },
+      "revId": "d211360cbba2defce2d4105f8614bef927375f92",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_b92feff5",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XmlStreamUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-06-02T14:38:04Z",
+      "side": 1,
+      "message": "This method is identical to the one above (except one line). There needs to be a common writeValue method extracted with Optional parent namespace ... and this one and the one above will call it.\n\nDuplicate code must be avoided .. especially if its 2 methods in 1 class.",
+      "range": {
+        "startLine": 165,
+        "startChar": 16,
+        "endLine": 165,
+        "endChar": 26
+      },
+      "revId": "d211360cbba2defce2d4105f8614bef927375f92",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_5936eb53",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XmlStreamUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-06-02T14:38:04Z",
+      "side": 1,
+      "message": "duplicate code again. \n\nthese methods are not even public.. why you need 2 of them ?",
+      "range": {
+        "startLine": 210,
+        "startChar": 24,
+        "endLine": 210,
+        "endChar": 29
+      },
+      "revId": "d211360cbba2defce2d4105f8614bef927375f92",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_991313b8",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XmlStreamUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 214,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-06-02T14:38:04Z",
+      "side": 1,
+      "message": "Remove these debugs",
+      "range": {
+        "startLine": 214,
+        "startChar": 16,
+        "endLine": 214,
+        "endChar": 21
+      },
+      "revId": "d211360cbba2defce2d4105f8614bef927375f92",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a9dcd25_19270314",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/XmlStreamUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 84
+      },
+      "writtenOn": "2015-06-02T14:38:04Z",
+      "side": 1,
+      "message": "add comments to this if about why it is skipping prefix declaration and why is it ok.",
+      "range": {
+        "startLine": 215,
+        "startChar": 12,
+        "endLine": 215,
+        "endChar": 14
+      },
+      "revId": "d211360cbba2defce2d4105f8614bef927375f92",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
