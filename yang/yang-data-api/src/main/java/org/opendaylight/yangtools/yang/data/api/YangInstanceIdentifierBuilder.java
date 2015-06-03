@@ -6,6 +6,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +36,11 @@ final class YangInstanceIdentifierBuilder implements InstanceIdentifierBuilder {
         path.add(arg);
         hash.addArgument(arg);
         return this;
+    }
+
+    @Override
+    public InstanceIdentifierBuilder node(final PathArgument arg) {
+        return addArgument(Preconditions.checkNotNull(arg));
     }
 
     @Override
