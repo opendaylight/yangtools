@@ -35,14 +35,7 @@ final class RecursiveReplaceCandidateNode extends AbstractDataTreeCandidateNode 
 
     @Override
     public DataTreeCandidateNode getModifiedChild(final PathArgument identifier) {
-        // FIXME: this is a linear walk. We need a Map of these in order to
-        //        do something like getChildMap().get(identifier);
-        for (DataTreeCandidateNode c : getChildNodes()) {
-            if (identifier.equals(c.getIdentifier())) {
-                return c;
-            }
-        }
-        return null;
+        return deltaChild(oldData, getData(), identifier);
     }
 
     @Override
