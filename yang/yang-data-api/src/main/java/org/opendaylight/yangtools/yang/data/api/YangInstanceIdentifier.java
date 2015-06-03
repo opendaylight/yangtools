@@ -412,6 +412,14 @@ public abstract class YangInstanceIdentifier extends IterablePathArguments imple
      */
     public interface InstanceIdentifierBuilder extends Builder<YangInstanceIdentifier> {
         /**
+         * Adds a {@link PathArgument} to to path arguments of resulting instance identifier.
+         *
+         * @param arg A {@link PathArgument} to be added
+         * @return this builder
+         */
+        InstanceIdentifierBuilder node(PathArgument arg);
+
+        /**
          * Adds {@link NodeIdentifier} with supplied QName to path arguments of resulting instance identifier.
          *
          * @param nodeType QName of {@link NodeIdentifier} which will be added
