@@ -83,7 +83,7 @@ final class StackedPathArguments extends PathArgumentList {
 
         @Override
         public boolean hasNext() {
-            return stack.hasNext();
+            return base.hasNext() || stack.hasNext();
         }
 
         @Override
