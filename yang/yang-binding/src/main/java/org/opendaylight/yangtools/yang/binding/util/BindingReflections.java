@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.binding.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
-
 import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -245,7 +244,7 @@ public class BindingReflections {
         return match.group(0);
     }
 
-    public static final QNameModule getQNameModule(Class<?> clz) {
+    public static final QNameModule getQNameModule(final Class<?> clz) {
         if(DataContainer.class.isAssignableFrom(clz) || BaseIdentity.class.isAssignableFrom(clz)) {
             return findQName(clz).getModule();
         }
@@ -257,7 +256,7 @@ public class BindingReflections {
         }
     }
 
-    public static final QNameModule getQNameModule(YangModuleInfo modInfo) {
+    public static final QNameModule getQNameModule(final YangModuleInfo modInfo) {
         return QNameModule.create(URI.create(modInfo.getNamespace()), QName.parseRevision(modInfo.getRevision()));
     }
 
@@ -567,19 +566,19 @@ public class BindingReflections {
             } catch (Exception e) {
                 throw new IllegalStateException("Unable to get QName for " + key + ". YangModuleInfo was not found.", e);
             }
-            final QName module = getModuleQName(moduleInfo);
+            final QName module = QName.cachedReference(getModuleQName(moduleInfo));
             if (Augmentation.class.isAssignableFrom(key)) {
                 return module;
             } else if (isRpcType(key)) {
                 final String className = key.getSimpleName();
                 if (className.endsWith(BindingMapping.RPC_OUTPUT_SUFFIX)) {
-                    return QName.create(module, "output");
+                    return QName.cachedReference(QName.create(module, "output"));
                 } else {
-                    return QName.create(module, "input");
+                    return QName.cachedReference(QName.create(module, "input"));
                 }
             }
             /*
-             * Fallback for Binding types which fo not have QNAME field
+             * Fallback for Binding types which do not have QNAME field
              */
             return module;
         } else {
