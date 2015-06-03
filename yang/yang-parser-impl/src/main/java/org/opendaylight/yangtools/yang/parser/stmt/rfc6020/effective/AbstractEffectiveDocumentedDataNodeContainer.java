@@ -7,17 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.LinkedHashSet;
 
+import java.util.LinkedHashMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -42,30 +42,46 @@ public abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends 
 
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
-        Map<QName, DataSchemaNode> mutableChildNodes = new HashMap<QName, DataSchemaNode>();
-        Set<GroupingDefinition> mutableGroupings = new HashSet<GroupingDefinition>();
-        Set<UsesNode> mutableUses = new HashSet<UsesNode>();
-        Set<TypeDefinition<?>> mutableTypeDefinitions = new HashSet<TypeDefinition<?>>();
-        Set<DataSchemaNode> mutablePublicChildNodes = new HashSet<DataSchemaNode>();
+        Map<QName, DataSchemaNode> mutableChildNodes = new LinkedHashMap<>();
+        Set<GroupingDefinition> mutableGroupings = new HashSet<>();
+        Set<UsesNode> mutableUses = new HashSet<>();
+        Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
+        Set<DataSchemaNode> mutablePublicChildNodes = new LinkedHashSet<>();
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof DataSchemaNode) {
                 DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;
-
-                mutableChildNodes.put(dataSchemaNode.getQName(), dataSchemaNode);
-                mutablePublicChildNodes.add(dataSchemaNode);
+                if (!mutableChildNodes.containsKey(dataSchemaNode.getQName())) {
+                    mutableChildNodes.put(dataSchemaNode.getQName(),
+                            dataSchemaNode);
+                    mutablePublicChildNodes.add(dataSchemaNode);
+                } else {
+                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
+                }
             }
             if (effectiveStatement instanceof UsesNode) {
                 UsesNode usesNode = (UsesNode) effectiveStatement;
-                mutableUses.add(usesNode);
+                if (!mutableUses.contains(usesNode)) {
+                    mutableUses.add(usesNode);
+                } else {
+                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
+                }
             }
             if (effectiveStatement instanceof TypeDefinition) {
                 TypeDefinition<?> typeDef = (TypeDefinition<?>) effectiveStatement;
-                mutableTypeDefinitions.add(typeDef);
+                if (!mutableTypeDefinitions.contains(typeDef)) {
+                    mutableTypeDefinitions.add(typeDef);
+                } else {
+                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
+                }
             }
             if (effectiveStatement instanceof GroupingDefinition) {
                 GroupingDefinition grp = (GroupingDefinition) effectiveStatement;
-                mutableGroupings.add(grp);
+                if (!mutableGroupings.contains(grp)) {
+                    mutableGroupings.add(grp);
+                } else {
+                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
+                }
             }
         }
 
