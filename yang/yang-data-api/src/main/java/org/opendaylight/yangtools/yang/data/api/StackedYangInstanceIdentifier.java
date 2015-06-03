@@ -59,15 +59,14 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier {
     public List<PathArgument> getPathArguments() {
         StackedPathArguments ret = tryPathArguments();
         if (ret == null) {
-            List<PathArgument> stack = new ArrayList<>();
+            final List<PathArgument> stack = new ArrayList<>();
             YangInstanceIdentifier current = this;
-            while (current.tryPathArguments() == null) {
+            do {
                 Verify.verify(current instanceof StackedYangInstanceIdentifier);
-
                 final StackedYangInstanceIdentifier stacked = (StackedYangInstanceIdentifier) current;
                 stack.add(stacked.getLastPathArgument());
                 current = stacked.getParent();
-            }
+            } while (current.tryPathArguments() == null);
 
             ret = new StackedPathArguments(current, Lists.reverse(stack));
             pathArguments = ret;
