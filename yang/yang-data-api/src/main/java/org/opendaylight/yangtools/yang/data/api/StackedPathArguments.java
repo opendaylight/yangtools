@@ -7,18 +7,21 @@
 package org.opendaylight.yangtools.yang.data.api;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import com.google.common.collect.UnmodifiableIterator;
 import java.util.Iterator;
 import java.util.List;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 final class StackedPathArguments extends PathArgumentList {
     private final List<PathArgument> base;
     private final List<PathArgument> stack;
 
-    public StackedPathArguments(final YangInstanceIdentifier base, final List<PathArgument> stack) {
+    public StackedPathArguments(@Nonnull final YangInstanceIdentifier base, @Nonnull final List<PathArgument> stack) {
+        Verify.verify(!stack.isEmpty());
         this.base = base.getPathArguments();
-        this.stack = Preconditions.checkNotNull(stack);
+        this.stack = stack;
     }
 
     @Override
