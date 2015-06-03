@@ -507,6 +507,11 @@ public abstract class YangInstanceIdentifier extends IterablePathArguments imple
             }
 
             final Map<QName, Object> otherKeyValues = ((NodeIdentifierWithPredicates) obj).keyValues;
+
+            // TODO: benchmark to see if just calling equals() on the two maps is not faster
+            if (keyValues == otherKeyValues) {
+                return true;
+            }
             if (keyValues.size() != otherKeyValues.size()) {
                 return false;
             }
