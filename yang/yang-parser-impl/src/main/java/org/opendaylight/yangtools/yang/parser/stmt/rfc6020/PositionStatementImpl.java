@@ -16,43 +16,47 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class PositionStatementImpl extends AbstractDeclaredStatement<String>
+public class PositionStatementImpl extends AbstractDeclaredStatement<Long>
         implements PositionStatement {
 
     protected PositionStatementImpl(
-            StmtContext<String, PositionStatement, ?> context) {
+            StmtContext<Long, PositionStatement, ?> context) {
         super(context);
     }
 
     public static class Definition
             extends
-            AbstractStatementSupport<String, PositionStatement, EffectiveStatement<String, PositionStatement>> {
+            AbstractStatementSupport<Long, PositionStatement, EffectiveStatement<Long, PositionStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.POSITION);
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
-            return value;
+        public Long parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+            try {
+                return Long.parseLong(value);
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException(String.format("Position value %s is not valid integer", value), e);
+            }
         }
 
         @Override
         public PositionStatement createDeclared(
-                StmtContext<String, PositionStatement, ?> ctx) {
+                StmtContext<Long, PositionStatement, ?> ctx) {
             return new PositionStatementImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<String, PositionStatement> createEffective(
-                StmtContext<String, PositionStatement, EffectiveStatement<String, PositionStatement>> ctx) {
+        public EffectiveStatement<Long, PositionStatement> createEffective(
+                StmtContext<Long, PositionStatement, EffectiveStatement<Long, PositionStatement>> ctx) {
             return new PositionEffectiveStatementImpl(ctx);
         }
 
     }
 
     @Override
-    public String getValue() {
+    public Long getValue() {
         return argument();
     }
 
