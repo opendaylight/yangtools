@@ -31,28 +31,25 @@ final class YangInstanceIdentifierBuilder implements InstanceIdentifierBuilder {
         this.hash = new HashCodeBuilder<>(hash);
     }
 
-    @Override
-    public InstanceIdentifierBuilder node(final QName nodeType) {
-        final PathArgument arg = new NodeIdentifier(nodeType);
+    private InstanceIdentifierBuilder addArgument(final PathArgument arg) {
         path.add(arg);
         hash.addArgument(arg);
         return this;
+    }
+
+    @Override
+    public InstanceIdentifierBuilder node(final QName nodeType) {
+        return addArgument(new NodeIdentifier(nodeType));
     }
 
     @Override
     public InstanceIdentifierBuilder nodeWithKey(final QName nodeType, final QName key, final Object value) {
-        final PathArgument arg = new NodeIdentifierWithPredicates(nodeType, key, value);
-        path.add(arg);
-        hash.addArgument(arg);
-        return this;
+        return addArgument(new NodeIdentifierWithPredicates(nodeType, key, value));
     }
 
     @Override
     public InstanceIdentifierBuilder nodeWithKey(final QName nodeType, final Map<QName, Object> keyValues) {
-        final PathArgument arg = new NodeIdentifierWithPredicates(nodeType, keyValues);
-        path.add(arg);
-        hash.addArgument(arg);
-        return this;
+        return addArgument(new NodeIdentifierWithPredicates(nodeType, keyValues));
     }
 
     @Override
