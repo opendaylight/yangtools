@@ -45,15 +45,16 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     @Nullable
     List<Object> getArgumentsFromRoot();
 
-    // <K,VT, V extends VT,N extends IdentifierNamespace<K, V>>
-    // <K, VT, V extends VT ,N extends IdentifierNamespace<K, V>> VT
-    // getFromNamespace(Class<N> type, K key)
+    List<StmtContext<?,?,?>> getStmtContextsFromRoot();
+
     @Nonnull
     <K, V, N extends IdentifierNamespace<K, V>> V getFromNamespace(
             Class<N> type, K key) throws NamespaceNotAvailableException;
 
-    <K, V, N extends IdentifierNamespace<K, V>> Map<?, ?> getAllFromNamespace(
+    <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromNamespace(
             Class<N> type);
+
+    <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromCurrentStmtCtxNamespace(Class<N> type);
 
     @Nonnull
     StmtContext<?, ?, ?> getRoot();
@@ -67,19 +68,31 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     E buildEffective();
 
+    boolean isSupportedToBuildEffective();
+
+    void setIsSupportedToBuildEffective(boolean isSupportedToBuild);
+
+    Collection<StatementContextBase<?, ?, ?>> getEffectOfStatement();
+
+    void addAsEffectOfStatement(StatementContextBase<?, ?, ?> ctx);
+
+    StatementContextBase<?, ?, ?> createCopy(
+            StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
+            throws SourceException;
+
     StatementContextBase<?, ?, ?> createCopy(QNameModule newQNameModule,
             StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
             throws SourceException;
 
-    public static enum TypeOfCopy {
-        ORIGINAL, ADDED_BY_USES, ADDED_BY_AUGMENTATION
+    enum TypeOfCopy {
+        ORIGINAL, ADDED_BY_USES, ADDED_BY_AUGMENTATION, ADDED_BY_USES_AUGMENTATION
     }
 
     TypeOfCopy getTypeOfCopy();
 
     void setTypeOfCopy(TypeOfCopy typeOfCopy);
 
-    public StatementContextBase<?, ?, ?> getOriginalCtx();
+    StatementContextBase<?, ?, ?> getOriginalCtx();
 
     void setOriginalCtx(StatementContextBase<?, ?, ?> originalCtx);
 
@@ -95,8 +108,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         @Override
         StmtContext.Mutable<?, ?, ?> getParentContext();
 
-        // <K,V,VT extends V,N extends IdentifierNamespace<K, V>> void
-        // addToNs(Class<N> type, K key, VT value)
         <K, V, VT extends V, N extends IdentifierNamespace<K, V>> void addToNs(
                 Class<N> type, K key, VT value)
                 throws NamespaceNotAvailableException;
