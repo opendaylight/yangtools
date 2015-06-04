@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
-
 import java.util.HashSet;
 import java.util.LinkedList;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
@@ -37,7 +36,7 @@ public class OutputEffectiveStatementImpl extends
 
     boolean augmenting;
     boolean addedByUses;
-    boolean configuration;
+    boolean configuration = true;
     ContainerSchemaNode original;
     ConstraintDefinition constraints;
 
@@ -52,7 +51,7 @@ public class OutputEffectiveStatementImpl extends
         path = Utils.getSchemaPath(ctx);
         presence = (firstEffective(PresenceEffectiveStatementImpl.class) == null) ? false
                 : true;
-        // :TODO init other fields
+        this.constraints = new EffectiveConstraintDefinitionImpl(this);
 
         initSubstatementCollections();
         initCopyType(ctx);
@@ -65,16 +64,19 @@ public class OutputEffectiveStatementImpl extends
         switch (typeOfCopy) {
         case ADDED_BY_AUGMENTATION:
             augmenting = true;
-            original = (ContainerSchemaNode) ctx.getOriginalCtx()
-                    .buildEffective();
             break;
         case ADDED_BY_USES:
             addedByUses = true;
-            original = (ContainerSchemaNode) ctx.getOriginalCtx()
-                    .buildEffective();
+            break;
+        case ADDED_BY_USES_AUGMENTATION:
+            addedByUses = augmenting = true;
             break;
         default:
             break;
+        }
+
+        if (!typeOfCopy.equals(TypeOfCopy.ORIGINAL)) {
+            original = (ContainerSchemaNode) ctx.getOriginalCtx().buildEffective();
         }
     }
 
@@ -84,6 +86,7 @@ public class OutputEffectiveStatementImpl extends
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
         Set<AugmentationSchema> augmentationsInit = new HashSet<>();
 
+        boolean configurationInit = false;
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
@@ -92,6 +95,12 @@ public class OutputEffectiveStatementImpl extends
             if (effectiveStatement instanceof AugmentationSchema) {
                 AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
                 augmentationsInit.add(augmentationSchema);
+            }
+            if (!configurationInit
+                    && effectiveStatement instanceof ConfigEffectiveStatementImpl) {
+                ConfigEffectiveStatementImpl configStmt = (ConfigEffectiveStatementImpl) effectiveStatement;
+                this.configuration = configStmt.argument();
+                configurationInit = true;
             }
         }
 

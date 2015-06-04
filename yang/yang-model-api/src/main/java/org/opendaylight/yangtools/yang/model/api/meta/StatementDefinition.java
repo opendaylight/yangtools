@@ -63,15 +63,15 @@ public interface StatementDefinition extends Immutable {
 
     /**
      *
-     * Returns class which represents supplied statement.
+     * Returns class which represents derived behaviour from supplied statement.
      *
      * This class should be interface, which defines convenience access to
      * statement properties, namespace items and substatements.
      *
-     * @return class which represents declared version of statement associated
+     * @return class which represents effective version of statement associated
      *         with this definition
      */
     @Nonnull
-    Class<? extends DeclaredStatement<?>> getEffectiveRepresentationClass();
+    Class<? extends EffectiveStatement<?,?>> getEffectiveRepresentationClass();
 
 }
