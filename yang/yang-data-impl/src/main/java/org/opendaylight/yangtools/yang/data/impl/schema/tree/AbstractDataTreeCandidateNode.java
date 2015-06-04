@@ -11,10 +11,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Maps;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -74,32 +72,38 @@ abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
             return Collections2.transform(newData.getValue(), TO_WRITTEN_NODE);
         }
 
-        // Create index for fast cross-references
-        // FIXME: speed this up by exposing maps inside ImmutableMapNode and similar.
-        final Map<PathArgument, NormalizedNode<?, ?>> oldChildren = Maps.newHashMapWithExpectedSize(oldData.getValue().size());
-        for (NormalizedNode<?, ?> child : oldData.getValue()) {
-            oldChildren.put(child.getIdentifier(), child);
-        }
-
-        final Collection<DataTreeCandidateNode> ret = new ArrayList<>(Math.max(oldChildren.size(), newData.getValue().size()));
+        /*
+         * This is slightly inefficient, as it requires N*F(M)+M*F(N) lookup operations, where
+         * F is dependent on the implementation of NormalizedNodeContainer.getChild().
+         *
+         * We build the return collection by iterating over new data and looking each child up
+         * in old data. Based on that we construct replaced/written nodes. We then proceed to
+         * iterate over old data and looking up each child in new data.
+         */
+        final Collection<DataTreeCandidateNode> result = new ArrayList<>();
         for (NormalizedNode<?, ?> child : newData.getValue()) {
-            // Slight optimization iterator length
-            final NormalizedNode<?, ?> oldChild = oldChildren.remove(child.getIdentifier());
             final DataTreeCandidateNode node;
-            if (oldChild == null) {
-                node = AbstractRecursiveCandidateNode.writeNode(child);
+            final Optional<NormalizedNode<?, ?>> maybeOldChild = oldData.getChild(child.getIdentifier());
+
+            if (maybeOldChild.isPresent()) {
+                // This does not find children which have not in fact been modified, as doing that
+                // reliably would require us running a full equals() on the two nodes.
+                node = AbstractRecursiveCandidateNode.replaceNode(maybeOldChild.get(), child);
             } else {
-                node = AbstractRecursiveCandidateNode.replaceNode(oldChild, child);
+                node = AbstractRecursiveCandidateNode.writeNode(child);
             }
 
-            ret.add(node);
+            result.add(node);
         }
 
-        for (NormalizedNode<?, ?> child : oldChildren.values()) {
-            ret.add(AbstractRecursiveCandidateNode.deleteNode(child));
+        // Process removals next, looking into new data to see if we processed it
+        for (NormalizedNode<?, ?> child : oldData.getValue()) {
+            if (!newData.getChild(child.getIdentifier()).isPresent()) {
+                result.add(AbstractRecursiveCandidateNode.deleteNode(child));
+            }
         }
 
-        return ret;
+        return result;
     }
 
     private final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?,?>> data;
