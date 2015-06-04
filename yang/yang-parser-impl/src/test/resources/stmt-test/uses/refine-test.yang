@@ -1,0 +1,57 @@
+module refine-test {
+    namespace "root-module";
+    prefix root;
+
+    container root-container {
+        container sub-container1 {
+        }
+
+        uses grp-1 {
+            refine container-from-grouping/list-in-container {
+                min-elements 5;
+                max-elements 7;
+                description "new description";
+                reference "new reference";
+                config true;
+                must "2 = 2";
+            }
+            refine container-from-grouping2/presence-container {
+                presence "presence desc";
+                description "new description";
+                reference "new reference";
+                config true;
+                must "1 = 1";
+            }
+            refine container-from-grouping/choice-from-grp {
+                mandatory true;
+            }
+        }
+
+        container sub-container2 {
+        }
+    }
+
+    grouping grp-1 {
+        container container-from-grouping {
+            list list-in-container {
+                min-elements 10;
+                max-elements 20;
+                description "original description";
+                reference "original reference";
+                config false;
+                must "1 = 1";
+            }
+            choice choice-from-grp {
+                case one {
+                }
+                case two {
+                }
+                mandatory false;
+            }
+        }
+        container container-from-grouping2 {
+            container presence-container {
+            }
+        }
+    }
+}
