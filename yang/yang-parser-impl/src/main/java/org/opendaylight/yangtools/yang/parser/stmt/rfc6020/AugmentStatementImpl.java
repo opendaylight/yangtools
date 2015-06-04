@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import java.util.Collection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +72,10 @@ public class AugmentStatementImpl extends
                 final StmtContext.Mutable<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> augmentNode)
                 throws SourceException {
 
+            if(StmtContextUtils.isInExtensionBody(augmentNode)) {
+                return;
+            }
+
             final ModelActionBuilder augmentAction = augmentNode
                     .newInferenceAction(ModelProcessingPhase.FULL_DECLARATION);
             final ModelActionBuilder.Prerequisite<StmtContext<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>>> sourceCtxPrereq = augmentAction
@@ -88,13 +93,17 @@ public class AugmentStatementImpl extends
                     if (augmentTargetCtx == null) {
                         throw new InferenceException("Augment target not found: "+augmentNode.getStatementArgument(), augmentNode.getStatementSourceReference());
                     }
+                    if (StmtContextUtils.isInExtensionBody(augmentTargetCtx)) {
+                        augmentNode.setIsSupportedToBuildEffective(false);
+                        return;
+                    }
 
-                    final StatementContextBase<?, ?, ?> augmentSourceCtx = (StatementContextBase<?, ?, ?>) sourceCtxPrereq
-                            .get();
+                    final StatementContextBase<?, ?, ?> augmentSourceCtx = (StatementContextBase<?, ?, ?>) augmentNode;
 
                     try {
                         AugmentUtils.copyFromSourceToTarget(augmentSourceCtx,
                                 augmentTargetCtx);
+                        augmentTargetCtx.addEffectiveSubstatement(augmentSourceCtx);
                     } catch (SourceException e) {
                         LOG.warn(e.getMessage(), e);
                     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -16,14 +16,15 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.InstanceIdentifierSpecificationEffectiveStatementImpl;
 
 public class InstanceIdentifierSpecificationImpl extends
         AbstractDeclaredStatement<String> implements
         TypeStatement.InstanceIdentifierSpecification {
 
     protected InstanceIdentifierSpecificationImpl(
-            StmtContext<String, TypeStatement.InstanceIdentifierSpecification, ?> context) {
-        super(context);
+            StmtContext<String, TypeStatement.InstanceIdentifierSpecification, ?> ctx) {
+        super(ctx);
     }
 
     public static class Definition
@@ -31,7 +32,7 @@ public class InstanceIdentifierSpecificationImpl extends
             AbstractStatementSupport<String, TypeStatement.InstanceIdentifierSpecification, EffectiveStatement<String, TypeStatement.InstanceIdentifierSpecification>> {
 
         public Definition() {
-            super(Rfc6020Mapping.REQUIRE_INSTANCE);
+            super(Rfc6020Mapping.TYPE);
         }
 
         @Override
@@ -49,7 +50,7 @@ public class InstanceIdentifierSpecificationImpl extends
         @Override
         public EffectiveStatement<String, TypeStatement.InstanceIdentifierSpecification> createEffective(
                 StmtContext<String, TypeStatement.InstanceIdentifierSpecification, EffectiveStatement<String, TypeStatement.InstanceIdentifierSpecification>> ctx) {
-            throw new UnsupportedOperationException();
+            return new InstanceIdentifierSpecificationEffectiveStatementImpl(ctx);
         }
     }
 
