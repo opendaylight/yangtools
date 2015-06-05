@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
 import org.opendaylight.yangtools.sal.binding.model.api.Type
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint
 
 /**
  * Template for generating JAVA class.
@@ -154,9 +153,6 @@ class ClassTemplate extends BaseTemplate {
             «generateToString(genTO.toStringIdentifiers)»
 
             «generateLengthMethod()»
-
-            «generateRangeMethod()»
-
         }
 
     '''
@@ -196,6 +192,7 @@ class ClassTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
+<<<<<<< HEAD
     @Deprecated
     private def rangeBody(List<RangeConstraint> restrictions, Class<? extends Number> numberClass) '''
         «List.importedName»<«Range.importedName»<«numberClass.importedName»>> ret = new java.util.ArrayList<>(«restrictions.size»);
@@ -223,6 +220,8 @@ class ClassTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
+=======
+>>>>>>> BUG-1485: remove deprecated range methods
     /**
      * Template method which generates inner classes inside this interface.
      *
