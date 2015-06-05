@@ -34,10 +34,9 @@ import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
 import org.opendaylight.yangtools.sal.binding.model.api.Type
 import org.opendaylight.yangtools.yang.binding.Augmentable
+import org.opendaylight.yangtools.yang.binding.AugmentationHolder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.Identifiable
-import org.opendaylight.yangtools.yang.binding.AugmentationHolder
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint
 
 /**
  * Template for generating JAVA builder classes.
@@ -467,8 +466,6 @@ class BuilderTemplate extends BaseTemplate {
                 return this;
             }
             «generateLengthMethod(length, field.returnType, type.name+BUILDER, length)»
-            «val range = field.fieldName + "_range"»
-            «generateRangeMethod(range, restrictions, field.returnType)»
         «ENDFOR»
         «IF augmentField != null»
 
@@ -561,31 +558,6 @@ class BuilderTemplate extends BaseTemplate {
             }
         }
         return «varName»;
-    '''
-
-    def private generateRangeMethod(String methodName, Restrictions restrictions, Type returnType) '''
-        «IF restrictions != null && !(restrictions.rangeConstraints.empty)»
-            «val number = returnType.importedNumber»
-            /**
-             * @deprecated This method is slated for removal in a future release. See BUG-1485 for details.
-             */
-            @Deprecated
-            public static «List.importedName»<«Range.importedName»<«number»>> «methodName»() {
-                «IF returnType.fullyQualifiedName.equals(BigDecimal.canonicalName)»
-                    «rangeBody(restrictions.rangeConstraints, BigDecimal)»
-                «ELSE»
-                    «rangeBody(restrictions.rangeConstraints, BigInteger)»
-                «ENDIF»
-            }
-        «ENDIF»
-    '''
-
-    def private rangeBody(List<RangeConstraint> restrictions, Class<? extends Number> numberClass) '''
-         final «List.importedName»<«Range.importedName»<«numberClass.importedName»>> ret = new java.util.ArrayList<>(«restrictions.size»);
-         «FOR r : restrictions»
-             ret.add(«Range.importedName».closed(«numericValue(numberClass, r.min)», «numericValue(numberClass, r.max)»));
-         «ENDFOR»
-         return ret;
     '''
 
     def private CharSequence generateCopyConstructor(boolean impl) '''
