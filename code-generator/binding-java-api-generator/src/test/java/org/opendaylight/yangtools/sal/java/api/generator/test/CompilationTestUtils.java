@@ -279,37 +279,6 @@ public class CompilationTestUtils {
     }
 
     /**
-     * Asserts that class contains 'public static
-     * java.util.List<com.google.common.collect.Range<java.lang.Integer>>
-     * getLength()' method.
-     *
-     * @param clazz
-     *            class to test
-     */
-    static void assertContainsGetLengthOrRange(final Class<?> clazz, final boolean isLength) {
-        try {
-            Method m = clazz.getDeclaredMethod(isLength ? "length" : "range");
-            java.lang.reflect.Type returnType = m.getGenericReturnType();
-            assertTrue("Return type of getLength method must be ParameterizedType",
-                    returnType instanceof ParameterizedType);
-            ParameterizedType listType = (ParameterizedType) returnType;
-            assertEquals("interface java.util.List", listType.getRawType().toString());
-
-            java.lang.reflect.Type[] args = listType.getActualTypeArguments();
-            assertEquals(1, args.length);
-            java.lang.reflect.Type range = args[0];
-            assertTrue(range instanceof ParameterizedType);
-            ParameterizedType pRange = (ParameterizedType) range;
-            assertEquals("class com.google.common.collect.Range", pRange.getRawType().toString());
-
-            args = pRange.getActualTypeArguments();
-            assertEquals(1, args.length);
-        } catch (NoSuchMethodException e) {
-            throw new AssertionError("Method length()/range() does not exists in class " + clazz.getSimpleName());
-        }
-    }
-
-    /**
      * Asserts that class implements given interface.
      *
      * @param clazz
