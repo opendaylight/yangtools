@@ -9,8 +9,6 @@ package org.opendaylight.yangtools.sal.java.api.generator
 
 import com.google.common.base.CharMatcher
 import com.google.common.base.Splitter
-import java.math.BigDecimal
-import java.math.BigInteger
 import java.util.Arrays
 import java.util.Collection
 import java.util.HashMap
@@ -373,51 +371,6 @@ abstract class BaseTemplate {
             ENDFOR»«
         ENDIF
     »'''
-
-    @Deprecated
-    def protected String importedNumber(Class<? extends Number> clazz) {
-        if (clazz.equals(typeof(BigDecimal))) {
-            return BigDecimal.importedName
-        }
-        return BigInteger.importedName
-    }
-
-    @Deprecated
-    def protected String importedNumber(Type clazz) {
-        if (clazz.fullyQualifiedName.equals(BigDecimal.canonicalName)) {
-            return BigDecimal.importedName
-        }
-        return BigInteger.importedName
-    }
-
-    @Deprecated
-    def protected String numericValue(Class<? extends Number> clazz, Object numberValue) {
-        val number = clazz.importedName;
-        val value = numberValue.toString
-        if (clazz.equals(typeof(BigInteger)) || clazz.equals(typeof(BigDecimal))) {
-            if (value.equals("0")) {
-                return number + ".ZERO"
-            } else if (value.equals("1")) {
-                return number + ".ONE"
-            } else if (value.equals("10")) {
-                return number + ".TEN"
-            } else {
-                try {
-                    val Long longVal = Long.valueOf(value)
-                    return number + ".valueOf(" + longVal + "L)"
-                } catch (NumberFormatException e) {
-                    if (clazz.equals(typeof(BigDecimal))) {
-                        try {
-                            val Double doubleVal = Double.valueOf(value);
-                            return number + ".valueOf(" + doubleVal + ")"
-                        } catch (NumberFormatException e2) {
-                        }
-                    }
-                }
-            }
-        }
-        return "new " + number + "(\"" + value + "\")"
-    }
 
     def protected GeneratedProperty findProperty(GeneratedTransferObject gto, String name) {
         val props = gto.properties
