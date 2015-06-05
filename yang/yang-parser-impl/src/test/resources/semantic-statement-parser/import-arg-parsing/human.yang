@@ -1,0 +1,8 @@
+module human {
+    namespace human;
+    prefix hum;
+
+    import mammal {
+        prefix mammal;
+    }
+}
