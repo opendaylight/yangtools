@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
 import org.opendaylight.yangtools.sal.binding.model.api.Type
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint
 
 /**
  * Template for generating JAVA class.
@@ -154,9 +153,6 @@ class ClassTemplate extends BaseTemplate {
             «generateToString(genTO.toStringIdentifiers)»
 
             «generateLengthMethod()»
-
-            «generateRangeMethod()»
-
         }
 
     '''
@@ -191,33 +187,6 @@ class ClassTemplate extends BaseTemplate {
                 «FOR r : restrictions.lengthConstraints»
                     ret.add(«Range.importedName».closed(«numericValue(numberClass, r.min)», «numericValue(numberClass, r.max)»));
                 «ENDFOR»
-                return ret;
-            }
-        «ENDIF»
-    '''
-
-    @Deprecated
-    private def rangeBody(List<RangeConstraint> restrictions, Class<? extends Number> numberClass) '''
-        «List.importedName»<«Range.importedName»<«numberClass.importedName»>> ret = new java.util.ArrayList<>(«restrictions.size»);
-        «FOR r : restrictions»
-            ret.add(«Range.importedName».closed(«numericValue(numberClass, r.min)», «numericValue(numberClass, r.max)»));
-        «ENDFOR»
-    '''
-
-    @Deprecated
-    def private generateRangeMethod() '''
-        «IF restrictions != null && !(restrictions.rangeConstraints.empty)»
-            «val returnType = allProperties.iterator.next.returnType»
-            /**
-             * @deprecated This method is slated for removal in a future release. See BUG-1485 for details.
-             */
-            @Deprecated
-            public static «List.importedName»<«Range.importedName»<«returnType.importedNumber»>> range() {
-            «IF returnType.fullyQualifiedName.equals(BigDecimal.canonicalName)»
-                «rangeBody(restrictions.rangeConstraints, BigDecimal)»
-            «ELSE»
-                «rangeBody(restrictions.rangeConstraints, BigInteger)»
-            «ENDIF»
                 return ret;
             }
         «ENDIF»
