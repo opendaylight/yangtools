@@ -19,7 +19,7 @@ import static org.opendaylight.yangtools.sal.java.api.generator.test.Compilation
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertContainsDefaultMethods;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertContainsField;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertContainsFieldWithValue;
-import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertContainsGetLengthOrRange;
+import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertContainsGetLength;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertContainsMethod;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertContainsRestrictionCheck;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.assertFilesCount;
@@ -145,7 +145,6 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertContainsDefaultMethods(int32Ext1Class);
         assertContainsMethod(int32Ext1Class, Integer.class, GET_VAL);
         defInst = assertContainsMethod(int32Ext1Class, int32Ext1Class, "getDefaultInstance", String.class);
-        assertContainsGetLengthOrRange(int32Ext1Class, false);
         // assertEquals(6, int32Ext1Class.getDeclaredMethods().length);
 
         List<Range<Integer>> rangeConstraints = new ArrayList<>();
@@ -167,7 +166,6 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertEquals(3, int32Ext2Class.getDeclaredConstructors().length);
         assertContainsMethod(int32Ext2Class, String.class, "toString");
         defInst = assertContainsMethod(int32Ext2Class, int32Ext2Class, "getDefaultInstance", String.class);
-        assertContainsGetLengthOrRange(int32Ext2Class, false);
         // assertEquals(3, int32Ext2Class.getDeclaredMethods().length);
 
         rangeConstraints.clear();
@@ -192,7 +190,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertContainsMethod(stringExt1Class, String.class, GET_VAL);
         defInst = assertContainsMethod(stringExt1Class, stringExt1Class, "getDefaultInstance", String.class);
         assertContainsDefaultMethods(stringExt1Class);
-        assertContainsGetLengthOrRange(stringExt1Class, true);
+        assertContainsGetLength(stringExt1Class);
         // assertEquals(6, stringExt1Class.getDeclaredMethods().length);
 
         List<Range<Integer>> lengthConstraints = new ArrayList<>();
@@ -212,7 +210,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertContainsConstructor(stringExt2Class, stringExt2Class);
         assertContainsConstructor(stringExt2Class, stringExt1Class);
         assertEquals(3, stringExt2Class.getDeclaredConstructors().length);
-        assertContainsGetLengthOrRange(stringExt2Class, true);
+        assertContainsGetLength(stringExt2Class);
         defInst = assertContainsMethod(stringExt2Class, stringExt2Class, "getDefaultInstance", String.class);
         // assertEquals(2, stringExt2Class.getDeclaredMethods().length);
 
@@ -252,7 +250,6 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertContainsMethod(myDecimalTypeClass, BigDecimal.class, GET_VAL);
         assertContainsDefaultMethods(myDecimalTypeClass);
         defInst = assertContainsMethod(myDecimalTypeClass, myDecimalTypeClass, "getDefaultInstance", String.class);
-        assertContainsGetLengthOrRange(myDecimalTypeClass, false);
         // assertEquals(6, myDecimalTypeClass.getDeclaredMethods().length);
 
         List<Range<BigDecimal>> decimalRangeConstraints = new ArrayList<>();
@@ -275,7 +272,6 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertContainsMethod(myDecimalType2Class, BigDecimal.class, GET_VAL);
         assertContainsDefaultMethods(myDecimalType2Class);
         defInst = assertContainsMethod(myDecimalType2Class, myDecimalType2Class, "getDefaultInstance", String.class);
-        assertContainsGetLengthOrRange(myDecimalType2Class, false);
         // assertEquals(6, myDecimalType2Class.getDeclaredMethods().length);
 
         List<Range<BigDecimal>> decimal2RangeConstraints = new ArrayList<>();

@@ -286,9 +286,9 @@ public class CompilationTestUtils {
      * @param clazz
      *            class to test
      */
-    static void assertContainsGetLengthOrRange(final Class<?> clazz, final boolean isLength) {
+    static void assertContainsGetLength(final Class<?> clazz) {
         try {
-            Method m = clazz.getDeclaredMethod(isLength ? "length" : "range");
+            Method m = clazz.getDeclaredMethod("length");
             java.lang.reflect.Type returnType = m.getGenericReturnType();
             assertTrue("Return type of getLength method must be ParameterizedType",
                     returnType instanceof ParameterizedType);
@@ -305,7 +305,7 @@ public class CompilationTestUtils {
             args = pRange.getActualTypeArguments();
             assertEquals(1, args.length);
         } catch (NoSuchMethodException e) {
-            throw new AssertionError("Method length()/range() does not exists in class " + clazz.getSimpleName());
+            throw new AssertionError("Method length() does not exists in class " + clazz.getSimpleName());
         }
     }
 

@@ -8,14 +8,12 @@
 package org.opendaylight.yangtools.sal.java.api.generator.test;
 
 import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.junit.Test;
 import org.opendaylight.yangtools.binding.generator.util.BindingTypes;
 import org.opendaylight.yangtools.binding.generator.util.Types;
@@ -54,7 +52,7 @@ public class GeneratorJavaFileTest {
         assertTrue(filesList.contains("Type4Builder.java"));
     }
 
-    private GeneratedType createGeneratedType(String pkgName, String name) {
+    private static GeneratedType createGeneratedType(final String pkgName, final String name) {
         GeneratedTypeBuilder builder = new GeneratedTypeBuilderImpl(pkgName, name);
         builder.addImplementsType(BindingTypes.DATA_OBJECT);
         return builder.toInstance();
