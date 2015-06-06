@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Date;
@@ -14,7 +16,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -28,16 +29,10 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.IncludedModuleContext;
 
 public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedDataNodeContainer<String, ModuleStatement>
         implements Module, Immutable {
@@ -59,9 +54,9 @@ public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedDat
     private ImmutableList<ExtensionDefinition> extensionNodes;
     private ImmutableSet<IdentitySchemaNode> identities;
     private ImmutableList<UnknownSchemaNode> unknownNodes;
-    private String source;
+    private final String source;
 
-    public ModuleEffectiveStatementImpl(StmtContext<String, ModuleStatement, ?> ctx) {
+    public ModuleEffectiveStatementImpl(final StmtContext<String, ModuleStatement, ?> ctx) {
         super(ctx);
 
         name = argument();

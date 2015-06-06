@@ -36,7 +36,7 @@ final class StackedPathArguments extends PathArgumentList {
     }
 
     @Override
-    public final PathArgument get(final int index) {
+    public PathArgument get(final int index) {
         if (index < base.size()) {
             return base.get(index);
         } else {
@@ -45,7 +45,7 @@ final class StackedPathArguments extends PathArgumentList {
     }
 
     @Override
-    public final int indexOf(final Object o) {
+    public int indexOf(final Object o) {
         final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
 
         int ret = base.indexOf(srch);
@@ -59,7 +59,7 @@ final class StackedPathArguments extends PathArgumentList {
     }
 
     @Override
-    public final int lastIndexOf(final Object o) {
+    public int lastIndexOf(final Object o) {
         final PathArgument srch = (PathArgument) Preconditions.checkNotNull(o);
 
         final int ret = stack.lastIndexOf(srch);
