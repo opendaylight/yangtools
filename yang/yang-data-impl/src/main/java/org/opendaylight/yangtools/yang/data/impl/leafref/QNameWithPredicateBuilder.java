@@ -89,9 +89,9 @@ class QNameWithPredicateBuilder {
         final StringBuilder sb = new StringBuilder();
 
         if (moduleQname != null) {
-            sb.append("(" + moduleQname.getNamespace());
-            sb.append("?revision=" + moduleQname.getRevision());
-            sb.append(")");
+            sb.append('(').append(moduleQname.getNamespace());
+            sb.append("?revision=").append(moduleQname.getRevision());
+            sb.append(')');
         }
 
         sb.append(localName);
