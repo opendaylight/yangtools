@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
-import org.opendaylight.yangtools.concepts.Immutable;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -16,6 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+import org.opendaylight.yangtools.concepts.Immutable;
 
 public abstract class LeafRefPath implements Immutable {
 
@@ -354,7 +354,7 @@ public abstract class LeafRefPath implements Immutable {
         sb.append(isAbsolute() ? "Absolute path:" : "Relative path:");
 
         for (QNameWithPredicate qName : pathFromRoot) {
-            sb.append("/" + qName);
+            sb.append('/').append(qName);
         }
 
         return sb.toString();

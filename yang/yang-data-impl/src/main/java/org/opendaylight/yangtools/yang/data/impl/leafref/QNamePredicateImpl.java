@@ -37,7 +37,7 @@ class QNamePredicateImpl implements Immutable, Serializable,
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
-        sb.append("[");
+        sb.append('[');
 
         sb.append(identifier);
         sb.append("=current()");
@@ -46,10 +46,10 @@ class QNamePredicateImpl implements Immutable, Serializable,
                 .getPathFromRoot();
 
         for (final QNameWithPredicate qName : pathFromRoot) {
-            sb.append("/" + qName);
+            sb.append('/').append(qName);
         }
 
-        sb.append("]");
+        sb.append(']');
         return sb.toString();
     }
 
