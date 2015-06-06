@@ -9,7 +9,6 @@
 package org.opendaylight.yangtools.yang.parser.repo;
 
 import static org.junit.Assert.assertEquals;
-
 import com.google.common.base.Optional;
 import java.util.HashMap;
 import java.util.Map;
@@ -66,7 +65,7 @@ public class DependencyResolverTest {
         assertEquals(0, resolved.getUnsatisfiedImports().size());
     }
 
-    private void addToMap(final Map<SourceIdentifier, YangModelDependencyInfo> map, final YangModelDependencyInfo yangModelDependencyInfo) {
+    private static void addToMap(final Map<SourceIdentifier, YangModelDependencyInfo> map, final YangModelDependencyInfo yangModelDependencyInfo) {
         map.put(getSourceId(yangModelDependencyInfo), yangModelDependencyInfo);
     }
 

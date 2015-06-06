@@ -69,7 +69,7 @@ public class SharedSchemaRepositoryTest {
         assertEquals(id2, source.checkedGet().getIdentifier());
     }
 
-    private SourceIdentifier loadAndRegisterSource(final SharedSchemaRepository sharedSchemaRepository, final String resourceName) throws Exception {
+    private static SourceIdentifier loadAndRegisterSource(final SharedSchemaRepository sharedSchemaRepository, final String resourceName) throws Exception {
         final SettableSchemaProvider<ASTSchemaSource> sourceProvider = getImmediateYangSourceProviderFromResource(resourceName);
         sourceProvider.setResult();
         final SourceIdentifier idNoRevision = sourceProvider.getId();
@@ -313,7 +313,7 @@ public class SharedSchemaRepositoryTest {
         fail("Creation of schema context should fail from non-regular sources");
     }
 
-    private void assertSchemaContext(final SchemaContext schemaContext, final int moduleSize) {
+    private static void assertSchemaContext(final SchemaContext schemaContext, final int moduleSize) {
         assertNotNull(schemaContext);
         assertEquals(moduleSize, schemaContext.getModules().size());
     }

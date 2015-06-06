@@ -46,8 +46,8 @@ public class LeafRefValidatation {
     private static final String NEW_LINE = System.getProperty("line.separator");
 
     private final DataTreeCandidate tree;
-    private final LinkedList<String> errorsMessages =  new LinkedList<String>();
-    private final HashSet<LeafRefContext> validatedLeafRefCtx =  new HashSet<LeafRefContext>();
+    private final List<String> errorsMessages =  new LinkedList<>();
+    private final Set<LeafRefContext> validatedLeafRefCtx =  new HashSet<>();
 
     private LeafRefValidatation(final DataTreeCandidate tree) {
         this.tree = tree;
@@ -373,12 +373,12 @@ public class LeafRefValidatation {
         final Map<QName, LeafRefContext> allReferencedByLeafRefCtxs = referencedByCtx
                 .getAllReferencedByLeafRefCtxs();
 
-        final HashMap<LeafRefContext, HashSet> leafRefsValues = new HashMap<LeafRefContext, HashSet>();
+        final Map<LeafRefContext, Set> leafRefsValues = new HashMap<>();
         final Collection<LeafRefContext> leafrefs = allReferencedByLeafRefCtxs
                 .values();
         for (final LeafRefContext leafRefContext : leafrefs) {
             if (leafRefContext.isReferencing()) {
-                final HashSet<Object> values = new HashSet<>();
+                final Set<Object> values = new HashSet<>();
 
                 final SchemaPath leafRefNodeSchemaPath = leafRefContext
                         .getCurrentNodePath();
@@ -393,7 +393,7 @@ public class LeafRefValidatation {
             }
         }
 
-        final HashSet<Object> leafRefTargetNodeValues = new HashSet<>();
+        final Set<Object> leafRefTargetNodeValues = new HashSet<>();
         final SchemaPath nodeSchemaPath = referencedByCtx.getCurrentNodePath();
         final LeafRefPath nodePath = LeafRefUtils.schemaPathToLeafRefPath(
                 nodeSchemaPath, referencedByCtx.getLeafRefContextModule());
@@ -401,11 +401,11 @@ public class LeafRefValidatation {
                 nodePath.getPathFromRoot(), null, QNameWithPredicate.ROOT);
 
         boolean valid = true;
-        final Set<Entry<LeafRefContext, HashSet>> entrySet = leafRefsValues
+        final Set<Entry<LeafRefContext, Set>> entrySet = leafRefsValues
                 .entrySet();
-        for (final Entry<LeafRefContext, HashSet> entry : entrySet) {
+        for (final Entry<LeafRefContext, Set> entry : entrySet) {
             final LeafRefContext leafRefContext = entry.getKey();
-            final HashSet leafRefValuesSet = entry.getValue();
+            final Set leafRefValuesSet = entry.getValue();
             for (final Object leafRefsValue : leafRefValuesSet) {
                 if (!leafRefTargetNodeValues.contains(leafRefsValue)) {
 
@@ -437,7 +437,7 @@ public class LeafRefValidatation {
     }
 
     private static StringBuilder createInvalidTargetMessage(final NormalizedNode<?, ?> leaf,
-            final HashSet<?> leafRefTargetNodeValues, final LeafRefContext leafRefContext,
+            final Set<?> leafRefTargetNodeValues, final LeafRefContext leafRefContext,
             final Object leafRefsValue) {
         final StringBuilder sb = new StringBuilder();
         sb.append("Invalid leafref value [");
@@ -578,7 +578,7 @@ public class LeafRefValidatation {
                     }
                 }
             } else {
-                final Map<QName, Set<?>> keyValues = new HashMap<QName, Set<?>>();
+                final Map<QName, Set<?>> keyValues = new HashMap<>();
 
                 final Iterator<QNamePredicate> predicates = qNamePredicates
                         .iterator();

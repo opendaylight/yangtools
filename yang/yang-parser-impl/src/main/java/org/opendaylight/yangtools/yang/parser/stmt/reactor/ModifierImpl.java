@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.EFFECTIVE_MODEL;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.FULL_DECLARATION;
-
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import java.util.HashSet;
@@ -39,16 +38,16 @@ class ModifierImpl implements ModelActionBuilder {
     private InferenceAction action;
     private boolean actionApplied = false;
 
-    ModifierImpl(ModelProcessingPhase phase) {
+    ModifierImpl(final ModelProcessingPhase phase) {
         this.phase = Preconditions.checkNotNull(phase);
     }
 
-    private <D> AbstractPrerequisite<D> addReq(AbstractPrerequisite<D> prereq) {
+    private <D> AbstractPrerequisite<D> addReq(final AbstractPrerequisite<D> prereq) {
         unsatisfied.add(prereq);
         return prereq;
     }
 
-    private <T> AbstractPrerequisite<T> addMutation(AbstractPrerequisite<T> mutation) {
+    private <T> AbstractPrerequisite<T> addMutation(final AbstractPrerequisite<T> mutation) {
         mutations.add(mutation);
         return mutation;
     }
@@ -59,7 +58,7 @@ class ModifierImpl implements ModelActionBuilder {
         Preconditions.checkState(action == null, "Action was already registered.");
     }
 
-    private IllegalStateException shouldNotHappenProbablyBug(SourceException e) {
+    private static IllegalStateException shouldNotHappenProbablyBug(final SourceException e) {
         return new IllegalStateException("Source exception during registering prerequisite. This is probably bug.",e);
     }
 
@@ -115,7 +114,7 @@ class ModifierImpl implements ModelActionBuilder {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private <K, C extends StmtContext<?,?,?>, N extends StatementNamespace<K, ?, ?>> AbstractPrerequisite<C> requiresCtxImpl(StmtContext<?, ?, ?> context, Class<N> namespace, K key,ModelProcessingPhase phase)  {
+    private <K, C extends StmtContext<?,?,?>, N extends StatementNamespace<K, ?, ?>> AbstractPrerequisite<C> requiresCtxImpl(final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key,final ModelProcessingPhase phase)  {
         checkNotRegistered();
         try {
             AddedToNamespace<C> addedToNs = new AddedToNamespace<C>(phase);
@@ -127,7 +126,7 @@ class ModifierImpl implements ModelActionBuilder {
         }
     }
 
-    private <C extends StmtContext<?, ?, ?>> AbstractPrerequisite<C> requiresCtxImpl(C context, ModelProcessingPhase phase) {
+    private <C extends StmtContext<?, ?, ?>> AbstractPrerequisite<C> requiresCtxImpl(final C context, final ModelProcessingPhase phase) {
         Preconditions.checkState(action == null, "Action was already registered.");
         try {
             PhaseFinished<C> phaseFin = new PhaseFinished<C>();
@@ -141,7 +140,7 @@ class ModifierImpl implements ModelActionBuilder {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private <K, C extends StmtContext.Mutable<?, ?, ?> , N extends StatementNamespace<K, ?, ? >> AbstractPrerequisite<C> mutatesCtxImpl(
-                StmtContext<?, ?, ?> context, Class<N> namespace, K key, ModelProcessingPhase phase) {
+                final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key, final ModelProcessingPhase phase) {
             try {
                 PhaseModificationInNamespace<C> mod = new PhaseModificationInNamespace<C>(phase);
                 addMutation(mod);
@@ -152,13 +151,13 @@ class ModifierImpl implements ModelActionBuilder {
             }
         }
 
-    private static StatementContextBase<?,?,?> contextImpl(StmtContext<?,?,?> context) {
+    private static StatementContextBase<?,?,?> contextImpl(final StmtContext<?,?,?> context) {
         Preconditions.checkArgument(context instanceof StatementContextBase,"Supplied context was not provided by this reactor.");
         return StatementContextBase.class.cast(context);
     }
 
     @Override
-    public <C extends Mutable<?, ?, ?>, CT extends C> Prerequisite<C> mutatesCtx(CT context, ModelProcessingPhase phase) {
+    public <C extends Mutable<?, ?, ?>, CT extends C> Prerequisite<C> mutatesCtx(final CT context, final ModelProcessingPhase phase) {
         try {
             return addMutation(new PhaseMutation<C>(contextImpl(context),phase));
         } catch (InferenceException e) {
@@ -167,56 +166,56 @@ class ModifierImpl implements ModelActionBuilder {
     }
 
     @Override
-    public  <A,D extends DeclaredStatement<A>,E extends EffectiveStatement<A, D>> AbstractPrerequisite<StmtContext<A, D, E>> requiresCtx(StmtContext<A, D, E> context, ModelProcessingPhase phase) {
+    public  <A,D extends DeclaredStatement<A>,E extends EffectiveStatement<A, D>> AbstractPrerequisite<StmtContext<A, D, E>> requiresCtx(final StmtContext<A, D, E> context, final ModelProcessingPhase phase) {
         return requiresCtxImpl(context, phase);
     }
 
 
     @Override
-    public <K, N extends StatementNamespace<K, ?, ? >> Prerequisite<StmtContext<?,?,?>> requiresCtx(StmtContext<?, ?, ?> context, Class<N> namespace, K key, ModelProcessingPhase phase) {
+    public <K, N extends StatementNamespace<K, ?, ? >> Prerequisite<StmtContext<?,?,?>> requiresCtx(final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key, final ModelProcessingPhase phase) {
         return requiresCtxImpl(context, namespace, key, phase);
     }
 
     @Override
-    public <D extends DeclaredStatement<?>> Prerequisite<D> requiresDeclared(StmtContext<?, ? extends D, ?> context) {
+    public <D extends DeclaredStatement<?>> Prerequisite<D> requiresDeclared(final StmtContext<?, ? extends D, ?> context) {
         return requiresCtxImpl(context, FULL_DECLARATION).transform(StmtContextUtils.<D>buildDeclared());
     }
 
     @Override
     public <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>> AbstractPrerequisite<StmtContext<?, D, ?>> requiresDeclaredCtx(
-            StmtContext<?, ?, ?> context, Class<N> namespace, K key) {
+            final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {
         return requiresCtxImpl(context, namespace, key, FULL_DECLARATION);
     }
 
     @Override
     public <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>> Prerequisite<D> requiresDeclared(
-            StmtContext<?, ?, ?> context, Class<N> namespace, K key) {
+            final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {
         final AbstractPrerequisite<StmtContext<?,D,?>> rawContext = requiresCtxImpl(context, namespace, key, FULL_DECLARATION);
         return rawContext.transform(StmtContextUtils.<D>buildDeclared());
     }
 
     @Override
-    public <E extends EffectiveStatement<?, ?>> Prerequisite<E> requiresEffective(StmtContext<?, ?, ? extends E> stmt) {
+    public <E extends EffectiveStatement<?, ?>> Prerequisite<E> requiresEffective(final StmtContext<?, ?, ? extends E> stmt) {
         return requiresCtxImpl(stmt, EFFECTIVE_MODEL).transform(StmtContextUtils.<E>buildEffective());
     }
 
     @Override
     public <K, E extends EffectiveStatement<?, ?>, N extends StatementNamespace<K, ?, ? extends E>> AbstractPrerequisite<StmtContext<?, ?, E>> requiresEffectiveCtx(
-            StmtContext<?, ?, ?> context, Class<N> namespace, K key) {
+            final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {
         return requiresCtxImpl(contextImpl(context),namespace,key, EFFECTIVE_MODEL);
     }
 
     @Override
     public <K, E extends EffectiveStatement<?, ?>, N extends StatementNamespace<K, ?, ? extends E>> Prerequisite<E> requiresEffective(
-            StmtContext<?, ?, ?> context, Class<N> namespace, K key) {
+            final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {
         final AbstractPrerequisite<StmtContext<?,?,E>> rawContext = requiresCtxImpl(context, namespace, key, EFFECTIVE_MODEL);
         return rawContext.transform(StmtContextUtils.<E>buildEffective());
     }
 
 
     @Override
-    public <N extends IdentifierNamespace<?, ?>> Prerequisite<Mutable<?, ?, ?>> mutatesNs(Mutable<?, ?, ?> context,
-            Class<N> namespace) {
+    public <N extends IdentifierNamespace<?, ?>> Prerequisite<Mutable<?, ?, ?>> mutatesNs(final Mutable<?, ?, ?> context,
+            final Class<N> namespace) {
         try {
             return addMutation(new NamespaceMutation<N>(contextImpl(context),namespace));
         } catch (SourceException e) {
@@ -225,21 +224,21 @@ class ModifierImpl implements ModelActionBuilder {
     }
 
     @Override
-    public <T extends Mutable<?, ?, ?>> Prerequisite<T> mutatesEffectiveCtx(T stmt) {
+    public <T extends Mutable<?, ?, ?>> Prerequisite<T> mutatesEffectiveCtx(final T stmt) {
         return mutatesCtx(stmt, EFFECTIVE_MODEL);
     }
 
 
    @Override
     public <K, E extends EffectiveStatement<?, ?>, N extends StatementNamespace<K, ?, ? extends E>> AbstractPrerequisite<Mutable<?, ?, E>> mutatesEffectiveCtx(
-            StmtContext<?, ?, ?> context, Class<N> namespace, K key) {
+            final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {
         return mutatesCtxImpl(context, namespace, key, EFFECTIVE_MODEL);
     }
 
 
 
     @Override
-    public void apply(InferenceAction action) throws InferenceException {
+    public void apply(final InferenceAction action) throws InferenceException {
         this.action = Preconditions.checkNotNull(action);
         tryToResolve();
     }
@@ -260,7 +259,7 @@ class ModifierImpl implements ModelActionBuilder {
             return done;
         }
 
-        protected boolean resolvePrereq(T value) throws InferenceException {
+        protected boolean resolvePrereq(final T value) throws InferenceException {
             this.value = value;
             this.done = true;
             tryToResolve();
@@ -289,7 +288,7 @@ class ModifierImpl implements ModelActionBuilder {
     private class PhaseMutation<C> extends AbstractPrerequisite<C> implements ContextMutation {
 
         @SuppressWarnings("unchecked")
-        public PhaseMutation(StatementContextBase<?, ?, ?> context, ModelProcessingPhase phase) throws InferenceException {
+        public PhaseMutation(final StatementContextBase<?, ?, ?> context, final ModelProcessingPhase phase) throws InferenceException {
             context.addMutation(phase, this);
             resolvePrereq((C) context);
         }
@@ -305,14 +304,14 @@ class ModifierImpl implements ModelActionBuilder {
 
         @SuppressWarnings("unchecked")
         @Override
-        public boolean phaseFinished(StatementContextBase<?, ?, ?> context, ModelProcessingPhase phase) throws SourceException {
+        public boolean phaseFinished(final StatementContextBase<?, ?, ?> context, final ModelProcessingPhase phase) throws SourceException {
             return resolvePrereq((C) (context));
         }
     }
 
     private class NamespaceMutation<N extends IdentifierNamespace<?,?>> extends  AbstractPrerequisite<StmtContext.Mutable<?, ?, ?>>  {
 
-        public NamespaceMutation(StatementContextBase<?, ?, ?> ctx, Class<N> namespace) throws InferenceException {
+        public NamespaceMutation(final StatementContextBase<?, ?, ?> ctx, final Class<N> namespace) throws InferenceException {
             resolvePrereq(ctx);
         }
 
@@ -322,20 +321,20 @@ class ModifierImpl implements ModelActionBuilder {
 
         private final ModelProcessingPhase phase;
 
-        public <K, N extends StatementNamespace<K, ?, ?>> AddedToNamespace(ModelProcessingPhase phase) {
+        public <K, N extends StatementNamespace<K, ?, ?>> AddedToNamespace(final ModelProcessingPhase phase) {
             this.phase = phase;
         }
 
         @Override
-        public void namespaceItemAdded(StatementContextBase<?, ?, ?> context, Class<?> namespace, Object key,
-                Object value) throws SourceException {
+        public void namespaceItemAdded(final StatementContextBase<?, ?, ?> context, final Class<?> namespace, final Object key,
+                final Object value) throws SourceException {
             StatementContextBase<?, ?, ?> targetContext = (StatementContextBase<?, ?, ?>) value;
             targetContext.addPhaseCompletedListener(phase, this);
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public boolean phaseFinished(StatementContextBase<?, ?, ?> context, ModelProcessingPhase phase) throws SourceException {
+        public boolean phaseFinished(final StatementContextBase<?, ?, ?> context, final ModelProcessingPhase phase) throws SourceException {
             return resolvePrereq((C) context);
         }
 
@@ -345,15 +344,15 @@ class ModifierImpl implements ModelActionBuilder {
 
         private final ModelProcessingPhase modPhase;
 
-        public <K, N extends StatementNamespace<K, ?, ?>> PhaseModificationInNamespace(ModelProcessingPhase phase) throws SourceException {
+        public <K, N extends StatementNamespace<K, ?, ?>> PhaseModificationInNamespace(final ModelProcessingPhase phase) throws SourceException {
             Preconditions.checkArgument(phase != null, "Model processing phase must not be null");
             this.modPhase = phase;
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public void namespaceItemAdded(StatementContextBase<?, ?, ?> context, Class<?> namespace, Object key,
-                Object value) throws SourceException {
+        public void namespaceItemAdded(final StatementContextBase<?, ?, ?> context, final Class<?> namespace, final Object key,
+                final Object value) throws SourceException {
             context.addMutation(modPhase,this);
             resolvePrereq((C) context);
         }

@@ -8,15 +8,16 @@
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
 import java.util.LinkedList;
+import java.util.List;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
 class QNameWithPredicateBuilder {
 
-    private LinkedList<QNamePredicate> qnamePredicates;
+    private List<QNamePredicate> qnamePredicates;
     private QNameModule moduleQname;
     private String localName;
 
-    public static QNameWithPredicateBuilder UP_PARENT_BUILDER = new QNameWithPredicateBuilder(
+    public static final QNameWithPredicateBuilder UP_PARENT_BUILDER = new QNameWithPredicateBuilder(
             null, "..") {
         @Override
         public QNameWithPredicate build() {
@@ -27,19 +28,19 @@ class QNameWithPredicateBuilder {
     public QNameWithPredicateBuilder(final QNameModule moduleQname, final String localName) {
         this.moduleQname = moduleQname;
         this.localName = localName;
-        this.qnamePredicates = new LinkedList<QNamePredicate>();
+        this.qnamePredicates = new LinkedList<>();
     }
 
     public QNameWithPredicate build() {
         final QNameWithPredicateImpl qNameWithPredicateImpl = new QNameWithPredicateImpl(
                 moduleQname, localName, qnamePredicates);
 
-        this.qnamePredicates = new LinkedList<QNamePredicate>();
+        this.qnamePredicates = new LinkedList<>();
 
         return qNameWithPredicateImpl;
     }
 
-    public LinkedList<QNamePredicate> getQNamePredicates() {
+    public List<QNamePredicate> getQNamePredicates() {
         return qnamePredicates;
     }
 

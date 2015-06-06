@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt.test;
 
+import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -15,7 +16,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
-import static org.junit.Assert.assertNotNull;
 
 public class YangFileStmtTest {
     //basic statements to parse and write
@@ -51,7 +51,7 @@ public class YangFileStmtTest {
         assertNotNull(result);
     }
 
-    private void addSources(CrossSourceStatementReactor.BuildAction reactor, StatementStreamSource... sources) {
+    private static void addSources(final CrossSourceStatementReactor.BuildAction reactor, final StatementStreamSource... sources) {
         for (StatementStreamSource source : sources) {
             reactor.addSource(source);
         }

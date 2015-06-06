@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -34,7 +35,7 @@ public class LeafRefUtils {
             return leafRefPath;
         }
 
-        final LinkedList<QNameWithPredicate> absoluteLeafRefTargetPathList = schemaPathToXPathQNames(
+        final Deque<QNameWithPredicate> absoluteLeafRefTargetPathList = schemaPathToXPathQNames(
                 contextNodeSchemaPath, module);
 
         final Iterable<QNameWithPredicate> leafRefTargetPathFromRoot = leafRefPath
@@ -59,10 +60,10 @@ public class LeafRefUtils {
      * @param module
      * @param absoluteLeafRefTargetPathList
      */
-    private static LinkedList<QNameWithPredicate> schemaPathToXPathQNames(
+    private static Deque<QNameWithPredicate> schemaPathToXPathQNames(
             final SchemaPath nodePath, final Module module) {
 
-        final LinkedList<QNameWithPredicate> xpath = new LinkedList<QNameWithPredicate>();
+        final Deque<QNameWithPredicate> xpath = new LinkedList<>();
 
         final Iterator<QName> nodePathIterator = nodePath.getPathFromRoot()
                 .iterator();
@@ -111,7 +112,7 @@ public class LeafRefUtils {
 
     public static LeafRefPath schemaPathToLeafRefPath(final SchemaPath nodePath,
             final Module module) {
-        final LinkedList<QNameWithPredicate> xpathQNames = schemaPathToXPathQNames(
+        final Deque<QNameWithPredicate> xpathQNames = schemaPathToXPathQNames(
                 nodePath, module);
         return LeafRefPath.create(xpathQNames, true);
     }

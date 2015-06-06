@@ -7,6 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.AsyncFunction;
+import com.google.common.util.concurrent.CheckedFuture;
+import com.google.common.util.concurrent.FutureCallback;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
@@ -17,9 +33,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.Set;
-
 import javax.annotation.Nullable;
-
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.opendaylight.yangtools.util.concurrent.ExceptionMapper;
@@ -38,23 +52,6 @@ import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
 import org.opendaylight.yangtools.yang.parser.util.ASTSchemaSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.AsyncFunction;
-import com.google.common.util.concurrent.CheckedFuture;
-import com.google.common.util.concurrent.FutureCallback;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 
 final class SharedSchemaContextFactory implements SchemaContextFactory {
     private static final ExceptionMapper<SchemaResolutionException> MAPPER = ReflectiveExceptionMapper.create("resolve sources", SchemaResolutionException.class);
@@ -163,7 +160,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
     /**
      * @return set (preserving ordering) from the input collection
      */
-    private List<SourceIdentifier> deDuplicateSources(final Collection<SourceIdentifier> requiredSources) {
+    private static List<SourceIdentifier> deDuplicateSources(final Collection<SourceIdentifier> requiredSources) {
         final Set<SourceIdentifier> uniqueSourceIdentifiers = Collections.unmodifiableSet(Sets.newLinkedHashSet(requiredSources));
         if(uniqueSourceIdentifiers.size() != requiredSources.size()) {
             LOG.warn("Duplicate sources requested for schema context, removed duplicate sources: {}", Collections2.filter(uniqueSourceIdentifiers, new Predicate<SourceIdentifier>() {

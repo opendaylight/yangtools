@@ -13,11 +13,9 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 
 public interface QNameWithPredicate {
 
-    final QNameWithPredicate UP_PARENT = new QNameWithPredicateBuilder(
-            null, "..").build();
+    QNameWithPredicate UP_PARENT = new QNameWithPredicateBuilder(null, "..").build();
 
-    final QNameWithPredicate ROOT = new QNameWithPredicateBuilder(
-            null, "").build();
+    QNameWithPredicate ROOT = new QNameWithPredicateBuilder(null, "").build();
 
     List<QNamePredicate> getQNamePredicates();
 

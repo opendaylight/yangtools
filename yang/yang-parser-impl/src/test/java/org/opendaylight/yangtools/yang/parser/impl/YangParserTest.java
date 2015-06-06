@@ -884,7 +884,7 @@ public class YangParserTest {
         assertSetEquals(newModules, ctx.getModules());
     }
 
-    private void checkOrder(final Collection<Module> modules) {
+    private static void checkOrder(final Collection<Module> modules) {
         Iterator<Module> it = modules.iterator();
         Module m = it.next();
         assertEquals("m2", m.getName());
@@ -904,7 +904,7 @@ public class YangParserTest {
         assertEquals("m1", m.getName());
     }
 
-    private void assertSetEquals(final Set<Module> s1, final Set<Module> s2) {
+    private static void assertSetEquals(final Set<Module> s1, final Set<Module> s2) {
         assertEquals(s1, s2);
         Iterator<Module> it = s1.iterator();
         for (Module m : s2) {

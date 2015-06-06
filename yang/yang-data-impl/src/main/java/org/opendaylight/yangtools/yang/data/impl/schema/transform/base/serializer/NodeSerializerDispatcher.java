@@ -47,7 +47,7 @@ public interface NodeSerializerDispatcher<E> {
      * requires serializers to be provided. The same instance of serializer can
      * be provided in case it is immutable.
      */
-    public abstract static class BaseNodeSerializerDispatcher<E> implements NodeSerializerDispatcher<E> {
+    abstract class BaseNodeSerializerDispatcher<E> implements NodeSerializerDispatcher<E> {
         private final FromNormalizedNodeSerializerFactory<E> factory;
 
         protected BaseNodeSerializerDispatcher(final FromNormalizedNodeSerializerFactory<E> factory) {

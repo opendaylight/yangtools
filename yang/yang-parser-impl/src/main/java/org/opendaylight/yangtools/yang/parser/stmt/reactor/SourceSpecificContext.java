@@ -7,10 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.YangConstants;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
@@ -23,7 +19,10 @@ import java.util.Objects;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
@@ -63,20 +62,20 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     private ModelProcessingPhase inProgressPhase;
     private ModelProcessingPhase finishedPhase;
-    private QNameToStatementDefinitionMap qNameToStmtDefMap = new QNameToStatementDefinitionMap();
-    private PrefixToModuleMap prefixToModuleMap = new PrefixToModuleMap();
+    private final QNameToStatementDefinitionMap qNameToStmtDefMap = new QNameToStatementDefinitionMap();
+    private final PrefixToModuleMap prefixToModuleMap = new PrefixToModuleMap();
 
 
-    SourceSpecificContext(BuildGlobalContext currentContext,StatementStreamSource source) {
+    SourceSpecificContext(final BuildGlobalContext currentContext,final StatementStreamSource source) {
         this.source = source;
         this.currentContext = currentContext;
     }
 
-    StatementDefinitionContext<?,?,?> getDefinition(QName name) {
+    StatementDefinitionContext<?,?,?> getDefinition(final QName name) {
         return currentContext.getStatementDefinition(name);
     }
 
-    ContextBuilder<?, ?, ?> createDeclaredChild(StatementContextBase<?, ?, ?> current, QName name, StatementSourceReference ref) {
+    ContextBuilder<?, ?, ?> createDeclaredChild(final StatementContextBase<?, ?, ?> current, final QName name, final StatementSourceReference ref) {
         StatementDefinitionContext<?,?,?> def = getDefinition(name);
 
         //extensions
@@ -94,7 +93,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private ContextBuilder<?,?, ?> createDeclaredRoot(StatementDefinitionContext<?,?,?> def, StatementSourceReference ref) {
+    private ContextBuilder<?,?, ?> createDeclaredRoot(final StatementDefinitionContext<?,?,?> def, final StatementSourceReference ref) {
         return new ContextBuilder(def,ref) {
 
             @Override
@@ -123,7 +122,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         return root.buildEffective();
     }
 
-    void startPhase(ModelProcessingPhase phase) {
+    void startPhase(final ModelProcessingPhase phase) {
         @Nullable ModelProcessingPhase previousPhase = phase.getPreviousPhase();
         Preconditions.checkState(Objects.equals(previousPhase, finishedPhase));
         Preconditions.checkState(modifiers.get(previousPhase).isEmpty());
@@ -131,7 +130,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> void addToLocalStorage(Class<N> type, K key, V value) {
+    public <K, V, N extends IdentifierNamespace<K, V>> void addToLocalStorage(final Class<N> type, final K key, final V value) {
         if(ImportedNamespaceContext.class.isAssignableFrom(type)) {
             importedNamespaces.add((NamespaceStorageNode) value);
         }
@@ -144,7 +143,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> V getFromLocalStorage(Class<N> type, K key) {
+    public <K, V, N extends IdentifierNamespace<K, V>> V getFromLocalStorage(final Class<N> type, final K key) {
         final V potentialLocal = getRoot().getFromLocalStorage(type, key);
         if(potentialLocal != null) {
             return potentialLocal;
@@ -159,7 +158,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(Class<N> type) {
+    public <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(final Class<N> type) {
         return currentContext.getNamespaceBehaviour(type);
     }
 
@@ -168,7 +167,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         return currentContext;
     }
 
-    PhaseCompletionProgress tryToCompletePhase(ModelProcessingPhase phase) throws SourceException {
+    PhaseCompletionProgress tryToCompletePhase(final ModelProcessingPhase phase) throws SourceException {
         Collection<ModifierImpl> currentPhaseModifiers = modifiers.get(phase);
 
         boolean hasProgressed = hasProgress(currentPhaseModifiers);
@@ -189,7 +188,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
 
-    private boolean hasProgress(Collection<ModifierImpl> currentPhaseModifiers) {
+    private static boolean hasProgress(final Collection<ModifierImpl> currentPhaseModifiers) {
 
         Iterator<ModifierImpl> modifier = currentPhaseModifiers.iterator();
         boolean hasProgressed = false;
@@ -204,7 +203,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     }
 
-    ModelActionBuilder newInferenceAction(ModelProcessingPhase phase) {
+    ModelActionBuilder newInferenceAction(final ModelProcessingPhase phase) {
         ModifierImpl action = new ModifierImpl(phase);
         modifiers.put(phase, action);
         return action;
@@ -216,7 +215,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                 + finishedPhase + "]";
     }
 
-    SourceException failModifiers(ModelProcessingPhase identifier) {
+    SourceException failModifiers(final ModelProcessingPhase identifier) {
         InferenceException sourceEx = new InferenceException("Fail to infer source relationships", root.getStatementSourceReference());
 
 

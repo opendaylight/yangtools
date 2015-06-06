@@ -2,9 +2,7 @@ package org.opendaylight.yangtools.yang.stmt.effective.build.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
 import java.net.URI;
-
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -78,17 +76,7 @@ public class EffectiveBuildTest {
 
     }
 
-    private void log(Throwable e, String indent) {
-        System.out.println(indent + e.getMessage());
-
-        Throwable[] suppressed = e.getSuppressed();
-        for (Throwable throwable : suppressed) {
-            log(throwable, indent + "        ");
-        }
-
-    }
-
-    private void addSources(BuildAction reactor, YangStatementSourceImpl... sources) {
+    private static void addSources(final BuildAction reactor, final YangStatementSourceImpl... sources) {
         for (YangStatementSourceImpl source : sources) {
             reactor.addSource(source);
         }

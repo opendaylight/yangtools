@@ -27,7 +27,7 @@ public interface SchemaContext extends ContainerSchemaNode {
     /**
      * QName of NETCONF top-level data node.
      */
-    public static final QName NAME = QName.create(URI.create("urn:ietf:params:xml:ns:netconf:base:1.0"), null, "data");
+    QName NAME = QName.create(URI.create("urn:ietf:params:xml:ns:netconf:base:1.0"), null, "data");
 
     /**
      * Returns data schema node instances which represents direct subnodes (like

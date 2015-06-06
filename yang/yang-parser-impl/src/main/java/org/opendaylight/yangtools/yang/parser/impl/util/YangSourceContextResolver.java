@@ -7,7 +7,6 @@
 package org.opendaylight.yangtools.yang.parser.impl.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -252,7 +251,7 @@ public abstract class YangSourceContextResolver {
         return potentialState;
     }
 
-    private boolean checkValidSource(final SourceIdentifier identifier, final YangModelDependencyInfo info) {
+    private static boolean checkValidSource(final SourceIdentifier identifier, final YangModelDependencyInfo info) {
         if (!identifier.getName().equals(info.getName())) {
             LOG.warn("Incorrect model returned. Identifier name was: {}, source contained: {}", identifier.getName(),
                     info.getName());

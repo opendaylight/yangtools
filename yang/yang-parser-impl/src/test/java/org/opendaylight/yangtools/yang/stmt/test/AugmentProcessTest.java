@@ -3,6 +3,7 @@ package org.opendaylight.yangtools.yang.stmt.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -20,7 +21,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
-import com.google.common.collect.ImmutableList;
 
 public class AugmentProcessTest {
 
@@ -145,7 +145,7 @@ public class AugmentProcessTest {
         assertNull(result);
     }
 
-    private void log(Throwable e, String indent) {
+    private void log(final Throwable e, final String indent) {
         System.out.println(indent + e.getMessage());
 
         Throwable[] suppressed = e.getSuppressed();
@@ -217,8 +217,8 @@ public class AugmentProcessTest {
         assertNotNull(grpAddNode);
     }
 
-    private <T extends ModelStatement> T findInStatements(QName target,
-            ImmutableList<T> statements) {
+    private static <T extends ModelStatement<?>> T findInStatements(final QName target,
+            final ImmutableList<T> statements) {
 
         for (final T statement : statements) {
             if (target
@@ -230,8 +230,8 @@ public class AugmentProcessTest {
         return null;
     }
 
-    private void addSources(CrossSourceStatementReactor.BuildAction reactor,
-            StatementStreamSource... sources) {
+    private static void addSources(final CrossSourceStatementReactor.BuildAction reactor,
+            final StatementStreamSource... sources) {
         for (StatementStreamSource source : sources) {
             reactor.addSource(source);
         }
