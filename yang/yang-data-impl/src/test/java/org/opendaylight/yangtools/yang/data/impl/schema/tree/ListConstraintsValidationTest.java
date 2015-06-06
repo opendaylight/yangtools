@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
 import com.google.common.base.Optional;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -158,7 +157,7 @@ public class ListConstraintsValidationTest {
         InMemoryDataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         Optional<NormalizedNode<?, ?>> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
-        assertTrue(((NormalizedNodeContainer) minMaxListRead.get()).getValue().size() == 2);
+        assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 2);
 
         modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(gooPath, gooEntryNode);
@@ -170,7 +169,7 @@ public class ListConstraintsValidationTest {
         snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
-        assertTrue(((NormalizedNodeContainer) minMaxListRead.get()).getValue().size() == 3);
+        assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 3);
 
         modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
@@ -210,7 +209,7 @@ public class ListConstraintsValidationTest {
         final InMemoryDataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         final Optional<NormalizedNode<?, ?>> masterContainer = snapshotAfterCommit.readNode(MASTER_CONTAINER_PATH);
         assertTrue(masterContainer.isPresent());
-        final Optional<NormalizedNodeContainer> leafList = ((NormalizedNodeContainer) masterContainer.get()).getChild(
+        final Optional<NormalizedNodeContainer<?, ?, ?>> leafList = ((NormalizedNodeContainer) masterContainer.get()).getChild(
                 new YangInstanceIdentifier.NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME));
         assertTrue(leafList.isPresent());
         assertTrue(leafList.get().getValue().size() == 2);

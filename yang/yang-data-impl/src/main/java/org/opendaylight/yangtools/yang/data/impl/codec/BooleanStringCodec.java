@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-
 import org.opendaylight.yangtools.yang.data.api.codec.BooleanCodec;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 
@@ -34,7 +33,7 @@ class BooleanStringCodec extends TypeDefinitionAwareCodec<Boolean, BooleanTypeDe
         return Boolean.valueOf(stringRepresentation);
     }
 
-    private void validate(final String string) {
+    private static void validate(final String string) {
         Preconditions.checkArgument(string.toLowerCase().equals("true")
                 || string.toLowerCase().equals("false"),
                 "Invalid value '%s' for boolean type. Allowed values are true and false", string);

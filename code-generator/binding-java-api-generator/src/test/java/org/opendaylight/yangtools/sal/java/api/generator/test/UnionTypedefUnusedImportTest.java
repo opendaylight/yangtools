@@ -15,7 +15,6 @@ import static org.opendaylight.yangtools.sal.java.api.generator.test.Compilation
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.cleanUp;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.getSourceFiles;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.testCompilation;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -52,12 +51,12 @@ public class UnionTypedefUnusedImportTest extends BaseCompilationTest {
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
-    private String readFile(String path, Charset encoding) throws IOException {
+    private static String readFile(final String path, final Charset encoding) throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return new String(encoded, encoding);
     }
 
-    private boolean containsImport(final String fullImport) throws URISyntaxException, IOException {
+    private static boolean containsImport(final String fullImport) throws URISyntaxException, IOException {
         final String filePath = GENERATOR_OUTPUT_PATH + FS + "union-typedef" + FS + "org" + FS + "opendaylight" + FS + "yang" + FS + "gen" + FS + "v1" + FS + "org" + FS + "opendaylight" + FS + "yangtools" + FS + "union" + FS + "typedef" + FS + "rev141124" + FS + "TypedefUnionBuilder.java";
         final String fileContent = readFile(filePath, StandardCharsets.UTF_8);
 
