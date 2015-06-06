@@ -12,7 +12,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -94,7 +93,7 @@ public class ImportResolutionTest {
         }
     }
 
-    private void addSources(BuildAction reactor, TestStatementSource... sources) {
+    private static void addSources(final BuildAction reactor, final TestStatementSource... sources) {
         for (TestStatementSource source : sources) {
             reactor.addSource(source);
         }

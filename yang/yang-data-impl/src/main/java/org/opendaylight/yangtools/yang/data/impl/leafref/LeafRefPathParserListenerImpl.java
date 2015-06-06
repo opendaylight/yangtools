@@ -42,8 +42,8 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener{
     private QNamePredicateBuilder currentPredicate;
     private QNameModule currentQnameModule;
     private String currentQNameLocalName;
-    private final LinkedList<QNameWithPredicateBuilder> leafRefPathQnameList;
-    private LinkedList<QNameWithPredicateBuilder> predicatePathKeyQnameList;
+    private final List<QNameWithPredicateBuilder> leafRefPathQnameList;
+    private List<QNameWithPredicateBuilder> predicatePathKeyQnameList;
     private final SchemaNode node; //FIXME use for identifier path completion
     private ParsingState currentParsingState;
 
@@ -95,7 +95,7 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener{
     @Override
     public void exitRel_path_keyexpr(final Rel_path_keyexprContext ctx) {
 
-        final LeafRefPath pathKeyExpression = LeafRefPath.create(Lists.transform(predicatePathKeyQnameList,build), false);
+        final LeafRefPath pathKeyExpression = LeafRefPath.create(Lists.transform(predicatePathKeyQnameList, build), false);
         currentPredicate.setPathKeyExpression(pathKeyExpression);
 
         currentParsingState=ParsingState.PREDICATE_PATH_EQUALITY_EXPR;

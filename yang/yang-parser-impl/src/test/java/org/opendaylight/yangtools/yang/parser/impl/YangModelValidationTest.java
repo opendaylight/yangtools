@@ -14,16 +14,13 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 import com.google.common.collect.Sets;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
-
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -216,7 +213,7 @@ public class YangModelValidationTest {
         }
     }
 
-    private Import_stmtContext mockImport(final String name, final String prefixName) {
+    private static Import_stmtContext mockImport(final String name, final String prefixName) {
         Import_stmtContext impor = mockStatement(Import_stmtContext.class, name);
 
         Prefix_stmtContext prefix = mockStatement(Prefix_stmtContext.class, prefixName);
@@ -231,7 +228,7 @@ public class YangModelValidationTest {
         return new SimpleDateFormat("yyyy-MM-dd").format(new Date());
     }
 
-    private Include_stmtContext mockInclude(final String name) {
+    private static Include_stmtContext mockInclude(final String name) {
         Include_stmtContext incl = mockStatement(Include_stmtContext.class, name);
 
         Revision_date_stmtContext revDate = mockStatement(Revision_date_stmtContext.class, getFormattedDate());

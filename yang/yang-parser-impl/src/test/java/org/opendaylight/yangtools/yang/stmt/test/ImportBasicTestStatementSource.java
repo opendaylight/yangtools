@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.stmt.test;
 
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.CONTAINER;
 import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.IMPORT;
 import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.MODULE;
 import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.NAMESPACE;
-import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.*;
-
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.PREFIX;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.REVISION;
+import static org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping.REVISION_DATE;
 import java.util.Arrays;
 import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -22,8 +24,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 
 class ImportBasicTestStatementSource implements StatementStreamSource {
 
@@ -32,7 +32,7 @@ class ImportBasicTestStatementSource implements StatementStreamSource {
     private final String name;
     private final List<String> imports;
     private StatementWriter writer;
-    private StatementSourceReference REF = new StatementSourceReference() {
+    private final StatementSourceReference REF = new StatementSourceReference() {
 
         @Override
         public StatementSource getStatementSource() {
@@ -41,13 +41,13 @@ class ImportBasicTestStatementSource implements StatementStreamSource {
     };
 
 
-    public ImportBasicTestStatementSource(String name, String... imports) {
+    public ImportBasicTestStatementSource(final String name, final String... imports) {
         this.name = name;
         this.imports = Arrays.asList(imports);
     }
 
     @Override
-    public void writeFull(StatementWriter writer, QNameToStatementDefinition stmtDef, PrefixToModule prefixes)
+    public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes)
             throws SourceException {
         this.writer = writer;
         header();
@@ -60,14 +60,14 @@ class ImportBasicTestStatementSource implements StatementStreamSource {
 
 
     @Override
-    public void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef) throws SourceException {
+    public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef) throws SourceException {
         this.writer = writer;
         header().end();
     }
 
     @Override
-    public void writeLinkageAndStatementDefinitions(StatementWriter writer, QNameToStatementDefinition stmtDef,
-            PrefixToModule prefixes) throws SourceException {
+    public void writeLinkageAndStatementDefinitions(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+            final PrefixToModule prefixes) throws SourceException {
         this.writer = writer;
         header();
         extensions();
@@ -145,12 +145,12 @@ class ImportBasicTestStatementSource implements StatementStreamSource {
         return NS_PREFIX + name;
     }
 
-    protected ImportBasicTestStatementSource arg(String arg) throws SourceException {
+    protected ImportBasicTestStatementSource arg(final String arg) throws SourceException {
         writer.argumentValue(arg, REF);
         return this;
     }
 
-    protected ImportBasicTestStatementSource stmt(Rfc6020Mapping stmt) throws SourceException {
+    protected ImportBasicTestStatementSource stmt(final Rfc6020Mapping stmt) throws SourceException {
         writer.startStatement(stmt.getStatementName(), REF);
         return this;
     }

@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
 import java.io.Serializable;
-import java.util.LinkedList;
+import java.util.List;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -18,19 +18,19 @@ final class QNameWithPredicateImpl implements Immutable, Serializable,
 
     private static final long serialVersionUID = 1L;
 
-    private final LinkedList<QNamePredicate> qnamePredicates;
+    private final List<QNamePredicate> qnamePredicates;
     private final QNameModule moduleQname;
     private final String localName;
 
     public QNameWithPredicateImpl(final QNameModule moduleQname, final String localName,
-            final LinkedList<QNamePredicate> qnamePredicates) {
+            final List<QNamePredicate> qnamePredicates) {
         this.moduleQname = moduleQname;
         this.localName = localName;
         this.qnamePredicates = qnamePredicates;
     }
 
     @Override
-    public LinkedList<QNamePredicate> getQNamePredicates() {
+    public List<QNamePredicate> getQNamePredicates() {
         return qnamePredicates;
     }
 

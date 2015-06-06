@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
 import com.google.common.base.Optional;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -168,7 +167,7 @@ public class RefineHolderTest {
         rh1.setReference("reference");
     }
 
-    private URI getUri(final String uri) {
+    private static URI getUri(final String uri) {
         URI simpleUri = null;
         boolean instantionated = false;
         try {

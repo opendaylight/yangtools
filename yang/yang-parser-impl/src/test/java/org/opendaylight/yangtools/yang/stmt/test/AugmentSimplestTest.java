@@ -1,5 +1,6 @@
 package org.opendaylight.yangtools.yang.stmt.test;
 
+import static org.junit.Assert.assertNotNull;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -7,8 +8,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-
-import static org.junit.Assert.assertNotNull;
 
 public class AugmentSimplestTest {
 
@@ -24,7 +23,7 @@ public class AugmentSimplestTest {
         assertNotNull(result);
     }
 
-    private void addSources(CrossSourceStatementReactor.BuildAction reactor, StatementStreamSource... sources) {
+    private static void addSources(final CrossSourceStatementReactor.BuildAction reactor, final StatementStreamSource... sources) {
         for (StatementStreamSource source : sources) {
             reactor.addSource(source);
         }

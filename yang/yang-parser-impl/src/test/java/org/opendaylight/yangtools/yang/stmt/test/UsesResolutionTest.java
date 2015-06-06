@@ -4,15 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class UsesResolutionTest {
 
@@ -107,7 +106,7 @@ public class UsesResolutionTest {
         }
     }
 
-    private void log(Throwable e, String indent) {
+    private void log(final Throwable e, final String indent) {
         System.out.println(indent + e.getMessage());
 
         Throwable[] suppressed = e.getSuppressed();
@@ -117,11 +116,10 @@ public class UsesResolutionTest {
 
     }
 
-    private void addSources(BuildAction reactor,
-            UsesTestStatementSource... sources) {
+    private static void addSources(final BuildAction reactor,
+            final UsesTestStatementSource... sources) {
         for (UsesTestStatementSource source : sources) {
             reactor.addSource(source);
         }
     }
-
 }
