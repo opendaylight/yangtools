@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
+import com.google.common.base.Optional;
 import java.net.URI;
 import java.util.Date;
-
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -29,12 +29,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ModuleEffectiveStatementImpl;
-
-import com.google.common.base.Optional;
 
 public class ModuleStatementSupport extends
         AbstractStatementSupport<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> {
@@ -72,16 +71,14 @@ public class ModuleStatementSupport extends
                     + "] is missing.");
         }
 
-        // FIXME: this is wrong, it has to select the newest revision statement, not the first it encounters.
-        //         YANG files are not required to order revisions
-        Optional<Date> revisionDate = Optional.fromNullable(firstAttributeOf(stmt.declaredSubstatements(),
-                RevisionStatement.class));
+        Optional<Date> revisionDate = Optional.fromNullable(getLatestRevision(stmt.declaredSubstatements()));
 
         qNameModule = QNameModule.cachedReference(QNameModule.create(moduleNs.get(), revisionDate.orNull()));
         ModuleIdentifier moduleIdentifier = new ModuleIdentifierImpl(stmt.getStatementArgument(),
                 Optional.<URI> absent(), revisionDate);
 
         stmt.addContext(ModuleNamespace.class, moduleIdentifier, stmt);
+        stmt.addContext(ModuleNamespaceForBelongsTo.class, moduleIdentifier.getName(), stmt);
         stmt.addContext(NamespaceToModule.class, qNameModule, stmt);
 
         String modulePrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
@@ -103,5 +100,21 @@ public class ModuleStatementSupport extends
             throws SourceException {
 
         stmt.addContext(NamespaceToModule.class, qNameModule, stmt);
+    }
+
+    private static Date getLatestRevision(Iterable<? extends StmtContext<?, ?, ?>> subStmts) {
+        Date revision = null;
+        for (StmtContext<?, ?, ?> subStmt : subStmts) {
+            if (subStmt.getPublicDefinition().getDeclaredRepresentationClass().isAssignableFrom(RevisionStatement
+                    .class)) {
+                if (revision == null && subStmt.getStatementArgument() != null) {
+                    revision = (Date) subStmt.getStatementArgument();
+                } else if (subStmt.getStatementArgument() != null && ((Date) subStmt.getStatementArgument()).compareTo
+                        (revision) > 0) {
+                    revision = (Date) subStmt.getStatementArgument();
+                }
+            }
+        }
+        return revision;
     }
 }
