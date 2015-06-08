@@ -16,6 +16,23 @@
       "revId": "d876897016cfd4783bbc1fcd0195b5b0f397437c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_43793c2e",
+        "filename": "yang/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonStreamToNormalizedNodeTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-08T22:40:57Z",
+      "side": 1,
+      "message": "we already have a static import of assertEquals, do we really need this one, too?",
+      "revId": "d876897016cfd4783bbc1fcd0195b5b0f397437c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
