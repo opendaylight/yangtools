@@ -31,8 +31,12 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSource {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DataNodeContainerSerializerSource.class);
 
     protected static final String INPUT = "_input";
     private static final String CHOICE_PREFIX = "CHOICE_";
@@ -128,6 +132,19 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
             if (!schemaChild.isAugmenting()) {
                 final String getter = getGetterName(schemaChild);
                 final Type childType = getterToType.get(getter);
+                if (childType == null) {
+                    // FIXME AnyXml nodes are ignored, since their type cannot be found in generated bindnig
+                    // Bug-706 https://bugs.opendaylight.org/show_bug.cgi?id=706
+                    if (schemaChild instanceof AnyXmlSchemaNode) {
+                        LOG.warn("Node {} will be ignored. AnyXml is not yet supported from binding aware code." +
+                                "Binding Independent code can be used to serialize anyXml nodes.", schemaChild.getPath());
+                        continue;
+                    } else {
+                        throw new IllegalStateException(
+                                String.format("Unable to find type for child node %s. Expected child nodes: %s",
+                                        schemaChild.getPath(), getterToType));
+                    }
+                }
                 emitChild(b, getter, childType, schemaChild);
             }
         }
