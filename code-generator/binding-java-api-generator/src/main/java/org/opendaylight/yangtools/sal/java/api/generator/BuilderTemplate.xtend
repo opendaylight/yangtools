@@ -716,8 +716,15 @@ class BuilderTemplate extends BaseTemplate {
      */
     def protected generateHashCode() '''
         «IF !properties.empty || augmentField != null»
+            private int hash = 0;
+            private volatile boolean hashValid = false;
+
             @Override
             public int hashCode() {
+                if (hashValid) {
+                    return hash;
+                }
+
                 final int prime = 31;
                 int result = 1;
                 «FOR property : properties»
@@ -730,6 +737,9 @@ class BuilderTemplate extends BaseTemplate {
                 «IF augmentField != null»
                     result = prime * result + ((«augmentField.name» == null) ? 0 : «augmentField.name».hashCode());
                 «ENDIF»
+
+                hash = result;
+                hashValid = true;
                 return result;
             }
         «ENDIF»
