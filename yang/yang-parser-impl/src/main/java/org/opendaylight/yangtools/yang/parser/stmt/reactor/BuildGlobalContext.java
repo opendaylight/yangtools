@@ -7,8 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 
+import java.util.Map.Entry;
+import java.util.Collection;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
@@ -49,18 +53,28 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
             .build();
 
     private final Map<QName,StatementDefinitionContext<?,?,?>> definitions = new HashMap<>();
-    private final Map<Class<?>,NamespaceBehaviourWithListeners<?, ?, ?>> namespaces = new HashMap<>();
+    private final Map<Class<?>,NamespaceBehaviourWithListeners<?, ?, ?>> supportedNamespaces = new HashMap<>();
 
 
     private final Map<ModelProcessingPhase,StatementSupportBundle> supports;
     private final Set<SourceSpecificContext> sources = new HashSet<>();
 
-    private ModelProcessingPhase currentPhase;
-    private ModelProcessingPhase finishedPhase;
+    private ModelProcessingPhase currentPhase = ModelProcessingPhase.INIT;
+    private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
 
     public BuildGlobalContext(Map<ModelProcessingPhase, StatementSupportBundle> supports) {
         super();
         this.supports = supports;
+    }
+
+    public BuildGlobalContext(Map<ModelProcessingPhase, StatementSupportBundle> supports,  Map<ValidationBundleType,Collection<?>> supportedValidation) {
+        super();
+        this.supports = supports;
+
+        Set<Entry<ValidationBundleType, Collection<?>>> validationBundles = supportedValidation.entrySet();
+        for (Entry<ValidationBundleType, Collection<?>> validationBundle : validationBundles) {
+            addToNs(ValidationBundlesNamespace.class, validationBundle.getKey(), validationBundle.getValue());
+        }
     }
 
     public StatementSupportBundle getSupportsForPhase(ModelProcessingPhase currentPhase) {
@@ -88,12 +102,12 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> getNamespaceBehaviour(Class<N> type) {
-        NamespaceBehaviourWithListeners<?, ?, ?> potential = namespaces.get(type);
+        NamespaceBehaviourWithListeners<?, ?, ?> potential = supportedNamespaces.get(type);
         if (potential == null) {
             NamespaceBehaviour<K, V, N> potentialRaw = supports.get(currentPhase).getNamespaceBehaviour(type);
             if(potentialRaw != null) {
                 potential = new NamespaceBehaviourWithListeners<>(potentialRaw);
-                namespaces.put(type, potential);
+                supportedNamespaces.put(type, potential);
             }
         }
         if (potential != null) {
@@ -191,7 +205,8 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
                 progressing = false;
                 Iterator<SourceSpecificContext> currentSource = sourcesToProgress.iterator();
                 while(currentSource.hasNext()) {
-                    PhaseCompletionProgress sourceProgress = currentSource.next().tryToCompletePhase(currentPhase);
+                    SourceSpecificContext nextSourceCtx = currentSource.next();
+                    PhaseCompletionProgress sourceProgress = nextSourceCtx.tryToCompletePhase(currentPhase);
                     switch (sourceProgress) {
                         case FINISHED:
                             currentSource.remove();
