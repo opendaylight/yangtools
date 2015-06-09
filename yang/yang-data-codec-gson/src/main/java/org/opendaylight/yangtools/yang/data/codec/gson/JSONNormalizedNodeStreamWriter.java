@@ -7,10 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.gson.stream.JsonWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.net.URI;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -22,10 +26,6 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-
-import java.io.IOException;
-import java.io.Writer;
-import java.net.URI;
 
 /**
  * This implementation will create JSON output as output stream.
@@ -44,7 +44,14 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
     /**
      * Matcher used to check if a string needs to be escaped.
      */
-    private static final CharMatcher JSON_ILLEGAL_STRING_CHARACTERS = CharMatcher.anyOf("\\\"\n\r");
+
+    private static final CharMatcher NEWLINE_CHAR_MATCHER = CharMatcher.is('\n');
+    private static final CharMatcher BACKSPACE_CHAR_MATCHER = CharMatcher.is('\b');
+    private static final CharMatcher FORMFEED_CHAR_MATCHER = CharMatcher.is('\f');
+    private static final CharMatcher CR_CHAR_MATCHER = CharMatcher.is('\r');
+    private static final CharMatcher TAB_CHAR_MATCHER = CharMatcher.is('\t');
+    private static final CharMatcher QUOTE_CHAR_MATCHER = CharMatcher.is('\"');
+    private static final CharMatcher REVERSE_SOLIDUS_CHAR_MATCHER = CharMatcher.is('\\');
 
     private final SchemaTracker tracker;
     private final JSONCodecFactory codecs;
@@ -62,9 +69,10 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         } else {
             indent = null;
         }
-        this.codecs = Preconditions.checkNotNull(codecFactory);
-        this.tracker = SchemaTracker.create(codecFactory.getSchemaContext(), path);
-        this.context = new JSONStreamWriterRootContext(initialNs);
+        codecs = Preconditions.checkNotNull(codecFactory);
+        tracker = SchemaTracker.create(codecFactory.getSchemaContext(), path);
+        context = new JSONStreamWriterRootContext(initialNs);
+
     }
 
     /**
@@ -229,27 +237,25 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         if (needQuotes) {
             writer.append('"');
 
-            final int needEscape = JSON_ILLEGAL_STRING_CHARACTERS.countIn(str);
-            if (needEscape != 0) {
-                final char[] escaped = new char[str.length() + needEscape];
-                int offset = 0;
-
-                for (int i = 0; i < str.length(); i++) {
-                    final char c = str.charAt(i);
-                    if (JSON_ILLEGAL_STRING_CHARACTERS.matches(c)) {
-                        escaped[offset++] = '\\';
-                    }
-                    escaped[offset++] = c;
-                }
-                writer.write(escaped);
-            } else {
-                writer.append(str);
-            }
+            final String escaped = replaceAllIllegalChars(str);
+            writer.append(escaped);
 
             writer.append('"');
         } else {
             writer.append(str);
         }
+    }
+
+    @VisibleForTesting
+    static String replaceAllIllegalChars(final String string){
+        String result = REVERSE_SOLIDUS_CHAR_MATCHER.replaceFrom(string, "\\\\\\\\");
+        result = BACKSPACE_CHAR_MATCHER.replaceFrom(result, "\\\\b");
+        result = FORMFEED_CHAR_MATCHER.replaceFrom(result, "\\\\f");
+        result = NEWLINE_CHAR_MATCHER.replaceFrom(result, "\\\\n");
+        result = CR_CHAR_MATCHER.replaceFrom(result, "\\\\r");
+        result = TAB_CHAR_MATCHER.replaceFrom(result, "\\\\t");
+        result = QUOTE_CHAR_MATCHER.replaceFrom(result, "\\\\\"");
+        return result;
     }
 
     @Override
