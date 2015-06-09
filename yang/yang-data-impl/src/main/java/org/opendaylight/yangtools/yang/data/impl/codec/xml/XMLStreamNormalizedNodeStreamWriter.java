@@ -101,7 +101,7 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
         try {
             writeStartElement(qname);
             if (value != null) {
-                streamUtils.writeValue(writer, type, value);
+                streamUtils.writeValue(writer, type, value, qname.getModule());
             }
             writer.writeEndElement();
         } catch (XMLStreamException e) {
@@ -113,7 +113,7 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
         try {
             writeStartElement(qname);
             if (value != null) {
-                streamUtils.writeValue(writer, schemaNode, value);
+                streamUtils.writeValue(writer, schemaNode, value, qname.getModule());
             }
             writer.writeEndElement();
         } catch (XMLStreamException e) {
@@ -124,9 +124,10 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
     private void writeElement(final QName qname, final SchemaNode schemaNode, final Object value, final Map<QName, String> attributes) throws IOException {
         try {
             writeStartElement(qname);
+
             writeAttributes(attributes);
             if (value != null) {
-                streamUtils.writeValue(writer, schemaNode, value);
+                streamUtils.writeValue(writer, schemaNode, value, qname.getModule());
             }
             writer.writeEndElement();
         } catch (XMLStreamException e) {
@@ -191,6 +192,7 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
         for (final Map.Entry<QName, String> qNameStringEntry : attributes.entrySet()) {
             try {
                 final String namespace = qNameStringEntry.getKey().getNamespace().toString();
+
                 if(Strings.isNullOrEmpty(namespace)) {
                     writer.writeAttribute(qNameStringEntry.getKey().getLocalName(), qNameStringEntry.getValue());
                 } else {
