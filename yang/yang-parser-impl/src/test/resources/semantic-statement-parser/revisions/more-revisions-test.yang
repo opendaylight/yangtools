@@ -1,0 +1,14 @@
+module more-revisions {
+    namespace "urn.mr";
+    prefix "mr";
+
+    //RFC6020 says that all revisions SHOULD be in reverse chronological order, but it doesn't say they MUST
+    //so, we have to take care of it in Java code (ModuleStatementSupport class)
+    revision "2015-05-07";
+
+    revision "2015-05-08";
+
+    revision "2015-05-01";
+
+    revision "2015-06-07";
+}
