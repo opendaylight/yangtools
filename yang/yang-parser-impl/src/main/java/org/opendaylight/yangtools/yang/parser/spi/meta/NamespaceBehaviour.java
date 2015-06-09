@@ -13,6 +13,8 @@ import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
+import java.util.Map;
+
 /**
  * Definition / implementation of specific Identifier Namespace behaviour.
  *
@@ -45,6 +47,8 @@ public abstract class NamespaceBehaviour<K,V, N extends IdentifierNamespace<K, V
         @Nullable NamespaceStorageNode getParentNamespaceStorage();
 
         @Nullable  <K, V, N extends IdentifierNamespace<K, V>> V getFromLocalStorage(Class<N> type, K key);
+
+        @Nullable <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromLocalStorage(Class<N> type);
 
         @Nullable  <K, V, N extends IdentifierNamespace<K, V>> void addToLocalStorage(Class<N> type, K key, V value);
 
@@ -101,6 +105,8 @@ public abstract class NamespaceBehaviour<K,V, N extends IdentifierNamespace<K, V
 
     public abstract V getFrom(NamespaceStorageNode storage, K key);
 
+    public abstract Map<K, V> getAllFrom(NamespaceStorageNode storage);
+
     public abstract void addTo(NamespaceStorageNode storage,K key,V value);
 
     @Override
@@ -110,6 +116,10 @@ public abstract class NamespaceBehaviour<K,V, N extends IdentifierNamespace<K, V
 
     protected final V getFromLocalStorage(NamespaceStorageNode storage, K key) {
         return storage.getFromLocalStorage(getIdentifier(), key);
+    }
+
+    protected final Map<K, V> getAllFromLocalStorage(NamespaceStorageNode storage) {
+        return storage.getAllFromLocalStorage(getIdentifier());
     }
 
     protected final void addToStorage(NamespaceStorageNode storage,K key,V value) {
@@ -132,6 +142,16 @@ public abstract class NamespaceBehaviour<K,V, N extends IdentifierNamespace<K, V
                 current = current.getParentNamespaceStorage();
             }
             return getFromLocalStorage(current,key);
+        }
+
+        @Override
+        public Map<K, V> getAllFrom(final NamespaceStorageNode storage) {
+            NamespaceStorageNode current = storage;
+            while(current.getStorageNodeType() != storageType) {
+                current = current.getParentNamespaceStorage();
+            }
+
+            return getAllFromLocalStorage(current);
         }
 
         @Override
@@ -164,18 +184,18 @@ public abstract class NamespaceBehaviour<K,V, N extends IdentifierNamespace<K, V
             return null;
         }
 
-//        @Override
-//        public Map<K, V> getAllFrom(final NamespaceStorageNode storage) {
-//            NamespaceStorageNode current = storage;
-//            while(current != null) {
-//                final Map<K, V> val = getAllFromLocalStorage(current);
-//                if(val != null) {
-//                    return val;
-//                }
-//                current = current.getParentNamespaceStorage();
-//            }
-//            return null;
-//        }
+        @Override
+        public Map<K, V> getAllFrom(final NamespaceStorageNode storage) {
+            NamespaceStorageNode current = storage;
+            while (current != null) {
+                final Map<K, V> val = getAllFromLocalStorage(current);
+                if (val != null) {
+                    return val;
+                }
+                current = current.getParentNamespaceStorage();
+            }
+            return null;
+        }
 
         @Override
         public void addTo(NamespaceStorageNode storage,K key, V value) {
