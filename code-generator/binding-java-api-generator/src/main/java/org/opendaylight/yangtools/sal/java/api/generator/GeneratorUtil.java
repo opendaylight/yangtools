@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.sal.java.api.generator;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.opendaylight.yangtools.sal.java.api.generator.Constants.COMMA;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -32,6 +31,7 @@ public final class GeneratorUtil {
      * It doesn't have the sense to create the instances of this class.
      */
     private GeneratorUtil() {
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -46,7 +46,7 @@ public final class GeneratorUtil {
      * @throws IllegalArgumentException
      *             if <code>genType</code> equals <code>null</code>
      */
-    public static Map<String, String> createImports(GeneratedType genType) {
+    public static Map<String, String> createImports(final GeneratedType genType) {
         if (genType == null) {
             throw new IllegalArgumentException("Generated Type cannot be NULL!");
         }
@@ -178,7 +178,7 @@ public final class GeneratorUtil {
      *             <li>if <code>genTO</code> equals <code>null</code></li>
      *             </ul>
      */
-    public static boolean isConstantInTO(String constName, GeneratedTransferObject genTO) {
+    public static boolean isConstantInTO(final String constName, final GeneratedTransferObject genTO) {
         if (constName == null || genTO == null) {
             throw new IllegalArgumentException();
         }
@@ -201,7 +201,7 @@ public final class GeneratorUtil {
      * @return map of the package names for all the enclosed types and
      *         recursivelly their enclosed types
      */
-    public static Map<String, String> createChildImports(GeneratedType genType) {
+    public static Map<String, String> createChildImports(final GeneratedType genType) {
         Map<String, String> childImports = new LinkedHashMap<>();
         List<GeneratedType> childGeneratedTypes = genType.getEnclosedTypes();
         if (!childGeneratedTypes.isEmpty()) {
@@ -289,7 +289,7 @@ public final class GeneratorUtil {
      *         <li>then <code>builder</code> + actual <code>type</code>
      *         parameters</li> <li>else only <code>builder</code></li>
      */
-    private static StringBuilder addActualTypeParameters(StringBuilder builder, final Type type,
+    private static StringBuilder addActualTypeParameters(final StringBuilder builder, final Type type,
             final GeneratedType parentGenType, final Map<String, String> imports) {
         if (type instanceof ParameterizedType) {
             final ParameterizedType pType = (ParameterizedType) type;
@@ -314,7 +314,7 @@ public final class GeneratorUtil {
      * @return string with all actual type parameters from <code>pTypes</code>
      */
     private static String getParameters(final GeneratedType parentGenType, final Type[] pTypes,
-            Map<String, String> availableImports) {
+            final Map<String, String> availableImports) {
         if (pTypes == null || pTypes.length == 0) {
             return "?";
         }
@@ -355,7 +355,7 @@ public final class GeneratorUtil {
      * @throws IllegalArgumentException
      *             if <code>childTransportObject</code> equals <code>null</code>
      */
-    public static GeneratedTransferObject getTopParrentTransportObject(GeneratedTransferObject childTransportObject) {
+    public static GeneratedTransferObject getTopParrentTransportObject(final GeneratedTransferObject childTransportObject) {
         if (childTransportObject == null) {
             throw new IllegalArgumentException("Parameter childTransportObject can't be null.");
         }
@@ -375,7 +375,7 @@ public final class GeneratorUtil {
      * @return subset of <code>properties</code> which have read only attribute
      *         set to true
      */
-    public static List<GeneratedProperty> resolveReadOnlyPropertiesFromTO(List<GeneratedProperty> properties) {
+    public static List<GeneratedProperty> resolveReadOnlyPropertiesFromTO(final List<GeneratedProperty> properties) {
         List<GeneratedProperty> readOnlyProperties = new ArrayList<GeneratedProperty>();
         if (properties != null) {
             for (final GeneratedProperty property : properties) {
@@ -399,7 +399,7 @@ public final class GeneratorUtil {
      *         generated transfer object. In case when extension exists the
      *         method is recursive called.
      */
-    public static List<GeneratedProperty> getPropertiesOfAllParents(GeneratedTransferObject genTO) {
+    public static List<GeneratedProperty> getPropertiesOfAllParents(final GeneratedTransferObject genTO) {
         List<GeneratedProperty> propertiesOfAllParents = new ArrayList<GeneratedProperty>();
         if (genTO.getSuperType() != null) {
             final List<GeneratedProperty> allPropertiesOfTO = genTO.getSuperType().getProperties();
