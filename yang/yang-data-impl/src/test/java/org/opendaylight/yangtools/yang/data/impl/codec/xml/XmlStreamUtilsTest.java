@@ -8,8 +8,10 @@
 
 package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
@@ -19,7 +21,10 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.AbstractMap;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 import org.custommonkey.xmlunit.Diff;
@@ -96,6 +101,31 @@ public class XmlStreamUtilsTest {
 
         final boolean identical = diff.identical();
         assertTrue("Xml differs: " + diff.toString(), identical);
+    }
+
+    @Test
+    public void testWriteIdentityRef() throws Exception {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final XMLStreamWriter writer =  XML_OUTPUT_FACTORY.createXMLStreamWriter(out);
+
+        writer.writeStartElement("element");
+        final QNameModule parent = QNameModule.create(URI.create("parent:uri"), new Date());
+        XmlStreamUtils.write(writer, null, QName.create(parent, "identity"), Optional.of(parent));
+        writer.writeEndElement();
+
+        writer.writeStartElement("elementDifferent");
+        XmlStreamUtils.write(writer, null, QName.create("different:namespace", "identity"), Optional.of(parent));
+        writer.writeEndElement();
+
+        writer.close();
+        out.close();
+
+        final String xmlAsString = new String(out.toByteArray()).replaceAll("\\s*", "");
+        assertThat(xmlAsString, containsString("element>identity"));
+
+        final Pattern prefixedIdentityPattern = Pattern.compile(".*\"different:namespace\">(.*):identity.*");
+        final Matcher matcher = prefixedIdentityPattern.matcher(xmlAsString);
+        assertTrue("Xml: " + xmlAsString + " should match: " + prefixedIdentityPattern, matcher.matches());
     }
 
     /**
