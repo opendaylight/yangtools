@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -70,7 +71,7 @@ public class XmlStreamUtils {
 
         final RandomPrefix prefixes = new RandomPrefix();
         final String str = XmlUtils.encodeIdentifier(prefixes, id);
-        writeNamespaceDeclarations(writer,prefixes.getPrefixes());
+        writeNamespaceDeclarations(writer, prefixes.getPrefixes());
         writer.writeCharacters(str);
     }
 
@@ -90,9 +91,10 @@ public class XmlStreamUtils {
      * @param writer XML Stream writer
      * @param schemaNode Schema node that describes the value
      * @param value data value
+     * @param parent optional parameter of a module QName owning the leaf definition
      * @throws XMLStreamException if an encoding problem occurs
      */
-    public void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final SchemaNode schemaNode, final Object value) throws XMLStreamException {
+    public void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final SchemaNode schemaNode, final Object value, final Optional<QNameModule> parent) throws XMLStreamException {
         if (value == null) {
             LOG.debug("Value of {}:{} is null, not encoding it", schemaNode.getQName().getNamespace(), schemaNode.getQName().getLocalName());
             return;
@@ -112,7 +114,15 @@ public class XmlStreamUtils {
             baseType = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypeDefinition, schemaContext.get(), schemaNode);
         }
 
-        writeValue(writer, baseType, value);
+        writeValue(writer, baseType, value, parent);
+    }
+
+    public void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final SchemaNode schemaNode, final Object value) throws XMLStreamException {
+        writeValue(writer, schemaNode, value, Optional.<QNameModule>absent());
+    }
+
+    public void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final SchemaNode schemaNode, final Object value, final QNameModule parent) throws XMLStreamException {
+        writeValue(writer, schemaNode, value, Optional.of(parent));
     }
 
     /**
@@ -122,9 +132,10 @@ public class XmlStreamUtils {
      * @param writer XML Stream writer
      * @param type data type. In case of leaf ref this should be the type of leaf being referenced
      * @param value data value
+     * @param parent optional parameter of a module QName owning the leaf definition
      * @throws XMLStreamException if an encoding problem occurs
      */
-    public void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final TypeDefinition<?> type, final Object value) throws XMLStreamException {
+    public void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final TypeDefinition<?> type, final Object value, final Optional<QNameModule> parent) throws XMLStreamException {
         if (value == null) {
             LOG.debug("Value of {}:{} is null, not encoding it", type.getQName().getNamespace(), type.getQName().getLocalName());
             return;
@@ -132,35 +143,54 @@ public class XmlStreamUtils {
         TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(type);
 
         if (baseType instanceof IdentityrefTypeDefinition) {
-            write(writer, (IdentityrefTypeDefinition) baseType, value);
+            if (parent.isPresent()) {
+                write(writer, (IdentityrefTypeDefinition) baseType, value, parent);
+            } else {
+                write(writer, (IdentityrefTypeDefinition) baseType, value, Optional.<QNameModule>absent());
+            }
         } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
             write(writer, (InstanceIdentifierTypeDefinition) baseType, value);
         } else {
-            final TypeDefinitionAwareCodec<Object, ?> codec = codecProvider.codecFor(baseType);
+            final TypeDefinitionAwareCodec<Object, ?> codec = codecProvider.codecFor(type);
             String text;
             if (codec != null) {
                 try {
                     text = codec.serialize(value);
                 } catch (ClassCastException e) {
-                    LOG.error("Provided node value {} did not have type {} required by mapping. Using stream instead.", value, baseType, e);
+                    LOG.error("Provided node value {} did not have type {} required by mapping. Using stream instead.", value, type, e);
                     text = String.valueOf(value);
                 }
             } else {
-                LOG.error("Failed to find codec for {}, falling back to using stream", baseType);
+                LOG.error("Failed to find codec for {}, falling back to using stream", type);
                 text = String.valueOf(value);
             }
             writer.writeCharacters(text);
         }
     }
 
-    private static void write(@Nonnull final XMLStreamWriter writer, @Nonnull final IdentityrefTypeDefinition type, @Nonnull final Object value) throws XMLStreamException {
+    public void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final TypeDefinition<?> type, final Object value, final QNameModule parent) throws XMLStreamException {
+        writeValue(writer, type, value, Optional.of(parent));
+    }
+
+    public void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final TypeDefinition<?> type, final Object value) throws XMLStreamException {
+        writeValue(writer, type, value, Optional.<QNameModule>absent());
+    }
+
+    @VisibleForTesting
+    static void write(@Nonnull final XMLStreamWriter writer, @Nonnull final IdentityrefTypeDefinition type, @Nonnull final Object value, final Optional<QNameModule>  parent) throws XMLStreamException {
         if (value instanceof QName) {
             final QName qname = (QName) value;
             final String prefix = "x";
 
-            final String ns = qname.getNamespace().toString();
-            writer.writeNamespace(prefix, ns);
-            writer.writeCharacters(prefix + ':' + qname.getLocalName());
+            //in case parent is present and same as element namespace write value without namespace
+            if (parent.isPresent() && qname.getNamespace().equals(parent.get().getNamespace())){
+                writer.writeCharacters(qname.getLocalName());
+            } else {
+                final String ns = qname.getNamespace().toString();
+                writer.writeNamespace(prefix, ns);
+                writer.writeCharacters(prefix + ':' + qname.getLocalName());
+            }
+
         } else {
             LOG.debug("Value of {}:{} is not a QName but {}", type.getQName().getNamespace(), type.getQName().getLocalName(), value.getClass());
             writer.writeCharacters(String.valueOf(value));
