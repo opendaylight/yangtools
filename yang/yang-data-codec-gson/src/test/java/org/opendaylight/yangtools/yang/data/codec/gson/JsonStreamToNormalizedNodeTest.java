@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadModules;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
-
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -60,34 +59,34 @@ public class JsonStreamToNormalizedNodeTest {
 
     @Test
     public void leafNodeInContainer() throws IOException, URISyntaxException {
-        String inputJson = loadTextFile("/complexjson/leaf-node-in-container.json");
+        final String inputJson = loadTextFile("/complexjson/leaf-node-in-container.json");
         verifyTransformationToNormalizedNode(inputJson, TestingNormalizedNodeStructuresCreator.leafNodeInContainer());
     }
 
     @Test
     public void leafNodeViaAugmentationInContainer() throws IOException, URISyntaxException {
-        String inputJson = loadTextFile("/complexjson/leaf-node-via-augmentation-in-container.json");
+        final String inputJson = loadTextFile("/complexjson/leaf-node-via-augmentation-in-container.json");
         verifyTransformationToNormalizedNode(inputJson,
                 TestingNormalizedNodeStructuresCreator.leafNodeViaAugmentationInContainer());
     }
 
     @Test
     public void leafListNodeInContainer() throws IOException, URISyntaxException {
-        String inputJson = loadTextFile("/complexjson/leaflist-node-in-container.json");
+        final String inputJson = loadTextFile("/complexjson/leaflist-node-in-container.json");
         verifyTransformationToNormalizedNode(inputJson,
                 TestingNormalizedNodeStructuresCreator.leafListNodeInContainer());
     }
 
     @Test
     public void keyedListNodeInContainer() throws IOException, URISyntaxException {
-        String inputJson = loadTextFile("/complexjson/keyed-list-node-in-container.json");
+        final String inputJson = loadTextFile("/complexjson/keyed-list-node-in-container.json");
         verifyTransformationToNormalizedNode(inputJson,
                 TestingNormalizedNodeStructuresCreator.keyedListNodeInContainer());
     }
 
     @Test
     public void choiceNodeInContainer() throws IOException, URISyntaxException {
-        String inputJson = loadTextFile("/complexjson/choice-node-in-container.json");
+        final String inputJson = loadTextFile("/complexjson/choice-node-in-container.json");
         verifyTransformationToNormalizedNode(inputJson, TestingNormalizedNodeStructuresCreator.choiceNodeInContainer());
     }
 
@@ -100,7 +99,7 @@ public class JsonStreamToNormalizedNodeTest {
      */
     @Test
     public void caseNodeAugmentationInChoiceInContainer() throws IOException, URISyntaxException {
-        String inputJson = loadTextFile("/complexjson/case-node-augmentation-in-choice-in-container.json");
+        final String inputJson = loadTextFile("/complexjson/case-node-augmentation-in-choice-in-container.json");
         verifyTransformationToNormalizedNode(inputJson,
                 TestingNormalizedNodeStructuresCreator.caseNodeAugmentationInChoiceInContainer());
     }
@@ -113,7 +112,7 @@ public class JsonStreamToNormalizedNodeTest {
      */
     @Test
     public void caseNodeExternalAugmentationInChoiceInContainer() throws IOException, URISyntaxException {
-        String inputJson = loadTextFile("/complexjson/case-node-external-augmentation-in-choice-in-container.json");
+        final String inputJson = loadTextFile("/complexjson/case-node-external-augmentation-in-choice-in-container.json");
         verifyTransformationToNormalizedNode(inputJson,
                 TestingNormalizedNodeStructuresCreator.caseNodeExternalAugmentationInChoiceInContainer());
     }
@@ -123,14 +122,14 @@ public class JsonStreamToNormalizedNodeTest {
      */
     @Test
     public void choiceNodeAugmentationInContainer() throws IOException, URISyntaxException {
-        String inputJson = loadTextFile("/complexjson/choice-node-augmentation-in-container.json");
+        final String inputJson = loadTextFile("/complexjson/choice-node-augmentation-in-container.json");
         verifyTransformationToNormalizedNode(inputJson,
                 TestingNormalizedNodeStructuresCreator.choiceNodeAugmentationInContainer());
     }
 
     @Test
     public void unkeyedNodeInContainer() throws IOException, URISyntaxException {
-        String inputJson = loadTextFile("/complexjson/unkeyed-node-in-container.json");
+        final String inputJson = loadTextFile("/complexjson/unkeyed-node-in-container.json");
         verifyTransformationToNormalizedNode(inputJson, TestingNormalizedNodeStructuresCreator.unkeyedNodeInContainer());
     }
 
@@ -142,7 +141,7 @@ public class JsonStreamToNormalizedNodeTest {
      */
     @Test
     public void missingModuleInfoInTopLevelElement() throws IOException, URISyntaxException {
-        String inputJson = loadTextFile("/complexjson/missing-module-in-top-level.json");
+        final String inputJson = loadTextFile("/complexjson/missing-module-in-top-level.json");
         verifyTransformationToNormalizedNode(inputJson, TestingNormalizedNodeStructuresCreator.topLevelContainer());
     }
 
@@ -155,11 +154,11 @@ public class JsonStreamToNormalizedNodeTest {
      */
     @Test
     public void leafNamesakes() throws IOException, URISyntaxException {
-        String inputJson = loadTextFile("/complexjson/namesakes.json");
+        final String inputJson = loadTextFile("/complexjson/namesakes.json");
         try {
             //second parameter isn't necessary because error will be raised before it is used.
             verifyTransformationToNormalizedNode(inputJson, null);
-        } catch (IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             final String errorMessage = e.getMessage();
             assertTrue(errorMessage.contains("Choose suitable module name for element lf11-namesake:"));
             assertTrue(errorMessage.contains("complexjson-augmentation"));
@@ -175,11 +174,11 @@ public class JsonStreamToNormalizedNodeTest {
      */
     @Test
     public void parsingNotExistingElement() throws IOException, URISyntaxException {
-        String inputJson = loadTextFile("/complexjson/not-existing-element.json");
+        final String inputJson = loadTextFile("/complexjson/not-existing-element.json");
         try {
             //second parameter isn't necessary because error will be raised before it is used.
             verifyTransformationToNormalizedNode(inputJson, null);
-        } catch (IllegalStateException e) {
+        } catch (final IllegalStateException e) {
             assertTrue(e.getMessage().contains("Schema node with name dummy-element wasn't found."));
         }
     }
@@ -187,13 +186,12 @@ public class JsonStreamToNormalizedNodeTest {
 
     private void verifyTransformationToNormalizedNode(final String inputJson,
             final NormalizedNode<?, ?> awaitedStructure) {
-        NormalizedNodeResult result = new NormalizedNodeResult();
+        final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        JsonParserStream jsonParser = JsonParserStream.create(streamWriter, schemaContext);
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, schemaContext);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
-        NormalizedNode<?, ?> transformedInput = result.getResult();
+        final NormalizedNode<?, ?> transformedInput = result.getResult();
         assertEquals("Transformation of json input to normalized node wasn't successful.", awaitedStructure,
                 transformedInput);
     }
-
 }
