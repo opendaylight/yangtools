@@ -448,17 +448,19 @@ class BuilderTemplate extends BaseTemplate {
                 «ENDIF»
             «ENDIF»
             public «type.name»«BUILDER» set«field.name.toFirstUpper»(«field.returnType.importedName» value) {
-                «IF restrictions != null && !restrictions.rangeConstraints.nullOrEmpty»
+                «IF restrictions != null»
                 if (value != null) {
-                    «val rangeGenerator = AbstractRangeGenerator.forType(field.returnType)»
-                    «IF field.returnType instanceof ConcreteType»
-                        «rangeGenerator.generateRangeCheckerCall(field.name.toFirstUpper, "value")»
-                    «ELSE»
-                        «rangeGenerator.generateRangeCheckerCall(field.name.toFirstUpper, "value.getValue()")»
+                    «IF !restrictions.rangeConstraints.nullOrEmpty»
+                        «val rangeGenerator = AbstractRangeGenerator.forType(field.returnType)»
+                        «IF field.returnType instanceof ConcreteType»
+                            «rangeGenerator.generateRangeCheckerCall(field.name.toFirstUpper, "value")»
+                        «ELSE»
+                            «rangeGenerator.generateRangeCheckerCall(field.name.toFirstUpper, "value.getValue()")»
+                        «ENDIF»
                     «ENDIF»
+                    «generateRestrictions(field, "value")»
                 }
                 «ENDIF»
-                «generateRestrictions(field, "value")»
                 this.«field.fieldName» = value;
                 return this;
             }
