@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+import java.util.Set;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import java.util.Collection;
 import java.util.LinkedList;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
@@ -31,7 +33,7 @@ public class AnyXmlEffectiveStatementImpl extends
     private final QName qname;
     private final SchemaPath path;
 
-    boolean configuration;
+    boolean configuration = true;
     AnyXmlSchemaNode original;
     ConstraintDefinition constraintsDef;
     boolean augmenting;
@@ -44,38 +46,48 @@ public class AnyXmlEffectiveStatementImpl extends
         super(ctx);
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
+        this.constraintsDef = new EffectiveConstraintDefinitionImpl(this);
 
-        initSubstatementCollections();
+        initSubstatementCollectionsAndFields();
         initCopyType(ctx);
     }
 
     private void initCopyType(
             StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx) {
 
-        TypeOfCopy typeOfCopy = ctx.getTypeOfCopy();
-        switch (typeOfCopy) {
-        case ADDED_BY_AUGMENTATION:
+        Set<TypeOfCopy> copyTypesFromOriginal = StmtContextUtils.getCopyTypesFromOriginal(ctx);
+
+        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
             augmenting = true;
-            original = (AnyXmlSchemaNode) ctx.getOriginalCtx().buildEffective();
-            break;
-        case ADDED_BY_USES:
+        }
+        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
             addedByUses = true;
+        }
+        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
+            addedByUses = augmenting = true;
+        }
+
+        if (ctx.getTypeOfCopy() != TypeOfCopy.ORIGINAL) {
             original = (AnyXmlSchemaNode) ctx.getOriginalCtx().buildEffective();
-            break;
-        default:
-            break;
         }
     }
 
-    private void initSubstatementCollections() {
+    private void initSubstatementCollectionsAndFields() {
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
 
+        boolean configurationInit = false;
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
                 unknownNodesInit.add(unknownNode);
+            }
+            if (!configurationInit
+                    && effectiveStatement instanceof ConfigEffectiveStatementImpl) {
+                ConfigEffectiveStatementImpl configStmt = (ConfigEffectiveStatementImpl) effectiveStatement;
+                this.configuration = configStmt.argument();
+                configurationInit = true;
             }
         }
 

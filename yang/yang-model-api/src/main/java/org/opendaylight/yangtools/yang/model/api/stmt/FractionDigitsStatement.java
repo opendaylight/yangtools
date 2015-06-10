@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 
-public interface FractionDigitsStatement extends DeclaredStatement<String> {
+public interface FractionDigitsStatement extends DeclaredStatement<Integer> {
 
-    String getValue();
+    Integer getValue();
 }
 
