@@ -54,7 +54,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     }
 
     @Override
-    public final Class<? extends DeclaredStatement<?>> getEffectiveRepresentationClass() {
+    public final Class<? extends EffectiveStatement<?,?>> getEffectiveRepresentationClass() {
         return type.getEffectiveRepresentationClass();
     }
 
