@@ -1,0 +1,14 @@
+module identity-ref-test {
+    yang-version 1;
+    namespace "urn:irt";
+    prefix "irt";
+
+    organization "opendaylight";
+    contact "http://www.opendaylight.org/";
+
+    revision "2015-06-03" {
+        reference "Initial revision.";
+    }
+
+    identity my-type;
+}

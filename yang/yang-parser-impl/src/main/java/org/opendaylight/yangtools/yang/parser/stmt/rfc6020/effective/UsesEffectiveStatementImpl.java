@@ -7,34 +7,89 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-public class UsesEffectiveStatementImpl extends EffectiveStatementBase<QName, UsesStatement>implements UsesNode {
+public class UsesEffectiveStatementImpl extends EffectiveStatementBase<QName, UsesStatement> implements UsesNode {
     private SchemaPath groupingPath;
-    ImmutableSet<AugmentationSchema> augmentations;
     private boolean addedByUses;
     ImmutableMap<SchemaPath, SchemaNode> refines;
+    ImmutableSet<AugmentationSchema> augmentations;
     ImmutableList<UnknownSchemaNode> unknownNodes;
 
     public UsesEffectiveStatementImpl(StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
         super(ctx);
 
-        this.groupingPath = null;
+        initGroupingPath(ctx);
+        initCopyType(ctx);
+        initSubstatementCollections();
+    }
+
+    private void initGroupingPath(StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
+        StmtContext<?, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> grpCtx = ctx.getFromNamespace(
+                GroupingNamespace.class, ctx.getStatementArgument());
+        this.groupingPath = Utils.getSchemaPath(grpCtx);
+    }
+
+    private void initSubstatementCollections() {
+        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
+
+        List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
+        Set<AugmentationSchema> augmentationsInit = new HashSet<>();
+        Map<SchemaPath, SchemaNode> refinesInit = new HashMap<>();
+
+        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
+            if (effectiveStatement instanceof UnknownSchemaNode) {
+                UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
+                unknownNodesInit.add(unknownNode);
+            }
+            if (effectiveStatement instanceof AugmentationSchema) {
+                AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
+                augmentationsInit.add(augmentationSchema);
+            }
+            if (effectiveStatement instanceof RefineEffectiveStatementImpl) {
+                RefineEffectiveStatementImpl refineStmt = (RefineEffectiveStatementImpl) effectiveStatement;
+                SchemaNodeIdentifier identifier = refineStmt.argument();
+                refinesInit.put(Utils.SchemaNodeIdentifierToSchemaPath(identifier), refineStmt.getRefineTargetNode());
+            }
+        }
+
+        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
+        this.augmentations = ImmutableSet.copyOf(augmentationsInit);
+        this.refines = ImmutableMap.copyOf(refinesInit);
+    }
+
+    private void initCopyType(
+            StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
+
+        Set<TypeOfCopy> copyTypesFromOriginal = StmtContextUtils.getCopyTypesFromOriginal(ctx);
+        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
+            addedByUses = true;
+        }
     }
 
     @Override
