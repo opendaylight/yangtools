@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import java.util.Iterator;
+import java.util.Map;
+
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 
@@ -62,5 +64,10 @@ final class NamespaceBehaviourWithListeners<K,V, N extends IdentifierNamespace<K
     public V getFrom(NamespaceBehaviour.NamespaceStorageNode storage,
             K key) {
         return delegate.getFrom(storage, key);
+    }
+
+    @Override
+    public Map<K, V> getAllFrom(final NamespaceStorageNode storage) {
+        return delegate.getAllFrom(storage);
     }
 }

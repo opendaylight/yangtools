@@ -7,6 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import java.util.HashSet;
+
+import java.util.Set;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
+import com.google.common.base.Predicate;
 import java.util.Collection;
 import com.google.common.base.Function;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -25,6 +31,13 @@ public final class StmtContextUtils {
         @Override
         public EffectiveStatement<?, ?> apply(StmtContext<?, ?, ?> input) {
             return input.buildEffective();
+        }
+    };
+
+    public static final Predicate<StmtContext<?, ?,?>> IS_SUPPORTED_TO_BUILD_EFFECTIVE = new Predicate<StmtContext<?,?,?>>() {
+        @Override
+        public boolean apply(StmtContext<?, ?, ?> input) {
+            return input.isSupportedToBuildEffective();
         }
     };
 
@@ -65,13 +78,14 @@ public final class StmtContextUtils {
         return null;
     }
 
-    public static final <DT extends DeclaredStatement<?>> StmtContext<?, ?, ?> findFirstDeclaredSubstatement(
+    @SuppressWarnings("unchecked")
+    public static final <AT,DT extends DeclaredStatement<AT>> StmtContext<AT, ?, ?> findFirstDeclaredSubstatement(
             StmtContext<?, ?, ?> stmtContext, Class<DT> declaredType) {
         Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements = stmtContext
                 .declaredSubstatements();
         for (StmtContext<?, ?, ?> subStmtContext : declaredSubstatements) {
             if (producesDeclared(subStmtContext,declaredType)) {
-                return subStmtContext;
+                return (StmtContext<AT, ?, ?>) subStmtContext;
             }
         }
         return null;
@@ -145,5 +159,41 @@ public final class StmtContextUtils {
             Class<? extends DeclaredStatement<?>> type) {
         return type.isAssignableFrom(ctx.getPublicDefinition()
                 .getDeclaredRepresentationClass());
+    }
+
+    public static boolean isInExtensionBody(
+            StmtContext<?,?,?> stmtCtx) {
+
+        StmtContext<?,?,?> current = stmtCtx;
+        while(!current.getParentContext().isRootContext()) {
+            current = current.getParentContext();
+            if(producesDeclared(current, UnknownStatementImpl.class)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean isUnknownStatement(StmtContext<?, ?, ?> stmtCtx) {
+        if (producesDeclared(stmtCtx, UnknownStatementImpl.class)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static Set<TypeOfCopy> getCopyTypesFromOriginal(
+            StmtContext<?, ?, ?> ctx) {
+
+        Set<TypeOfCopy> copyTypesFromOriginal = new HashSet<>();
+        StmtContext<?,?,?> current = ctx;
+
+        while(current.getOriginalCtx()!=null){
+            copyTypesFromOriginal.add(current.getTypeOfCopy());
+            current = current.getOriginalCtx();
+        }
+
+        return copyTypesFromOriginal;
     }
 }
