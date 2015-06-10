@@ -10,6 +10,9 @@ package org.opendaylight.yangtools.sal.java.api.generator;
 import static com.google.common.base.Preconditions.checkArgument;
 import static org.opendaylight.yangtools.sal.java.api.generator.Constants.COMMA;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +29,15 @@ import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.WildcardType;
 
 public final class GeneratorUtil {
+    private static final Comparator<GeneratedProperty> EQUALS_COMPLEXITY_COMPARATOR = new Comparator<GeneratedProperty>() {
+        @Override
+        public int compare(final GeneratedProperty o1, final GeneratedProperty o2) {
+            final EqualsComplexity ec1 = EqualsComplexity.forProperty(o1);
+            final EqualsComplexity ec2 = EqualsComplexity.forProperty(o2);
+
+            return ec1.compareTo(ec2);
+        }
+    };
 
     /**
      * It doesn't have the sense to create the instances of this class.
@@ -410,4 +422,17 @@ public final class GeneratorUtil {
         return propertiesOfAllParents;
     }
 
+    /**
+     * Order a collection of properties according the complexity of their {@link Object#equals(Object)}
+     * complexity.
+     *
+     * @param properties Properties which need to be ordered.
+     * @return Reordered properties. Note that the order is not guaranteed to be consistent in face
+     *         of duplicates with same complexity.
+     */
+    static Collection<GeneratedProperty> propertiesInEqualityOrder(final Collection<GeneratedProperty> properties) {
+        final List<GeneratedProperty> ret = new ArrayList<>(properties);
+        Collections.sort(properties, EQUALS_COMPLEXITY_COMPARATOR);
+        return ret;
+    }
 }
