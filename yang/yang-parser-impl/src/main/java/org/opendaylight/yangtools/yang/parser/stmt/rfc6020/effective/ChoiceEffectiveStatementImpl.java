@@ -7,8 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -30,14 +37,16 @@ import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
-public class ChoiceEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, ChoiceStatement> implements ChoiceSchemaNode, DerivableSchemaNode {
+public class ChoiceEffectiveStatementImpl extends
+        AbstractEffectiveDocumentedNode<QName, ChoiceStatement> implements
+        ChoiceSchemaNode, DerivableSchemaNode {
     private final QName qname;
     private final SchemaPath path;
 
     boolean augmenting;
     boolean addedByUses;
     ChoiceSchemaNode original;
-    boolean configuration;
+    boolean configuration = true;
     ConstraintDefinition constraints;
     String defaultCase;
 
@@ -45,42 +54,47 @@ public class ChoiceEffectiveStatementImpl extends AbstractEffectiveDocumentedNod
     ImmutableSet<AugmentationSchema> augmentations;
     ImmutableList<UnknownSchemaNode> unknownNodes;
 
-    public ChoiceEffectiveStatementImpl(StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
+    public ChoiceEffectiveStatementImpl(
+            StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
         super(ctx);
 
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
-        //:TODO init other fields
+        this.constraints = new EffectiveConstraintDefinitionImpl(this);
 
-        initSubstatementCollections();
+        initSubstatementCollectionsAndFields();
         initCopyType(ctx);
     }
 
     private void initCopyType(
             StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
 
-        TypeOfCopy typeOfCopy = ctx.getTypeOfCopy();
-        switch (typeOfCopy) {
-        case ADDED_BY_AUGMENTATION:
+        Set<TypeOfCopy> copyTypesFromOriginal = StmtContextUtils.getCopyTypesFromOriginal(ctx);
+
+        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
             augmenting = true;
-            original = (ChoiceSchemaNode) ctx.getOriginalCtx().buildEffective();
-            break;
-        case ADDED_BY_USES:
+        }
+        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
             addedByUses = true;
+        }
+        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
+            addedByUses = augmenting = true;
+        }
+
+        if (ctx.getTypeOfCopy() != TypeOfCopy.ORIGINAL) {
             original = (ChoiceSchemaNode) ctx.getOriginalCtx().buildEffective();
-            break;
-        default:
-            break;
         }
     }
 
-    private void initSubstatementCollections() {
+    private void initSubstatementCollectionsAndFields() {
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
         Set<AugmentationSchema> augmentationsInit = new HashSet<>();
         Set<ChoiceCaseNode> casesInit = new HashSet<>();
 
+        boolean configurationInit = false;
+        boolean defaultInit = false;
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
@@ -93,6 +107,27 @@ public class ChoiceEffectiveStatementImpl extends AbstractEffectiveDocumentedNod
             if (effectiveStatement instanceof ChoiceCaseNode) {
                 ChoiceCaseNode choiceCaseNode = (ChoiceCaseNode) effectiveStatement;
                 casesInit.add(choiceCaseNode);
+            }
+            if (effectiveStatement instanceof AnyXmlSchemaNode
+                    || effectiveStatement instanceof ContainerSchemaNode
+                    || effectiveStatement instanceof ListSchemaNode
+                    || effectiveStatement instanceof LeafListSchemaNode
+                    || effectiveStatement instanceof LeafSchemaNode) {
+                ChoiceCaseNode shorthandCase = new CaseShorthandImpl(
+                        (DataSchemaNode) effectiveStatement);
+                casesInit.add(shorthandCase);
+            }
+            if (!configurationInit
+                    && effectiveStatement instanceof ConfigEffectiveStatementImpl) {
+                ConfigEffectiveStatementImpl configStmt = (ConfigEffectiveStatementImpl) effectiveStatement;
+                this.configuration = configStmt.argument();
+                configurationInit = true;
+            }
+            if (!defaultInit
+                    && effectiveStatement instanceof DefaultEffectiveStatementImpl) {
+                DefaultEffectiveStatementImpl defaultCaseStmt = (DefaultEffectiveStatementImpl) effectiveStatement;
+                this.defaultCase = defaultCaseStmt.argument();
+                defaultInit = true;
             }
         }
 
@@ -154,7 +189,8 @@ public class ChoiceEffectiveStatementImpl extends AbstractEffectiveDocumentedNod
     @Override
     public ChoiceCaseNode getCaseNodeByName(final QName name) {
         if (name == null) {
-            throw new IllegalArgumentException("Choice Case QName cannot be NULL!");
+            throw new IllegalArgumentException(
+                    "Choice Case QName cannot be NULL!");
         }
         for (final ChoiceCaseNode caseNode : cases) {
             if (caseNode != null && name.equals(caseNode.getQName())) {
@@ -167,7 +203,8 @@ public class ChoiceEffectiveStatementImpl extends AbstractEffectiveDocumentedNod
     @Override
     public ChoiceCaseNode getCaseNodeByName(final String name) {
         if (name == null) {
-            throw new IllegalArgumentException("Choice Case string Name cannot be NULL!");
+            throw new IllegalArgumentException(
+                    "Choice Case string Name cannot be NULL!");
         }
         for (final ChoiceCaseNode caseNode : cases) {
             if (caseNode != null && (caseNode.getQName() != null)
@@ -223,7 +260,8 @@ public class ChoiceEffectiveStatementImpl extends AbstractEffectiveDocumentedNod
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(ChoiceEffectiveStatementImpl.class.getSimpleName());
+        StringBuilder sb = new StringBuilder(
+                ChoiceEffectiveStatementImpl.class.getSimpleName());
         sb.append("[");
         sb.append("qname=").append(qname);
         sb.append("]");
