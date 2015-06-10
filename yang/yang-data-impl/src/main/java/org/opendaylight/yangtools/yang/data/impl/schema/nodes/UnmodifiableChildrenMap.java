@@ -23,6 +23,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
  */
 final class UnmodifiableChildrenMap implements Map<PathArgument, DataContainerChild<? extends PathArgument, ?>>, Serializable {
     private static final long serialVersionUID = 1L;
+    /*
+     * Do not wrap maps which are smaller than this and instead copy them into
+     * an ImmutableMap.
+     */
+    private static final int WRAP_THRESHOLD = 9;
     private final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> delegate;
     private transient Collection<DataContainerChild<? extends PathArgument, ?>> values;
 
@@ -46,6 +51,9 @@ final class UnmodifiableChildrenMap implements Map<PathArgument, DataContainerCh
         }
         if (map.isEmpty()) {
             return Collections.emptyMap();
+        }
+        if (map.size() < WRAP_THRESHOLD) {
+            return ImmutableMap.copyOf(map);
         }
 
         return new UnmodifiableChildrenMap(map);
