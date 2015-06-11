@@ -51,7 +51,7 @@ final class UnmodifiableChildrenMap extends CloneableChildrenMap implements Seri
             return map;
         }
         if (map.isEmpty()) {
-            return Collections.emptyMap();
+            return ImmutableMap.of();
         }
         if (map.size() < WRAP_THRESHOLD) {
             return ImmutableMap.copyOf(map);
