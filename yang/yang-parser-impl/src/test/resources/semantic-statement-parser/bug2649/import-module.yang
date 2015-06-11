@@ -1,0 +1,8 @@
+module import-module {
+    prefix imp;
+    namespace "import-module";
+    
+    revision 1970-01-01 {
+        description "Initial revision.";
+    }
+}
