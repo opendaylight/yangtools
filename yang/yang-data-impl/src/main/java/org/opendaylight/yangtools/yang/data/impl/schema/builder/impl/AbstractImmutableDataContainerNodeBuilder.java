@@ -67,6 +67,9 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends YangInstanceI
 
     protected final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> buildValue() {
         dirty = true;
+        if (value instanceof Object2ObjectOpenHashMap) {
+            ((Object2ObjectOpenHashMap<?, ?>) value).trim();
+        }
         return value;
     }
 
