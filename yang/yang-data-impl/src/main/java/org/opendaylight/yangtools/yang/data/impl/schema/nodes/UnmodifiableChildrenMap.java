@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableMap;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -21,7 +22,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
  * Internal equivalent of {@link Collections}' unmodifiable Map. It does not retain
  * keySet/entrySet references, thus lowering the memory overhead.
  */
-final class UnmodifiableChildrenMap implements Map<PathArgument, DataContainerChild<? extends PathArgument, ?>>, Serializable {
+final class UnmodifiableChildrenMap extends CloneableChildrenMap implements Serializable {
     private static final long serialVersionUID = 1L;
     /*
      * Do not wrap maps which are smaller than this and instead copy them into
@@ -143,5 +144,15 @@ final class UnmodifiableChildrenMap implements Map<PathArgument, DataContainerCh
     @Override
     public String toString() {
         return delegate.toString();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> createMutableClone() {
+        if (delegate instanceof HashMap) {
+            return (Map<PathArgument, DataContainerChild<? extends PathArgument, ?>>) ((HashMap<?, ?>) delegate).clone();
+        }
+
+        return new HashMap<>(delegate);
     }
 }

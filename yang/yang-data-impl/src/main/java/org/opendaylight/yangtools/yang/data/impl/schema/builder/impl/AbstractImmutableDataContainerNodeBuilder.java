@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.CloneableChildrenMap;
 
 abstract class AbstractImmutableDataContainerNodeBuilder<I extends YangInstanceIdentifier.PathArgument, R extends DataContainerNode<I>> implements DataContainerNodeBuilder<I, R> {
     private static final int DEFAULT_CAPACITY = 4;
@@ -45,14 +46,11 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends YangInstanceI
         this.nodeIdentifier = node.getIdentifier();
 
         /*
-         * FIXME: BUG-2402: this call is not what we actually want. We are the
-         *        only user of getChildren(), and we really want this to be a
-         *        zero-copy operation if we happen to not modify the children.
-         *        If we do, we want to perform an efficient copy-on-write before
-         *        we make the change.
-         *
-         *        With this interface we end up creating a lot of short-lived
-         *        objects in case we modify the map -- see checkDirty().
+         * This quite awkward. What we actually want to be saying here is: give me
+         * a copy-on-write view of your children. The API involved in that could be
+         * a bit hairy, so we do the next best thing and rely on the fact that the
+         * returned object implements a specific interface, which leaks the functionality
+         * we need.
          */
         this.value = node.getChildren();
         this.dirty = true;
@@ -73,14 +71,11 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends YangInstanceI
 
     private void checkDirty() {
         if (dirty) {
-            /*
-             * FIXME: BUG-2402: This is the second part of the above. Note
-             *        that value here is usually a read-only view. Invocation
-             *        of this constructor will force instantiation of a wrapper
-             *        Map.Entry object, just to make sure this read path does
-             *        not modify the map.
-             */
-            value = new HashMap<>(value);
+            if (value instanceof CloneableChildrenMap) {
+                value = ((CloneableChildrenMap) value).createMutableClone();
+            } else {
+                value = new HashMap<>(value);
+            }
             dirty = false;
         }
     }
