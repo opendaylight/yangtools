@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
@@ -31,12 +31,12 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
     }
 
     @Override
-    public ImmutableMapEntryNodeBuilder withNodeIdentifier(final YangInstanceIdentifier.NodeIdentifierWithPredicates nodeIdentifier) {
+    public ImmutableMapEntryNodeBuilder withNodeIdentifier(final NodeIdentifierWithPredicates nodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 
     @Override
-    public DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> withChild(final DataContainerChild<?, ?> child) {
+    public DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> withChild(final DataContainerChild<?, ?> child) {
         validator.validateChild(child.getIdentifier());
         return super.withChild(child);
     }
@@ -50,7 +50,7 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
     /**
      * Build map entry node identifier from schema, and provided children
      */
-    private YangInstanceIdentifier.NodeIdentifierWithPredicates constructNodeIdentifier() {
+    private NodeIdentifierWithPredicates constructNodeIdentifier() {
         Collection<QName> keys = schema.getKeyDefinition();
 
         if (keys.isEmpty()) {
@@ -60,15 +60,15 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
         final Map<QName, Object> keysToValues = new LinkedHashMap<>();
         for (QName key : keys) {
             final DataContainerChild<?, ?> valueForKey = getChild(childrenQNamesToPaths.get(key));
-            DataValidationException.checkListKey(valueForKey, key, new YangInstanceIdentifier.NodeIdentifierWithPredicates(
+            DataValidationException.checkListKey(valueForKey, key, new NodeIdentifierWithPredicates(
                 schema.getQName(), keysToValues));
             keysToValues.put(key, valueForKey.getValue());
         }
 
-        return new YangInstanceIdentifier.NodeIdentifierWithPredicates(schema.getQName(), keysToValues);
+        return new NodeIdentifierWithPredicates(schema.getQName(), keysToValues);
     }
 
-    public static DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> create(final ListSchemaNode schema) {
+    public static DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(final ListSchemaNode schema) {
         return new ImmutableMapEntryNodeSchemaAwareBuilder(schema);
     }
 
