@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -33,12 +33,13 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends YangInstanceI
     private boolean dirty;
 
     protected AbstractImmutableDataContainerNodeBuilder() {
-        this.value = new HashMap<>(DEFAULT_CAPACITY);
+        this.value = new Object2ObjectOpenHashMap<>(DEFAULT_CAPACITY);
         this.dirty = false;
     }
 
     protected AbstractImmutableDataContainerNodeBuilder(final int sizeHint) {
-        this.value = new HashMap<>(DEFAULT_CAPACITY);
+        final int size = sizeHint >= 0 ? sizeHint : DEFAULT_CAPACITY;
+        this.value = new Object2ObjectOpenHashMap<>(size);
         this.dirty = false;
     }
 
@@ -73,8 +74,10 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends YangInstanceI
         if (dirty) {
             if (value instanceof CloneableChildrenMap) {
                 value = ((CloneableChildrenMap) value).createMutableClone();
+            } else if (value instanceof Object2ObjectOpenHashMap) {
+                value = ((Object2ObjectOpenHashMap<YangInstanceIdentifier.PathArgument, DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>>) value).clone();
             } else {
-                value = new HashMap<>(value);
+                value = new Object2ObjectOpenHashMap<>(value);
             }
             dirty = false;
         }

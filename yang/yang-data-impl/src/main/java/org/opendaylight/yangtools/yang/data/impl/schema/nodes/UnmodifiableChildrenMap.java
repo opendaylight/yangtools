@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
@@ -56,7 +57,6 @@ final class UnmodifiableChildrenMap extends CloneableChildrenMap implements Seri
         if (map.size() < WRAP_THRESHOLD) {
             return ImmutableMap.copyOf(map);
         }
-
         return new UnmodifiableChildrenMap(map);
     }
 
@@ -149,10 +149,12 @@ final class UnmodifiableChildrenMap extends CloneableChildrenMap implements Seri
     @Override
     @SuppressWarnings("unchecked")
     public Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> createMutableClone() {
-        if (delegate instanceof HashMap) {
+        if (delegate instanceof Object2ObjectOpenHashMap) {
+            return ((Object2ObjectOpenHashMap<PathArgument, DataContainerChild<? extends PathArgument, ?>>) delegate).clone();
+         } else if (delegate instanceof HashMap) {
             return (Map<PathArgument, DataContainerChild<? extends PathArgument, ?>>) ((HashMap<?, ?>) delegate).clone();
         }
 
-        return new HashMap<>(delegate);
+        return new Object2ObjectOpenHashMap<>(delegate);
     }
 }
