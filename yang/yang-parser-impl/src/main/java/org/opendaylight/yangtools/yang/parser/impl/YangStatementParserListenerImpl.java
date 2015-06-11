@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -9,9 +9,11 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParserBaseListener;
@@ -23,6 +25,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 
 import javax.annotation.concurrent.Immutable;
 
@@ -30,14 +33,15 @@ import javax.annotation.concurrent.Immutable;
 public class YangStatementParserListenerImpl extends YangStatementParserBaseListener {
 
     private StatementWriter writer;
-    private StatementSourceReference ref;
+    private String sourceName;
     private QNameToStatementDefinition stmtDef;
     private PrefixToModule prefixes;
     private List<String> toBeSkipped = new ArrayList<>();
+    private boolean isType = false;
     private static final Logger LOG = LoggerFactory.getLogger(YangStatementParserListenerImpl.class);
 
-    public YangStatementParserListenerImpl(StatementSourceReference ref) {
-        this.ref = ref;
+    public YangStatementParserListenerImpl(String sourceName) {
+        this.sourceName = sourceName;
     }
 
     public void setAttributes(StatementWriter writer, QNameToStatementDefinition stmtDef) {
@@ -53,27 +57,48 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
 
     @Override
     public void enterStatement(YangStatementParser.StatementContext ctx) {
+        final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, ctx
+                .getStart().getLine(), ctx.getStart().getCharPositionInLine());
         boolean action = true;
+        QName identifier;
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree child = ctx.getChild(i);
             if (child instanceof YangStatementParser.KeywordContext) {
                 try {
-                    QName identifier = new QName(YangConstants.RFC6020_YIN_NAMESPACE,
+                    identifier = new QName(YangConstants.RFC6020_YIN_NAMESPACE,
                             ((YangStatementParser.KeywordContext) child).children.get(0).getText());
                     if (stmtDef != null && Utils.isValidStatementDefinition(prefixes, stmtDef, identifier) && toBeSkipped.isEmpty()) {
-                        writer.startStatement(identifier, ref);
+                        if (identifier.equals(Rfc6020Mapping.TYPE.getStatementName())) {
+                            isType = true;
+                        } else {
+                            writer.startStatement(identifier, ref);
+                        }
                     } else {
-                        action = false;
-                        toBeSkipped.add(((YangStatementParser.KeywordContext) child).children.get(0).getText());
+                        if (writer.getPhase().equals(ModelProcessingPhase.FULL_DECLARATION)) {
+                            throw new IllegalArgumentException(identifier.getLocalName() + " is not a YANG statement " +
+                                    "or use of extension. Source: " + ref);
+                        } else {
+                            action = false;
+                            toBeSkipped.add(((YangStatementParser.KeywordContext) child).children.get(0).getText());
+                        }
                     }
                 } catch (SourceException e) {
                     LOG.warn(e.getMessage(), e);
                 }
             } else if (child instanceof YangStatementParser.ArgumentContext) {
                 try {
-                    if (action) {
-                        writer.argumentValue(
-                                Utils.stringFromStringContext((YangStatementParser.ArgumentContext) child), ref);
+                    final String argument = Utils.stringFromStringContext((YangStatementParser.ArgumentContext) child);
+                    if (isType) {
+                            if (TypeUtils.isYangTypeBodyStmt(argument)) {
+                                writer.startStatement(new QName(YangConstants.RFC6020_YIN_NAMESPACE, argument), ref);
+                            } else {
+                                writer.startStatement(new QName(YangConstants.RFC6020_YIN_NAMESPACE, Rfc6020Mapping
+                                        .TYPE.getStatementName().getLocalName()), ref);
+                            }
+                        writer.argumentValue(argument, ref);
+                        isType = false;
+                    } else if (action) {
+                        writer.argumentValue(Utils.stringFromStringContext((YangStatementParser.ArgumentContext) child), ref);
                     } else {
                         action = true;
                     }
@@ -87,6 +112,8 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
 
     @Override
     public void exitStatement(YangStatementParser.StatementContext ctx) {
+        final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, ctx.getStart().getLine(), ctx
+                .getStart().getCharPositionInLine());
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree child = ctx.getChild(i);
             if (child instanceof YangStatementParser.KeywordContext) {
