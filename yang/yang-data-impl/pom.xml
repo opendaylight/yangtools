@@ -18,7 +18,7 @@
     <artifactId>yang-data-impl</artifactId>
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
-
+    <packaging>bundle</packaging>
 
     <build>
         <plugins>
@@ -55,9 +55,12 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Export-Package>
-                            org.opendaylight.yangtools.yang.data.impl.*
-                        </Export-Package>
+                        <Export-Package>org.opendaylight.yangtools.yang.data.impl.*</Export-Package>
+                        <Embed-Dependency>fastutil;inline=
+                            it/unimi/dsi/fastutil/objects/Object2ObjectOpenHashMap.class|
+                            it/unimi/dsi/fastutil/objects/Object2ObjectOpenHashMap$MapEntry.class
+                        </Embed-Dependency>
+                        <Private-Package>it.unimi.dsi.fastutil.*</Private-Package>
                     </instructions>
                 </configuration>
             </plugin>
@@ -172,6 +175,11 @@
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
             <version>4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>it.unimi.dsi</groupId>
+            <artifactId>fastutil</artifactId>
+            <version>7.0.6</version>
         </dependency>
     </dependencies>
 </project>
