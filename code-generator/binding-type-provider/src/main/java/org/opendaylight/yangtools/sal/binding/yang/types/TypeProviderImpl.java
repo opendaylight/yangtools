@@ -217,7 +217,7 @@ public final class TypeProviderImpl implements TypeProvider {
         return returnType;
     }
 
-    private GeneratedTransferObject shadedTOWithRestrictions(final GeneratedTransferObject gto, final Restrictions r) {
+    private static GeneratedTransferObject shadedTOWithRestrictions(final GeneratedTransferObject gto, final Restrictions r) {
         GeneratedTOBuilder gtob = new GeneratedTOBuilderImpl(gto.getPackageName(), gto.getName());
         GeneratedTransferObject parent = gto.getSuperType();
         if (parent != null) {
@@ -465,7 +465,7 @@ public final class TypeProviderImpl implements TypeProvider {
      *         <li>false - other cases</li>
      *         </ul>
      */
-    private boolean leafContainsEnumDefinition(final SchemaNode dataNode) {
+    private static boolean leafContainsEnumDefinition(final SchemaNode dataNode) {
         if (dataNode instanceof LeafSchemaNode) {
             final LeafSchemaNode leaf = (LeafSchemaNode) dataNode;
             if (leaf.getType() instanceof EnumTypeDefinition) {
@@ -489,7 +489,7 @@ public final class TypeProviderImpl implements TypeProvider {
      *         <li>false - other cases</li>
      *         </ul>
      */
-    private boolean leafListContainsEnumDefinition(final SchemaNode dataNode) {
+    private static boolean leafListContainsEnumDefinition(final SchemaNode dataNode) {
         if (dataNode instanceof LeafListSchemaNode) {
             final LeafListSchemaNode leafList = (LeafListSchemaNode) dataNode;
             if (leafList.getType() instanceof EnumTypeDefinition) {
@@ -564,7 +564,7 @@ public final class TypeProviderImpl implements TypeProvider {
      *             </ul>
      *
      */
-    private Enumeration addInnerEnumerationToTypeBuilder(final EnumTypeDefinition enumTypeDef, final String enumName,
+    private static Enumeration addInnerEnumerationToTypeBuilder(final EnumTypeDefinition enumTypeDef, final String enumName,
             final GeneratedTypeBuilderBase<?> typeBuilder) {
         Preconditions.checkArgument(enumTypeDef != null, "EnumTypeDefinition reference cannot be NULL!");
         Preconditions.checkArgument(enumTypeDef.getValues() != null,
@@ -1021,7 +1021,7 @@ public final class TypeProviderImpl implements TypeProvider {
      *            string with name of property which should be added to
      *            <code>unionGentransObject</code>
      */
-    private void updateUnionTypeAsProperty(final GeneratedTOBuilder unionGenTransObject, final Type type,
+    private static void updateUnionTypeAsProperty(final GeneratedTOBuilder unionGenTransObject, final Type type,
             final String propertyName) {
         if (unionGenTransObject != null && type != null && !unionGenTransObject.containsProperty(propertyName)) {
             final GeneratedPropertyBuilder propBuilder = unionGenTransObject
@@ -1044,7 +1044,7 @@ public final class TypeProviderImpl implements TypeProvider {
      * @return generated TO builder which contains data from
      *         <code>typedef</code> and <code>basePackageName</code>
      */
-    private GeneratedTOBuilderImpl typedefToTransferObject(final String basePackageName,
+    private static GeneratedTOBuilderImpl typedefToTransferObject(final String basePackageName,
             final TypeDefinition<?> typedef, final String moduleName) {
 
         final String packageName = packageNameForGeneratedType(basePackageName, typedef.getPath());
@@ -1166,7 +1166,7 @@ public final class TypeProviderImpl implements TypeProvider {
      *             <li>if <code>regularExpressions</code> equals null</li>
      *             </ul>
      */
-    private void addStringRegExAsConstant(final GeneratedTOBuilder genTOBuilder, final List<String> regularExpressions) {
+    private static void addStringRegExAsConstant(final GeneratedTOBuilder genTOBuilder, final List<String> regularExpressions) {
         if (genTOBuilder == null) {
             throw new IllegalArgumentException("Generated transfer object builder can't be null");
         }
@@ -1255,7 +1255,7 @@ public final class TypeProviderImpl implements TypeProvider {
      * @param gto
      *            transfer object which needs to be serializable
      */
-    private void makeSerializable(final GeneratedTOBuilderImpl gto) {
+    private static void makeSerializable(final GeneratedTOBuilderImpl gto) {
         gto.addImplementsType(Types.typeForClass(Serializable.class));
         GeneratedPropertyBuilder prop = new GeneratedPropertyBuilderImpl("serialVersionUID");
         prop.setValue(Long.toString(BindingGeneratorUtil.computeDefaultSUID(gto)));
@@ -1341,7 +1341,7 @@ public final class TypeProviderImpl implements TypeProvider {
      *            string with name of augmented node
      * @return string with the number suffix incremented by one (or 1 is added)
      */
-    private String provideAvailableNameForGenTOBuilder(final String name) {
+    private static String provideAvailableNameForGenTOBuilder(final String name) {
         Matcher mtch = NUMBERS_PATTERN.matcher(name);
         if (mtch.find()) {
             final int newSuffix = Integer.valueOf(name.substring(mtch.start())) + 1;
@@ -1369,9 +1369,9 @@ public final class TypeProviderImpl implements TypeProvider {
         TypeDefinition<?> type = node.getType();
         QName typeQName = type.getQName();
         TypeDefinition<?> base = baseTypeDefForExtendedType(type);
-        Preconditions.checkNotNull(type, "Cannot provide default construction for null type of " + node);
-        Preconditions.checkNotNull(defaultValue, "Cannot provide default construction for null default statement of "
-                + node);
+        Preconditions.checkNotNull(type, "Cannot provide default construction for null type of %s", node);
+        Preconditions.checkNotNull(defaultValue, "Cannot provide default construction for null default statement of %s",
+                node);
 
         StringBuilder sb = new StringBuilder();
         String result = null;
@@ -1462,11 +1462,11 @@ public final class TypeProviderImpl implements TypeProvider {
         return sb.toString();
     }
 
-    private String typeToDef(final Class<?> clazz, final String defaultValue) {
+    private static String typeToDef(final Class<?> clazz, final String defaultValue) {
         return "new " + clazz.getName() + "(\"" + defaultValue + "\")";
     }
 
-    private String binaryToDef(final String defaultValue) {
+    private static String binaryToDef(final String defaultValue) {
         StringBuilder sb = new StringBuilder();
         BaseEncoding en = BaseEncoding.base64();
         byte[] encoded = en.decode(defaultValue);
@@ -1481,7 +1481,7 @@ public final class TypeProviderImpl implements TypeProvider {
         return sb.toString();
     }
 
-    private String bitsToDef(final BitsTypeDefinition type, final String className, final String defaultValue,
+    private static String bitsToDef(final BitsTypeDefinition type, final String className, final String defaultValue,
             final boolean isExt) {
         List<Bit> bits = new ArrayList<>(type.getBits());
         Collections.sort(bits, new Comparator<Bit>() {
@@ -1602,7 +1602,7 @@ public final class TypeProviderImpl implements TypeProvider {
         return union(className, node.getDefault(), node);
     }
 
-    private String union(final String className, final String defaultValue, final LeafSchemaNode node) {
+    private static String union(final String className, final String defaultValue, final LeafSchemaNode node) {
         StringBuilder sb = new StringBuilder();
         sb.append("new ");
         sb.append(className);

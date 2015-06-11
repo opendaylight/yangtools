@@ -116,7 +116,7 @@ public class TypeProviderTest {
         provider.javaTypeForSchemaDefinitionType(testTypedef, null, null);
     }
 
-    private LeafSchemaNode provideLeafNodeFromTopLevelContainer(final Module module, final String containerName, final String leafNodeName) {
+    private static LeafSchemaNode provideLeafNodeFromTopLevelContainer(final Module module, final String containerName, final String leafNodeName) {
         final DataSchemaNode rootNode = module.getDataChildByName(containerName);
         assertNotNull("Container foo is not present in root of module "+ module.getName(), rootNode);
         assertTrue(rootNode instanceof DataNodeContainer);
@@ -128,7 +128,7 @@ public class TypeProviderTest {
         return (LeafSchemaNode) node;
     }
 
-    private LeafListSchemaNode provideLeafListNodeFromTopLevelContainer(final Module module, final String containerName, final String leafListNodeName) {
+    private static LeafListSchemaNode provideLeafListNodeFromTopLevelContainer(final Module module, final String containerName, final String leafListNodeName) {
         final DataSchemaNode rootNode = module.getDataChildByName(containerName);
         assertNotNull("Container foo is not present in root of module "+ module.getName(), rootNode);
         assertTrue(rootNode instanceof DataNodeContainer);
@@ -200,7 +200,7 @@ public class TypeProviderTest {
         assertTrue(result instanceof GeneratedTransferObject);
     }
 
-    private TypeDefinition<?> resolveTypeDefinitionFromModule(final Module module, final String typedefName) {
+    private static TypeDefinition<?> resolveTypeDefinitionFromModule(final Module module, final String typedefName) {
         TypeDefinition<?> result = null;
         final Set<TypeDefinition<?>> typeDefs = module.getTypeDefinitions();
         for (final TypeDefinition<?> typedef : typeDefs) {

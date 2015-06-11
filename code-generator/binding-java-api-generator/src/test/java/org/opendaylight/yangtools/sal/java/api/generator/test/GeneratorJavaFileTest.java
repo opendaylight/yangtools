@@ -54,7 +54,7 @@ public class GeneratorJavaFileTest {
         assertTrue(filesList.contains("Type4Builder.java"));
     }
 
-    private GeneratedType createGeneratedType(String pkgName, String name) {
+    private static GeneratedType createGeneratedType(String pkgName, String name) {
         GeneratedTypeBuilder builder = new GeneratedTypeBuilderImpl(pkgName, name);
         builder.addImplementsType(BindingTypes.DATA_OBJECT);
         return builder.toInstance();
