@@ -1,0 +1,9 @@
+submodule submodule-to-submodule-1 {
+
+    belongs-to root-module {
+        prefix root;
+    }
+
+    container container-in-submodule-to-submodule-1 {
+    }
+}

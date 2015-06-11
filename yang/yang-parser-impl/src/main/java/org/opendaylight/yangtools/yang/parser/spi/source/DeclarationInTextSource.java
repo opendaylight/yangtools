@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
  * of YANG / YIN statement stream sources.
  *
  *
- *  To create source reference use one of this static factiories:
+ *  To create source reference use one of this static factories:
  *  <ul>
  *  <li>{@link #atPosition(String, int, int)} - provides most specific reference of statement location,
  *  this is most prefered since it provides most context to debug YANG model.
