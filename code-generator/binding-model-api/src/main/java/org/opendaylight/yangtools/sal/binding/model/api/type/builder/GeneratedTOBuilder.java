@@ -85,7 +85,7 @@ public interface GeneratedTOBuilder extends GeneratedTypeBuilderBase<GeneratedTO
      * @param typeDef
      *           Type Definition
      */
-    void setBaseType(TypeDefinition typeDef);
+    void setBaseType(TypeDefinition<?> typeDef);
 
     /**
      *
