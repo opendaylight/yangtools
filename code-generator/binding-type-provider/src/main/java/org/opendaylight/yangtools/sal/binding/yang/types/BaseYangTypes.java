@@ -8,10 +8,11 @@
 package org.opendaylight.yangtools.sal.binding.yang.types;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.opendaylight.yangtools.binding.generator.util.Types;
@@ -34,7 +35,7 @@ public final class BaseYangTypes {
      * {@link org.opendaylight.yangtools.sal.binding.model.api.Type Type}. This
      * map is filled with mapping data in static initialization block
      */
-    private static Map<String, Type> typeMap = new HashMap<String, Type>();
+    private static final Map<String, Type> TYPE_MAP;
 
     /**
      * <code>Type</code> representation of <code>boolean</code> YANG type
@@ -113,25 +114,30 @@ public final class BaseYangTypes {
      * It is undesirable to create instance of this class.
      */
     private BaseYangTypes() {
+        throw new UnsupportedOperationException();
     }
 
     static {
-        typeMap.put("boolean", BOOLEAN_TYPE);
-        typeMap.put("empty", EMPTY_TYPE);
-        typeMap.put("enumeration", ENUM_TYPE);
-        typeMap.put("int8", INT8_TYPE);
-        typeMap.put("int16", INT16_TYPE);
-        typeMap.put("int32", INT32_TYPE);
-        typeMap.put("int64", INT64_TYPE);
-        typeMap.put("string", STRING_TYPE);
-        typeMap.put("decimal64", DECIMAL64_TYPE);
-        typeMap.put("uint8", UINT8_TYPE);
-        typeMap.put("uint16", UINT16_TYPE);
-        typeMap.put("uint32", UINT32_TYPE);
-        typeMap.put("uint64", UINT64_TYPE);
-        typeMap.put("union", UNION_TYPE);
-        typeMap.put("binary", BINARY_TYPE);
-        typeMap.put("instance-identifier", INSTANCE_IDENTIFIER);
+        final Builder<String, Type> b = ImmutableMap.<String, Type>builder();
+
+        b.put("boolean", BOOLEAN_TYPE);
+        b.put("empty", EMPTY_TYPE);
+        b.put("enumeration", ENUM_TYPE);
+        b.put("int8", INT8_TYPE);
+        b.put("int16", INT16_TYPE);
+        b.put("int32", INT32_TYPE);
+        b.put("int64", INT64_TYPE);
+        b.put("string", STRING_TYPE);
+        b.put("decimal64", DECIMAL64_TYPE);
+        b.put("uint8", UINT8_TYPE);
+        b.put("uint16", UINT16_TYPE);
+        b.put("uint32", UINT32_TYPE);
+        b.put("uint64", UINT64_TYPE);
+        b.put("union", UNION_TYPE);
+        b.put("binary", BINARY_TYPE);
+        b.put("instance-identifier", INSTANCE_IDENTIFIER);
+
+        TYPE_MAP = b.build();
     }
 
     public static final TypeProvider BASE_YANG_TYPES_PROVIDER = new TypeProvider() {
@@ -145,7 +151,7 @@ public final class BaseYangTypes {
          */
         @Override
         public Type javaTypeForYangType(final String type) {
-            return typeMap.get(type);
+            return TYPE_MAP.get(type);
         }
 
         /**
@@ -161,7 +167,7 @@ public final class BaseYangTypes {
         @Override
         public Type javaTypeForSchemaDefinitionType(final TypeDefinition<?> type, final SchemaNode parentNode) {
             if (type != null) {
-                return typeMap.get(type.getQName().getLocalName());
+                return TYPE_MAP.get(type.getQName().getLocalName());
             }
 
             return null;

@@ -83,7 +83,7 @@ public class BaseYangTypesTest {
             assertNotNull(typedef);
             assertTrue(typedef instanceof ExtendedType);
 
-            final TypeDefinition baseType = typedef.getBaseType();
+            final TypeDefinition<?> baseType = typedef.getBaseType();
             if (baseType instanceof BinaryTypeDefinition) {
                 binary = (BinaryTypeDefinition) baseType;
             } else if (baseType instanceof DecimalTypeDefinition) {
