@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import java.util.ArrayList;
+import com.google.common.collect.ImmutableList;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
@@ -22,7 +22,7 @@ final class UnknownSchemaNodeImpl implements UnknownSchemaNode {
     String description;
     String reference;
     Status status = Status.CURRENT;
-    private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
+    private List<UnknownSchemaNode> unknownNodes;
     private QName nodeType;
     private String nodeParameter;
     boolean addedByUses;
@@ -78,7 +78,7 @@ final class UnknownSchemaNodeImpl implements UnknownSchemaNode {
 
     void setUnknownSchemaNodes(final List<UnknownSchemaNode> unknownNodes) {
         if (unknownNodes != null) {
-            this.unknownNodes.addAll(unknownNodes);
+            this.unknownNodes = ImmutableList.copyOf(unknownNodes);
         }
     }
 
