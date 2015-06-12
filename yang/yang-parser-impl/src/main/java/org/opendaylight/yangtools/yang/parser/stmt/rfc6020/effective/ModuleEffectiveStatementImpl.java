@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import org.opendaylight.yangtools.yang.model.util.ModuleImportImpl;
+
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
@@ -22,6 +24,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import java.util.Map;
+import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
 import java.net.URI;
 import java.util.Collection;
@@ -50,12 +53,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 
 public class ModuleEffectiveStatementImpl extends
-        AbstractEffectiveDocumentedNode<String, ModuleStatement>
-        implements Module, Immutable {
+        AbstractEffectiveDocumentedNode<String, ModuleStatement> implements
+        Module, Immutable {
 
     private final QNameModule qNameModule;
     private final String name;
-    private String sourcePath; // TODO fill
+    private String sourcePath;
     private String prefix;
     private String yangVersion;
     private String organization;
@@ -71,7 +74,7 @@ public class ModuleEffectiveStatementImpl extends
     private ImmutableSet<IdentitySchemaNode> identities;
     private ImmutableList<UnknownSchemaNode> unknownNodes;
     private String source;
-    private ImmutableList<EffectiveStatement<?,?>> substatementsOfSubmodules;
+    private ImmutableList<EffectiveStatement<?, ?>> substatementsOfSubmodules;
 
     private ImmutableMap<QName, DataSchemaNode> childNodes;
     private ImmutableSet<GroupingDefinition> groupings;
@@ -110,8 +113,10 @@ public class ModuleEffectiveStatementImpl extends
             }
         }
 
-        // TODO init source, sourcePath
-        source = ctx.getStatementSource().name();
+        sourcePath = ((DeclarationInTextSource) ctx
+                .getStatementSourceReference()).getSourceName();
+        // TODO source
+        // source =
 
         initSubmodules(ctx);
         initSubstatementCollections(ctx);
@@ -132,21 +137,25 @@ public class ModuleEffectiveStatementImpl extends
                 .values();
 
         Set<Module> submodulesInit = new HashSet<>();
-        List<EffectiveStatement<?,?>> substatementsOfSubmodulesInit = new LinkedList<>();
+        List<EffectiveStatement<?, ?>> substatementsOfSubmodulesInit = new LinkedList<>();
         for (ModuleIdentifier submoduleIdentifier : includedSubmodules) {
             Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> submoduleCtx = (Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>) ctx
                     .getFromNamespace(SubmoduleNamespace.class,
                             submoduleIdentifier);
-            SubmoduleEffectiveStatementImpl submodule = (SubmoduleEffectiveStatementImpl) submoduleCtx.buildEffective();
+            SubmoduleEffectiveStatementImpl submodule = (SubmoduleEffectiveStatementImpl) submoduleCtx
+                    .buildEffective();
             submodulesInit.add(submodule);
-            substatementsOfSubmodulesInit.addAll(submodule.effectiveSubstatements());
+            substatementsOfSubmodulesInit.addAll(submodule
+                    .effectiveSubstatements());
         }
 
         this.submodules = ImmutableSet.copyOf(submodulesInit);
-        this.substatementsOfSubmodules = ImmutableList.copyOf(substatementsOfSubmodulesInit);
+        this.substatementsOfSubmodules = ImmutableList
+                .copyOf(substatementsOfSubmodulesInit);
     }
 
-    private void initSubstatementCollections(StmtContext<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> ctx) {
+    private void initSubstatementCollections(
+            StmtContext<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> ctx) {
         List<EffectiveStatement<?, ?>> effectiveSubstatements = new LinkedList<>();
 
         effectiveSubstatements.addAll(effectiveSubstatements());
@@ -205,7 +214,9 @@ public class ModuleEffectiveStatementImpl extends
                             dataSchemaNode);
                     mutablePublicChildNodes.add(dataSchemaNode);
                 } else {
-                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
+                    throw EffectiveStmtUtils
+                            .createNameCollisionSourceException(ctx,
+                                    effectiveStatement);
                 }
             }
             if (effectiveStatement instanceof UsesNode) {
@@ -213,7 +224,9 @@ public class ModuleEffectiveStatementImpl extends
                 if (!mutableUses.contains(usesNode)) {
                     mutableUses.add(usesNode);
                 } else {
-                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
+                    throw EffectiveStmtUtils
+                            .createNameCollisionSourceException(ctx,
+                                    effectiveStatement);
                 }
             }
             if (effectiveStatement instanceof TypeDefEffectiveStatementImpl) {
@@ -222,7 +235,9 @@ public class ModuleEffectiveStatementImpl extends
                 if (!mutableTypeDefinitions.contains(extendedType)) {
                     mutableTypeDefinitions.add(extendedType);
                 } else {
-                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
+                    throw EffectiveStmtUtils
+                            .createNameCollisionSourceException(ctx,
+                                    effectiveStatement);
                 }
             }
             if (effectiveStatement instanceof GroupingDefinition) {
@@ -230,14 +245,16 @@ public class ModuleEffectiveStatementImpl extends
                 if (!mutableGroupings.contains(grp)) {
                     mutableGroupings.add(grp);
                 } else {
-                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
+                    throw EffectiveStmtUtils
+                            .createNameCollisionSourceException(ctx,
+                                    effectiveStatement);
                 }
             }
         }
 
         this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
-        this.imports = ImmutableSet.copyOf(importsInit);
+        this.imports = ImmutableSet.copyOf(resolveModuleImports(importsInit, ctx));
         this.notifications = ImmutableSet.copyOf(notificationsInit);
         this.rpcs = ImmutableSet.copyOf(rpcsInit);
         this.deviations = ImmutableSet.copyOf(deviationsInit);
@@ -250,6 +267,31 @@ public class ModuleEffectiveStatementImpl extends
         this.publicChildNodes = ImmutableSet.copyOf(mutablePublicChildNodes);
         this.typeDefinitions = ImmutableSet.copyOf(mutableTypeDefinitions);
         this.uses = ImmutableSet.copyOf(mutableUses);
+    }
+
+    private Set<ModuleImport> resolveModuleImports(
+            Set<ModuleImport> importsInit,
+            StmtContext<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> ctx) {
+        Set<ModuleImport> resolvedModuleImports = new LinkedHashSet<>();
+        for (ModuleImport moduleImport : importsInit) {
+            if (moduleImport.getRevision().equals(
+                    SimpleDateFormatUtil.DEFAULT_DATE_IMP)) {
+                QNameModule impModuleQName = ctx.getFromNamespace(
+                        ModuleNameToModuleQName.class,
+                        moduleImport.getModuleName());
+                if (!impModuleQName.getRevision().equals(
+                        SimpleDateFormatUtil.DEFAULT_DATE_REV)) {
+                    ModuleImport resolvedModuleImport = new ModuleImportImpl(
+                            moduleImport.getModuleName(),
+                            impModuleQName.getRevision(),
+                            moduleImport.getPrefix());
+                    resolvedModuleImports.add(resolvedModuleImport);
+                }
+            } else {
+                resolvedModuleImports.add(moduleImport);
+            }
+        }
+        return resolvedModuleImports;
     }
 
     @Override
@@ -429,7 +471,8 @@ public class ModuleEffectiveStatementImpl extends
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(ModuleEffectiveStatementImpl.class.getSimpleName());
+        StringBuilder sb = new StringBuilder(
+                ModuleEffectiveStatementImpl.class.getSimpleName());
         sb.append("[");
         sb.append("name=").append(name);
         sb.append(", namespace=").append(getNamespace());
