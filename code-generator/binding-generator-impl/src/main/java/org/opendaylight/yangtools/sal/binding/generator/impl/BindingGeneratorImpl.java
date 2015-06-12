@@ -25,6 +25,7 @@ import static org.opendaylight.yangtools.binding.generator.util.Types.typeForCla
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNode;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findNodeInSchemaContext;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
+
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
@@ -37,7 +38,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.opendaylight.yangtools.sal.binding.generator.impl.YangTemplate;
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.BindingTypes;
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
@@ -736,14 +736,14 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *         <code>enumTypeDef</code>
      */
     private EnumBuilder resolveInnerEnumFromTypeDefinition(final EnumTypeDefinition enumTypeDef, final QName enumName,
-            final GeneratedTypeBuilder typeBuilder, Module module) {
+            final GeneratedTypeBuilder typeBuilder, final Module module) {
         if ((enumTypeDef != null) && (typeBuilder != null) && (enumTypeDef.getQName() != null)
                 && (enumTypeDef.getQName().getLocalName() != null)) {
             final String enumerationName = BindingMapping.getClassName(enumName);
             final EnumBuilder enumBuilder = typeBuilder.addEnumeration(enumerationName);
             enumBuilder.setDescription(enumTypeDef.getDescription());
             enumBuilder.updateEnumPairsFromEnumTypeDef(enumTypeDef);
-            ModuleContext ctx = genCtx.get(module);
+            final ModuleContext ctx = genCtx.get(module);
             ctx.addInnerTypedefType(enumTypeDef.getPath(), enumBuilder);
             return enumBuilder;
         }
@@ -1249,9 +1249,10 @@ public class BindingGeneratorImpl implements BindingGenerator {
                             childOfType = findGroupingByPath(parent.getPath());
                         }
                         resolveDataSchemaNodes(module, basePackageName, caseTypeBuilder, childOfType, caseChildNodes);
-                    } else
+                    } else {
                         resolveDataSchemaNodes(module, basePackageName, caseTypeBuilder, moduleToDataType(module),
                                 caseChildNodes);
+                    }
                }
             }
             processUsesAugments(caseNode, module);
@@ -1351,7 +1352,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *         <li>true - in other cases</li>
      *         </ul>
      */
-    private Type resolveLeafSchemaNodeAsMethod(final GeneratedTypeBuilder typeBuilder, final LeafSchemaNode leaf, Module module) {
+    private Type resolveLeafSchemaNodeAsMethod(final GeneratedTypeBuilder typeBuilder, final LeafSchemaNode leaf, final Module module) {
         Type returnType = null;
         if ((leaf != null) && (typeBuilder != null)) {
             final String leafName = leaf.getQName().getLocalName();
@@ -1478,8 +1479,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 returnType = mc.getTypedefs().get(typeDef.getPath());
             } else if (typeDef instanceof EnumTypeDefinition && BaseTypes.ENUMERATION_QNAME.equals(typeDef.getQName())) {
                 // Annonymous enumeration (already generated, since it is inherited via uses).
-                LeafSchemaNode originalLeaf = (LeafSchemaNode) SchemaNodeUtils.getRootOriginalIfPossible(leaf);
-                QName qname = originalLeaf.getQName();
+                final LeafSchemaNode originalLeaf = (LeafSchemaNode) SchemaNodeUtils.getRootOriginalIfPossible(leaf);
+                final QName qname = originalLeaf.getQName();
                 final Module enumModule =  schemaContext.findModuleByNamespaceAndRevision(qname.getNamespace(),
                         qname.getRevision());
                 returnType = genCtx.get(enumModule).getInnerType(originalLeaf.getType().getPath());
@@ -1547,7 +1548,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
      *         <li>false - other cases</li>
      *         </ul>
      */
-    private boolean resolveLeafListSchemaNode(final GeneratedTypeBuilder typeBuilder, final LeafListSchemaNode node, Module module) {
+    private boolean resolveLeafListSchemaNode(final GeneratedTypeBuilder typeBuilder, final LeafListSchemaNode node, final Module module) {
         if ((node != null) && (typeBuilder != null)) {
             final QName nodeName = node.getQName();
 
@@ -1555,7 +1556,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
                 final TypeDefinition<?> typeDef = node.getType();
                 final Module parentModule = findParentModule(schemaContext, node);
 
-                Type returnType = null;
+                final Type returnType = null;
                 if (typeDef instanceof EnumTypeDefinition) {
                     returnType = typeProvider.javaTypeForSchemaDefinitionType(typeDef, node);
                     final EnumTypeDefinition enumTypeDef = (EnumTypeDefinition) typeDef;

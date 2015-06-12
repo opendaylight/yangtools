@@ -34,6 +34,9 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
  */
 public class StreamWriterGenerator extends AbstractStreamWriterGenerator {
 
+
+    private static final String UNKNOWN_SIZE = "-1";
+
     private StreamWriterGenerator(final JavassistUtils utils, final Void ignore) {
         super(utils);
     }
@@ -61,13 +64,14 @@ public class StreamWriterGenerator extends AbstractStreamWriterGenerator {
         return Integer.toString(node.getChildNodes().size());
     }
 
+
     @Override
     protected DataObjectSerializerSource generateContainerSerializer(final GeneratedType type, final ContainerSchemaNode node) {
 
         return new AugmentableDataNodeContainerEmitterSource(this, type, node) {
             @Override
             public CharSequence emitStartEvent() {
-                return startContainerNode(classReference(type), getChildSizeFromSchema(node));
+                return startContainerNode(classReference(type), UNKNOWN_SIZE);
             }
         };
     }
@@ -78,7 +82,7 @@ public class StreamWriterGenerator extends AbstractStreamWriterGenerator {
         return new AugmentableDataNodeContainerEmitterSource(this, type, node) {
             @Override
             public CharSequence emitStartEvent() {
-                return startContainerNode(classReference(type), getChildSizeFromSchema(node));
+                return startContainerNode(classReference(type), UNKNOWN_SIZE);
             }
         };
     }
@@ -88,7 +92,7 @@ public class StreamWriterGenerator extends AbstractStreamWriterGenerator {
         return new AugmentableDataNodeContainerEmitterSource(this, type, node) {
             @Override
             public CharSequence emitStartEvent() {
-                return startCaseNode(classReference(type),getChildSizeFromSchema(node));
+                return startCaseNode(classReference(type),UNKNOWN_SIZE);
             }
         };
     }
@@ -99,7 +103,7 @@ public class StreamWriterGenerator extends AbstractStreamWriterGenerator {
 
             @Override
             public CharSequence emitStartEvent() {
-                return startUnkeyedListItem(getChildSizeFromSchema(schemaNode));
+                return startUnkeyedListItem(UNKNOWN_SIZE);
             }
         };
     }
@@ -120,7 +124,7 @@ public class StreamWriterGenerator extends AbstractStreamWriterGenerator {
         return new AugmentableDataNodeContainerEmitterSource(this, type, node) {
             @Override
             public CharSequence emitStartEvent() {
-                return startMapEntryNode(invoke(INPUT, "getKey"), getChildSizeFromSchema(node));
+                return startMapEntryNode(invoke(INPUT, "getKey"), UNKNOWN_SIZE);
             }
         };
     }
