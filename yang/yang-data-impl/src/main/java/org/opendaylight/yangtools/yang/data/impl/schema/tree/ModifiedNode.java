@@ -51,6 +51,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             throw new IllegalArgumentException(String.format("Unhandled modification type %s", input.getOperation()));
         }
     };
+    private static final int DEFAULT_CHILD_COUNT = 8;
 
     private final Map<PathArgument, ModifiedNode> children;
     private final Optional<TreeNode> original;
@@ -69,10 +70,10 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             children = Collections.emptyMap();
             break;
         case ORDERED:
-            children = new LinkedHashMap<>();
+            children = new LinkedHashMap<>(DEFAULT_CHILD_COUNT);
             break;
         case UNORDERED:
-            children = new HashMap<>();
+            children = new HashMap<>(DEFAULT_CHILD_COUNT);
             break;
         default:
             throw new IllegalArgumentException("Unsupported child tracking policy " + childPolicy);
