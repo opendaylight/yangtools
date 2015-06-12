@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,7 +37,11 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
     }
 
     protected ImmutableLeafSetNodeBuilder(final int sizeHint) {
-        value = new HashMap<>(sizeHint * 4 / 3);
+        if (sizeHint >= 0) {
+            value = Maps.newHashMapWithExpectedSize(sizeHint);
+        } else {
+            value = new HashMap<>(DEFAULT_CAPACITY);
+        }
     }
 
     protected ImmutableLeafSetNodeBuilder(final ImmutableLeafSetNode<T> node) {

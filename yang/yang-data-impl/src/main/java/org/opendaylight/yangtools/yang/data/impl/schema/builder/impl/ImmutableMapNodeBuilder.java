@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +34,11 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
     }
 
     protected ImmutableMapNodeBuilder(final int sizeHint) {
-        this.value = new HashMap<>(DEFAULT_CAPACITY);
+        if (sizeHint >= 0) {
+            this.value = Maps.newHashMapWithExpectedSize(sizeHint);
+        } else {
+            this.value = new HashMap<>(DEFAULT_CAPACITY);
+        }
     }
 
     protected ImmutableMapNodeBuilder(final ImmutableMapNode node) {
