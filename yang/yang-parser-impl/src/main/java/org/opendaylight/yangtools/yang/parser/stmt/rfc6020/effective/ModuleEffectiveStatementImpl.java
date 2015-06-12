@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import java.util.Map;
+import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
 import java.net.URI;
 import java.util.Collection;
@@ -55,7 +56,7 @@ public class ModuleEffectiveStatementImpl extends
 
     private final QNameModule qNameModule;
     private final String name;
-    private String sourcePath; // TODO fill
+    private String sourcePath;
     private String prefix;
     private String yangVersion;
     private String organization;
@@ -110,8 +111,9 @@ public class ModuleEffectiveStatementImpl extends
             }
         }
 
-        // TODO init source, sourcePath
-        source = ctx.getStatementSource().name();
+        sourcePath = ((DeclarationInTextSource) ctx.getStatementSourceReference()).getSourceName();
+        // TODO source
+        //source =
 
         initSubmodules(ctx);
         initSubstatementCollections(ctx);
