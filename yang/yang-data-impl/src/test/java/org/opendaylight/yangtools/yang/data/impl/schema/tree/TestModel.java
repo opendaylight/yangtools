@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
-
+import com.google.common.io.Resources;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
-import java.util.Set;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public class TestModel {
 
@@ -36,16 +36,15 @@ public class TestModel {
 
 
     public static final InputStream getDatastoreTestInputStream() {
-        return getInputStream(DATASTORE_TEST_YANG);
-    }
-
-    private static InputStream getInputStream(final String resourceName) {
         return TestModel.class.getResourceAsStream(DATASTORE_TEST_YANG);
     }
 
     public static SchemaContext createTestContext() {
         YangParserImpl parser = new YangParserImpl();
-        Set<Module> modules = parser.parseYangModelsFromStreams(Collections.singletonList(getDatastoreTestInputStream()));
-        return parser.resolveSchemaContext(modules);
+        try {
+            return parser.parseSources(Collections.singleton(Resources.asByteSource(TestModel.class.getResource(DATASTORE_TEST_YANG))));
+        } catch (IOException | YangSyntaxErrorException e) {
+            throw new IllegalStateException("Failed to create context", e);
+        }
     }
 }
