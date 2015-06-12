@@ -19,6 +19,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinit
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
+import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
+import org.opendaylight.yangtools.yang.parser.util.NamedInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.io.File;
@@ -80,15 +82,20 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
         walker.walk(yangStatementModelParser, statementContext);
     }
 
-    private FileInputStream loadFile(String fileName, boolean isAbsolute) throws URISyntaxException, FileNotFoundException {
-        return isAbsolute ? new FileInputStream(new File(fileName)) : new FileInputStream(new File(getClass().getResource(fileName).toURI()));
+    private NamedFileInputStream loadFile(String fileName, boolean isAbsolute) throws URISyntaxException,
+            FileNotFoundException {
+        return isAbsolute ? new NamedFileInputStream(new File(fileName), fileName) : new NamedFileInputStream(new File
+                (getClass().getResource(fileName).toURI()), fileName);
     }
 
-    private YangStatementParser.StatementContext parseYangSource(final InputStream stream) throws IOException, YangSyntaxErrorException {
+    private YangStatementParser.StatementContext parseYangSource(final InputStream stream) throws IOException,
+            YangSyntaxErrorException {
         final YangStatementLexer lexer = new YangStatementLexer(new ANTLRInputStream(stream));
         final CommonTokenStream tokens = new CommonTokenStream(lexer);
         final YangStatementParser parser = new YangStatementParser(tokens);
-        sourceName = parser.getSourceName();
+        if (stream instanceof NamedFileInputStream) {
+            sourceName = ((NamedFileInputStream) stream).getFileDestination();
+        }
         return parser.statement();
     }
 }
