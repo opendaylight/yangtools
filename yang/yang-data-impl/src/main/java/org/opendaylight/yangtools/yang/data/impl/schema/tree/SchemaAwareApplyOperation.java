@@ -175,7 +175,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
 
     private static void checkDeleteApplicable(final NodeModification modification, final Optional<TreeNode> current) {
         // Delete is always applicable, we do not expose it to subclasses
-        if (current.isPresent()) {
+        if (!current.isPresent()) {
             LOG.trace("Delete operation turned to no-op on missing node {}", modification);
         }
     }
@@ -189,7 +189,11 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     final Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> currentMeta, final Version version) {
         switch (modification.getOperation()) {
         case DELETE:
-            modification.resolveModificationType(ModificationType.DELETE);
+            if (currentMeta.isPresent()) {
+                modification.resolveModificationType(ModificationType.DELETE);
+            } else {
+                modification.resolveModificationType(ModificationType.UNMODIFIED);
+            }
             return modification.setSnapshot(Optional.<TreeNode> absent());
         case TOUCH:
             Preconditions.checkArgument(currentMeta.isPresent(), "Metadata not available for modification %s",
