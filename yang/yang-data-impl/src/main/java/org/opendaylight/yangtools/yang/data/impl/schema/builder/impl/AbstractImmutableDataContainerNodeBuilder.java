@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,12 +34,12 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends YangInstanceI
     private boolean dirty;
 
     protected AbstractImmutableDataContainerNodeBuilder() {
-        this.value = new HashMap<>(DEFAULT_CAPACITY);
+        this.value = Maps.newHashMapWithExpectedSize(DEFAULT_CAPACITY);
         this.dirty = false;
     }
 
     protected AbstractImmutableDataContainerNodeBuilder(final int sizeHint) {
-        this.value = new HashMap<>(DEFAULT_CAPACITY);
+        this.value = Maps.newHashMapWithExpectedSize(sizeHint >=0 ? sizeHint : DEFAULT_CAPACITY);
         this.dirty = false;
     }
 

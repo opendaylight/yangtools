@@ -36,7 +36,11 @@ public class ImmutableOrderedMapNodeBuilder implements CollectionNodeBuilder<Map
     }
 
     protected ImmutableOrderedMapNodeBuilder(final int sizeHint) {
-        this.value = new LinkedHashMap<>(DEFAULT_CAPACITY);
+        if (sizeHint >= 0) {
+            this.value = new LinkedHashMap<>(sizeHint + sizeHint / 3);
+        } else {
+            this.value = new LinkedHashMap<>(DEFAULT_CAPACITY);
+        }
         this.dirty = false;
     }
 
