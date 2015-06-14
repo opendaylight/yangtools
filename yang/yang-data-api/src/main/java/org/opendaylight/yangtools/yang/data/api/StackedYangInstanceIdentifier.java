@@ -138,4 +138,9 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier {
         }
         outputStream.writeObject(p);
     }
+
+    @Override
+    public YangInstanceIdentifier toOptimized() {
+        return FixedYangInstanceIdentifier.create(getPathArguments());
+    }
 }
