@@ -6,6 +6,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
@@ -94,6 +95,15 @@ public abstract class YangInstanceIdentifier extends IterablePathArguments imple
      * @return True if this instance identifier is empty, false otherwise.
      */
     public abstract boolean isEmpty();
+
+    /**
+     * Return an optimized version of this identifier, useful when the identifier
+     * will be used very frequently.
+     *
+     * @return A optimized equivalent instance.
+     */
+    @Beta
+    public abstract YangInstanceIdentifier toOptimized();
 
     /**
      * Return the conceptual parent {@link YangInstanceIdentifier}, which has
@@ -243,6 +253,55 @@ public abstract class YangInstanceIdentifier extends IterablePathArguments imple
         return Optional.of(createRelativeIdentifier(common));
     }
 
+    @Override
+    public final boolean contains(final YangInstanceIdentifier other) {
+        Preconditions.checkArgument(other != null, "other should not be null");
+
+        final Iterator<?> lit = getPathArguments().iterator();
+        final Iterator<?> oit = other.getPathArguments().iterator();
+
+        while (lit.hasNext()) {
+            if (!oit.hasNext()) {
+                return false;
+            }
+
+            if (!lit.next().equals(oit.next())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public final String toString() {
+        /*
+         * The toStringCache is safe, since the object contract requires
+         * immutability of the object and all objects referenced from this
+         * object.
+         * Used lists, maps are immutable. Path Arguments (elements) are also
+         * immutable, since the PathArgument contract requires immutability.
+         * The cache is thread-safe - if multiple computations occurs at the
+         * same time, cache will be overwritten with same result.
+         */
+        String ret = toStringCache;
+        if (ret == null) {
+            final StringBuilder builder = new StringBuilder("/");
+            PathArgument prev = null;
+            for (PathArgument argument : getPathArguments()) {
+                if (prev != null) {
+                    builder.append('/');
+                }
+                builder.append(argument.toRelativeString(prev));
+                prev = argument;
+            }
+
+            ret = builder.toString();
+            TOSTRINGCACHE_UPDATER.lazySet(this, ret);
+        }
+        return ret;
+    }
+
     private static int hashCode(final Object value) {
         if (value == null) {
             return 0;
@@ -268,7 +327,6 @@ public abstract class YangInstanceIdentifier extends IterablePathArguments imple
     // Static factories & helpers
 
     /**
-     *
      * Returns a new InstanceIdentifier with only one path argument of type {@link NodeIdentifier} with supplied QName
      *
      * @param name QName of first node identifier
@@ -279,7 +337,6 @@ public abstract class YangInstanceIdentifier extends IterablePathArguments imple
     }
 
     /**
-     *
      * Returns new builder for InstanceIdentifier with empty path arguments.
      *
      * @return new builder for InstanceIdentifier with empty path arguments.
@@ -292,7 +349,7 @@ public abstract class YangInstanceIdentifier extends IterablePathArguments imple
      *
      * Returns new builder for InstanceIdentifier with path arguments copied from original instance identifier.
      *
-     * @param origin Instace Identifier from which path arguments are copied.
+     * @param origin InstanceIdentifier from which path arguments are copied.
      * @return new builder for InstanceIdentifier with path arguments copied from original instance identifier.
      */
     public static InstanceIdentifierBuilder builder(final YangInstanceIdentifier origin) {
@@ -691,54 +748,5 @@ public abstract class YangInstanceIdentifier extends IterablePathArguments imple
                 return -1;
             }
         }
-    }
-
-    @Override
-    public final boolean contains(final YangInstanceIdentifier other) {
-        Preconditions.checkArgument(other != null, "other should not be null");
-
-        final Iterator<?> lit = getPathArguments().iterator();
-        final Iterator<?> oit = other.getPathArguments().iterator();
-
-        while (lit.hasNext()) {
-            if (!oit.hasNext()) {
-                return false;
-            }
-
-            if (!lit.next().equals(oit.next())) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    @Override
-    public final String toString() {
-        /*
-         * The toStringCache is safe, since the object contract requires
-         * immutability of the object and all objects referenced from this
-         * object.
-         * Used lists, maps are immutable. Path Arguments (elements) are also
-         * immutable, since the PathArgument contract requires immutability.
-         * The cache is thread-safe - if multiple computations occurs at the
-         * same time, cache will be overwritten with same result.
-         */
-        String ret = toStringCache;
-        if (ret == null) {
-            final StringBuilder builder = new StringBuilder("/");
-            PathArgument prev = null;
-            for (PathArgument argument : getPathArguments()) {
-                if (prev != null) {
-                    builder.append('/');
-                }
-                builder.append(argument.toRelativeString(prev));
-                prev = argument;
-            }
-
-            ret = builder.toString();
-            TOSTRINGCACHE_UPDATER.lazySet(this, ret);
-        }
-        return ret;
     }
 }
