@@ -65,7 +65,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  *
  * @see <a href="http://tools.ietf.org/html/rfc6020#section-9.13">RFC6020</a>
  */
-public abstract class YangInstanceIdentifier extends IterablePathArguments implements Path<YangInstanceIdentifier>, Immutable, Serializable {
+public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentifier>, Immutable, Serializable {
     /**
      * An empty {@link YangInstanceIdentifier}. It corresponds to the path of the conceptual
      * root of the YANG namespace.
@@ -114,22 +114,10 @@ public abstract class YangInstanceIdentifier extends IterablePathArguments imple
     @Nullable public abstract YangInstanceIdentifier getParent();
 
     /**
-     * Returns a list of path arguments.
-     *
-     * @deprecated Use {@link #getPathArguments()} instead.
-     * @return Immutable list of path arguments.
-     */
-    @Deprecated
-    public final List<PathArgument> getPath() {
-        return getPathArguments();
-    }
-
-    /**
      * Returns an ordered iteration of path arguments.
      *
      * @return Immutable iteration of path arguments.
      */
-    @Override
     public abstract List<PathArgument> getPathArguments();
 
     /**
@@ -138,7 +126,6 @@ public abstract class YangInstanceIdentifier extends IterablePathArguments imple
      *
      * @return Immutable iterable of path arguments in reverse order.
      */
-    @Override
     public abstract List<PathArgument> getReversePathArguments();
 
     /**
