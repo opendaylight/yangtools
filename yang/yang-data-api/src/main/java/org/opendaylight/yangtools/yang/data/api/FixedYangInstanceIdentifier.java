@@ -99,4 +99,9 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier {
             return super.pathArgumentsEqual(other);
         }
     }
+
+    @Override
+    public YangInstanceIdentifier toOptimized() {
+        return this;
+    }
 }
