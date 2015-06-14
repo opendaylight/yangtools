@@ -59,12 +59,6 @@ final class YangInstanceIdentifierBuilder implements InstanceIdentifierBuilder {
     }
 
     @Override
-    @Deprecated
-    public YangInstanceIdentifier toInstance() {
-        return build();
-    }
-
-    @Override
     public YangInstanceIdentifier build() {
         return FixedYangInstanceIdentifier.create(path, hash.build());
     }
