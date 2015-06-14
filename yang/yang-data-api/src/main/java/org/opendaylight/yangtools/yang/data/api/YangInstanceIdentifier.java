@@ -499,12 +499,6 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          */
         @Override
         YangInstanceIdentifier build();
-
-        /*
-         * @deprecated use #build()
-         */
-        @Deprecated
-        YangInstanceIdentifier toInstance();
     }
 
     /**
