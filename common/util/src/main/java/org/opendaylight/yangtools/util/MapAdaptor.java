@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.util;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.romix.scala.collection.concurrent.TrieMap;
 import java.util.Collections;
 import java.util.HashMap;
@@ -86,6 +88,22 @@ public final class MapAdaptor {
     }
 
     /**
+     * Creates an initial snapshot. The backing map is selected according to
+     * the expected size.
+     *
+     * @param expectedSize Expected map size
+     * @return An empty mutable map.
+     */
+    public <K, V> Map<K, V> initialSnapshot(final int expectedSize) {
+        Preconditions.checkArgument(expectedSize >= 0);
+        if (expectedSize > persistMinItems) {
+            return new ReadWriteTrieMap<>();
+        }
+
+        return Maps.newHashMapWithExpectedSize(expectedSize);
+    }
+
+    /**
      * Input is treated is supposed to be left unmodified, result must be mutable.
      *
      * @param input
@@ -124,7 +142,7 @@ public final class MapAdaptor {
          */
         if (size == 0) {
             LOG.trace("Reducing input {} to an empty map", input);
-            return Collections.emptyMap();
+            return ImmutableMap.of();
         }
 
         /*
