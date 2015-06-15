@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
 public class UnknownStatementImpl extends AbstractDeclaredStatement<String> implements UnknownStatement<String> {
 
@@ -22,8 +23,9 @@ public class UnknownStatementImpl extends AbstractDeclaredStatement<String> impl
         super(context);
     }
 
-    public static class Definition extends AbstractStatementSupport<String, UnknownStatement<String>, EffectiveStatement<String, UnknownStatement<String>>> {
-
+    public static class Definition
+            extends
+            AbstractStatementSupport<String, UnknownStatement<String>, EffectiveStatement<String, UnknownStatement<String>>> {
 
         public Definition(final StatementDefinition publicDefinition) {
             super(publicDefinition);
@@ -40,8 +42,9 @@ public class UnknownStatementImpl extends AbstractDeclaredStatement<String> impl
         }
 
         @Override
-        public EffectiveStatement<String, UnknownStatement<String>> createEffective(final StmtContext<String, UnknownStatement<String>, EffectiveStatement<String, UnknownStatement<String>>> ctx) {
-            throw new UnsupportedOperationException();
+        public EffectiveStatement<String, UnknownStatement<String>> createEffective(
+                final StmtContext<String, UnknownStatement<String>, EffectiveStatement<String, UnknownStatement<String>>> ctx) {
+            return new UnknownEffectiveStatementImpl(ctx);
         }
     }
 

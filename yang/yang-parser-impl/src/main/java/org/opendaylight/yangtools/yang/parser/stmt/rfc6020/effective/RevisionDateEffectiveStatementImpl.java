@@ -7,14 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import java.util.Date;
+
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class RevisionDateEffectiveStatementImpl extends
-        EffectiveStatementBase<String, RevisionDateStatement> {
+        EffectiveStatementBase<Date, RevisionDateStatement> {
 
     public RevisionDateEffectiveStatementImpl(
-            StmtContext<String, RevisionDateStatement, ?> ctx) {
+            StmtContext<Date, RevisionDateStatement, ?> ctx) {
         super(ctx);
     }
 
