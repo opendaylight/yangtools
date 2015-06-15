@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
+import com.google.common.annotations.Beta;
 
+@Beta
 public enum TreeType {
-
     CONFIGURATION,
-
-    OPERATIONAL
+    OPERATIONAL,
 }
