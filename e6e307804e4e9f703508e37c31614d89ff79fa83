@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "9a6a9dd7_fe726348",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/DataTreeFactory.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-06-15T08:28:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a6a9dd7_bd8dd533",
+      "revId": "e6e307804e4e9f703508e37c31614d89ff79fa83",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a6a9dd7_fd9b4d70",
         "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/TreeType.java",
         "patchSetId": 8
@@ -30,6 +48,24 @@
       "writtenOn": "2015-06-08T16:28:43Z",
       "side": 1,
       "message": "missing javadocs",
+      "revId": "e6e307804e4e9f703508e37c31614d89ff79fa83",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_1ee71714",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/schema/tree/TreeType.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-06-15T08:28:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a6a9dd7_fd9b4d70",
       "revId": "e6e307804e4e9f703508e37c31614d89ff79fa83",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "9a6a9dd7_def0bfcb",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/AbstractDataNodeContainerModificationStrategy.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 55,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-06-15T08:28:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a6a9dd7_1d7c0120",
+      "revId": "e6e307804e4e9f703508e37c31614d89ff79fa83",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a6a9dd7_dd752933",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/AbstractNodeContainerModificationStrategy.java",
         "patchSetId": 8
@@ -64,6 +118,24 @@
       "writtenOn": "2015-06-08T16:28:43Z",
       "side": 1,
       "message": "missing a space",
+      "revId": "e6e307804e4e9f703508e37c31614d89ff79fa83",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_9eba47e0",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/AbstractNodeContainerModificationStrategy.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-06-15T08:28:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a6a9dd7_dd752933",
       "revId": "e6e307804e4e9f703508e37c31614d89ff79fa83",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "9a6a9dd7_de751f33",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/ChoiceModificationStrategy.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-06-15T08:28:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a6a9dd7_fd726d48",
+      "revId": "e6e307804e4e9f703508e37c31614d89ff79fa83",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a6a9dd7_bdbb95c3",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/InMemoryDataTree.java",
         "patchSetId": 8
@@ -98,6 +188,24 @@
       "writtenOn": "2015-06-08T16:28:43Z",
       "side": 1,
       "message": "move this up, so mutable state is lower than immutable",
+      "revId": "e6e307804e4e9f703508e37c31614d89ff79fa83",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_7eb973e8",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/InMemoryDataTree.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-06-15T08:28:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a6a9dd7_bdbb95c3",
       "revId": "e6e307804e4e9f703508e37c31614d89ff79fa83",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -121,6 +229,24 @@
     },
     {
       "key": {
+        "uuid": "9a6a9dd7_1ece3784",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/InMemoryDataTree.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-06-15T08:28:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a6a9dd7_7db5fdcb",
+      "revId": "e6e307804e4e9f703508e37c31614d89ff79fa83",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a6a9dd7_ddc3e936",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/OperationWithModification.java",
         "patchSetId": 8
@@ -138,6 +264,24 @@
     },
     {
       "key": {
+        "uuid": "9a6a9dd7_dec75f63",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/OperationWithModification.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-06-15T08:28:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a6a9dd7_ddc3e936",
+      "revId": "e6e307804e4e9f703508e37c31614d89ff79fa83",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a6a9dd7_bd94f537",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/SchemaAwareApplyOperation.java",
         "patchSetId": 8
@@ -149,6 +293,24 @@
       "writtenOn": "2015-06-08T16:28:43Z",
       "side": 1,
       "message": "space",
+      "revId": "e6e307804e4e9f703508e37c31614d89ff79fa83",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_9ea1e7ab",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/SchemaAwareApplyOperation.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-06-15T08:28:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a6a9dd7_bd94f537",
       "revId": "e6e307804e4e9f703508e37c31614d89ff79fa83",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
@@ -223,6 +385,24 @@
     },
     {
       "key": {
+        "uuid": "9a6a9dd7_bea62bc0",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/UnorderedMapModificationStrategy.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-06-15T08:28:55Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a6a9dd7_9d04917f",
+      "revId": "e6e307804e4e9f703508e37c31614d89ff79fa83",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a6a9dd7_fdd7cdeb",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/UnorderedMapModificationStrategy.java",
         "patchSetId": 8
@@ -234,6 +414,24 @@
       "writtenOn": "2015-06-08T16:28:43Z",
       "side": 1,
       "message": "here, and elsewhere we are introducing a space after static imports -- is that appropriate?",
+      "revId": "e6e307804e4e9f703508e37c31614d89ff79fa83",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a6a9dd7_3e79bb2f",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/UnorderedMapModificationStrategy.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-06-15T08:28:55Z",
+      "side": 1,
+      "message": "Import settings in Eclipse according to\nhttps://wiki.opendaylight.org/view/GettingStarted:_Eclipse#Import_ordering",
+      "parentUuid": "9a6a9dd7_fdd7cdeb",
       "revId": "e6e307804e4e9f703508e37c31614d89ff79fa83",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
