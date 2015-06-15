@@ -334,6 +334,24 @@
     },
     {
       "key": {
+        "uuid": "7a7fa997_399ecb57",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/SchemaAwareApplyOperation.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-06-15T08:44:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a6a9dd7_3dcea55b",
+      "revId": "e6e307804e4e9f703508e37c31614d89ff79fa83",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a6a9dd7_3da0e58f",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/SchemaAwareApplyOperation.java",
         "patchSetId": 8
@@ -351,6 +369,24 @@
     },
     {
       "key": {
+        "uuid": "7a7fa997_d9a2379a",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/SchemaAwareApplyOperation.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 263,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-06-15T08:44:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a6a9dd7_3da0e58f",
+      "revId": "e6e307804e4e9f703508e37c31614d89ff79fa83",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a6a9dd7_1da3a19f",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/SchemaAwareApplyOperation.java",
         "patchSetId": 8
@@ -362,6 +398,24 @@
       "writtenOn": "2015-06-08T16:28:43Z",
       "side": 1,
       "message": "always returns true?",
+      "revId": "e6e307804e4e9f703508e37c31614d89ff79fa83",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_f99ff34e",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/SchemaAwareApplyOperation.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 266,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-06-15T08:44:29Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a6a9dd7_1da3a19f",
       "revId": "e6e307804e4e9f703508e37c31614d89ff79fa83",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
