@@ -7,16 +7,14 @@
  */
 package org.opendaylight.yangtools.util;
 
+import com.google.common.base.Preconditions;
+import com.romix.scala.collection.concurrent.TrieMap;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Preconditions;
-import com.romix.scala.collection.concurrent.TrieMap;
 
 /**
  * A TrieMap facade tracking modifications. Since we change structures based on
@@ -33,6 +31,11 @@ final class ReadWriteTrieMap<K, V> implements Map<K, V> {
     private static final Logger LOG = LoggerFactory.getLogger(ReadOnlyTrieMap.class);
     private final TrieMap<K, V> delegate;
     private int size;
+
+    ReadWriteTrieMap() {
+        this.delegate = new TrieMap<K, V>();
+        this.size = 0;
+    }
 
     ReadWriteTrieMap(final TrieMap<K, V> delegate, final int size) {
         this.delegate = Preconditions.checkNotNull(delegate);

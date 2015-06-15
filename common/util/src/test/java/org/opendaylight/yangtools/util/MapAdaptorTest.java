@@ -11,12 +11,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-
+import com.google.common.collect.ImmutableMap;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -38,10 +37,10 @@ public class MapAdaptorTest {
         assertTrue(snap instanceof HashMap);
 
         final Map<?, ?> opt1 = adaptor.optimize(input);
-        assertSame(Collections.EMPTY_MAP, opt1);
+        assertSame(ImmutableMap.of(), opt1);
 
         final Map<?, ?> opt2 = adaptor.optimize(snap);
-        assertSame(Collections.EMPTY_MAP, opt2);
+        assertSame(ImmutableMap.of(), opt2);
     }
 
     @Test
