@@ -33,6 +33,7 @@ abstract class AbstractDataTreeTip implements DataTreeTip {
     public final void validate(final DataTreeModification modification) throws DataValidationFailedException {
         Preconditions.checkArgument(modification instanceof InMemoryDataTreeModification, "Invalid modification class %s", modification.getClass());
         final InMemoryDataTreeModification m = (InMemoryDataTreeModification)modification;
+        Preconditions.checkArgument(m.isSealed(), "Attempted to verify unsealed modification %s", m);
 
         m.getStrategy().checkApplicable(PUBLIC_ROOT_PATH, m.getRootModification(), Optional.of(getTipRoot()));
     }
@@ -40,8 +41,9 @@ abstract class AbstractDataTreeTip implements DataTreeTip {
     @Override
     public final DataTreeCandidateTip prepare(final DataTreeModification modification) {
         Preconditions.checkArgument(modification instanceof InMemoryDataTreeModification, "Invalid modification class %s", modification.getClass());
-
         final InMemoryDataTreeModification m = (InMemoryDataTreeModification)modification;
+        Preconditions.checkArgument(m.isSealed(), "Attempted to prepare unsealed modification %s", m);
+
         final ModifiedNode root = m.getRootModification();
 
         final TreeNode currentRoot = getTipRoot();
