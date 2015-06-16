@@ -80,7 +80,7 @@ public final class JSONCodecFactory {
 
     private JSONCodecFactory(final SchemaContext context) {
         this.schemaContext = Preconditions.checkNotNull(context);
-        iidCodec = new JSONStringInstanceIdentifierCodec(context);
+        iidCodec = new JSONStringInstanceIdentifierCodec(context, this);
     }
 
     /**
