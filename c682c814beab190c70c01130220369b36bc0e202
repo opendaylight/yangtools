@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a7fa997_6bdd4114",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/ElementInstanceIdentifierParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-06-16T11:15:11Z",
+      "side": 1,
+      "message": "This will not probably work for leaf-ref and identityrefs... At least add  FIXME for affected types.\n\nIf keyCodec is null - emit warning or throw IllegalStateException describing error.\n\nBut would prefer to have this fixed also for leafrefs and identityref",
+      "range": {
+        "startLine": 39,
+        "startChar": 8,
+        "endLine": 42,
+        "endChar": 43
+      },
+      "revId": "c682c814beab190c70c01130220369b36bc0e202",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
