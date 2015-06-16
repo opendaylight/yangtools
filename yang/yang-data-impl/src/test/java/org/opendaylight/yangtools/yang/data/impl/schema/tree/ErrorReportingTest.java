@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
@@ -28,43 +29,44 @@ public class ErrorReportingTest {
 
     @Test
     public void writeWithoutParentExisting() {
-        InMemoryDataTreeModification modification = tree.takeSnapshot().newModification();
+        final InMemoryDataTreeModification modification = tree.takeSnapshot().newModification();
         // We write node without creating parent
         modification.write(TestModel.OUTER_LIST_PATH, ImmutableNodes.mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
         modification.ready();
         try {
             tree.validate(modification);
             fail("ModifiedNodeDoesNotExistException should be raised");
-        } catch (ModifiedNodeDoesNotExistException e) {
+        } catch (final ModifiedNodeDoesNotExistException e) {
             assertEquals(TestModel.TEST_PATH, e.getPath());
-        } catch (DataValidationFailedException e) {
+        } catch (final DataValidationFailedException e) {
             fail("ModifiedNodeDoesNotExistException expected");
         }
     }
 
     @Test
     public void parentConcurrentlyDeletedExisting() {
-        InMemoryDataTreeModification initial = tree.takeSnapshot().newModification();
+        final InMemoryDataTreeModification initial = tree.takeSnapshot().newModification();
         // We write node without creating parent
         initial.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         initial.ready();
         // We commit transaction
         tree.commit(tree.prepare(initial));
 
-        InMemoryDataTreeModification writeTx = tree.takeSnapshot().newModification();
-        InMemoryDataTreeModification deleteTx = tree.takeSnapshot().newModification();
+        final InMemoryDataTreeModification writeTx = tree.takeSnapshot().newModification();
+        final InMemoryDataTreeModification deleteTx = tree.takeSnapshot().newModification();
         deleteTx.delete(TestModel.TEST_PATH);
         deleteTx.ready();
         // We commit delete modification
         tree.commit(tree.prepare(deleteTx));
 
         writeTx.write(TestModel.OUTER_LIST_PATH, ImmutableNodes.mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
+        writeTx.ready();
         try {
             tree.validate(writeTx);
             fail("ConflictingModificationAppliedException should be raised");
-        } catch (ConflictingModificationAppliedException e) {
+        } catch (final ConflictingModificationAppliedException e) {
             assertEquals(TestModel.TEST_PATH, e.getPath());
-        } catch (DataValidationFailedException e) {
+        } catch (final DataValidationFailedException e) {
             fail("ConflictingModificationAppliedException expected");
         }
 
