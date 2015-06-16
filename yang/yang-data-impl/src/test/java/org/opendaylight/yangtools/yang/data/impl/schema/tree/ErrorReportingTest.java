@@ -59,6 +59,7 @@ public class ErrorReportingTest {
         tree.commit(tree.prepare(deleteTx));
 
         writeTx.write(TestModel.OUTER_LIST_PATH, ImmutableNodes.mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
+        writeTx.ready();
         try {
             tree.validate(writeTx);
             fail("ConflictingModificationAppliedException should be raised");
