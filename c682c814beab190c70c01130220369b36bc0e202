@@ -22,6 +22,30 @@
       "revId": "c682c814beab190c70c01130220369b36bc0e202",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_cbf8154c",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/xml/ElementInstanceIdentifierParser.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 2470
+      },
+      "writtenOn": "2015-06-16T13:07:05Z",
+      "side": 1,
+      "message": "Forgot about this. Added leafref and identityref branching.",
+      "parentUuid": "7a7fa997_6bdd4114",
+      "range": {
+        "startLine": 39,
+        "startChar": 8,
+        "endLine": 42,
+        "endChar": 43
+      },
+      "revId": "c682c814beab190c70c01130220369b36bc0e202",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
