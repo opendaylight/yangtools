@@ -261,7 +261,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         final boolean wasRunning = UPDATER.compareAndSet(this, 0, 1);
         Preconditions.checkState(wasRunning, "Attempted to seal an already-sealed Data Tree.");
 
-        AbstractReadyIterator current = AbstractReadyIterator.create(rootNode);
+        AbstractReadyIterator current = AbstractReadyIterator.create(rootNode, strategyTree);
         do {
             current = current.process();
         } while (current != null);

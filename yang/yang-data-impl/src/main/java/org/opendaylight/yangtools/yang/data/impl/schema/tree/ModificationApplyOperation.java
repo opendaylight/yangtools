@@ -70,13 +70,16 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
 
     /**
      *
-     * Performs structural verification of NodeModification, such as writen values / types
-     * uses right structural elements.
+     * Performs structural verification of NodeModification, such as writen values / types uses
+     * right structural elements.
      *
-     * @param modification to be verified.
-     * @throws IllegalArgumentException If provided NodeModification does not adhere to the structure.
+     * @param modification data to be verified.
+     * @param verifyChildren true if structure verification should be run against children.
+     * @throws IllegalArgumentException If provided NodeModification does not adhere to the
+     *         structure.
      */
-    abstract void verifyStructure(NormalizedNode<?, ?> modification) throws IllegalArgumentException;
+    abstract void verifyStructure(NormalizedNode<?, ?> modification, boolean verifyChildren)
+            throws IllegalArgumentException;
 
     /**
      * Return the tracking policy for this node's children.

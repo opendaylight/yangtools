@@ -109,7 +109,7 @@ public class ConfigStatementValidationTest {
         inMemoryDataTree.setSchemaContext(schemaContext);
         final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(TestModel.TEST_PATH, createFooTestContainerNode());
-
+        modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
         final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare);
@@ -122,7 +122,7 @@ public class ConfigStatementValidationTest {
         inMemoryDataTree.setSchemaContext(schemaContext);
         final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(TestModel.TEST_PATH, createBarTestContainerNode());
-
+        modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
         final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare);
@@ -162,7 +162,7 @@ public class ConfigStatementValidationTest {
 
         final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(ii, choice1);
-
+        modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
         final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare);

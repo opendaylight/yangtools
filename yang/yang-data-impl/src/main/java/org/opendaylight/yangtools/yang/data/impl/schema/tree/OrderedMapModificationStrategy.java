@@ -15,7 +15,7 @@ final class OrderedMapModificationStrategy extends AbstractNodeContainerModifica
     private final Optional<ModificationApplyOperation> entryStrategy;
 
     OrderedMapModificationStrategy(final ListSchemaNode schema, final TreeType treeType) {
-        super(OrderedMapNode.class);
+        super(OrderedMapNode.class, treeType);
         entryStrategy = Optional.<ModificationApplyOperation> of(new ListEntryModificationStrategy(schema, treeType));
     }
 

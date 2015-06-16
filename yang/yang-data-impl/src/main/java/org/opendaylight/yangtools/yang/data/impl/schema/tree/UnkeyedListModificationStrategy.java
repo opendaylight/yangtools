@@ -123,7 +123,7 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
     }
 
     @Override
-    protected void verifyStructure(final NormalizedNode<?, ?> writtenValue) {
+    protected void verifyStructure(final NormalizedNode<?, ?> writtenValue, final boolean verifyChildren) {
 
     }
 
