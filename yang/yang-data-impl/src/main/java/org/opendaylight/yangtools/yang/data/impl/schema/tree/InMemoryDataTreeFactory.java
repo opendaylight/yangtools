@@ -7,6 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
@@ -14,6 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
@@ -21,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  */
 public final class InMemoryDataTreeFactory implements DataTreeFactory {
     private static final InMemoryDataTreeFactory INSTANCE = new InMemoryDataTreeFactory();
-    private final NormalizedNode<?, ?> root = ImmutableNodes.containerNode(SchemaContext.NAME);
+    private final NormalizedNode<?, ?> rootContainer = ImmutableNodes.containerNode(SchemaContext.NAME);
 
     private InMemoryDataTreeFactory() {
         // Never instantiated externally
@@ -33,8 +39,27 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
     }
 
     @Override
-    public TipProducingDataTree create(TreeType treeType) {
-        return new InMemoryDataTree(TreeNodeFactory.createTreeNode(root, Version.initial()), treeType, null);
+    public TipProducingDataTree create(final TreeType treeType) {
+        return new InMemoryDataTree(TreeNodeFactory.createTreeNode(rootContainer, Version.initial()),
+            treeType, YangInstanceIdentifier.EMPTY, null);
+    }
+
+    @Override
+    public TipProducingDataTree create(final TreeType treeType, final YangInstanceIdentifier rootPath) {
+        final NormalizedNode<?, ?> root;
+        final PathArgument arg = rootPath.getLastPathArgument();
+        if (arg instanceof NodeIdentifier) {
+            root = rootContainer;
+        } else if (arg instanceof NodeIdentifierWithPredicates) {
+            final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> b = ImmutableNodes.mapEntryBuilder();
+            b.withNodeIdentifier((NodeIdentifierWithPredicates) arg);
+            root = b.build();
+        } else {
+            // FIXME: implement augmentations and leaf-lists
+            throw new IllegalArgumentException("Unsupported root node " + arg);
+        }
+
+        return new InMemoryDataTree(TreeNodeFactory.createTreeNode(root, Version.initial()), treeType, rootPath, null);
     }
 
     /**
