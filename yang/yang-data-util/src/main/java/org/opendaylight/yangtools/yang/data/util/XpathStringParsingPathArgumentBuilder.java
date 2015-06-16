@@ -150,15 +150,18 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
             skipWhitespaces();
             checkCurrentAndSkip(EQUALS, "Precondition must contain '='");
             skipWhitespaces();
-            final Object value = deserializeValue(key,nextQuotedValue());
+            final String keyValue = nextQuotedValue();
             skipWhitespaces();
             checkCurrentAndSkip(PRECONDITION_END, "Precondition must ends with ']'");
 
             // Break-out from method for leaf-list case
             if(key == null && currentNode.isLeaf()) {
                 checkValid(offset == data.length(), "Leaf argument must be last argument of instance identifier.");
-                return new YangInstanceIdentifier.NodeWithValue(name, value);
+                return new YangInstanceIdentifier.NodeWithValue(name, keyValue);
             }
+            final DataSchemaContextNode<?> keyNode = currentNode.getChild(key);
+            checkValid(keyNode != null, "%s is not correct schema node identifier.", key);
+            final Object value = codec.deserializeKeyValue(keyNode.getDataSchemaNode(), keyValue);
             keyValues.put(key, value);
         }
         return new YangInstanceIdentifier.NodeIdentifierWithPredicates(name, keyValues.build());
