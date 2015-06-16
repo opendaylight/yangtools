@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RevisionEffectiveStatementImpl;
-
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import java.text.ParseException;
 import java.util.Date;
@@ -47,7 +46,8 @@ public class RevisionStatementImpl extends AbstractDeclaredStatement<Date>
                 revision = SimpleDateFormatUtil.getRevisionFormat()
                         .parse(value);
             } catch (ParseException e) {
-                throw new IllegalArgumentException(e);
+                throw new SourceException(String.format("Revision value %s is not in required format yyyy-MM-dd",
+                        value), ctx.getStatementSourceReference(), e);
             }
 
             return revision;

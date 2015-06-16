@@ -9,8 +9,9 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.FULL_DECLARATION;
 
-import java.util.Collection;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -62,6 +63,10 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
                 final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode)
                 throws SourceException {
 
+            if(StmtContextUtils.isInExtensionBody(usesNode)) {
+                return;
+            }
+
             ModelActionBuilder usesAction = usesNode.newInferenceAction(FULL_DECLARATION);
             final QName groupingName = usesNode.getStatementArgument();
 
@@ -78,10 +83,11 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
                     StatementContextBase<?, ?, ?> sourceGrpStmtCtx = (StatementContextBase<?, ?, ?>) sourceGroupingPre.get();
 
                     try {
-                        GroupingUtils.copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx);
+                        GroupingUtils.copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
                         GroupingUtils.resolveUsesNode(usesNode, targetNodeStmtCtx);
                     } catch (SourceException e) {
                         LOG.warn(e.getMessage(), e);
+                        throw e;
                     }
                 }
 

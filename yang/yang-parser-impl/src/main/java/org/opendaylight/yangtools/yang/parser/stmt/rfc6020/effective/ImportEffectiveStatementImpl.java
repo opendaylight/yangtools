@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import java.util.Date;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 
+import java.util.Date;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
@@ -25,10 +26,11 @@ public class ImportEffectiveStatementImpl extends EffectiveStatementBase<String,
         super(ctx);
 
         moduleName = ctx.getStatementArgument();
+        revision = SimpleDateFormatUtil.DEFAULT_DATE_IMP;
 
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof RevisionEffectiveStatementImpl) {
-                revision = ((RevisionEffectiveStatementImpl) effectiveStatement).argument();
+            if (effectiveStatement instanceof RevisionDateEffectiveStatementImpl) {
+                revision = ((RevisionDateEffectiveStatementImpl) effectiveStatement).argument();
             }
             if (effectiveStatement instanceof PrefixEffectiveStatementImpl) {
                 prefix = ((PrefixEffectiveStatementImpl) effectiveStatement).argument();

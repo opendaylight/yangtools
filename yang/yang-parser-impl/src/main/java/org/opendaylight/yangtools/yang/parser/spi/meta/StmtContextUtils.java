@@ -7,8 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import com.google.common.base.Function;
+import java.util.HashSet;
+import java.util.Set;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
+import com.google.common.base.Predicate;
 import java.util.Collection;
+import com.google.common.base.Function;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
@@ -28,6 +33,13 @@ public final class StmtContextUtils {
         }
     };
 
+    public static final Predicate<StmtContext<?, ?,?>> IS_SUPPORTED_TO_BUILD_EFFECTIVE = new Predicate<StmtContext<?,?,?>>() {
+        @Override
+        public boolean apply(StmtContext<?, ?, ?> input) {
+            return input.isSupportedToBuildEffective();
+        }
+    };
+
     private StmtContextUtils() {
         throw new UnsupportedOperationException("Utility class");
     }
@@ -38,12 +50,12 @@ public final class StmtContextUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <E extends EffectiveStatement<?, ?>> Function<StmtContext<?, ?, ? extends E>, E> buildEffective() {
+    public static final <E extends EffectiveStatement<?, ?>> Function<StmtContext<?, ?, ? extends E>, E> buildEffective() {
         return Function.class.cast(BUILD_EFFECTIVE);
     }
 
     @SuppressWarnings("unchecked")
-    public static <AT, DT extends DeclaredStatement<AT>> AT firstAttributeOf(
+    public static final <AT, DT extends DeclaredStatement<AT>> AT firstAttributeOf(
             final Iterable<? extends StmtContext<?, ?, ?>> contexts,
             final Class<DT> declaredType) {
         for (StmtContext<?, ?, ?> ctx : contexts) {
@@ -55,7 +67,7 @@ public final class StmtContextUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <AT, DT extends DeclaredStatement<AT>> AT firstAttributeOf(
+    public static final <AT, DT extends DeclaredStatement<AT>> AT firstAttributeOf(
             final StmtContext<?, ?, ?> ctx, final Class<DT> declaredType) {
 
         if (producesDeclared(ctx, declaredType)) {
@@ -65,19 +77,20 @@ public final class StmtContextUtils {
         return null;
     }
 
-    public static <DT extends DeclaredStatement<?>> StmtContext<?, ?, ?> findFirstDeclaredSubstatement(
-            final StmtContext<?, ?, ?> stmtContext, final Class<DT> declaredType) {
+    @SuppressWarnings("unchecked")
+    public static final <AT,DT extends DeclaredStatement<AT>> StmtContext<AT, ?, ?> findFirstDeclaredSubstatement(
+            StmtContext<?, ?, ?> stmtContext, Class<DT> declaredType) {
         Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements = stmtContext
                 .declaredSubstatements();
         for (StmtContext<?, ?, ?> subStmtContext : declaredSubstatements) {
             if (producesDeclared(subStmtContext,declaredType)) {
-                return subStmtContext;
+                return (StmtContext<AT, ?, ?>) subStmtContext;
             }
         }
         return null;
     }
 
-    public static StmtContext<?, ?, ?> findFirstDeclaredSubstatement(
+    public static final StmtContext<?, ?, ?> findFirstDeclaredSubstatement(
             final StmtContext<?, ?, ?> stmtContext, int startIndex, final Class<? extends DeclaredStatement<?>>... types) {
 
         if (startIndex >= types.length) {
@@ -99,7 +112,7 @@ public final class StmtContextUtils {
         return null;
     }
 
-    public static <DT extends DeclaredStatement<?>> StmtContext<?, ?, ?> findFirstDeclaredSubstatementOnSublevel(
+    public static final <DT extends DeclaredStatement<?>> StmtContext<?, ?, ?> findFirstDeclaredSubstatementOnSublevel(
             final StmtContext<?, ?, ?> stmtContext, final Class<DT> declaredType,
             int sublevel) {
         Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements = stmtContext
@@ -120,7 +133,7 @@ public final class StmtContextUtils {
         return null;
     }
 
-    public static <DT extends DeclaredStatement<?>> StmtContext<?, ?, ?> findDeepFirstDeclaredSubstatement(
+    public static final <DT extends DeclaredStatement<?>> StmtContext<?, ?, ?> findDeepFirstDeclaredSubstatement(
             final StmtContext<?, ?, ?> stmtContext, final Class<DT> declaredType) {
 
         Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements = stmtContext
@@ -141,9 +154,45 @@ public final class StmtContextUtils {
         return null;
     }
 
-    public static boolean producesDeclared(final StmtContext<?, ?, ?> ctx,
+    public static final boolean producesDeclared(final StmtContext<?, ?, ?> ctx,
             final Class<? extends DeclaredStatement<?>> type) {
         return type.isAssignableFrom(ctx.getPublicDefinition()
                 .getDeclaredRepresentationClass());
+    }
+
+    public static boolean isInExtensionBody(
+            StmtContext<?,?,?> stmtCtx) {
+
+        StmtContext<?,?,?> current = stmtCtx;
+        while(!current.getParentContext().isRootContext()) {
+            current = current.getParentContext();
+            if(producesDeclared(current, UnknownStatementImpl.class)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static boolean isUnknownStatement(StmtContext<?, ?, ?> stmtCtx) {
+        if (producesDeclared(stmtCtx, UnknownStatementImpl.class)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static Set<TypeOfCopy> getCopyTypesFromOriginal(
+            StmtContext<?, ?, ?> ctx) {
+
+        Set<TypeOfCopy> copyTypesFromOriginal = new HashSet<>();
+        StmtContext<?,?,?> current = ctx;
+
+        while(current.getOriginalCtx()!=null){
+            copyTypesFromOriginal.add(current.getTypeOfCopy());
+            current = current.getOriginalCtx();
+        }
+
+        return copyTypesFromOriginal;
     }
 }

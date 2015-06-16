@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IncludeEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IncludeEffectiveStatementImpl;
 import java.net.URI;
-import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
@@ -74,17 +74,17 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
             ModelActionBuilder includeAction = stmt.newInferenceAction(SOURCE_LINKAGE);
             final Prerequisite<StmtContext<?, ?, ?>> requiresCtxPrerequisite = includeAction.requiresCtx(stmt,
                     SubmoduleNamespace.class, includeSubmoduleIdentifier, SOURCE_LINKAGE);
-            final Prerequisite<Mutable<?, ?, ?>> mutatesCtxPrerequisite = includeAction.mutatesCtx(stmt.getRoot(),
-                    SOURCE_LINKAGE);
 
             includeAction.apply(new InferenceAction() {
 
                 @Override
                 public void apply() throws InferenceException {
-                    StmtContext<?, ?, ?> includedSubmoduleStmt = requiresCtxPrerequisite.get();
+                    StmtContext<?, ?, ?> includedSubModuleContext = requiresCtxPrerequisite.get();
 
-                    mutatesCtxPrerequisite.get().addToNs(IncludedModuleContext.class, includeSubmoduleIdentifier,
-                            includedSubmoduleStmt);
+                    stmt.addToNs(IncludedModuleContext.class, includeSubmoduleIdentifier,
+                            includedSubModuleContext);
+                    stmt.addToNs(IncludedSubmoduleNameToIdentifier.class,
+                            stmt.getStatementArgument(), includeSubmoduleIdentifier);
                 }
 
                 @Override
@@ -100,19 +100,13 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
         private static ModuleIdentifier getIncludeSubmoduleIdentifier(Mutable<String, IncludeStatement, ?> stmt) {
 
             String subModuleName = stmt.getStatementArgument();
-            String revisionArg = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
-            final Optional<Date> revision;
-            if (revisionArg != null) {
-                try {
-                    revision = Optional.of(SimpleDateFormatUtil.getRevisionFormat().parse(revisionArg));
-                } catch (ParseException e) {
-                    throw new IllegalArgumentException(e);
-                }
-            } else {
-                revision = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_IMP);
+
+            Date revisionDate = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
+            if (revisionDate == null) {
+                revisionDate = SimpleDateFormatUtil.DEFAULT_DATE_IMP;
             }
 
-            return new ModuleIdentifierImpl(subModuleName, Optional.<URI> absent(), revision);
+            return new ModuleIdentifierImpl(subModuleName, Optional.<URI> absent(), Optional.<Date> of(revisionDate));
         }
     }
 
