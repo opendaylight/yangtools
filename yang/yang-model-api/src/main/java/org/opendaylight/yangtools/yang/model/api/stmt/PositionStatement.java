@@ -8,10 +8,11 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import javax.annotation.Nonnull;
+
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface PositionStatement extends DeclaredStatement<String> {
+public interface PositionStatement extends DeclaredStatement<Long> {
 
-    @Nonnull String getValue();
+    @Nonnull
+    Long getValue();
 }
-

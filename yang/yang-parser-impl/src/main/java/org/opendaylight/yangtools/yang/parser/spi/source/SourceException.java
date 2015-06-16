@@ -15,7 +15,7 @@ import javax.annotation.Nonnull;
  * Thrown to indicate error in YANG model source.
  *
  */
-public class SourceException extends Exception {
+public class SourceException extends RuntimeException {
 
     /**
      *

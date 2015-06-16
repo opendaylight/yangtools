@@ -7,16 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+import java.util.Set;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
@@ -25,62 +23,88 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-public class LeafEffectiveStatementImpl extends
-        AbstractEffectiveDocumentedNode<QName, LeafStatement> implements
+public class LeafEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, LeafStatement> implements
         LeafSchemaNode, DerivableSchemaNode {
     private final QName qname;
     private final SchemaPath path;
 
-    boolean augmenting;
-    boolean addedByUses;
-    LeafSchemaNode original;
-    boolean configuration;
-    ConstraintDefinition constraintsDef;
-    TypeDefinition<?> type;
-    String defaultStr;
-    String unitsStr;
+    private boolean augmenting;
+    private boolean addedByUses;
+    private LeafSchemaNode original;
+    private boolean configuration = true;
+    private ConstraintDefinition constraintsDef;
+    private TypeDefinition<?> type;
+    private String defaultStr;
+    private String unitsStr;
 
     private ImmutableList<UnknownSchemaNode> unknownNodes;
 
-    public LeafEffectiveStatementImpl(
-            StmtContext<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
+    public LeafEffectiveStatementImpl(StmtContext<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
         super(ctx);
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
-        // :TODO init other fields
+        this.constraintsDef = new EffectiveConstraintDefinitionImpl(this);
 
-        initSubstatementCollections();
+        initSubstatementCollections(ctx);
         initCopyType(ctx);
     }
 
     private void initCopyType(
             StmtContext<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
 
-        TypeOfCopy typeOfCopy = ctx.getTypeOfCopy();
-        switch (typeOfCopy) {
-        case ADDED_BY_AUGMENTATION:
+        Set<TypeOfCopy> copyTypesFromOriginal = StmtContextUtils.getCopyTypesFromOriginal(ctx);
+
+        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
             augmenting = true;
-            original = (LeafSchemaNode) ctx.getOriginalCtx().buildEffective();
-            break;
-        case ADDED_BY_USES:
+        }
+        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
             addedByUses = true;
+        }
+        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
+            addedByUses = augmenting = true;
+        }
+
+        if (ctx.getTypeOfCopy() != TypeOfCopy.ORIGINAL) {
             original = (LeafSchemaNode) ctx.getOriginalCtx().buildEffective();
-            break;
-        default:
-            break;
         }
     }
 
-    private void initSubstatementCollections() {
+    private void initSubstatementCollections(
+            final StmtContext<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
 
+        boolean configurationInit = false;
+        boolean defaultInit = false;
+        boolean unitsInit = false;
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
-                UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
-                unknownNodesInit.add(unknownNode);
+                unknownNodesInit.add((UnknownSchemaNode) effectiveStatement);
+            }
+            if (effectiveStatement instanceof TypeDefinition) {
+                type = TypeUtils.getTypeFromEffectiveStatement(effectiveStatement);
+            }
+            if (!configurationInit && effectiveStatement instanceof ConfigEffectiveStatementImpl) {
+                ConfigEffectiveStatementImpl configStmt = (ConfigEffectiveStatementImpl) effectiveStatement;
+                this.configuration = configStmt.argument();
+                configurationInit = true;
+            }
+            if (!defaultInit && effectiveStatement instanceof DefaultEffectiveStatementImpl) {
+                DefaultEffectiveStatementImpl defStmt = (DefaultEffectiveStatementImpl) effectiveStatement;
+                this.defaultStr = defStmt.argument();
+                defaultInit = true;
+            }
+            if (!unitsInit && effectiveStatement instanceof UnitsEffectiveStatementImpl) {
+                UnitsEffectiveStatementImpl unitStmt = (UnitsEffectiveStatementImpl) effectiveStatement;
+                this.unitsStr = unitStmt.argument();
+                unitsInit = true;
             }
         }
 
@@ -182,8 +206,7 @@ public class LeafEffectiveStatementImpl extends
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(
-                LeafEffectiveStatementImpl.class.getSimpleName());
+        StringBuilder sb = new StringBuilder(LeafEffectiveStatementImpl.class.getSimpleName());
         sb.append("[");
         sb.append("qname=").append(qname);
         sb.append(", path=").append(path);

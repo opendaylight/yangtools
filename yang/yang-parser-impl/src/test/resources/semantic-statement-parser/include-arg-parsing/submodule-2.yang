@@ -1,0 +1,5 @@
+submodule submodule-2 {
+    belongs-to "root-module" {
+        prefix "rm";
+    }
+}
