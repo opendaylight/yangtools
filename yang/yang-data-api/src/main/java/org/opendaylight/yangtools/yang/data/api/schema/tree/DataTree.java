@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
@@ -35,4 +36,11 @@ public interface DataTree extends DataTreeTip {
      * @param candidate data tree candidate
      */
     void commit(DataTreeCandidate candidate);
+
+    /**
+     * Get the root path of this data tree.
+     *
+     * @return The tree's root path.
+     */
+    YangInstanceIdentifier getRootPath();
 }
