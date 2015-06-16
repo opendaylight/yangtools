@@ -26,7 +26,7 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
     private final Map<YangInstanceIdentifier.PathArgument, ModificationApplyOperation> childNodes;
 
     ChoiceModificationStrategy(final ChoiceSchemaNode schemaNode, final TreeType treeType) {
-        super(ChoiceNode.class);
+        super(ChoiceNode.class, treeType);
         final ImmutableMap.Builder<YangInstanceIdentifier.PathArgument, ModificationApplyOperation> child = ImmutableMap.builder();
 
         for (final ChoiceCaseNode caze : schemaNode.getCases()) {

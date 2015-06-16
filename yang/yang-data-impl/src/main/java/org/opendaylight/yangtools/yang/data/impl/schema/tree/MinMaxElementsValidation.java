@@ -146,8 +146,8 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
     }
 
     @Override
-    protected void verifyStructure(final NormalizedNode<?, ?> modification) {
-        delegate.verifyStructure(modification);
+    protected void verifyStructure(final NormalizedNode<?, ?> modification, final boolean verifyChildren) {
+        delegate.verifyStructure(modification, verifyChildren);
     }
 
     @Override

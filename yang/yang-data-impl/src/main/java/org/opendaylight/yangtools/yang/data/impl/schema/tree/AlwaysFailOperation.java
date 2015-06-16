@@ -44,7 +44,7 @@ final class AlwaysFailOperation extends ModificationApplyOperation {
     }
 
     @Override
-    void verifyStructure(final NormalizedNode<?, ?> modification) {
+    void verifyStructure(final NormalizedNode<?, ?> modification, final boolean verifyChildren) {
         throw new IllegalStateException("Schema Context is not available.");
     }
 
