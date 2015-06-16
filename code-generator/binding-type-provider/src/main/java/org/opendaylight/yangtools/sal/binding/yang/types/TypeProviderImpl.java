@@ -11,6 +11,7 @@ import static org.opendaylight.yangtools.binding.generator.util.BindingGenerator
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNode;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNodeForRelativeXPath;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
 import com.google.common.io.BaseEncoding;
@@ -53,6 +54,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTy
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -82,12 +85,15 @@ import org.opendaylight.yangtools.yang.model.util.Int16;
 import org.opendaylight.yangtools.yang.model.util.Int32;
 import org.opendaylight.yangtools.yang.model.util.Int64;
 import org.opendaylight.yangtools.yang.model.util.Int8;
+import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.model.util.StringType;
 import org.opendaylight.yangtools.yang.model.util.Uint16;
 import org.opendaylight.yangtools.yang.model.util.Uint32;
 import org.opendaylight.yangtools.yang.model.util.Uint64;
 import org.opendaylight.yangtools.yang.model.util.Uint8;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
+import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
 
 public final class TypeProviderImpl implements TypeProvider {
     private static final Pattern NUMBERS_PATTERN = Pattern.compile("[0-9]+\\z");
@@ -236,6 +242,49 @@ public final class TypeProviderImpl implements TypeProvider {
         return gtob.toInstance();
     }
 
+    private boolean isLeafRefSelfReference(final LeafrefTypeDefinition leafref, final SchemaNode parentNode) {
+        final SchemaNode leafRefValueNode;
+        final RevisionAwareXPath leafRefXPath = leafref.getPathStatement();
+        final RevisionAwareXPath leafRefStrippedXPath = new RevisionAwareXPathImpl(leafRefXPath.toString()
+                .replaceAll("\\[(.*?)\\]", ""), leafRefXPath.isAbsolute());
+
+        ///// skip leafrefs in augments - they're checked once augments are resolved
+        final Iterator<QName> iterator = parentNode.getPath().getPathFromRoot().iterator();
+        boolean isAugmenting = false;
+        DataNodeContainer current = null;
+        DataSchemaNode dataChildByName;
+
+        while (iterator.hasNext() && !isAugmenting) {
+            final QName next = iterator.next();
+            if (current == null) {
+                dataChildByName = schemaContext.getDataChildByName(next);
+            } else {
+                dataChildByName = current.getDataChildByName(next);
+            }
+            if (dataChildByName != null) {
+                isAugmenting = dataChildByName.isAugmenting();
+            } else {
+                return false;
+            }
+            if (dataChildByName instanceof DataNodeContainer) {
+                current = (DataNodeContainer) dataChildByName;
+            }
+        }
+        if (isAugmenting) {
+            return false;
+        }
+        /////
+
+        Module parentModule = getParentModule(parentNode);
+        if (!leafRefStrippedXPath.isAbsolute()) {
+            leafRefValueNode = SchemaContextUtil.findDataSchemaNodeForRelativeXPath(schemaContext, parentModule,
+                    parentNode, leafRefStrippedXPath);
+        } else {
+            leafRefValueNode = SchemaContextUtil.findDataSchemaNode(schemaContext, parentModule, leafRefStrippedXPath);
+        }
+        return (leafRefValueNode != null) ? leafRefValueNode.equals(parentNode) : false;
+    }
+
     /**
      * Returns JAVA <code>Type</code> for instances of the type
      * <code>LeafrefTypeDefinition</code> or
@@ -248,6 +297,10 @@ public final class TypeProviderImpl implements TypeProvider {
     private Type javaTypeForLeafrefOrIdentityRef(final TypeDefinition<?> typeDefinition, final SchemaNode parentNode) {
         if (typeDefinition instanceof LeafrefTypeDefinition) {
             final LeafrefTypeDefinition leafref = (LeafrefTypeDefinition) typeDefinition;
+            if (isLeafRefSelfReference(leafref, parentNode)) {
+                throw new YangValidationException("Leafref " + leafref.toString() + " is referencing itself, incoming" +
+                        " StackOverFlowError detected.");
+            }
             return provideTypeForLeafref(leafref, parentNode);
         } else if (typeDefinition instanceof IdentityrefTypeDefinition) {
             final IdentityrefTypeDefinition idref = (IdentityrefTypeDefinition) typeDefinition;
