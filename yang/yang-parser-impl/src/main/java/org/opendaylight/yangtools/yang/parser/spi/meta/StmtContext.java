@@ -79,7 +79,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     void setTypeOfCopy(TypeOfCopy typeOfCopy);
 
-    public StatementContextBase<?, ?, ?> getOriginalCtx();
+    StatementContextBase<?, ?, ?> getOriginalCtx();
 
     void setOriginalCtx(StatementContextBase<?, ?, ?> originalCtx);
 

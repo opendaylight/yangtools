@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 public class SchemaSourceTransformer<S extends SchemaSourceRepresentation, D extends SchemaSourceRepresentation> implements SchemaSourceListener, SchemaSourceProvider<D> {
     private static final ExceptionMapper<SchemaSourceException> MAPPER = ReflectiveExceptionMapper.create("Source transformation", SchemaSourceException.class);
 
-    public static interface Transformation<S extends SchemaSourceRepresentation, D extends SchemaSourceRepresentation> extends AsyncFunction<S, D> {
+    public interface Transformation<S extends SchemaSourceRepresentation, D extends SchemaSourceRepresentation> extends AsyncFunction<S, D> {
         @Override
         CheckedFuture<D, SchemaSourceException> apply(final S input) throws Exception;
     }

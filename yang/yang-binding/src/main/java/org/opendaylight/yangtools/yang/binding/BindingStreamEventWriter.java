@@ -104,7 +104,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      * all other values will result, based on implementation preference, in the
      * hint being completely ignored or IllegalArgumentException being thrown.
      */
-    final int UNKNOWN_SIZE = -1;
+    int UNKNOWN_SIZE = -1;
 
     /**
      *

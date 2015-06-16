@@ -38,7 +38,7 @@ public final class TransformingSourceProvider<I, O> implements //
      * @throws NullPointerException
      *             if any of arguments is null.
      */
-    public static final <I, O> TransformingSourceProvider<I, O> create(final AdvancedSchemaSourceProvider<I> delegate,
+    public static <I, O> TransformingSourceProvider<I, O> create(final AdvancedSchemaSourceProvider<I> delegate,
             final SchemaSourceTransformation<I, O> transformation) {
         return new TransformingSourceProvider<>(delegate, transformation);
     }

@@ -65,7 +65,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
     @GuardedBy("this")
     private final Collection<SchemaListenerRegistration> listeners = new ArrayList<>();
 
-    private static final <T extends SchemaSourceRepresentation> CheckedFuture<T, SchemaSourceException> fetchSource(final SourceIdentifier id, final Iterator<AbstractSchemaSourceRegistration<?>> it) {
+    private static <T extends SchemaSourceRepresentation> CheckedFuture<T, SchemaSourceException> fetchSource(final SourceIdentifier id, final Iterator<AbstractSchemaSourceRegistration<?>> it) {
         final AbstractSchemaSourceRegistration<?> reg = it.next();
 
         @SuppressWarnings("unchecked")

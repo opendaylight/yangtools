@@ -12,17 +12,13 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 /**
- *
  * Source-specific mapping of prefixes to namespaces
- *
  */
 public interface PrefixToModule extends IdentifierNamespace<String, QNameModule> {
 
-    public static final String DEFAULT_PREFIX = "";
-
+    String DEFAULT_PREFIX = "";
 
     /**
-     *
      * Returns QNameModule (namespace + revision) associated with supplied
      * prefix.
      *
@@ -36,7 +32,6 @@ public interface PrefixToModule extends IdentifierNamespace<String, QNameModule>
     @Nullable QNameModule get(String prefix);
 
     /**
-     *
      * Returns QNameModule (namespace + revision) associated with XML namespace
      * (URI).
      *
@@ -47,5 +42,4 @@ public interface PrefixToModule extends IdentifierNamespace<String, QNameModule>
      *
      */
     @Nullable QNameModule getByNamespace(String namespace);
-
 }
