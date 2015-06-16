@@ -1,0 +1,8 @@
+module cycle-yang {
+    namespace cycle-yang;
+    prefix cya;
+
+    import cycle-yin {
+        prefix cyi;
+    }
+}
