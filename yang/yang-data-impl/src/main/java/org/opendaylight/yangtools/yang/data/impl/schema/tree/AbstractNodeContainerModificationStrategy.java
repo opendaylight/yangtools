@@ -35,20 +35,21 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
 
     @SuppressWarnings("rawtypes")
     @Override
-    void verifyStructure(final NormalizedNode<?, ?> writtenValue) {
+    void verifyStructure(final NormalizedNode<?, ?> writtenValue, final boolean verifyChildren) {
         checkArgument(nodeClass.isInstance(writtenValue), "Node %s is not of type %s", writtenValue, nodeClass);
         checkArgument(writtenValue instanceof NormalizedNodeContainer);
-
-        final NormalizedNodeContainer container = (NormalizedNodeContainer) writtenValue;
-        for (final Object child : container.getValue()) {
-            checkArgument(child instanceof NormalizedNode);
-            final NormalizedNode<?, ?> castedChild = (NormalizedNode<?, ?>) child;
-            final Optional<ModificationApplyOperation> childOp = getChild(castedChild.getIdentifier());
-            if(childOp.isPresent()) {
-                childOp.get().verifyStructure(castedChild);
-            } else {
-                throw new SchemaValidationFailedException(String.format("Child %s is not valid child according to schema.",
-                        castedChild.getIdentifier()));
+        if (verifyChildren) {
+            final NormalizedNodeContainer container = (NormalizedNodeContainer) writtenValue;
+            for (final Object child : container.getValue()) {
+                checkArgument(child instanceof NormalizedNode);
+                final NormalizedNode<?, ?> castedChild = (NormalizedNode<?, ?>) child;
+                final Optional<ModificationApplyOperation> childOp = getChild(castedChild.getIdentifier());
+                if (childOp.isPresent()) {
+                    childOp.get().verifyStructure(castedChild, verifyChildren);
+                } else {
+                    throw new SchemaValidationFailedException(String.format(
+                            "Child %s is not valid child according to schema.", castedChild.getIdentifier()));
+                }
             }
         }
     }

@@ -94,8 +94,9 @@ abstract class RootModificationApplyOperation extends ModificationApplyOperation
     }
 
     @Override
-    final void verifyStructure(final NormalizedNode<?, ?> modification) throws IllegalArgumentException {
-        getDelegate().verifyStructure(modification);
+    final void verifyStructure(final NormalizedNode<?, ?> modification, final boolean verifyChildren)
+            throws IllegalArgumentException {
+        getDelegate().verifyStructure(modification, verifyChildren);
     }
 
     @Override

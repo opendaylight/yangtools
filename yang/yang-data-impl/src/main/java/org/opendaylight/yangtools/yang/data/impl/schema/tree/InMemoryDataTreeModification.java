@@ -169,8 +169,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
     public void ready() {
         final boolean wasRunning = UPDATER.compareAndSet(this, 0, 1);
         Preconditions.checkState(wasRunning, "Attempted to seal an already-sealed Data Tree.");
-
-        rootNode.seal();
+        rootNode.seal(strategyTree);
     }
 
     private void checkSealed() {

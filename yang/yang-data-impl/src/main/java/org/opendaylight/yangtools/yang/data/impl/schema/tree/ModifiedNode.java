@@ -237,7 +237,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * Seal the modification node and prune any children which has not been
      * modified.
      */
-    void seal() {
+    void seal(final ModificationApplyOperation schema) {
         clearSnapshot();
 
         // Walk all child nodes and remove any children which have not
@@ -245,7 +245,9 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         final Iterator<ModifiedNode> it = children.values().iterator();
         while (it.hasNext()) {
             final ModifiedNode child = it.next();
-            child.seal();
+            final Optional<ModificationApplyOperation> childSchema = schema.getChild(child.getIdentifier());
+            Preconditions.checkState(childSchema.isPresent());
+            child.seal(childSchema.get());
 
             if (child.operation == LogicalOperation.NONE) {
                 it.remove();
@@ -255,6 +257,18 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         // A TOUCH node without any children is a no-op
         if (operation == LogicalOperation.TOUCH && children.isEmpty()) {
             updateOperationType(LogicalOperation.NONE);
+        } else if (operation == LogicalOperation.WRITE) {
+            schema.verifyStructure(value, true);
+        } else if (operation == LogicalOperation.MERGE) {
+            /*
+             * A merge operation will end up overwriting parts of the tree, retaining others. We
+             * want to make sure we do not validate the complete resulting structure, but rather
+             * just what was written. In order to do that, we first pretend the data was written,
+             * run verification and then perform the merge -- with the explicit assumption that
+             * adding the newly-validated data with the previously-validated data will not result in
+             * invalid data.
+             */
+            schema.verifyStructure(value, false);
         }
     }
 
