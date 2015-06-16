@@ -207,6 +207,10 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         return version;
     }
 
+    boolean isSealed() {
+        return sealed == 1;
+    }
+
     private static void applyChildren(final DataTreeModificationCursor cursor, final ModifiedNode node) {
         final Collection<ModifiedNode> children = node.getChildren();
         if (!children.isEmpty()) {
