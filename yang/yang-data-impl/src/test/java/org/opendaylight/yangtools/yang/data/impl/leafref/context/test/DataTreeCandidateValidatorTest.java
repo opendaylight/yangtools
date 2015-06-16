@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.leafref.context.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -192,6 +191,7 @@ public class DataTreeCandidateValidatorTest {
 
         final YangInstanceIdentifier path = YangInstanceIdentifier.of(odl);
         initialDataTreeModification.write(path, odlProjectContainer);
+        initialDataTreeModification.ready();
 
         final DataTreeCandidate writeContributorsCandidate = inMemoryDataTree
                 .prepare(initialDataTreeModification);
@@ -226,6 +226,7 @@ public class DataTreeCandidateValidatorTest {
         final DataTreeModification writeModification = inMemoryDataTree
                 .takeSnapshot().newModification();
         writeModification.write(contributorPath, contributorContainer);
+        writeModification.ready();
 
         final DataTreeCandidate writeContributorsCandidate = inMemoryDataTree
                 .prepare(writeModification);
@@ -252,7 +253,6 @@ public class DataTreeCandidateValidatorTest {
         LOG.debug(inMemoryDataTree.toString());
 
         assertTrue(exception);
-
     }
 
     private void writeIntoMapEntry() {
@@ -271,6 +271,7 @@ public class DataTreeCandidateValidatorTest {
         final DataTreeModification writeModification = inMemoryDataTree
                 .takeSnapshot().newModification();
         writeModification.write(leaderPath, leader);
+        writeModification.ready();
 
         final DataTreeCandidate writeContributorsCandidate = inMemoryDataTree
                 .prepare(writeModification);
@@ -321,6 +322,7 @@ public class DataTreeCandidateValidatorTest {
         final DataTreeModification writeModification = inMemoryDataTree
                 .takeSnapshot().newModification();
         writeModification.write(newOdlProjectMapEntryPath, newProjectMapEntry);
+        writeModification.ready();
 
         final DataTreeCandidate writeContributorsCandidate = inMemoryDataTree
                 .prepare(writeModification);
@@ -369,6 +371,7 @@ public class DataTreeCandidateValidatorTest {
                 .write(YangInstanceIdentifier.of(l2), ImmutableNodes.leafNode(
                         l2, "Leafref target l2 under the root"));
 
+        writeModification.ready();
         final DataTreeCandidate writeContributorsCandidate = inMemoryDataTree
                 .prepare(writeModification);
 
@@ -424,10 +427,11 @@ public class DataTreeCandidateValidatorTest {
                 con3);
         writeModification.write(con3Path, con3Node);
 
-        final LeafSetNode leafListNode = createLeafRefLeafListNode();
+        final LeafSetNode<?> leafListNode = createLeafRefLeafListNode();
         final YangInstanceIdentifier leafListPath = YangInstanceIdentifier.of(odl)
                 .node(leafrefLeafList);
         writeModification.write(leafListPath, leafListNode);
+        writeModification.ready();
 
         final DataTreeCandidate writeContributorsCandidate = inMemoryDataTree
                 .prepare(writeModification);
@@ -457,7 +461,7 @@ public class DataTreeCandidateValidatorTest {
 
     }
 
-    private LeafSetNode createLeafRefLeafListNode() {
+    private LeafSetNode<?> createLeafRefLeafListNode() {
 
         final ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafSetBuilder = Builders
                 .leafSetBuilder();
@@ -577,6 +581,7 @@ public class DataTreeCandidateValidatorTest {
         final DataTreeModification delete = inMemoryDataTree.takeSnapshot()
                 .newModification();
         delete.delete(contributorPath);
+        delete.ready();
 
         final DataTreeCandidate deleteContributorsCanditate = inMemoryDataTree
                 .prepare(delete);
