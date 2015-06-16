@@ -36,16 +36,20 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
 
     //<K,V,N extends IdentifierNamespace<K, V>> V
     //public final <K, VT, V extends VT ,N extends IdentifierNamespace<K, V>> VT getFromNamespace(Class<N> type, K key)
-    public final <K,V,N extends IdentifierNamespace<K, V>> V getFromNamespace(Class<N> type, K key)
+    public final <K,V, KT extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(Class<N> type, KT key)
             throws NamespaceNotAvailableException {
         return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this,key);
     }
 
-    public final <K, V, N extends IdentifierNamespace<K, V>> Map<?, ?> getAllFromNamespace(Class<N> type){
-        return namespaces.get(type);
+    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromNamespace(Class<N> type){
+        return getBehaviourRegistry().getNamespaceBehaviour(type).getAllFrom(this);
     }
 
-    public final <K,V,VT extends V,N extends IdentifierNamespace<K, V>> void addToNs(Class<N> type, K key, VT value)
+    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromCurrentStmtCtxNamespace(Class<N> type){
+        return (Map<K, V>) namespaces.get(type);
+    }
+
+    public final <K,V, KT extends K, VT extends V,N extends IdentifierNamespace<K, V>> void addToNs(Class<N> type, KT key, VT value)
             throws NamespaceNotAvailableException {
         getBehaviourRegistry().getNamespaceBehaviour(type).addTo(this,key,value);
     }
@@ -66,7 +70,12 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         return null;
     }
 
-
+    @Override
+    public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromLocalStorage(Class<N> type) {
+        @SuppressWarnings("unchecked")
+        Map<K, V> localNamespace = (Map<K, V>) namespaces.get(type);
+        return localNamespace;
+    }
 
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> void addToLocalStorage(Class<N> type, K key, V value) {
