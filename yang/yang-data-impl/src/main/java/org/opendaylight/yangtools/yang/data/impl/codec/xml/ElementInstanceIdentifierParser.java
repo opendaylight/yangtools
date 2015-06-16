@@ -10,10 +10,14 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 import com.google.common.base.Preconditions;
 import java.net.URI;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.data.util.AbstractStringInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.w3c.dom.Element;
 
 final class ElementInstanceIdentifierParser extends AbstractStringInstanceIdentifierCodec {
@@ -25,6 +29,17 @@ final class ElementInstanceIdentifierParser extends AbstractStringInstanceIdenti
         this.element = Preconditions.checkNotNull(element);
         this.schema = Preconditions.checkNotNull(schema);
         this.dataContextTree = DataSchemaContextTree.from(schema);
+    }
+
+    @Override
+    protected Object deserializeKeyValue(final DataSchemaNode schemaNode, final String value) {
+        Preconditions.checkNotNull(schemaNode, "schemaNode cannot be null");
+        Preconditions.checkArgument(schemaNode instanceof LeafSchemaNode, "schemaNode must be of type LeafSchemaNode");
+        final TypeDefinition<?> type = ((LeafSchemaNode) schemaNode).getType();
+        final TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(type);
+        final TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> keyCodec =
+                XmlUtils.DEFAULT_XML_CODEC_PROVIDER.codecFor(baseType);
+        return keyCodec.deserialize(value);
     }
 
     @Override

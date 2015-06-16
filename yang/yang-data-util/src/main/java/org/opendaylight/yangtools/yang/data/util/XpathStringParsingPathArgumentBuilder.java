@@ -150,7 +150,9 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
             skipWhitespaces();
             checkCurrentAndSkip(EQUALS, "Precondition must contain '='");
             skipWhitespaces();
-            final Object value = deserializeValue(key,nextQuotedValue());
+            final DataSchemaContextNode<?> keyNode = currentNode.getChild(key);
+            checkValid(keyNode != null, "%s is not correct schema node identifier.", key);
+            final Object value = codec.deserializeKeyValue(keyNode.getDataSchemaNode(), nextQuotedValue());
             skipWhitespaces();
             checkCurrentAndSkip(PRECONDITION_END, "Precondition must ends with ']'");
 
