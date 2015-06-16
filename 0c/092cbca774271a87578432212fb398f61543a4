@@ -1,0 +1,7 @@
+Verified+1: jenkins-releng <jenkins-releng@opendaylight.org>
+Code-Review+2: Tony Tkacik <ttkacik@cisco.com>
+Submitted-by: Tony Tkacik <ttkacik@cisco.com>
+Submitted-at: Tue, 16 Jun 2015 13:30:11 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/22668
+Project: yangtools
+Branch: refs/heads/stable/lithium
