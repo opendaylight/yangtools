@@ -10,10 +10,17 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 import com.google.common.base.Preconditions;
 import java.net.URI;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.data.util.AbstractStringInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.w3c.dom.Element;
 
 final class ElementInstanceIdentifierParser extends AbstractStringInstanceIdentifierCodec {
@@ -25,6 +32,23 @@ final class ElementInstanceIdentifierParser extends AbstractStringInstanceIdenti
         this.element = Preconditions.checkNotNull(element);
         this.schema = Preconditions.checkNotNull(schema);
         this.dataContextTree = DataSchemaContextTree.from(schema);
+    }
+
+    @Override
+    protected Object deserializeKeyValue(final DataSchemaNode schemaNode, final String value) {
+        Preconditions.checkNotNull(schemaNode, "schemaNode cannot be null");
+        Preconditions.checkArgument(schemaNode instanceof LeafSchemaNode, "schemaNode must be of type LeafSchemaNode");
+        TypeDefinition<?> originalType = XmlUtils.resolveBaseTypeFrom(((LeafSchemaNode) schemaNode).getType());
+        if (originalType instanceof IdentityrefTypeDefinition) {
+            return new ElementIdentityrefParser(schema, element).deserialize(value);
+        } else if (originalType instanceof LeafrefTypeDefinition) {
+            originalType = SchemaContextUtil.getBaseTypeForLeafRef((LeafrefTypeDefinition) originalType, schema,
+                    schemaNode);
+        }
+        final TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> keyCodec =
+                XmlUtils.DEFAULT_XML_CODEC_PROVIDER.codecFor(originalType);
+        Preconditions.checkState(keyCodec != null, String.format("Cannot find codec for type '%s'.", originalType));
+        return keyCodec.deserialize(value);
     }
 
     @Override

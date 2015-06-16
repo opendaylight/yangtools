@@ -14,16 +14,20 @@ import java.net.URI;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 final class JSONStringInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec implements JSONCodec<YangInstanceIdentifier> {
     private final SchemaContext context;
     private final DataSchemaContextTree dataContextTree;
+    private final JSONCodecFactory codecFactory;
 
-    JSONStringInstanceIdentifierCodec(final SchemaContext context) {
+    JSONStringInstanceIdentifierCodec(final SchemaContext context, final JSONCodecFactory jsonCodecFactory) {
         this.context = Preconditions.checkNotNull(context);
         this.dataContextTree = DataSchemaContextTree.from(context);
+        this.codecFactory = jsonCodecFactory;
     }
 
     @Override
@@ -45,6 +49,14 @@ final class JSONStringInstanceIdentifierCodec extends AbstractModuleStringInstan
     @Override
     public boolean needQuotes() {
         return true;
+    }
+
+    @Override
+    protected Object deserializeKeyValue(DataSchemaNode schemaNode, String value) {
+        Preconditions.checkNotNull(schemaNode, "schemaNode cannot be null");
+        Preconditions.checkArgument(schemaNode instanceof LeafSchemaNode, "schemaNode must be of type LeafSchemaNode");
+        final JSONCodec<Object> objectJSONCodec = codecFactory.codecFor(schemaNode);
+        return objectJSONCodec.deserialize(value);
     }
 
     /**
