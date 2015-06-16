@@ -50,7 +50,7 @@ abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeC
     private final TreeType treeType;
 
     protected AbstractDataNodeContainerModificationStrategy(final T schema, final Class<? extends NormalizedNode<?, ?>> nodeClass, final TreeType treeType) {
-        super(nodeClass);
+        super(nodeClass, treeType);
         this.schema = Preconditions.checkNotNull(schema,"schema");
         this.treeType = Preconditions.checkNotNull(treeType,"treeType");
     }

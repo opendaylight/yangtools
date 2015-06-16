@@ -233,14 +233,25 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     }
 
     /**
-     * Seal the modification node.
+     * Seal the modification node and prune any children which has not been modified.
+     * 
+     * @param schema
      */
-    void seal() {
+    void seal(final ModificationApplyOperation schema) {
         clearSnapshot();
 
         // A TOUCH node without any children is a no-op
-        if (operation == LogicalOperation.TOUCH && children.isEmpty()) {
-            updateOperationType(LogicalOperation.NONE);
+        switch (operation) {
+            case TOUCH:
+                if (children.isEmpty()) {
+                    updateOperationType(LogicalOperation.NONE);
+                }
+                break;
+            case WRITE:
+                schema.verifyStructure(value, true);
+                break;
+            default:
+                break;
         }
     }
 
