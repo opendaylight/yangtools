@@ -17,6 +17,4 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
  */
 public interface ModuleNameToModuleQName extends IdentifierNamespace<String, QNameModule> {
 
-
-
 }

@@ -8,10 +8,12 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import javax.annotation.Nonnull;
+
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 
-public interface PatternStatement extends DeclaredStatement<String>, DocumentedConstraintGroup {
+public interface PatternStatement extends DeclaredStatement<PatternConstraint>, DocumentedConstraintGroup {
 
-    @Nonnull String getValue();
+    @Nonnull
+    PatternConstraint getValue();
 }
-

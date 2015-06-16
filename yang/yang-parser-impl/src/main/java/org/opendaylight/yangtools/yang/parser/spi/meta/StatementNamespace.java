@@ -12,9 +12,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
-public interface StatementNamespace<K, D extends DeclaredStatement<?>,E extends EffectiveStatement<?,D>>  extends IdentifierNamespace<K, E>  {
+public interface StatementNamespace<K,D extends DeclaredStatement<?>,E extends EffectiveStatement<?,D>>  extends IdentifierNamespace<K, StmtContext<?,D,E>>  {
     @Override
-    @Nullable E get(K key);
+    @Nullable StmtContext<?,D,E> get(K key);
 
     interface TreeScoped<K, D extends DeclaredStatement<?>,E extends EffectiveStatement<?,D>> extends StatementNamespace<K,D,E> {
         TreeScoped<K,D,E> getParentContext();
