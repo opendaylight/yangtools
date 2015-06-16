@@ -7,52 +7,56 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RangeEffectiveStatementImpl;
+import java.math.BigDecimal;
+import java.util.List;
 
+import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.RangeEffectiveStatementImpl;
 
-public class RangeStatementImpl extends AbstractDeclaredStatement<String>
-        implements RangeStatement {
+public class RangeStatementImpl extends AbstractDeclaredStatement<List<RangeConstraint>> implements RangeStatement {
 
-    protected RangeStatementImpl(
-            StmtContext<String, RangeStatement, ?> context) {
+    // these objects are to compare whether range has MAX or MIN value
+    // none of these values should appear as Yang number according to spec so they are safe to use
+    public static final BigDecimal YANG_MIN_NUM = BigDecimal.valueOf(-Double.MAX_VALUE);
+    public static final BigDecimal YANG_MAX_NUM = BigDecimal.valueOf(Double.MAX_VALUE);
+
+    protected RangeStatementImpl(StmtContext<List<RangeConstraint>, RangeStatement, ?> context) {
         super(context);
     }
 
     public static class Definition
             extends
-            AbstractStatementSupport<String, RangeStatement, EffectiveStatement<String, RangeStatement>> {
+            AbstractStatementSupport<List<RangeConstraint>, RangeStatement, EffectiveStatement<List<RangeConstraint>, RangeStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.RANGE);
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
-            return value;
+        public List<RangeConstraint> parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+            return TypeUtils.parseRangeListFromString(value);
         }
 
         @Override
-        public RangeStatement createDeclared(
-                StmtContext<String, RangeStatement, ?> ctx) {
+        public RangeStatement createDeclared(StmtContext<List<RangeConstraint>, RangeStatement, ?> ctx) {
             return new RangeStatementImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<String, RangeStatement> createEffective(
-                StmtContext<String, RangeStatement, EffectiveStatement<String, RangeStatement>> ctx) {
+        public EffectiveStatement<List<RangeConstraint>, RangeStatement> createEffective(
+                StmtContext<List<RangeConstraint>, RangeStatement, EffectiveStatement<List<RangeConstraint>, RangeStatement>> ctx) {
             return new RangeEffectiveStatementImpl(ctx);
         }
-
     }
 
     @Override
@@ -76,8 +80,7 @@ public class RangeStatementImpl extends AbstractDeclaredStatement<String>
     }
 
     @Override
-    public String getRange() {
+    public List<RangeConstraint> getRange() {
         return argument();
     }
-
 }
