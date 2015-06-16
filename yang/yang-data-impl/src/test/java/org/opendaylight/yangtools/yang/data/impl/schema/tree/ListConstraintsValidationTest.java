@@ -87,6 +87,7 @@ public class ListConstraintsValidationTest {
                 rootOper);
 
         modificationTree.write(MASTER_CONTAINER_PATH, ImmutableNodes.containerNode(MASTER_CONTAINER_QNAME));
+        modificationTree.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(modificationTree));
 
     }
@@ -121,7 +122,7 @@ public class ListConstraintsValidationTest {
         modificationTree.write(MIN_MAX_LIST_PATH, mapNode1);
         modificationTree.merge(MIN_MAX_LIST_PATH, mapNode2);
         // TODO: check why write and then merge on list commits only "bar" child
-
+        modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
         final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare);
@@ -151,7 +152,7 @@ public class ListConstraintsValidationTest {
         modificationTree.merge(barPath, barEntryNode);
         modificationTree.write(gooPath, gooEntryNode);
         modificationTree.delete(gooPath);
-
+        modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
         DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare1);
@@ -163,8 +164,9 @@ public class ListConstraintsValidationTest {
 
         modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(gooPath, gooEntryNode);
-
+        modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
+
         prepare1 = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare1);
 
@@ -177,7 +179,7 @@ public class ListConstraintsValidationTest {
 
         modificationTree.delete(gooPath);
         modificationTree.delete(fooPath);
-
+        modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
     }
 
@@ -203,7 +205,7 @@ public class ListConstraintsValidationTest {
         modificationTree.write(MIN_MAX_LEAF_LIST_PATH.node(barPath), barLeafSetEntry);
         modificationTree.merge(MIN_MAX_LEAF_LIST_PATH.node(gooPath), gooLeafSetEntry);
         modificationTree.delete(MIN_MAX_LEAF_LIST_PATH.node(gooPath));
-
+        modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
         final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare1);
@@ -245,7 +247,7 @@ public class ListConstraintsValidationTest {
         modificationTree.write(MIN_MAX_LEAF_LIST_PATH.node(barPath), barLeafSetEntry);
         modificationTree.merge(MIN_MAX_LEAF_LIST_PATH.node(gooPath), gooLeafSetEntry);
         modificationTree.write(MIN_MAX_LEAF_LIST_PATH.node(fuuPath), fuuLeafSetEntry);
-
+        modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
     }
 
@@ -264,7 +266,7 @@ public class ListConstraintsValidationTest {
 
         modificationTree.write(MASTER_CONTAINER_PATH, ImmutableNodes.containerNode(MASTER_CONTAINER_QNAME));
         modificationTree.merge(UNKEYED_LIST_PATH, unkeyedListNode);
-
+        modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
         final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare1);
@@ -293,7 +295,7 @@ public class ListConstraintsValidationTest {
                 .withValue(unkeyedEntries).build();
 
         modificationTree.write(UNKEYED_LIST_PATH, unkeyedListNode);
-
+        modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
     }
 }
