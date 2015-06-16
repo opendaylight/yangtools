@@ -237,7 +237,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * Seal the modification node and prune any children which has not been
      * modified.
      */
-    void seal() {
+    void seal(final ModificationApplyOperation schema) {
         clearSnapshot();
 
         // Walk all child nodes and remove any children which have not
@@ -245,7 +245,9 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         final Iterator<ModifiedNode> it = children.values().iterator();
         while (it.hasNext()) {
             final ModifiedNode child = it.next();
-            child.seal();
+            final Optional<ModificationApplyOperation> childSchema = schema.getChild(child.getIdentifier());
+            Preconditions.checkState(childSchema.isPresent());
+            child.seal(childSchema.get());
 
             if (child.operation == LogicalOperation.NONE) {
                 it.remove();
@@ -253,8 +255,17 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         }
 
         // A TOUCH node without any children is a no-op
-        if (operation == LogicalOperation.TOUCH && children.isEmpty()) {
-            updateOperationType(LogicalOperation.NONE);
+        switch (operation) {
+            case TOUCH:
+                if (children.isEmpty()) {
+                    updateOperationType(LogicalOperation.NONE);
+                }
+                break;
+            case WRITE:
+                schema.verifyStructure(value, true);
+                break;
+            default:
+                break;
         }
     }
 

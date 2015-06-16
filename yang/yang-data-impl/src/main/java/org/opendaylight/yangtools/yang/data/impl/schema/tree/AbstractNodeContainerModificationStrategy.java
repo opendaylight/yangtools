@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificat
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModifiedNodeDoesNotExistException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
@@ -28,27 +29,31 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareApplyOperation {
 
     private final Class<? extends NormalizedNode<?, ?>> nodeClass;
+    private final boolean verifyChildrenStructure;
 
-    protected AbstractNodeContainerModificationStrategy(final Class<? extends NormalizedNode<?, ?>> nodeClass) {
+    protected AbstractNodeContainerModificationStrategy(final Class<? extends NormalizedNode<?, ?>> nodeClass,
+            final TreeType treeType) {
         this.nodeClass = Preconditions.checkNotNull(nodeClass , "nodeClass");
+        this.verifyChildrenStructure = (treeType == TreeType.CONFIGURATION);
     }
 
     @SuppressWarnings("rawtypes")
     @Override
-    void verifyStructure(final NormalizedNode<?, ?> writtenValue) {
+    void verifyStructure(final NormalizedNode<?, ?> writtenValue, final boolean verifyChildren) {
         checkArgument(nodeClass.isInstance(writtenValue), "Node %s is not of type %s", writtenValue, nodeClass);
         checkArgument(writtenValue instanceof NormalizedNodeContainer);
-
-        final NormalizedNodeContainer container = (NormalizedNodeContainer) writtenValue;
-        for (final Object child : container.getValue()) {
-            checkArgument(child instanceof NormalizedNode);
-            final NormalizedNode<?, ?> castedChild = (NormalizedNode<?, ?>) child;
-            final Optional<ModificationApplyOperation> childOp = getChild(castedChild.getIdentifier());
-            if(childOp.isPresent()) {
-                childOp.get().verifyStructure(castedChild);
-            } else {
-                throw new SchemaValidationFailedException(String.format("Child %s is not valid child according to schema.",
-                        castedChild.getIdentifier()));
+        if (verifyChildrenStructure && verifyChildren) {
+            final NormalizedNodeContainer container = (NormalizedNodeContainer) writtenValue;
+            for (final Object child : container.getValue()) {
+                checkArgument(child instanceof NormalizedNode);
+                final NormalizedNode<?, ?> castedChild = (NormalizedNode<?, ?>) child;
+                final Optional<ModificationApplyOperation> childOp = getChild(castedChild.getIdentifier());
+                if (childOp.isPresent()) {
+                    childOp.get().verifyStructure(castedChild, verifyChildren);
+                } else {
+                    throw new SchemaValidationFailedException(String.format(
+                            "Child %s is not valid child according to schema.", castedChild.getIdentifier()));
+                }
             }
         }
     }

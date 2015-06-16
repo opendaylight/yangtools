@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -30,7 +31,7 @@ abstract class AbstractValueNodeModificationStrategy<T extends DataSchemaNode> e
     }
 
     @Override
-    protected final void verifyStructure(final NormalizedNode<?, ?> writtenValue) {
+    protected final void verifyStructure(final NormalizedNode<?, ?> writtenValue, final boolean verifyChildren) {
         checkArgument(nodeClass.isInstance(writtenValue), "Node should must be of type %s", nodeClass);
     }
 
