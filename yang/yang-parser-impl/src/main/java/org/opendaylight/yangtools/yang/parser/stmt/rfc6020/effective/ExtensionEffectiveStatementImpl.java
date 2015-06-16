@@ -48,16 +48,15 @@ public class ExtensionEffectiveStatementImpl extends
 
         if (argumentSubstatement != null) {
             this.argument = argumentSubstatement.argument().getLocalName();
+
+            YinElementEffectiveStatementImpl yinElement = argumentSubstatement
+                    .firstEffective(YinElementEffectiveStatementImpl.class);
+            if (yinElement != null) {
+                this.yin = yinElement.argument();
+            } else {
+                this.yin = false;
+            }
         }
-
-        YinElementEffectiveStatementImpl yinElement = firstEffective(YinElementEffectiveStatementImpl.class);
-
-        if (yinElement != null) {
-            this.yin = yinElement.argument();
-        } else {
-            this.yin = false;
-        }
-
     }
 
     private void initSubstatementCollections() {
