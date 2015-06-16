@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+
 /**
  * Factory interface for creating data trees.
  */
@@ -24,4 +26,11 @@ public interface DataTreeFactory {
      * @return A data tree instance.
      */
     DataTree create(TreeType type);
+
+    /**
+     * Create a new data tree rooted at a particular node.
+     *
+     * @return A data tree instance.
+     */
+    DataTree create(TreeType treeType, YangInstanceIdentifier rootPath);
 }
