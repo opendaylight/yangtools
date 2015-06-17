@@ -22,9 +22,11 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.AttributesBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
@@ -46,7 +48,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
     private final T identifier;
 
     @Override
-    public T getIdentifier() {
+    public final T getIdentifier() {
         return identifier;
     }
 
@@ -73,6 +75,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
      */
     abstract NormalizedNode<?, ?> create(YangInstanceIdentifier instanceId, Optional<NormalizedNode<?, ?>> deepestChild, Optional<Entry<QName,ModifyAction>> operation);
 
+    abstract boolean isMixin();
 
     public void addModifyOpIfPresent(final Optional<Entry<QName,ModifyAction>> operation, final AttributesBuilder<?> builder) {
         if(operation.isPresent()) {
@@ -84,17 +87,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
         return operation.name().toLowerCase();
     }
 
-    static boolean isMixin(final InstanceIdToNodes<?> op) {
-        return op instanceof MixinNormalizationOp;
-    }
-
-    /**
-     * Marker interface for Mixin nodes normalization operations
-     */
-    interface MixinNormalizationOp {}
-
-
-    private static class UnkeyedListMixinNormalization extends InstanceIdToCompositeNodes<NodeIdentifier> implements MixinNormalizationOp {
+    private final static class UnkeyedListMixinNormalization extends InstanceIdToCompositeNodes<NodeIdentifier> {
 
         private final UnkeyedListItemNormalization innerNode;
 
@@ -104,7 +97,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
         }
 
         @Override
-        protected NormalizedNodeContainerBuilder<?, ?, ?, ?> createBuilder(final PathArgument compositeNode) {
+        protected CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> createBuilder(final PathArgument compositeNode) {
             return Builders.unkeyedListBuilder().withNodeIdentifier(getIdentifier());
         }
 
@@ -114,6 +107,11 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
                 return innerNode;
             }
             return null;
+        }
+
+        @Override
+        boolean isMixin() {
+            return true;
         }
     }
 
@@ -144,6 +142,10 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
             return builder.build();
         }
 
+        @Override
+        boolean isMixin() {
+            return false;
+        }
     }
 
     private static Optional<DataSchemaNode> findChildSchemaNode(final DataNodeContainer parent, final QName child) {
