@@ -182,7 +182,7 @@ extension_stmt : EXTENSION_KEYWORD string (SEMICOLON | (LEFT_BRACE  (argument_st
 // string validated in YangModelBasicValidationListener.enterRevision_date_stmt()
 revision_date_stmt : REVISION_DATE_KEYWORD string stmtend;
 // string validated in YangModelBasicValidationListener.enterRevision_stmt()
-revision_stmt : REVISION_KEYWORD string (SEMICOLON | (LEFT_BRACE stmtsep* (description_stmt )? (reference_stmt )? RIGHT_BRACE));
+revision_stmt : REVISION_KEYWORD string (SEMICOLON | (LEFT_BRACE stmtsep* (description_stmt )? (reference_stmt )? (unknown_statement)? RIGHT_BRACE));
 // string not validated
 units_stmt : UNITS_KEYWORD string stmtend;
 // string not validated
