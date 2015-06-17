@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import javax.annotation.Nonnull;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -20,12 +21,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
  * the tree.
  */
 @Beta
+@NotThreadSafe
 public interface DataTreeSnapshotCursor extends AutoCloseable {
     /**
      * Move the cursor to the specified child of the current position.
      *
      * @param child Child identifier
-     * @throws BackendFailedException when implementation-specific errors occurs
+     * @throws BackendFailedException when an implementation-specific error occurs
      *                                while servicing the request.
      * @throws IllegalArgumentException when specified identifier does not identify
      *                                  a valid child, or if that child is not an
@@ -36,10 +38,10 @@ public interface DataTreeSnapshotCursor extends AutoCloseable {
     /**
      * Move the cursor to the specified child of the current position. This is
      * the equivalent of multiple invocations of {@link #enter(PathArgument)},
-     * except the operation is performed atomically.
+     * except the operation is performed all at once.
      *
      * @param path Nested child identifier
-     * @throws BackendFailedException when implementation-specific errors occurs
+     * @throws BackendFailedException when an implementation-specific error occurs
      *                                while servicing the request.
      * @throws IllegalArgumentException when specified path does not identify
      *                                  a valid child, or if that child is not an
@@ -53,7 +55,7 @@ public interface DataTreeSnapshotCursor extends AutoCloseable {
      * argument.
      *
      * @param path Nested child identifier
-     * @throws BackendFailedException when implementation-specific errors occurs
+     * @throws BackendFailedException when an implementation-specific error occurs
      *                                while servicing the request.
      * @throws IllegalArgumentException when specified path does not identify
      *                                  a valid child, or if that child is not an

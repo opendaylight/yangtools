@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -16,14 +17,19 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 
 final class OperationWithModification {
+    private static final Function<TreeNode, NormalizedNode<?, ?>> READ_DATA = new Function<TreeNode, NormalizedNode<?, ?>>() {
+        @Override
+        public NormalizedNode<?, ?> apply(final TreeNode input) {
+            return input.getData();
+        }
+    };
 
     private final ModifiedNode modification;
-
     private final ModificationApplyOperation applyOperation;
 
     private OperationWithModification(final ModificationApplyOperation op, final ModifiedNode mod) {
-        this.modification = mod;
-        this.applyOperation = op;
+        this.modification = Preconditions.checkNotNull(mod);
+        this.applyOperation = Preconditions.checkNotNull(op);
     }
 
     void write(final NormalizedNode<?, ?> value) {
@@ -35,7 +41,7 @@ final class OperationWithModification {
     }
 
     private void recursiveMerge(final NormalizedNode<?,?> data) {
-        if (data instanceof NormalizedNodeContainer<?,?,?>) {
+        if (data instanceof NormalizedNodeContainer) {
             @SuppressWarnings({ "rawtypes", "unchecked" })
             final
             NormalizedNodeContainer<?,?,NormalizedNode<PathArgument, ?>> dataContainer = (NormalizedNodeContainer) data;
@@ -46,7 +52,7 @@ final class OperationWithModification {
              * retain children created by past write operation.
              * These writes will then be pushed down in the tree while there are merge modifications on these children
              */
-            if (modification.getOperation().equals(LogicalOperation.WRITE)) {
+            if (modification.getOperation() == LogicalOperation.WRITE) {
                 @SuppressWarnings({ "rawtypes", "unchecked" })
                 final
                 NormalizedNodeContainer<?,?,NormalizedNode<PathArgument, ?>> odlDataContainer =
@@ -81,6 +87,40 @@ final class OperationWithModification {
 
     void delete() {
         modification.delete();
+    }
+
+    /**
+     * Read a particular child. If the child has been modified and does not have a stable
+     * view, one will we instantiated with specified version.
+     *
+     * @param child
+     * @param version
+     * @return
+     */
+    Optional<NormalizedNode<?, ?>> read(final PathArgument child, final Version version) {
+        final Optional<ModifiedNode> maybeChild = modification.getChild(child);
+        if (maybeChild.isPresent()) {
+            final ModifiedNode childNode = maybeChild.get();
+
+            Optional<TreeNode> snapshot = childNode.getSnapshot();
+            if (snapshot == null) {
+                // Snapshot is not present, force instantiation
+                snapshot = applyOperation.getChild(child).get().apply(childNode, childNode.getOriginal(), version);
+            }
+
+            return snapshot.transform(READ_DATA);
+        }
+
+        Optional<TreeNode> snapshot = modification.getSnapshot();
+        if (snapshot == null) {
+            snapshot = apply(modification.getOriginal(), version);
+        }
+
+        if (snapshot.isPresent()) {
+            return snapshot.get().getChild(child).transform(READ_DATA);
+        }
+
+        return Optional.absent();
     }
 
     public ModifiedNode getModification() {
