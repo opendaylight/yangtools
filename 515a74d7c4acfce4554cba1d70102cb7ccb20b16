@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "7a7fa997_cc758833",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/AbstractValueNodeModificationStrategy.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-06-17T14:48:43Z",
+      "side": 1,
+      "message": "Coding style.",
+      "parentUuid": "7a7fa997_731217b6",
+      "revId": "515a74d7c4acfce4554cba1d70102cb7ccb20b16",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7a7fa997_9317b3a3",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/ModifiedNode.java",
         "patchSetId": 3
@@ -30,6 +48,24 @@
       "writtenOn": "2015-06-16T20:15:40Z",
       "side": 1,
       "message": "probably warrants a move to a switch(operation)",
+      "revId": "515a74d7c4acfce4554cba1d70102cb7ccb20b16",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_47e711e5",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/ModifiedNode.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 260,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-06-17T14:48:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7a7fa997_9317b3a3",
       "revId": "515a74d7c4acfce4554cba1d70102cb7ccb20b16",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
