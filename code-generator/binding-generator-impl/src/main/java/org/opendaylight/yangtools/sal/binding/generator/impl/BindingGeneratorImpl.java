@@ -25,10 +25,12 @@ import static org.opendaylight.yangtools.binding.generator.util.Types.typeForCla
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNode;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findNodeInSchemaContext;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
+
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.google.common.html.HtmlEscapers;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -37,7 +39,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.opendaylight.yangtools.sal.binding.generator.impl.YangTemplate;
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.BindingTypes;
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
@@ -2047,7 +2048,8 @@ public class BindingGeneratorImpl implements BindingGenerator {
         if (verboseClassComments) {
             sb.append("<pre>");
             sb.append(NEW_LINE);
-            sb.append(YangTemplate.generateYangSnipet(schemaNodes));
+            // we need to escape HTML characters only in yang snipet
+            sb.append(HtmlEscapers.htmlEscaper().escape(YangTemplate.generateYangSnipet(schemaNodes)));
             sb.append("</pre>");
             sb.append(NEW_LINE);
         }
@@ -2086,7 +2088,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             sb.append(NEW_LINE);
             sb.append("<pre>");
             sb.append(NEW_LINE);
-            sb.append(YangTemplate.generateYangSnipet(schemaNode));
+            sb.append(HtmlEscapers.htmlEscaper().escape(YangTemplate.generateYangSnipet(schemaNode)));
             sb.append("</pre>");
             sb.append(NEW_LINE);
             sb.append("The schema path to identify an instance is");
@@ -2132,7 +2134,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
 
     private String createDescription(final Module module) {
         final StringBuilder sb = new StringBuilder();
-        final String formattedDescription = YangTemplate.formatToParagraph(module.getDescription(), 0);
+        final String formattedDescription = HtmlEscapers.htmlEscaper().escape(YangTemplate.formatToParagraph(module.getDescription(), 0));
 
         if (!isNullOrEmpty(formattedDescription)) {
             sb.append(formattedDescription);
@@ -2151,7 +2153,7 @@ public class BindingGeneratorImpl implements BindingGenerator {
             sb.append(NEW_LINE);
             sb.append("<pre>");
             sb.append(NEW_LINE);
-            sb.append(YangTemplate.generateYangSnipet(module));
+            sb.append(HtmlEscapers.htmlEscaper().escape(YangTemplate.generateYangSnipet(module)));
             sb.append("</pre>");
         }
 
