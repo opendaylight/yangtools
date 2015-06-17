@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a7fa997_a495c0e5",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/UnknownSchemaNodeImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-17T23:02:58Z",
+      "side": 1,
+      "message": "keep it as a list -- always prefer to declare the interface contract, not implementation. Unless you need an implementation-specific method, which is not the case here.",
+      "revId": "11900d71bd157cb60ce58ec2e313b6428c1e1d6b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
