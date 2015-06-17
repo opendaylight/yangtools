@@ -11,12 +11,14 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeSnapshot;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.CursorAwareDataTreeSnapshot;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeSnapshotCursor;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-final class InMemoryDataTreeSnapshot implements DataTreeSnapshot {
+final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements CursorAwareDataTreeSnapshot {
     private final RootModificationApplyOperation applyOper;
     private final SchemaContext schemaContext;
     private final TreeNode rootNode;
@@ -47,8 +49,19 @@ final class InMemoryDataTreeSnapshot implements DataTreeSnapshot {
     }
 
     @Override
+    public DataTreeSnapshotCursor createCursor(final YangInstanceIdentifier path) {
+        final Optional<NormalizedNode<?, ?>> maybeRoot = NormalizedNodes.findNode(rootNode.getData(), path);
+        if (!maybeRoot.isPresent()) {
+            return null;
+        }
+
+        final NormalizedNode<?, ?> root = maybeRoot.get();
+        Preconditions.checkArgument(root instanceof NormalizedNodeContainer, "Child %s is not a container", path);
+        return openCursor(new InMemoryDataTreeSnapshotCursor(this, path, (NormalizedNodeContainer<?, ?, ?>)root));
+    }
+
+    @Override
     public String toString() {
         return rootNode.getSubtreeVersion().toString();
     }
-
 }

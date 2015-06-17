@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.CursorAwareDataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModificationCursor;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
@@ -27,8 +28,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class InMemoryDataTreeModification implements DataTreeModification {
-    private static final AtomicIntegerFieldUpdater<InMemoryDataTreeModification> UPDATER =
+final class InMemoryDataTreeModification extends AbstractCursorAware implements CursorAwareDataTreeModification {
+    private static final AtomicIntegerFieldUpdater<InMemoryDataTreeModification> SEALED_UPDATER =
             AtomicIntegerFieldUpdater.newUpdater(InMemoryDataTreeModification.class, "sealed");
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTreeModification.class);
 
@@ -120,7 +121,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         }
     }
 
-    private void upgradeIfPossible() {
+    void upgradeIfPossible() {
         if (rootNode.getOperation() == LogicalOperation.NONE) {
             strategyTree.upgradeIfPossible();
         }
@@ -167,7 +168,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
 
     @Override
     public void ready() {
-        final boolean wasRunning = UPDATER.compareAndSet(this, 0, 1);
+        final boolean wasRunning = SEALED_UPDATER.compareAndSet(this, 0, 1);
         Preconditions.checkState(wasRunning, "Attempted to seal an already-sealed Data Tree.");
         rootNode.seal(strategyTree);
     }
@@ -255,15 +256,25 @@ final class InMemoryDataTreeModification implements DataTreeModification {
         }
     }
 
+    static void checkIdentifierReferencesData(final PathArgument arg, final NormalizedNode<?, ?> data) {
+        Preconditions.checkArgument(arg.equals(data.getIdentifier()),
+            "Instance identifier references %s but data identifier is %s", arg, data.getIdentifier());
+    }
+
     private static void checkIdentifierReferencesData(final YangInstanceIdentifier path, final NormalizedNode<?, ?> data) {
         if (!path.isEmpty()) {
             final PathArgument lastArg = path.getLastPathArgument();
             Preconditions.checkArgument(lastArg != null, "Instance identifier %s has invalid null path argument", path);
-            Preconditions.checkArgument(lastArg.equals(data.getIdentifier()),
-                    "Instance identifier references %s but data identifier is %s", lastArg, data.getIdentifier());
+            checkIdentifierReferencesData(lastArg, data);
         } else {
             final QName type = data.getNodeType();
             Preconditions.checkArgument(SchemaContext.NAME.equals(type), "Incorrect name %s of root node", type);
         }
+    }
+
+    @Override
+    public DataTreeModificationCursor createCursor(final YangInstanceIdentifier path) {
+        final OperationWithModification op = resolveModificationFor(path);
+        return openCursor(new InMemoryDataTreeModificationCursor(this, path, op));
     }
 }
