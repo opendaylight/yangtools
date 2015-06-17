@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.Map;
@@ -62,6 +61,11 @@ abstract class InstanceIdToSimpleNodes<T extends YangInstanceIdentifier.PathArgu
         protected NormalizedNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, Object, LeafNode<Object>> getBuilder(final YangInstanceIdentifier.PathArgument node) {
             return Builders.leafBuilder().withNodeIdentifier(getIdentifier());
         }
+
+        @Override
+        boolean isMixin() {
+            return false;
+        }
     }
 
     static final class LeafListEntryNormalization extends InstanceIdToSimpleNodes<YangInstanceIdentifier.NodeWithValue> {
@@ -76,5 +80,9 @@ abstract class InstanceIdToSimpleNodes<T extends YangInstanceIdentifier.PathArgu
             return Builders.leafSetEntryBuilder().withNodeIdentifier((YangInstanceIdentifier.NodeWithValue) node).withValue(((YangInstanceIdentifier.NodeWithValue) node).getValue());
         }
 
+        @Override
+        boolean isMixin() {
+            return false;
+        }
     }
 }
