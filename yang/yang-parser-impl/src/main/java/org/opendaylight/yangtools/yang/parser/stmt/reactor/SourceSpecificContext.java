@@ -42,11 +42,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinit
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase.ContextBuilder;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBehaviour.Registry, Mutable {
+class SourceSpecificContext implements NamespaceStorageNode, NamespaceBehaviour.Registry, Mutable {
 
     public enum PhaseCompletionProgress {
         NO_PROGRESS,
@@ -70,6 +69,10 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     SourceSpecificContext(BuildGlobalContext currentContext,StatementStreamSource source) {
         this.source = source;
         this.currentContext = currentContext;
+    }
+
+    ModelProcessingPhase getInProgressPhase() {
+        return inProgressPhase;
     }
 
     StatementDefinitionContext<?,?,?> getDefinition(QName name) {
@@ -102,9 +105,9 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                 if(root == null) {
                     root = new RootStatementContext(this, SourceSpecificContext.this);
                 } else {
-                    Preconditions.checkState(root.getIdentifier().equals(getIdentifier()), "Root statement was already defined as %s.", root.getIdentifier());
+                    Preconditions.checkState(root.getIdentifier().equals(createIdentifier()), "Root statement was already defined as %s.", root.getIdentifier());
                 }
-                root.resetLists();
+
                 return root;
             }
 
