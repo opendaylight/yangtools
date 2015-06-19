@@ -175,6 +175,7 @@ abstract class DataContainerCodecContext<D extends DataObject,T> extends NodeCod
             return nullable;
         }
         MissingSchemaForClassException.check(factory().getRuntimeContext(), childClass);
+        MissingClassInLoadingStrategyException.check(factory().getRuntimeContext().getStrategy(), childClass);
         throw IncorrectNestingException.create(message, args);
     }
 
