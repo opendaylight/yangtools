@@ -27,6 +27,10 @@ public class MissingSchemaException extends IllegalArgumentException {
         super(msg);
     }
 
+    protected MissingSchemaException(final String msg, final Throwable cause) {
+        super(msg, cause);
+    }
+
     private static MissingSchemaException create(final String format, final Object... args) {
         return new MissingSchemaException(String.format(format, args));
     }
