@@ -1,0 +1,10 @@
+Code-Review+1: Maros Marsalek <mmarsale@cisco.com>
+Code-Review+1: Luis Gomez <ecelgp@gmail.com>
+Verified+1: Tony Tkacik <ttkacik@cisco.com>
+Code-Review+1: Ed Warnicke <hagbard@gmail.com>
+Code-Review+2: Jan Medved <jmedved@cisco.com>
+Submitted-by: Jan Medved <jmedved@cisco.com>
+Submitted-at: Fri, 19 Jun 2015 21:14:26 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/22986
+Project: yangtools
+Branch: refs/heads/stable/lithium
