@@ -54,19 +54,6 @@ final class DataContainerCodecPrototype<T> implements NodeContextSupplier {
         }
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private DataContainerCodecPrototype(final Class<?> cls, final YangInstanceIdentifier.PathArgument arg, final T nodeSchema,
-            final CodecContextFactory factory,final DataContainerCodecContext<?,T> instance) {
-        super();
-        this.yangArg = arg;
-        this.schema = nodeSchema;
-        this.factory = factory;
-        this.namespace = arg.getNodeType().getModule();
-        this.bindingClass = cls;
-        this.bindingArg = new InstanceIdentifier.Item(bindingClass);
-        this.instance = instance;
-    }
-
     @SuppressWarnings({ "unchecked", "rawtypes" })
     static <T extends DataSchemaNode> DataContainerCodecPrototype<T> from(final Class<?> cls, final T schema,
             final CodecContextFactory factory) {
