@@ -98,7 +98,7 @@ public class ImmutableMapEntryNodeBuilder extends AbstractImmutableDataContainer
     @Override
     public MapEntryNode build() {
         for (final Entry<QName, Object> key : getNodeIdentifier().getKeyValues().entrySet()) {
-            final DataContainerChild<?, ?> childNode = getChild(childrenQNamesToPaths.get(key.getValue()));
+            final DataContainerChild<?, ?> childNode = getChild(childrenQNamesToPaths.get(key.getKey()));
 
             // We have enough information to fill-in missing leaf nodes, so let's do that
             if (childNode == null) {
