@@ -31,7 +31,7 @@ public final class Version {
      *
      * @return a new version.
      */
-    public static final Version initial() {
+    public static Version initial() {
         return new Version();
     }
 }

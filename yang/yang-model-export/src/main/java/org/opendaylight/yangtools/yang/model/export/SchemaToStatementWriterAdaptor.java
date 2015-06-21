@@ -33,7 +33,7 @@ final class SchemaToStatementWriterAdaptor implements Rfc6020ModuleWriter {
         this.writer = Preconditions.checkNotNull(writer);
     }
 
-    public static final Rfc6020ModuleWriter from(final StatementTextWriter writer) {
+    public static Rfc6020ModuleWriter from(final StatementTextWriter writer) {
         return new SchemaToStatementWriterAdaptor(writer);
     }
 

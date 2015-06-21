@@ -26,7 +26,7 @@ final class LengthGenerator {
         return "check" + member + "Length";
     }
 
-    private static final Collection<String> createExpressions(final Collection<LengthConstraint> constraints) {
+    private static Collection<String> createExpressions(final Collection<LengthConstraint> constraints) {
         final Collection<String> ret = new ArrayList<>(constraints.size());
 
         for (LengthConstraint l : constraints) {

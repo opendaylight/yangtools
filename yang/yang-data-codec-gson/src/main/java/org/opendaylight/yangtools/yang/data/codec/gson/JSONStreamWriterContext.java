@@ -110,7 +110,7 @@ abstract class JSONStreamWriterContext {
      */
     protected abstract void emitEnd(final JsonWriter writer) throws IOException;
 
-    private final void emitMyself(final SchemaContext schema, final JsonWriter writer) throws IOException {
+    private void emitMyself(final SchemaContext schema, final JsonWriter writer) throws IOException {
         if (!emittedMyself) {
             if (parent != null) {
                 parent.emittingChild(schema, writer);
@@ -154,5 +154,4 @@ abstract class JSONStreamWriterContext {
         }
         return parent;
     }
-
 }

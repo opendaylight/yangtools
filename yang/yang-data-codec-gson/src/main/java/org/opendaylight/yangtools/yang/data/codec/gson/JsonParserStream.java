@@ -104,7 +104,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         }
     }
 
-    private final void setValue(final AbstractNodeDataWithSchema parent, final String value) {
+    private void setValue(final AbstractNodeDataWithSchema parent, final String value) {
         Preconditions.checkArgument(parent instanceof SimpleNodeDataWithSchema, "Node %s is not a simple type", parent.getSchema().getQName());
 
         final Object translatedValue = translateValueByType(value, parent.getSchema());
@@ -192,7 +192,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         return parent instanceof ListNodeDataWithSchema || parent instanceof LeafListNodeDataWithSchema;
     }
 
-    private AbstractNodeDataWithSchema newArrayEntry(final AbstractNodeDataWithSchema parent) {
+    private static AbstractNodeDataWithSchema newArrayEntry(final AbstractNodeDataWithSchema parent) {
         AbstractNodeDataWithSchema newChild;
         if (parent instanceof ListNodeDataWithSchema) {
             newChild = new ListEntryNodeDataWithSchema(parent.getSchema());

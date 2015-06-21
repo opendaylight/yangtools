@@ -533,10 +533,9 @@ class SchemaContextEmitter {
             emitReferenceNode(first.getReference());
             writer.endNode();
         }
-
     }
 
-    private String toLengthString(final List<LengthConstraint> list) {
+    private static String toLengthString(final List<LengthConstraint> list) {
         final StringBuilder lengthStr = new StringBuilder();
         final Iterator<LengthConstraint> constIt = list.iterator();
         while (constIt.hasNext()) {
@@ -555,7 +554,7 @@ class SchemaContextEmitter {
         return lengthStr.toString();
     }
 
-    private String toRangeString(final List<RangeConstraint> list) {
+    private static String toRangeString(final List<RangeConstraint> list) {
         final StringBuilder lengthStr = new StringBuilder();
         final Iterator<RangeConstraint> constIt = list.iterator();
         while (constIt.hasNext()) {
@@ -942,7 +941,7 @@ class SchemaContextEmitter {
 
     }
 
-    private <T extends SchemaNode> T getOriginalChecked(final T value) {
+    private static <T extends SchemaNode> T getOriginalChecked(final T value) {
         final Optional<SchemaNode> original = SchemaNodeUtils.getOriginalIfPossible(value);
         Preconditions.checkArgument(original.isPresent(), "Original unmodified version of node is not present.");
         @SuppressWarnings("unchecked")

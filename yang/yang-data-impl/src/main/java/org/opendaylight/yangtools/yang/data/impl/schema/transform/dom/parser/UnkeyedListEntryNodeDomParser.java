@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.w3c.dom.Element;
 
 final class UnkeyedListEntryNodeDomParser extends ListEntryNodeDomParser<YangInstanceIdentifier.NodeIdentifier, UnkeyedListEntryNode> {
-
     UnkeyedListEntryNodeDomParser(final NodeParserDispatcher<Element> dispatcher) {
         super(dispatcher);
     }
@@ -27,9 +26,8 @@ final class UnkeyedListEntryNodeDomParser extends ListEntryNodeDomParser<YangIns
     }
 
     @Override
-    protected final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, UnkeyedListEntryNode> getBuilder(
-            ListSchemaNode schema) {
+    protected DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, UnkeyedListEntryNode> getBuilder(
+            final ListSchemaNode schema) {
         return Builders.unkeyedListEntryBuilder().withNodeIdentifier(new NodeIdentifier(schema.getQName()));
     }
-
 }
