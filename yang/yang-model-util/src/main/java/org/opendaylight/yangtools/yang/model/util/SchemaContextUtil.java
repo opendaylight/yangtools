@@ -249,7 +249,7 @@ public final class SchemaContextUtil {
      * @return Notification schema or null, if notification is not present in schema context.
      */
     @Beta
-    public static @Nullable NotificationDefinition getNotificationSchema(@Nonnull final SchemaContext schema,@Nonnull  final SchemaPath path) {
+    @Nullable public static NotificationDefinition getNotificationSchema(@Nonnull final SchemaContext schema, @Nonnull final SchemaPath path) {
         Preconditions.checkNotNull(schema, "Schema context must not be null.");
         Preconditions.checkNotNull(path, "Schema path must not be null.");
         for (final NotificationDefinition potential : schema.getNotifications()) {
@@ -268,7 +268,7 @@ public final class SchemaContextUtil {
      * @return Notification schema or null, if notification is not present in schema context.
      */
     @Beta
-    public static @Nullable ContainerSchemaNode getRpcDataSchema(@Nonnull final SchemaContext schema,@Nonnull  final SchemaPath path) {
+    @Nullable public static ContainerSchemaNode getRpcDataSchema(@Nonnull final SchemaContext schema, @Nonnull final SchemaPath path) {
         Preconditions.checkNotNull(schema, "Schema context must not be null.");
         Preconditions.checkNotNull(path, "Schema path must not be null.");
         final Iterator<QName> it = path.getPathFromRoot().iterator();

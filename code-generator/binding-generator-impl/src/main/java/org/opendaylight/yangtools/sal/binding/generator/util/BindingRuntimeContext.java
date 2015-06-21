@@ -330,7 +330,7 @@ public class BindingRuntimeContext implements Immutable {
         return getEnumMapping(typeWithSchema);
     }
 
-    private BiMap<String, String> getEnumMapping(final Entry<GeneratedType, Object> typeWithSchema) {
+    private static BiMap<String, String> getEnumMapping(final Entry<GeneratedType, Object> typeWithSchema) {
         final TypeDefinition<?> typeDef = (TypeDefinition<?>) typeWithSchema.getValue();
 
         final EnumerationType enumType;
@@ -350,7 +350,6 @@ public class BindingRuntimeContext implements Immutable {
         // TODO cache these maps for future use
         return mappedEnums;
     }
-
 
     public Set<Class<?>> getCases(final Class<?> choice) {
         final Collection<Type> cazes = choiceToCases.get(referencedType(choice));
@@ -399,7 +398,7 @@ public class BindingRuntimeContext implements Immutable {
         return ImmutableMap.copyOf(identifierToType);
     }
 
-    private AugmentationIdentifier getAugmentationIdentifier(final AugmentationSchema augment) {
+    private static AugmentationIdentifier getAugmentationIdentifier(final AugmentationSchema augment) {
         final Set<QName> childNames = new HashSet<>();
         for (final DataSchemaNode child : augment.getChildNodes()) {
             childNames.add(child.getQName());
@@ -432,7 +431,7 @@ public class BindingRuntimeContext implements Immutable {
         return collection;
     }
 
-    private static final <T extends SchemaNode> T getOriginalSchema(final T choice) {
+    private static <T extends SchemaNode> T getOriginalSchema(final T choice) {
         @SuppressWarnings("unchecked")
         final T original = (T) SchemaNodeUtils.getRootOriginalIfPossible(choice);
         if (original != null) {

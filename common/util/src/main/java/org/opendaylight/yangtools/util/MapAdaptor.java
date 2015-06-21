@@ -44,7 +44,7 @@ public final class MapAdaptor {
                 DEFAULT_INSTANCE.persistMinItems, DEFAULT_INSTANCE.copyMaxItems);
     }
 
-    private static final int getProperty(final String name, final int defaultValue) {
+    private static int getProperty(final String name, final int defaultValue) {
         try {
             final String p = System.getProperty(name);
             if (p != null) {

@@ -49,7 +49,7 @@ public class SchemaNodeUtils {
      * @param qname input or output QName with namespace same as RPC
      * @return input or output schema. Returns null if RPC does not have input/output specified.
      */
-    public static @Nullable ContainerSchemaNode getRpcDataSchema(final @Nonnull RpcDefinition rpc, @Nonnull final QName qname) {
+    @Nullable public static ContainerSchemaNode getRpcDataSchema(@Nonnull final RpcDefinition rpc, @Nonnull final QName qname) {
         Preconditions.checkNotNull(rpc, "Rpc Schema must not be null");
         Preconditions.checkNotNull(qname,"QName must not be null");
         switch (qname.getLocalName()) {

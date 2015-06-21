@@ -54,7 +54,7 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
      *
      * @return A class object
      */
-    protected final @Nonnull Class<T> getTypeClass() {
+    @Nonnull protected final Class<T> getTypeClass() {
         return type;
     }
 
@@ -63,7 +63,7 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
      *
      * @return Fully-qualified name
      */
-    protected final @Nonnull String getTypeName() {
+    @Nonnull protected final String getTypeName() {
         return type.getName();
     }
 
@@ -73,7 +73,7 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
      * @param value Value as a Number
      * @return Value in native format.
      */
-    protected final @Nonnull T getValue(final Number value) {
+    @Nonnull protected final T getValue(final Number value) {
         if (type.isInstance(value)) {
             return type.cast(value);
         }
@@ -98,10 +98,11 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
     /**
      * Format a value into a Java-compilable expression which results in the appropriate
      * type.
+     *
      * @param value Number value
      * @return Java language string representation
      */
-    protected abstract @Nonnull String format(final T value);
+    @Nonnull protected abstract String format(final T value);
 
     /**
      * Generate the checker method source code.
@@ -109,7 +110,7 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
      * @param constraints Restrictions which need to be applied.
      * @return Method source code.
      */
-    protected abstract @Nonnull String generateRangeCheckerImplementation(@Nonnull final String checkerName, @Nonnull final Collection<RangeConstraint> constraints);
+    @Nonnull protected abstract String generateRangeCheckerImplementation(@Nonnull final String checkerName, @Nonnull final Collection<RangeConstraint> constraints);
 
     private static String rangeCheckerName(final String member) {
         return "check" + member + "Range";

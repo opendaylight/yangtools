@@ -127,7 +127,6 @@ class SingleModuleYinStatementWriter implements StatementTextWriter {
         writeArgument0(xpath.toString());
     }
 
-
     private void writeArgument0(final String strRep) {
         try {
             if (isArgumentYinElement(currentStatement)) {
@@ -143,7 +142,7 @@ class SingleModuleYinStatementWriter implements StatementTextWriter {
         }
     }
 
-    private boolean isArgumentYinElement(StatementDefinition currentStatement) {
+    private static boolean isArgumentYinElement(final StatementDefinition currentStatement) {
         if (currentStatement instanceof Rfc6020Mapping) {
             return ((Rfc6020Mapping) currentStatement).isArgumentYinElement();
         } else if (currentStatement instanceof ExtensionStatement) {
@@ -158,9 +157,7 @@ class SingleModuleYinStatementWriter implements StatementTextWriter {
                 currentStatement.getArgumentName());
     }
 
-
-
-    private String toPrefixedString(@Nullable final String prefix, final String localName) {
+    private static String toPrefixedString(@Nullable final String prefix, final String localName) {
         if (prefix == null || prefix.isEmpty()) {
             return localName;
         }
@@ -220,5 +217,4 @@ class SingleModuleYinStatementWriter implements StatementTextWriter {
     private void writeStartXmlElement(final QName name) throws XMLStreamException {
         writer.writeStartElement(name.getNamespace().toString(), name.getLocalName());
     }
-
 }

@@ -103,7 +103,7 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
         return hashMap;
     }
 
-    private static final String getGetterName(final DataSchemaNode node) {
+    private static String getGetterName(final DataSchemaNode node) {
         final TypeDefinition<?> type ;
         if (node instanceof LeafSchemaNode) {
             type = ((LeafSchemaNode) node).getType();

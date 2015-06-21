@@ -8,10 +8,8 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 import com.google.common.base.Optional;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -52,7 +50,7 @@ final class LazyContainerNode extends ContainerNode {
     }
 
     @SuppressWarnings("unchecked")
-    private final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> castData() {
+    private NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> castData() {
         return (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>) getData();
     }
 }

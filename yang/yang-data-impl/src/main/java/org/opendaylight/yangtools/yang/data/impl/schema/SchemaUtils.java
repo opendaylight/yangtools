@@ -50,7 +50,7 @@ public final class SchemaUtils {
      * @param dataSchemaNode - iterable of schemaNodes to look through
      * @return - schema node with newest revision or absent if no schema node with matching qname is found
      */
-    public static final Optional<DataSchemaNode> findFirstSchema(final QName qname, final Iterable<DataSchemaNode> dataSchemaNode) {
+    public static Optional<DataSchemaNode> findFirstSchema(final QName qname, final Iterable<DataSchemaNode> dataSchemaNode) {
         DataSchemaNode sNode = null;
         if (dataSchemaNode != null && qname != null) {
             for (DataSchemaNode dsn : dataSchemaNode) {
@@ -138,7 +138,7 @@ public final class SchemaUtils {
 
             HashSet<QName> qNamesFromAugment = Sets.newHashSet(Collections2.transform(augment.getChildNodes(), new Function<DataSchemaNode, QName>() {
                 @Override
-                public QName apply(final @Nonnull DataSchemaNode input) {
+                public QName apply(@Nonnull final DataSchemaNode input) {
                     Preconditions.checkNotNull(input);
                     return input.getQName();
                 }

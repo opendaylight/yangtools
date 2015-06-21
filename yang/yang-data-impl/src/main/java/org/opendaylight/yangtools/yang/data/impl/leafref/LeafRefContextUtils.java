@@ -82,26 +82,30 @@ public final class LeafRefContextUtils {
 
     public static boolean isLeafRef(final SchemaNode node, final LeafRefContext root) {
 
-        if ((node == null) || (root == null))
+        if (node == null || root == null) {
             return false;
+        }
 
         final LeafRefContext leafRefReferencingContext = getLeafRefReferencingContext(
                 node, root);
-        if (leafRefReferencingContext == null)
+        if (leafRefReferencingContext == null) {
             return false;
+        }
 
         return leafRefReferencingContext.isReferencing();
     }
 
     public static boolean hasLeafRefChild(final SchemaNode node, final LeafRefContext root) {
 
-        if ((node == null) || (root == null))
+        if (node == null || root == null) {
             return false;
+        }
 
         final LeafRefContext leafRefReferencingContext = getLeafRefReferencingContext(
                 node, root);
-        if (leafRefReferencingContext == null)
+        if (leafRefReferencingContext == null) {
             return false;
+        }
 
         return leafRefReferencingContext.hasReferencingChild();
     }
@@ -109,13 +113,15 @@ public final class LeafRefContextUtils {
     public static boolean isReferencedByLeafRef(final SchemaNode node,
             final LeafRefContext root) {
 
-        if ((node == null) || (root == null))
+        if (node == null || root == null) {
             return false;
+        }
 
         final LeafRefContext leafRefReferencedByContext = getLeafRefReferencedByContext(
                 node, root);
-        if (leafRefReferencedByContext == null)
+        if (leafRefReferencedByContext == null) {
             return false;
+        }
 
         return leafRefReferencedByContext.isReferenced();
     }
@@ -123,13 +129,15 @@ public final class LeafRefContextUtils {
     public static boolean hasChildReferencedByLeafRef(final SchemaNode node,
             final LeafRefContext root) {
 
-        if ((node == null) || (root == null))
+        if ((node == null) || (root == null)) {
             return false;
+        }
 
         final LeafRefContext leafRefReferencedByContext = getLeafRefReferencedByContext(
                 node, root);
-        if (leafRefReferencedByContext == null)
+        if (leafRefReferencedByContext == null) {
             return false;
+        }
 
         return leafRefReferencedByContext.hasReferencedChild();
     }
@@ -241,8 +249,9 @@ public final class LeafRefContextUtils {
         final LeafRefContext leafRefReferencedByContext = getLeafRefReferencedByContext(
                 pathFromRoot, root);
 
-        if (leafRefReferencedByContext == null)
+        if (leafRefReferencedByContext == null) {
             return new HashMap<QName, LeafRefContext>();
+        }
 
         return leafRefReferencedByContext.getAllReferencedByLeafRefCtxs();
     }

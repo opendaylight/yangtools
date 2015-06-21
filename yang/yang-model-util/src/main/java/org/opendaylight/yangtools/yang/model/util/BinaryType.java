@@ -7,17 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import com.google.common.base.Optional;
 import java.util.Collections;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
-
-import com.google.common.base.Optional;
 
 /**
  * The <code>default</code> implementation of Binary Type Definition interface.
@@ -29,11 +27,11 @@ public final class BinaryType implements BinaryTypeDefinition {
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.8";
     private static final String UNITS = "";
 
-    private final static QName QNAME = BaseTypes.BINARY_QNAME;
+    private static final QName QNAME = BaseTypes.BINARY_QNAME;
 
     private static final BinaryType INSTANCE = new BinaryType();
 
-    private final static SchemaPath PATH = SchemaPath.create(Collections.singletonList(QNAME), true);
+    private static final SchemaPath PATH = SchemaPath.create(Collections.singletonList(QNAME), true);
     private final List<Byte> bytes = Collections.emptyList();
     private final List<LengthConstraint> lengthConstraints;
 

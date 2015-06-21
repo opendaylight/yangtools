@@ -150,10 +150,10 @@ public final class SourceIdentifier implements Immutable {
      *
      * @return Filename for this source identifier.
      */
-    public static final String toYangFileName(final String moduleName, final Optional<String> revision) {
+    public static String toYangFileName(final String moduleName, final Optional<String> revision) {
         StringBuilder filename = new StringBuilder(moduleName);
         if (revision.isPresent()) {
-            filename.append("@");
+            filename.append('@');
             filename.append(revision.get());
         }
         filename.append(".yang");

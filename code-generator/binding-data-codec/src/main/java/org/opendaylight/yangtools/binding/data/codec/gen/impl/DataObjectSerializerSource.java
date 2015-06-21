@@ -74,7 +74,7 @@ abstract class DataObjectSerializerSource extends AbstractSource {
         return invoke(STREAM, "startContainerNode", (type),expected);
     }
 
-    protected final  CharSequence escape(final String localName) {
+    protected final CharSequence escape(final String localName) {
         return '"' + localName + '"';
     }
 
@@ -96,12 +96,10 @@ abstract class DataObjectSerializerSource extends AbstractSource {
 
     protected final CharSequence startMapEntryNode(final CharSequence key, final CharSequence expected) {
         return invoke(STREAM,"startMapEntryNode",key,expected);
-
     }
 
     protected final CharSequence startAugmentationNode(final CharSequence key) {
         return invoke(STREAM,"startAugmentationNode",key);
-
     }
 
     protected final CharSequence startChoiceNode(final CharSequence localName,final CharSequence expected) {
