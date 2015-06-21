@@ -13,7 +13,7 @@ final class IntegerRangeGenerator extends AbstractPrimitiveRangeGenerator<Intege
     }
 
     @Override
-    protected final String format(final Integer value) {
+    protected String format(final Integer value) {
         return value.toString();
     }
 

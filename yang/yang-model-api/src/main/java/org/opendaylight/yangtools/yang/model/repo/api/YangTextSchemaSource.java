@@ -89,7 +89,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements SchemaS
         }
 
         @Override
-        public final ByteSource getDelegate() {
+        public ByteSource getDelegate() {
             return delegate;
         }
 
