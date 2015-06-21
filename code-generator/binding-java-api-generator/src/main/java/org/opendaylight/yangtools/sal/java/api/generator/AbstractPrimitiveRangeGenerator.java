@@ -47,7 +47,7 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
         return minValue.compareTo(minToEnforce) < 0;
     }
 
-    private final Collection<String> createExpressions(final Collection<RangeConstraint> constraints) {
+    private Collection<String> createExpressions(final Collection<RangeConstraint> constraints) {
         final Collection<String> ret = new ArrayList<>(constraints.size());
 
         for (RangeConstraint r : constraints) {

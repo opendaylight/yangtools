@@ -22,7 +22,8 @@ final class MapEntryNodeDomParser extends ListEntryNodeDomParser<YangInstanceIde
     MapEntryNodeDomParser(final NodeParserDispatcher<Element> dispatcher) {
         super(dispatcher);
         // TODO strict parsing attribute should be injected into superclass via a constructor
-        // WIth current approach (getter) we have to call super.strictParsing in constructor and cannot reuse constructors
+        // With the current approach (getter) we have to call super.strictParsing in constructor
+        // and cannot reuse constructors
         this.strictParsing = super.strictParsing();
     }
 
@@ -38,8 +39,8 @@ final class MapEntryNodeDomParser extends ListEntryNodeDomParser<YangInstanceIde
     }
 
     @Override
-    protected final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> getBuilder(
-            ListSchemaNode schema) {
+    protected DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> getBuilder(
+            final ListSchemaNode schema) {
         return Builders.mapEntryBuilder(schema);
     }
 
