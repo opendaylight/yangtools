@@ -34,9 +34,8 @@ class BooleanStringCodec extends TypeDefinitionAwareCodec<Boolean, BooleanTypeDe
         return Boolean.valueOf(stringRepresentation);
     }
 
-    private void validate(final String string) {
-        Preconditions.checkArgument(string.toLowerCase().equals("true")
-                || string.toLowerCase().equals("false"),
+    private static void validate(final String string) {
+        Preconditions.checkArgument("true".equalsIgnoreCase(string) || "false".equalsIgnoreCase(string),
                 "Invalid value '%s' for boolean type. Allowed values are true and false", string);
     }
 
