@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.spi.source.StmtOrderingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import java.util.Collection;
 import org.slf4j.Logger;
@@ -72,7 +73,7 @@ public class AugmentStatementImpl extends
                 final StmtContext.Mutable<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> augmentNode)
                 throws SourceException {
 
-            if(StmtContextUtils.isInExtensionBody(augmentNode)) {
+            if (StmtContextUtils.isInExtensionBody(augmentNode)) {
                 return;
             }
 
@@ -91,7 +92,10 @@ public class AugmentStatementImpl extends
                             .getAugmentTargetCtx(augmentNode);
 
                     if (augmentTargetCtx == null) {
-                        throw new InferenceException("Augment target not found: "+augmentNode.getStatementArgument(), augmentNode.getStatementSourceReference());
+                        throw new InferenceException(
+                                "Augment target not found: "
+                                        + augmentNode.getStatementArgument(),
+                                augmentNode.getStatementSourceReference());
                     }
                     if (StmtContextUtils.isInExtensionBody(augmentTargetCtx)) {
                         augmentNode.setIsSupportedToBuildEffective(false);
@@ -103,19 +107,37 @@ public class AugmentStatementImpl extends
                     try {
                         AugmentUtils.copyFromSourceToTarget(augmentSourceCtx,
                                 augmentTargetCtx);
-                        augmentTargetCtx.addEffectiveSubstatement(augmentSourceCtx);
+                        augmentTargetCtx
+                                .addEffectiveSubstatement(augmentSourceCtx);
+                        updateAugmentOrder(augmentSourceCtx);
                     } catch (SourceException e) {
                         LOG.warn(e.getMessage(), e);
                     }
 
                 }
 
+                private void updateAugmentOrder(
+                        final StatementContextBase<?, ?, ?> augmentSourceCtx) {
+                    Integer currentOrder = augmentSourceCtx
+                            .getFromNamespace(StmtOrderingNamespace.class,
+                                    Rfc6020Mapping.AUGMENT);
+                    if (currentOrder == null) {
+                        currentOrder = 1;
+                    } else {
+                        currentOrder++;
+                    }
+                    augmentSourceCtx.setOrder(currentOrder);
+                    augmentSourceCtx.addToNs(StmtOrderingNamespace.class,
+                            Rfc6020Mapping.AUGMENT, currentOrder);
+                }
+
                 @Override
                 public void prerequisiteFailed(
                         final Collection<? extends ModelActionBuilder.Prerequisite<?>> failed)
                         throws InferenceException {
-                        throw new InferenceException("Augment target not found: "+augmentNode.getStatementArgument(),
-                                augmentNode.getStatementSourceReference());
+                    throw new InferenceException("Augment target not found: "
+                            + augmentNode.getStatementArgument(), augmentNode
+                            .getStatementSourceReference());
                 }
             });
         }
