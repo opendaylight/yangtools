@@ -1,0 +1,8 @@
+module egocentric {
+    namespace egocentric;
+    prefix ego;
+
+    import egocentric {
+        prefix ego;
+    }
+}

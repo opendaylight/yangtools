@@ -1,8 +1,17 @@
+/*
+ * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+
 package org.opendaylight.yangtools.yang.stmt.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+
 import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import org.junit.Test;
@@ -21,18 +30,19 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 
 public class AugmentProcessTest {
 
     private static final YangStatementSourceImpl AUGMENTED = new YangStatementSourceImpl(
-            "/stmt-test/augments/augmented.yang");
+            "/stmt-test/augments/augmented.yang", false);
     private static final YangStatementSourceImpl ROOT = new YangStatementSourceImpl(
-            "/stmt-test/augments/aug-root.yang");
+            "/stmt-test/augments/aug-root.yang", false);
 
     private static final QNameModule ROOT_QNAME_MODULE = QNameModule.create(
-            URI.create("root"), null);
+            URI.create("root"), SimpleDateFormatUtil.DEFAULT_DATE_REV);
     private static final QNameModule AUGMENTED_QNAME_MODULE = QNameModule
-            .create(URI.create("aug"), null);
+            .create(URI.create("aug"), SimpleDateFormatUtil.DEFAULT_DATE_REV);
 
     private static GroupingDefinition grp2Def;
 
@@ -43,17 +53,17 @@ public class AugmentProcessTest {
     private final QName contTarget = QName.create(AUGMENTED_QNAME_MODULE,
             "cont-target");
 
-    private final QName contAdded1 = QName.create(AUGMENTED_QNAME_MODULE,
+    private final QName contAdded1 = QName.create(ROOT_QNAME_MODULE,
             "cont-added1");
-    private final QName contAdded2 = QName.create(AUGMENTED_QNAME_MODULE,
+    private final QName contAdded2 = QName.create(ROOT_QNAME_MODULE,
             "cont-added2");
 
-    private final QName list1 = QName.create(AUGMENTED_QNAME_MODULE, "list1");
-    private final QName axml = QName.create(AUGMENTED_QNAME_MODULE, "axml");
+    private final QName list1 = QName.create(ROOT_QNAME_MODULE, "list1");
+    private final QName axml = QName.create(ROOT_QNAME_MODULE, "axml");
 
-    private final QName contGrp = QName.create(AUGMENTED_QNAME_MODULE,
+    private final QName contGrp = QName.create(ROOT_QNAME_MODULE,
             "cont-grp");
-    private final QName axmlGrp = QName.create(AUGMENTED_QNAME_MODULE,
+    private final QName axmlGrp = QName.create(ROOT_QNAME_MODULE,
             "axml-grp");
 
     private final QName augCont1 = QName.create(ROOT_QNAME_MODULE, "aug-cont1");
@@ -65,27 +75,28 @@ public class AugmentProcessTest {
     private final QName grpAdd = QName.create(ROOT_QNAME_MODULE, "grp-add");
 
     private static final YangStatementSourceImpl MULTIPLE_AUGMENT = new YangStatementSourceImpl(
-            "/stmt-test/augments/multiple-augment-test.yang");
+            "/stmt-test/augments/multiple-augment-test.yang",false);
 
     private static final YangStatementSourceImpl MULTIPLE_AUGMENT_ROOT = new YangStatementSourceImpl(
-            "/stmt-test/augments/multiple-augment-root.yang");
+            "/stmt-test/augments/multiple-augment-root.yang",false);
     private static final YangStatementSourceImpl MULTIPLE_AUGMENT_IMPORTED = new YangStatementSourceImpl(
-            "/stmt-test/augments/multiple-augment-imported.yang");
+            "/stmt-test/augments/multiple-augment-imported.yang",false);
     private static final YangStatementSourceImpl MULTIPLE_AUGMENT_SUBMODULE = new YangStatementSourceImpl(
-            "/stmt-test/augments/multiple-augment-submodule.yang");
+            "/stmt-test/augments/multiple-augment-submodule.yang",false);
 
     private static final YangStatementSourceImpl MULTIPLE_AUGMENT_INCORRECT = new YangStatementSourceImpl(
-            "/stmt-test/augments/multiple-augment-incorrect.yang");
+            "/stmt-test/augments/multiple-augment-incorrect.yang",false);
 
     private static final YangStatementSourceImpl MULTIPLE_AUGMENT_INCORRECT2 = new YangStatementSourceImpl(
-            "/stmt-test/augments/multiple-augment-incorrect2.yang");
+            "/stmt-test/augments/multiple-augment-incorrect2.yang",false);
 
     @Test
-    public void multipleAugmentsAndMultipleModulesTest() throws SourceException,
-            ReactorException {
+    public void multipleAugmentsAndMultipleModulesTest()
+            throws SourceException, ReactorException {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
-        addSources(reactor, MULTIPLE_AUGMENT_ROOT, MULTIPLE_AUGMENT_IMPORTED, MULTIPLE_AUGMENT_SUBMODULE);
+        addSources(reactor, MULTIPLE_AUGMENT_ROOT, MULTIPLE_AUGMENT_IMPORTED,
+                MULTIPLE_AUGMENT_SUBMODULE);
 
         EffectiveSchemaContext result = null;
         try {
@@ -129,8 +140,8 @@ public class AugmentProcessTest {
     }
 
     @Test
-    public void multipleAugmentIncorrectPathAndGrpTest() throws SourceException,
-            ReactorException {
+    public void multipleAugmentIncorrectPathAndGrpTest()
+            throws SourceException, ReactorException {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
         addSources(reactor, MULTIPLE_AUGMENT_INCORRECT2);
