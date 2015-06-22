@@ -1,0 +1,4 @@
+module coverage2-import {
+    namespace coverage2-imp-ns;
+    prefix cov2-imp;
+}

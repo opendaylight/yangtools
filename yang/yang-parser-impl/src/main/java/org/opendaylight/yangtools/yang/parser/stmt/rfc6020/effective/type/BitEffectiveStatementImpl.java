@@ -114,7 +114,7 @@ public class BitEffectiveStatementImpl extends EffectiveStatementBase<QName, Bit
         int result = 1;
         result = prime * result + qName.hashCode();
         result = prime * result + schemaPath.hashCode();
-        result = prime * result + position.hashCode();
+        result = prime * result + ((position == null) ? 0 : position.hashCode());
         result = prime * result + ((unknownSchemaNodes == null) ? 0 : unknownSchemaNodes.hashCode());
         return result;
     }

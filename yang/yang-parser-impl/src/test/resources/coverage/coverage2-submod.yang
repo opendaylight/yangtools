@@ -1,0 +1,95 @@
+submodule coverage2-submod {
+    yang-version 1;
+
+    belongs-to coverage2 {
+        prefix cov2;
+    }
+
+    revision 1998-02-03 {
+        description "initial";
+    }
+    organization "submod2 org";
+    contact "submod2 contact";
+    import coverage2-import {
+        prefix cov2-imp;
+    }
+
+    extension ext1 {
+    }
+
+    choice choice1 {
+        case case1;
+    }
+
+    augment /choice1 {
+        case case2;
+        ext1 "extension1";
+    }
+
+    feature feature1 {
+        ext1 extension1;
+    }
+
+    rpc rpc1 {
+        typedef my-rpc-type {
+            type string;
+        }
+        grouping grp-in-rpc {
+        }
+        ext1 extension1;
+    }
+
+    grouping grp-rpc {
+        input {
+            container cont-rpc-input {
+            }
+            leaf rpc-input-leaf {
+                type string;
+                units "none";
+            }
+            config true;
+            ext1 extension1;
+        }
+        output {
+            ext1 extension1;
+        }
+    }
+
+    augment /rpc1 {
+        uses grp-rpc;
+    }
+
+    notification not1 {
+    }
+
+    identity identity1 {
+        ext1 extension1;
+    }
+
+    deviation /choice1 {
+        deviate add {
+            default case1;
+        }
+        ext1 "extension1";
+    }
+
+    typedef myint32 {
+        type int32;
+    }
+
+    grouping grp1 {
+        leaf leaf1 {
+            type string;
+        }
+    }
+
+    uses grp1 {
+        refine leaf1 {
+            config true;
+            ext1 extension1;
+        }
+        ext1 extension1;
+    }
+
+    ext1 "extension1";
+}
