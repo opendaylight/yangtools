@@ -1,0 +1,43 @@
+module coverage2 {
+    namespace coverage2-ns;
+    prefix cov2;
+
+    include coverage2-submod;
+
+    extension ext2 {
+    }
+
+    typedef my-int32 {
+        type int32;
+    }
+
+    leaf leaf-my-int32 {
+        type my-int32;
+    }
+
+    grouping grp-aug {
+        leaf-list ll1 {
+            type string;
+            ordered-by user;
+            config true;
+            mandatory true;
+
+            ext2 extension2;
+        }
+    }
+
+    container cont1 {
+        leaf cont1-condition {
+            type string;
+        }
+        must "cont1-condition != 'true'" {
+            error-message "error";
+        }
+    }
+
+    augment /cont1 {
+        uses grp-aug;
+    }
+
+    anyxml axml;
+}

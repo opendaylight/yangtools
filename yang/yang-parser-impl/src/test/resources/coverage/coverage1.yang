@@ -1,0 +1,105 @@
+module coverage1 {
+    namespace coverage1-ns;
+    prefix cov1;
+
+    revision 1998-02-03 {
+        description "initial revision";
+        reference "initial reference";
+    }
+
+    extension ext2 {
+    }
+
+    extension ext1 {
+        ext2 extension2;
+    }
+
+    choice test-choice {
+
+        config true;
+        mandatory true;
+
+        case case1 {
+            ext1 "extension1" {
+                description "extension1 description";
+                reference "extension1 reference";
+            }
+            typedef t1 {
+                type string;
+            }
+        }
+        case case2;
+        case case3;
+
+        default case2;
+        ext1 "extension2";
+    }
+
+    augment /test-choice {
+        case case4;
+    }
+
+    list list1 {
+        leaf list1-leaf1{
+            type string;
+        }
+        leaf list1-leaf2{
+            type string;
+        }
+    }
+
+    notification notif1 {
+    }
+
+    identity id1;
+
+    leaf type-test {
+        type union {
+            type binary;
+            type bits {
+                bit bit1 {
+                    position 1;
+                    ext2 extension2;
+                    description "bit1 desc";
+                    reference "bit1 ref";
+                    status deprecated;
+                }
+                bit bit2;
+            }
+            type boolean;
+            type empty;
+            type identityref {
+                base id1;
+            }
+            type int8;
+            type int16;
+            type int32;
+            type int64;
+            type uint8;
+            type uint16;
+            type uint32;
+            type uint64;
+            type decimal64 {
+                fraction-digits 9;
+            }
+        }
+    }
+
+    leaf leaf-enum {
+        type enumeration {
+            enum enum1 {
+                value 9;
+                status deprecated;
+                description "enum1 desc";
+                reference "enum1 ref";
+            }
+            enum enum2;
+        }
+    }
+
+    type int8 {
+        range "0..10 | 20..30";
+        units "int8 units";
+        default 9;
+    }
+}
