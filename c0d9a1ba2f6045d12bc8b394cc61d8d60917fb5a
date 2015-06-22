@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a7fa997_9f5c8627",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/UnknownSchemaNodeImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-22T11:20:22Z",
+      "side": 1,
+      "message": "\u003d ImmutableList.of(), as otherwise we\u0027ll return null.",
+      "revId": "c0d9a1ba2f6045d12bc8b394cc61d8d60917fb5a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
