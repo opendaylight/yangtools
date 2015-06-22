@@ -99,7 +99,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
     static DataSchemaContextNode<?> fromSchemaAndQNameChecked(final DataNodeContainer schema, final QName child) {
         DataSchemaNode result = findChildSchemaNode(schema, child);
         // We try to look up if this node was added by augmentation
-        if ((schema instanceof DataSchemaNode) && result.isAugmenting()) {
+        if (result != null && (schema instanceof DataSchemaNode) && result.isAugmenting()) {
             return fromAugmentation(schema, (AugmentationTarget) schema, result);
         }
         return fromDataSchemaNode(result);
