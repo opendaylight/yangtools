@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import java.util.Set;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
@@ -60,7 +57,7 @@ public class LeafListEffectiveStatementImpl extends AbstractEffectiveDocumentedN
     private void initCopyType(
             StmtContext<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> ctx) {
 
-        Set<TypeOfCopy> copyTypesFromOriginal = StmtContextUtils.getCopyTypesFromOriginal(ctx);
+        List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
 
         if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
             augmenting = true;
@@ -72,7 +69,7 @@ public class LeafListEffectiveStatementImpl extends AbstractEffectiveDocumentedN
             addedByUses = augmenting = true;
         }
 
-        if (ctx.getTypeOfCopy() != TypeOfCopy.ORIGINAL) {
+        if (ctx.getOriginalCtx() != null) {
             original = (LeafListSchemaNode) ctx.getOriginalCtx().buildEffective();
         }
     }
