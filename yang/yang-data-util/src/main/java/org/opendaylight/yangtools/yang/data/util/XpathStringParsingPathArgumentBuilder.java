@@ -92,9 +92,9 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
     }
 
     private PathArgument computeNextArgument() {
-        checkValid(SLASH  == currentChar(),"Identifier must start with '/'.");
+        checkValid(SLASH == currentChar(), "Identifier must start with '/'.");
         skipCurrentChar();
-
+        checkValid(!allCharactersConsumed(), "Identifier cannot end with '/'.");
         QName name = nextQName();
         if(allCharactersConsumed() || SLASH == currentChar()) {
             return computeIdentifier(name);
