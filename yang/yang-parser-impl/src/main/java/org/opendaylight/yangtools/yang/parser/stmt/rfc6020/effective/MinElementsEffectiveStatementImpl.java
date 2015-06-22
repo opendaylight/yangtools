@@ -11,10 +11,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class MinElementsEffectiveStatementImpl extends
-        EffectiveStatementBase<String, MinElementsStatement> {
+        EffectiveStatementBase<Integer, MinElementsStatement> {
 
     public MinElementsEffectiveStatementImpl(
-            StmtContext<String, MinElementsStatement, ?> ctx) {
+            StmtContext<Integer, MinElementsStatement, ?> ctx) {
         super(ctx);
 
     }
