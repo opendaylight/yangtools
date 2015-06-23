@@ -1,0 +1,4 @@
+module parser-impl-test2-import {
+    namespace parser-impl-test2-imp-ns;
+    prefix pit2-imp;
+}
