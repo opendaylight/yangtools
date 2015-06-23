@@ -7,52 +7,64 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PatternEffectiveStatementImpl;
-
+import com.google.common.base.Optional;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
+import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.PatternConstraintEffectiveImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.PatternEffectiveStatementImpl;
 
-public class PatternStatementImpl extends AbstractDeclaredStatement<String>
-        implements PatternStatement {
+public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConstraint> implements PatternStatement {
 
-    protected PatternStatementImpl(
-            StmtContext<String, PatternStatement, ?> context) {
+    protected PatternStatementImpl(StmtContext<PatternConstraint, PatternStatement, ?> context) {
         super(context);
     }
 
     public static class Definition
             extends
-            AbstractStatementSupport<String, PatternStatement, EffectiveStatement<String, PatternStatement>> {
+            AbstractStatementSupport<PatternConstraint, PatternStatement, EffectiveStatement<PatternConstraint, PatternStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.PATTERN);
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
-            return value;
+        public PatternConstraint parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+
+            final StringBuilder wrapPatternBuilder = new StringBuilder(value.length() + 2);
+            wrapPatternBuilder.append('^');
+            wrapPatternBuilder.append(value);
+            wrapPatternBuilder.append('$');
+            final String pattern = wrapPatternBuilder.toString();
+
+            try {
+                Pattern.compile(pattern);
+                return new PatternConstraintEffectiveImpl(pattern, Optional.of(""), Optional.of(""));
+            } catch (PatternSyntaxException e) {
+                return null;
+            }
         }
 
         @Override
-        public PatternStatement createDeclared(
-                StmtContext<String, PatternStatement, ?> ctx) {
+        public PatternStatement createDeclared(StmtContext<PatternConstraint, PatternStatement, ?> ctx) {
             return new PatternStatementImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<String, PatternStatement> createEffective(
-                StmtContext<String, PatternStatement, EffectiveStatement<String, PatternStatement>> ctx) {
+        public EffectiveStatement<PatternConstraint, PatternStatement> createEffective(
+                StmtContext<PatternConstraint, PatternStatement, EffectiveStatement<PatternConstraint, PatternStatement>> ctx) {
             return new PatternEffectiveStatementImpl(ctx);
         }
-
     }
 
     @Override
@@ -76,7 +88,7 @@ public class PatternStatementImpl extends AbstractDeclaredStatement<String>
     }
 
     @Override
-    public String getValue() {
+    public PatternConstraint getValue() {
         return argument();
     }
 

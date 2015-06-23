@@ -1,0 +1,4 @@
+module nature {
+    namespace nature;
+    prefix nat;
+}

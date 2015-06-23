@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -8,21 +8,20 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BitsSpecificationEffectiveStatementImpl;
 
-public class BitsSpecificationImpl extends AbstractDeclaredStatement<String>
-        implements TypeStatement.BitsSpecification {
+public class BitsSpecificationImpl extends AbstractDeclaredStatement<String> implements TypeStatement.BitsSpecification {
 
-    protected BitsSpecificationImpl(
-            StmtContext<String, TypeStatement.BitsSpecification, ?> context) {
+    protected BitsSpecificationImpl(StmtContext<String, TypeStatement.BitsSpecification, ?> context) {
         super(context);
     }
 
@@ -35,8 +34,7 @@ public class BitsSpecificationImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value)
-                throws SourceException {
+        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) throws SourceException {
             return value;
         }
 
@@ -49,7 +47,7 @@ public class BitsSpecificationImpl extends AbstractDeclaredStatement<String>
         @Override
         public EffectiveStatement<String, TypeStatement.BitsSpecification> createEffective(
                 StmtContext<String, TypeStatement.BitsSpecification, EffectiveStatement<String, TypeStatement.BitsSpecification>> ctx) {
-            throw new UnsupportedOperationException();
+            return new BitsSpecificationEffectiveStatementImpl(ctx);
         }
     }
 
