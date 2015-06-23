@@ -1,8 +1,5 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 import com.google.common.base.Optional;
 import java.util.Collections;
 import java.util.List;
@@ -12,26 +9,31 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
-public class StringEffectiveStatementImpl extends
-        EffectiveStatementBase<String, TypeStatement> implements StringTypeDefinition {
+public class StringEffectiveStatementImpl extends EffectiveStatementBase<String, TypeStatement> implements
+        StringTypeDefinition {
 
     public static final String LOCAL_NAME = TypeUtils.STRING;
     private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, LOCAL_NAME);
     private static final SchemaPath PATH = SchemaPath.create(true, QNAME);
     private static final String DEFAULT_VALUE = "";
-    private static final String DESCRIPTION = "";
-    private static final String REFERENCE = "";
+    private static final String DESCRIPTION = "The string built-in type represents human-readable strings in YANG. "
+            + "Legal characters are tab, carriage return, line feed, and the legal "
+            + "characters of Unicode and ISO/IEC 10646";
+    private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.4";
     private final List<LengthConstraint> lengthConstraints;
     private final List<PatternConstraint> patternConstraints;
     private static final String UNITS = "";
 
-    public StringEffectiveStatementImpl(StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
+    public StringEffectiveStatementImpl(
+            StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
         super(ctx);
 
         final LengthConstraint defLength = new LengthConstraintEffectiveImpl(0, Integer.MAX_VALUE, Optional.of(""),

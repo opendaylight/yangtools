@@ -64,7 +64,7 @@ public class RevisionAwareXPathImpl implements RevisionAwareXPath {
         if (absolute != other.absolute) {
             return false;
         }
-        return false;
+        return true;
     }
 
     @Override
