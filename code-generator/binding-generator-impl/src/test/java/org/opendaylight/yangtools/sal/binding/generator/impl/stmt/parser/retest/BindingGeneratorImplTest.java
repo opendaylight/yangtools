@@ -5,12 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.sal.binding.generator.impl;
+package org.opendaylight.yangtools.sal.binding.generator.impl.stmt.parser.retest;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import org.opendaylight.yangtools.sal.binding.generator.impl.BindingGeneratorImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
@@ -27,7 +28,6 @@ import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public class BindingGeneratorImplTest {
 
@@ -61,13 +61,11 @@ public class BindingGeneratorImplTest {
 
     @Test
     public void choiceNodeGenerationTest() throws IOException,
-            YangSyntaxErrorException, URISyntaxException {
+            YangSyntaxErrorException, URISyntaxException, SourceException, ReactorException {
         File resourceFile = new File(getClass().getResource(
                 "/binding-generator-impl-test/choice-test.yang").toURI());
-        File resourceDir = resourceFile.getParentFile();
 
-        YangParserImpl parser = YangParserImpl.getInstance();
-        SchemaContext context = parser.parseFile(resourceFile, resourceDir);
+        SchemaContext context = RetestUtils.parseYangSources(resourceFile);
 
         List<Type> generateTypes = new BindingGeneratorImpl(false)
                 .generateTypes(context);
@@ -161,13 +159,11 @@ public class BindingGeneratorImplTest {
 
     @Test
     public void notificationGenerationTest() throws IOException,
-            YangSyntaxErrorException, URISyntaxException {
+            YangSyntaxErrorException, URISyntaxException, SourceException, ReactorException {
         File resourceFile = new File(getClass().getResource(
                 "/binding-generator-impl-test/notification-test.yang").toURI());
-        File resourceDir = resourceFile.getParentFile();
 
-        YangParserImpl parser = YangParserImpl.getInstance();
-        SchemaContext context = parser.parseFile(resourceFile, resourceDir);
+        SchemaContext context = RetestUtils.parseYangSources(resourceFile);
 
         List<Type> generateTypes = new BindingGeneratorImpl(false)
                 .generateTypes(context);

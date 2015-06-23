@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import java.util.HashSet;
 import java.util.Set;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 import com.google.common.base.Predicate;
 import java.util.Collection;
@@ -188,20 +187,6 @@ public final class StmtContextUtils {
         } else {
             return false;
         }
-    }
-
-    public static Set<TypeOfCopy> getCopyTypesFromOriginal(
-            StmtContext<?, ?, ?> ctx) {
-
-        Set<TypeOfCopy> copyTypesFromOriginal = new HashSet<>();
-        StmtContext<?,?,?> current = ctx;
-
-        while(current.getOriginalCtx()!=null){
-            copyTypesFromOriginal.add(current.getTypeOfCopy());
-            current = current.getOriginalCtx();
-        }
-
-        return copyTypesFromOriginal;
     }
 
     public static Collection<SchemaNodeIdentifier> replaceModuleQNameForKey(StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, ?> keyStmtCtx,

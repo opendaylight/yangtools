@@ -9,8 +9,9 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
+import com.google.common.collect.Iterables;
 
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import java.util.ArrayList;
@@ -242,8 +243,7 @@ public final class Utils {
                 localName = value;
                 qNameModule = getRootModuleQName(ctx);
             }
-            //:FIXME test and verify this...
-            if(qNameModule == null && ctx.getTypeOfCopy() == StmtContext.TypeOfCopy.ADDED_BY_AUGMENTATION) {
+            if(qNameModule == null && Iterables.getLast(ctx.getCopyHistory()) == StmtContext.TypeOfCopy.ADDED_BY_AUGMENTATION) {
                 ctx = ctx.getOriginalCtx();
                 qNameModule = getModuleQNameByPrefix(ctx, prefix);
             }

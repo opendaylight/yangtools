@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -69,7 +67,7 @@ public class ChoiceEffectiveStatementImpl extends
     private void initCopyType(
             StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
 
-        Set<TypeOfCopy> copyTypesFromOriginal = StmtContextUtils.getCopyTypesFromOriginal(ctx);
+        List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
 
         if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
             augmenting = true;
@@ -81,7 +79,7 @@ public class ChoiceEffectiveStatementImpl extends
             addedByUses = augmenting = true;
         }
 
-        if (ctx.getTypeOfCopy() != TypeOfCopy.ORIGINAL) {
+        if (ctx.getOriginalCtx() != null) {
             original = (ChoiceSchemaNode) ctx.getOriginalCtx().buildEffective();
         }
     }
@@ -116,6 +114,12 @@ public class ChoiceEffectiveStatementImpl extends
                 ChoiceCaseNode shorthandCase = new CaseShorthandImpl(
                         (DataSchemaNode) effectiveStatement);
                 casesInit.add(shorthandCase);
+
+                if(effectiveStatement instanceof LeafEffectiveStatementImpl &&
+                   this.augmenting == false) {
+                    resetAugmenting((LeafEffectiveStatementImpl) effectiveStatement);
+                }
+                //resetAddedByUsesAndAugmenting(effectiveStatement);
             }
             if (!configurationInit
                     && effectiveStatement instanceof ConfigEffectiveStatementImpl) {
@@ -135,6 +139,36 @@ public class ChoiceEffectiveStatementImpl extends
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
         this.cases = ImmutableSet.copyOf(casesInit);
     }
+
+    private void resetAugmenting(LeafEffectiveStatementImpl leaf) {
+        leaf.augmenting = false;
+    }
+
+//:TODO DELETE and RETURN FIELDS ACCESS MODIFIERS TO PRIVATE:
+//    private void resetAugmenting(
+//            EffectiveStatement<?, ?> effectiveStatement) {
+//        if(effectiveStatement instanceof LeafEffectiveStatementImpl) {
+//            LeafEffectiveStatementImpl leaf = (LeafEffectiveStatementImpl) effectiveStatement;
+//            leaf.addedByUses = false;
+//            leaf.augmenting = false;
+//        } else if(effectiveStatement instanceof ContainerEffectiveStatementImpl) {
+//            ContainerEffectiveStatementImpl container = (ContainerEffectiveStatementImpl) effectiveStatement;
+//            container.addedByUses = false;
+//            container.augmenting = false;
+//        } else if(effectiveStatement instanceof LeafListEffectiveStatementImpl) {
+//            LeafListEffectiveStatementImpl leafList = (LeafListEffectiveStatementImpl) effectiveStatement;
+//            leafList.addedByUses = false;
+//            leafList.augmenting = false;
+//        } else if(effectiveStatement instanceof ListEffectiveStatementImpl) {
+//            ListEffectiveStatementImpl list = (ListEffectiveStatementImpl) effectiveStatement;
+//            list.addedByUses = false;
+//            list.augmenting = false;
+//        } else if(effectiveStatement instanceof AnyXmlEffectiveStatementImpl) {
+//            AnyXmlEffectiveStatementImpl anyXml = (AnyXmlEffectiveStatementImpl) effectiveStatement;
+//            anyXml.addedByUses = false;
+//            anyXml.augmenting = false;
+//        }
+//    }
 
     @Override
     public QName getQName() {
