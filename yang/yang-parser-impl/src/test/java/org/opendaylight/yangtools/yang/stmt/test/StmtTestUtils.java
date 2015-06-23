@@ -8,9 +8,19 @@
 
 package org.opendaylight.yangtools.yang.stmt.test;
 
+import java.net.URISyntaxException;
+
+import java.net.URL;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Collection;
@@ -23,7 +33,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceIm
 
 public class StmtTestUtils {
 
-    private static final Logger LOG = LoggerFactory.getLogger(StmtTestUtils.class);
+    private static final Logger LOG = LoggerFactory
+            .getLogger(StmtTestUtils.class);
 
     private StmtTestUtils() {
 
@@ -38,7 +49,8 @@ public class StmtTestUtils {
         }
     }
 
-    public static List<Module> findModules(final Set<Module> modules, final String moduleName) {
+    public static List<Module> findModules(final Set<Module> modules,
+            final String moduleName) {
         List<Module> result = new ArrayList<>();
         for (Module module : modules) {
             if (module.getName().equals(moduleName)) {
@@ -71,12 +83,49 @@ public class StmtTestUtils {
             String indent) {
 
         for (DataSchemaNode child : childNodes) {
-            LOG.debug(indent + "Child "
-                    + child.getQName().getLocalName());
+            LOG.debug(indent + "Child " + child.getQName().getLocalName());
             if (child instanceof DataNodeContainer) {
                 printChilds(((DataNodeContainer) child).getChildNodes(), indent
                         + "      ");
             }
         }
+    }
+
+    public static SchemaContext parseYangSources(
+            StatementStreamSource... sources) throws SourceException,
+            ReactorException {
+
+        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
+                .newBuild();
+        reactor.addSources(sources);
+
+        return reactor.buildEffective();
+    }
+
+    public static SchemaContext parseYangSources(File... files)
+            throws SourceException, ReactorException, FileNotFoundException {
+
+        StatementStreamSource[] sources = new StatementStreamSource[files.length];
+
+        for (int i = 0; i < files.length; i++) {
+            sources[i] = new YangStatementSourceImpl(new FileInputStream(
+                    files[i]));
+        }
+
+        return parseYangSources(sources);
+    }
+
+    public static SchemaContext parseYangSources(Collection<File> files)
+            throws SourceException, ReactorException, FileNotFoundException {
+        return parseYangSources(files.toArray(new File[files.size()]));
+    }
+
+    public static SchemaContext parseYangSources(String yangSourcesDirectoryPath)
+            throws SourceException, ReactorException, FileNotFoundException, URISyntaxException {
+
+        URL resourceDir = StmtTestUtils.class.getResource(yangSourcesDirectoryPath);
+        File testSourcesDir = new File(resourceDir.toURI());
+
+        return parseYangSources(testSourcesDir.listFiles());
     }
 }
