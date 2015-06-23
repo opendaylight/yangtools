@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -7,22 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
-
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EnumSpecificationEffectiveStatementImpl;
 
-public class EnumSpecificationImpl extends AbstractDeclaredStatement<String>
-        implements TypeStatement.EnumSpecification {
+public class EnumSpecificationImpl extends AbstractDeclaredStatement<String> implements TypeStatement.EnumSpecification {
 
-    protected EnumSpecificationImpl(
-            StmtContext<String, TypeStatement.EnumSpecification, ?> context) {
+    protected EnumSpecificationImpl(StmtContext<String, TypeStatement.EnumSpecification, ?> context) {
         super(context);
     }
 
@@ -31,12 +30,11 @@ public class EnumSpecificationImpl extends AbstractDeclaredStatement<String>
             AbstractStatementSupport<String, TypeStatement.EnumSpecification, EffectiveStatement<String, TypeStatement.EnumSpecification>> {
 
         public Definition() {
-            super(Rfc6020Mapping.ENUM);
+            super(Rfc6020Mapping.TYPE);
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value)
-                throws SourceException {
+        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) throws SourceException {
             return value;
         }
 
@@ -49,7 +47,7 @@ public class EnumSpecificationImpl extends AbstractDeclaredStatement<String>
         @Override
         public EffectiveStatement<String, TypeStatement.EnumSpecification> createEffective(
                 StmtContext<String, TypeStatement.EnumSpecification, EffectiveStatement<String, TypeStatement.EnumSpecification>> ctx) {
-            throw new UnsupportedOperationException();
+            return new EnumSpecificationEffectiveStatementImpl(ctx);
         }
     }
 

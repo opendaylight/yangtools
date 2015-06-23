@@ -1,0 +1,34 @@
+module cyclic-identity-test {
+    namespace "cyclic.identity.test";
+    prefix cid;
+
+    identity child-identity-1 {
+        base child-identity-2;
+    }
+
+    identity child-identity-2 {
+        base child-identity-3;
+    }
+
+    identity child-identity-3 {
+        base child-identity-4;
+    }
+
+    identity child-identity-4 {
+        base child-identity-1;
+    }
+
+    identity base-identity {
+    }
+
+    identity sub-identity {
+        base base-identity;
+    }
+
+    identity sub-identity-2 {
+        base base-identity;
+    }
+
+    container root-container {
+    }
+}
