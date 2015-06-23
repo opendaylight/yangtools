@@ -10,7 +10,7 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>yangtools-parent</artifactId>
-        <version>0.7.0-SNAPSHOT</version>
+        <version>0.7.0-Lithium</version>
         <relativePath>/../../common/parent/pom.xml</relativePath>
     </parent>
 
@@ -31,12 +31,12 @@
                     <dependency>
                         <groupId>org.opendaylight.yangtools</groupId>
                         <artifactId>yang-binding</artifactId>
-                        <version>0.7.0-SNAPSHOT</version>
+                        <version>0.7.0-Lithium</version>
                     </dependency>
                     <dependency>
                         <groupId>org.opendaylight.yangtools</groupId>
                         <artifactId>yang-common</artifactId>
-                        <version>0.7.0-SNAPSHOT</version>
+                        <version>0.7.0-Lithium</version>
                     </dependency>
                 </dependencies>
             </plugin>
