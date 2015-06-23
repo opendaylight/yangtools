@@ -28,7 +28,8 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * The Integer Built-In Types are defined in <a
  * href="https://tools.ietf.org/html/rfc6020#section-9.2"> [RFC-6020]</a>
  */
-public interface IntegerTypeDefinition extends TypeDefinition<IntegerTypeDefinition> {
+public interface
+        IntegerTypeDefinition extends TypeDefinition<IntegerTypeDefinition> {
 
     /**
      * Returns Range Constraints defined for given Integer Type.

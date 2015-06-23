@@ -17,19 +17,30 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceIm
 
 public class IncludeRevisionsTest {
 
-    private static final YangStatementSourceImpl EQUAL_ROOT = new YangStatementSourceImpl("/revisions/equal-root.yang");
-    private static final YangStatementSourceImpl EQUAL_REV = new YangStatementSourceImpl("/revisions/equal-rev.yang");
-    private static final YangStatementSourceImpl UNEQUAL_ROOT = new YangStatementSourceImpl("/revisions/unequal-root.yang");
-    private static final YangStatementSourceImpl UNEQUAL_REV = new YangStatementSourceImpl("/revisions/unequal-rev.yang");
-    private static final YangStatementSourceImpl SUBMOD_ONLY_ROOT = new YangStatementSourceImpl("/revisions/submod-only-root.yang");
-    private static final YangStatementSourceImpl SUBMOD_ONLY_REV = new YangStatementSourceImpl("/revisions/submod-only-rev.yang");
-    private static final YangStatementSourceImpl MOD_ONLY_ROOT = new YangStatementSourceImpl("/revisions/mod-only-root.yang");
-    private static final YangStatementSourceImpl MOD_ONLY_REV = new YangStatementSourceImpl("/revisions/mod-only-rev.yang");
-    private static final YangStatementSourceImpl MOD_ONLY_1970_ROOT = new YangStatementSourceImpl("/revisions/mod-1970-root.yang");
-    private static final YangStatementSourceImpl MOD_ONLY_1970_REV = new YangStatementSourceImpl("/revisions/mod-1970-rev.yang");
-    private static final YangStatementSourceImpl NOWHERE_ROOT = new YangStatementSourceImpl("/revisions/nowhere-root.yang");
-    private static final YangStatementSourceImpl NOWHERE_REV = new YangStatementSourceImpl("/revisions/nowhere-rev.yang");
-
+    private static final YangStatementSourceImpl EQUAL_ROOT = new YangStatementSourceImpl("/revisions/equal-root.yang",
+            false);
+    private static final YangStatementSourceImpl EQUAL_REV = new YangStatementSourceImpl("/revisions/equal-rev.yang",
+            false);
+    private static final YangStatementSourceImpl UNEQUAL_ROOT = new YangStatementSourceImpl(
+            "/revisions/unequal-root.yang", false);
+    private static final YangStatementSourceImpl UNEQUAL_REV = new YangStatementSourceImpl(
+            "/revisions/unequal-rev.yang", false);
+    private static final YangStatementSourceImpl SUBMOD_ONLY_ROOT = new YangStatementSourceImpl(
+            "/revisions/submod-only-root.yang", false);
+    private static final YangStatementSourceImpl SUBMOD_ONLY_REV = new YangStatementSourceImpl(
+            "/revisions/submod-only-rev.yang", false);
+    private static final YangStatementSourceImpl MOD_ONLY_ROOT = new YangStatementSourceImpl(
+            "/revisions/mod-only-root.yang", false);
+    private static final YangStatementSourceImpl MOD_ONLY_REV = new YangStatementSourceImpl(
+            "/revisions/mod-only-rev.yang", false);
+    private static final YangStatementSourceImpl MOD_ONLY_1970_ROOT = new YangStatementSourceImpl(
+            "/revisions/mod-1970-root.yang", false);
+    private static final YangStatementSourceImpl MOD_ONLY_1970_REV = new YangStatementSourceImpl(
+            "/revisions/mod-1970-rev.yang", false);
+    private static final YangStatementSourceImpl NOWHERE_ROOT = new YangStatementSourceImpl(
+            "/revisions/nowhere-root.yang", false);
+    private static final YangStatementSourceImpl NOWHERE_REV = new YangStatementSourceImpl(
+            "/revisions/nowhere-rev.yang", false);
 
     @Test
     public void revsEqualTest() throws SourceException, ReactorException {
@@ -80,7 +91,6 @@ public class IncludeRevisionsTest {
             assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, e.getPhase());
         }
     }
-
 
     @Test
     public void rev1970InModuleOnlyTest() throws SourceException, ReactorException {
