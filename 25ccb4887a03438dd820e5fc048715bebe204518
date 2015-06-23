@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a7fa997_ba12ad60",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/CoverageTest1.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2015-06-23T09:25:12Z",
+      "side": 1,
+      "message": "Please break down this class to level of classes tested and change the name appropriately.",
+      "revId": "25ccb4887a03438dd820e5fc048715bebe204518",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_da176950",
+        "filename": "yang/yang-parser-impl/src/test/resources/coverage/coverage1.yang",
+        "patchSetId": 3
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2015-06-23T09:25:12Z",
+      "side": 1,
+      "message": "same as for classes ... don\u0027t use word \u0027coverage\u0027 in names",
+      "revId": "25ccb4887a03438dd820e5fc048715bebe204518",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
