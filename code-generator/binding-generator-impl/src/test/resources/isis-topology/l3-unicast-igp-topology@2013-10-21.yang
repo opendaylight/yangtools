@@ -1,0 +1,25 @@
+module l3-unicast-igp-topology {
+    yang-version 1;
+    namespace "urn:TBD:params:xml:ns:yang:nt:l3-unicast-igp-topology";
+
+    prefix "l3t";
+    import network-topology { prefix "nt"; revision-date 2013-10-21; }
+
+    revision "2013-10-21" {
+        description "Initial revision";
+        reference "TBD";
+    }
+
+    grouping igp-topology-attributes {
+        container igp-topology-attributes {
+            leaf name {
+                type string;
+            }
+        }
+    }
+
+    augment "/nt:network-topology/nt:topology" {
+        when "nt:topology-types/l3-unicast-igp-topology";
+        uses igp-topology-attributes;
+    }
+}
