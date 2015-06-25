@@ -9,7 +9,7 @@
 
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
-        <version>0.7.0-Lithium</version>
+        <version>0.7.1-SNAPSHOT</version>
         <artifactId>yangtools-parent</artifactId>
         <relativePath>/../../common/parent/pom.xml</relativePath>
     </parent>

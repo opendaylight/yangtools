@@ -13,7 +13,7 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>binding-generator</artifactId>
-        <version>0.7.0-Lithium</version>
+        <version>0.7.1-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
