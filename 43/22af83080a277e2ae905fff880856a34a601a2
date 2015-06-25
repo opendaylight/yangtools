@@ -1,0 +1,8 @@
+Code-Review+2: Thanh Ha <thanh.ha@linuxfoundation.org>
+Code-Review-1: jenkins-releng <jenkins-releng@opendaylight.org>
+Verified+1: Thanh Ha <thanh.ha@linuxfoundation.org>
+Submitted-by: Thanh Ha <thanh.ha@linuxfoundation.org>
+Submitted-at: Thu, 25 Jun 2015 20:16:09 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/23290
+Project: yangtools
+Branch: refs/heads/stable/lithium
