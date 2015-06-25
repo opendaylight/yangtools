@@ -7,8 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import java.util.Collection;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import java.io.InputStream;
+import java.util.List;
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 import com.google.common.collect.ImmutableMap;
@@ -92,6 +96,15 @@ public class CrossSourceStatementReactor {
 
         public EffectiveSchemaContext buildEffective() throws SourceException, ReactorException {
             return context.buildEffective();
+        }
+
+        public SchemaContext buildEffective(List<InputStream> yangInputStreams) throws SourceException, ReactorException {
+
+            for(InputStream yangInputStream : yangInputStreams) {
+                addSource(new YangStatementSourceImpl(yangInputStream));
+            }
+
+            return buildEffective();
         }
 
     }

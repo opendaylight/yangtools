@@ -41,7 +41,8 @@ import org.slf4j.LoggerFactory;
  */
 public final class ModuleDependencySort {
 
-    private static final Date DEFAULT_REVISION = new Date(0);
+//    private static final Date DEFAULT_REVISION = new Date(0);
+    private static final Date DEFAULT_REVISION = SimpleDateFormatUtil.DEFAULT_DATE_REV;
     private static final Logger LOGGER = LoggerFactory.getLogger(ModuleDependencySort.class);
     private static final Function<Node, Module> TOPOLOGY_FUNCTION = new Function<TopologicalSort.Node, Module>() {
         @Override

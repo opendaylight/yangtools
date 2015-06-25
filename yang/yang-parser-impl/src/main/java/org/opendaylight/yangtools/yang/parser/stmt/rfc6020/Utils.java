@@ -8,11 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
-
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
-
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -47,6 +45,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
@@ -61,8 +60,7 @@ public final class Utils {
 
     private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
     private static final CharMatcher DOUBLE_QUOTE_MATCHER = CharMatcher.is('"');
-    private static final CharMatcher SINGLE_QUOTE_MATCHER = CharMatcher
-            .is('\'');
+    private static final CharMatcher SINGLE_QUOTE_MATCHER = CharMatcher.is('\'');
 
     public static final QName EMPTY_QNAME = QName.create("empty", "empty");
 
@@ -75,8 +73,8 @@ public final class Utils {
     private Utils() {
     }
 
-    public static Collection<SchemaNodeIdentifier.Relative> transformKeysStringToKeyNodes(StmtContext<?, ?, ?> ctx, String
-            value) {
+    public static Collection<SchemaNodeIdentifier.Relative> transformKeysStringToKeyNodes(StmtContext<?, ?, ?> ctx,
+            String value) {
         Splitter keySplitter = Splitter.on(SEPARATOR).omitEmptyStrings().trimResults();
         List<String> keyTokens = keySplitter.splitToList(value);
 
@@ -89,8 +87,8 @@ public final class Utils {
 
         for (String keyToken : keyTokens) {
 
-            SchemaNodeIdentifier.Relative keyNode = (Relative) SchemaNodeIdentifier.Relative
-                    .create(false, Utils.qNameFromArgument(ctx, keyToken));
+            SchemaNodeIdentifier.Relative keyNode = (Relative) SchemaNodeIdentifier.Relative.create(false,
+                    Utils.qNameFromArgument(ctx, keyToken));
             keyNodes.add(keyNode);
         }
 
@@ -99,8 +97,7 @@ public final class Utils {
 
     public static List<String> splitPathToNodeNames(String path) {
 
-        Splitter keySplitter = Splitter.on(SEPARATOR_NODENAME)
-                .omitEmptyStrings().trimResults();
+        Splitter keySplitter = Splitter.on(SEPARATOR_NODENAME).omitEmptyStrings().trimResults();
         return keySplitter.splitToList(path);
     }
 
@@ -111,14 +108,17 @@ public final class Utils {
         try {
             xPath.compile(path);
         } catch (XPathExpressionException e) {
-            throw new IllegalArgumentException(
-                    "Argument is not valid XPath string", e);
+            throw new IllegalArgumentException(String.format("Argument %s is not valid XPath string", path), e);
         }
+    }
+
+    private static String trimSingleLastSlashFromXPath(final String path) {
+        return path.replaceAll("/$", "");
     }
 
     public static boolean isXPathAbsolute(String path) {
 
-        validateXPath(path);
+        validateXPath(trimSingleLastSlashFromXPath(path));
 
         return path.matches(REGEX_PATH_ABS);
     }
@@ -143,8 +143,8 @@ public final class Utils {
         return null;
     }
 
-    public static boolean isValidStatementDefinition(PrefixToModule prefixes,
-            QNameToStatementDefinition stmtDef, QName identifier) {
+    public static boolean isValidStatementDefinition(PrefixToModule prefixes, QNameToStatementDefinition stmtDef,
+            QName identifier) {
         if (stmtDef.get(identifier) != null) {
             return true;
         } else {
@@ -154,16 +154,11 @@ public final class Utils {
             if (namesParts.length == 2) {
                 String prefix = namesParts[0];
                 String localName = namesParts[1];
-                if (prefixes != null
-                        && prefixes.get(prefix) != null
-                        && stmtDef
-                                .get(new QName(
-                                        YangConstants.RFC6020_YIN_NAMESPACE,
-                                        localName)) != null) {
+                if (prefixes != null && prefixes.get(prefix) != null
+                        && stmtDef.get(new QName(YangConstants.RFC6020_YIN_NAMESPACE, localName)) != null) {
                     return true;
                 } else {
-                    if (stmtDef.get(new QName(
-                            YangConstants.RFC6020_YIN_NAMESPACE, localName)) != null) {
+                    if (stmtDef.get(new QName(YangConstants.RFC6020_YIN_NAMESPACE, localName)) != null) {
                         return true;
                     }
                 }
@@ -172,12 +167,13 @@ public final class Utils {
         return false;
     }
 
-    public static Iterable<QName> parseXPath(StmtContext<?, ?, ?> ctx,
-            String path) {
+    public static Iterable<QName> parseXPath(StmtContext<?, ?, ?> ctx, String path) {
 
-        validateXPath(path);
+        String trimmedPath = trimSingleLastSlashFromXPath(path);
 
-        List<String> nodeNames = splitPathToNodeNames(path);
+        validateXPath(trimmedPath);
+
+        List<String> nodeNames = splitPathToNodeNames(trimmedPath);
         List<QName> qNames = new ArrayList<>();
 
         for (String nodeName : nodeNames) {
@@ -192,8 +188,7 @@ public final class Utils {
         return qNames;
     }
 
-    public static String stringFromStringContext(
-            final YangStatementParser.ArgumentContext context) {
+    public static String stringFromStringContext(final YangStatementParser.ArgumentContext context) {
         StringBuilder sb = new StringBuilder();
         List<TerminalNode> strings = context.STRING();
         if (strings.isEmpty()) {
@@ -236,14 +231,15 @@ public final class Utils {
             prefix = namesParts[0];
             localName = namesParts[1];
             qNameModule = getModuleQNameByPrefix(ctx, prefix);
-            //in case of unknown statement argument, we're not going to parse it
-            if (qNameModule == null && ctx.getPublicDefinition().getDeclaredRepresentationClass().isAssignableFrom
-                    (UnknownStatementImpl.class)) {
+            // in case of unknown statement argument, we're not going to parse it
+            if (qNameModule == null
+                    && ctx.getPublicDefinition().getDeclaredRepresentationClass()
+                    .isAssignableFrom(UnknownStatementImpl.class)) {
                 localName = value;
                 qNameModule = getRootModuleQName(ctx);
             }
-            //:FIXME test and verify this...
-            if(qNameModule == null && ctx.getTypeOfCopy() == StmtContext.TypeOfCopy.ADDED_BY_AUGMENTATION) {
+            if (qNameModule == null
+                    && Iterables.getLast(ctx.getCopyHistory()) == StmtContext.TypeOfCopy.ADDED_BY_AUGMENTATION) {
                 ctx = ctx.getOriginalCtx();
                 qNameModule = getModuleQNameByPrefix(ctx, prefix);
             }
@@ -253,33 +249,24 @@ public final class Utils {
         }
 
         if (qNameModule == null) {
-            throw new IllegalArgumentException("Error in module '"
-                    + ctx.getRoot().rawStatementArgument()
+            throw new IllegalArgumentException("Error in module '" + ctx.getRoot().rawStatementArgument()
                     + "': can not resolve QNameModule for '" + value + "'.");
         }
 
-        QNameModule resultQNameModule = qNameModule.getRevision() == null ? QNameModule
-                .create(qNameModule.getNamespace(),
-                        SimpleDateFormatUtil.DEFAULT_DATE_REV) : qNameModule;
+        QNameModule resultQNameModule = qNameModule.getRevision() == null ? QNameModule.create(
+                qNameModule.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV) : qNameModule;
 
         return QName.create(resultQNameModule, localName);
     }
 
-    public static QNameModule getModuleQNameByPrefix(StmtContext<?, ?, ?> ctx,
-            String prefix) {
+    public static QNameModule getModuleQNameByPrefix(StmtContext<?, ?, ?> ctx, String prefix) {
         QNameModule qNameModule;
-        ModuleIdentifier impModIdentifier = ctx.getRoot().getFromNamespace(
-                ImpPrefixToModuleIdentifier.class, prefix);
-        qNameModule = ctx.getFromNamespace(ModuleIdentifierToModuleQName.class,
-                impModIdentifier);
+        ModuleIdentifier impModIdentifier = ctx.getRoot().getFromNamespace(ImpPrefixToModuleIdentifier.class, prefix);
+        qNameModule = ctx.getFromNamespace(ModuleIdentifierToModuleQName.class, impModIdentifier);
 
-        if (qNameModule == null
-                && StmtContextUtils.producesDeclared(ctx.getRoot(),
-                        SubmoduleStatement.class)) {
-            String moduleName = ctx.getRoot().getFromNamespace(
-                    BelongsToPrefixToModuleName.class, prefix);
-            qNameModule = ctx.getFromNamespace(ModuleNameToModuleQName.class,
-                    moduleName);
+        if (qNameModule == null && StmtContextUtils.producesDeclared(ctx.getRoot(), SubmoduleStatement.class)) {
+            String moduleName = ctx.getRoot().getFromNamespace(BelongsToPrefixToModuleName.class, prefix);
+            qNameModule = ctx.getFromNamespace(ModuleNameToModuleQName.class, moduleName);
         }
         return qNameModule;
     }
@@ -294,25 +281,19 @@ public final class Utils {
         QNameModule qNameModule = null;
 
         if (StmtContextUtils.producesDeclared(rootCtx, ModuleStatement.class)) {
-            qNameModule = rootCtx.getFromNamespace(
-                    ModuleCtxToModuleQName.class,
-                    rootCtx);
-        } else if (StmtContextUtils.producesDeclared(rootCtx,
-                SubmoduleStatement.class)) {
-            String belongsToModuleName = firstAttributeOf(ctx.getRoot()
-                    .declaredSubstatements(), BelongsToStatement.class);
-            qNameModule = rootCtx.getFromNamespace(
-                    ModuleNameToModuleQName.class, belongsToModuleName);
+            qNameModule = rootCtx.getFromNamespace(ModuleCtxToModuleQName.class, rootCtx);
+        } else if (StmtContextUtils.producesDeclared(rootCtx, SubmoduleStatement.class)) {
+            String belongsToModuleName = firstAttributeOf(ctx.getRoot().declaredSubstatements(),
+                    BelongsToStatement.class);
+            qNameModule = rootCtx.getFromNamespace(ModuleNameToModuleQName.class, belongsToModuleName);
         }
 
-        return qNameModule.getRevision() == null ? QNameModule.create(
-                qNameModule.getNamespace(),
+        return qNameModule.getRevision() == null ? QNameModule.create(qNameModule.getNamespace(),
                 SimpleDateFormatUtil.DEFAULT_DATE_REV) : qNameModule;
     }
 
     @Nullable
-    public static StatementContextBase<?, ?, ?> findNode(
-            StatementContextBase<?, ?, ?> rootStmtCtx,
+    public static StatementContextBase<?, ?, ?> findNode(StatementContextBase<?, ?, ?> rootStmtCtx,
             final Iterable<QName> path) {
 
         StatementContextBase<?, ?, ?> parent = rootStmtCtx;
@@ -320,8 +301,7 @@ public final class Utils {
         Iterator<QName> pathIter = path.iterator();
         while (pathIter.hasNext()) {
             QName nextPathQName = pathIter.next();
-            StatementContextBase<?, ?, ?> foundSubstatement = getSubstatementByQName(
-                    parent, nextPathQName);
+            StatementContextBase<?, ?, ?> foundSubstatement = getSubstatementByQName(parent, nextPathQName);
 
             if (foundSubstatement == null) {
                 return null;
@@ -336,13 +316,11 @@ public final class Utils {
         return null;
     }
 
-    public static StatementContextBase<?, ?, ?> getSubstatementByQName(
-            StatementContextBase<?, ?, ?> parent, QName nextPathQName) {
+    public static StatementContextBase<?, ?, ?> getSubstatementByQName(StatementContextBase<?, ?, ?> parent,
+            QName nextPathQName) {
 
-        Collection<StatementContextBase<?, ?, ?>> declaredSubstatement = parent
-                .declaredSubstatements();
-        Collection<StatementContextBase<?, ?, ?>> effectiveSubstatement = parent
-                .effectiveSubstatements();
+        Collection<StatementContextBase<?, ?, ?>> declaredSubstatement = parent.declaredSubstatements();
+        Collection<StatementContextBase<?, ?, ?>> effectiveSubstatement = parent.effectiveSubstatements();
 
         Collection<StatementContextBase<?, ?, ?>> allSubstatements = new LinkedList<>();
         allSubstatements.addAll(declaredSubstatement);
@@ -358,20 +336,18 @@ public final class Utils {
     }
 
     @Nullable
-    public static StatementContextBase<?, ?, ?> findNode(
-            StatementContextBase<?, ?, ?> rootStmtCtx,
+    public static StatementContextBase<?, ?, ?> findNode(StatementContextBase<?, ?, ?> rootStmtCtx,
             final SchemaNodeIdentifier node) {
         return findNode(rootStmtCtx, node.getPathFromRoot());
     }
 
     public static SchemaPath getSchemaPath(StmtContext<?, ?, ?> ctx) {
 
-        if(ctx == null) {
+        if (ctx == null) {
             return null;
         }
 
-        Iterator<StmtContext<?, ?, ?>> iteratorFromRoot = ctx
-                .getStmtContextsFromRoot().iterator();
+        Iterator<StmtContext<?, ?, ?>> iteratorFromRoot = ctx.getStmtContextsFromRoot().iterator();
 
         if (iteratorFromRoot.hasNext()) {
             iteratorFromRoot.next(); // skip root argument
@@ -383,8 +359,7 @@ public final class Utils {
             Object nextStmtArgument = nextStmtCtx.getStatementArgument();
             if (nextStmtArgument instanceof QName) {
                 QName qname = (QName) nextStmtArgument;
-                if (StmtContextUtils.producesDeclared(
-                        nextStmtCtx.getParentContext(), ChoiceStatement.class)
+                if (StmtContextUtils.producesDeclared(nextStmtCtx.getParentContext(), ChoiceStatement.class)
                         && isSupportedAsShorthandCase(nextStmtCtx)) {
                     qNamesFromRoot.add(qname);
                 }
@@ -392,14 +367,11 @@ public final class Utils {
             } else if (nextStmtArgument instanceof String) {
                 final QName qName = qNameFromArgument(ctx, (String) nextStmtArgument);
                 qNamesFromRoot.add(qName);
-            }
-            else if (StmtContextUtils.producesDeclared(nextStmtCtx,
-                    AugmentStatement.class)
+            } else if (StmtContextUtils.producesDeclared(nextStmtCtx, AugmentStatement.class)
                     && nextStmtArgument instanceof SchemaNodeIdentifier) {
-                addQNamesFromSchemaNodeIdentifierToList(qNamesFromRoot,
-                        (SchemaNodeIdentifier) nextStmtArgument);
-            } else if (nextStmtCtx.getPublicDefinition().getDeclaredRepresentationClass().isAssignableFrom
-                    (UnknownStatementImpl.class)) {
+                addQNamesFromSchemaNodeIdentifierToList(qNamesFromRoot, (SchemaNodeIdentifier) nextStmtArgument);
+            } else if (nextStmtCtx.getPublicDefinition().getDeclaredRepresentationClass()
+                    .isAssignableFrom(UnknownStatementImpl.class)) {
                 qNamesFromRoot.add(nextStmtCtx.getPublicDefinition().getStatementName());
             } else {
                 return SchemaPath.SAME;
@@ -410,22 +382,17 @@ public final class Utils {
         return schemaPath;
     }
 
-    private static boolean isSupportedAsShorthandCase(
-            StmtContext<?, ?, ?> statementCtx) {
+    private static boolean isSupportedAsShorthandCase(StmtContext<?, ?, ?> statementCtx) {
 
-        Collection<?> supportedCaseShorthands = statementCtx.getFromNamespace(
-                ValidationBundlesNamespace.class,
+        Collection<?> supportedCaseShorthands = statementCtx.getFromNamespace(ValidationBundlesNamespace.class,
                 ValidationBundleType.SUPPORTED_CASE_SHORTHANDS);
 
-        return supportedCaseShorthands == null
-                || supportedCaseShorthands.contains(statementCtx
-                        .getPublicDefinition());
+        return supportedCaseShorthands == null || supportedCaseShorthands.contains(statementCtx.getPublicDefinition());
     }
 
-    private static void addQNamesFromSchemaNodeIdentifierToList(
-            List<QName> qNamesFromRoot, SchemaNodeIdentifier augmentTargetPath) {
-        Iterator<QName> augmentTargetPathIterator = augmentTargetPath
-                .getPathFromRoot().iterator();
+    private static void addQNamesFromSchemaNodeIdentifierToList(List<QName> qNamesFromRoot,
+            SchemaNodeIdentifier augmentTargetPath) {
+        Iterator<QName> augmentTargetPathIterator = augmentTargetPath.getPathFromRoot().iterator();
         while (augmentTargetPathIterator.hasNext()) {
             qNamesFromRoot.add(augmentTargetPathIterator.next());
         }
@@ -437,16 +404,14 @@ public final class Utils {
         // suit this
         String deviateUpper = deviate.toUpperCase();
         if (Objects.equals(deviate, deviateUpper)) {
-            throw new IllegalArgumentException(String.format(
-                    "String %s is not valid deviate argument", deviate));
+            throw new IllegalArgumentException(String.format("String %s is not valid deviate argument", deviate));
         }
 
         // but Java enum is uppercase so we cannot use lowercase here
         try {
             return Deviation.Deviate.valueOf(deviateUpper);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(String.format(
-                    "String %s is not valid deviate argument", deviate), e);
+            throw new IllegalArgumentException(String.format("String %s is not valid deviate argument", deviate), e);
         }
     }
 
@@ -470,10 +435,8 @@ public final class Utils {
         return status;
     }
 
-    public static SchemaPath SchemaNodeIdentifierToSchemaPath(
-            SchemaNodeIdentifier identifier) {
-        return SchemaPath.create(identifier.getPathFromRoot(),
-                identifier.isAbsolute());
+    public static SchemaPath SchemaNodeIdentifierToSchemaPath(SchemaNodeIdentifier identifier) {
+        return SchemaPath.create(identifier.getPathFromRoot(), identifier.isAbsolute());
     }
 
 }
