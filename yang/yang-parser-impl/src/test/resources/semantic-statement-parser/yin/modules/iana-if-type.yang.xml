@@ -1,0 +1,1806 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="iana-if-type"
+        xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+        xmlns:ianaift="urn:ietf:params:xml:ns:yang:iana-if-type">
+  <namespace uri="urn:ietf:params:xml:ns:yang:iana-if-type"/>
+  <prefix value="ianaift"/>
+  <organization>
+    <text>IANA</text>
+  </organization>
+  <contact>
+    <text>        Internet Assigned Numbers Authority
+
+Postal: ICANN
+        4676 Admiralty Way, Suite 330
+        Marina del Rey, CA 90292
+
+Tel:    +1 310 823 9358
+E-Mail: iana&amp;iana.org</text>
+  </contact>
+  <description>
+    <text>This YANG module defines the iana-if-type typedef, which
+contains YANG definitions for IANA-registered interface types.
+
+This YANG module is maintained by IANA, and reflects the
+'ifType definitions' registry.
+
+The latest revision of this YANG module can be obtained from
+the IANA web site.
+
+Copyright (c) 2011 IETF Trust and the persons identified as
+authors of the code.  All rights reserved.
+
+Redistribution and use in source and binary forms, with or
+without modification, is permitted pursuant to, and subject
+to the license terms contained in, the Simplified BSD License
+set forth in Section 4.c of the IETF Trust's Legal Provisions
+Relating to IETF Documents
+(http://trustee.ietf.org/license-info).
+
+This version of this YANG module is part of RFC XXXX; see
+the RFC itself for full legal notices.</text>
+  </description>
+  <revision date="2013-07-04">
+    <description>
+      <text>Initial revision.</text>
+    </description>
+    <reference>
+      <text>RFC XXXX: IANA Interface Type YANG Module</text>
+    </reference>
+  </revision>
+  <typedef name="iana-if-type">
+    <type name="enumeration">
+      <enum name="other">
+        <value value="1"/>
+        <description>
+          <text>None of the following</text>
+        </description>
+      </enum>
+      <enum name="regular1822">
+        <value value="2"/>
+      </enum>
+      <enum name="hdh1822">
+        <value value="3"/>
+      </enum>
+      <enum name="ddnX25">
+        <value value="4"/>
+      </enum>
+      <enum name="rfc877x25">
+        <value value="5"/>
+        <reference>
+          <text>RFC 1382 - SNMP MIB Extension for the X.25 Packet Layer</text>
+        </reference>
+      </enum>
+      <enum name="ethernetCsmacd">
+        <value value="6"/>
+        <description>
+          <text>For all ethernet-like interfaces, regardless of speed,
+as per RFC3635.</text>
+        </description>
+        <reference>
+          <text>RFC 3635 - Definitions of Managed Objects for the
+           Ethernet-like Interface Types.</text>
+        </reference>
+      </enum>
+      <enum name="iso88023Csmacd">
+        <value value="7"/>
+        <status value="deprecated"/>
+        <description>
+          <text>Deprecated via RFC3635.
+Use ethernetCsmacd(6) instead.</text>
+        </description>
+        <reference>
+          <text>RFC 3635 - Definitions of Managed Objects for the
+           Ethernet-like Interface Types.</text>
+        </reference>
+      </enum>
+      <enum name="iso88024TokenBus">
+        <value value="8"/>
+      </enum>
+      <enum name="iso88025TokenRing">
+        <value value="9"/>
+      </enum>
+      <enum name="iso88026Man">
+        <value value="10"/>
+      </enum>
+      <enum name="starLan">
+        <value value="11"/>
+        <status value="deprecated"/>
+        <description>
+          <text>Deprecated via RFC3635.
+Use ethernetCsmacd(6) instead.</text>
+        </description>
+        <reference>
+          <text>RFC 3635 - Definitions of Managed Objects for the
+           Ethernet-like Interface Types.</text>
+        </reference>
+      </enum>
+      <enum name="proteon10Mbit">
+        <value value="12"/>
+      </enum>
+      <enum name="proteon80Mbit">
+        <value value="13"/>
+      </enum>
+      <enum name="hyperchannel">
+        <value value="14"/>
+      </enum>
+      <enum name="fddi">
+        <value value="15"/>
+        <reference>
+          <text>RFC 1512 - FDDI Management Information Base</text>
+        </reference>
+      </enum>
+      <enum name="lapb">
+        <value value="16"/>
+        <reference>
+          <text>RFC 1381 - SNMP MIB Extension for X.25 LAPB</text>
+        </reference>
+      </enum>
+      <enum name="sdlc">
+        <value value="17"/>
+      </enum>
+      <enum name="ds1">
+        <value value="18"/>
+        <description>
+          <text>DS1-MIB</text>
+        </description>
+        <reference>
+          <text>RFC 4805 - Definitions of Managed Objects for the
+           DS1, J1, E1, DS2, and E2 Interface Types</text>
+        </reference>
+      </enum>
+      <enum name="e1">
+        <value value="19"/>
+        <status value="obsolete"/>
+        <description>
+          <text>Obsolete see DS1-MIB</text>
+        </description>
+        <reference>
+          <text>RFC 4805 - Definitions of Managed Objects for the
+           DS1, J1, E1, DS2, and E2 Interface Types</text>
+        </reference>
+      </enum>
+      <enum name="basicISDN">
+        <value value="20"/>
+        <description>
+          <text>see also RFC2127</text>
+        </description>
+      </enum>
+      <enum name="primaryISDN">
+        <value value="21"/>
+      </enum>
+      <enum name="propPointToPointSerial">
+        <value value="22"/>
+        <description>
+          <text>proprietary serial</text>
+        </description>
+      </enum>
+      <enum name="ppp">
+        <value value="23"/>
+      </enum>
+      <enum name="softwareLoopback">
+        <value value="24"/>
+      </enum>
+      <enum name="eon">
+        <value value="25"/>
+        <description>
+          <text>CLNP over IP</text>
+        </description>
+      </enum>
+      <enum name="ethernet3Mbit">
+        <value value="26"/>
+      </enum>
+      <enum name="nsip">
+        <value value="27"/>
+        <description>
+          <text>XNS over IP</text>
+        </description>
+      </enum>
+      <enum name="slip">
+        <value value="28"/>
+        <description>
+          <text>generic SLIP</text>
+        </description>
+      </enum>
+      <enum name="ultra">
+        <value value="29"/>
+        <description>
+          <text>ULTRA technologies</text>
+        </description>
+      </enum>
+      <enum name="ds3">
+        <value value="30"/>
+        <description>
+          <text>DS3-MIB</text>
+        </description>
+        <reference>
+          <text>RFC 3896 - Definitions of Managed Objects for the
+           DS3/E3 Interface Type</text>
+        </reference>
+      </enum>
+      <enum name="sip">
+        <value value="31"/>
+        <description>
+          <text>SMDS, coffee</text>
+        </description>
+        <reference>
+          <text>RFC 1694 - Definitions of Managed Objects for SMDS
+           Interfaces using SMIv2</text>
+        </reference>
+      </enum>
+      <enum name="frameRelay">
+        <value value="32"/>
+        <description>
+          <text>DTE only.</text>
+        </description>
+        <reference>
+          <text>RFC 2115 - Management Information Base for Frame Relay
+           DTEs Using SMIv2</text>
+        </reference>
+      </enum>
+      <enum name="rs232">
+        <value value="33"/>
+        <reference>
+          <text>RFC 1659 - Definitions of Managed Objects for RS-232-like
+           Hardware Devices using SMIv2</text>
+        </reference>
+      </enum>
+      <enum name="para">
+        <value value="34"/>
+        <description>
+          <text>parallel-port</text>
+        </description>
+        <reference>
+          <text>RFC 1660 - Definitions of Managed Objects for
+           Parallel-printer-like Hardware Devices using
+           SMIv2</text>
+        </reference>
+      </enum>
+      <enum name="arcnet">
+        <value value="35"/>
+        <description>
+          <text>arcnet</text>
+        </description>
+      </enum>
+      <enum name="arcnetPlus">
+        <value value="36"/>
+        <description>
+          <text>arcnet plus</text>
+        </description>
+      </enum>
+      <enum name="atm">
+        <value value="37"/>
+        <description>
+          <text>ATM cells</text>
+        </description>
+      </enum>
+      <enum name="miox25">
+        <value value="38"/>
+        <reference>
+          <text>RFC 1461 - SNMP MIB extension for Multiprotocol
+           Interconnect over X.25</text>
+        </reference>
+      </enum>
+      <enum name="sonet">
+        <value value="39"/>
+        <description>
+          <text>SONET or SDH</text>
+        </description>
+      </enum>
+      <enum name="x25ple">
+        <value value="40"/>
+        <reference>
+          <text>RFC 2127 - ISDN Management Information Base using SMIv2</text>
+        </reference>
+      </enum>
+      <enum name="iso88022llc">
+        <value value="41"/>
+      </enum>
+      <enum name="localTalk">
+        <value value="42"/>
+      </enum>
+      <enum name="smdsDxi">
+        <value value="43"/>
+      </enum>
+      <enum name="frameRelayService">
+        <value value="44"/>
+        <description>
+          <text>FRNETSERV-MIB</text>
+        </description>
+        <reference>
+          <text>RFC 2954 - Definitions of Managed Objects for Frame
+           Relay Service</text>
+        </reference>
+      </enum>
+      <enum name="v35">
+        <value value="45"/>
+      </enum>
+      <enum name="hssi">
+        <value value="46"/>
+      </enum>
+      <enum name="hippi">
+        <value value="47"/>
+      </enum>
+      <enum name="modem">
+        <value value="48"/>
+        <description>
+          <text>Generic modem</text>
+        </description>
+      </enum>
+      <enum name="aal5">
+        <value value="49"/>
+        <description>
+          <text>AAL5 over ATM</text>
+        </description>
+      </enum>
+      <enum name="sonetPath">
+        <value value="50"/>
+      </enum>
+      <enum name="sonetVT">
+        <value value="51"/>
+      </enum>
+      <enum name="smdsIcip">
+        <value value="52"/>
+        <description>
+          <text>SMDS InterCarrier Interface</text>
+        </description>
+      </enum>
+      <enum name="propVirtual">
+        <value value="53"/>
+        <description>
+          <text>proprietary virtual/internal</text>
+        </description>
+        <reference>
+          <text>RFC 2863 - The Interfaces Group MIB</text>
+        </reference>
+      </enum>
+      <enum name="propMultiplexor">
+        <value value="54"/>
+        <description>
+          <text>proprietary multiplexing</text>
+        </description>
+        <reference>
+          <text>RFC 2863 - The Interfaces Group MIB</text>
+        </reference>
+      </enum>
+      <enum name="ieee80212">
+        <value value="55"/>
+        <description>
+          <text>100BaseVG</text>
+        </description>
+      </enum>
+      <enum name="fibreChannel">
+        <value value="56"/>
+        <description>
+          <text>Fibre Channel</text>
+        </description>
+      </enum>
+      <enum name="hippiInterface">
+        <value value="57"/>
+        <description>
+          <text>HIPPI interfaces</text>
+        </description>
+      </enum>
+      <enum name="frameRelayInterconnect">
+        <value value="58"/>
+        <status value="obsolete"/>
+        <description>
+          <text>Obsolete use either
+frameRelay(32) or frameRelayService(44).</text>
+        </description>
+      </enum>
+      <enum name="aflane8023">
+        <value value="59"/>
+        <description>
+          <text>ATM Emulated LAN for 802.3</text>
+        </description>
+      </enum>
+      <enum name="aflane8025">
+        <value value="60"/>
+        <description>
+          <text>ATM Emulated LAN for 802.5</text>
+        </description>
+      </enum>
+      <enum name="cctEmul">
+        <value value="61"/>
+        <description>
+          <text>ATM Emulated circuit</text>
+        </description>
+      </enum>
+      <enum name="fastEther">
+        <value value="62"/>
+        <status value="deprecated"/>
+        <description>
+          <text>Obsoleted via RFC3635.
+ethernetCsmacd(6) should be used instead</text>
+        </description>
+        <reference>
+          <text>RFC 3635 - Definitions of Managed Objects for the
+           Ethernet-like Interface Types.</text>
+        </reference>
+      </enum>
+      <enum name="isdn">
+        <value value="63"/>
+        <description>
+          <text>ISDN and X.25</text>
+        </description>
+        <reference>
+          <text>RFC 1356 - Multiprotocol Interconnect on X.25 and ISDN
+           in the Packet Mode</text>
+        </reference>
+      </enum>
+      <enum name="v11">
+        <value value="64"/>
+        <description>
+          <text>CCITT V.11/X.21</text>
+        </description>
+      </enum>
+      <enum name="v36">
+        <value value="65"/>
+        <description>
+          <text>CCITT V.36</text>
+        </description>
+      </enum>
+      <enum name="g703at64k">
+        <value value="66"/>
+        <description>
+          <text>CCITT G703 at 64Kbps</text>
+        </description>
+      </enum>
+      <enum name="g703at2mb">
+        <value value="67"/>
+        <status value="obsolete"/>
+        <description>
+          <text>Obsolete see DS1-MIB</text>
+        </description>
+      </enum>
+      <enum name="qllc">
+        <value value="68"/>
+        <description>
+          <text>SNA QLLC</text>
+        </description>
+      </enum>
+      <enum name="fastEtherFX">
+        <value value="69"/>
+        <status value="deprecated"/>
+        <description>
+          <text>Obsoleted via RFC3635
+ethernetCsmacd(6) should be used instead</text>
+        </description>
+        <reference>
+          <text>RFC 3635 - Definitions of Managed Objects for the
+           Ethernet-like Interface Types.</text>
+        </reference>
+      </enum>
+      <enum name="channel">
+        <value value="70"/>
+        <description>
+          <text>channel</text>
+        </description>
+      </enum>
+      <enum name="ieee80211">
+        <value value="71"/>
+        <description>
+          <text>radio spread spectrum</text>
+        </description>
+      </enum>
+      <enum name="ibm370parChan">
+        <value value="72"/>
+        <description>
+          <text>IBM System 360/370 OEMI Channel</text>
+        </description>
+      </enum>
+      <enum name="escon">
+        <value value="73"/>
+        <description>
+          <text>IBM Enterprise Systems Connection</text>
+        </description>
+      </enum>
+      <enum name="dlsw">
+        <value value="74"/>
+        <description>
+          <text>Data Link Switching</text>
+        </description>
+      </enum>
+      <enum name="isdns">
+        <value value="75"/>
+        <description>
+          <text>ISDN S/T interface</text>
+        </description>
+      </enum>
+      <enum name="isdnu">
+        <value value="76"/>
+        <description>
+          <text>ISDN U interface</text>
+        </description>
+      </enum>
+      <enum name="lapd">
+        <value value="77"/>
+        <description>
+          <text>Link Access Protocol D</text>
+        </description>
+      </enum>
+      <enum name="ipSwitch">
+        <value value="78"/>
+        <description>
+          <text>IP Switching Objects</text>
+        </description>
+      </enum>
+      <enum name="rsrb">
+        <value value="79"/>
+        <description>
+          <text>Remote Source Route Bridging</text>
+        </description>
+      </enum>
+      <enum name="atmLogical">
+        <value value="80"/>
+        <description>
+          <text>ATM Logical Port</text>
+        </description>
+        <reference>
+          <text>RFC 3606 - Definitions of Supplemental Managed Objects
+           for ATM Interface</text>
+        </reference>
+      </enum>
+      <enum name="ds0">
+        <value value="81"/>
+        <description>
+          <text>Digital Signal Level 0</text>
+        </description>
+        <reference>
+          <text>RFC 2494 - Definitions of Managed Objects for the DS0
+           and DS0 Bundle Interface Type</text>
+        </reference>
+      </enum>
+      <enum name="ds0Bundle">
+        <value value="82"/>
+        <description>
+          <text>group of ds0s on the same ds1</text>
+        </description>
+        <reference>
+          <text>RFC 2494 - Definitions of Managed Objects for the DS0
+           and DS0 Bundle Interface Type</text>
+        </reference>
+      </enum>
+      <enum name="bsc">
+        <value value="83"/>
+        <description>
+          <text>Bisynchronous Protocol</text>
+        </description>
+      </enum>
+      <enum name="async">
+        <value value="84"/>
+        <description>
+          <text>Asynchronous Protocol</text>
+        </description>
+      </enum>
+      <enum name="cnr">
+        <value value="85"/>
+        <description>
+          <text>Combat Net Radio</text>
+        </description>
+      </enum>
+      <enum name="iso88025Dtr">
+        <value value="86"/>
+        <description>
+          <text>ISO 802.5r DTR</text>
+        </description>
+      </enum>
+      <enum name="eplrs">
+        <value value="87"/>
+        <description>
+          <text>Ext Pos Loc Report Sys</text>
+        </description>
+      </enum>
+      <enum name="arap">
+        <value value="88"/>
+        <description>
+          <text>Appletalk Remote Access Protocol</text>
+        </description>
+      </enum>
+      <enum name="propCnls">
+        <value value="89"/>
+        <description>
+          <text>Proprietary Connectionless Protocol</text>
+        </description>
+      </enum>
+      <enum name="hostPad">
+        <value value="90"/>
+        <description>
+          <text>CCITT-ITU X.29 PAD Protocol</text>
+        </description>
+      </enum>
+      <enum name="termPad">
+        <value value="91"/>
+        <description>
+          <text>CCITT-ITU X.3 PAD Facility</text>
+        </description>
+      </enum>
+      <enum name="frameRelayMPI">
+        <value value="92"/>
+        <description>
+          <text>Multiproto Interconnect over FR</text>
+        </description>
+      </enum>
+      <enum name="x213">
+        <value value="93"/>
+        <description>
+          <text>CCITT-ITU X213</text>
+        </description>
+      </enum>
+      <enum name="adsl">
+        <value value="94"/>
+        <description>
+          <text>Asymmetric Digital Subscriber Loop</text>
+        </description>
+      </enum>
+      <enum name="radsl">
+        <value value="95"/>
+        <description>
+          <text>Rate-Adapt. Digital Subscriber Loop</text>
+        </description>
+      </enum>
+      <enum name="sdsl">
+        <value value="96"/>
+        <description>
+          <text>Symmetric Digital Subscriber Loop</text>
+        </description>
+      </enum>
+      <enum name="vdsl">
+        <value value="97"/>
+        <description>
+          <text>Very H-Speed Digital Subscrib. Loop</text>
+        </description>
+      </enum>
+      <enum name="iso88025CRFPInt">
+        <value value="98"/>
+        <description>
+          <text>ISO 802.5 CRFP</text>
+        </description>
+      </enum>
+      <enum name="myrinet">
+        <value value="99"/>
+        <description>
+          <text>Myricom Myrinet</text>
+        </description>
+      </enum>
+      <enum name="voiceEM">
+        <value value="100"/>
+        <description>
+          <text>voice recEive and transMit</text>
+        </description>
+      </enum>
+      <enum name="voiceFXO">
+        <value value="101"/>
+        <description>
+          <text>voice Foreign Exchange Office</text>
+        </description>
+      </enum>
+      <enum name="voiceFXS">
+        <value value="102"/>
+        <description>
+          <text>voice Foreign Exchange Station</text>
+        </description>
+      </enum>
+      <enum name="voiceEncap">
+        <value value="103"/>
+        <description>
+          <text>voice encapsulation</text>
+        </description>
+      </enum>
+      <enum name="voiceOverIp">
+        <value value="104"/>
+        <description>
+          <text>voice over IP encapsulation</text>
+        </description>
+      </enum>
+      <enum name="atmDxi">
+        <value value="105"/>
+        <description>
+          <text>ATM DXI</text>
+        </description>
+      </enum>
+      <enum name="atmFuni">
+        <value value="106"/>
+        <description>
+          <text>ATM FUNI</text>
+        </description>
+      </enum>
+      <enum name="atmIma">
+        <value value="107"/>
+        <description>
+          <text>ATM IMA</text>
+        </description>
+      </enum>
+      <enum name="pppMultilinkBundle">
+        <value value="108"/>
+        <description>
+          <text>PPP Multilink Bundle</text>
+        </description>
+      </enum>
+      <enum name="ipOverCdlc">
+        <value value="109"/>
+        <description>
+          <text>IBM ipOverCdlc</text>
+        </description>
+      </enum>
+      <enum name="ipOverClaw">
+        <value value="110"/>
+        <description>
+          <text>IBM Common Link Access to Workstn</text>
+        </description>
+      </enum>
+      <enum name="stackToStack">
+        <value value="111"/>
+        <description>
+          <text>IBM stackToStack</text>
+        </description>
+      </enum>
+      <enum name="virtualIpAddress">
+        <value value="112"/>
+        <description>
+          <text>IBM VIPA</text>
+        </description>
+      </enum>
+      <enum name="mpc">
+        <value value="113"/>
+        <description>
+          <text>IBM multi-protocol channel support</text>
+        </description>
+      </enum>
+      <enum name="ipOverAtm">
+        <value value="114"/>
+        <description>
+          <text>IBM ipOverAtm</text>
+        </description>
+        <reference>
+          <text>RFC 2320 - Definitions of Managed Objects for Classical IP
+           and ARP Over ATM Using SMIv2 (IPOA-MIB)</text>
+        </reference>
+      </enum>
+      <enum name="iso88025Fiber">
+        <value value="115"/>
+        <description>
+          <text>ISO 802.5j Fiber Token Ring</text>
+        </description>
+      </enum>
+      <enum name="tdlc">
+        <value value="116"/>
+        <description>
+          <text>IBM twinaxial data link control</text>
+        </description>
+      </enum>
+      <enum name="gigabitEthernet">
+        <value value="117"/>
+        <status value="deprecated"/>
+        <description>
+          <text>Obsoleted via RFC3635
+ethernetCsmacd(6) should be used instead</text>
+        </description>
+        <reference>
+          <text>RFC 3635 - Definitions of Managed Objects for the
+           Ethernet-like Interface Types.</text>
+        </reference>
+      </enum>
+      <enum name="hdlc">
+        <value value="118"/>
+        <description>
+          <text>HDLC</text>
+        </description>
+      </enum>
+      <enum name="lapf">
+        <value value="119"/>
+        <description>
+          <text>LAP F</text>
+        </description>
+      </enum>
+      <enum name="v37">
+        <value value="120"/>
+        <description>
+          <text>V.37</text>
+        </description>
+      </enum>
+      <enum name="x25mlp">
+        <value value="121"/>
+        <description>
+          <text>Multi-Link Protocol</text>
+        </description>
+      </enum>
+      <enum name="x25huntGroup">
+        <value value="122"/>
+        <description>
+          <text>X25 Hunt Group</text>
+        </description>
+      </enum>
+      <enum name="transpHdlc">
+        <value value="123"/>
+        <description>
+          <text>Transp HDLC</text>
+        </description>
+      </enum>
+      <enum name="interleave">
+        <value value="124"/>
+        <description>
+          <text>Interleave channel</text>
+        </description>
+      </enum>
+      <enum name="fast">
+        <value value="125"/>
+        <description>
+          <text>Fast channel</text>
+        </description>
+      </enum>
+      <enum name="ip">
+        <value value="126"/>
+        <description>
+          <text>IP (for APPN HPR in IP networks)</text>
+        </description>
+      </enum>
+      <enum name="docsCableMaclayer">
+        <value value="127"/>
+        <description>
+          <text>CATV Mac Layer</text>
+        </description>
+      </enum>
+      <enum name="docsCableDownstream">
+        <value value="128"/>
+        <description>
+          <text>CATV Downstream interface</text>
+        </description>
+      </enum>
+      <enum name="docsCableUpstream">
+        <value value="129"/>
+        <description>
+          <text>CATV Upstream interface</text>
+        </description>
+      </enum>
+      <enum name="a12MppSwitch">
+        <value value="130"/>
+        <description>
+          <text>Avalon Parallel Processor</text>
+        </description>
+      </enum>
+      <enum name="tunnel">
+        <value value="131"/>
+        <description>
+          <text>Encapsulation interface</text>
+        </description>
+      </enum>
+      <enum name="coffee">
+        <value value="132"/>
+        <description>
+          <text>coffee pot</text>
+        </description>
+        <reference>
+          <text>RFC 2325 - Coffee MIB</text>
+        </reference>
+      </enum>
+      <enum name="ces">
+        <value value="133"/>
+        <description>
+          <text>Circuit Emulation Service</text>
+        </description>
+      </enum>
+      <enum name="atmSubInterface">
+        <value value="134"/>
+        <description>
+          <text>ATM Sub Interface</text>
+        </description>
+      </enum>
+      <enum name="l2vlan">
+        <value value="135"/>
+        <description>
+          <text>Layer 2 Virtual LAN using 802.1Q</text>
+        </description>
+      </enum>
+      <enum name="l3ipvlan">
+        <value value="136"/>
+        <description>
+          <text>Layer 3 Virtual LAN using IP</text>
+        </description>
+      </enum>
+      <enum name="l3ipxvlan">
+        <value value="137"/>
+        <description>
+          <text>Layer 3 Virtual LAN using IPX</text>
+        </description>
+      </enum>
+      <enum name="digitalPowerline">
+        <value value="138"/>
+        <description>
+          <text>IP over Power Lines</text>
+        </description>
+      </enum>
+      <enum name="mediaMailOverIp">
+        <value value="139"/>
+        <description>
+          <text>Multimedia Mail over IP</text>
+        </description>
+      </enum>
+      <enum name="dtm">
+        <value value="140"/>
+        <description>
+          <text>Dynamic syncronous Transfer Mode</text>
+        </description>
+      </enum>
+      <enum name="dcn">
+        <value value="141"/>
+        <description>
+          <text>Data Communications Network</text>
+        </description>
+      </enum>
+      <enum name="ipForward">
+        <value value="142"/>
+        <description>
+          <text>IP Forwarding Interface</text>
+        </description>
+      </enum>
+      <enum name="msdsl">
+        <value value="143"/>
+        <description>
+          <text>Multi-rate Symmetric DSL</text>
+        </description>
+      </enum>
+      <enum name="ieee1394">
+        <value value="144"/>
+        <description>
+          <text>IEEE1394 High Performance Serial Bus</text>
+        </description>
+      </enum>
+      <enum name="if-gsn">
+        <value value="145"/>
+        <description>
+          <text>HIPPI-6400</text>
+        </description>
+      </enum>
+      <enum name="dvbRccMacLayer">
+        <value value="146"/>
+        <description>
+          <text>DVB-RCC MAC Layer</text>
+        </description>
+      </enum>
+      <enum name="dvbRccDownstream">
+        <value value="147"/>
+        <description>
+          <text>DVB-RCC Downstream Channel</text>
+        </description>
+      </enum>
+      <enum name="dvbRccUpstream">
+        <value value="148"/>
+        <description>
+          <text>DVB-RCC Upstream Channel</text>
+        </description>
+      </enum>
+      <enum name="atmVirtual">
+        <value value="149"/>
+        <description>
+          <text>ATM Virtual Interface</text>
+        </description>
+      </enum>
+      <enum name="mplsTunnel">
+        <value value="150"/>
+        <description>
+          <text>MPLS Tunnel Virtual Interface</text>
+        </description>
+      </enum>
+      <enum name="srp">
+        <value value="151"/>
+        <description>
+          <text>Spatial Reuse Protocol</text>
+        </description>
+      </enum>
+      <enum name="voiceOverAtm">
+        <value value="152"/>
+        <description>
+          <text>Voice Over ATM</text>
+        </description>
+      </enum>
+      <enum name="voiceOverFrameRelay">
+        <value value="153"/>
+        <description>
+          <text>Voice Over Frame Relay</text>
+        </description>
+      </enum>
+      <enum name="idsl">
+        <value value="154"/>
+        <description>
+          <text>Digital Subscriber Loop over ISDN</text>
+        </description>
+      </enum>
+      <enum name="compositeLink">
+        <value value="155"/>
+        <description>
+          <text>Avici Composite Link Interface</text>
+        </description>
+      </enum>
+      <enum name="ss7SigLink">
+        <value value="156"/>
+        <description>
+          <text>SS7 Signaling Link</text>
+        </description>
+      </enum>
+      <enum name="propWirelessP2P">
+        <value value="157"/>
+        <description>
+          <text>Prop. P2P wireless interface</text>
+        </description>
+      </enum>
+      <enum name="frForward">
+        <value value="158"/>
+        <description>
+          <text>Frame Forward Interface</text>
+        </description>
+      </enum>
+      <enum name="rfc1483">
+        <value value="159"/>
+        <description>
+          <text>Multiprotocol over ATM AAL5</text>
+        </description>
+        <reference>
+          <text>RFC 1483 - Multiprotocol Encapsulation over ATM
+           Adaptation Layer 5</text>
+        </reference>
+      </enum>
+      <enum name="usb">
+        <value value="160"/>
+        <description>
+          <text>USB Interface</text>
+        </description>
+      </enum>
+      <enum name="ieee8023adLag">
+        <value value="161"/>
+        <description>
+          <text>IEEE 802.3ad Link Aggregate</text>
+        </description>
+      </enum>
+      <enum name="bgppolicyaccounting">
+        <value value="162"/>
+        <description>
+          <text>BGP Policy Accounting</text>
+        </description>
+      </enum>
+      <enum name="frf16MfrBundle">
+        <value value="163"/>
+        <description>
+          <text>FRF .16 Multilink Frame Relay</text>
+        </description>
+      </enum>
+      <enum name="h323Gatekeeper">
+        <value value="164"/>
+        <description>
+          <text>H323 Gatekeeper</text>
+        </description>
+      </enum>
+      <enum name="h323Proxy">
+        <value value="165"/>
+        <description>
+          <text>H323 Voice and Video Proxy</text>
+        </description>
+      </enum>
+      <enum name="mpls">
+        <value value="166"/>
+        <description>
+          <text>MPLS</text>
+        </description>
+      </enum>
+      <enum name="mfSigLink">
+        <value value="167"/>
+        <description>
+          <text>Multi-frequency signaling link</text>
+        </description>
+      </enum>
+      <enum name="hdsl2">
+        <value value="168"/>
+        <description>
+          <text>High Bit-Rate DSL - 2nd generation</text>
+        </description>
+      </enum>
+      <enum name="shdsl">
+        <value value="169"/>
+        <description>
+          <text>Multirate HDSL2</text>
+        </description>
+      </enum>
+      <enum name="ds1FDL">
+        <value value="170"/>
+        <description>
+          <text>Facility Data Link 4Kbps on a DS1</text>
+        </description>
+      </enum>
+      <enum name="pos">
+        <value value="171"/>
+        <description>
+          <text>Packet over SONET/SDH Interface</text>
+        </description>
+      </enum>
+      <enum name="dvbAsiIn">
+        <value value="172"/>
+        <description>
+          <text>DVB-ASI Input</text>
+        </description>
+      </enum>
+      <enum name="dvbAsiOut">
+        <value value="173"/>
+        <description>
+          <text>DVB-ASI Output</text>
+        </description>
+      </enum>
+      <enum name="plc">
+        <value value="174"/>
+        <description>
+          <text>Power Line Communtications</text>
+        </description>
+      </enum>
+      <enum name="nfas">
+        <value value="175"/>
+        <description>
+          <text>Non Facility Associated Signaling</text>
+        </description>
+      </enum>
+      <enum name="tr008">
+        <value value="176"/>
+        <description>
+          <text>TR008</text>
+        </description>
+      </enum>
+      <enum name="gr303RDT">
+        <value value="177"/>
+        <description>
+          <text>Remote Digital Terminal</text>
+        </description>
+      </enum>
+      <enum name="gr303IDT">
+        <value value="178"/>
+        <description>
+          <text>Integrated Digital Terminal</text>
+        </description>
+      </enum>
+      <enum name="isup">
+        <value value="179"/>
+        <description>
+          <text>ISUP</text>
+        </description>
+      </enum>
+      <enum name="propDocsWirelessMaclayer">
+        <value value="180"/>
+        <description>
+          <text>Cisco proprietary Maclayer</text>
+        </description>
+      </enum>
+      <enum name="propDocsWirelessDownstream">
+        <value value="181"/>
+        <description>
+          <text>Cisco proprietary Downstream</text>
+        </description>
+      </enum>
+      <enum name="propDocsWirelessUpstream">
+        <value value="182"/>
+        <description>
+          <text>Cisco proprietary Upstream</text>
+        </description>
+      </enum>
+      <enum name="hiperlan2">
+        <value value="183"/>
+        <description>
+          <text>HIPERLAN Type 2 Radio Interface</text>
+        </description>
+      </enum>
+      <enum name="propBWAp2Mp">
+        <value value="184"/>
+        <description>
+          <text>PropBroadbandWirelessAccesspt2multipt use of this value
+for IEEE 802.16 WMAN interfaces as per IEEE Std 802.16f
+is deprecated and ieee80216WMAN(237) should be used
+instead.</text>
+        </description>
+      </enum>
+      <enum name="sonetOverheadChannel">
+        <value value="185"/>
+        <description>
+          <text>SONET Overhead Channel</text>
+        </description>
+      </enum>
+      <enum name="digitalWrapperOverheadChannel">
+        <value value="186"/>
+        <description>
+          <text>Digital Wrapper</text>
+        </description>
+      </enum>
+      <enum name="aal2">
+        <value value="187"/>
+        <description>
+          <text>ATM adaptation layer 2</text>
+        </description>
+      </enum>
+      <enum name="radioMAC">
+        <value value="188"/>
+        <description>
+          <text>MAC layer over radio links</text>
+        </description>
+      </enum>
+      <enum name="atmRadio">
+        <value value="189"/>
+        <description>
+          <text>ATM over radio links</text>
+        </description>
+      </enum>
+      <enum name="imt">
+        <value value="190"/>
+        <description>
+          <text>Inter Machine Trunks</text>
+        </description>
+      </enum>
+      <enum name="mvl">
+        <value value="191"/>
+        <description>
+          <text>Multiple Virtual Lines DSL</text>
+        </description>
+      </enum>
+      <enum name="reachDSL">
+        <value value="192"/>
+        <description>
+          <text>Long Reach DSL</text>
+        </description>
+      </enum>
+      <enum name="frDlciEndPt">
+        <value value="193"/>
+        <description>
+          <text>Frame Relay DLCI End Point</text>
+        </description>
+      </enum>
+      <enum name="atmVciEndPt">
+        <value value="194"/>
+        <description>
+          <text>ATM VCI End Point</text>
+        </description>
+      </enum>
+      <enum name="opticalChannel">
+        <value value="195"/>
+        <description>
+          <text>Optical Channel</text>
+        </description>
+      </enum>
+      <enum name="opticalTransport">
+        <value value="196"/>
+        <description>
+          <text>Optical Transport</text>
+        </description>
+      </enum>
+      <enum name="propAtm">
+        <value value="197"/>
+        <description>
+          <text>Proprietary ATM</text>
+        </description>
+      </enum>
+      <enum name="voiceOverCable">
+        <value value="198"/>
+        <description>
+          <text>Voice Over Cable Interface</text>
+        </description>
+      </enum>
+      <enum name="infiniband">
+        <value value="199"/>
+        <description>
+          <text>Infiniband</text>
+        </description>
+      </enum>
+      <enum name="teLink">
+        <value value="200"/>
+        <description>
+          <text>TE Link</text>
+        </description>
+      </enum>
+      <enum name="q2931">
+        <value value="201"/>
+        <description>
+          <text>Q.2931</text>
+        </description>
+      </enum>
+      <enum name="virtualTg">
+        <value value="202"/>
+        <description>
+          <text>Virtual Trunk Group</text>
+        </description>
+      </enum>
+      <enum name="sipTg">
+        <value value="203"/>
+        <description>
+          <text>SIP Trunk Group</text>
+        </description>
+      </enum>
+      <enum name="sipSig">
+        <value value="204"/>
+        <description>
+          <text>SIP Signaling</text>
+        </description>
+      </enum>
+      <enum name="docsCableUpstreamChannel">
+        <value value="205"/>
+        <description>
+          <text>CATV Upstream Channel</text>
+        </description>
+      </enum>
+      <enum name="econet">
+        <value value="206"/>
+        <description>
+          <text>Acorn Econet</text>
+        </description>
+      </enum>
+      <enum name="pon155">
+        <value value="207"/>
+        <description>
+          <text>FSAN 155Mb Symetrical PON interface</text>
+        </description>
+      </enum>
+      <enum name="pon622">
+        <value value="208"/>
+        <description>
+          <text>FSAN622Mb Symetrical PON interface</text>
+        </description>
+      </enum>
+      <enum name="bridge">
+        <value value="209"/>
+        <description>
+          <text>Transparent bridge interface</text>
+        </description>
+      </enum>
+      <enum name="linegroup">
+        <value value="210"/>
+        <description>
+          <text>Interface common to multiple lines</text>
+        </description>
+      </enum>
+      <enum name="voiceEMFGD">
+        <value value="211"/>
+        <description>
+          <text>voice E&amp;M Feature Group D</text>
+        </description>
+      </enum>
+      <enum name="voiceFGDEANA">
+        <value value="212"/>
+        <description>
+          <text>voice FGD Exchange Access North American</text>
+        </description>
+      </enum>
+      <enum name="voiceDID">
+        <value value="213"/>
+        <description>
+          <text>voice Direct Inward Dialing</text>
+        </description>
+      </enum>
+      <enum name="mpegTransport">
+        <value value="214"/>
+        <description>
+          <text>MPEG transport interface</text>
+        </description>
+      </enum>
+      <enum name="sixToFour">
+        <value value="215"/>
+        <status value="deprecated"/>
+        <description>
+          <text>6to4 interface (DEPRECATED)</text>
+        </description>
+        <reference>
+          <text>RFC 4087 - IP Tunnel MIB</text>
+        </reference>
+      </enum>
+      <enum name="gtp">
+        <value value="216"/>
+        <description>
+          <text>GTP (GPRS Tunneling Protocol)</text>
+        </description>
+      </enum>
+      <enum name="pdnEtherLoop1">
+        <value value="217"/>
+        <description>
+          <text>Paradyne EtherLoop 1</text>
+        </description>
+      </enum>
+      <enum name="pdnEtherLoop2">
+        <value value="218"/>
+        <description>
+          <text>Paradyne EtherLoop 2</text>
+        </description>
+      </enum>
+      <enum name="opticalChannelGroup">
+        <value value="219"/>
+        <description>
+          <text>Optical Channel Group</text>
+        </description>
+      </enum>
+      <enum name="homepna">
+        <value value="220"/>
+        <description>
+          <text>HomePNA ITU-T G.989</text>
+        </description>
+      </enum>
+      <enum name="gfp">
+        <value value="221"/>
+        <description>
+          <text>Generic Framing Procedure (GFP)</text>
+        </description>
+      </enum>
+      <enum name="ciscoISLvlan">
+        <value value="222"/>
+        <description>
+          <text>Layer 2 Virtual LAN using Cisco ISL</text>
+        </description>
+      </enum>
+      <enum name="actelisMetaLOOP">
+        <value value="223"/>
+        <description>
+          <text>Acteleis proprietary MetaLOOP High Speed Link</text>
+        </description>
+      </enum>
+      <enum name="fcipLink">
+        <value value="224"/>
+        <description>
+          <text>FCIP Link</text>
+        </description>
+      </enum>
+      <enum name="rpr">
+        <value value="225"/>
+        <description>
+          <text>Resilient Packet Ring Interface Type</text>
+        </description>
+      </enum>
+      <enum name="qam">
+        <value value="226"/>
+        <description>
+          <text>RF Qam Interface</text>
+        </description>
+      </enum>
+      <enum name="lmp">
+        <value value="227"/>
+        <description>
+          <text>Link Management Protocol</text>
+        </description>
+        <reference>
+          <text>RFC 4327 - Link Management Protocol (LMP) Management
+           Information Base (MIB)</text>
+        </reference>
+      </enum>
+      <enum name="cblVectaStar">
+        <value value="228"/>
+        <description>
+          <text>Cambridge Broadband Networks Limited VectaStar</text>
+        </description>
+      </enum>
+      <enum name="docsCableMCmtsDownstream">
+        <value value="229"/>
+        <description>
+          <text>CATV Modular CMTS Downstream Interface</text>
+        </description>
+      </enum>
+      <enum name="adsl2">
+        <value value="230"/>
+        <status value="deprecated"/>
+        <description>
+          <text>Asymmetric Digital Subscriber Loop Version 2
+(DEPRECATED/OBSOLETED - please use adsl2plus(238)
+instead)</text>
+        </description>
+        <reference>
+          <text>RFC 4706 - Definitions of Managed Objects for Asymmetric
+           Digital Subscriber Line 2 (ADSL2)</text>
+        </reference>
+      </enum>
+      <enum name="macSecControlledIF">
+        <value value="231"/>
+        <description>
+          <text>MACSecControlled</text>
+        </description>
+      </enum>
+      <enum name="macSecUncontrolledIF">
+        <value value="232"/>
+        <description>
+          <text>MACSecUncontrolled</text>
+        </description>
+      </enum>
+      <enum name="aviciOpticalEther">
+        <value value="233"/>
+        <description>
+          <text>Avici Optical Ethernet Aggregate</text>
+        </description>
+      </enum>
+      <enum name="atmbond">
+        <value value="234"/>
+        <description>
+          <text>atmbond</text>
+        </description>
+      </enum>
+      <enum name="voiceFGDOS">
+        <value value="235"/>
+        <description>
+          <text>voice FGD Operator Services</text>
+        </description>
+      </enum>
+      <enum name="mocaVersion1">
+        <value value="236"/>
+        <description>
+          <text>MultiMedia over Coax Alliance (MoCA) Interface
+as documented in information provided privately to IANA</text>
+        </description>
+      </enum>
+      <enum name="ieee80216WMAN">
+        <value value="237"/>
+        <description>
+          <text>IEEE 802.16 WMAN interface</text>
+        </description>
+      </enum>
+      <enum name="adsl2plus">
+        <value value="238"/>
+        <description>
+          <text>Asymmetric Digital Subscriber Loop Version 2,
+Version 2 Plus and all variants</text>
+        </description>
+      </enum>
+      <enum name="dvbRcsMacLayer">
+        <value value="239"/>
+        <description>
+          <text>DVB-RCS MAC Layer</text>
+        </description>
+        <reference>
+          <text>RFC 5728 - The SatLabs Group DVB-RCS MIB</text>
+        </reference>
+      </enum>
+      <enum name="dvbTdm">
+        <value value="240"/>
+        <description>
+          <text>DVB Satellite TDM</text>
+        </description>
+        <reference>
+          <text>RFC 5728 - The SatLabs Group DVB-RCS MIB</text>
+        </reference>
+      </enum>
+      <enum name="dvbRcsTdma">
+        <value value="241"/>
+        <description>
+          <text>DVB-RCS TDMA</text>
+        </description>
+        <reference>
+          <text>RFC 5728 - The SatLabs Group DVB-RCS MIB</text>
+        </reference>
+      </enum>
+      <enum name="x86Laps">
+        <value value="242"/>
+        <description>
+          <text>LAPS based on ITU-T X.86/Y.1323</text>
+        </description>
+      </enum>
+      <enum name="wwanPP">
+        <value value="243"/>
+        <description>
+          <text>3GPP WWAN</text>
+        </description>
+      </enum>
+      <enum name="wwanPP2">
+        <value value="244"/>
+        <description>
+          <text>3GPP2 WWAN</text>
+        </description>
+      </enum>
+      <enum name="voiceEBS">
+        <value value="245"/>
+        <description>
+          <text>voice P-phone EBS physical interface</text>
+        </description>
+      </enum>
+      <enum name="ifPwType">
+        <value value="246"/>
+        <description>
+          <text>Pseudowire interface type</text>
+        </description>
+        <reference>
+          <text>RFC 5601 - Pseudowire (PW) Management Information Base</text>
+        </reference>
+      </enum>
+      <enum name="ilan">
+        <value value="247"/>
+        <description>
+          <text>Internal LAN on a bridge per IEEE 802.1ap</text>
+        </description>
+      </enum>
+      <enum name="pip">
+        <value value="248"/>
+        <description>
+          <text>Provider Instance Port on a bridge per IEEE 802.1ah PBB</text>
+        </description>
+      </enum>
+      <enum name="aluELP">
+        <value value="249"/>
+        <description>
+          <text>Alcatel-Lucent Ethernet Link Protection</text>
+        </description>
+      </enum>
+      <enum name="gpon">
+        <value value="250"/>
+        <description>
+          <text>Gigabit-capable passive optical networks (G-PON) as per
+ITU-T G.948</text>
+        </description>
+      </enum>
+      <enum name="vdsl2">
+        <value value="251"/>
+        <description>
+          <text>Very high speed digital subscriber line Version 2
+(as per ITU-T Recommendation G.993.2)</text>
+        </description>
+        <reference>
+          <text>RFC 5650 - Definitions of Managed Objects for Very High
+           Speed Digital Subscriber Line 2 (VDSL2)</text>
+        </reference>
+      </enum>
+      <enum name="capwapDot11Profile">
+        <value value="252"/>
+        <description>
+          <text>WLAN Profile Interface</text>
+        </description>
+        <reference>
+          <text>RFC 5834 - Control and Provisioning of Wireless Access
+           Points (CAPWAP) Protocol Binding MIB for
+           IEEE 802.11</text>
+        </reference>
+      </enum>
+      <enum name="capwapDot11Bss">
+        <value value="253"/>
+        <description>
+          <text>WLAN BSS Interface</text>
+        </description>
+        <reference>
+          <text>RFC 5834 - Control and Provisioning of Wireless Access
+           Points (CAPWAP) Protocol Binding MIB for
+           IEEE 802.11</text>
+        </reference>
+      </enum>
+      <enum name="capwapWtpVirtualRadio">
+        <value value="254"/>
+        <description>
+          <text>WTP Virtual Radio Interface</text>
+        </description>
+        <reference>
+          <text>RFC 5833 - Control and Provisioning of Wireless Access
+           Points (CAPWAP) Protocol Base MIB</text>
+        </reference>
+      </enum>
+      <enum name="bits">
+        <value value="255"/>
+        <description>
+          <text>bitsport</text>
+        </description>
+      </enum>
+      <enum name="docsCableUpstreamRfPort">
+        <value value="256"/>
+        <description>
+          <text>DOCSIS CATV Upstream RF Port</text>
+        </description>
+      </enum>
+      <enum name="cableDownstreamRfPort">
+        <value value="257"/>
+        <description>
+          <text>CATV downstream RF port</text>
+        </description>
+      </enum>
+      <enum name="vmwareVirtualNic">
+        <value value="258"/>
+        <description>
+          <text>VMware Virtual Network Interface</text>
+        </description>
+      </enum>
+      <enum name="ieee802154">
+        <value value="259"/>
+        <description>
+          <text>IEEE 802.15.4 WPAN interface</text>
+        </description>
+        <reference>
+          <text>IEEE 802.15.4-2006</text>
+        </reference>
+      </enum>
+      <enum name="otnOdu">
+        <value value="260"/>
+        <description>
+          <text>OTN Optical Data Unit</text>
+        </description>
+      </enum>
+      <enum name="otnOtu">
+        <value value="261"/>
+        <description>
+          <text>OTN Optical channel Transport Unit</text>
+        </description>
+      </enum>
+      <enum name="ifVfiType">
+        <value value="262"/>
+        <description>
+          <text>VPLS Forwarding Instance Interface Type</text>
+        </description>
+      </enum>
+      <enum name="g9981">
+        <value value="263"/>
+        <description>
+          <text>G.998.1 bonded interface</text>
+        </description>
+      </enum>
+      <enum name="g9982">
+        <value value="264"/>
+        <description>
+          <text>G.998.2 bonded interface</text>
+        </description>
+      </enum>
+      <enum name="g9983">
+        <value value="265"/>
+        <description>
+          <text>G.998.3 bonded interface</text>
+        </description>
+      </enum>
+      <enum name="aluEpon">
+        <value value="266"/>
+        <description>
+          <text>Ethernet Passive Optical Networks (E-PON)</text>
+        </description>
+      </enum>
+      <enum name="aluEponOnu">
+        <value value="267"/>
+        <description>
+          <text>EPON Optical Network Unit</text>
+        </description>
+      </enum>
+      <enum name="aluEponPhysicalUni">
+        <value value="268"/>
+        <description>
+          <text>EPON physical User to Network interface</text>
+        </description>
+      </enum>
+      <enum name="aluEponLogicalLink">
+        <value value="269"/>
+        <description>
+          <text>The emulation of a point-to-point link over the EPON
+layer</text>
+        </description>
+      </enum>
+      <enum name="aluGponOnu">
+        <value value="270"/>
+        <description>
+          <text>GPON Optical Network Unit</text>
+        </description>
+        <reference>
+          <text>ITU-T G.984.2</text>
+        </reference>
+      </enum>
+      <enum name="aluGponPhysicalUni">
+        <value value="271"/>
+        <description>
+          <text>GPON physical User to Network interface</text>
+        </description>
+        <reference>
+          <text>ITU-T G.984.2</text>
+        </reference>
+      </enum>
+      <enum name="vmwareNicTeam">
+        <value value="272"/>
+        <description>
+          <text>VMware NIC Team</text>
+        </description>
+      </enum>
+    </type>
+    <description>
+      <text>This data type is used as the syntax of the 'type'
+leaf in the 'interface' list in the YANG module
+ietf-interface.
+
+The definition of this typedef with the
+addition of newly assigned values is published
+periodically by the IANA, in either the Assigned
+Numbers RFC, or some derivative of it specific to
+Internet Network Management number assignments.  (The
+latest arrangements can be obtained by contacting the
+IANA.)
+
+Requests for new values should be made to IANA via
+email (iana&amp;iana.org).</text>
+    </description>
+    <reference>
+      <text>IANA ifType definitions registry.
+&lt;http://www.iana.org/assignments/smi-numbers&gt;</text>
+    </reference>
+  </typedef>
+</module>
