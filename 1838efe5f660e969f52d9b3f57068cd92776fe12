@@ -1,0 +1,565 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a7fa997_abfed269",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/SimpleDateFormatUtil.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "javadoc?",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_cb030e72",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/type/IntegerTypeDefinition.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "single line",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_4beffeb0",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangStatementParserListenerImpl.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "is this allowed to be null?",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_eb2b6ae9",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YangStatementParserListenerImpl.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 80,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "unneeded else",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_0b31065a",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/IdentityNamespace.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 11,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "should not have an empty line here",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_ab357247",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/IdentityNamespace.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "commented-out code ?",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_6b3f5a26",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/NamespaceBehaviour.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "leading empy line, improperly ordered",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_2b4962d0",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/NamespaceBehaviour.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 108,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "missing javadoc for abstract methods",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_4b461ec1",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StatementNamespace.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "missing spaces",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_0b1826d2",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "import ordering, fix your IDE setup",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_6b267a18",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 175,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "missing space here and elsewhere",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_8b23d604",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 186,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "useless if, just return the result of producesDeclared()",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_0b7fc6e1",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 210,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "splitter can be constant",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_4b74defc",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/source/BelongsToModuleContext.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 13,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "missing javadoc",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_eb604a37",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/source/ModuleNamespaceForBelongsTo.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "missing javadoc",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_0b66e651",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/source/StatementWriter.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "nonnull annotations should be on the same line, as for Java 8 they are result annotations, not method annotations",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_6b543a54",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/validation/ValidationBundlesNamespace.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "copyright header",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_ab5a5281",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/validation/ValidationBundlesNamespace.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 6,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "missing javadoc",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_cb5f8e71",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/validation/ValidationBundlesNamespace.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "javadocs for enum memebers",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_8b519664",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/BuildGlobalContext.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "is it allowed to be null?",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_ebc7ea10",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/CrossSourceStatementReactor.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 83,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "renders the above method superfluous",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_abd1f2ce",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/RootStatementContext.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "javadoc for public class",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_4be29ea0",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/RootStatementContext.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "Collections.singletonList()? if not, it should be pre-allocated to 1 I guess.",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_abe8127d",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/StatementContextBase.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 233,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "leaking mutable collection?!",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_cba46e59",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/AugmentUtils.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "single line, please",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_cbbb0e71",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/AugmentUtils.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 358,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "this does not look obvious.\n\nIs an empty allowedAugmentTargets is considered to contain all? If so, add an explicit comment.",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_4ba7fe4f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/BinarySpecificationImpl.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "javadoc for public class",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_abe7b2e3",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/TypeUtils.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "should be final an misses javadocs",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_0be346da",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/TypeUtils.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "ImmutableSet, ImmutableMap\n\ndo we really want to make them public?",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_cbec6eca",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/TypeUtils.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": ".on(\u0027|\u0027)",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_eb04ca7f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/TypeUtils.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "should be final to ensure it\u0027s always initialized",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_4bd85e1d",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/TypeUtils.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "duplicated code between methods",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_0b0a668a",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/TypeUtils.java",
+        "patchSetId": 92
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-06-26T16:15:16Z",
+      "side": 1,
+      "message": "Comparator can be a constant",
+      "revId": "1838efe5f660e969f52d9b3f57068cd92776fe12",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
