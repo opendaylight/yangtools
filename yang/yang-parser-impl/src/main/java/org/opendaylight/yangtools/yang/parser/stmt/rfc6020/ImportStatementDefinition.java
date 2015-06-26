@@ -13,11 +13,15 @@ import com.google.common.base.Optional;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map.Entry;
+import java.util.Map;
+import java.util.Set;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
@@ -61,28 +65,77 @@ public class ImportStatementDefinition extends
             final Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt)
             throws SourceException {
         final ModuleIdentifier impIdentifier = getImportedModuleIdentifier(stmt);
-        ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_LINKAGE);
+        ModelActionBuilder importAction = stmt
+                .newInferenceAction(SOURCE_LINKAGE);
         final Prerequisite<StmtContext<?, ?, ?>> imported;
         final Prerequisite<Mutable<?, ?, ?>> linkageTarget;
-        imported = importAction.requiresCtx(stmt, ModuleNamespace.class, impIdentifier, SOURCE_LINKAGE);
+        imported = importAction.requiresCtx(stmt, ModuleNamespace.class,
+                impIdentifier, SOURCE_LINKAGE);
         linkageTarget = importAction.mutatesCtx(stmt.getRoot(), SOURCE_LINKAGE);
-
-        String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
-        stmt.addToNs(ImpPrefixToModuleIdentifier.class, impPrefix, impIdentifier);
 
         importAction.apply(new InferenceAction() {
 
             @Override
             public void apply() throws InferenceException {
-                StmtContext<?, ?, ?> importedModule = imported.get();
-                linkageTarget.get().addToNs(ImportedModuleContext.class, impIdentifier, importedModule);
+                StmtContext<?, ?, ?> importedModule = null;
+                ModuleIdentifier importedModuleIdentifier = null;
+                if (impIdentifier.getRevision() == SimpleDateFormatUtil.DEFAULT_DATE_IMP) {
+                    Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> recentModuleEntry = findRecentModule(
+                            impIdentifier,
+                            stmt.getAllFromNamespace(ModuleNamespace.class));
+                    if (recentModuleEntry != null) {
+                        importedModuleIdentifier = recentModuleEntry.getKey();
+                        importedModule = recentModuleEntry.getValue();
+                    }
+                }
+
+                if(importedModule == null || importedModuleIdentifier == null) {
+                    importedModule = imported.get();
+                    importedModuleIdentifier = impIdentifier;
+                }
+
+                linkageTarget.get().addToNs(ImportedModuleContext.class,
+                        importedModuleIdentifier, importedModule);
+                String impPrefix = firstAttributeOf(stmt.declaredSubstatements(),
+                        PrefixStatement.class);
+                stmt.addToNs(ImpPrefixToModuleIdentifier.class, impPrefix,
+                        importedModuleIdentifier);
+            }
+
+            private Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> findRecentModule(
+                    ModuleIdentifier impIdentifier,
+                    Map<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> allModules) {
+
+                ModuleIdentifier recentModuleIdentifier = impIdentifier;
+                Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> recentModuleEntry = null;
+
+                Set<Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>>> moduleEntrySet = allModules
+                        .entrySet();
+                for (Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> moduleEntry : moduleEntrySet) {
+                    if (moduleEntry.getKey().getName()
+                            .equals(impIdentifier.getName())
+                            && moduleEntry
+                            .getKey()
+                            .getRevision()
+                            .compareTo(
+                                    recentModuleIdentifier
+                                            .getRevision()) > 0) {
+                        recentModuleIdentifier = moduleEntry.getKey();
+                        recentModuleEntry = moduleEntry;
+                    }
+                }
+
+                return recentModuleEntry;
             }
 
             @Override
-            public void prerequisiteFailed(Collection<? extends Prerequisite<?>> failed) throws InferenceException {
+            public void prerequisiteFailed(
+                    Collection<? extends Prerequisite<?>> failed)
+                    throws InferenceException {
                 if (failed.contains(imported)) {
-                    throw new InferenceException(String.format("Imported module [%s] was not found.", impIdentifier),
-                            stmt.getStatementSourceReference());
+                    throw new InferenceException(String.format(
+                            "Imported module [%s] was not found.",
+                            impIdentifier), stmt.getStatementSourceReference());
                 }
             }
         });
