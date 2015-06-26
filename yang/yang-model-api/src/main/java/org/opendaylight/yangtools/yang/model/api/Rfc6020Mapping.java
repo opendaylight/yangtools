@@ -15,6 +15,7 @@ import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
@@ -152,27 +153,34 @@ public enum Rfc6020Mapping implements StatementDefinition {
     YIN_ELEMENT(YinElementStatement.class, "yin-element", "value");
 
     private final Class<? extends DeclaredStatement<?>> type;
+    private final Class<? extends EffectiveStatement<?,?>> effectiveType;
     private final QName name;
     private final QName argument;
     private final boolean yinElement;
 
-    private Rfc6020Mapping(Class<? extends DeclaredStatement<?>> clz, final String nameStr) {
+    Rfc6020Mapping(Class<? extends DeclaredStatement<?>> clz, final String nameStr) {
         type = Preconditions.checkNotNull(clz);
+        //FIXME: fill up effective type correctly
+        effectiveType = null;
         name = yinQName(nameStr);
         argument = null;
         yinElement = false;
     }
 
-    private Rfc6020Mapping(Class<? extends DeclaredStatement<?>> clz, final String nameStr, final String argumentStr) {
+    Rfc6020Mapping(Class<? extends DeclaredStatement<?>> clz, final String nameStr, final String argumentStr) {
         type = Preconditions.checkNotNull(clz);
+        //FIXME: fill up effective type correctly
+        effectiveType = null;
         name = yinQName(nameStr);
         argument = yinQName(argumentStr);
         this.yinElement = false;
     }
 
-    private Rfc6020Mapping(Class<? extends DeclaredStatement<?>> clz, final String nameStr, final String argumentStr,
+    Rfc6020Mapping(Class<? extends DeclaredStatement<?>> clz, final String nameStr, final String argumentStr,
             final boolean yinElement) {
         type = Preconditions.checkNotNull(clz);
+        //FIXME: fill up effective type correctly
+        effectiveType = null;
         name = yinQName(nameStr);
         argument = yinQName(argumentStr);
         this.yinElement = yinElement;
@@ -198,9 +206,8 @@ public enum Rfc6020Mapping implements StatementDefinition {
     }
 
     @Override
-    public Class<? extends DeclaredStatement<?>> getEffectiveRepresentationClass() {
-        // FIXME: Add support once these interfaces are defined.
-        throw new UnsupportedOperationException("Not defined yet.");
+    public Class<? extends EffectiveStatement<?,?>> getEffectiveRepresentationClass() {
+        return effectiveType;
     }
 
     public boolean isArgumentYinElement() {
