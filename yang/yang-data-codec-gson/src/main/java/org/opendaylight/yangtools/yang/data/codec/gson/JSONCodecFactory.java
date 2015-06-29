@@ -120,7 +120,7 @@ public final class JSONCodecFactory {
             return (JSONCodec<Object>) iidCodec;
         }
         if (type instanceof EmptyTypeDefinition) {
-            return (JSONCodec<Object>) JSONEmptyCodec.INSTANCE;
+            return JSONEmptyCodec.INSTANCE;
         }
 
         final TypeDefinitionAwareCodec<Object, ?> codec = TypeDefinitionAwareCodec.from(type);
