@@ -44,6 +44,8 @@ abstract class AbstractDataTreeTip implements DataTreeTip {
         final InMemoryDataTreeModification m = (InMemoryDataTreeModification)modification;
         Preconditions.checkArgument(m.isSealed(), "Attempted to prepare unsealed modification %s", m);
 
+        m.resolve();
+
         final ModifiedNode root = m.getRootModification();
 
         final TreeNode currentRoot = getTipRoot();

@@ -29,16 +29,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class InMemoryDataTreeModification extends AbstractCursorAware implements CursorAwareDataTreeModification {
-    private static final AtomicIntegerFieldUpdater<InMemoryDataTreeModification> SEALED_UPDATER =
-            AtomicIntegerFieldUpdater.newUpdater(InMemoryDataTreeModification.class, "sealed");
+    private static final AtomicIntegerFieldUpdater<InMemoryDataTreeModification> STATE_UPDATER =
+            AtomicIntegerFieldUpdater.newUpdater(InMemoryDataTreeModification.class, "state");
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTreeModification.class);
+    private static final int STATE_OPEN = 0;
+    private static final int STATE_SEALED = 1;
+    private static final int STATE_RESOLVED = 2;
 
     private final RootModificationApplyOperation strategyTree;
     private final InMemoryDataTreeSnapshot snapshot;
     private final ModifiedNode rootNode;
     private final Version version;
 
-    private volatile int sealed = 0;
+    private volatile int state = STATE_OPEN;
 
     InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot, final RootModificationApplyOperation resolver) {
         this.snapshot = Preconditions.checkNotNull(snapshot);
@@ -167,7 +170,16 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     private void checkSealed() {
-        Preconditions.checkState(sealed == 0, "Data Tree is sealed. No further modifications allowed.");
+        Preconditions.checkState(state == STATE_OPEN, "Data Tree is sealed. No further modifications allowed.");
+    }
+
+    /**
+     * Marks this modification as resolved.
+     * Attempt to resolve already resolved modification causes {@link IllegalStateException} to be thrown.
+     */
+    void resolve() {
+        final boolean wasResolved = STATE_UPDATER.compareAndSet(this, STATE_SEALED, STATE_RESOLVED);
+        Preconditions.checkState(wasResolved, "Attempted to resolve an already-resolved Data Tree modification.");
     }
 
     @Override
@@ -177,7 +189,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     @Override
     public DataTreeModification newModification() {
-        Preconditions.checkState(sealed == 1, "Attempted to chain on an unsealed modification");
+        Preconditions.checkState(isSealed(), "Attempted to chain on an unsealed modification");
 
         if (rootNode.getOperation() == LogicalOperation.NONE) {
             // Simple fast case: just use the underlying modification
@@ -201,7 +213,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     boolean isSealed() {
-        return sealed == 1;
+        return state >= STATE_SEALED;
     }
 
     private static void applyChildren(final DataTreeModificationCursor cursor, final ModifiedNode node) {
@@ -271,9 +283,10 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         return openCursor(new InMemoryDataTreeModificationCursor(this, path, op));
     }
 
+    @Override
     public void ready() {
-        final boolean wasRunning = SEALED_UPDATER.compareAndSet(this, 0, 1);
-        Preconditions.checkState(wasRunning, "Attempted to seal an already-sealed Data Tree.");
+        final boolean wasOpen = STATE_UPDATER.compareAndSet(this, STATE_OPEN, STATE_SEALED);
+        Preconditions.checkState(wasOpen, "Attempted to seal an already-sealed Data Tree.");
 
         AbstractReadyIterator current = AbstractReadyIterator.create(rootNode, strategyTree);
         do {

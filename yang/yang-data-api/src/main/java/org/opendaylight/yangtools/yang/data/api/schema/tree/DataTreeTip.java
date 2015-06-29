@@ -22,9 +22,11 @@ public interface DataTreeTip {
 
     /**
      * Prepare a modification for commit.
+     * Modification can be successfully prepared only once. Attempt to prepare already prepared modification will fail.
      *
      * @param modification
      * @return candidate data tree
+     * @throws IllegalStateException when trying to prepare already prepared modification.
      */
     DataTreeCandidate prepare(DataTreeModification modification);
 }
