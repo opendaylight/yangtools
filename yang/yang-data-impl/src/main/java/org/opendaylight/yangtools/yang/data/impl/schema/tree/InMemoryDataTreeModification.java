@@ -31,6 +31,8 @@ import org.slf4j.LoggerFactory;
 final class InMemoryDataTreeModification extends AbstractCursorAware implements CursorAwareDataTreeModification {
     private static final AtomicIntegerFieldUpdater<InMemoryDataTreeModification> SEALED_UPDATER =
             AtomicIntegerFieldUpdater.newUpdater(InMemoryDataTreeModification.class, "sealed");
+    private static final AtomicIntegerFieldUpdater<InMemoryDataTreeModification> RESOLVED_UPDATER =
+            AtomicIntegerFieldUpdater.newUpdater(InMemoryDataTreeModification.class, "resolved");
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTreeModification.class);
 
     private final RootModificationApplyOperation strategyTree;
@@ -39,6 +41,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     private final Version version;
 
     private volatile int sealed = 0;
+    private volatile int resolved = 0;
 
     InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot, final RootModificationApplyOperation resolver) {
         this.snapshot = Preconditions.checkNotNull(snapshot);
@@ -168,6 +171,15 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     private void checkSealed() {
         Preconditions.checkState(sealed == 0, "Data Tree is sealed. No further modifications allowed.");
+    }
+
+    /**
+     * Marks this modification as resolved.
+     * Attempt to resolve already resolved modification causes {@link IllegalStateException} to be thrown.
+     */
+    void resolve() {
+        final boolean wasResolved = RESOLVED_UPDATER.compareAndSet(this, 0, 1);
+        Preconditions.checkState(wasResolved, "Attempted to resolve an already-resolved Data Tree modification.");
     }
 
     @Override
