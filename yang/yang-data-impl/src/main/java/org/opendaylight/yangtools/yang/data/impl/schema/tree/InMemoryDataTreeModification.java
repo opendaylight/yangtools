@@ -28,8 +28,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class InMemoryDataTreeModification implements DataTreeModification {
-    private static final AtomicIntegerFieldUpdater<InMemoryDataTreeModification> UPDATER =
+    private static final AtomicIntegerFieldUpdater<InMemoryDataTreeModification> SEALED_UPDATER =
             AtomicIntegerFieldUpdater.newUpdater(InMemoryDataTreeModification.class, "sealed");
+    private static final AtomicIntegerFieldUpdater<InMemoryDataTreeModification> RESOLVED_UPDATER =
+            AtomicIntegerFieldUpdater.newUpdater(InMemoryDataTreeModification.class, "resolved");
     private static final Logger LOG = LoggerFactory.getLogger(InMemoryDataTreeModification.class);
 
     private final RootModificationApplyOperation strategyTree;
@@ -38,6 +40,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
     private final Version version;
 
     private volatile int sealed = 0;
+    private volatile int resolved = 0;
 
     InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot, final RootModificationApplyOperation resolver) {
         this.snapshot = Preconditions.checkNotNull(snapshot);
@@ -170,6 +173,12 @@ final class InMemoryDataTreeModification implements DataTreeModification {
     }
 
     @Override
+    public void resolve() {
+        final boolean wasResolved = RESOLVED_UPDATER.compareAndSet(this, 0, 1);
+        Preconditions.checkState(wasResolved, "Attempted to resolve an already-resolved Data Tree modification.");
+    }
+
+    @Override
     public String toString() {
         return "MutableDataTree [modification=" + rootNode + "]";
     }
@@ -258,7 +267,7 @@ final class InMemoryDataTreeModification implements DataTreeModification {
 
     @Override
     public void ready() {
-        final boolean wasRunning = UPDATER.compareAndSet(this, 0, 1);
+        final boolean wasRunning = SEALED_UPDATER.compareAndSet(this, 0, 1);
         Preconditions.checkState(wasRunning, "Attempted to seal an already-sealed Data Tree.");
 
         AbstractReadyIterator current = AbstractReadyIterator.create(rootNode, strategyTree);

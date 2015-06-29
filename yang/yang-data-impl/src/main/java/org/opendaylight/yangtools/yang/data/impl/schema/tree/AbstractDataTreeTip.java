@@ -40,6 +40,7 @@ abstract class AbstractDataTreeTip implements DataTreeTip {
     @Override
     public final DataTreeCandidateTip prepare(final DataTreeModification modification) {
         Preconditions.checkArgument(modification instanceof InMemoryDataTreeModification, "Invalid modification class %s", modification.getClass());
+        modification.resolve();
 
         final InMemoryDataTreeModification m = (InMemoryDataTreeModification)modification;
         final ModifiedNode root = m.getRootModification();
