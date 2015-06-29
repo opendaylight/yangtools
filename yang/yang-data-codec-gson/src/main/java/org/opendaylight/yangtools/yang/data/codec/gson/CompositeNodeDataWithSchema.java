@@ -113,8 +113,8 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
         return newChild;
     }
 
-    private CaseNodeDataWithSchema findChoice(final Collection<AbstractNodeDataWithSchema> childNodes, final DataSchemaNode choiceCandidate,
-            final DataSchemaNode caseCandidate) {
+    private static CaseNodeDataWithSchema findChoice(final Collection<AbstractNodeDataWithSchema> childNodes,
+            final DataSchemaNode choiceCandidate, final DataSchemaNode caseCandidate) {
         if (childNodes != null) {
             for (AbstractNodeDataWithSchema nodeDataWithSchema : childNodes) {
                 if (nodeDataWithSchema instanceof ChoiceNodeDataWithSchema

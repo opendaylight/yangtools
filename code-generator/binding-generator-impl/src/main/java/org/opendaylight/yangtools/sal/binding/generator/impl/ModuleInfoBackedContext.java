@@ -134,7 +134,7 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
         return true;
     }
 
-    private SourceIdentifier sourceIdentifierFrom(final YangModuleInfo moduleInfo) {
+    private static SourceIdentifier sourceIdentifierFrom(final YangModuleInfo moduleInfo) {
         return SourceIdentifier.create(moduleInfo.getName(), Optional.of(moduleInfo.getRevision()));
     }
 
