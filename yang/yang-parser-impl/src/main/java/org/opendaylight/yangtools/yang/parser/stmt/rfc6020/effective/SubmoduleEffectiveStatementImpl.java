@@ -7,6 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+
+import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
+import com.google.common.collect.ImmutableMap;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import java.util.Map;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Date;
@@ -14,7 +30,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -30,17 +45,16 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
-
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
-public class SubmoduleEffectiveStatementImpl extends
-        AbstractEffectiveDocumentedDataNodeContainer<String, SubmoduleStatement> implements Module, Immutable {
+public class SubmoduleEffectiveStatementImpl
+        extends
+        AbstractEffectiveDocumentedNode<String, SubmoduleStatement>
+        implements Module, Immutable {
 
     private final QNameModule qNameModule;
     private final String name;
@@ -60,43 +74,96 @@ public class SubmoduleEffectiveStatementImpl extends
     private ImmutableSet<IdentitySchemaNode> identities;
     private ImmutableList<UnknownSchemaNode> unknownNodes;
     private String source;
+    private ImmutableList<EffectiveStatement<?,?>> substatementsOfSubmodules;
 
-    public SubmoduleEffectiveStatementImpl(StmtContext<String, SubmoduleStatement, ?> ctx) {
+    private ImmutableMap<QName, DataSchemaNode> childNodes;
+    private ImmutableSet<GroupingDefinition> groupings;
+    private ImmutableSet<UsesNode> uses;
+    private ImmutableSet<TypeDefinition<?>> typeDefinitions;
+    private ImmutableSet<DataSchemaNode> publicChildNodes;
+
+    public SubmoduleEffectiveStatementImpl(
+            StmtContext<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> ctx) {
         super(ctx);
 
         name = argument();
 
-        String belongsToModuleName = firstAttributeOf(ctx.declaredSubstatements(), BelongsToStatement.class);
-        final QNameModule belongsToModule = ctx.getFromNamespace(ModuleNameToModuleQName.class, belongsToModuleName);
-        qNameModule = QNameModule.create(belongsToModule.getNamespace(), belongsToModule.getRevision());
+        String belongsToModuleName = firstAttributeOf(
+                ctx.declaredSubstatements(), BelongsToStatement.class);
+        final QNameModule belongsToModuleQName = ctx.getFromNamespace(
+                ModuleNameToModuleQName.class, belongsToModuleName);
+        RevisionEffectiveStatementImpl submoduleRevision = firstEffective(RevisionEffectiveStatementImpl.class);
+
+        qNameModule = submoduleRevision == null ? QNameModule.create(
+                belongsToModuleQName.getNamespace(),
+                SimpleDateFormatUtil.DEFAULT_DATE_REV) : QNameModule.create(
+                belongsToModuleQName.getNamespace(),
+                submoduleRevision.argument());
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof PrefixEffectiveStatementImpl) {
-                prefix = ((PrefixEffectiveStatementImpl) effectiveStatement).argument();
+                prefix = ((PrefixEffectiveStatementImpl) effectiveStatement)
+                        .argument();
             }
             if (effectiveStatement instanceof YangVersionEffectiveStatementImpl) {
-                yangVersion = ((YangVersionEffectiveStatementImpl) effectiveStatement).argument();
+                yangVersion = ((YangVersionEffectiveStatementImpl) effectiveStatement)
+                        .argument();
             }
             if (effectiveStatement instanceof OrganizationEffectiveStatementImpl) {
-                organization = ((OrganizationEffectiveStatementImpl) effectiveStatement).argument();
+                organization = ((OrganizationEffectiveStatementImpl) effectiveStatement)
+                        .argument();
             }
             if (effectiveStatement instanceof ContactEffectiveStatementImpl) {
-                contact = ((ContactEffectiveStatementImpl) effectiveStatement).argument();
+                contact = ((ContactEffectiveStatementImpl) effectiveStatement)
+                        .argument();
             }
         }
 
+        //:TODO init source, sourcePath
         source = ctx.getStatementSource().name();
 
-        initSubstatementCollections();
+        initSubmodules(ctx);
+        initSubstatementCollections(ctx);
     }
 
-    private void initSubstatementCollections() {
-        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
+    private void initSubmodules(
+            StmtContext<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> ctx) {
+        Map<String, ModuleIdentifier> includedSubmodulesMap = ctx
+                .getAllFromCurrentStmtCtxNamespace(IncludedSubmoduleNameToIdentifier.class);
+
+        if (includedSubmodulesMap == null || includedSubmodulesMap.isEmpty()) {
+            this.submodules = ImmutableSet.of();
+            this.substatementsOfSubmodules = ImmutableList.of();
+            return;
+        }
+
+        Collection<ModuleIdentifier> includedSubmodules = includedSubmodulesMap
+                .values();
+
+        Set<Module> submodulesInit = new HashSet<>();
+        List<EffectiveStatement<?,?>> substatementsOfSubmodulesInit = new LinkedList<>();
+        for (ModuleIdentifier submoduleIdentifier : includedSubmodules) {
+            Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> submoduleCtx = (Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>) ctx
+                    .getFromNamespace(SubmoduleNamespace.class,
+                            submoduleIdentifier);
+            SubmoduleEffectiveStatementImpl submodule = (SubmoduleEffectiveStatementImpl) submoduleCtx.buildEffective();
+            submodulesInit.add(submodule);
+            substatementsOfSubmodulesInit.addAll(submodule.effectiveSubstatements());
+        }
+
+        this.submodules = ImmutableSet.copyOf(submodulesInit);
+        this.substatementsOfSubmodules = ImmutableList.copyOf(substatementsOfSubmodulesInit);
+    }
+
+    private void initSubstatementCollections(StmtContext<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> ctx) {
+        List<EffectiveStatement<?, ?>> effectiveSubstatements = new LinkedList<>();
+
+        effectiveSubstatements.addAll(effectiveSubstatements());
+        effectiveSubstatements.addAll(this.substatementsOfSubmodules);
 
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
         Set<AugmentationSchema> augmentationsInit = new HashSet<>();
         Set<ModuleImport> importsInit = new HashSet<>();
-        Set<Module> submodulesInit = new HashSet<>();
         Set<NotificationDefinition> notificationsInit = new HashSet<>();
         Set<RpcDefinition> rpcsInit = new HashSet<>();
         Set<Deviation> deviationsInit = new HashSet<>();
@@ -104,6 +171,13 @@ public class SubmoduleEffectiveStatementImpl extends
         Set<FeatureDefinition> featuresInit = new HashSet<>();
         List<ExtensionDefinition> extensionNodesInit = new LinkedList<>();
 
+        Map<QName, DataSchemaNode> mutableChildNodes = new LinkedHashMap<>();
+        Set<GroupingDefinition> mutableGroupings = new HashSet<>();
+        Set<UsesNode> mutableUses = new HashSet<>();
+        Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
+        Set<DataSchemaNode> mutablePublicChildNodes = new LinkedHashSet<>();
+
+        //:TODO add validation also for other node types
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 unknownNodesInit.add((UnknownSchemaNode) effectiveStatement);
@@ -114,11 +188,9 @@ public class SubmoduleEffectiveStatementImpl extends
             if (effectiveStatement instanceof ModuleImport) {
                 importsInit.add((ModuleImport) effectiveStatement);
             }
-            if (effectiveStatement instanceof Module) {
-                submodulesInit.add((Module) effectiveStatement);
-            }
             if (effectiveStatement instanceof NotificationDefinition) {
-                notificationsInit.add((NotificationDefinition) effectiveStatement);
+                notificationsInit
+                        .add((NotificationDefinition) effectiveStatement);
             }
             if (effectiveStatement instanceof RpcDefinition) {
                 rpcsInit.add((RpcDefinition) effectiveStatement);
@@ -133,20 +205,61 @@ public class SubmoduleEffectiveStatementImpl extends
                 featuresInit.add((FeatureDefinition) effectiveStatement);
             }
             if (effectiveStatement instanceof ExtensionDefinition) {
-                extensionNodesInit.add((ExtensionDefinition) effectiveStatement);
+                extensionNodesInit
+                        .add((ExtensionDefinition) effectiveStatement);
+            }
+            if (effectiveStatement instanceof DataSchemaNode) {
+                DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;
+                if (!mutableChildNodes.containsKey(dataSchemaNode.getQName())) {
+                    mutableChildNodes.put(dataSchemaNode.getQName(),
+                            dataSchemaNode);
+                    mutablePublicChildNodes.add(dataSchemaNode);
+                } else {
+                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
+                }
+            }
+            if (effectiveStatement instanceof UsesNode) {
+                UsesNode usesNode = (UsesNode) effectiveStatement;
+                if (!mutableUses.contains(usesNode)) {
+                    mutableUses.add(usesNode);
+                } else {
+                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
+                }
+            }
+            if (effectiveStatement instanceof TypeDefEffectiveStatementImpl) {
+                TypeDefEffectiveStatementImpl typeDef = (TypeDefEffectiveStatementImpl) effectiveStatement;
+                ExtendedType extendedType = typeDef.buildType();
+                if (!mutableTypeDefinitions.contains(extendedType)) {
+                    mutableTypeDefinitions.add(extendedType);
+                } else {
+                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
+                }
+            }
+            if (effectiveStatement instanceof GroupingDefinition) {
+                GroupingDefinition grp = (GroupingDefinition) effectiveStatement;
+                if (!mutableGroupings.contains(grp)) {
+                    mutableGroupings.add(grp);
+                } else {
+                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
+                }
             }
         }
 
         this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
         this.imports = ImmutableSet.copyOf(importsInit);
-        this.submodules = ImmutableSet.copyOf(submodulesInit);
         this.notifications = ImmutableSet.copyOf(notificationsInit);
         this.rpcs = ImmutableSet.copyOf(rpcsInit);
         this.deviations = ImmutableSet.copyOf(deviationsInit);
         this.identities = ImmutableSet.copyOf(identitiesInit);
         this.features = ImmutableSet.copyOf(featuresInit);
         this.extensionNodes = ImmutableList.copyOf(extensionNodesInit);
+
+        this.childNodes = ImmutableMap.copyOf(mutableChildNodes);
+        this.groupings = ImmutableSet.copyOf(mutableGroupings);
+        this.publicChildNodes = ImmutableSet.copyOf(mutablePublicChildNodes);
+        this.typeDefinitions = ImmutableSet.copyOf(mutableTypeDefinitions);
+        this.uses = ImmutableSet.copyOf(mutableUses);
     }
 
     @Override
@@ -240,6 +353,43 @@ public class SubmoduleEffectiveStatementImpl extends
     }
 
     @Override
+    public final Set<TypeDefinition<?>> getTypeDefinitions() {
+        return typeDefinitions;
+    }
+
+    @Override
+    public final Set<DataSchemaNode> getChildNodes() {
+        return publicChildNodes;
+    }
+
+    @Override
+    public final Set<GroupingDefinition> getGroupings() {
+        return groupings;
+    }
+
+    @Override
+    public final DataSchemaNode getDataChildByName(final QName name) {
+        // Child nodes are keyed by their container name, so we can do a direct
+        // lookup
+        return childNodes.get(name);
+    }
+
+    @Override
+    public final DataSchemaNode getDataChildByName(final String name) {
+        for (DataSchemaNode node : childNodes.values()) {
+            if (node.getQName().getLocalName().equals(name)) {
+                return node;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Set<UsesNode> getUses() {
+        return uses;
+    }
+
+    @Override
     public String getSource() {
         return source;
     }
@@ -249,7 +399,8 @@ public class SubmoduleEffectiveStatementImpl extends
         final int prime = 31;
         int result = 1;
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((yangVersion == null) ? 0 : yangVersion.hashCode());
+        result = prime * result
+                + ((yangVersion == null) ? 0 : yangVersion.hashCode());
         result = prime * result + qNameModule.hashCode();
         return result;
     }
@@ -288,7 +439,8 @@ public class SubmoduleEffectiveStatementImpl extends
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(ModuleImpl.class.getSimpleName());
+
+        StringBuilder sb = new StringBuilder(SubmoduleEffectiveStatementImpl.class.getSimpleName());
         sb.append("[");
         sb.append("name=").append(name);
         sb.append(", namespace=").append(getNamespace());

@@ -9,14 +9,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
-
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ImportEffectiveStatementImpl;
-
-import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import com.google.common.base.Optional;
 import java.net.URI;
-import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
@@ -24,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
@@ -34,7 +29,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Infere
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ImportEffectiveStatementImpl;
 
 public class ImportStatementDefinition extends
         AbstractStatementSupport<String, ImportStatement, EffectiveStatement<String, ImportStatement>> {
@@ -84,7 +81,8 @@ public class ImportStatementDefinition extends
             @Override
             public void prerequisiteFailed(Collection<? extends Prerequisite<?>> failed) throws InferenceException {
                 if (failed.contains(imported)) {
-                    throw new InferenceException("Imported module was not found.", stmt.getStatementSourceReference());
+                    throw new InferenceException(String.format("Imported module [%s] was not found.", impIdentifier),
+                            stmt.getStatementSourceReference());
                 }
             }
         });
@@ -94,19 +92,12 @@ public class ImportStatementDefinition extends
             throws SourceException {
 
         String moduleName = stmt.getStatementArgument();
-        String revisionArg = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
-        final Optional<Date> revision;
-        if (revisionArg != null) {
-            try {
-                revision = Optional.of(SimpleDateFormatUtil.getRevisionFormat().parse(revisionArg));
-            } catch (ParseException e) {
-                throw new SourceException(String.format("Revision value %s is not in required format yyyy-MM-dd",
-                        revisionArg), stmt.getStatementSourceReference(), e);
-            }
-        } else {
-            revision = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_IMP);
+        Date revision = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
+        if (revision == null) {
+            revision = SimpleDateFormatUtil.DEFAULT_DATE_IMP;
         }
-        return new ModuleIdentifierImpl(moduleName, Optional.<URI> absent(), revision);
+
+        return new ModuleIdentifierImpl(moduleName, Optional.<URI> absent(), Optional.<Date> of(revision));
     }
 
 }

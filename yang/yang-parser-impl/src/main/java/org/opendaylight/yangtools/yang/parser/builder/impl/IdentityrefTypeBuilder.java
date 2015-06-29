@@ -112,7 +112,7 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
 
     @Override
     public QName getQName() {
-        return null;
+        return qname;
     }
 
     @Override

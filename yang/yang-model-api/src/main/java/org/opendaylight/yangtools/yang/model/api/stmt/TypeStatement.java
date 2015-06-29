@@ -51,28 +51,40 @@ public interface TypeStatement extends DeclaredStatement<String> {
     @Rfc6020AbnfRule("leafref-specification")
     interface LeafrefSpecification extends TypeStatement {
 
-        @Nullable PathStatement getPath();
+        @Nonnull PathStatement getPath();
 
     }
 
+    @Rfc6020AbnfRule("instanceidentifier-specification")
     interface InstanceIdentifierSpecification extends TypeStatement {
 
         @Nullable RequireInstanceStatement getRequireInstance();
     }
 
-
+    @Rfc6020AbnfRule("identityref-specification")
     interface IdentityRefSpecification extends TypeStatement {
 
+        @Nonnull BaseStatement getBase();
+
     }
+
+    @Rfc6020AbnfRule("bits-specification")
     interface BitsSpecification extends TypeStatement {
 
         @Nonnull Collection<? extends BitStatement> getBits();
 
     }
 
+    @Rfc6020AbnfRule("union-specification")
     interface UnionSpecification extends TypeStatement {
 
         @Nonnull Collection<? extends TypeStatement> getTypes();
 
+    }
+
+    @Rfc6020AbnfRule("binary-specification")
+    interface BinarySpecification extends TypeStatement {
+
+        @Nullable LengthStatement getLength();
     }
 }

@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -48,7 +49,7 @@ public class CaseEffectiveStatementImpl extends
         super(ctx);
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
-        // :TODO init other fields
+        this.constraints = new EffectiveConstraintDefinitionImpl(this);
 
         initSubstatementCollections();
         initCopyType(ctx);
@@ -57,18 +58,20 @@ public class CaseEffectiveStatementImpl extends
     private void initCopyType(
             StmtContext<QName, CaseStatement, EffectiveStatement<QName, CaseStatement>> ctx) {
 
-        TypeOfCopy typeOfCopy = ctx.getTypeOfCopy();
-        switch (typeOfCopy) {
-        case ADDED_BY_AUGMENTATION:
+        Set<TypeOfCopy> copyTypesFromOriginal = StmtContextUtils.getCopyTypesFromOriginal(ctx);
+
+        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
             augmenting = true;
-            original = (ChoiceCaseNode) ctx.getOriginalCtx().buildEffective();
-            break;
-        case ADDED_BY_USES:
+        }
+        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
             addedByUses = true;
+        }
+        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
+            addedByUses = augmenting = true;
+        }
+
+        if (ctx.getTypeOfCopy() != TypeOfCopy.ORIGINAL) {
             original = (ChoiceCaseNode) ctx.getOriginalCtx().buildEffective();
-            break;
-        default:
-            break;
         }
     }
 

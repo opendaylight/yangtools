@@ -1,0 +1,11 @@
+submodule submodule-1 {
+
+    belongs-to root-module {
+        prefix root;
+    }
+    
+    include submodule-to-submodule-1 { revision-date 1970-01-01; }
+    
+    container container-in-submodule-1 {
+    }
+}

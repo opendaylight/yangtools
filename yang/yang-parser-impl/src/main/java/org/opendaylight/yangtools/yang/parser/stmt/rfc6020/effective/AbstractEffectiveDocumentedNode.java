@@ -27,18 +27,27 @@ public abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredState
         if (descStmt != null) {
             description = descStmt.argument();
         } else {
-            description = "";
+            description = null;
         }
 
         ReferenceEffectiveStatementImpl refStmt = firstEffective(ReferenceEffectiveStatementImpl.class);
         if (refStmt != null) {
             reference = refStmt.argument();
         } else {
-            reference = "";
+            RevisionEffectiveStatementImpl revision = firstEffective(RevisionEffectiveStatementImpl.class);
+            if (revision != null) {
+                reference = revision.getReference();
+            } else {
+                reference = null;
+            }
         }
 
-        // :TODO
-        status = null;
+        StatusEffectiveStatementImpl statusStmt = firstEffective(StatusEffectiveStatementImpl.class);
+        if (statusStmt != null) {
+            status = statusStmt.argument();
+        } else {
+            status = Status.CURRENT;
+        }
     }
 
     @Override

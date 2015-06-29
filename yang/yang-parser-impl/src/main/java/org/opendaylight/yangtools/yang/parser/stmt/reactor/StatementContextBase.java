@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.HashMultimap;
@@ -115,6 +117,15 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private Collection<StatementContextBase<?, ?, ?>> declared = new ArrayList<>();
     private Collection<StatementContextBase<?, ?, ?>> effective = new ArrayList<>();
+    private Collection<StatementContextBase<?, ?, ?>> effectOfStatement = new ArrayList<>();
+
+    public Collection<StatementContextBase<?, ?, ?>> getEffectOfStatement() {
+        return effectOfStatement;
+    }
+
+    public void addAsEffectOfStatement(StatementContextBase<?, ?, ?> ctx) {
+        effectOfStatement.add(ctx);
+    }
 
     private ModelProcessingPhase completedPhase;
 
@@ -128,6 +139,18 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private StatementContextBase<?, ?, ?> originalCtx;
     private TypeOfCopy typeOfCopy = TypeOfCopy.ORIGINAL;
+
+    private boolean isSupportedToBuildEffective = true;
+
+    @Override
+    public boolean isSupportedToBuildEffective() {
+        return isSupportedToBuildEffective;
+    }
+
+    @Override
+    public void setIsSupportedToBuildEffective(boolean isSupportedToBuildEffective) {
+        this.isSupportedToBuildEffective = isSupportedToBuildEffective;
+    }
 
     @Override
     public TypeOfCopy getTypeOfCopy() {
@@ -210,6 +233,20 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return Collections.unmodifiableCollection(effective);
     }
 
+    public void removeStatementsFromEffectiveSubstatements(Collection<StatementContextBase<?, ?, ?>> substatements) {
+        effective.removeAll(substatements);
+    }
+
+    public void removeStatementFromEffectiveSubstatements(StatementDefinition refineSubstatementDef) {
+        Iterator<StatementContextBase<?, ?, ?>> iterator = effective.iterator();
+        while (iterator.hasNext()) {
+            StatementContextBase<?, ?, ?> next = iterator.next();
+            if (next.getPublicDefinition().equals(refineSubstatementDef)) {
+                iterator.remove();
+            }
+        }
+    }
+
     public void addEffectiveSubstatement(
             StatementContextBase<?, ?, ?> substatement) {
         effective.add(substatement);
@@ -228,8 +265,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
             @Override
             public StatementContextBase build() throws SourceException {
-                StatementContextBase<?, ?, ?> potential = substatements
-                        .get(getIdentifier());
+                StatementContextBase<?, ?, ?> potential = null;
+
+                if (getDefinition().getPublicView() != Rfc6020Mapping.AUGMENT) {
+                    potential = substatements.get(getIdentifier());
+                }
                 if (potential == null) {
                     potential = new SubstatementContext(
                             StatementContextBase.this, this);
@@ -311,8 +351,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
                 .iterator();
         while (listener.hasNext()) {
             OnPhaseFinished next = listener.next();
-            if(next.phaseFinished(this, phase)) {
-             listener.remove();
+            if (next.phaseFinished(this, phase)) {
+                listener.remove();
             }
         }
     }
