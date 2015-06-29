@@ -51,6 +51,12 @@ public interface DataTreeModification extends DataTreeSnapshot {
     void ready();
 
     /**
+     * Marks this modification as resolved.
+     * Attempt to resolve already resolved modification causes {@link IllegalStateException} to be thrown.
+     */
+    void resolve();
+
+    /**
      * Apply the contents of this modification to a cursor. This can be used
      * to replicate this modification onto another one. The cursor's position
      * must match the root of this modification, otherwise performing this

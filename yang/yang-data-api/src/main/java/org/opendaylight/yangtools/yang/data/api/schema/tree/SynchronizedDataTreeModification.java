@@ -59,6 +59,11 @@ public final class SynchronizedDataTreeModification implements DataTreeModificat
     }
 
     @Override
+    public void resolve() {
+        delegate.resolve();
+    }
+
+    @Override
     public synchronized void applyToCursor(final DataTreeModificationCursor cursor) {
         delegate.applyToCursor(cursor);
     }

@@ -22,6 +22,7 @@ public interface DataTreeTip {
 
     /**
      * Prepare a modification for commit.
+     * After prepare call this modification will be resolved and cannot be used to create another data tree candidate
      *
      * @param modification
      * @return candidate data tree
