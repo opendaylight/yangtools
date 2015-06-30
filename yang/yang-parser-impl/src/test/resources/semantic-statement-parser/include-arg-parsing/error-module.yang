@@ -1,0 +1,6 @@
+module error-module {
+    prefix "errm";
+    namespace "errm";
+
+    include foo;
+}

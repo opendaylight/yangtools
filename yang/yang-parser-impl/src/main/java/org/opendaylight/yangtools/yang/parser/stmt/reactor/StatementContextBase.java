@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Identifiable;
+import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -30,80 +31,40 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.ValueAddedListener;
 
 public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends NamespaceStorageSupport implements
-        StmtContext.Mutable<A, D, E>, Identifiable<StatementIdentifier> {
+        extends NamespaceStorageSupport implements StmtContext.Mutable<A, D, E>, Identifiable<StatementIdentifier> {
 
+    /**
+     * event listener when an item is added to model namespace
+     */
     interface OnNamespaceItemAdded extends EventListener {
 
-        void namespaceItemAdded(StatementContextBase<?, ?, ?> context,
-                Class<?> namespace, Object key, Object value)
+        void namespaceItemAdded(StatementContextBase<?, ?, ?> context, Class<?> namespace, Object key, Object value)
                 throws SourceException;
 
     }
 
+    /**
+     * event listener when a parsing {@link ModelProcessingPhase} is completed
+     */
     interface OnPhaseFinished extends EventListener {
 
-        boolean phaseFinished(StatementContextBase<?, ?, ?> context,
-                ModelProcessingPhase phase) throws SourceException;
+        boolean phaseFinished(StatementContextBase<?, ?, ?> context, ModelProcessingPhase phase) throws SourceException;
 
     }
 
+    /**
+     * interface for all mutations within an {@link ModelActionBuilder.InferenceAction}
+     */
     interface ContextMutation {
 
         boolean isFinished();
-
-    }
-
-    abstract static class ContextBuilder<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
-
-        private final StatementDefinitionContext<A, D, E> definition;
-        private final StatementSourceReference stmtRef;
-        private String rawArg;
-        private StatementSourceReference argRef;
-
-        public ContextBuilder(StatementDefinitionContext<A, D, E> def,
-                StatementSourceReference sourceRef) {
-            this.definition = def;
-            this.stmtRef = sourceRef;
-        }
-
-        public void setArgument(@Nonnull String argument,
-                @Nonnull StatementSourceReference argumentSource) {
-            Preconditions.checkArgument(definition.hasArgument(),
-                    "Statement does not take argument.");
-            this.rawArg = Preconditions.checkNotNull(argument);
-            this.argRef = Preconditions.checkNotNull(argumentSource);
-        }
-
-        public String getRawArgument() {
-            return rawArg;
-        }
-
-        public StatementSourceReference getStamementSource() {
-            return stmtRef;
-        }
-
-        public StatementSourceReference getArgumentSource() {
-            return argRef;
-        }
-
-        public StatementDefinitionContext<A, D, E> getDefinition() {
-            return definition;
-        }
-
-        public StatementIdentifier getIdentifier() {
-            return new StatementIdentifier(definition.getStatementName(),
-                    rawArg);
-        }
-
-        public abstract StatementContextBase<A, D, E> build()
-                throws SourceException;
 
     }
 
@@ -115,19 +76,38 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private Collection<StatementContextBase<?, ?, ?>> declared = new ArrayList<>();
     private Collection<StatementContextBase<?, ?, ?>> effective = new ArrayList<>();
+    private Collection<StatementContextBase<?, ?, ?>> effectOfStatement = new ArrayList<>();
+
+    public Collection<StatementContextBase<?, ?, ?>> getEffectOfStatement() {
+        return effectOfStatement;
+    }
+
+    public void addAsEffectOfStatement(StatementContextBase<?, ?, ?> ctx) {
+        effectOfStatement.add(ctx);
+    }
 
     private ModelProcessingPhase completedPhase;
 
-    private Multimap<ModelProcessingPhase, OnPhaseFinished> phaseListeners = HashMultimap
-            .create();
-    private Multimap<ModelProcessingPhase, ContextMutation> phaseMutation = HashMultimap
-            .create();
+    private Multimap<ModelProcessingPhase, OnPhaseFinished> phaseListeners = HashMultimap.create();
+    private Multimap<ModelProcessingPhase, ContextMutation> phaseMutation = HashMultimap.create();
 
     private D declaredInstance;
     private E effectiveInstance;
 
     private StatementContextBase<?, ?, ?> originalCtx;
     private TypeOfCopy typeOfCopy = TypeOfCopy.ORIGINAL;
+
+    private boolean isSupportedToBuildEffective = true;
+
+    @Override
+    public boolean isSupportedToBuildEffective() {
+        return isSupportedToBuildEffective;
+    }
+
+    @Override
+    public void setIsSupportedToBuildEffective(boolean isSupportedToBuildEffective) {
+        this.isSupportedToBuildEffective = isSupportedToBuildEffective;
+    }
 
     @Override
     public TypeOfCopy getTypeOfCopy() {
@@ -159,89 +139,160 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.completedPhase = completedPhase;
     }
 
-    StatementContextBase(@Nonnull ContextBuilder<A, D, E> builder)
-            throws SourceException {
+    StatementContextBase(@Nonnull ContextBuilder<A, D, E> builder) throws SourceException {
         this.definition = builder.getDefinition();
-        this.identifier = builder.getIdentifier();
+        this.identifier = builder.createIdentifier();
         this.statementDeclSource = builder.getStamementSource();
         this.completedPhase = null;
     }
 
     StatementContextBase(StatementContextBase<A, D, E> original) {
-        this.definition = original.definition;
-        this.identifier = original.identifier;
-        this.statementDeclSource = original.statementDeclSource;
+        this.definition = Preconditions
+                .checkNotNull(original.definition, "Statement context definition cannot be null");
+        this.identifier = Preconditions
+                .checkNotNull(original.identifier, "Statement context identifier cannot be null");
+        this.statementDeclSource = Preconditions.checkNotNull(original.statementDeclSource,
+                "Statement context statementDeclSource cannot be null");
         this.completedPhase = null;
     }
 
+    /**
+     * @return context of parent of statement
+     */
     @Override
     public abstract StatementContextBase<?, ?, ?> getParentContext();
 
+    /**
+     * @return root context of statement
+     */
     @Override
     public abstract RootStatementContext<?, ?, ?> getRoot();
 
+    /**
+     * @return statement identifier
+     */
     @Override
     public StatementIdentifier getIdentifier() {
         return identifier;
     }
 
+    /**
+     * @return origin of statement
+     */
     @Override
     public StatementSource getStatementSource() {
         return statementDeclSource.getStatementSource();
     }
 
+    /**
+     * @return reference of statement source
+     */
     @Override
     public StatementSourceReference getStatementSourceReference() {
         return statementDeclSource;
     }
 
+    /**
+     * @return raw statement argument string
+     */
     @Override
     public String rawStatementArgument() {
         return identifier.getArgument();
     }
 
+    /**
+     * @return collection of declared substatements
+     */
     @Override
     public Collection<StatementContextBase<?, ?, ?>> declaredSubstatements() {
         return Collections.unmodifiableCollection(declared);
     }
 
+    /**
+     * @return collection of effective substatements
+     */
     @Override
     public Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements() {
         return Collections.unmodifiableCollection(effective);
     }
 
-    public void addEffectiveSubstatement(
-            StatementContextBase<?, ?, ?> substatement) {
-        effective.add(substatement);
+    public void removeStatementsFromEffectiveSubstatements(Collection<StatementContextBase<?, ?, ?>> substatements) {
+        effective.removeAll(substatements);
     }
 
-    public void addDeclaredSubstatement(
-            StatementContextBase<?, ?, ?> substatement) {
-        declared.add(substatement);
+    public void removeStatementFromEffectiveSubstatements(StatementDefinition refineSubstatementDef) {
+        Iterator<StatementContextBase<?, ?, ?>> iterator = effective.iterator();
+        while (iterator.hasNext()) {
+            StatementContextBase<?, ?, ?> next = iterator.next();
+            if (next.getPublicDefinition().equals(refineSubstatementDef)) {
+                iterator.remove();
+            }
+        }
     }
 
+    /**
+     * adds effective statement to collection of substatements
+     *
+     * @throws IllegalStateException
+     *             if added in declared phase
+     * @throws NullPointerException
+     *             if statement parameter is null
+     */
+    public void addEffectiveSubstatement(StatementContextBase<?, ?, ?> substatement) {
+
+        final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
+        Preconditions.checkState(inProgressPhase == ModelProcessingPhase.FULL_DECLARATION
+                || inProgressPhase == ModelProcessingPhase.EFFECTIVE_MODEL,
+                "Effective statement cannot be added in declared phase");
+
+        effective.add(Preconditions.checkNotNull(substatement,
+                "StatementContextBase effective substatement cannot be null"));
+    }
+
+    /**
+     * adds declared statement to collection of substatements
+     *
+     * @throws IllegalStateException
+     *             if added in effective phase
+     * @throws NullPointerException
+     *             if statement parameter is null
+     */
+    public void addDeclaredSubstatement(StatementContextBase<?, ?, ?> substatement) {
+
+        final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
+        Preconditions.checkState(inProgressPhase != ModelProcessingPhase.EFFECTIVE_MODEL,
+                "Declared statement cannot be added in effective phase");
+
+        declared.add(Preconditions.checkNotNull(substatement,
+                "StatementContextBase declared substatement cannot be null"));
+    }
+
+    /**
+     * builds new substatement from statement definition context and statement source reference
+     */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public ContextBuilder<?, ?, ?> substatementBuilder(
-            StatementDefinitionContext<?, ?, ?> def,
+    public ContextBuilder<?, ?, ?> substatementBuilder(StatementDefinitionContext<?, ?, ?> def,
             StatementSourceReference ref) {
         return new ContextBuilder(def, ref) {
 
             @Override
             public StatementContextBase build() throws SourceException {
-                StatementContextBase<?, ?, ?> potential = substatements
-                        .get(getIdentifier());
+                StatementContextBase<?, ?, ?> potential = null;
+
+                if (getDefinition().getPublicView() != Rfc6020Mapping.AUGMENT) {
+                    potential = substatements.get(createIdentifier());
+                }
                 if (potential == null) {
-                    potential = new SubstatementContext(
-                            StatementContextBase.this, this);
-                    substatements.put(getIdentifier(), potential);
+                    potential = new SubstatementContext(StatementContextBase.this, this);
+                    substatements.put(createIdentifier(), potential);
                 }
                 potential.resetLists();
                 switch (this.getStamementSource().getStatementSource()) {
                 case DECLARATION:
-                    declared.add(potential);
+                    addDeclaredSubstatement(potential);
                     break;
                 case CONTEXT:
-                    effective.add(potential);
+                    addEffectiveSubstatement(potential);
                     break;
                 }
                 return potential;
@@ -249,22 +300,30 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         };
     }
 
+    /**
+     * @return local namespace behaviour type {@link NamespaceBehaviour}
+     */
     @Override
     public StorageNodeType getStorageNodeType() {
         return StorageNodeType.STATEMENT_LOCAL;
     }
 
+    /**
+     * builds {@link DeclaredStatement} for statement context
+     */
     @Override
     public D buildDeclared() {
-        Preconditions
-                .checkArgument(completedPhase == ModelProcessingPhase.FULL_DECLARATION
-                        || completedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
+        Preconditions.checkArgument(completedPhase == ModelProcessingPhase.FULL_DECLARATION
+                || completedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         if (declaredInstance == null) {
             declaredInstance = definition().getFactory().createDeclared(this);
         }
         return declaredInstance;
     }
 
+    /**
+     * builds {@link EffectiveStatement} for statement context
+     */
     @Override
     public E buildEffective() {
         if (effectiveInstance == null) {
@@ -273,14 +332,32 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return effectiveInstance;
     }
 
+    /**
+     * clears collection of declared substatements
+     *
+     * @throws IllegalStateException
+     *             if invoked in effective build phase
+     */
     void resetLists() {
+
+        final SourceSpecificContext sourceContext = getRoot().getSourceContext();
+        Preconditions.checkState(sourceContext.getInProgressPhase() != ModelProcessingPhase.EFFECTIVE_MODEL,
+                "Declared statements list cannot be cleared in effective phase");
+
         declared.clear();
     }
 
-    boolean tryToCompletePhase(ModelProcessingPhase phase)
-            throws SourceException {
-        Iterator<ContextMutation> openMutations = phaseMutation.get(phase)
-                .iterator();
+    /**
+     * tries to execute current {@link ModelProcessingPhase} of source parsing
+     *
+     * @param phase
+     *            to be executed (completed)
+     * @return if phase was successfully completed
+     * @throws SourceException
+     *             when an error occured in source parsing
+     */
+    boolean tryToCompletePhase(ModelProcessingPhase phase) throws SourceException {
+        Iterator<ContextMutation> openMutations = phaseMutation.get(phase).iterator();
         boolean finished = true;
         while (openMutations.hasNext()) {
             ContextMutation current = openMutations.next();
@@ -304,66 +381,72 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return false;
     }
 
-    private void onPhaseCompleted(ModelProcessingPhase phase)
-            throws SourceException {
+    /**
+     * occurs on end of {@link ModelProcessingPhase} of source parsing
+     *
+     * @param phase
+     *            that was to be completed (finished)
+     * @throws SourceException
+     *             when an error occured in source parsing
+     */
+    private void onPhaseCompleted(ModelProcessingPhase phase) throws SourceException {
         completedPhase = phase;
-        Iterator<OnPhaseFinished> listener = phaseListeners.get(completedPhase)
-                .iterator();
+        Iterator<OnPhaseFinished> listener = phaseListeners.get(completedPhase).iterator();
         while (listener.hasNext()) {
             OnPhaseFinished next = listener.next();
-            if(next.phaseFinished(this, phase)) {
-             listener.remove();
+            if (next.phaseFinished(this, phase)) {
+                listener.remove();
             }
         }
     }
 
     /**
-     *
      * Ends declared section of current node.
      *
      * @param ref
      * @throws SourceException
-     *
      */
-    void endDeclared(StatementSourceReference ref, ModelProcessingPhase phase)
-            throws SourceException {
+    void endDeclared(StatementSourceReference ref, ModelProcessingPhase phase) throws SourceException {
         definition().onDeclarationFinished(this, phase);
     }
 
+    /**
+     * @return statement definition
+     */
     protected final StatementDefinitionContext<A, D, E> definition() {
         return definition;
     }
 
     @Override
-    protected void checkLocalNamespaceAllowed(
-            Class<? extends IdentifierNamespace<?, ?>> type) {
+    protected void checkLocalNamespaceAllowed(Class<? extends IdentifierNamespace<?, ?>> type) {
         definition().checkNamespaceAllowed(type);
     }
 
+    /**
+     * occurs when an item is added to model namespace
+     *
+     * @throws SourceException
+     */
     @Override
-    protected <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceElementAdded(
-            Class<N> type, K key, V value) {
+    protected <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceElementAdded(Class<N> type, K key, V value) {
         // definition().onNamespaceElementAdded(this, type, key, value);
     }
 
-    <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceItemAddedAction(
-            final Class<N> type, K key, final OnNamespaceItemAdded listener)
-            throws SourceException {
+    <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceItemAddedAction(final Class<N> type, K key,
+            final OnNamespaceItemAdded listener) throws SourceException {
         Object potential = getFromNamespace(type, key);
         if (potential != null) {
             listener.namespaceItemAdded(this, type, key, potential);
             return;
         }
-        NamespaceBehaviour<K, V, N> behaviour = getBehaviourRegistry()
-                .getNamespaceBehaviour(type);
+        NamespaceBehaviour<K, V, N> behaviour = getBehaviourRegistry().getNamespaceBehaviour(type);
         if (behaviour instanceof NamespaceBehaviourWithListeners) {
             NamespaceBehaviourWithListeners<K, V, N> casted = (NamespaceBehaviourWithListeners<K, V, N>) behaviour;
             casted.addValueListener(key, new ValueAddedListener(this) {
                 @Override
                 void onValueAdded(Object key, Object value) {
                     try {
-                        listener.namespaceItemAdded(StatementContextBase.this,
-                                type, key, value);
+                        listener.namespaceItemAdded(StatementContextBase.this, type, key, value);
                     } catch (SourceException e) {
                         throw Throwables.propagate(e);
                     }
@@ -372,18 +455,32 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         }
     }
 
+    /**
+     * @see StatementSupport#getPublicView()
+     */
     @Override
     public StatementDefinition getPublicDefinition() {
         return definition().getPublicView();
     }
 
+    /**
+     * @return new {@link ModelActionBuilder} for the phase
+     */
     @Override
     public ModelActionBuilder newInferenceAction(ModelProcessingPhase phase) {
         return getRoot().getSourceContext().newInferenceAction(phase);
     }
 
-    void addPhaseCompletedListener(ModelProcessingPhase phase,
-            OnPhaseFinished listener) throws SourceException {
+    /**
+     * adds {@link OnPhaseFinished} listener for a {@link ModelProcessingPhase} end
+     *
+     * @throws SourceException
+     */
+    void addPhaseCompletedListener(ModelProcessingPhase phase, OnPhaseFinished listener) throws SourceException {
+
+        Preconditions.checkNotNull(phase, "Statement context processing phase cannot be null");
+        Preconditions.checkNotNull(listener, "Statement context phase listener cannot be null");
+
         ModelProcessingPhase finishedPhase = completedPhase;
         while (finishedPhase != null) {
             if (phase.equals(finishedPhase)) {
@@ -395,21 +492,36 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         phaseListeners.put(phase, listener);
     }
 
+    /**
+     * adds {@link ContextMutation} to {@link ModelProcessingPhase}
+     *
+     * @throws IllegalStateException
+     *             when the mutation was registered after phase was completed
+     */
     void addMutation(ModelProcessingPhase phase, ContextMutation mutation) {
         ModelProcessingPhase finishedPhase = completedPhase;
         while (finishedPhase != null) {
             if (phase.equals(finishedPhase)) {
-                throw new IllegalStateException(
-                        "Mutation registered after phase was completed.");
+                throw new IllegalStateException("Mutation registered after phase was completed.");
             }
             finishedPhase = finishedPhase.getPreviousPhase();
         }
         phaseMutation.put(phase, mutation);
     }
 
+    /**
+     * adds statement to namespace map with the key
+     *
+     * @param namespace
+     *            {@link StatementNamespace} child that determines namespace to be added to
+     * @param key
+     *            of type according to namespace class specification
+     * @param stmt
+     *            to be added to namespace map
+     */
     @Override
-    public <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(
-            Class<N> namespace, KT key, StmtContext<?, ?, ?> stmt) {
+    public <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(Class<N> namespace, KT key,
+            StmtContext<?, ?, ?> stmt) {
         addContextToNamespace(namespace, (K) key, stmt);
     }
 }

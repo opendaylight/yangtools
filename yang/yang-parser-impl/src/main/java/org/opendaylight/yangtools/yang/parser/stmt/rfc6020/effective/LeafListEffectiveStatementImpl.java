@@ -7,16 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+import java.util.Set;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
@@ -25,20 +23,24 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-public class LeafListEffectiveStatementImpl extends
-        AbstractEffectiveDocumentedNode<QName, LeafListStatement> implements
+public class LeafListEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, LeafListStatement> implements
         LeafListSchemaNode, DerivableSchemaNode {
     private final QName qname;
     private final SchemaPath path;
 
-    boolean augmenting;
-    boolean addedByUses;
-    LeafListSchemaNode original;
-    boolean configuration;
-    ConstraintDefinition constraintsDef;
-    TypeDefinition<?> type;
-    boolean userOrdered;
+    private boolean augmenting;
+    private boolean addedByUses;
+    private LeafListSchemaNode original;
+    private boolean configuration = true;
+    private ConstraintDefinition constraintsDef;
+    private TypeDefinition<?> type;
+    private boolean userOrdered;
 
     private ImmutableList<UnknownSchemaNode> unknownNodes;
 
@@ -47,7 +49,9 @@ public class LeafListEffectiveStatementImpl extends
         super(ctx);
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
-        // :TODO init other fields
+        this.constraintsDef = new EffectiveConstraintDefinitionImpl(this);
+
+        // :TODO init TypeDefinition
 
         initSubstatementCollections();
         initCopyType(ctx);
@@ -56,32 +60,45 @@ public class LeafListEffectiveStatementImpl extends
     private void initCopyType(
             StmtContext<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> ctx) {
 
-        TypeOfCopy typeOfCopy = ctx.getTypeOfCopy();
-        switch (typeOfCopy) {
-        case ADDED_BY_AUGMENTATION:
+        Set<TypeOfCopy> copyTypesFromOriginal = StmtContextUtils.getCopyTypesFromOriginal(ctx);
+
+        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
             augmenting = true;
-            original = (LeafListSchemaNode) ctx.getOriginalCtx()
-                    .buildEffective();
-            break;
-        case ADDED_BY_USES:
+        }
+        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
             addedByUses = true;
-            original = (LeafListSchemaNode) ctx.getOriginalCtx()
-                    .buildEffective();
-            break;
-        default:
-            break;
+        }
+        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
+            addedByUses = augmenting = true;
+        }
+
+        if (ctx.getTypeOfCopy() != TypeOfCopy.ORIGINAL) {
+            original = (LeafListSchemaNode) ctx.getOriginalCtx().buildEffective();
         }
     }
-
     private void initSubstatementCollections() {
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
 
+        boolean configurationInit = false;
+        boolean userOrderedInit = false;
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
-                UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
-                unknownNodesInit.add(unknownNode);
+                unknownNodesInit.add((UnknownSchemaNode) effectiveStatement);
+            }
+            if (effectiveStatement instanceof TypeDefinition) {
+                type = TypeUtils.getTypeFromEffectiveStatement(effectiveStatement);
+            }
+            if (!configurationInit && effectiveStatement instanceof ConfigEffectiveStatementImpl) {
+                ConfigEffectiveStatementImpl configStmt = (ConfigEffectiveStatementImpl) effectiveStatement;
+                this.configuration = configStmt.argument();
+                configurationInit = true;
+            }
+            if (!userOrderedInit && effectiveStatement instanceof OrderedByEffectiveStatementImpl) {
+                OrderedByEffectiveStatementImpl orderedByStmt = (OrderedByEffectiveStatementImpl) effectiveStatement;
+                this.userOrdered = orderedByStmt.argument().equals("user") ? true : false;
+                userOrderedInit = true;
             }
         }
 
@@ -178,8 +195,7 @@ public class LeafListEffectiveStatementImpl extends
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(
-                LeafListEffectiveStatementImpl.class.getSimpleName());
+        StringBuilder sb = new StringBuilder(LeafListEffectiveStatementImpl.class.getSimpleName());
         sb.append("[");
         sb.append(qname);
         sb.append("]");
