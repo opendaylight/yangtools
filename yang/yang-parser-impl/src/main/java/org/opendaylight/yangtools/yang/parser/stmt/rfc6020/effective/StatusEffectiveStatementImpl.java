@@ -7,14 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import org.opendaylight.yangtools.yang.model.api.Status;
+
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class StatusEffectiveStatementImpl extends
-        EffectiveStatementBase<String, StatusStatement> {
+        EffectiveStatementBase<Status, StatusStatement> {
 
     public StatusEffectiveStatementImpl(
-            StmtContext<String, StatusStatement, ?> ctx) {
+            StmtContext<Status, StatusStatement, ?> ctx) {
         super(ctx);
 
     }

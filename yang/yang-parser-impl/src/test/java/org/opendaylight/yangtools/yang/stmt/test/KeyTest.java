@@ -22,9 +22,9 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceIm
 public class KeyTest {
 
     private static final YangStatementSourceImpl KEY_SIMPLE_AND_COMP = new YangStatementSourceImpl(
-            "/semantic-statement-parser/key-arg-parsing/key-simple-and-comp.yang");
+            "/semantic-statement-parser/key-arg-parsing/key-simple-and-comp.yang", false);
     private static final YangStatementSourceImpl KEY_COMP_DUPLICATE = new YangStatementSourceImpl(
-            "/semantic-statement-parser/key-arg-parsing/key-comp-duplicate.yang");
+            "/semantic-statement-parser/key-arg-parsing/key-comp-duplicate.yang", false);
 
     @Test
     public void keySimpleTest() throws SourceException, ReactorException {

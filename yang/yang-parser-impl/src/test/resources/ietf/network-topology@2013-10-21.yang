@@ -317,7 +317,7 @@ module network-topology  {
                 ";
                 key "link-id";
                 uses link-attributes;
-                must "boolean(../underlay-topology/link[./supporting-link]";
+                must "boolean(../underlay-topology/link[./supporting-link])";
                     // Constraint: any supporting link must be part of an underlay topology
                 must "boolean(../node[./source/source-node])";
                     // Constraint: A link must have as source a node of the same topology

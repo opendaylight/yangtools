@@ -7,8 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RevisionDateEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
+import java.text.ParseException;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import java.util.Date;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RevisionDateEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
@@ -17,42 +21,51 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class RevisionDateStatementImpl extends
-        AbstractDeclaredStatement<String> implements RevisionDateStatement {
+        AbstractDeclaredStatement<Date> implements RevisionDateStatement {
 
     protected RevisionDateStatementImpl(
-            StmtContext<String, RevisionDateStatement, ?> context) {
+            StmtContext<Date, RevisionDateStatement, ?> context) {
         super(context);
     }
 
     public static class Definition
             extends
-            AbstractStatementSupport<String, RevisionDateStatement, EffectiveStatement<String, RevisionDateStatement>> {
+            AbstractStatementSupport<Date, RevisionDateStatement, EffectiveStatement<Date, RevisionDateStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.REVISION_DATE);
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
-            return value;
+        public Date parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) throws SourceException {
+            Date revision;
+            try {
+                revision = SimpleDateFormatUtil.getRevisionFormat()
+                        .parse(value);
+            } catch (ParseException e) {
+                throw new SourceException(String.format("Revision value %s is not in required format yyyy-MM-dd",
+                        value), ctx.getStatementSourceReference(), e);
+            }
+
+            return revision;
         }
 
         @Override
         public RevisionDateStatement createDeclared(
-                StmtContext<String, RevisionDateStatement, ?> ctx) {
+                StmtContext<Date, RevisionDateStatement, ?> ctx) {
             return new RevisionDateStatementImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<String, RevisionDateStatement> createEffective(
-                StmtContext<String, RevisionDateStatement, EffectiveStatement<String, RevisionDateStatement>> ctx) {
+        public EffectiveStatement<Date, RevisionDateStatement> createEffective(
+                StmtContext<Date, RevisionDateStatement, EffectiveStatement<Date, RevisionDateStatement>> ctx) {
             return new RevisionDateEffectiveStatementImpl(ctx);
         }
 
     }
 
     @Override
-    public String getDate() {
+    public Date getDate() {
         return argument();
     }
 

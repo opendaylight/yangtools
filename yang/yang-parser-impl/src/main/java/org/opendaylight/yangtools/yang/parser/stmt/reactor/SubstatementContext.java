@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import java.util.List;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.GroupingUtils;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -34,6 +38,7 @@ class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Effective
                 builder.getRawArgument());
     }
 
+    @SuppressWarnings("unchecked")
     SubstatementContext(SubstatementContext<A, D, E> original,
             QNameModule newQNameModule,
             StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
@@ -41,10 +46,20 @@ class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Effective
         super(original);
         this.parent = newParent;
 
-        if (newQNameModule != null && original.argument instanceof QName) {
-            QName originalQName = (QName) original.argument;
-            this.argument = (A) QName.create(newQNameModule,
-                    originalQName.getLocalName());
+        if (newQNameModule != null) {
+            if (original.argument instanceof QName) {
+                QName originalQName = (QName) original.argument;
+                this.argument = (A) QName.create(newQNameModule,
+                        originalQName.getLocalName());
+            } else if (StmtContextUtils.producesDeclared(original,
+                    KeyStatement.class)) {
+                this.argument = (A) StmtContextUtils
+                        .replaceModuleQNameForKey(
+                                (StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, ?>) original,
+                                newQNameModule);
+            } else {
+                this.argument = original.argument;
+            }
         } else {
             this.argument = original.argument;
         }
@@ -112,6 +127,13 @@ class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Effective
     }
 
     @Override
+    public StatementContextBase<?, ?, ?> createCopy(
+            StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
+            throws SourceException {
+        return createCopy(null, newParent, typeOfCopy);
+    }
+
+    @Override
     public StatementContextBase<A, D, E> createCopy(QNameModule newQNameModule,
             StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
             throws SourceException {
@@ -127,6 +149,14 @@ class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Effective
         List<Object> argumentsFromRoot = parent.getArgumentsFromRoot();
         argumentsFromRoot.add(argument);
         return argumentsFromRoot;
+    }
+
+    @Override
+    public List<StmtContext<?, ?, ?>> getStmtContextsFromRoot() {
+        List<StmtContext<?, ?, ?>> stmtContextsList = parent
+                .getStmtContextsFromRoot();
+        stmtContextsList.add(this);
+        return stmtContextsList;
     }
 
     @Override
