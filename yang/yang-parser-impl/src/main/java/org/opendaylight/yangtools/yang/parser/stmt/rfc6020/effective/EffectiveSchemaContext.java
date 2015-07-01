@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
+
 import java.util.HashSet;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
@@ -49,7 +51,10 @@ public class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
                 modulesInit.add(module);
             }
         }
-        this.modules = ImmutableSet.copyOf(modulesInit);
+
+        Module[] moduleArray = new Module[modulesInit.size()];
+        List<Module> sortedModuleList = ModuleDependencySort.sort(modulesInit.toArray(moduleArray));
+        this.modules = ImmutableSet.copyOf(sortedModuleList);
 
         final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(
                 new TreeMap<URI, Collection<Module>>(), MODULE_SET_SUPPLIER);

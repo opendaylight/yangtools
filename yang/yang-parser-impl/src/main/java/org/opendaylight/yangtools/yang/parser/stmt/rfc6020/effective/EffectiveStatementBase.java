@@ -54,11 +54,13 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
 
         Collection<StatementContextBase<?, ?, ?>> substatementsInit = new LinkedList<>();
 
-        for(StatementContextBase<?, ?, ?> declaredSubstatement : declaredSubstatements) {
-            if(declaredSubstatement.getPublicDefinition() == Rfc6020Mapping.USES) {
+        for (StatementContextBase<?, ?, ?> declaredSubstatement : declaredSubstatements) {
+            if (declaredSubstatement.getPublicDefinition() == Rfc6020Mapping.USES) {
                 substatementsInit.add(declaredSubstatement);
-                substatementsInit.addAll(declaredSubstatement.getEffectOfStatement());
-                effectiveSubstatements.removeAll(declaredSubstatement.getEffectOfStatement());
+                substatementsInit.addAll(declaredSubstatement
+                        .getEffectOfStatement());
+                effectiveSubstatements.removeAll(declaredSubstatement
+                        .getEffectOfStatement());
             } else {
                 substatementsInit.add(declaredSubstatement);
             }
@@ -66,7 +68,8 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
 
         substatementsInit.addAll(effectiveSubstatements);
 
-        this.substatements = FluentIterable.from(substatementsInit).filter(StmtContextUtils.IS_SUPPORTED_TO_BUILD_EFFECTIVE)
+        this.substatements = FluentIterable.from(substatementsInit)
+                .filter(StmtContextUtils.IS_SUPPORTED_TO_BUILD_EFFECTIVE)
                 .transform(StmtContextUtils.buildEffective()).toList();
     }
 
@@ -138,8 +141,7 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
     }
 
     @SuppressWarnings("unchecked")
-    protected final <T> Collection<T> allSubstatementsOfType(
-            Class<T> type) {
+    protected final <T> Collection<T> allSubstatementsOfType(Class<T> type) {
         Collection<T> result = null;
 
         try {
@@ -161,4 +163,19 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
         }
         return result;
     }
+
+    protected final <R> R firstSubstatementOfType(Class<?> type,
+            Class<R> returnType) {
+        R result = null;
+        try {
+            result = returnType.cast(Iterables.find(
+                    substatements,
+                    Predicates.and(Predicates.instanceOf(type),
+                            Predicates.instanceOf(returnType))));
+        } catch (NoSuchElementException e) {
+            result = null;
+        }
+        return result;
+    }
+
 }
