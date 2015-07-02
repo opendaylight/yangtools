@@ -7,14 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-
+import java.util.SortedSet;
+import java.util.TreeSet;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import java.util.Collection;
 import java.util.HashSet;
@@ -62,26 +63,27 @@ public class ChoiceEffectiveStatementImpl extends
         this.path = Utils.getSchemaPath(ctx);
         this.constraints = new EffectiveConstraintDefinitionImpl(this);
 
-        initSubstatementCollectionsAndFields();
         initCopyType(ctx);
+        initSubstatementCollectionsAndFields();
     }
 
     private void initCopyType(
             StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
 
-        Set<TypeOfCopy> copyTypesFromOriginal = StmtContextUtils.getCopyTypesFromOriginal(ctx);
+        List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
 
-        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
+        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
             augmenting = true;
         }
-        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
+        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
             addedByUses = true;
         }
-        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
+        if (copyTypesFromOriginal
+                .contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
             addedByUses = augmenting = true;
         }
 
-        if (ctx.getTypeOfCopy() != TypeOfCopy.ORIGINAL) {
+        if (ctx.getOriginalCtx() != null) {
             original = (ChoiceSchemaNode) ctx.getOriginalCtx().buildEffective();
         }
     }
@@ -91,7 +93,7 @@ public class ChoiceEffectiveStatementImpl extends
 
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
         Set<AugmentationSchema> augmentationsInit = new HashSet<>();
-        Set<ChoiceCaseNode> casesInit = new HashSet<>();
+        SortedSet<ChoiceCaseNode> casesInit = new TreeSet<>(Comparators.SCHEMA_NODE_COMP);
 
         boolean configurationInit = false;
         boolean defaultInit = false;
@@ -113,9 +115,16 @@ public class ChoiceEffectiveStatementImpl extends
                     || effectiveStatement instanceof ListSchemaNode
                     || effectiveStatement instanceof LeafListSchemaNode
                     || effectiveStatement instanceof LeafSchemaNode) {
+
+                DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;
                 ChoiceCaseNode shorthandCase = new CaseShorthandImpl(
-                        (DataSchemaNode) effectiveStatement);
+                        dataSchemaNode);
                 casesInit.add(shorthandCase);
+
+                if (dataSchemaNode.isAugmenting() == true
+                        && this.augmenting == false) {
+                    resetAugmenting(dataSchemaNode);
+                }
             }
             if (!configurationInit
                     && effectiveStatement instanceof ConfigEffectiveStatementImpl) {
@@ -134,6 +143,25 @@ public class ChoiceEffectiveStatementImpl extends
         this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
         this.cases = ImmutableSet.copyOf(casesInit);
+    }
+
+    private void resetAugmenting(DataSchemaNode dataSchemaNode) {
+        if (dataSchemaNode instanceof LeafEffectiveStatementImpl) {
+            LeafEffectiveStatementImpl leaf = (LeafEffectiveStatementImpl) dataSchemaNode;
+            leaf.augmenting = false;
+        } else if (dataSchemaNode instanceof ContainerEffectiveStatementImpl) {
+            ContainerEffectiveStatementImpl container = (ContainerEffectiveStatementImpl) dataSchemaNode;
+            container.augmenting = false;
+        } else if (dataSchemaNode instanceof LeafListEffectiveStatementImpl) {
+            LeafListEffectiveStatementImpl leafList = (LeafListEffectiveStatementImpl) dataSchemaNode;
+            leafList.augmenting = false;
+        } else if (dataSchemaNode instanceof ListEffectiveStatementImpl) {
+            ListEffectiveStatementImpl list = (ListEffectiveStatementImpl) dataSchemaNode;
+            list.augmenting = false;
+        } else if (dataSchemaNode instanceof AnyXmlEffectiveStatementImpl) {
+            AnyXmlEffectiveStatementImpl anyXml = (AnyXmlEffectiveStatementImpl) dataSchemaNode;
+            anyXml.augmenting = false;
+        }
     }
 
     @Override
