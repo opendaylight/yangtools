@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import java.util.ArrayList;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LengthEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.PatternEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.RangeEffectiveStatementImpl;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import java.util.Collections;
@@ -31,7 +35,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.TypeDefinitionEffectiveBuilder;
 
-public class TypeDefEffectiveStatementImpl extends EffectiveStatementBase<QName, TypedefStatement> implements
+public class TypeDefEffectiveStatementImpl extends
+        EffectiveStatementBase<QName, TypedefStatement> implements
         TypeDefinition<TypeDefinition<?>>, TypeDefinitionEffectiveBuilder {
 
     private final QName qName;
@@ -54,72 +59,122 @@ public class TypeDefEffectiveStatementImpl extends EffectiveStatementBase<QName,
 
     private ExtendedType extendedType = null;
 
-    public TypeDefEffectiveStatementImpl(StmtContext<QName, TypedefStatement, ?> ctx) {
+    public TypeDefEffectiveStatementImpl(
+            StmtContext<QName, TypedefStatement, ?> ctx) {
         super(ctx);
 
         qName = ctx.getStatementArgument();
         path = Utils.getSchemaPath(ctx);
+        baseType = parseBaseTypeFromCtx(ctx);
 
-        ExtendedTypeEffectiveStatementImpl type = null;
+        EffectiveStatementBase<?, ?> typeEffectiveStmt = firstSubstatementOfType(
+                TypeDefinition.class, EffectiveStatementBase.class);
+
+        ranges = initRanges(typeEffectiveStmt);
+        lengths = initLengths(typeEffectiveStmt);
+        patterns = initPatterns(typeEffectiveStmt);
+
+        //due to compatibility problems with original yang parser
+        if (typeEffectiveStmt.argument().equals(TypeUtils.DECIMAL64)
+                && ranges.isEmpty()) {
+            fractionDigits = null;
+        } else {
+            fractionDigits = initFractionDigits(typeEffectiveStmt);
+        }
 
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof ExtendedTypeEffectiveStatementImpl) {
-                type = ((ExtendedTypeEffectiveStatementImpl) effectiveStatement);
-            }
             if (effectiveStatement instanceof DefaultEffectiveStatementImpl) {
-                defaultValue = ((DefaultEffectiveStatementImpl) effectiveStatement).argument();
+                defaultValue = ((DefaultEffectiveStatementImpl) effectiveStatement)
+                        .argument();
             }
             if (effectiveStatement instanceof UnitsEffectiveStatementImpl) {
-                units = ((UnitsEffectiveStatementImpl) effectiveStatement).argument();
+                units = ((UnitsEffectiveStatementImpl) effectiveStatement)
+                        .argument();
             }
             if (effectiveStatement instanceof DescriptionEffectiveStatementImpl) {
-                description = ((DescriptionEffectiveStatementImpl) effectiveStatement).argument();
+                description = ((DescriptionEffectiveStatementImpl) effectiveStatement)
+                        .argument();
             }
             if (effectiveStatement instanceof ReferenceEffectiveStatementImpl) {
-                reference = ((ReferenceEffectiveStatementImpl) effectiveStatement).argument();
+                reference = ((ReferenceEffectiveStatementImpl) effectiveStatement)
+                        .argument();
             }
             if (effectiveStatement instanceof StatusEffectiveStatementImpl) {
-                status = ((StatusEffectiveStatementImpl) effectiveStatement).argument();
+                status = ((StatusEffectiveStatementImpl) effectiveStatement)
+                        .argument();
             }
         }
-
-        if (type != null) {
-
-            ranges = ImmutableList.copyOf(type.getRangeConstraints());
-            lengths = ImmutableList.copyOf(type.getLengthConstraints());
-            patterns = ImmutableList.copyOf(type.getPatternConstraints());
-            fractionDigits = type.getFractionDigits();
-        } else {
-
-            ranges = Collections.emptyList();
-            lengths = Collections.emptyList();
-            patterns = Collections.emptyList();
-            fractionDigits = null;
-        }
-
-        baseType = parseBaseTypeFromCtx(ctx);
     }
 
-    private TypeDefinition<?> parseBaseTypeFromCtx(final StmtContext<QName, TypedefStatement, ?> ctx) {
+    private TypeDefinition<?> parseBaseTypeFromCtx(
+            final StmtContext<QName, TypedefStatement, ?> ctx) {
 
         TypeDefinition<?> baseType;
 
-        QName baseTypeQName = Utils.qNameFromArgument(ctx,
-                StmtContextUtils.firstAttributeOf(ctx.declaredSubstatements(), TypeStatement.class));
+        QName baseTypeQName = Utils.qNameFromArgument(ctx, StmtContextUtils
+                .firstAttributeOf(ctx.declaredSubstatements(),
+                        TypeStatement.class));
 
-        if (TypeUtils.isYangBaseTypeString(baseTypeQName.getLocalName())) {
-            baseType = TypeUtils.getYangBaseTypeFromString(baseTypeQName.getLocalName());
+        if (TypeUtils.isYangBuiltInTypeString(baseTypeQName.getLocalName())) {
+            baseType = TypeUtils.getYangPrimitiveTypeFromString(baseTypeQName
+                    .getLocalName());
+            if (baseType == null) {
+                baseType = firstSubstatementOfType(TypeDefinition.class);
+            }
         } else {
             StmtContext<?, TypedefStatement, EffectiveStatement<QName, TypedefStatement>> baseTypeCtx = ctx
-                    .getParentContext().getFromNamespace(TypeNamespace.class, baseTypeQName);
-            baseType = (TypeDefEffectiveStatementImpl) baseTypeCtx.buildEffective();
-        }
-
-        if (baseType == null) {
-            baseType = firstSubstatementOfType(TypeDefinition.class);
+                    .getParentContext().getFromNamespace(TypeNamespace.class,
+                            baseTypeQName);
+            baseType = (TypeDefEffectiveStatementImpl) baseTypeCtx
+                    .buildEffective();
         }
 
         return baseType;
+    }
+
+    protected Integer initFractionDigits(
+            EffectiveStatementBase<?, ?> typeEffectiveStmt) {
+        final FractionDigitsEffectiveStatementImpl fractionDigitsEffStmt = typeEffectiveStmt
+                .firstEffective(FractionDigitsEffectiveStatementImpl.class);
+        return fractionDigitsEffStmt != null ? fractionDigitsEffStmt.argument()
+                : null;
+    }
+
+    protected List<RangeConstraint> initRanges(
+            EffectiveStatementBase<?, ?> typeEffectiveStmt) {
+        final RangeEffectiveStatementImpl rangeConstraints = typeEffectiveStmt
+                .firstEffective(RangeEffectiveStatementImpl.class);
+        return rangeConstraints != null ? rangeConstraints.argument()
+                : Collections.<RangeConstraint> emptyList();
+    }
+
+    protected List<LengthConstraint> initLengths(
+            EffectiveStatementBase<?, ?> typeEffectiveStmt) {
+        final LengthEffectiveStatementImpl lengthConstraints = typeEffectiveStmt
+                .firstEffective(LengthEffectiveStatementImpl.class);
+        return lengthConstraints != null ? lengthConstraints.argument()
+                : Collections.<LengthConstraint> emptyList();
+    }
+
+    protected List<PatternConstraint> initPatterns(
+            EffectiveStatementBase<?, ?> typeEffectiveStmt) {
+        final List<PatternConstraint> patternConstraints = new ArrayList<>();
+
+        for (final EffectiveStatement<?, ?> effectiveStatement : typeEffectiveStmt
+                .effectiveSubstatements()) {
+            if (effectiveStatement instanceof PatternEffectiveStatementImpl) {
+                final PatternConstraint pattern = ((PatternEffectiveStatementImpl) effectiveStatement)
+                        .argument();
+
+                if (pattern != null) {
+                    patternConstraints.add(pattern);
+                }
+            }
+        }
+
+        return !patternConstraints.isEmpty() ? ImmutableList
+                .copyOf(patternConstraints) : Collections
+                .<PatternConstraint> emptyList();
     }
 
     @Override
@@ -193,10 +248,13 @@ public class TypeDefEffectiveStatementImpl extends EffectiveStatementBase<QName,
         Builder extendedTypeBuilder;
         if (baseType instanceof TypeDefinitionEffectiveBuilder) {
             TypeDefinitionEffectiveBuilder typeDefBaseType = (TypeDefinitionEffectiveBuilder) baseType;
-            extendedTypeBuilder = ExtendedType.builder(qName, typeDefBaseType.buildType(),
-                    Optional.fromNullable(description), Optional.fromNullable(reference), path);
+            extendedTypeBuilder = ExtendedType.builder(qName,
+                    typeDefBaseType.buildType(),
+                    Optional.fromNullable(description),
+                    Optional.fromNullable(reference), path);
         } else {
-            extendedTypeBuilder = ExtendedType.builder(qName, baseType, Optional.fromNullable(description),
+            extendedTypeBuilder = ExtendedType.builder(qName, baseType,
+                    Optional.fromNullable(description),
                     Optional.fromNullable(reference), path);
         }
 

@@ -66,7 +66,7 @@ public class TypeUtils {
 
     public static final Set<String> BUILT_IN_TYPES = new HashSet<>();
     public static final Set<String> TYPE_BODY_STMTS = new HashSet<>();
-    public static final Map<String, TypeDefinition> BASE_TYPES_MAP = new HashMap<>();
+    public static final Map<String, TypeDefinition<?>> PRIMITIVE_TYPES_MAP = new HashMap<>();
 
     static {
 
@@ -97,20 +97,19 @@ public class TypeUtils {
         TYPE_BODY_STMTS.add(INSTANCE_IDENTIFIER);
         TYPE_BODY_STMTS.add(BITS);
         TYPE_BODY_STMTS.add(UNION);
-        TYPE_BODY_STMTS.add(BINARY);
 
-        BASE_TYPES_MAP.put(BINARY, BinaryType.getInstance());
-        BASE_TYPES_MAP.put(BOOLEAN, BooleanType.getInstance());
-        BASE_TYPES_MAP.put(EMPTY, EmptyType.getInstance());
-        BASE_TYPES_MAP.put(INT8, Int8.getInstance());
-        BASE_TYPES_MAP.put(INT16, Int16.getInstance());
-        BASE_TYPES_MAP.put(INT32, Int32.getInstance());
-        BASE_TYPES_MAP.put(INT64, Int64.getInstance());
-        BASE_TYPES_MAP.put(STRING, StringType.getInstance());
-        BASE_TYPES_MAP.put(UINT8, Uint8.getInstance());
-        BASE_TYPES_MAP.put(UINT16, Uint16.getInstance());
-        BASE_TYPES_MAP.put(UINT32, Uint32.getInstance());
-        BASE_TYPES_MAP.put(UINT64, Uint64.getInstance());
+        PRIMITIVE_TYPES_MAP.put(BINARY, BinaryType.getInstance());
+        PRIMITIVE_TYPES_MAP.put(BOOLEAN, BooleanType.getInstance());
+        PRIMITIVE_TYPES_MAP.put(EMPTY, EmptyType.getInstance());
+        PRIMITIVE_TYPES_MAP.put(INT8, Int8.getInstance());
+        PRIMITIVE_TYPES_MAP.put(INT16, Int16.getInstance());
+        PRIMITIVE_TYPES_MAP.put(INT32, Int32.getInstance());
+        PRIMITIVE_TYPES_MAP.put(INT64, Int64.getInstance());
+        PRIMITIVE_TYPES_MAP.put(STRING, StringType.getInstance());
+        PRIMITIVE_TYPES_MAP.put(UINT8, Uint8.getInstance());
+        PRIMITIVE_TYPES_MAP.put(UINT16, Uint16.getInstance());
+        PRIMITIVE_TYPES_MAP.put(UINT32, Uint32.getInstance());
+        PRIMITIVE_TYPES_MAP.put(UINT64, Uint64.getInstance());
     }
 
     private TypeUtils() {
@@ -253,12 +252,27 @@ public class TypeUtils {
         return rangeConstraints;
     }
 
-    public static boolean isYangBaseTypeString(String typeName) {
+    public static boolean isBuiltInType(TypeDefinition<?> o1) {
+        return BUILT_IN_TYPES.contains(o1.getQName().getLocalName());
+    }
+
+    public static boolean isYangBuiltInTypeString(String typeName) {
         return BUILT_IN_TYPES.contains(typeName);
     }
 
-    public static boolean isYangTypeBodyStmt(String typeName) {
+    public static boolean isYangPrimitiveTypeString(String typeName) {
+        return PRIMITIVE_TYPES_MAP.containsKey(typeName);
+    }
+
+    public static boolean isYangTypeBodyStmtString(String typeName) {
         return TYPE_BODY_STMTS.contains(typeName);
+    }
+
+    public static TypeDefinition<?> getYangPrimitiveTypeFromString(String typeName) {
+        if (PRIMITIVE_TYPES_MAP.containsKey(typeName)) {
+            return PRIMITIVE_TYPES_MAP.get(typeName);
+        }
+        return null;
     }
 
     public static TypeDefinition<?> getTypeFromEffectiveStatement(EffectiveStatement<?, ?> effectiveStatement) {
@@ -266,18 +280,9 @@ public class TypeUtils {
             TypeDefinitionEffectiveBuilder typeDefEffectiveBuilder = (TypeDefinitionEffectiveBuilder) effectiveStatement;
             return typeDefEffectiveBuilder.buildType();
         } else {
-            final String typeName = ((TypeDefinition) effectiveStatement).getQName().getLocalName();
-            return BASE_TYPES_MAP.get(typeName);
+            final String typeName = ((TypeDefinition<?>) effectiveStatement).getQName().getLocalName();
+            return PRIMITIVE_TYPES_MAP.get(typeName);
         }
-    }
-
-    public static TypeDefinition<?> getYangBaseTypeFromString(String typeName) {
-
-        if (BASE_TYPES_MAP.containsKey(typeName)) {
-            return BASE_TYPES_MAP.get(typeName);
-        }
-
-        return null;
     }
 
     public static void sortTypes(List<TypeDefinition<?>> typesInit) {
@@ -295,7 +300,4 @@ public class TypeUtils {
         });
     }
 
-    public static boolean isBuiltInType(TypeDefinition<?> o1) {
-        return BUILT_IN_TYPES.contains(o1.getQName().getLocalName());
-    }
 }
