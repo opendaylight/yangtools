@@ -7,13 +7,17 @@
  */
 package org.opendaylight.yangtools.sal.binding.generator.impl;
 
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
@@ -23,11 +27,9 @@ import org.opendaylight.yangtools.sal.binding.generator.api.ModuleInfoRegistry;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,11 +82,12 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
     private synchronized Optional<SchemaContext> recreateSchemaContext() {
         try {
             ImmutableList<InputStream> streams = getAvailableStreams();
-            YangParserImpl parser = new YangParserImpl();
-            Set<Module> modules = parser.parseYangModelsFromStreams(streams);
-            SchemaContext schemaContext = parser.resolveSchemaContext(modules);
+            CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
+                    .newBuild();
+            SchemaContext schemaContext = reactor.buildEffective(streams);
+
             return Optional.of(schemaContext);
-        } catch (IOException e) {
+        } catch (IOException | SourceException | ReactorException e) {
             LOG.error("Schema was not recreated.",e);
         }
         return Optional.absent();

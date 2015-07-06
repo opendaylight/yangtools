@@ -89,7 +89,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
                 try {
                     final String argument = Utils.stringFromStringContext((YangStatementParser.ArgumentContext) child);
                     if (isType) {
-                            if (TypeUtils.isYangTypeBodyStmt(argument)) {
+                            if (TypeUtils.isYangTypeBodyStmtString(argument)) {
                                 writer.startStatement(new QName(YangConstants.RFC6020_YIN_NAMESPACE, argument), ref);
                             } else {
                                 writer.startStatement(new QName(YangConstants.RFC6020_YIN_NAMESPACE, Rfc6020Mapping

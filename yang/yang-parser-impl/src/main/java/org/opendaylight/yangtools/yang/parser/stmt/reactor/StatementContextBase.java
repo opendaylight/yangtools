@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import java.util.LinkedList;
 
+import java.util.List;
+import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.HashMultimap;
@@ -112,6 +114,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private final StatementDefinitionContext<A, D, E> definition;
     private final StatementIdentifier identifier;
     private final StatementSourceReference statementDeclSource;
+    private int order = 0;
 
     private Map<StatementIdentifier, StatementContextBase<?, ?, ?>> substatements = new LinkedHashMap<>();
 
@@ -138,7 +141,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private E effectiveInstance;
 
     private StatementContextBase<?, ?, ?> originalCtx;
-    private TypeOfCopy typeOfCopy = TypeOfCopy.ORIGINAL;
+    private List<TypeOfCopy> copyHistory;
 
     private boolean isSupportedToBuildEffective = true;
 
@@ -153,13 +156,18 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public TypeOfCopy getTypeOfCopy() {
-        return typeOfCopy;
+    public List<TypeOfCopy> getCopyHistory() {
+        return copyHistory;
     }
 
     @Override
-    public void setTypeOfCopy(TypeOfCopy typeOfCopy) {
-        this.typeOfCopy = typeOfCopy;
+    public void addToCopyHistory(TypeOfCopy typeOfCopy) {
+        this.copyHistory.add(typeOfCopy);
+    }
+
+    @Override
+    public void addAllToCopyHistory(List<TypeOfCopy> typeOfCopyList) {
+        this.copyHistory.addAll(typeOfCopyList);
     }
 
     @Override
@@ -170,6 +178,16 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     @Override
     public void setOriginalCtx(StatementContextBase<?, ?, ?> originalCtx) {
         this.originalCtx = originalCtx;
+    }
+
+    @Override
+    public void setOrder(int order) {
+        this.order = order;
+    }
+
+    @Override
+    public int getOrder() {
+        return order;
     }
 
     @Override
@@ -188,6 +206,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.identifier = builder.getIdentifier();
         this.statementDeclSource = builder.getStamementSource();
         this.completedPhase = null;
+        initCopyHistory();
     }
 
     StatementContextBase(StatementContextBase<A, D, E> original) {
@@ -195,6 +214,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.identifier = original.identifier;
         this.statementDeclSource = original.statementDeclSource;
         this.completedPhase = null;
+        initCopyHistory();
+    }
+
+    private void initCopyHistory() {
+        this.copyHistory = new LinkedList<>();
+        this.copyHistory.add(TypeOfCopy.ORIGINAL);
     }
 
     @Override
