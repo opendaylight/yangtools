@@ -12,8 +12,9 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.treeScoped;
 import static org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
+import org.opendaylight.yangtools.yang.parser.spi.source.StmtOrderingNamespace;
 
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedIdentitiesNamespace;
@@ -141,6 +142,7 @@ public final class YangInferencePipeline {
             .addSupport(new FeatureStatementImpl.Definition())
             .addSupport(new PositionStatementImpl.Definition())
             .addSupport(new ValueStatementImpl.Definition())
+            .addSupport(global(StmtOrderingNamespace.class))
             .build();
 
     public static final Map<ModelProcessingPhase, StatementSupportBundle> RFC6020_BUNDLES = ImmutableMap

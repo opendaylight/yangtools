@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -62,7 +60,7 @@ public class OutputEffectiveStatementImpl extends
     private void initCopyType(
             StmtContext<QName, OutputStatement, EffectiveStatement<QName, OutputStatement>> ctx) {
 
-        Set<TypeOfCopy> copyTypesFromOriginal = StmtContextUtils.getCopyTypesFromOriginal(ctx);
+        List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
 
         if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
             augmenting = true;
@@ -74,7 +72,7 @@ public class OutputEffectiveStatementImpl extends
             addedByUses = augmenting = true;
         }
 
-        if (ctx.getTypeOfCopy() != TypeOfCopy.ORIGINAL) {
+        if (ctx.getOriginalCtx() != null) {
             original = (ContainerSchemaNode) ctx.getOriginalCtx().buildEffective();
         }
     }
