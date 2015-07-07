@@ -59,7 +59,7 @@ public class AugmentEffectiveStatementImpl
         this.namespace = rootModuleQName.getNamespace();
         this.revision = rootModuleQName.getRevision();
 
-        this.order = 1;
+        this.order = ctx.getOrder();
 
         initCopyOf(ctx);
         initSubstatementCollections();
