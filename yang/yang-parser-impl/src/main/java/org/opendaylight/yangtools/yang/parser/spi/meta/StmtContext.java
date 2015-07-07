@@ -88,15 +88,21 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         ORIGINAL, ADDED_BY_USES, ADDED_BY_AUGMENTATION, ADDED_BY_USES_AUGMENTATION
     }
 
-    TypeOfCopy getTypeOfCopy();
+    List<TypeOfCopy> getCopyHistory();
 
-    void setTypeOfCopy(TypeOfCopy typeOfCopy);
+    void addAllToCopyHistory(List<TypeOfCopy> typeOfCopyList);
+
+    void addToCopyHistory(TypeOfCopy typeOfCopy);
 
     StatementContextBase<?, ?, ?> getOriginalCtx();
 
     void setOriginalCtx(StatementContextBase<?, ?, ?> originalCtx);
 
     boolean isRootContext();
+
+    void setOrder(int order);
+
+    int getOrder();
 
     void setCompletedPhase(ModelProcessingPhase completedPhase);
 
