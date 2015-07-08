@@ -41,9 +41,7 @@ public final class DataTreeCandidates {
 
     public static void applyToModification(final DataTreeModification modification, final DataTreeCandidate candidate) {
         if (modification instanceof CursorAwareDataTreeModification) {
-            try (DataTreeModificationCursor cursor = ((CursorAwareDataTreeModification) modification).createCursor(candidate.getRootPath())) {
-                applyToCursor(cursor, candidate);
-            }
+            applyToCursorAwareModification((CursorAwareDataTreeModification) modification, candidate);
             return;
         }
 
@@ -72,6 +70,22 @@ public final class DataTreeCandidates {
             break;
         default:
             throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
+        }
+    }
+
+    private static void applyToCursorAwareModification(final CursorAwareDataTreeModification modification,
+            final DataTreeCandidate candidate) {
+        final YangInstanceIdentifier candidatePath = candidate.getRootPath();
+        if (candidatePath.isEmpty()) {
+            try (DataTreeModificationCursor cursor =
+                    ((CursorAwareDataTreeModification) modification).createCursor(candidatePath)) {
+                DataTreeCandidateNodes.applyRootToCursor(cursor, candidate.getRootNode());
+            }
+        } else {
+            try (DataTreeModificationCursor cursor =
+                    ((CursorAwareDataTreeModification) modification).createCursor(candidatePath.getParent())) {
+                DataTreeCandidateNodes.applyToCursor(cursor, candidate.getRootNode());
+            }
         }
     }
 
