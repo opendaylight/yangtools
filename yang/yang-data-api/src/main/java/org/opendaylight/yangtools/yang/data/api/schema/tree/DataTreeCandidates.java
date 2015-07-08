@@ -33,13 +33,27 @@ public final class DataTreeCandidates {
 
     public static void applyToModification(final DataTreeModification modification, final DataTreeCandidate candidate) {
         if (modification instanceof CursorAwareDataTreeModification) {
-            try (DataTreeModificationCursor cursor = ((CursorAwareDataTreeModification) modification).createCursor(candidate.getRootPath())) {
-                applyNode(cursor, candidate.getRootNode());
-            }
+            applyToCursor((CursorAwareDataTreeModification) modification, candidate);
         } else {
             applyNode(modification, candidate.getRootPath(), candidate.getRootNode());
         }
     }
+
+    private static void applyToCursor(final CursorAwareDataTreeModification modification,
+            final DataTreeCandidate candidate) {
+        final YangInstanceIdentifier candidatePath = candidate.getRootPath();
+        // FIXME: Extend check to check candidate is root of rooted data tree
+        if (candidatePath.isEmpty()) {
+            try (final DataTreeModificationCursor cursor = modification.createCursor(candidatePath)) {
+                applyToRootCursor(cursor, candidate.getRootNode());
+            }
+        } else {
+            try (final DataTreeModificationCursor cursor = modification.createCursor(candidatePath.getParent())) {
+                applyToParentCursor(cursor, candidate.getRootNode());
+            }
+        }
+    }
+
 
     private static void applyNode(final DataTreeModification modification, final YangInstanceIdentifier path, final DataTreeCandidateNode node) {
         switch (node.getModificationType()) {
@@ -49,7 +63,7 @@ public final class DataTreeCandidates {
             break;
         case SUBTREE_MODIFIED:
             LOG.debug("Modification {} modified path {}", modification, path);
-            for (DataTreeCandidateNode child : node.getChildNodes()) {
+            for (final DataTreeCandidateNode child : node.getChildNodes()) {
                 applyNode(modification, path.node(child.getIdentifier()), child);
             }
             break;
@@ -66,15 +80,15 @@ public final class DataTreeCandidates {
         }
     }
 
-    private static void applyNode(final DataTreeModificationCursor cursor, final DataTreeCandidateNode node) {
+    private static void applyToParentCursor(final DataTreeModificationCursor cursor, final DataTreeCandidateNode node) {
         switch (node.getModificationType()) {
         case DELETE:
             cursor.delete(node.getIdentifier());
             break;
         case SUBTREE_MODIFIED:
             cursor.enter(node.getIdentifier());
-            for (DataTreeCandidateNode child : node.getChildNodes()) {
-                applyNode(cursor, child);
+            for (final DataTreeCandidateNode child : node.getChildNodes()) {
+                    applyToParentCursor(cursor, child);
             }
             cursor.exit();
             break;
@@ -86,6 +100,24 @@ public final class DataTreeCandidates {
             break;
         default:
             throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
+        }
+    }
+
+    private static void applyToRootCursor(final DataTreeModificationCursor cursor, final DataTreeCandidateNode node) {
+        switch (node.getModificationType()) {
+            case DELETE:
+                throw new IllegalArgumentException("Can not apply deletion of root node.");
+            case UNMODIFIED:
+                // No-op
+                break;
+            case WRITE:
+            case SUBTREE_MODIFIED:
+                for (final DataTreeCandidateNode child : node.getChildNodes()) {
+                    applyToParentCursor(cursor, child);
+                }
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported modification " + node.getModificationType());
         }
     }
 }
