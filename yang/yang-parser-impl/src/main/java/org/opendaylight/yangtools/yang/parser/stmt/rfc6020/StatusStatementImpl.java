@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.StatusEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.model.api.Status;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.StatusEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
@@ -16,43 +17,42 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class StatusStatementImpl extends AbstractDeclaredStatement<String>
+public class StatusStatementImpl extends AbstractDeclaredStatement<Status>
         implements StatusStatement {
 
     protected StatusStatementImpl(
-            StmtContext<String, StatusStatement, ?> context) {
+            StmtContext<Status, StatusStatement, ?> context) {
         super(context);
     }
 
     public static class Definition
             extends
-            AbstractStatementSupport<String, StatusStatement, EffectiveStatement<String, StatusStatement>> {
+            AbstractStatementSupport<Status, StatusStatement, EffectiveStatement<Status, StatusStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.STATUS);
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
-            return value;
+        public Status parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+            return Utils.parseStatus(value);
         }
 
         @Override
         public StatusStatement createDeclared(
-                StmtContext<String, StatusStatement, ?> ctx) {
+                StmtContext<Status, StatusStatement, ?> ctx) {
             return new StatusStatementImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<String, StatusStatement> createEffective(
-                StmtContext<String, StatusStatement, EffectiveStatement<String, StatusStatement>> ctx) {
+        public EffectiveStatement<Status, StatusStatement> createEffective(
+                StmtContext<Status, StatusStatement, EffectiveStatement<Status, StatusStatement>> ctx) {
             return new StatusEffectiveStatementImpl(ctx);
         }
-
     }
 
     @Override
-    public String getValue() {
+    public Status getValue() {
         return argument();
     }
 

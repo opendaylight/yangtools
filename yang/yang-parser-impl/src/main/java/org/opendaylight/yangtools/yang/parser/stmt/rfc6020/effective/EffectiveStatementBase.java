@@ -7,26 +7,30 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import java.util.Collections;
-
-import java.util.NoSuchElementException;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import com.google.common.collect.Collections2;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
-import java.util.LinkedList;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.FluentIterable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import com.google.common.collect.ImmutableList;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.Map;
+import java.util.NoSuchElementException;
+
+import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
         implements EffectiveStatement<A, D> {
@@ -52,10 +56,21 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
                 .effectiveSubstatements();
 
         Collection<StatementContextBase<?, ?, ?>> substatementsInit = new LinkedList<>();
-        substatementsInit.addAll(declaredSubstatements);
+
+        for(StatementContextBase<?, ?, ?> declaredSubstatement : declaredSubstatements) {
+            if(declaredSubstatement.getPublicDefinition() == Rfc6020Mapping.USES) {
+                substatementsInit.add(declaredSubstatement);
+                substatementsInit.addAll(declaredSubstatement.getEffectOfStatement());
+                ((StatementContextBase)ctx).removeStatementsFromEffectiveSubstatements(declaredSubstatement
+                        .getEffectOfStatement());
+            } else {
+                substatementsInit.add(declaredSubstatement);
+            }
+        }
+
         substatementsInit.addAll(effectiveSubstatements);
 
-        this.substatements = FluentIterable.from(substatementsInit)
+        this.substatements = FluentIterable.from(substatementsInit).filter(StmtContextUtils.IS_SUPPORTED_TO_BUILD_EFFECTIVE)
                 .transform(StmtContextUtils.buildEffective()).toList();
     }
 
@@ -79,12 +94,9 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
         if (declaredInstance == null) {
             declaredInstance = stmtCtx.buildDeclared();
         }
-
         return declaredInstance;
     }
 
-    // public <K, V, N extends IdentifierNamespace<? super K, ? extends V>> V
-    // get(
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> V get(
             Class<N> namespace, K identifier) {
@@ -118,20 +130,6 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
         return result;
     }
 
-    @SuppressWarnings("unchecked")
-    protected final <S extends EffectiveStatement<?, ?>> Collection<? extends S> allEffective(
-            Class<S> type) {
-        Collection<? extends S> result = null;
-
-        try {
-            result = Collection.class.cast(Collections2.filter(substatements,
-                    Predicates.instanceOf(type)));
-        } catch (NoSuchElementException e) {
-            result = Collections.emptyList();
-        }
-        return result;
-    }
-
     protected final <S extends SchemaNode> S firstSchemaNode(Class<S> type) {
         S result = null;
         try {
@@ -144,9 +142,9 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
     }
 
     @SuppressWarnings("unchecked")
-    protected final <S extends SchemaNode> Collection<? extends S> allSchemaNodes(
-            Class<S> type) {
-        Collection<? extends S> result = null;
+    protected final <T> Collection<T> allSubstatementsOfType(
+            Class<T> type) {
+        Collection<T> result = null;
 
         try {
             result = Collection.class.cast(Collections2.filter(substatements,
@@ -157,4 +155,14 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
         return result;
     }
 
+    protected final <T> T firstSubstatementOfType(Class<T> type) {
+        T result = null;
+        try {
+            result = type.cast(Iterables.find(substatements,
+                    Predicates.instanceOf(type)));
+        } catch (NoSuchElementException e) {
+            result = null;
+        }
+        return result;
+    }
 }

@@ -9,13 +9,15 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface EnumStatement extends DeclaredStatement<String>, DocumentationGroup.WithStatus {
+public interface EnumStatement extends DeclaredStatement<QName>, DocumentationGroup.WithStatus {
 
-    @Nonnull String getName();
+    @Nonnull
+    String getName();
 
-    @Nullable ValueStatement getValue();
-
+    @Nullable
+    ValueStatement getValue();
 }
-
