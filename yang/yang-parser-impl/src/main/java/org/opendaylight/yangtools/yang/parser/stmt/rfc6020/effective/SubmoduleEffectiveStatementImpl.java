@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
+import org.opendaylight.yangtools.yang.model.util.ModuleImportImpl;
+import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
 import com.google.common.collect.ImmutableMap;
@@ -22,6 +24,7 @@ import java.util.Map;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
 import java.net.URI;
 import java.util.Collection;
@@ -119,8 +122,9 @@ public class SubmoduleEffectiveStatementImpl
             }
         }
 
-        //:TODO init source, sourcePath
-        source = ctx.getStatementSource().name();
+        //:TODO init source
+//        source = ctx.getStatementSource().name();
+        sourcePath = ((DeclarationInTextSource) ctx.getStatementSourceReference()).getSourceName();
 
         initSubmodules(ctx);
         initSubstatementCollections(ctx);
@@ -247,7 +251,7 @@ public class SubmoduleEffectiveStatementImpl
 
         this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
-        this.imports = ImmutableSet.copyOf(importsInit);
+        this.imports = ImmutableSet.copyOf(resolveModuleImports(importsInit,ctx));
         this.notifications = ImmutableSet.copyOf(notificationsInit);
         this.rpcs = ImmutableSet.copyOf(rpcsInit);
         this.deviations = ImmutableSet.copyOf(deviationsInit);
@@ -260,6 +264,30 @@ public class SubmoduleEffectiveStatementImpl
         this.publicChildNodes = ImmutableSet.copyOf(mutablePublicChildNodes);
         this.typeDefinitions = ImmutableSet.copyOf(mutableTypeDefinitions);
         this.uses = ImmutableSet.copyOf(mutableUses);
+    }
+
+    private Set<ModuleImport> resolveModuleImports(
+            Set<ModuleImport> importsInit,
+            StmtContext<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> ctx) {
+        Set<ModuleImport> resolvedModuleImports = new LinkedHashSet<>();
+        for (ModuleImport moduleImport : importsInit) {
+            if (moduleImport.getRevision().equals(
+                    SimpleDateFormatUtil.DEFAULT_DATE_IMP)) {
+                QNameModule impModuleQName = Utils.getModuleQNameByPrefix(ctx,
+                        moduleImport.getPrefix());
+                if (!impModuleQName.getRevision().equals(
+                        SimpleDateFormatUtil.DEFAULT_DATE_REV)) {
+                    ModuleImport resolvedModuleImport = new ModuleImportImpl(
+                            moduleImport.getModuleName(),
+                            impModuleQName.getRevision(),
+                            moduleImport.getPrefix());
+                    resolvedModuleImports.add(resolvedModuleImport);
+                }
+            } else {
+                resolvedModuleImports.add(moduleImport);
+            }
+        }
+        return resolvedModuleImports;
     }
 
     @Override

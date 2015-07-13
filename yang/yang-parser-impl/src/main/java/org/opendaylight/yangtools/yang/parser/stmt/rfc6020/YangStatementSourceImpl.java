@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.ByteSource;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URISyntaxException;
@@ -19,12 +20,14 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementLexer;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils;
 import org.opendaylight.yangtools.yang.parser.impl.YangStatementParserListenerImpl;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
+import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +43,7 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
     private YangStatementParser.StatementContext statementContext;
     private ParseTreeWalker walker;
     private String sourceName;
+    private String source;
     private static final Logger LOG = LoggerFactory.getLogger(YangStatementSourceImpl.class);
 
     public YangStatementSourceImpl(final String fileName, boolean isAbsolute) {
@@ -55,6 +59,17 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
     public YangStatementSourceImpl(final InputStream inputStream) {
         try {
             statementContext = parseYangSource(inputStream);
+            walker = new ParseTreeWalker();
+            yangStatementModelParser = new YangStatementParserListenerImpl(sourceName);
+        } catch (Exception e) {
+            LOG.warn(e.getMessage(), e);
+        }
+    }
+
+    public YangStatementSourceImpl(SourceIdentifier identifier, YangStatementParser.StatementContext statementContext) {
+        try {
+            this.statementContext = statementContext;
+            this.sourceName = identifier.getName();
             walker = new ParseTreeWalker();
             yangStatementModelParser = new YangStatementParserListenerImpl(sourceName);
         } catch (Exception e) {
@@ -80,15 +95,34 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
         walker.walk(yangStatementModelParser, statementContext);
     }
 
-    private FileInputStream loadFile(final String fileName, boolean isAbsolute) throws URISyntaxException, FileNotFoundException {
-        return isAbsolute ? new FileInputStream(new File(fileName)) : new FileInputStream(new File(getClass().getResource(fileName).toURI()));
+    private NamedFileInputStream loadFile(final String fileName, boolean isAbsolute) throws URISyntaxException,
+            IOException {
+        //TODO: we need absolute path first!
+        final File file = new File(fileName);
+        final ByteSource byteSource = BuilderUtils.fileToByteSource(file);
+        source = byteSource.asCharSource(Charsets.UTF_8).read();
+        return isAbsolute ? new NamedFileInputStream(file, fileName) : new NamedFileInputStream(new File
+                (getClass().getResource(fileName).toURI()), fileName);
     }
 
-    private YangStatementParser.StatementContext parseYangSource(final InputStream stream) throws IOException, YangSyntaxErrorException {
+    private YangStatementParser.StatementContext parseYangSource(final InputStream stream) throws IOException,
+            YangSyntaxErrorException {
         final YangStatementLexer lexer = new YangStatementLexer(new ANTLRInputStream(stream));
         final CommonTokenStream tokens = new CommonTokenStream(lexer);
         final YangStatementParser parser = new YangStatementParser(tokens);
         sourceName = parser.getSourceName();
+//        if (sourceName == null && stream instanceof NamedFileInputStream) {
+//            sourceName = ((NamedFileInputStream) stream).getFileDestination();
+//        }
+        if (sourceName == null) {
+            sourceName = stream.toString();
+        }
+        System.out.println("stream: " + stream);
+        System.out.println("sourceName: " + sourceName);
         return parser.statement();
+    }
+
+    public YangStatementParser.StatementContext getYangAST() {
+        return statementContext;
     }
 }

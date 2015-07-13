@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.BinarySpecificationImpl;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import com.google.common.base.Preconditions;
@@ -338,8 +337,6 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                 return new StatementDefinitionContext<>(new IdentityRefSpecificationImpl.Definition());
             case TypeUtils.INSTANCE_IDENTIFIER:
                 return new StatementDefinitionContext<>(new InstanceIdentifierSpecificationImpl.Definition());
-            case TypeUtils.BINARY:
-                return new StatementDefinitionContext<>(new BinarySpecificationImpl.Definition());
             default:
                 return null;
         }
