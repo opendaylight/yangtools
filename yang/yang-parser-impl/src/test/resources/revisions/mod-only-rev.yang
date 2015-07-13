@@ -1,5 +1,5 @@
 submodule mod-only-rev {
-	belongs-to "mod-only-root" {
-		prefix mod-only-root;
-	}
+    belongs-to "mod-only-root" {
+        prefix mod-only-root;
+    }
 }

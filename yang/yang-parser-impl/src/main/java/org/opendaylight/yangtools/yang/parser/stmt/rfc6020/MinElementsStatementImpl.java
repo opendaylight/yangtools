@@ -16,43 +16,42 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class MinElementsStatementImpl extends AbstractDeclaredStatement<String>
-        implements MinElementsStatement {
+public class MinElementsStatementImpl extends
+        AbstractDeclaredStatement<Integer> implements MinElementsStatement {
 
     protected MinElementsStatementImpl(
-            StmtContext<String, MinElementsStatement, ?> context) {
+            StmtContext<Integer, MinElementsStatement, ?> context) {
         super(context);
     }
 
     public static class Definition
             extends
-            AbstractStatementSupport<String, MinElementsStatement, EffectiveStatement<String, MinElementsStatement>> {
+            AbstractStatementSupport<Integer, MinElementsStatement, EffectiveStatement<Integer, MinElementsStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.MIN_ELEMENTS);
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
-            return value;
+        public Integer parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+            return Integer.parseInt(value);
         }
 
         @Override
         public MinElementsStatement createDeclared(
-                StmtContext<String, MinElementsStatement, ?> ctx) {
+                StmtContext<Integer, MinElementsStatement, ?> ctx) {
             return new MinElementsStatementImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<String, MinElementsStatement> createEffective(
-                StmtContext<String, MinElementsStatement, EffectiveStatement<String, MinElementsStatement>> ctx) {
+        public EffectiveStatement<Integer, MinElementsStatement> createEffective(
+                StmtContext<Integer, MinElementsStatement, EffectiveStatement<Integer, MinElementsStatement>> ctx) {
             return new MinElementsEffectiveStatementImpl(ctx);
         }
-
     }
 
     @Override
-    public String getValue() {
+    public Integer getValue() {
         return argument();
     }
 

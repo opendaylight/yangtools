@@ -14,9 +14,34 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 public class RevisionEffectiveStatementImpl extends
         EffectiveStatementBase<Date, RevisionStatement> {
 
+    private final String reference;
+    private final String description;
+
     public RevisionEffectiveStatementImpl(
             StmtContext<Date, RevisionStatement, ?> ctx) {
         super(ctx);
+
+        DescriptionEffectiveStatementImpl descStmt = firstEffective(DescriptionEffectiveStatementImpl.class);
+        if (descStmt != null) {
+            description = descStmt.argument();
+        } else {
+            description = null;
+        }
+
+        ReferenceEffectiveStatementImpl refStmt = firstEffective(ReferenceEffectiveStatementImpl.class);
+        if (refStmt != null) {
+            reference = refStmt.argument();
+        } else {
+            reference = null;
+        }
+    }
+
+    public final String getDescription() {
+        return description;
+    }
+
+    public final String getReference() {
+        return reference;
     }
 
 }
