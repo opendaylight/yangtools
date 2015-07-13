@@ -1,21 +1,23 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+import java.util.Set;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public class GroupingEffectiveStatementImpl extends
-        AbstractEffectiveDocumentedDataNodeContainer<QName, GroupingStatement>
-        implements GroupingDefinition {
+        AbstractEffectiveDocumentedDataNodeContainer<QName, GroupingStatement> implements GroupingDefinition {
     private final QName qname;
     private final SchemaPath path;
 
@@ -28,15 +30,25 @@ public class GroupingEffectiveStatementImpl extends
 
         qname = ctx.getStatementArgument();
         path = Utils.getSchemaPath(ctx);
-        // :TODO init other fields
 
+        initCopyType(ctx);
         initSubstatementCollections();
+    }
+
+    private void initCopyType(
+            StmtContext<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> ctx) {
+
+        Set<TypeOfCopy> copyTypesFromOriginal = StmtContextUtils.getCopyTypesFromOriginal(ctx);
+
+        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
+            addedByUses = true;
+        }
     }
 
     private void initSubstatementCollections() {
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
-        unknownNodes = new LinkedList<UnknownSchemaNode>();
+        unknownNodes = new LinkedList<>();
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
@@ -107,8 +119,7 @@ public class GroupingEffectiveStatementImpl extends
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(
-                GroupingEffectiveStatementImpl.class.getSimpleName());
+        StringBuilder sb = new StringBuilder(GroupingEffectiveStatementImpl.class.getSimpleName());
         sb.append("[");
         sb.append("qname=").append(qname);
         sb.append("]");

@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.KeyEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.KeyEffectiveStatementImpl;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -34,8 +35,6 @@ public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<Schem
             extends
             AbstractStatementSupport<Collection<SchemaNodeIdentifier>, KeyStatement, EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement>> {
 
-        public static final char SEPARATOR = ' ';
-
         public Definition() {
             super(Rfc6020Mapping.KEY);
         }
@@ -44,7 +43,7 @@ public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<Schem
         public Collection<SchemaNodeIdentifier> parseArgumentValue(StmtContext<?, ?, ?> ctx, String value)
                 throws SourceException {
 
-            Splitter keySplitter = Splitter.on(SEPARATOR).omitEmptyStrings().trimResults();
+            Splitter keySplitter = Splitter.on(StmtContextUtils.LIST_KEY_SEPARATOR).omitEmptyStrings().trimResults();
             List<String> keyTokens = keySplitter.splitToList(value);
 
             // to detect if key contains duplicates
@@ -57,7 +56,7 @@ public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<Schem
             for (String keyToken : keyTokens) {
 
                 SchemaNodeIdentifier keyNode = SchemaNodeIdentifier
-                        .create(true, Utils.qNameFromArgument(ctx, keyToken));
+                        .create(false, Utils.qNameFromArgument(ctx, keyToken));
                 keyNodes.add(keyNode);
             }
 

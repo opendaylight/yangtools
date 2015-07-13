@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 
 public interface StatementWriter {
 
@@ -77,4 +78,9 @@ public interface StatementWriter {
      */
     void endStatement(@Nonnull StatementSourceReference ref) throws SourceException;
 
+    /**
+     *
+     * @return current processing phase
+     */
+    @Nonnull ModelProcessingPhase getPhase();
 }

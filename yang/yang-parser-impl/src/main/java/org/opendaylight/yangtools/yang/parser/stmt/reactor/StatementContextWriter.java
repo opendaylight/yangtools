@@ -8,12 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import com.google.common.base.Preconditions;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase.ContextBuilder;
 
 class StatementContextWriter implements StatementWriter {
 
@@ -36,7 +36,7 @@ class StatementContextWriter implements StatementWriter {
 
     @Override
     public void argumentValue(String value, StatementSourceReference ref) {
-        Preconditions.checkState(current != null, "Could not two arguments for one statement.");
+        Preconditions.checkState(current != null, "Could not set two arguments for one statement.");
         current.setArgument(value, ref);
     }
 
@@ -53,6 +53,12 @@ class StatementContextWriter implements StatementWriter {
         Preconditions.checkState(parent != null);
         parent.endDeclared(ref,phase);
         parent = parent.getParentContext();
+    }
+
+    @Nonnull
+    @Override
+    public ModelProcessingPhase getPhase() {
+        return phase;
     }
 
 }

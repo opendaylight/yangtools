@@ -1,0 +1,26 @@
+module identity-test {
+    namespace "identity.test";
+    prefix id;
+
+    identity root-identity {
+        description "root";
+    }
+
+    identity child-identity-1 {
+        description "child-identity-1";
+        base root-identity;
+    }
+
+    identity child-identity-2 {
+        description "child-identity-2";
+        base root-identity;
+    }
+
+    identity child-identity-1-2 {
+        description "child-identity-1-2";
+        base child-identity-1;
+    }
+
+    container root-container {
+    }
+}
