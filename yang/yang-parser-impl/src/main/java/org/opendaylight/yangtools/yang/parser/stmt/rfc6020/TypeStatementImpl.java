@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BinaryEffectiveStatementImpl;
+
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
-
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ExtendedTypeEffectiveStatementImpl;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -94,6 +95,8 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
                 return new BooleanEffectiveStatementImpl(ctx);
             case TypeUtils.EMPTY:
                 return new EmptyEffectiveStatementImpl(ctx);
+            case TypeUtils.BINARY:
+                return new BinaryEffectiveStatementImpl(ctx);
             default:
                 // :FIXME try to resolve original typedef context here and
                 // return buildEffective of original typedef context
