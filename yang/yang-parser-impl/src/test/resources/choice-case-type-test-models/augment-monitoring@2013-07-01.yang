@@ -1,0 +1,25 @@
+module augment-monitoring {
+    yang-version 1;
+    namespace "urn:ietf:params:xml:ns:yang:augment-monitoring";
+    prefix "amon";
+
+    import choice-monitoring { prefix nm; }
+
+    revision "2013-07-01" {
+            reference "NO REF";
+    }
+
+    augment "/nm:netconf-state/nm:datastores/nm:datastore/nm:locks/nm:lock-type" {
+
+        case anonymous-lock {
+            leaf lock-time {
+                type uint32;
+            }
+        }
+
+        leaf leaf-aug-case {
+            type string;
+        }
+    }
+
+}
