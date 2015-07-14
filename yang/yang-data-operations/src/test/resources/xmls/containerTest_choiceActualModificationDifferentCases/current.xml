@@ -1,4 +1,0 @@
-<container xmlns="urn:opendaylight:params:xml:ns:yang:controller:test">
-    <identityRef>test-identity2</identityRef>
-    <augumentString2>augumentString2</augumentString2>
-</container>
