@@ -9,9 +9,18 @@
 package org.opendaylight.yangtools.yang.stmt.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
+import java.net.URISyntaxException;
+
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
+import java.io.FileNotFoundException;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import org.junit.Test;
@@ -247,4 +256,24 @@ public class AugmentProcessTest {
             reactor.addSource(source);
         }
     }
+
+    @Test
+    public void caseShortHandAugmentingTest() throws SourceException, FileNotFoundException, ReactorException, URISyntaxException {
+
+        SchemaContext context = StmtTestUtils.parseYangSources("/choice-case-type-test-models");
+
+        assertNotNull(context);
+
+        ContainerSchemaNode netconf =  (ContainerSchemaNode) context.getDataChildByName("netconf-state");
+        ContainerSchemaNode datastores =  (ContainerSchemaNode) netconf.getDataChildByName("datastores");
+        ListSchemaNode datastore =  (ListSchemaNode) datastores.getDataChildByName("datastore");
+        ContainerSchemaNode locks =  (ContainerSchemaNode) datastore.getDataChildByName("locks");
+        ChoiceSchemaNode lockType =  (ChoiceSchemaNode)locks.getDataChildByName("lock-type");
+
+        ChoiceCaseNode leafAugCase = lockType.getCaseNodeByName("leaf-aug-case");
+        assertTrue(leafAugCase.isAugmenting());
+        DataSchemaNode leafAug = leafAugCase.getDataChildByName("leaf-aug-case");
+        assertFalse(leafAug.isAugmenting());
+    }
+
 }

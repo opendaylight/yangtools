@@ -9,10 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -24,7 +21,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
@@ -71,9 +67,9 @@ public final class TypeUtils {
     public static final String UINT64 = "uint64";
     public static final String UNION = "union";
 
-    private static final ImmutableSet<String> BUILT_IN_TYPES = initBuiltInTypesSet();
-    private static final ImmutableSet<String> TYPE_BODY_STMTS = initTypeBodyStmtsSet();
-    private static final ImmutableMap<String, TypeDefinition> BASE_TYPES_MAP = initBaseTypesMap();
+    private static final Set<String> BUILT_IN_TYPES = new HashSet<>();
+    public static final Set<String> TYPE_BODY_STMTS = new HashSet<>();
+    public static final Map<String, TypeDefinition<?>> PRIMITIVE_TYPES_MAP = new HashMap<>();
 
     private static final Comparator<TypeDefinition<?>> TYPE_SORT_COMPARATOR = new Comparator<TypeDefinition<?>>() {
         @Override
@@ -87,65 +83,68 @@ public final class TypeUtils {
             return 0;
         }
     };
+    static {
 
-    private static ImmutableSet<String> initBuiltInTypesSet() {
+//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,BINARY));
+//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,BITS));
+//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,BOOLEAN));
+//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,DECIMAL64));
+//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,EMPTY));
+//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,ENUMERATION));
+//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,IDENTITY_REF));
+//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,INSTANCE_IDENTIFIER));
+//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,INT8));
+//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,INT16));
+//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,INT32));
+//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,INT64));
+//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,LEAF_REF));
+//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,STRING));
+//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,UINT8));
+//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,UINT16));
+//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,UINT32));
+//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,UINT64));
+//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,UNION));
 
-        final Set<String> builtInTypesInit = new HashSet<>();
-        builtInTypesInit.add(BINARY);
-        builtInTypesInit.add(BITS);
-        builtInTypesInit.add(BOOLEAN);
-        builtInTypesInit.add(DECIMAL64);
-        builtInTypesInit.add(EMPTY);
-        builtInTypesInit.add(ENUMERATION);
-        builtInTypesInit.add(IDENTITY_REF);
-        builtInTypesInit.add(INSTANCE_IDENTIFIER);
-        builtInTypesInit.add(INT8);
-        builtInTypesInit.add(INT16);
-        builtInTypesInit.add(INT32);
-        builtInTypesInit.add(INT64);
-        builtInTypesInit.add(LEAF_REF);
-        builtInTypesInit.add(STRING);
-        builtInTypesInit.add(UINT8);
-        builtInTypesInit.add(UINT16);
-        builtInTypesInit.add(UINT32);
-        builtInTypesInit.add(UINT64);
-        builtInTypesInit.add(UNION);
+        BUILT_IN_TYPES.add(BINARY);
+        BUILT_IN_TYPES.add(BITS);
+        BUILT_IN_TYPES.add(BOOLEAN);
+        BUILT_IN_TYPES.add(DECIMAL64);
+        BUILT_IN_TYPES.add(EMPTY);
+        BUILT_IN_TYPES.add(ENUMERATION);
+        BUILT_IN_TYPES.add(IDENTITY_REF);
+        BUILT_IN_TYPES.add(INSTANCE_IDENTIFIER);
+        BUILT_IN_TYPES.add(INT8);
+        BUILT_IN_TYPES.add(INT16);
+        BUILT_IN_TYPES.add(INT32);
+        BUILT_IN_TYPES.add(INT64);
+        BUILT_IN_TYPES.add(LEAF_REF);
+        BUILT_IN_TYPES.add(STRING);
+        BUILT_IN_TYPES.add(UINT8);
+        BUILT_IN_TYPES.add(UINT16);
+        BUILT_IN_TYPES.add(UINT32);
+        BUILT_IN_TYPES.add(UINT64);
+        BUILT_IN_TYPES.add(UNION);
 
-        return ImmutableSet.copyOf(builtInTypesInit);
-    }
+        TYPE_BODY_STMTS.add(DECIMAL64);
+        TYPE_BODY_STMTS.add(ENUMERATION);
+        TYPE_BODY_STMTS.add(LEAF_REF);
+        TYPE_BODY_STMTS.add(IDENTITY_REF);
+        TYPE_BODY_STMTS.add(INSTANCE_IDENTIFIER);
+        TYPE_BODY_STMTS.add(BITS);
+        TYPE_BODY_STMTS.add(UNION);
 
-    private static ImmutableSet<String> initTypeBodyStmtsSet() {
-
-        final Set<String> typeBodyStmtsInit = new HashSet<>();
-        typeBodyStmtsInit.add(DECIMAL64);
-        typeBodyStmtsInit.add(ENUMERATION);
-        typeBodyStmtsInit.add(LEAF_REF);
-        typeBodyStmtsInit.add(IDENTITY_REF);
-        typeBodyStmtsInit.add(INSTANCE_IDENTIFIER);
-        typeBodyStmtsInit.add(BITS);
-        typeBodyStmtsInit.add(UNION);
-        typeBodyStmtsInit.add(BINARY);
-
-        return ImmutableSet.copyOf(typeBodyStmtsInit);
-    }
-
-    private static ImmutableMap<String, TypeDefinition> initBaseTypesMap() {
-
-        final Map<String, TypeDefinition> baseTypesMapInit = new HashMap<>();
-        baseTypesMapInit.put(BINARY, BinaryType.getInstance());
-        baseTypesMapInit.put(BOOLEAN, BooleanType.getInstance());
-        baseTypesMapInit.put(EMPTY, EmptyType.getInstance());
-        baseTypesMapInit.put(INT8, Int8.getInstance());
-        baseTypesMapInit.put(INT16, Int16.getInstance());
-        baseTypesMapInit.put(INT32, Int32.getInstance());
-        baseTypesMapInit.put(INT64, Int64.getInstance());
-        baseTypesMapInit.put(STRING, StringType.getInstance());
-        baseTypesMapInit.put(UINT8, Uint8.getInstance());
-        baseTypesMapInit.put(UINT16, Uint16.getInstance());
-        baseTypesMapInit.put(UINT32, Uint32.getInstance());
-        baseTypesMapInit.put(UINT64, Uint64.getInstance());
-
-        return ImmutableMap.copyOf(baseTypesMapInit);
+        PRIMITIVE_TYPES_MAP.put(BINARY, BinaryType.getInstance());
+        PRIMITIVE_TYPES_MAP.put(BOOLEAN, BooleanType.getInstance());
+        PRIMITIVE_TYPES_MAP.put(EMPTY, EmptyType.getInstance());
+        PRIMITIVE_TYPES_MAP.put(INT8, Int8.getInstance());
+        PRIMITIVE_TYPES_MAP.put(INT16, Int16.getInstance());
+        PRIMITIVE_TYPES_MAP.put(INT32, Int32.getInstance());
+        PRIMITIVE_TYPES_MAP.put(INT64, Int64.getInstance());
+        PRIMITIVE_TYPES_MAP.put(STRING, StringType.getInstance());
+        PRIMITIVE_TYPES_MAP.put(UINT8, Uint8.getInstance());
+        PRIMITIVE_TYPES_MAP.put(UINT16, Uint16.getInstance());
+        PRIMITIVE_TYPES_MAP.put(UINT32, Uint32.getInstance());
+        PRIMITIVE_TYPES_MAP.put(UINT64, Uint64.getInstance());
     }
 
     private TypeUtils() {
@@ -166,7 +165,7 @@ public final class TypeUtils {
         }
     }
 
-    private static int compareNumbers(Number n1, Number n2) {
+    public static int compareNumbers(Number n1, Number n2) {
 
         final BigDecimal num1 = yangConstraintToBigDecimal(n1);
         final BigDecimal num2 = yangConstraintToBigDecimal(n2);
@@ -292,12 +291,27 @@ public final class TypeUtils {
         return rangeConstraints;
     }
 
-    public static boolean isYangBaseTypeString(String typeName) {
+    public static boolean isBuiltInType(TypeDefinition<?> o1) {
+        return BUILT_IN_TYPES.contains(o1.getQName().getLocalName());
+    }
+
+    public static boolean isYangBuiltInTypeString(String typeName) {
         return BUILT_IN_TYPES.contains(typeName);
     }
 
-    public static boolean isYangTypeBodyStmt(String typeName) {
+    public static boolean isYangPrimitiveTypeString(String typeName) {
+        return PRIMITIVE_TYPES_MAP.containsKey(typeName);
+    }
+
+    public static boolean isYangTypeBodyStmtString(String typeName) {
         return TYPE_BODY_STMTS.contains(typeName);
+    }
+
+    public static TypeDefinition<?> getYangPrimitiveTypeFromString(String typeName) {
+        if (PRIMITIVE_TYPES_MAP.containsKey(typeName)) {
+            return PRIMITIVE_TYPES_MAP.get(typeName);
+        }
+        return null;
     }
 
     public static TypeDefinition<?> getTypeFromEffectiveStatement(EffectiveStatement<?, ?> effectiveStatement) {
@@ -305,25 +319,13 @@ public final class TypeUtils {
             TypeDefinitionEffectiveBuilder typeDefEffectiveBuilder = (TypeDefinitionEffectiveBuilder) effectiveStatement;
             return typeDefEffectiveBuilder.buildType();
         } else {
-            final String typeName = ((TypeDefinition) effectiveStatement).getQName().getLocalName();
-            return BASE_TYPES_MAP.get(typeName);
+            final String typeName = ((TypeDefinition<?>) effectiveStatement).getQName().getLocalName();
+            return PRIMITIVE_TYPES_MAP.get(typeName);
         }
-    }
-
-    public static TypeDefinition<?> getYangBaseTypeFromString(String typeName) {
-
-        if (BASE_TYPES_MAP.containsKey(typeName)) {
-            return BASE_TYPES_MAP.get(typeName);
-        }
-
-        return null;
     }
 
     public static void sortTypes(List<TypeDefinition<?>> typesInit) {
         Collections.sort(typesInit, TYPE_SORT_COMPARATOR);
     }
 
-    public static boolean isBuiltInType(TypeDefinition<?> o1) {
-        return BUILT_IN_TYPES.contains(o1.getQName().getLocalName());
-    }
 }
