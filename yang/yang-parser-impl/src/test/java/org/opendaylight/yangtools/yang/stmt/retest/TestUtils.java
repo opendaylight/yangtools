@@ -8,6 +8,16 @@
 package org.opendaylight.yangtools.yang.stmt.retest;
 
 import static org.junit.Assert.assertEquals;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Collection;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
+import org.opendaylight.yangtools.yang.stmt.test.StmtTestUtils;
+
 import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
@@ -40,20 +50,25 @@ final class TestUtils {
     private TestUtils() {
     }
 
-    public static Set<Module> loadModules(final URI resourceDirectory) throws SourceException, ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+    public static Set<Module> loadModules(final URI resourceDirectory)
+            throws SourceException, ReactorException {
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
+                .newBuild();
         File[] files = new File(resourceDirectory).listFiles();
 
         for (File file : files) {
-            addSources(reactor, new YangStatementSourceImpl(file.getPath(), true));
+            addSources(reactor, new YangStatementSourceImpl(file.getPath(),
+                    true));
         }
 
         EffectiveSchemaContext ctx = reactor.buildEffective();
         return ctx.getModules();
     }
 
-    public static Set<Module> loadModules(final List<InputStream> streams) throws SourceException, ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+    public static Set<Module> loadModules(final List<InputStream> streams)
+            throws SourceException, ReactorException {
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
+                .newBuild();
         for (InputStream inputStream : streams) {
             addSources(reactor, new YangStatementSourceImpl(inputStream));
         }
@@ -62,14 +77,17 @@ final class TestUtils {
         return ctx.getModules();
     }
 
-    public static Module loadModule(final InputStream stream) throws SourceException, ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+    public static Module loadModule(final InputStream stream)
+            throws SourceException, ReactorException {
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
+                .newBuild();
         addSources(reactor, new YangStatementSourceImpl(stream));
         EffectiveSchemaContext ctx = reactor.buildEffective();
         return ctx.getModules().iterator().next();
     }
 
-    public static Module findModule(final Set<Module> modules, final String moduleName) {
+    public static Module findModule(final Set<Module> modules,
+            final String moduleName) {
         Module result = null;
         for (Module module : modules) {
             if (module.getName().equals(moduleName)) {
@@ -80,7 +98,8 @@ final class TestUtils {
         return result;
     }
 
-    public static ModuleImport findImport(final Set<ModuleImport> imports, final String prefix) {
+    public static ModuleImport findImport(final Set<ModuleImport> imports,
+            final String prefix) {
         ModuleImport result = null;
         for (ModuleImport moduleImport : imports) {
             if (moduleImport.getPrefix().equals(prefix)) {
@@ -91,7 +110,8 @@ final class TestUtils {
         return result;
     }
 
-    public static TypeDefinition<?> findTypedef(final Set<TypeDefinition<?>> typedefs, final String name) {
+    public static TypeDefinition<?> findTypedef(
+            final Set<TypeDefinition<?>> typedefs, final String name) {
         TypeDefinition<?> result = null;
         for (TypeDefinition<?> td : typedefs) {
             if (td.getQName().getLocalName().equals(name)) {
@@ -102,8 +122,9 @@ final class TestUtils {
         return result;
     }
 
-    public static SchemaPath createPath(final boolean absolute, final URI namespace, final Date revision,
-            final String prefix, final String... names) {
+    public static SchemaPath createPath(final boolean absolute,
+            final URI namespace, final Date revision, final String prefix,
+            final String... names) {
         List<QName> path = new ArrayList<>();
         for (String name : names) {
             path.add(QName.create(namespace, revision, name));
@@ -123,18 +144,20 @@ final class TestUtils {
     }
 
     /**
-     * Test if node has augmenting flag set to expected value. In case this is DataNodeContainer/ChoiceNode, check its
-     * child nodes/case nodes too.
+     * Test if node has augmenting flag set to expected value. In case this is
+     * DataNodeContainer/ChoiceNode, check its child nodes/case nodes too.
      *
      * @param node
      *            node to check
      * @param expected
      *            expected value
      */
-    public static void checkIsAugmenting(final DataSchemaNode node, final boolean expected) {
+    public static void checkIsAugmenting(final DataSchemaNode node,
+            final boolean expected) {
         assertEquals(expected, node.isAugmenting());
         if (node instanceof DataNodeContainer) {
-            for (DataSchemaNode child : ((DataNodeContainer) node).getChildNodes()) {
+            for (DataSchemaNode child : ((DataNodeContainer) node)
+                    .getChildNodes()) {
                 checkIsAugmenting(child, expected);
             }
         } else if (node instanceof ChoiceSchemaNode) {
@@ -145,18 +168,20 @@ final class TestUtils {
     }
 
     /**
-     * Check if node has addedByUses flag set to expected value. In case this is DataNodeContainer/ChoiceNode, check its
-     * child nodes/case nodes too.
+     * Check if node has addedByUses flag set to expected value. In case this is
+     * DataNodeContainer/ChoiceNode, check its child nodes/case nodes too.
      *
      * @param node
      *            node to check
      * @param expected
      *            expected value
      */
-    public static void checkIsAddedByUses(final DataSchemaNode node, final boolean expected) {
+    public static void checkIsAddedByUses(final DataSchemaNode node,
+            final boolean expected) {
         assertEquals(expected, node.isAddedByUses());
         if (node instanceof DataNodeContainer) {
-            for (DataSchemaNode child : ((DataNodeContainer) node).getChildNodes()) {
+            for (DataSchemaNode child : ((DataNodeContainer) node)
+                    .getChildNodes()) {
                 checkIsAddedByUses(child, expected);
             }
         } else if (node instanceof ChoiceSchemaNode) {
@@ -166,14 +191,16 @@ final class TestUtils {
         }
     }
 
-    public static void checkIsAddedByUses(final GroupingDefinition node, final boolean expected) {
+    public static void checkIsAddedByUses(final GroupingDefinition node,
+            final boolean expected) {
         assertEquals(expected, node.isAddedByUses());
         for (DataSchemaNode child : ((DataNodeContainer) node).getChildNodes()) {
             checkIsAddedByUses(child, expected);
         }
     }
 
-    public static List<Module> findModules(final Set<Module> modules, final String moduleName) {
+    public static List<Module> findModules(final Set<Module> modules,
+            final String moduleName) {
         List<Module> result = new ArrayList<>();
         for (Module module : modules) {
             if (module.getName().equals(moduleName)) {
@@ -183,10 +210,63 @@ final class TestUtils {
         return result;
     }
 
-    private static void addSources(CrossSourceStatementReactor.BuildAction reactor, YangStatementSourceImpl... sources) {
+    private static void addSources(
+            CrossSourceStatementReactor.BuildAction reactor,
+            YangStatementSourceImpl... sources) {
         for (YangStatementSourceImpl source : sources) {
             reactor.addSource(source);
         }
+    }
+
+    public static SchemaContext parseYangSources(
+            StatementStreamSource... sources) throws SourceException,
+            ReactorException {
+
+        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
+                .newBuild();
+        reactor.addSources(sources);
+
+        return reactor.buildEffective();
+    }
+
+    public static SchemaContext parseYangSources(File... files)
+            throws SourceException, ReactorException, FileNotFoundException {
+
+        StatementStreamSource[] sources = new StatementStreamSource[files.length];
+
+        for (int i = 0; i < files.length; i++) {
+            sources[i] = new YangStatementSourceImpl(new FileInputStream(
+                    files[i]));
+        }
+
+        return parseYangSources(sources);
+    }
+
+    public static SchemaContext parseYangSources(Collection<File> files)
+            throws SourceException, ReactorException, FileNotFoundException {
+        return parseYangSources(files.toArray(new File[files.size()]));
+    }
+
+    public static SchemaContext parseYangSources(String yangSourcesDirectoryPath)
+            throws SourceException, ReactorException, FileNotFoundException,
+            URISyntaxException {
+
+        URL resourceDir = StmtTestUtils.class
+                .getResource(yangSourcesDirectoryPath);
+        File testSourcesDir = new File(resourceDir.toURI());
+
+        return parseYangSources(testSourcesDir.listFiles());
+    }
+
+    public static SchemaContext parseYangSource(String yangSourceFilePath)
+            throws SourceException, ReactorException, FileNotFoundException,
+            URISyntaxException {
+
+        URL resourceFile = StmtTestUtils.class
+                .getResource(yangSourceFilePath);
+        File testSourcesFile = new File(resourceFile.toURI());
+
+        return parseYangSources(testSourcesFile);
     }
 
 }
