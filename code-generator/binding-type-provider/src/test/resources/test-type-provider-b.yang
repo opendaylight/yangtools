@@ -34,7 +34,7 @@ module test-type-provider-b {
 
     leaf conditional-leafref {
         type leafref {
-            path "/prov:foo/prov:bars/prov:bar-item/[prov:id=10]";
+            path "/prov:foo/prov:bars/prov:bar-item[prov:id=10]";
         }
     }
 

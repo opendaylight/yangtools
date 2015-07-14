@@ -12,7 +12,6 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import com.google.common.base.Joiner;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -21,7 +20,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
 import org.junit.Test;
@@ -63,7 +61,9 @@ public class YangToSourcesPluginTestIT {
         } catch (VerificationException e) {
             assertVerificationException(
                     e,
-                    "org.opendaylight.yangtools.yang.parser.util.YangValidationException: Not existing module imported:unknownDep:2013-02-27 by:private:2013-02-27");
+                    "org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException: Imported module " +
+                    "[ModuleIdentifierImpl{name='unknownDep', namespace=null, revision=Wed Feb 27 00:00:00 " +
+                    "CET 2013}] was not found.");
             return;
         }
 

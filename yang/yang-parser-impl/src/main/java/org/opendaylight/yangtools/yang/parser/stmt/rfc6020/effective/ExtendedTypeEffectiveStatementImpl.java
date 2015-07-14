@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
@@ -124,8 +123,8 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
         TypeDefinition<?> baseType;
 
         final QName baseTypeQName = Utils.qNameFromArgument(ctx, ctx.getStatementArgument());
-        if (TypeUtils.isYangBaseTypeString(baseTypeQName.getLocalName())) {
-            baseType = TypeUtils.getYangBaseTypeFromString(baseTypeQName.getLocalName());
+        if (TypeUtils.isYangPrimitiveTypeString(baseTypeQName.getLocalName())) {
+            baseType = TypeUtils.getYangPrimitiveTypeFromString(baseTypeQName.getLocalName());
         } else {
             StmtContext<?, TypedefStatement, EffectiveStatement<QName, TypedefStatement>> baseTypeCtx = ctx
                     .getParentContext().getFromNamespace(TypeNamespace.class, baseTypeQName);
@@ -163,37 +162,39 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
 
         if (baseType instanceof IntegerTypeDefinition) {
             final IntegerTypeDefinition intType = (IntegerTypeDefinition) TypeUtils
-                    .getYangBaseTypeFromString(baseTypeName);
+                    .getYangPrimitiveTypeFromString(baseTypeName);
             typeConstraints.addRanges(intType.getRangeConstraints());
         } else if (baseType instanceof UnsignedIntegerTypeDefinition) {
             final UnsignedIntegerTypeDefinition uintType = (UnsignedIntegerTypeDefinition) TypeUtils
-                    .getYangBaseTypeFromString(baseTypeName);
+                    .getYangPrimitiveTypeFromString(baseTypeName);
             typeConstraints.addRanges(uintType.getRangeConstraints());
         } else if (baseType instanceof StringTypeDefinition) {
             final StringTypeDefinition stringType = (StringTypeDefinition) TypeUtils
-                    .getYangBaseTypeFromString(baseTypeName);
+                    .getYangPrimitiveTypeFromString(baseTypeName);
             typeConstraints.addLengths(stringType.getLengthConstraints());
             typeConstraints.addPatterns(stringType.getPatternConstraints());
-        } else if (baseType instanceof DecimalTypeDefinition) {
-            final DecimalTypeDefinition decimalType = (DecimalTypeDefinition) TypeUtils
-                    .getYangBaseTypeFromString(baseTypeName);
-            typeConstraints.addRanges(decimalType.getRangeConstraints());
-            typeConstraints.addFractionDigits(decimalType.getFractionDigits());
         } else if (baseType instanceof BinaryTypeDefinition) {
             final BinaryTypeDefinition binaryType = (BinaryTypeDefinition) TypeUtils
-                    .getYangBaseTypeFromString(baseTypeName);
+                    .getYangPrimitiveTypeFromString(baseTypeName);
             typeConstraints.addLengths(binaryType.getLengthConstraints());
         } else if (baseType instanceof TypeDefEffectiveStatementImpl) {
             typeConstraints.addRanges(((TypeDefEffectiveStatementImpl) baseType).getRangeConstraints());
             typeConstraints.addLengths(((TypeDefEffectiveStatementImpl) baseType).getLengthConstraints());
             typeConstraints.addPatterns(((TypeDefEffectiveStatementImpl) baseType).getPatternConstraints());
             typeConstraints.addFractionDigits(((TypeDefEffectiveStatementImpl) baseType).getFractionDigits());
-        } else if (baseType instanceof ExtendedTypeEffectiveStatementImpl) {
-            typeConstraints.addRanges(((ExtendedTypeEffectiveStatementImpl) baseType).getRangeConstraints());
-            typeConstraints.addLengths(((ExtendedTypeEffectiveStatementImpl) baseType).getLengthConstraints());
-            typeConstraints.addPatterns(((ExtendedTypeEffectiveStatementImpl) baseType).getPatternConstraints());
-            typeConstraints.addFractionDigits(((ExtendedTypeEffectiveStatementImpl) baseType).getFractionDigits());
         }
+//        else if (baseType instanceof DecimalTypeDefinition) {
+//            final DecimalTypeDefinition decimalType = (DecimalTypeDefinition) TypeUtils
+//                    .getYangBaseTypeFromString(baseTypeName);
+//            typeConstraints.addRanges(decimalType.getRangeConstraints());
+//            typeConstraints.addFractionDigits(decimalType.getFractionDigits());
+//        }
+//        else if (baseType instanceof ExtendedTypeEffectiveStatementImpl) {
+//            typeConstraints.addRanges(((ExtendedTypeEffectiveStatementImpl) baseType).getRangeConstraints());
+//            typeConstraints.addLengths(((ExtendedTypeEffectiveStatementImpl) baseType).getLengthConstraints());
+//            typeConstraints.addPatterns(((ExtendedTypeEffectiveStatementImpl) baseType).getPatternConstraints());
+//            typeConstraints.addFractionDigits(((ExtendedTypeEffectiveStatementImpl) baseType).getFractionDigits());
+//        }
 
         return typeConstraints;
     }
