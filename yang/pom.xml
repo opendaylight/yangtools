@@ -26,7 +26,6 @@
         <module>yang-data-api</module>
         <module>yang-data-util</module>
         <module>yang-data-impl</module>
-        <module>yang-data-operations</module>
         <module>yang-data-codec-gson</module>
         <module>yang-model-api</module>
         <module>yang-maven-plugin</module>

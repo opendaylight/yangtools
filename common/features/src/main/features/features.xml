@@ -41,7 +41,6 @@
         <bundle>mvn:org.opendaylight.yangtools.thirdparty/antlr4-runtime-osgi-nohead/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-data-api/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-data-impl/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools/yang-data-operations/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-data-util/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-model-api/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-model-util/{{VERSION}}</bundle>
