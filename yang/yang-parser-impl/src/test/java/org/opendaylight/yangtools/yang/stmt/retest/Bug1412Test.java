@@ -55,45 +55,42 @@ public class Bug1412Test {
         assertEquals(expectedQName, action.getQName());
 
         unknownNodes = action.getUnknownSchemaNodes();
-        assertEquals(2, unknownNodes.size());
-        //FIXME: do fix in UnknownEffectiveStatementImpl class & uncomment once nature of nodes within unknown stmts is
-        //FIXME: clarified (new statement parser approach)
-//        assertEquals(4, unknownNodes.size());
-//        UnknownSchemaNode info = null;
-//        UnknownSchemaNode description = null;
-//        UnknownSchemaNode actionPoint = null;
-//        UnknownSchemaNode output = null;
-//        for (UnknownSchemaNode un : unknownNodes) {
-//            if ("info".equals(un.getNodeType().getLocalName())) {
-//                info = un;
-//            } else if ("description".equals(un.getNodeType().getLocalName())) {
-//                description = un;
-//            } else if ("actionpoint".equals(un.getNodeType().getLocalName())) {
-//                actionPoint = un;
-//            } else if ("output".equals(un.getNodeType().getLocalName())) {
-//                output = un;
-//            }
-//        }
-//        assertNotNull(info);
-//        assertNotNull(description);
-//        assertNotNull(actionPoint);
-//        assertNotNull(output);
+        assertEquals(4, unknownNodes.size());
+        UnknownSchemaNode info = null;
+        UnknownSchemaNode description = null;
+        UnknownSchemaNode actionPoint = null;
+        UnknownSchemaNode output = null;
+        for (UnknownSchemaNode un : unknownNodes) {
+            if ("info".equals(un.getNodeType().getLocalName())) {
+                info = un;
+            } else if ("description".equals(un.getNodeType().getLocalName())) {
+                description = un;
+            } else if ("actionpoint".equals(un.getNodeType().getLocalName())) {
+                actionPoint = un;
+            } else if ("output".equals(un.getNodeType().getLocalName())) {
+                output = un;
+            }
+        }
+        assertNotNull(info);
+        assertNotNull(description);
+        assertNotNull(actionPoint);
+        assertNotNull(output);
 
-//        expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "info");
-//        assertEquals(expectedNodeType, info.getNodeType());
-//        assertEquals("greeting", info.getNodeParameter());
-//
-//        expectedNodeType = QName.create(qm, "description");
-//        assertEquals(expectedNodeType, description.getNodeType());
-//        assertEquals("say greeting", description.getNodeParameter());
-//
-//        expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "actionpoint");
-//        assertEquals(expectedNodeType, actionPoint.getNodeType());
-//        assertEquals("entry", actionPoint.getNodeParameter());
-//
-//        expectedNodeType = QName.create(qm, "output");
-//        assertEquals(expectedNodeType, output.getNodeType());
-//        assertEquals("", output.getNodeParameter());
+        expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "info");
+        assertEquals(expectedNodeType, info.getNodeType());
+        assertEquals("greeting", info.getNodeParameter());
+
+        expectedNodeType = QName.create(qm, "description");
+        assertEquals(expectedNodeType, description.getNodeType());
+        assertEquals("say greeting", description.getNodeParameter());
+
+        expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "actionpoint");
+        assertEquals(expectedNodeType, actionPoint.getNodeType());
+        assertEquals("entry", actionPoint.getNodeParameter());
+
+        expectedNodeType = QName.create(qm, "output");
+        assertEquals(expectedNodeType, output.getNodeType());
+        assertEquals("", output.getNodeParameter());
     }
 
 }
