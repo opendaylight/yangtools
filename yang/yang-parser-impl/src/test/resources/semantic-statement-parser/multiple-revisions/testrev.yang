@@ -1,0 +1,19 @@
+module testrev {
+    yang-version 1;
+    namespace "urn:tstrev:yang";
+    prefix "tstrev";
+
+    import importedrevtest {
+        prefix "imprevtst";
+    }
+
+    description "This is a test module";
+
+    revision 2015-07-02;
+
+    container mycontainer {
+        leaf myleaf {
+            type imprevtst:date-and-time;
+        }
+    }
+}

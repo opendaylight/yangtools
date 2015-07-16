@@ -436,4 +436,22 @@ public class AugmentTest {
         assertTrue(id.isAugmenting());
     }
 
+    @Test
+    public void caseShortHandAugmentingTest() throws Exception {
+        modules = TestUtils.loadModules(getClass().getResource("/choice-case-type-test-models").toURI());
+
+        Module findModule = TestUtils.findModule(modules, "choice-monitoring");
+
+        ContainerSchemaNode netconf =  (ContainerSchemaNode) findModule.getDataChildByName("netconf-state");
+        ContainerSchemaNode datastores =  (ContainerSchemaNode) netconf.getDataChildByName("datastores");
+        ListSchemaNode datastore =  (ListSchemaNode) datastores.getDataChildByName("datastore");
+        ContainerSchemaNode locks =  (ContainerSchemaNode) datastore.getDataChildByName("locks");
+        ChoiceSchemaNode lockType =  (ChoiceSchemaNode)locks.getDataChildByName("lock-type");
+
+        ChoiceCaseNode leafAugCase = lockType.getCaseNodeByName("leaf-aug-case");
+        assertTrue(leafAugCase.isAugmenting());
+        DataSchemaNode leafAug = leafAugCase.getDataChildByName("leaf-aug-case");
+        assertFalse(leafAug.isAugmenting());
+    }
+
 }

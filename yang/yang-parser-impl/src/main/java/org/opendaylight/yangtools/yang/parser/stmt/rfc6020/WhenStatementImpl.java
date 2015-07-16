@@ -39,7 +39,7 @@ public class WhenStatementImpl extends AbstractDeclaredStatement<RevisionAwareXP
 
         @Override public RevisionAwareXPath parseArgumentValue(
                 StmtContext<?, ?, ?> ctx, String value) throws SourceException {
-            return new RevisionAwareXPathImpl(value, Utils.isXPathAbsolute(value));
+            return new RevisionAwareXPathImpl(value, Utils.isXPathAbsolute(ctx, value));
         }
 
         @Override public WhenStatement createDeclared(

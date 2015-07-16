@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableList;
@@ -38,7 +36,7 @@ public class ContainerEffectiveStatementImpl extends
     private final SchemaPath path;
 
     private boolean presence;
-    private boolean augmenting;
+    boolean augmenting;
     private boolean addedByUses;
     private boolean configuration = true;
     private ContainerSchemaNode original;
@@ -62,7 +60,7 @@ public class ContainerEffectiveStatementImpl extends
     private void initCopyType(
             StmtContext<QName, ContainerStatement, EffectiveStatement<QName, ContainerStatement>> ctx) {
 
-        Set<TypeOfCopy> copyTypesFromOriginal = StmtContextUtils.getCopyTypesFromOriginal(ctx);
+        List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
 
         if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
             augmenting = true;
@@ -74,7 +72,7 @@ public class ContainerEffectiveStatementImpl extends
             addedByUses = augmenting = true;
         }
 
-        if (ctx.getTypeOfCopy() != TypeOfCopy.ORIGINAL) {
+        if (ctx.getOriginalCtx() != null) {
             original = (ContainerSchemaNode) ctx.getOriginalCtx().buildEffective();
         }
     }
