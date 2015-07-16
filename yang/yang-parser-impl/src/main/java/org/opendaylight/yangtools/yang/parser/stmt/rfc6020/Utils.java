@@ -450,4 +450,71 @@ public final class Utils {
         return SchemaPath.create(identifier.getPathFromRoot(), identifier.isAbsolute());
     }
 
+    public static QName qNameFromUnknownArgument(StmtContext<?, ?, ?> ctx, String localName) {
+
+        if (localName == null || localName.equals("")) {
+            return EMPTY_QNAME;
+        }
+
+        QNameModule qNameModule = getRootModuleQName(ctx);
+
+        if (qNameModule == null) {
+            throw new IllegalArgumentException("Error in module '" + ctx.getRoot().rawStatementArgument()
+                    + "': can not resolve QNameModule for '" + localName + "'.");
+        }
+
+        QNameModule resultQNameModule = qNameModule.getRevision() == null ? QNameModule.create(
+                qNameModule.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV) : qNameModule;
+
+        return QName.create(resultQNameModule, localName);
+    }
+
+    public static SchemaPath getSchemaPathFromUnknownArgument(StmtContext<?, ?, ?> ctx) {
+
+        if (ctx == null) {
+            return null;
+        }
+
+        Iterator<StmtContext<?, ?, ?>> iteratorFromRoot = ctx.getStmtContextsFromRoot().iterator();
+
+        if (iteratorFromRoot.hasNext()) {
+            iteratorFromRoot.next(); // skip root argument
+        }
+
+        List<QName> qNamesFromRoot = new LinkedList<>();
+        while (iteratorFromRoot.hasNext()) {
+            StmtContext<?, ?, ?> nextStmtCtx = iteratorFromRoot.next();
+            Object nextStmtArgument = nextStmtCtx.getStatementArgument();
+            if (nextStmtArgument instanceof QName) {
+                QName qname = (QName) nextStmtArgument;
+                if (StmtContextUtils.producesDeclared(nextStmtCtx, UsesStatement.class)) {
+                    continue;
+                }
+                if (StmtContextUtils.producesDeclared(nextStmtCtx.getParentContext(), ChoiceStatement.class)
+                        && isSupportedAsShorthandCase(nextStmtCtx)) {
+                    qNamesFromRoot.add(qname);
+                }
+                qNamesFromRoot.add(qname);
+            } else if (nextStmtArgument instanceof String) {
+                QName qName;
+                if (StmtContextUtils.producesDeclared(nextStmtCtx, UnknownStatementImpl.class)) {
+                    qName = qNameFromUnknownArgument(ctx, (String) nextStmtArgument);
+                } else {
+                    qName = qNameFromArgument(ctx, (String) nextStmtArgument);
+                }
+                qNamesFromRoot.add(qName);
+            } else if (StmtContextUtils.producesDeclared(nextStmtCtx, AugmentStatement.class)
+                    && nextStmtArgument instanceof SchemaNodeIdentifier) {
+                addQNamesFromSchemaNodeIdentifierToList(qNamesFromRoot, (SchemaNodeIdentifier) nextStmtArgument);
+            } else if (nextStmtCtx.getPublicDefinition().getDeclaredRepresentationClass()
+                    .isAssignableFrom(UnknownStatementImpl.class)) {
+                qNamesFromRoot.add(nextStmtCtx.getPublicDefinition().getStatementName());
+            } else {
+                return SchemaPath.SAME;
+            }
+        }
+
+        final SchemaPath schemaPath = SchemaPath.create(qNamesFromRoot, true);
+        return schemaPath;
+    }
 }
