@@ -1,8 +1,5 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import java.util.Set;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,7 +35,7 @@ public class GroupingEffectiveStatementImpl extends
     private void initCopyType(
             StmtContext<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> ctx) {
 
-        Set<TypeOfCopy> copyTypesFromOriginal = StmtContextUtils.getCopyTypesFromOriginal(ctx);
+        List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
 
         if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
             addedByUses = true;

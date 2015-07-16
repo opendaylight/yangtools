@@ -34,7 +34,7 @@ public class DeviationStatementImpl extends AbstractDeclaredStatement<SchemaNode
 
         @Override public SchemaNodeIdentifier parseArgumentValue(
                 StmtContext<?, ?, ?> ctx, String value) throws SourceException {
-            return SchemaNodeIdentifier.create(Utils.parseXPath(ctx, value), Utils.isXPathAbsolute(value));
+            return SchemaNodeIdentifier.create(Utils.parseXPath(ctx, value), Utils.isXPathAbsolute(ctx, value));
         }
 
         @Override public DeviationStatement createDeclared(
