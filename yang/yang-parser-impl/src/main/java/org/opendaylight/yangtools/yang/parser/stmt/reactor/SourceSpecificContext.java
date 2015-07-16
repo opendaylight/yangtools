@@ -116,6 +116,12 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                 def = resolveTypeBodyStmts(name.getLocalName());
             }
         }
+        else if (current != null && current.definition().getRepresentingClass().equals(UnknownStatementImpl.class)) {
+            QName qName = Utils.qNameFromArgument(current, name.getLocalName());
+
+            def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition
+                    (getNewStatementDefinition(qName)));
+        }
 
         Preconditions.checkArgument(def != null, "Statement %s does not have type mapping defined.", name);
         if (current == null) {
