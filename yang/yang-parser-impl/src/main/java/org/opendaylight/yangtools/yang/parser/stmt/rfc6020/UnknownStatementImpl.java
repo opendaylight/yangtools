@@ -33,7 +33,7 @@ public class UnknownStatementImpl extends AbstractDeclaredStatement<String> impl
 
         @Override
         public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) throws SourceException {
-            return value;
+            return value == null ? "" : value;
         }
 
         @Override
