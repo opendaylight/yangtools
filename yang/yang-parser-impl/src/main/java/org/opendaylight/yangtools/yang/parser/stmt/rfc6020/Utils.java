@@ -257,8 +257,14 @@ public final class Utils {
         }
 
         if (qNameModule == null) {
-            throw new IllegalArgumentException("Error in module '" + ctx.getRoot().rawStatementArgument()
-                    + "': can not resolve QNameModule for '" + value + "'.");
+            if (StmtContextUtils.producesDeclared(ctx, UnknownStatementImpl.class)
+                    && StmtContextUtils.producesDeclared(ctx.getParentContext(), UnknownStatementImpl.class)) {
+
+                qNameModule = getRootModuleQName(ctx);
+            } else {
+                throw new IllegalArgumentException("Error in module '" + ctx.getRoot().rawStatementArgument()
+                        + "': can not resolve QNameModule for '" + value + "'.");
+            }
         }
 
         QNameModule resultQNameModule = qNameModule.getRevision() == null ? QNameModule.create(
@@ -376,7 +382,7 @@ public final class Utils {
                 }
                 qNamesFromRoot.add(qname);
             } else if (nextStmtArgument instanceof String) {
-                final QName qName = qNameFromArgument(ctx, (String) nextStmtArgument);
+                QName qName = qNameFromArgument(ctx, ((String) nextStmtArgument));
                 qNamesFromRoot.add(qName);
             } else if (StmtContextUtils.producesDeclared(nextStmtCtx, AugmentStatement.class)
                     && nextStmtArgument instanceof SchemaNodeIdentifier) {
@@ -449,5 +455,4 @@ public final class Utils {
     public static SchemaPath SchemaNodeIdentifierToSchemaPath(SchemaNodeIdentifier identifier) {
         return SchemaPath.create(identifier.getPathFromRoot(), identifier.isAbsolute());
     }
-
 }
