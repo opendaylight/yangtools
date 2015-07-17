@@ -88,6 +88,8 @@ public class AugmentStatementImpl extends
                 @Override
                 public void apply() throws InferenceException {
 
+                    System.out.println();
+
                     final StatementContextBase<?, ?, ?> augmentTargetCtx = AugmentUtils
                             .getAugmentTargetCtx(augmentNode);
 

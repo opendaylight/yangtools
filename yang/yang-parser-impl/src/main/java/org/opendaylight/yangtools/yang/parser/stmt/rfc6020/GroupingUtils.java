@@ -12,7 +12,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.RootStatementContext;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
-import java.util.Iterator;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import java.util.Collection;
@@ -69,7 +68,7 @@ public final class GroupingUtils {
                                 TypeOfCopy.ADDED_BY_USES);
                 targetCtx.addEffectiveSubstatement(copy);
                 usesNode.addAsEffectOfStatement(copy);
-            } else if (isReusedByUses(originalStmtCtx)) {
+            } else if (isReusedByUsesOnTop(originalStmtCtx)) {
                 targetCtx.addEffectiveSubstatement(originalStmtCtx);
                 usesNode.addAsEffectOfStatement(originalStmtCtx);
             }
@@ -90,7 +89,7 @@ public final class GroupingUtils {
                                 TypeOfCopy.ADDED_BY_USES);
                 targetCtx.addEffectiveSubstatement(copy);
                 usesNode.addAsEffectOfStatement(copy);
-            } else if (isReusedByUses(originalStmtCtx)) {
+            } else if (isReusedByUsesOnTop(originalStmtCtx)) {
                 targetCtx.addEffectiveSubstatement(originalStmtCtx);
                 usesNode.addAsEffectOfStatement(originalStmtCtx);
             }
@@ -123,11 +122,11 @@ public final class GroupingUtils {
                 QName sourceQName = (QName) sourceStmtArgument;
                 QNameModule sourceQNameModule = sourceQName.getModule();
 
-                if (targetQNameModule.equals(sourceQNameModule)) {
-                    return null;
-                } else {
-                    return targetQNameModule;
-                }
+//                if (targetQNameModule.equals(sourceQNameModule)) {
+//                    return null;
+//                } else {
+                return targetQNameModule;
+//                }
             } else {
                 return null;
             }
@@ -153,6 +152,17 @@ public final class GroupingUtils {
     }
 
     public static boolean isReusedByUses(StmtContext<?, ?, ?> stmtContext) {
+
+        Set<StatementDefinition> reusedDefSet = new HashSet<>();
+        reusedDefSet.add(Rfc6020Mapping.TYPEDEF);
+        reusedDefSet.add(Rfc6020Mapping.TYPE);
+        reusedDefSet.add(Rfc6020Mapping.USES);
+
+        StatementDefinition def = stmtContext.getPublicDefinition();
+        return reusedDefSet.contains(def);
+    }
+
+    public static boolean isReusedByUsesOnTop(StmtContext<?, ?, ?> stmtContext) {
 
         Set<StatementDefinition> reusedDefSet = new HashSet<>();
         reusedDefSet.add(Rfc6020Mapping.TYPEDEF);
