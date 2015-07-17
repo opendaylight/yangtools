@@ -41,15 +41,9 @@ public class AugmentToExtensionTest {
         ContainerSchemaNode devicesContainer = (ContainerSchemaNode) devicesModule.getDataChildByName("my-container");
         Set<UsesNode> uses = devicesContainer.getUses();
 
-        boolean augmentationIsInContainer = false;
         for (UsesNode usesNode : uses) {
-            Set<AugmentationSchema> augmentations = usesNode.getAugmentations();
-            for (AugmentationSchema augmentationSchema : augmentations) {
-                augmentationIsInContainer = true;
-            }
+            assertTrue(usesNode.getAugmentations().isEmpty());
         }
-
-        assertFalse(augmentationIsInContainer);
     }
 
     @Test
