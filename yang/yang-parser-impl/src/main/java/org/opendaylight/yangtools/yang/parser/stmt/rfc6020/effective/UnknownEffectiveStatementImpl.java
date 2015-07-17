@@ -8,6 +8,8 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -63,7 +65,12 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<String
             if (argument() == null || argument().isEmpty()) {
                 qName = extension.getQName();
             } else {
-                qName = QName.create(Utils.qNameFromArgument(ctx, ctx.getStatementArgument()).getModule(), argument());
+                //qName = QName.create(Utils.qNameFromArgument(ctx, ctx.getStatementArgument()).getModule(), argument());
+                StatementContextBase<?, ?, ?> originalCtx = ctx
+                        .getOriginalCtx();
+                qName = (originalCtx != null) ? Utils.qNameFromArgument(
+                        originalCtx, ctx.getStatementArgument())
+                        : Utils.qNameFromArgument(ctx, ctx.getStatementArgument());
             }
         }
 
