@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
@@ -49,7 +50,7 @@ public class ListKeysTest {
             reactor.buildEffective();
             fail("effective build should fail due to list instead of leaf referenced in list key");
         } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
+            assertEquals(InferenceException.class, e.getClass());
             assertTrue(e.getMessage().startsWith("Key 'test1_key1 test1_key2' misses node 'test1_key2'"));
         }
     }
@@ -67,7 +68,7 @@ public class ListKeysTest {
             reactor.buildEffective();
             fail("effective build should fail due to missing leaf referenced in list key");
         } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
+            assertEquals(InferenceException.class, e.getClass());
             assertTrue(e.getMessage().startsWith("Key 'test1_key1 test1_key2' misses node 'test1_key2'"));
         }
     }
@@ -85,7 +86,7 @@ public class ListKeysTest {
             reactor.buildEffective();
             fail("effective build should fail due to list instead of leaf in grouping referenced in list key");
         } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
+            assertEquals(InferenceException.class, e.getClass());
             assertTrue(e.getMessage().startsWith("Key 'grp_list' misses node 'grp_list'"));
         }
     }
@@ -103,7 +104,7 @@ public class ListKeysTest {
             reactor.buildEffective();
             fail("effective build should fail due to list instead of leaf in grouping augmented to list referenced in list key");
         } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
+            assertEquals(InferenceException.class, e.getClass());
             assertTrue(e.getMessage().startsWith("Key 'grp_leaf' misses node 'grp_leaf'"));
         }
     }

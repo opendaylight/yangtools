@@ -217,8 +217,7 @@ public class ChoiceEffectiveStatementImpl extends
     @Override
     public ChoiceCaseNode getCaseNodeByName(final QName name) {
         if (name == null) {
-            throw new IllegalArgumentException(
-                    "Choice Case QName cannot be NULL!");
+            throw new IllegalArgumentException("Choice Case QName cannot be NULL!");
         }
         for (final ChoiceCaseNode caseNode : cases) {
             if (caseNode != null && name.equals(caseNode.getQName())) {
