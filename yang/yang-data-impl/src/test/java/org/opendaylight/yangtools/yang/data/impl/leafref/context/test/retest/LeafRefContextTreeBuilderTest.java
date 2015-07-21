@@ -236,7 +236,7 @@ public class LeafRefContextTreeBuilderTest {
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = IllegalStateException.class)
     public void incorrectLeafRefPathTest() throws URISyntaxException, FileNotFoundException, ReactorException {
         final File resourceFile = new File(getClass().getResource(
                 "/leafref-context-test/incorrect-modules/leafref-test.yang").toURI());

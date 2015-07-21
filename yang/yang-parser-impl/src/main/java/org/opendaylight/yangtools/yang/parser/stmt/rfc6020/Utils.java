@@ -47,6 +47,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -57,6 +58,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModul
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
@@ -87,7 +89,8 @@ public final class Utils {
 
         // to detect if key contains duplicates
         if ((new HashSet<>(keyTokens)).size() < keyTokens.size()) {
-            throw new IllegalArgumentException();
+            throw new SourceException(String.format("Duplicate value in list key: %s", value),
+                    ctx.getStatementSourceReference());
         }
 
         Set<SchemaNodeIdentifier.Relative> keyNodes = new HashSet<>();
@@ -115,8 +118,8 @@ public final class Utils {
         try {
             xPath.compile(path);
         } catch (XPathExpressionException e) {
-            throw new IllegalArgumentException(String.format("Argument %s is not valid XPath string at %s", path, ctx
-                    .getStatementSourceReference().toString()), e);
+            throw new SourceException(String.format("Argument %s is not valid XPath string", path),
+                    ctx.getStatementSourceReference(), e);
         }
     }
 
@@ -189,7 +192,7 @@ public final class Utils {
                 final QName qName = Utils.qNameFromArgument(ctx, nodeName);
                 qNames.add(qName);
             } catch (Exception e) {
-                throw new IllegalArgumentException(e);
+                throw e;
             }
         }
 
@@ -257,8 +260,8 @@ public final class Utils {
         }
 
         if (qNameModule == null) {
-            throw new IllegalArgumentException("Error in module '" + ctx.getRoot().rawStatementArgument()
-                    + "': can not resolve QNameModule for '" + value + "'.");
+            throw new InferenceException(String.format("Error in module '%s': can not resolve QNameModule for '%s'.",
+                    ctx.getRoot().rawStatementArgument(), value), ctx.getStatementSourceReference());
         }
 
         QNameModule resultQNameModule = qNameModule.getRevision() == null ? QNameModule.create(
@@ -409,20 +412,22 @@ public final class Utils {
         }
     }
 
-    public static Deviation.Deviate parseDeviateFromString(final String deviate) {
+    public static Deviation.Deviate parseDeviateFromString(final StmtContext<?, ?, ?> ctx, final String deviate) {
 
         // Yang constants should be lowercase so we have throw if value does not
         // suit this
         String deviateUpper = deviate.toUpperCase();
         if (Objects.equals(deviate, deviateUpper)) {
-            throw new IllegalArgumentException(String.format("String %s is not valid deviate argument", deviate));
+            throw new SourceException(String.format("String %s is not valid deviate argument", deviate),
+                    ctx.getStatementSourceReference());
         }
 
         // but Java enum is uppercase so we cannot use lowercase here
         try {
             return Deviation.Deviate.valueOf(deviateUpper);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(String.format("String %s is not valid deviate argument", deviate), e);
+            throw new SourceException(String.format("String %s is not valid deviate argument", deviate),
+                    ctx.getStatementSourceReference(), e);
         }
     }
 
