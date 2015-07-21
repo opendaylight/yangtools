@@ -101,7 +101,7 @@ public class AugmentTest {
             reactor.build();
             fail("reactor.process should fail due to missing import from augment path");
         } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
+            assertEquals(IllegalStateException.class, e.getClass());
         }
     }
 
@@ -115,7 +115,7 @@ public class AugmentTest {
             reactor.build();
             fail("reactor.process should fail due to empty path");
         } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
+            assertEquals(IllegalStateException.class, e.getClass());
         }
     }
 
@@ -129,7 +129,7 @@ public class AugmentTest {
             reactor.build();
             fail("reactor.process should fail due to invalid XPath");
         } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
+            assertEquals(IllegalStateException.class, e.getClass());
         }
     }
 

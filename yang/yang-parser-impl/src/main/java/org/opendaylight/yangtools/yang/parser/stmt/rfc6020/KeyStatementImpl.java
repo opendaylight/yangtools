@@ -48,7 +48,9 @@ public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<Schem
 
             // to detect if key contains duplicates
             if ((new HashSet<>(keyTokens)).size() < keyTokens.size()) {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException(
+                        String.format("Duplicate value in list key: %s\nStatement source at %s", value,
+                                ctx.getStatementSourceReference()));
             }
 
             Set<SchemaNodeIdentifier> keyNodes = new HashSet<>();

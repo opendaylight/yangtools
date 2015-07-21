@@ -44,7 +44,7 @@ public class RangeStatementImpl extends AbstractDeclaredStatement<List<RangeCons
 
         @Override
         public List<RangeConstraint> parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
-            return TypeUtils.parseRangeListFromString(value);
+            return TypeUtils.parseRangeListFromString(ctx, value);
         }
 
         @Override
