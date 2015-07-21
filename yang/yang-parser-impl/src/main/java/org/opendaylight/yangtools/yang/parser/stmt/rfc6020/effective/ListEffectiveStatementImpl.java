@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
@@ -91,9 +92,9 @@ public class ListEffectiveStatementImpl extends AbstractEffectiveDocumentedDataN
                 final QName keyQName = key.getLastComponent();
 
                 if (!possibleLeafQNamesForKey.contains(keyQName)) {
-                    throw new IllegalArgumentException(String.format("Key '%s' misses node '%s' in list '%s', file %s",
-                            keyEffectiveSubstatement.getDeclared().rawArgument(), keyQName.getLocalName(), ctx.getStatementArgument(),
-                            ctx.getStatementSourceReference()));
+                    throw new InferenceException(String.format("Key '%s' misses node '%s' in list '%s'",
+                            keyEffectiveSubstatement.getDeclared().rawArgument(), keyQName.getLocalName(),
+                            ctx.getStatementArgument()), ctx.getStatementSourceReference());
                 }
 
                 keyDefinitionInit.add(keyQName);

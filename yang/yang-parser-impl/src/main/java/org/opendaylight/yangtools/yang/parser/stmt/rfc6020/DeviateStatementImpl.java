@@ -35,7 +35,7 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<Deviation.De
 
         @Override public Deviation.Deviate parseArgumentValue(
                 StmtContext<?, ?, ?> ctx, String value) throws SourceException {
-            return Utils.parseDeviateFromString(value);
+            return Utils.parseDeviateFromString(ctx, value);
         }
 
         @Override public DeviateStatement createDeclared(
