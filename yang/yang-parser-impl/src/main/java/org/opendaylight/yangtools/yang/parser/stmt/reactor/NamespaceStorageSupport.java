@@ -34,8 +34,6 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         // NOOP
     }
 
-    //<K,V,N extends IdentifierNamespace<K, V>> V
-    //public final <K, VT, V extends VT ,N extends IdentifierNamespace<K, V>> VT getFromNamespace(Class<N> type, K key)
     public final <K,V, KT extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(Class<N> type, KT key)
             throws NamespaceNotAvailableException {
         return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this,key);
