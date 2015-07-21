@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;

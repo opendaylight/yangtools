@@ -161,7 +161,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     }
 
     /**
-     * @return this as it is the only\context from root (this)
+     * @return this as it is the only context from root (this)
      */
     @Override
     public List<StmtContext<?, ?, ?>> getStmtContextsFromRoot() {
