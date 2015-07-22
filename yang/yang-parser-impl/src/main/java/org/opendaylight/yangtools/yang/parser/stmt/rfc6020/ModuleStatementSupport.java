@@ -70,8 +70,9 @@ public class ModuleStatementSupport extends
         Optional<URI> moduleNs = Optional.fromNullable(firstAttributeOf(stmt.declaredSubstatements(),
                 NamespaceStatement.class));
         if (!moduleNs.isPresent()) {
-            throw new IllegalArgumentException("Namespace of the module [" + stmt.getStatementArgument()
-                    + "] is missing.");
+            throw new SourceException(
+                    String.format("Namespace of the module [%s] is missing.", stmt.getStatementArgument()),
+                    stmt.getStatementSourceReference());
         }
 
         Optional<Date> revisionDate = Optional.fromNullable(getLatestRevision(stmt.declaredSubstatements()));
@@ -89,7 +90,9 @@ public class ModuleStatementSupport extends
 
         String modulePrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
         if (modulePrefix == null) {
-            throw new IllegalArgumentException("Prefix of the module [" + stmt.getStatementArgument() + "] is missing.");
+            throw new SourceException(
+                    String.format("Prefix of the module [%s] is missing.", stmt.getStatementArgument()),
+                    stmt.getStatementSourceReference());
         }
 
         stmt.addToNs(PrefixToModule.class, modulePrefix, qNameModule);

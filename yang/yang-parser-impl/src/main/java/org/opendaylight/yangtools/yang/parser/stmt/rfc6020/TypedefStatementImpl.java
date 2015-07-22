@@ -59,8 +59,9 @@ public class TypedefStatementImpl extends AbstractDeclaredStatement<QName> imple
                 throws SourceException {
             if (stmt != null && stmt.getParentContext() != null) {
                 if (stmt.getParentContext().getFromNamespace(TypeNamespace.class, stmt.getStatementArgument()) != null) {
-                    throw new IllegalArgumentException(String.format("Duplicate name for typedef %s",
-                            stmt.getStatementArgument()));
+                    throw new SourceException(
+                            String.format("Duplicate name for typedef %s", stmt.getStatementArgument()),
+                            stmt.getStatementSourceReference());
                 }
 
                 stmt.getParentContext().addContext(TypeNamespace.class, stmt.getStatementArgument(), stmt);

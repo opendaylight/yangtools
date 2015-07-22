@@ -167,12 +167,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     StatementContextBase(StatementContextBase<A, D, E> original) {
-        this.definition = Preconditions
-                .checkNotNull(original.definition, "Statement context definition cannot be null");
-        this.identifier = Preconditions
-                .checkNotNull(original.identifier, "Statement context identifier cannot be null");
+        this.definition = Preconditions.checkNotNull(original.definition,
+                "Statement context definition cannot be null copying from " + original.getStatementSourceReference());
+        this.identifier = Preconditions.checkNotNull(original.identifier,
+                "Statement context identifier cannot be null copying from " + original.getStatementSourceReference());
         this.statementDeclSource = Preconditions.checkNotNull(original.statementDeclSource,
-                "Statement context statementDeclSource cannot be null");
+                "Statement context statementDeclSource cannot be null copying from " + original.getStatementSourceReference());
         this.completedPhase = null;
         initCopyHistory();
     }
@@ -269,10 +269,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
         Preconditions.checkState(inProgressPhase == ModelProcessingPhase.FULL_DECLARATION
                 || inProgressPhase == ModelProcessingPhase.EFFECTIVE_MODEL,
-                "Effective statement cannot be added in declared phase");
+                "Effective statement cannot be added in declared phase at " + getStatementSourceReference());
 
         effective.add(Preconditions.checkNotNull(substatement,
-                "StatementContextBase effective substatement cannot be null"));
+                "StatementContextBase effective substatement cannot be null at " + getStatementSourceReference()));
     }
 
     /**
@@ -287,10 +287,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
         final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
         Preconditions.checkState(inProgressPhase != ModelProcessingPhase.EFFECTIVE_MODEL,
-                "Declared statement cannot be added in effective phase");
+                "Declared statement cannot be added in effective phase at " + getStatementSourceReference());
 
         declared.add(Preconditions.checkNotNull(substatement,
-                "StatementContextBase declared substatement cannot be null"));
+                "StatementContextBase declared substatement cannot be null at " + getStatementSourceReference()));
     }
 
     /**
@@ -368,7 +368,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
         final SourceSpecificContext sourceContext = getRoot().getSourceContext();
         Preconditions.checkState(sourceContext.getInProgressPhase() != ModelProcessingPhase.EFFECTIVE_MODEL,
-                "Declared statements list cannot be cleared in effective phase");
+                "Declared statements list cannot be cleared in effective phase at " + getStatementSourceReference());
 
         declared.clear();
     }
@@ -504,8 +504,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      */
     void addPhaseCompletedListener(ModelProcessingPhase phase, OnPhaseFinished listener) throws SourceException {
 
-        Preconditions.checkNotNull(phase, "Statement context processing phase cannot be null");
-        Preconditions.checkNotNull(listener, "Statement context phase listener cannot be null");
+        Preconditions.checkNotNull(phase,
+                "Statement context processing phase cannot be null at " + getStatementSourceReference());
+        Preconditions.checkNotNull(listener,
+                "Statement context phase listener cannot be null at " + getStatementSourceReference());
 
         ModelProcessingPhase finishedPhase = completedPhase;
         while (finishedPhase != null) {
@@ -528,7 +530,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         ModelProcessingPhase finishedPhase = completedPhase;
         while (finishedPhase != null) {
             if (phase.equals(finishedPhase)) {
-                throw new IllegalStateException("Mutation registered after phase was completed.");
+                throw new IllegalStateException(
+                        "Mutation registered after phase was completed at " + getStatementSourceReference());
             }
             finishedPhase = finishedPhase.getPreviousPhase();
         }
