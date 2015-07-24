@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a7fa997_b8426a3c",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YinStatementParserImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 200,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-07-24T08:34:32Z",
+      "side": 1,
+      "message": "Use QNameToStatementDefinition namespace to obtain this information.",
+      "range": {
+        "startLine": 176,
+        "startChar": 4,
+        "endLine": 200,
+        "endChar": 5
+      },
+      "revId": "a2adaa0068bd7c173675e72b02bef4e3b20cc50d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_d83de6bc",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YinStatementParserImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 215,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-07-24T08:34:32Z",
+      "side": 1,
+      "message": "Use QNameToStatementDefinition namespace which is injected into source to obtain that information.",
+      "range": {
+        "startLine": 210,
+        "startChar": 3,
+        "endLine": 215,
+        "endChar": 5
+      },
+      "revId": "a2adaa0068bd7c173675e72b02bef4e3b20cc50d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_784cd270",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/YinStatementSourceImpl.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 47,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-07-24T08:34:32Z",
+      "side": 1,
+      "message": "Should not this be static?",
+      "range": {
+        "startLine": 47,
+        "startChar": 8,
+        "endLine": 47,
+        "endChar": 56
+      },
+      "revId": "a2adaa0068bd7c173675e72b02bef4e3b20cc50d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a7fa997_98476e4b",
+        "filename": "yang/yang-parser-impl/src/test/resources/semantic-statement-parser/yin/extension-use.xml",
+        "patchSetId": 5
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-07-24T08:34:32Z",
+      "side": 1,
+      "message": "Move this before import - that way you will test harder case - extension is used before it is declared.",
+      "range": {
+        "startLine": 14,
+        "startChar": 4,
+        "endLine": 14,
+        "endChar": 55
+      },
+      "revId": "a2adaa0068bd7c173675e72b02bef4e3b20cc50d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
