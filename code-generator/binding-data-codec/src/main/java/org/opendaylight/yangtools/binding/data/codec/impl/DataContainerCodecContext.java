@@ -41,6 +41,10 @@ abstract class DataContainerCodecContext<T> extends NodeCodecContext {
         return prototype.getYangArg();
     }
 
+    protected final Class<?> getBindingClass() {
+        return Class.class.cast(prototype.getBindingClass());
+    }
+
     /**
      * Returns nested node context using supplied YANG Instance Identifier
      *
