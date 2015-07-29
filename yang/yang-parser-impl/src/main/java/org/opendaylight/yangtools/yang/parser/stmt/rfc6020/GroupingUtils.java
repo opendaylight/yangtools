@@ -7,28 +7,28 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
-
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.RootStatementContext;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
-import java.util.Iterator;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.RootStatementContext;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public final class GroupingUtils {
@@ -186,17 +186,18 @@ public final class GroupingUtils {
         if (refineArgument instanceof SchemaNodeIdentifier) {
             refineTargetNodeIdentifier = (SchemaNodeIdentifier) refineArgument;
         } else {
-            throw new IllegalArgumentException(
-                    "Invalid refine argument. It must be instance of SchemaNodeIdentifier");
+            throw new InferenceException(String
+                    .format("Invalid refine argument: %s. It must be instance of SchemaNodeIdentifier", refineArgument),
+                    refineCtx.getStatementSourceReference());
         }
 
         StatementContextBase<?, ?, ?> refineTargetNodeCtx = Utils.findNode(
                 usesParentCtx, refineTargetNodeIdentifier);
 
         if (refineTargetNodeCtx == null) {
-            throw new IllegalArgumentException(
-                    "Refine target node not found. Path: "
-                            + refineTargetNodeIdentifier);
+            throw new InferenceException(
+                    String.format("Refine target node not found. Path: %s", refineTargetNodeIdentifier),
+                    refineCtx.getStatementSourceReference());
         }
 
         addOrReplaceNodes(refineCtx, refineTargetNodeCtx);

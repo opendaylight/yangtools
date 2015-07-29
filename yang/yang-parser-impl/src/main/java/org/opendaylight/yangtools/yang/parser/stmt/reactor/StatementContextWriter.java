@@ -36,7 +36,7 @@ class StatementContextWriter implements StatementWriter {
 
     @Override
     public void argumentValue(String value, StatementSourceReference ref) {
-        Preconditions.checkState(current != null, "Could not set two arguments for one statement.");
+        Preconditions.checkState(current != null, "Could not set argument for not existing statement: ", ref);
         current.setArgument(value, ref);
     }
 

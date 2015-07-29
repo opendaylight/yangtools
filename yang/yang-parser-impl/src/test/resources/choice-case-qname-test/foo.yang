@@ -1,0 +1,21 @@
+module foo {
+    prefix "foo";
+    namespace "urn.opendaylight.foo";
+    revision "2010-06-12";
+
+    choice testing-choice {
+        case first-case {
+            leaf leaf1 {
+
+            }
+        }
+
+        case second-case {
+            leaf leaf2 {
+
+            }
+        }
+
+    }
+
+}

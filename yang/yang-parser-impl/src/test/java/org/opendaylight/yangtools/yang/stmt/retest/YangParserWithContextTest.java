@@ -97,21 +97,6 @@ public class YangParserWithContextTest {
                 SimpleDateFormatUtil.getRevisionFormat().parse("2013-06-18"));
         assertNotNull(module);
 
-//        String resource = "/ietf/ietf-inet-types@2010-09-24.yang";
-//        InputStream stream = new FileInputStream(new File(getClass()
-//                .getResource(resource).toURI()));
-//        SchemaContext context = parser.resolveSchemaContext(TestUtils
-//                .loadModules(Lists.newArrayList(stream)));
-//        stream.close();
-//
-//        resource = "/context-test/test1.yang";
-//        InputStream stream2 = new FileInputStream(new File(getClass()
-//                .getResource(resource).toURI()));
-//        Module module = TestUtils.loadModuleWithContext("test1", stream2,
-//                context);
-//        stream2.close();
-//        assertNotNull(module);
-
         LeafSchemaNode leaf = (LeafSchemaNode) module.getDataChildByName("id");
 
         ExtendedType leafType = (ExtendedType) leaf.getType();
@@ -145,18 +130,6 @@ public class YangParserWithContextTest {
                 "/context-test/test2.yang", false);
         StmtTestUtils.addSources(reactor, BAZ, FOO, BAR, SUBFOO, test2);
         SchemaContext context = reactor.buildEffective();
-
-        // Module testModule;
-        // try (InputStream stream = new FileInputStream(new
-        // File(getClass().getResource("/context-test/test2.yang")
-        // .toURI()))) {
-        // testModule = TestUtils.loadModuleWithContext("test2", stream,
-        // context);
-        // }
-        // assertNotNull(testModule);
-
-        // suffix _u = added by uses
-        // suffix _g = defined in grouping from context
 
         // get grouping
         Module testModule = context.findModuleByName("test2",
@@ -273,14 +246,6 @@ public class YangParserWithContextTest {
         StmtTestUtils.addSources(reactor, BAZ, FOO, BAR, SUBFOO, test2);
         SchemaContext context = reactor.buildEffective();
 
-        // Module module;
-        // try (InputStream stream = new FileInputStream(new
-        // File(getClass().getResource("/context-test/test2.yang")
-        // .toURI()))) {
-        // module = TestUtils.loadModuleWithContext("test2", stream, context);
-        // }
-        // assertNotNull(module);
-
         Module module = context.findModuleByName("test2",
                 SimpleDateFormatUtil.getRevisionFormat().parse("2013-06-18"));
         assertNotNull(module);
@@ -377,20 +342,6 @@ public class YangParserWithContextTest {
                 SimpleDateFormatUtil.getRevisionFormat().parse("2013-06-18"));
         assertNotNull(module);
 
-//        SchemaContext context;
-//        File yangFile = new File(getClass().getResource(
-//                "/types/custom-types-test@2012-4-4.yang").toURI());
-//        File dependenciesDir = new File(getClass().getResource("/ietf").toURI());
-//        YangContextParser parser = new YangParserImpl();
-//        context = parser.parseFile(yangFile, dependenciesDir);
-//
-//        Module module;
-//        try (InputStream stream = new FileInputStream(new File(getClass()
-//                .getResource("/context-test/test3.yang").toURI()))) {
-//            module = TestUtils.loadModuleWithContext("test3", stream, context);
-//        }
-//        assertNotNull(module);
-
         Set<IdentitySchemaNode> identities = module.getIdentities();
         assertEquals(1, identities.size());
 
@@ -430,19 +381,6 @@ public class YangParserWithContextTest {
         Module module = context.findModuleByName("test3",
                 SimpleDateFormatUtil.getRevisionFormat().parse("2013-06-18"));
         assertNotNull(module);
-
-//        SchemaContext context;
-//        File yangFile = new File(getClass().getResource(
-//                "/types/custom-types-test@2012-4-4.yang").toURI());
-//        File dependenciesDir = new File(getClass().getResource("/ietf").toURI());
-//        YangContextParser parser = new YangParserImpl();
-//        context = parser.parseFile(yangFile, dependenciesDir);
-//
-//        Module module;
-//        try (InputStream stream = new FileInputStream(new File(getClass()
-//                .getResource("/context-test/test3.yang").toURI()))) {
-//            module = TestUtils.loadModuleWithContext("test3", stream, context);
-//        }
 
         ContainerSchemaNode network = (ContainerSchemaNode) module
                 .getDataChildByName("network");
@@ -524,29 +462,6 @@ public class YangParserWithContextTest {
                 SimpleDateFormatUtil.getRevisionFormat().parse("2013-02-27"));
         assertNotNull(testModule);
 
-        // load first module
-//        SchemaContext context;
-//        String resource = "/model/bar.yang";
-//
-//        try (InputStream stream = new FileInputStream(new File(getClass()
-//                .getResource(resource).toURI()))) {
-//            context = parser.resolveSchemaContext(TestUtils.loadModules(Lists
-//                    .newArrayList(stream)));
-//        }
-
-        // load another modules and parse them against already existing context
-//        Set<Module> modules;
-//        try (InputStream stream = new FileInputStream(new File(getClass()
-//                .getResource("/context-test/deviation-test.yang").toURI()))) {
-//            List<InputStream> input = Lists.newArrayList(stream);
-//            modules = TestUtils.loadModulesWithContext(input, context);
-//        }
-//        assertNotNull(modules);
-
-        // test deviation
-        //Module testModule = TestUtils.findModule(modules, "deviation-test");
-
-
         Set<Deviation> deviations = testModule.getDeviations();
         assertEquals(1, deviations.size());
         Deviation dev = deviations.iterator().next();
@@ -564,5 +479,4 @@ public class YangParserWithContextTest {
         assertEquals(expectedPath, dev.getTargetPath());
         assertEquals(Deviate.ADD, dev.getDeviate());
     }
-
 }
