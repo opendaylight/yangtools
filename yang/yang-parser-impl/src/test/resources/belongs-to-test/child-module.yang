@@ -1,0 +1,5 @@
+submodule child-module {
+    belongs-to "aaa" {
+    prefix a;
+    }
+}

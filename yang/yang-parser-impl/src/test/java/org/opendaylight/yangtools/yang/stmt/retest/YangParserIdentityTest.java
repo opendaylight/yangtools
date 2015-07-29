@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 import org.opendaylight.yangtools.yang.stmt.test.StmtTestUtils;
 
 public class YangParserIdentityTest {
@@ -22,7 +23,7 @@ public class YangParserIdentityTest {
     public void testParsingIdentityTestModule() throws URISyntaxException,
             ReactorException, FileNotFoundException {
         File yang = new File(getClass().getResource("/identity/identitytest.yang").toURI());
-        InputStream stream = new FileInputStream(yang);
+        InputStream stream = new NamedFileInputStream(yang, yang.getPath());
         try {
             TestUtils.loadModule(stream);
         } catch (SomeModifiersUnresolvedException e) {
@@ -36,7 +37,7 @@ public class YangParserIdentityTest {
     public void testParsingPrefixIdentityTestModule() throws URISyntaxException,
             ReactorException, FileNotFoundException {
         File yang = new File(getClass().getResource("/identity/prefixidentitytest.yang").toURI());
-        InputStream stream = new FileInputStream(yang);
+        InputStream stream = new NamedFileInputStream(yang, yang.getPath());
         try {
             TestUtils.loadModule(stream);
         } catch (SomeModifiersUnresolvedException e) {

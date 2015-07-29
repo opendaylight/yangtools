@@ -31,7 +31,9 @@ import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinit
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType.Builder;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LengthEffectiveStatementImpl;
@@ -107,9 +109,8 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
                 qName = QName.create(Utils.getRootModuleQName(ctx), nameTokens.get(1));
                 break;
             default:
-                throw new IllegalArgumentException(String.format(
-                        "Bad colon separated parts number (%d) of QName '%s'.", nameTokens.size(),
-                        ctx.getStatementArgument()));
+                throw new SourceException(String.format("Bad colon separated parts number (%d) of QName '%s'.",
+                        nameTokens.size(), ctx.getStatementArgument()), ctx.getStatementSourceReference());
             }
         } else {
             qName = Utils.qNameFromArgument(ctx, ctx.getStatementArgument());
@@ -130,8 +131,8 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
                     .getParentContext().getFromNamespace(TypeNamespace.class, baseTypeQName);
 
             if (baseTypeCtx == null) {
-                throw new IllegalStateException(String.format("Type '%s' was not found in %s.", baseTypeQName,
-                        ctx.getStatementSourceReference()));
+                throw new InferenceException(String.format("Type '%s' was not found", baseTypeQName),
+                        ctx.getStatementSourceReference());
             }
 
             baseType = (TypeDefEffectiveStatementImpl) baseTypeCtx.buildEffective();
@@ -183,18 +184,6 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
             typeConstraints.addPatterns(((TypeDefEffectiveStatementImpl) baseType).getPatternConstraints());
             typeConstraints.addFractionDigits(((TypeDefEffectiveStatementImpl) baseType).getFractionDigits());
         }
-//        else if (baseType instanceof DecimalTypeDefinition) {
-//            final DecimalTypeDefinition decimalType = (DecimalTypeDefinition) TypeUtils
-//                    .getYangBaseTypeFromString(baseTypeName);
-//            typeConstraints.addRanges(decimalType.getRangeConstraints());
-//            typeConstraints.addFractionDigits(decimalType.getFractionDigits());
-//        }
-//        else if (baseType instanceof ExtendedTypeEffectiveStatementImpl) {
-//            typeConstraints.addRanges(((ExtendedTypeEffectiveStatementImpl) baseType).getRangeConstraints());
-//            typeConstraints.addLengths(((ExtendedTypeEffectiveStatementImpl) baseType).getLengthConstraints());
-//            typeConstraints.addPatterns(((ExtendedTypeEffectiveStatementImpl) baseType).getPatternConstraints());
-//            typeConstraints.addFractionDigits(((ExtendedTypeEffectiveStatementImpl) baseType).getFractionDigits());
-//        }
 
         return typeConstraints;
     }

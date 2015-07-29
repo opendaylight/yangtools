@@ -25,13 +25,20 @@ public class SourceException extends RuntimeException {
     private final StatementSourceReference sourceRef;
 
     public SourceException(@Nonnull String message,@Nonnull StatementSourceReference source) {
-        super(Preconditions.checkNotNull(message));
-        sourceRef = Preconditions.checkNotNull(source);
+        super(createMessage(message, source));
+        sourceRef = source;
     }
 
     public SourceException(@Nonnull String message,@Nonnull StatementSourceReference source, Throwable cause) {
-        super(Preconditions.checkNotNull(message),cause);
-        sourceRef = Preconditions.checkNotNull(source);
+        super(createMessage(message, source),cause);
+        sourceRef = source;
+    }
+
+    private static String createMessage(@Nonnull String message,@Nonnull StatementSourceReference source) {
+        Preconditions.checkNotNull(message);
+        Preconditions.checkNotNull(source);
+
+        return String.format("%s\nStatement source at %s", message, source);
     }
 
     public @Nonnull StatementSourceReference getSourceReference() {

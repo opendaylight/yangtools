@@ -1,0 +1,18 @@
+module parent-module {
+
+    yang-version "1";
+    prefix "bar";
+    namespace "urn.opendaylight.bar";
+
+    include child-module;
+
+    organization "opendaylight";
+    contact "http://www.opendaylight.org/";
+
+    typedef int32-ext {
+            type int {
+                range "5 .. 10";
+            }
+        }
+
+}
