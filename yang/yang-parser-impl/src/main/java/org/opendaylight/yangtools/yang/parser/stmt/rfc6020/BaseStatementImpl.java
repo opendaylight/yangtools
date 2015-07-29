@@ -88,11 +88,12 @@ public class BaseStatementImpl extends AbstractDeclaredStatement<QName>
                     }
 
                     @Override
-                    public void prerequisiteFailed(
-                            Collection<? extends Prerequisite<?>> failed)
+                    public void prerequisiteFailed(Collection<? extends Prerequisite<?>> failed)
                             throws InferenceException {
-                            throw new InferenceException("Unable to resolve identity "+baseParentCtx.getStatementArgument()+" and base identity " + baseStmtCtx.getStatementArgument(), baseStmtCtx
-                                    .getStatementSourceReference());
+                        throw new InferenceException(
+                                "Unable to resolve identity " + baseParentCtx.getStatementArgument()
+                                        + " and base identity " + baseStmtCtx.getStatementArgument(),
+                                baseStmtCtx.getStatementSourceReference());
                     }
 
                 });

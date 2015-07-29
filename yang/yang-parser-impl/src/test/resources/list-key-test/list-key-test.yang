@@ -1,0 +1,17 @@
+module list-key-test {
+
+    namespace "urn.opendaylight.list-key-test";
+    prefix "lkt";
+
+    list testlist {
+        key "testkey testkey";
+
+        leaf testkey {
+            type "string";
+        }
+
+        leaf testleaf {
+            type "string";
+        }
+    }
+}
