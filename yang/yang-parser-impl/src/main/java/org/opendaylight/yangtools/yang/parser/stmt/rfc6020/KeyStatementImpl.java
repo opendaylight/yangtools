@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.KeyEffectiveStatementImpl;
 import java.util.Collection;
 import java.util.HashSet;
@@ -33,7 +32,8 @@ public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<Schem
 
     public static class Definition
             extends
-            AbstractStatementSupport<Collection<SchemaNodeIdentifier>, KeyStatement, EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement>> {
+            AbstractStatementSupport<Collection<SchemaNodeIdentifier>, KeyStatement,
+                    EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.KEY);
@@ -48,7 +48,8 @@ public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<Schem
 
             // to detect if key contains duplicates
             if ((new HashSet<>(keyTokens)).size() < keyTokens.size()) {
-                throw new IllegalArgumentException();
+                throw new SourceException(
+                        String.format("Duplicate value in list key: %s\n", value), ctx.getStatementSourceReference());
             }
 
             Set<SchemaNodeIdentifier> keyNodes = new HashSet<>();
@@ -70,7 +71,8 @@ public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<Schem
 
         @Override
         public EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement> createEffective(
-                StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement>> ctx) {
+                StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement,
+                        EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement>> ctx) {
             return new KeyEffectiveStatementImpl(ctx);
         }
     }

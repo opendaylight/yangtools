@@ -21,12 +21,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
-
 import javax.annotation.concurrent.Immutable;
 
 @Immutable
@@ -64,46 +62,40 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree child = ctx.getChild(i);
             if (child instanceof YangStatementParser.KeywordContext) {
-                try {
-                    identifier = new QName(YangConstants.RFC6020_YIN_NAMESPACE,
-                            ((YangStatementParser.KeywordContext) child).children.get(0).getText());
-                    if (stmtDef != null && Utils.isValidStatementDefinition(prefixes, stmtDef, identifier) && toBeSkipped.isEmpty()) {
-                        if (identifier.equals(Rfc6020Mapping.TYPE.getStatementName())) {
-                            isType = true;
-                        } else {
-                            writer.startStatement(identifier, ref);
-                        }
+                identifier = new QName(YangConstants.RFC6020_YIN_NAMESPACE,
+                        ((YangStatementParser.KeywordContext) child).children.get(0).getText());
+                if (stmtDef != null && Utils.isValidStatementDefinition(prefixes, stmtDef, identifier)  &&
+                        toBeSkipped.isEmpty()) {
+                    if (identifier.equals(Rfc6020Mapping.TYPE.getStatementName())) {
+                        isType = true;
                     } else {
-                        if (writer.getPhase().equals(ModelProcessingPhase.FULL_DECLARATION)) {
-                            throw new IllegalArgumentException(identifier.getLocalName() + " is not a YANG statement " +
-                                    "or use of extension. Source: " + ref);
-                        } else {
-                            action = false;
-                            toBeSkipped.add(((YangStatementParser.KeywordContext) child).children.get(0).getText());
-                        }
+                        writer.startStatement(identifier, ref);
                     }
-                } catch (SourceException e) {
-                    LOG.warn(e.getMessage(), e);
+                } else {
+                    if (writer.getPhase().equals(ModelProcessingPhase.FULL_DECLARATION)) {
+                        throw new IllegalArgumentException(identifier.getLocalName() + " is not a YANG statement " +
+                                "or use of extension. Source: " + ref);
+                    } else {
+                        action = false;
+                        toBeSkipped.add(((YangStatementParser.KeywordContext) child).children.get(0).getText());
+                    }
                 }
             } else if (child instanceof YangStatementParser.ArgumentContext) {
-                try {
-                    final String argument = Utils.stringFromStringContext((YangStatementParser.ArgumentContext) child);
-                    if (isType) {
-                            if (TypeUtils.isYangTypeBodyStmtString(argument)) {
-                                writer.startStatement(new QName(YangConstants.RFC6020_YIN_NAMESPACE, argument), ref);
-                            } else {
-                                writer.startStatement(new QName(YangConstants.RFC6020_YIN_NAMESPACE, Rfc6020Mapping
-                                        .TYPE.getStatementName().getLocalName()), ref);
-                            }
-                        writer.argumentValue(argument, ref);
-                        isType = false;
-                    } else if (action) {
-                        writer.argumentValue(Utils.stringFromStringContext((YangStatementParser.ArgumentContext) child), ref);
-                    } else {
-                        action = true;
-                    }
-                } catch (SourceException e) {
-                    LOG.warn(e.getMessage(), e);
+                final String argument = Utils.stringFromStringContext((YangStatementParser.ArgumentContext) child);
+                if (isType) {
+                        if (TypeUtils.isYangTypeBodyStmtString(argument)) {
+                            writer.startStatement(new QName(YangConstants.RFC6020_YIN_NAMESPACE, argument), ref);
+                        } else {
+                            writer.startStatement(new QName(YangConstants.RFC6020_YIN_NAMESPACE, Rfc6020Mapping
+                                    .TYPE.getStatementName().getLocalName()), ref);
+                        }
+                    writer.argumentValue(argument, ref);
+                    isType = false;
+                } else if (action) {
+                    writer.argumentValue(Utils.stringFromStringContext((YangStatementParser.ArgumentContext) child),
+                            ref);
+                } else {
+                    action = true;
                 }
             }
 
@@ -112,23 +104,21 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
 
     @Override
     public void exitStatement(YangStatementParser.StatementContext ctx) {
-        final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, ctx.getStart().getLine(), ctx
+        final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, ctx.getStart().getLine(),
+                ctx
                 .getStart().getCharPositionInLine());
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree child = ctx.getChild(i);
             if (child instanceof YangStatementParser.KeywordContext) {
-                try {
-                    String statementName = ((YangStatementParser.KeywordContext) child).children.get(0).getText();
-                    QName identifier = new QName(YangConstants.RFC6020_YIN_NAMESPACE, statementName);
-                    if (stmtDef != null && Utils.isValidStatementDefinition(prefixes, stmtDef, identifier) && toBeSkipped.isEmpty()) {
-                        writer.endStatement(ref);
-                    }
+                String statementName = ((YangStatementParser.KeywordContext) child).children.get(0).getText();
+                QName identifier = new QName(YangConstants.RFC6020_YIN_NAMESPACE, statementName);
+                if (stmtDef != null && Utils.isValidStatementDefinition(prefixes, stmtDef, identifier)  &&
+                        toBeSkipped.isEmpty()) {
+                    writer.endStatement(ref);
+                }
 
-                    if (toBeSkipped.contains(statementName)) {
-                        toBeSkipped.remove(statementName);
-                    }
-                } catch (SourceException e) {
-                    LOG.warn(e.getMessage(), e);
+                if (toBeSkipped.contains(statementName)) {
+                    toBeSkipped.remove(statementName);
                 }
             }
         }

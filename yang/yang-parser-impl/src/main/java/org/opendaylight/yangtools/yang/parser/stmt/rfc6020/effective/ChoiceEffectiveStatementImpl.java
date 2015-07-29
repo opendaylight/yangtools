@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
@@ -41,6 +42,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 public class ChoiceEffectiveStatementImpl extends
         AbstractEffectiveDocumentedNode<QName, ChoiceStatement> implements
         ChoiceSchemaNode, DerivableSchemaNode {
+    private final StatementSourceReference ref;
     private final QName qname;
     private final SchemaPath path;
 
@@ -59,6 +61,7 @@ public class ChoiceEffectiveStatementImpl extends
             StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
         super(ctx);
 
+        this.ref = ctx.getStatementSourceReference();
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
         this.constraints = new EffectiveConstraintDefinitionImpl(this);
@@ -217,8 +220,7 @@ public class ChoiceEffectiveStatementImpl extends
     @Override
     public ChoiceCaseNode getCaseNodeByName(final QName name) {
         if (name == null) {
-            throw new IllegalArgumentException(
-                    "Choice Case QName cannot be NULL!");
+            throw new IllegalArgumentException("Choice Case QName cannot be NULL! " + ref);
         }
         for (final ChoiceCaseNode caseNode : cases) {
             if (caseNode != null && name.equals(caseNode.getQName())) {
@@ -232,7 +234,7 @@ public class ChoiceEffectiveStatementImpl extends
     public ChoiceCaseNode getCaseNodeByName(final String name) {
         if (name == null) {
             throw new IllegalArgumentException(
-                    "Choice Case string Name cannot be NULL!");
+                    "Choice Case string Name cannot be NULL! " + ref);
         }
         for (final ChoiceCaseNode caseNode : cases) {
             if (caseNode != null && (caseNode.getQName() != null)

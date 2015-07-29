@@ -38,7 +38,7 @@ public class LengthStatementImpl extends AbstractDeclaredStatement<List<LengthCo
 
         @Override
         public List<LengthConstraint> parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
-            return TypeUtils.parseLengthListFromString(value);
+            return TypeUtils.parseLengthListFromString(ctx, value);
         }
 
         @Override

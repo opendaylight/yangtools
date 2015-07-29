@@ -82,7 +82,8 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
                 @Override
                 public void prerequisiteFailed(Collection<? extends ModelActionBuilder.Prerequisite<?>> failed) throws InferenceException {
                     if (failed.contains(belongsToPrereq)) {
-                        throw new InferenceException("Module from belongs-to was not found: " + belongsToCtx.getStatementArgument(), belongsToCtx
+                        throw new SourceException("Module from belongs-to was not found: " + belongsToCtx.getStatementArgument
+                                (), belongsToCtx
                                 .getStatementSourceReference());
                     }
                 }

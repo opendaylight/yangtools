@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import java.util.ArrayList;
 import java.util.List;
+import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Collection;
@@ -108,8 +109,7 @@ public class StmtTestUtils {
         StatementStreamSource[] sources = new StatementStreamSource[files.length];
 
         for (int i = 0; i < files.length; i++) {
-            sources[i] = new YangStatementSourceImpl(new FileInputStream(
-                    files[i]));
+           sources[i] = new YangStatementSourceImpl(new NamedFileInputStream(files[i], files[i].getPath()));
         }
 
         return parseYangSources(sources);
