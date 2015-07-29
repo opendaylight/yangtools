@@ -84,9 +84,8 @@ public class SubmoduleStatementImpl extends
                     stmt, 0, BelongsToStatement.class, PrefixStatement.class);
 
             if (prefixSubStmtCtx == null) {
-                throw new IllegalArgumentException(
-                        "Prefix of belongsTo statement is missing in submodule ["
-                                + stmt.getStatementArgument() + "].");
+                throw new SourceException(String.format("Prefix of belongsTo statement is missing in submodule [%s].",
+                        stmt.getStatementArgument()), stmt.getStatementSourceReference());
             }
 
             String prefix = (String) prefixSubStmtCtx.getStatementArgument();

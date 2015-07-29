@@ -16,6 +16,7 @@ import java.net.URL;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 import org.opendaylight.yangtools.yang.stmt.test.StmtTestUtils;
 
 import java.io.File;
@@ -235,8 +236,8 @@ final class TestUtils {
         StatementStreamSource[] sources = new StatementStreamSource[files.length];
 
         for (int i = 0; i < files.length; i++) {
-            sources[i] = new YangStatementSourceImpl(new FileInputStream(
-                    files[i]));
+            sources[i] = new YangStatementSourceImpl(new NamedFileInputStream(
+                    files[i], files[i].getPath()));
         }
 
         return parseYangSources(sources);

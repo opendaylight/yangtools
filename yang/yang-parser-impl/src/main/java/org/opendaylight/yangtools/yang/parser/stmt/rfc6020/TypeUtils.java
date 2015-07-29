@@ -37,6 +37,9 @@ import org.opendaylight.yangtools.yang.model.util.Uint16;
 import org.opendaylight.yangtools.yang.model.util.Uint32;
 import org.opendaylight.yangtools.yang.model.util.Uint64;
 import org.opendaylight.yangtools.yang.model.util.Uint8;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LengthConstraintEffectiveImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.RangeConstraintEffectiveImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.TypeDefinitionEffectiveBuilder;
@@ -173,7 +176,7 @@ public final class TypeUtils {
         return new BigDecimal(num1.toString()).compareTo(new BigDecimal(num2.toString()));
     }
 
-    private static Number parseIntegerConstraintValue(final String value) {
+    private static Number parseIntegerConstraintValue(final StmtContext<?, ?, ?> ctx, final String value) {
         Number result;
 
         if (isMinOrMaxString(value)) {
@@ -182,13 +185,14 @@ public final class TypeUtils {
             try {
                 result = new BigInteger(value);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException(String.format("Value %s is not a valid integer", value), e);
+                throw new SourceException(String.format("Value %s is not a valid integer", value),
+                        ctx.getStatementSourceReference(), e);
             }
         }
         return result;
     }
 
-    private static Number parseDecimalConstraintValue(final String value) {
+    private static Number parseDecimalConstraintValue(final StmtContext<?, ?, ?> ctx, final String value) {
         final Number result;
 
         if (isMinOrMaxString(value)) {
@@ -201,7 +205,8 @@ public final class TypeUtils {
                     result = new BigInteger(value);
                 }
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException(String.format("Value %s is not a valid decimal number", value), e);
+                throw new SourceException(String.format("Value %s is not a valid decimal number", value),
+                        ctx.getStatementSourceReference(), e);
             }
         }
         return result;
@@ -211,7 +216,7 @@ public final class TypeUtils {
         return "min".equals(value) || "max".equals(value);
     }
 
-    public static List<RangeConstraint> parseRangeListFromString(String rangeArgument) {
+    public static List<RangeConstraint> parseRangeListFromString(final StmtContext<?, ?, ?> ctx, String rangeArgument) {
 
         Optional<String> description = Optional.absent();
         Optional<String> reference = Optional.absent();
@@ -220,19 +225,22 @@ public final class TypeUtils {
 
         for (final String singleRange : PIPE_SPLITTER.split(rangeArgument)) {
             final Iterator<String> boundaries = TWO_DOTS_SPLITTER.splitToList(singleRange).iterator();
-            final Number min = parseDecimalConstraintValue(boundaries.next());
+            final Number min = parseDecimalConstraintValue(ctx, boundaries.next());
 
             final Number max;
             if (boundaries.hasNext()) {
-                max = parseDecimalConstraintValue(boundaries.next());
+                max = parseDecimalConstraintValue(ctx, boundaries.next());
 
                 // if min larger than max then error
                 if (compareNumbers(min, max) == 1) {
-                    throw new IllegalArgumentException(String.format(
-                            "Range constraint %s has descending order of boundaries; should be ascending", singleRange));
+                    throw new InferenceException(
+                            String.format("Range constraint %s has descending order of boundaries; should be ascending",
+                                    singleRange),
+                            ctx.getStatementSourceReference());
                 }
                 if (boundaries.hasNext()) {
-                    throw new IllegalArgumentException("Wrong number of boundaries in range constraint " + singleRange);
+                    throw new SourceException("Wrong number of boundaries in range constraint " + singleRange,
+                            ctx.getStatementSourceReference());
                 }
             } else {
                 max = min;
@@ -240,8 +248,8 @@ public final class TypeUtils {
 
             // some of intervals overlapping
             if (rangeConstraints.size() > 1 && compareNumbers(min, Iterables.getLast(rangeConstraints).getMax()) != 1) {
-                throw new IllegalArgumentException(String.format("Some of the ranges in %s are not disjoint",
-                        rangeArgument));
+                throw new InferenceException(String.format("Some of the ranges in %s are not disjoint", rangeArgument),
+                        ctx.getStatementSourceReference());
             }
 
             rangeConstraints.add(new RangeConstraintEffectiveImpl(min, max, description, reference));
@@ -250,7 +258,7 @@ public final class TypeUtils {
         return rangeConstraints;
     }
 
-    public static List<LengthConstraint> parseLengthListFromString(String rangeArgument) {
+    public static List<LengthConstraint> parseLengthListFromString(final StmtContext<?, ?, ?> ctx, String rangeArgument) {
 
         Optional<String> description = Optional.absent();
         Optional<String> reference = Optional.absent();
@@ -259,21 +267,21 @@ public final class TypeUtils {
 
         for (final String singleRange : PIPE_SPLITTER.split(rangeArgument)) {
             final Iterator<String> boundaries = TWO_DOTS_SPLITTER.splitToList(singleRange).iterator();
-            final Number min = parseIntegerConstraintValue(boundaries.next());
+            final Number min = parseIntegerConstraintValue(ctx, boundaries.next());
 
             final Number max;
             if (boundaries.hasNext()) {
-                max = parseIntegerConstraintValue(boundaries.next());
+                max = parseIntegerConstraintValue(ctx, boundaries.next());
 
                 // if min larger than max then error
                 if (compareNumbers(min, max) == 1) {
-                    throw new IllegalArgumentException(
-                            String.format(
-                                    "Length constraint %s has descending order of boundaries; should be ascending",
-                                    singleRange));
+                    throw new InferenceException(String.format(
+                            "Length constraint %s has descending order of boundaries; should be ascending",
+                            singleRange), ctx.getStatementSourceReference());
                 }
                 if (boundaries.hasNext()) {
-                    throw new IllegalArgumentException("Wrong number of boundaries in length constraint " + singleRange);
+                    throw new SourceException("Wrong number of boundaries in length constraint " + singleRange,
+                            ctx.getStatementSourceReference());
                 }
             } else {
                 max = min;
@@ -281,8 +289,9 @@ public final class TypeUtils {
 
             // some of intervals overlapping
             if (rangeConstraints.size() > 1 && compareNumbers(min, Iterables.getLast(rangeConstraints).getMax()) != 1) {
-                throw new IllegalArgumentException(String.format("Some of the length ranges in %s are not disjoint",
-                        rangeArgument));
+                throw new InferenceException(
+                        String.format("Some of the length ranges in %s are not disjoint", rangeArgument),
+                        ctx.getStatementSourceReference());
             }
 
             rangeConstraints.add(new LengthConstraintEffectiveImpl(min, max, description, reference));

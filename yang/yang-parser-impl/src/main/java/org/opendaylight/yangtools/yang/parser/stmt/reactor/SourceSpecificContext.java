@@ -7,13 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Objects;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -22,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImportedNamespaceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -31,6 +36,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModuleMap;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
@@ -41,7 +47,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.BitsSpecificationImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Decimal64SpecificationImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.EnumSpecificationImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.IdentityRefSpecificationImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.InstanceIdentifierSpecificationImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.LeafrefSpecificationImpl;
@@ -49,19 +54,12 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnionSpecificationImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
 public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBehaviour.Registry, Mutable {
 
     public enum PhaseCompletionProgress {
-        NO_PROGRESS,
-        PROGRESS,
-        FINISHED
+        NO_PROGRESS, PROGRESS, FINISHED
     }
 
     private final StatementStreamSource source;
@@ -76,7 +74,6 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     private QNameToStatementDefinitionMap qNameToStmtDefMap = new QNameToStatementDefinitionMap();
     private PrefixToModuleMap prefixToModuleMap = new PrefixToModuleMap();
 
-
     SourceSpecificContext(BuildGlobalContext currentContext, StatementStreamSource source) {
         this.source = source;
         this.currentContext = currentContext;
@@ -90,29 +87,34 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         return currentContext.getStatementDefinition(name);
     }
 
-    ContextBuilder<?, ?, ?> createDeclaredChild(StatementContextBase<?, ?, ?> current, QName name, StatementSourceReference ref) {
+    ContextBuilder<?, ?, ?> createDeclaredChild(StatementContextBase<?, ?, ?> current, QName name,
+            StatementSourceReference ref) {
         StatementDefinitionContext<?, ?, ?> def = getDefinition(name);
 
         if (def == null) {
-            //unknown-stmts (from import, include or local-scope)
+            // unknown-stmts (from import, include or local-scope)
             if (qNameToStmtDefMap.get(Utils.trimPrefix(name)) != null) {
                 QName key = Utils.qNameFromArgument(current, name.getLocalName());
                 if (key != null) {
-                    final StatementContextBase<?,?,?> extension = (StatementContextBase<?, ?, ?>) currentContext
+                    final StatementContextBase<?, ?, ?> extension = (StatementContextBase<?, ?, ?>) currentContext
                             .getAllFromNamespace(ExtensionNamespace.class).get(key);
                     if (extension != null) {
-                        final QName qName = QName.create(((QName) ((SubstatementContext) extension).getStatementArgument())
-                                .getModule().getNamespace(), ((QName) ((SubstatementContext) extension).
-                                getStatementArgument()).getModule().getRevision(), extension.getIdentifier().getArgument());
+                        final QName qName = QName.create(
+                                ((QName) ((SubstatementContext) extension).getStatementArgument()).getModule()
+                                        .getNamespace(),
+                                ((QName) ((SubstatementContext) extension).getStatementArgument()).getModule()
+                                        .getRevision(),
+                                extension.getIdentifier().getArgument());
 
-                        def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition
-                                (getNewStatementDefinition(qName)));
+                        def = new StatementDefinitionContext<>(
+                                new UnknownStatementImpl.Definition(getNewStatementDefinition(qName)));
                     } else {
-                        throw new IllegalArgumentException("Not found unknown statement: " + name);
+                        throw new SourceException("Extension not found: " + name,
+                                current.getStatementSourceReference());
                     }
                 }
             } else {
-                //type-body-stmts
+                // type-body-stmts
                 def = resolveTypeBodyStmts(name.getLocalName());
             }
         }
@@ -152,8 +154,9 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         };
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private ContextBuilder<?, ?, ?> createDeclaredRoot(StatementDefinitionContext<?, ?, ?> def, StatementSourceReference ref) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private ContextBuilder<?, ?, ?> createDeclaredRoot(StatementDefinitionContext<?, ?, ?> def,
+            StatementSourceReference ref) {
         return new ContextBuilder(def, ref) {
 
             @Override
@@ -161,7 +164,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                 if (root == null) {
                     root = new RootStatementContext(this, SourceSpecificContext.this);
                 } else {
-                    Preconditions.checkState(root.getIdentifier().equals(createIdentifier()), "Root statement was already defined as %s.", root.getIdentifier());
+                    Preconditions.checkState(root.getIdentifier().equals(createIdentifier()),
+                            "Root statement was already defined as %s.", root.getIdentifier());
                 }
                 root.resetLists();
                 return root;
@@ -183,14 +187,16 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     void startPhase(final ModelProcessingPhase phase) {
-        @Nullable ModelProcessingPhase previousPhase = phase.getPreviousPhase();
+        @Nullable
+        ModelProcessingPhase previousPhase = phase.getPreviousPhase();
         Preconditions.checkState(Objects.equals(previousPhase, finishedPhase));
         Preconditions.checkState(modifiers.get(previousPhase).isEmpty());
         inProgressPhase = phase;
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> void addToLocalStorage(final Class<N> type, final K key, final V value) {
+    public <K, V, N extends IdentifierNamespace<K, V>> void addToLocalStorage(final Class<N> type, final K key,
+            final V value) {
         if (ImportedNamespaceContext.class.isAssignableFrom(type)) {
             importedNamespaces.add((NamespaceStorageNode) value);
         }
@@ -237,7 +243,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(final Class<N> type) {
+    public <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(
+            final Class<N> type) {
         return currentContext.getNamespaceBehaviour(type);
     }
 
@@ -265,7 +272,6 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         }
         return PhaseCompletionProgress.NO_PROGRESS;
     }
-
 
     private static boolean hasProgress(final Collection<ModifierImpl> currentPhaseModifiers) {
 
@@ -295,8 +301,9 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     SourceException failModifiers(final ModelProcessingPhase identifier) {
-        InferenceException sourceEx = new InferenceException("Fail to infer source relationships", root.getStatementSourceReference());
-
+        InferenceException sourceEx = new InferenceException(
+                "Fail to infer source relationships in " + root.getStatementSourceReference(),
+                root.getStatementSourceReference());
 
         for (ModifierImpl mod : modifiers.get(identifier)) {
             try {
@@ -310,41 +317,41 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     void loadStatements() throws SourceException {
         switch (inProgressPhase) {
-            case SOURCE_LINKAGE:
-                source.writeLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef());
-                break;
-            case STATEMENT_DEFINITION:
-                source.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes());
-                break;
-            case FULL_DECLARATION:
-                source.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes());
-                break;
-            default:
-                break;
+        case SOURCE_LINKAGE:
+            source.writeLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef());
+            break;
+        case STATEMENT_DEFINITION:
+            source.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase), stmtDef(),
+                    prefixes());
+            break;
+        case FULL_DECLARATION:
+            source.writeFull(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes());
+            break;
+        default:
+            break;
         }
     }
 
     private StatementDefinitionContext<?, ?, ?> resolveTypeBodyStmts(String typeArgument) {
         switch (typeArgument) {
-            case TypeUtils.DECIMAL64:
-                return new StatementDefinitionContext<>(new Decimal64SpecificationImpl.Definition());
-            case TypeUtils.UNION:
-                return new StatementDefinitionContext<>(new UnionSpecificationImpl.Definition());
-            case TypeUtils.ENUMERATION:
-                return new StatementDefinitionContext<>(new EnumSpecificationImpl.Definition());
-            case TypeUtils.LEAF_REF:
-                return new StatementDefinitionContext<>(new LeafrefSpecificationImpl.Definition());
-            case TypeUtils.BITS:
-                return new StatementDefinitionContext<>(new BitsSpecificationImpl.Definition());
-            case TypeUtils.IDENTITY_REF:
-                return new StatementDefinitionContext<>(new IdentityRefSpecificationImpl.Definition());
-            case TypeUtils.INSTANCE_IDENTIFIER:
-                return new StatementDefinitionContext<>(new InstanceIdentifierSpecificationImpl.Definition());
-            default:
-                return null;
+        case TypeUtils.DECIMAL64:
+            return new StatementDefinitionContext<>(new Decimal64SpecificationImpl.Definition());
+        case TypeUtils.UNION:
+            return new StatementDefinitionContext<>(new UnionSpecificationImpl.Definition());
+        case TypeUtils.ENUMERATION:
+            return new StatementDefinitionContext<>(new EnumSpecificationImpl.Definition());
+        case TypeUtils.LEAF_REF:
+            return new StatementDefinitionContext<>(new LeafrefSpecificationImpl.Definition());
+        case TypeUtils.BITS:
+            return new StatementDefinitionContext<>(new BitsSpecificationImpl.Definition());
+        case TypeUtils.IDENTITY_REF:
+            return new StatementDefinitionContext<>(new IdentityRefSpecificationImpl.Definition());
+        case TypeUtils.INSTANCE_IDENTIFIER:
+            return new StatementDefinitionContext<>(new InstanceIdentifierSpecificationImpl.Definition());
+        default:
+            return null;
         }
     }
-
 
     private PrefixToModule prefixes() {
         Map<String, QNameModule> prefixes = currentContext.getAllFromNamespace(PrefixToModule.class);
@@ -355,26 +362,24 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     private QNameToStatementDefinition stmtDef() {
-        //regular YANG statements added
-        ImmutableMap<QName, StatementSupport<?, ?, ?>> definitions = currentContext.getSupportsForPhase(
-                inProgressPhase).getDefinitions();
+        // regular YANG statements added
+        ImmutableMap<QName, StatementSupport<?, ?, ?>> definitions = currentContext.getSupportsForPhase(inProgressPhase)
+                .getDefinitions();
         for (Map.Entry<QName, StatementSupport<?, ?, ?>> entry : definitions.entrySet()) {
             qNameToStmtDefMap.put(entry.getKey(), entry.getValue());
         }
 
-        //extensions added
+        // extensions added
         if (inProgressPhase.equals(ModelProcessingPhase.FULL_DECLARATION)) {
             Map<QName, StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>>> extensions = currentContext
                     .getAllFromNamespace(ExtensionNamespace.class);
             if (extensions != null) {
                 for (Map.Entry<QName, StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>>> extension : extensions
                         .entrySet()) {
-                    qNameToStmtDefMap
-                            .put(new QName(YangConstants.RFC6020_YIN_NAMESPACE,
-                                    extension.getKey().getLocalName()),
-                                    (StatementDefinition) ((StatementContextBase<?, ?, ?>) extension
-                                            .getValue()).definition()
-                                            .getFactory());
+                    qNameToStmtDefMap.put(
+                            new QName(YangConstants.RFC6020_YIN_NAMESPACE, extension.getKey().getLocalName()),
+                            (StatementDefinition) ((StatementContextBase<?, ?, ?>) extension.getValue()).definition()
+                                    .getFactory());
                 }
             }
         }

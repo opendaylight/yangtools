@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ValueEffectiveStatementImpl;
 
 public class ValueStatementImpl extends AbstractDeclaredStatement<Integer> implements ValueStatement {
@@ -35,10 +36,9 @@ public class ValueStatementImpl extends AbstractDeclaredStatement<Integer> imple
             try {
                 valueNum = Integer.parseInt(value);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException(
-                        String.format(
-                                "%s is not valid value statement integer argument in a range of -2147483648..2147483647",
-                                value), e);
+                throw new SourceException(String.format(
+                        "%s is not valid value statement integer argument in a range of -2147483648..2147483647",
+                        value), ctx.getStatementSourceReference(), e);
             }
 
             return valueNum;
