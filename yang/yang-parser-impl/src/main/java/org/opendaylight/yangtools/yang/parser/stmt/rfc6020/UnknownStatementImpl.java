@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import org.opendaylight.yangtools.yang.common.QName;
+
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -17,40 +19,40 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
-public class UnknownStatementImpl extends AbstractDeclaredStatement<String> implements UnknownStatement<String> {
+public class UnknownStatementImpl extends AbstractDeclaredStatement<QName> implements UnknownStatement<QName> {
 
-    protected UnknownStatementImpl(final StmtContext<String, ?, ?> context) {
+    protected UnknownStatementImpl(final StmtContext<QName, ?, ?> context) {
         super(context);
     }
 
     public static class Definition
             extends
-            AbstractStatementSupport<String, UnknownStatement<String>, EffectiveStatement<String, UnknownStatement<String>>> {
+            AbstractStatementSupport<QName, UnknownStatement<QName>, EffectiveStatement<QName, UnknownStatement<QName>>> {
 
         public Definition(final StatementDefinition publicDefinition) {
             super(publicDefinition);
         }
 
         @Override
-        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) throws SourceException {
-            return value == null ? "" : value;
+        public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) throws SourceException {
+            return Utils.qNameFromArgument(ctx, value);
         }
 
         @Override
-        public UnknownStatement<String> createDeclared(final StmtContext<String, UnknownStatement<String>, ?> ctx) {
+        public UnknownStatement<QName> createDeclared(final StmtContext<QName, UnknownStatement<QName>, ?> ctx) {
             return new UnknownStatementImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<String, UnknownStatement<String>> createEffective(
-                final StmtContext<String, UnknownStatement<String>, EffectiveStatement<String, UnknownStatement<String>>> ctx) {
+        public EffectiveStatement<QName, UnknownStatement<QName>> createEffective(
+                final StmtContext<QName, UnknownStatement<QName>, EffectiveStatement<QName, UnknownStatement<QName>>> ctx) {
             return new UnknownEffectiveStatementImpl(ctx);
         }
     }
 
     @Nullable
     @Override
-    public String getArgument() {
-        return rawArgument();
+    public QName getArgument() {
+        return argument();
     }
 }

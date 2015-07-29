@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import com.google.common.collect.ImmutableMap;
+import java.util.LinkedHashMap;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
 
 import java.util.HashSet;
@@ -60,17 +62,19 @@ public class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
                 new TreeMap<URI, Collection<Module>>(), MODULE_SET_SUPPLIER);
         final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(
                 new TreeMap<String, Collection<Module>>(), MODULE_SET_SUPPLIER);
+        final Map<ModuleIdentifier, String> isMap = new LinkedHashMap<>();
 
         for (Module m : modulesInit) {
             nameMap.put(m.getName(), m);
             nsMap.put(m.getNamespace(), m);
+
+            // :TODO init identifiersToSources sources (modules ARE SET)
+            isMap.put(m, "");
         }
 
         namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
         nameToModules = ImmutableSetMultimap.copyOf(nameMap);
-
-        // :TODO init identifiersToSources
-        this.identifiersToSources = null;
+        identifiersToSources = ImmutableMap.copyOf(isMap);
 
     }
 

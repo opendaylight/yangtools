@@ -9,10 +9,11 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
+
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,19 +23,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-
 import javax.annotation.Nullable;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.common.YangConstants;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -48,7 +46,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relat
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
@@ -68,8 +65,6 @@ public final class Utils {
     private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
     private static final CharMatcher DOUBLE_QUOTE_MATCHER = CharMatcher.is('"');
     private static final CharMatcher SINGLE_QUOTE_MATCHER = CharMatcher.is('\'');
-
-    public static final QName EMPTY_QNAME = QName.create("empty", "empty");
 
     private static final char SEPARATOR_NODENAME = '/';
 
@@ -222,7 +217,7 @@ public final class Utils {
     public static QName qNameFromArgument(StmtContext<?, ?, ?> ctx, String value) {
 
         if (value == null || value.equals("")) {
-            return EMPTY_QNAME;
+            return ctx.getPublicDefinition().getStatementName();
         }
 
         String prefix;
@@ -235,7 +230,7 @@ public final class Utils {
             localName = namesParts[0];
             qNameModule = getRootModuleQName(ctx);
             break;
-        case 2:
+        default:
             prefix = namesParts[0];
             localName = namesParts[1];
             qNameModule = getModuleQNameByPrefix(ctx, prefix);
@@ -252,20 +247,11 @@ public final class Utils {
                 qNameModule = getModuleQNameByPrefix(ctx, prefix);
             }
             break;
-        default:
-            break;
         }
 
         if (qNameModule == null) {
-            if (StmtContextUtils.producesDeclared(ctx, UnknownStatementImpl.class)
-                    && StmtContextUtils.producesDeclared(ctx.getParentContext(), UnknownStatementImpl.class)) {
-
-                qNameModule = getRootModuleQName(ctx);
-                localName = value;
-            } else {
-                throw new IllegalArgumentException("Error in module '" + ctx.getRoot().rawStatementArgument()
-                        + "': can not resolve QNameModule for '" + value + "'.");
-            }
+            throw new IllegalArgumentException("Error in module '" + ctx.getRoot().rawStatementArgument()
+                    + "': can not resolve QNameModule for '" + value + "'.");
         }
 
         QNameModule resultQNameModule = qNameModule.getRevision() == null ? QNameModule.create(
@@ -298,7 +284,7 @@ public final class Utils {
         if (StmtContextUtils.producesDeclared(rootCtx, ModuleStatement.class)) {
             qNameModule = rootCtx.getFromNamespace(ModuleCtxToModuleQName.class, rootCtx);
         } else if (StmtContextUtils.producesDeclared(rootCtx, SubmoduleStatement.class)) {
-            String belongsToModuleName = firstAttributeOf(ctx.getRoot().declaredSubstatements(),
+            String belongsToModuleName = firstAttributeOf(rootCtx.substatements(),
                     BelongsToStatement.class);
             qNameModule = rootCtx.getFromNamespace(ModuleNameToModuleQName.class, belongsToModuleName);
         }
@@ -383,13 +369,17 @@ public final class Utils {
                 }
                 qNamesFromRoot.add(qname);
             } else if (nextStmtArgument instanceof String) {
-                QName qName = qNameFromArgument(ctx, ((String) nextStmtArgument));
+                StatementContextBase<?, ?, ?> originalCtx = ctx
+                        .getOriginalCtx();
+                final QName qName = (originalCtx != null) ? qNameFromArgument(
+                        originalCtx, (String) nextStmtArgument)
+                        : qNameFromArgument(ctx, (String) nextStmtArgument);
                 qNamesFromRoot.add(qName);
-            } else if (StmtContextUtils.producesDeclared(nextStmtCtx, AugmentStatement.class)
+            } else if ((StmtContextUtils.producesDeclared(nextStmtCtx, AugmentStatement.class)
+                       || StmtContextUtils.producesDeclared(nextStmtCtx, RefineStatement.class))
                     && nextStmtArgument instanceof SchemaNodeIdentifier) {
                 addQNamesFromSchemaNodeIdentifierToList(qNamesFromRoot, (SchemaNodeIdentifier) nextStmtArgument);
-            } else if (nextStmtCtx.getPublicDefinition().getDeclaredRepresentationClass()
-                    .isAssignableFrom(UnknownStatementImpl.class)) {
+            } else if (isUnknownNode(nextStmtCtx)) {
                 qNamesFromRoot.add(nextStmtCtx.getPublicDefinition().getStatementName());
             } else {
                 return SchemaPath.SAME;
@@ -398,6 +388,11 @@ public final class Utils {
 
         final SchemaPath schemaPath = SchemaPath.create(qNamesFromRoot, true);
         return schemaPath;
+    }
+
+    public static boolean isUnknownNode(StmtContext<?, ?, ?> stmtCtx) {
+        return stmtCtx.getPublicDefinition().getDeclaredRepresentationClass()
+                .isAssignableFrom(UnknownStatementImpl.class);
     }
 
     private static boolean isSupportedAsShorthandCase(StmtContext<?, ?, ?> statementCtx) {
@@ -456,4 +451,5 @@ public final class Utils {
     public static SchemaPath SchemaNodeIdentifierToSchemaPath(SchemaNodeIdentifier identifier) {
         return SchemaPath.create(identifier.getPathFromRoot(), identifier.isAbsolute());
     }
+
 }
