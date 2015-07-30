@@ -12,13 +12,13 @@
     <parent>
         <artifactId>model-iana</artifactId>
         <groupId>org.opendaylight.yangtools.model</groupId>
-        <version>0.6.6-SNAPSHOT</version>
+        <version>0.6.6-Helium-SR4</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>iana-if-type</artifactId>
-    <version>2013.07.04.4.4-SNAPSHOT</version>
+    <version>2013.07.04.4.4-Helium-SR4</version>
 
     <build>
         <plugins>

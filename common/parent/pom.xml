@@ -13,14 +13,14 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>odlparent</artifactId>
-        <version>1.4.6-SNAPSHOT</version>
+        <version>1.4.6-Helium-SR4</version>
         <relativePath></relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>yangtools-parent</artifactId>
     <groupId>org.opendaylight.yangtools</groupId>
-    <version>0.6.6-SNAPSHOT</version>
+    <version>0.6.6-Helium-SR4</version>
     <packaging>pom</packaging>
     <prerequisites>
         <maven>3.0.4</maven>
@@ -32,16 +32,16 @@
         <ctrie.version>0.2.0</ctrie.version>
         <exam.version>3.0.0</exam.version>
         <groovy.version>2.1.6</groovy.version>
-        <yangtools.version>0.6.6-SNAPSHOT</yangtools.version>
-        <ietf.topology.version>2013.10.21.2.4-SNAPSHOT</ietf.topology.version>
-        <ietf.inet.types.version>2010.09.24.4.4-SNAPSHOT</ietf.inet.types.version>
-        <ietf.yang.types.version>2010.09.24.4.4-SNAPSHOT</ietf.yang.types.version>
-        <ietf.yang.types.20130715.version>2013.07.15.1.4-SNAPSHOT</ietf.yang.types.20130715.version>
-        <ietf.restconf.version>2013.10.19.1.4-SNAPSHOT</ietf.restconf.version>
+        <yangtools.version>0.6.6-Helium-SR4</yangtools.version>
+        <ietf.topology.version>2013.10.21.2.4-Helium-SR4</ietf.topology.version>
+        <ietf.inet.types.version>2010.09.24.4.4-Helium-SR4</ietf.inet.types.version>
+        <ietf.yang.types.version>2010.09.24.4.4-Helium-SR4</ietf.yang.types.version>
+        <ietf.yang.types.20130715.version>2013.07.15.1.4-Helium-SR4</ietf.yang.types.20130715.version>
+        <ietf.restconf.version>2013.10.19.1.4-Helium-SR4</ietf.restconf.version>
         <karaf.version>3.0.1</karaf.version>
         <nexusproxy>http://nexus.opendaylight.org/content</nexusproxy>
-        <opendaylight.l2.types.version>2013.08.27.4.4-SNAPSHOT</opendaylight.l2.types.version>
-        <yang.ext.version>2013.09.07.4.4-SNAPSHOT</yang.ext.version>
+        <opendaylight.l2.types.version>2013.08.27.4.4-Helium-SR4</opendaylight.l2.types.version>
+        <yang.ext.version>2013.09.07.4.4-Helium-SR4</yang.ext.version>
         <maven.javadoc.version>2.9.1</maven.javadoc.version>
         <jsr305.version>2.0.1</jsr305.version>
 
@@ -629,7 +629,7 @@
                 <plugin>
                     <groupId>org.opendaylight.yangtools</groupId>
                     <artifactId>yang-maven-plugin</artifactId>
-                    <version>0.6.6-SNAPSHOT</version>
+                    <version>0.6.6-Helium-SR4</version>
                     <executions>
                         <execution>
                             <goals>
@@ -663,7 +663,7 @@
                         <dependency>
                             <groupId>org.opendaylight.yangtools</groupId>
                             <artifactId>maven-sal-api-gen-plugin</artifactId>
-                            <version>0.6.6-SNAPSHOT</version>
+                            <version>0.6.6-Helium-SR4</version>
                             <type>jar</type>
                         </dependency>
                     </dependencies>
