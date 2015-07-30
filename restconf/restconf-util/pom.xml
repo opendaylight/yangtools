@@ -11,7 +11,7 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>restconf-parent</artifactId>
-        <version>0.6.6-Helium-SR4</version>
+        <version>0.6.7-SNAPSHOT</version>
     </parent>
 
     <artifactId>restconf-util</artifactId>
@@ -94,7 +94,7 @@
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>binding-data-codec</artifactId>
-            <version>0.6.6-Helium-SR4</version>
+            <version>0.6.7-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>

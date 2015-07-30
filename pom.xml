@@ -13,14 +13,14 @@
     <parent>
       <groupId>org.opendaylight.yangtools</groupId>
       <artifactId>yangtools-parent</artifactId>
-      <version>0.6.6-Helium-SR4</version>
+      <version>0.6.7-SNAPSHOT</version>
       <relativePath>common/parent</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>yangtools-aggregator</artifactId>
     <groupId>org.opendaylight.yangtools</groupId>
-    <version>0.6.6-Helium-SR4</version>
+    <version>0.6.7-SNAPSHOT</version>
     <name>yangtools</name> <!-- Used by Sonar to set project name -->
     <packaging>pom</packaging>
 

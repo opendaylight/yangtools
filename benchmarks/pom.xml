@@ -5,7 +5,7 @@
   <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>yangtools-parent</artifactId>
-        <version>0.6.6-Helium-SR4</version>
+        <version>0.6.7-SNAPSHOT</version>
         <relativePath>../common/parent</relativePath>
   </parent>
   <modelVersion>4.0.0</modelVersion>
@@ -14,8 +14,8 @@
   <artifactId>benchmarks</artifactId>
 
   <properties>
-    <yangtools.version>0.6.6-Helium-SR4</yangtools.version>
-    <yang.maven.plugin.version>0.6.6-Helium-SR4</yang.maven.plugin.version>
+    <yangtools.version>0.6.7-SNAPSHOT</yangtools.version>
+    <yang.maven.plugin.version>0.6.7-SNAPSHOT</yang.maven.plugin.version>
     <java.source.version>1.7</java.source.version>
     <java.target.version>1.7</java.target.version>
     <jmh.version>0.9.7</jmh.version>
