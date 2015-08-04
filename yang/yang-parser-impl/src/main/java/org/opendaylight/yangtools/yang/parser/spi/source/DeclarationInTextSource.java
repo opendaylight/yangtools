@@ -33,14 +33,20 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
  */
 public abstract class DeclarationInTextSource implements StatementSourceReference {
 
-    private final String source;
+    private final String sourceText;
+    private final String sourceName;
 
-    DeclarationInTextSource(String source) {
-        this.source = source;
+    DeclarationInTextSource(String sourceName, String sourceText) {
+        this.sourceName = sourceName;
+        this.sourceText = sourceText;
     }
 
     public String getSourceName() {
-        return source;
+        return sourceName;
+    }
+
+    public String getSourceText() {
+        return sourceText;
     }
 
     @Override
@@ -51,22 +57,22 @@ public abstract class DeclarationInTextSource implements StatementSourceReferenc
     @Override
     public abstract String toString();
 
-    public static final DeclarationInTextSource inSource(String sourceName) {
-        return new InSource(sourceName);
+    public static final DeclarationInTextSource inSource(String sourceName, String sourceText) {
+        return new InSource(sourceName, sourceText);
     }
 
-    public static final DeclarationInTextSource atLine(String sourceName, int line) {
-        return new AtLine(sourceName,line);
+    public static final DeclarationInTextSource atLine(String sourceName, String sourceText, int line) {
+        return new AtLine(sourceName, sourceText, line);
     }
 
-    public static final DeclarationInTextSource atPosition(String sourceName, int line, int position) {
-        return new AtPosition(sourceName,line,position);
+    public static final DeclarationInTextSource atPosition(String sourceName, String sourceText, int line, int position) {
+        return new AtPosition(sourceName, sourceText, line,position);
     }
 
     private static class InSource extends DeclarationInTextSource {
 
-        public InSource(String source) {
-            super(source);
+        public InSource(String sourceName, String sourceText) {
+            super(sourceName, sourceText);
         }
 
         @Override
@@ -80,8 +86,8 @@ public abstract class DeclarationInTextSource implements StatementSourceReferenc
 
         private final int line;
 
-        public AtLine(String source,int line) {
-            super(source);
+        public AtLine(String sourceName, String sourceText, int line) {
+            super(sourceName, sourceText);
             this.line = line;
         }
 
@@ -97,8 +103,8 @@ public abstract class DeclarationInTextSource implements StatementSourceReferenc
         private int line;
         private int character;
 
-        public AtPosition(String source, int line, int character) {
-            super(source);
+        public AtPosition(String sourceName, String sourceText, int line, int character) {
+            super(sourceName, sourceText);
             this.line = line;
             this.character = character;
         }

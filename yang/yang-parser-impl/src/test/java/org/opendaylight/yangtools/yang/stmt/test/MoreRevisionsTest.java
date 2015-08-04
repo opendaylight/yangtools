@@ -11,9 +11,10 @@ package org.opendaylight.yangtools.yang.stmt.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import org.junit.Ignore;
+
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
-
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import java.util.Set;
 import org.junit.Test;
@@ -125,11 +126,35 @@ public class MoreRevisionsTest {
     @Test
     public void multipleRevisionsTest() throws SourceException,
             ReactorException, FileNotFoundException, URISyntaxException {
-        for (int i = 0; i < 25; i++) {
+        for (int i = 0; i < 100; i++) {
             SchemaContext context = StmtTestUtils
                     .parseYangSources("/semantic-statement-parser/multiple-revisions");
             assertNotNull(context);
         }
     }
 
+    @Test
+    @Ignore
+    public void multipleRevisionsFullTest() throws SourceException,
+            ReactorException, FileNotFoundException, URISyntaxException {
+        for (int i = 0; i < 1000; i++) {
+            if( i%10 == 0 ) System.out.println(i);
+            SchemaContext context = StmtTestUtils
+                    .parseYangSources("/semantic-statement-parser/multiple-revisions/full");
+            assertNotNull(context);
+            assertEquals(6, context.getModules().size());
+        }
+    }
+
+    @Test
+    public void multipleRevisionsSimpleTest() throws SourceException,
+            ReactorException, FileNotFoundException, URISyntaxException {
+        for (int i = 0; i < 1000; i++) {
+            if( i%10 == 0 ) System.out.println(i);
+            SchemaContext context = StmtTestUtils
+                    .parseYangSources("/semantic-statement-parser/multiple-revisions/simple");
+            assertNotNull(context);
+            assertEquals(5, context.getModules().size());
+        }
+    }
 }
