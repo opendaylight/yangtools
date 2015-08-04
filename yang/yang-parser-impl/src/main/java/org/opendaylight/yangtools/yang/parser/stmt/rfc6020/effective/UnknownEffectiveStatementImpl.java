@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<String, UnknownStatement<String>> implements
+public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<QName, UnknownStatement<QName>> implements
         UnknownSchemaNode {
 
     private boolean augmenting;
@@ -40,33 +40,24 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<String
     private QName nodeType;
     private String nodeParameter;
 
-    public UnknownEffectiveStatementImpl(final StmtContext<String, UnknownStatement<String>, ?> ctx) {
+    public UnknownEffectiveStatementImpl(final StmtContext<QName, UnknownStatement<QName>, ?> ctx) {
         super(ctx);
 
         final StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> extensionInit = ctx
                 .getAllFromNamespace(ExtensionNamespace.class).get(ctx.getPublicDefinition().getStatementName());
+
         if (extensionInit == null) {
             extension = null;
             nodeType = ctx.getPublicDefinition().getArgumentName();
-
-            if (argument() == null || argument().isEmpty()) {
-                qName = nodeType;
-            } else {
-                qName = QName.create(Utils.qNameFromArgument(ctx, ctx.getStatementArgument()).getModule(), argument());
-            }
         } else {
             extension = (ExtensionEffectiveStatementImpl) extensionInit.buildEffective();
             nodeType = extension.getQName();
-
-            if (argument() == null || argument().isEmpty()) {
-                qName = extension.getQName();
-            } else {
-                qName = QName.create(Utils.qNameFromArgument(ctx, ctx.getStatementArgument()).getModule(), argument());
-            }
         }
 
+        qName = ctx.getStatementArgument();
         path = Utils.getSchemaPath(ctx);
-        nodeParameter = argument();
+
+        nodeParameter = (ctx.rawStatementArgument() == null) ? "" : ctx.rawStatementArgument();
 
         // TODO init other fields (see Bug1412Test)
 
@@ -85,7 +76,7 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<String
         initCopyType(ctx);
     }
 
-    private void initCopyType(final StmtContext<String, UnknownStatement<String>, ?> ctx) {
+    private void initCopyType(final StmtContext<QName, UnknownStatement<QName>, ?> ctx) {
 
         List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
 

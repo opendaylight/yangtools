@@ -235,6 +235,14 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     /**
+     * @return collection of substatements
+     */
+    @Override
+    public Collection<StatementContextBase<?, ?, ?>> substatements() {
+        return Collections.unmodifiableCollection(substatements.values());
+    }
+
+    /**
      * @return collection of effective substatements
      */
     @Override

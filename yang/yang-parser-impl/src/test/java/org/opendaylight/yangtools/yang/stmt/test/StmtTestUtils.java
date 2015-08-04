@@ -8,11 +8,11 @@
 
 package org.opendaylight.yangtools.yang.stmt.test;
 
-import java.net.URISyntaxException;
+import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -108,8 +108,7 @@ public class StmtTestUtils {
         StatementStreamSource[] sources = new StatementStreamSource[files.length];
 
         for (int i = 0; i < files.length; i++) {
-            sources[i] = new YangStatementSourceImpl(new FileInputStream(
-                    files[i]));
+            sources[i] = new YangStatementSourceImpl(new NamedFileInputStream(files[i], files[i].getPath()));
         }
 
         return parseYangSources(sources);
