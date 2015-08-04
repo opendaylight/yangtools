@@ -1,0 +1,4 @@
+module simple-module {
+    namespace "test";
+    prefix test;
+}

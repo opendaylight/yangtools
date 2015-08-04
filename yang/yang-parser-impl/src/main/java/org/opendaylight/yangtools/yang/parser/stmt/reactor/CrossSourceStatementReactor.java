@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
-
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import java.io.InputStream;
 import java.util.List;
