@@ -73,6 +73,10 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
      *
      * @param identifier
      *            Namespace identifier.
+     * @param <K> type parameter
+     * @param <V> type parameter
+     * @param <N> type parameter
+     *
      * @return global namespace behaviour for supplied namespace type.
      */
     public static @Nonnull <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> global(
@@ -89,6 +93,10 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
      *
      * @param identifier
      *            Namespace identifier.
+     * @param <K> type parameter
+     * @param <V> type parameter
+     * @param <N> type parameter
+     *
      * @return source-local namespace behaviour for supplied namespace type.
      */
     public static <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> sourceLocal(
@@ -104,7 +112,11 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
      * supplied node.
      *
      * @param identifier
-     *            Namespace identifier.
+     *            Namespace identifier.     *
+     * @param <K> type parameter
+     * @param <V> type parameter
+     * @param <N> type parameter
+     *
      * @return tree-scoped namespace behaviour for supplied namespace type.
      */
     public static <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> treeScoped(Class<N> identifier) {
@@ -113,16 +125,29 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
 
     /**
      * returns value from model namespace storage according to key param class
+     *
+     * @param storage namespace storage
+     * @param key type parameter
+     *
+     * @return value from model namespace storage according to key param class
      */
     public abstract V getFrom(NamespaceStorageNode storage, K key);
 
     /**
      * returns all values of a keys of param class from model namespace storage
+     *
+     * @param storage namespace storage
+     *
+     * @return all values of keys of param class from model namespace storage
      */
     public abstract Map<K, V> getAllFrom(NamespaceStorageNode storage);
 
     /**
      * adds key and value to corresponding namespace storage according to param class
+     *
+     * @param storage namespace storage
+     * @param key type parameter
+     * @param value type parameter
      */
     public abstract void addTo(NamespaceStorageNode storage, K key, V value);
 

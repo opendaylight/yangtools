@@ -26,7 +26,7 @@ public interface DocumentedNodeBuilder {
     /**
      * Set description to this node.
      *
-     * @param description
+     * @param description description of this node
      */
     void setDescription(String description);
 
@@ -40,7 +40,7 @@ public interface DocumentedNodeBuilder {
     /**
      * Set reference to this node.
      *
-     * @param reference
+     * @param reference reference to this node
      */
     void setReference(String reference);
 
@@ -54,7 +54,7 @@ public interface DocumentedNodeBuilder {
     /**
      * Set status to this node.
      *
-     * @param status
+     * @param status status of this node
      */
     void setStatus(Status status);
 }

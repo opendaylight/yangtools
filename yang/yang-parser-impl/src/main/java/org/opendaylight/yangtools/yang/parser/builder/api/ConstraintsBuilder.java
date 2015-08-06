@@ -113,7 +113,7 @@ public interface ConstraintsBuilder extends Builder<ConstraintDefinition> {
     /**
      * Sets mandatory status of parent node
      *
-     * @param mandatory
+     * @param mandatory mandatory status
      */
     void setMandatory(boolean mandatory);
 

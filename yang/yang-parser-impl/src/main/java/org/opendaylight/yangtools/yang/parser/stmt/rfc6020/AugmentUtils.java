@@ -277,22 +277,19 @@ public final class AugmentUtils {
             if (substatementArgument instanceof QName) {
                 substatementQName = (QName) substatementArgument;
 
-                if (isSupportedAugmentTarget(substatement)
-                        && nextPathQName.getLocalName().equals(substatementQName.getLocalName())) {
-                    return substatement;
-                }
-            } // augment to extension
-            else if (StmtContextUtils.producesDeclared(substatement, UnknownStatementImpl.class)
-                    && substatementArgument instanceof String) {
-
-                final String nextPathName = nextPathQName.getLocalName();
-
-                if (nextPathName.equals(substatementArgument)
-                        || nextPathName.equals(substatement.getPublicDefinition().getStatementName().getLocalName())) {
-                    String message = "Module '" + substatement.getRoot().getStatementArgument()
-                            + "': augment into extension '" + substatementArgument + "'.";
-                    LOG.warn(message);
-                    return substatement;
+                if (nextPathQName.getLocalName().equals(
+                        substatementQName.getLocalName())) {
+                    if (isSupportedAugmentTarget(substatement)) {
+                        return substatement;
+                    } else if (Utils.isUnknownNode(substatement)) {
+                        // augment into unknown node
+                        String message = "Module '"
+                                + substatement.getRoot().getStatementArgument()
+                                + "': augment into unknown node '"
+                                + substatementArgument + "'.";
+                        LOG.warn(message);
+                        return substatement;
+                    }
                 }
             }
         }

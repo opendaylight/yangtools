@@ -129,6 +129,8 @@ public interface ModelActionBuilder {
          * @throws InferenceException If inference action can not be processed.
          *      Note that this exception be used for user to debug YANG sources,
          *      so should provide helpful context to fix issue in sources.
+         *
+         * @param failed collection of prerequisites which were not met
          */
         void prerequisiteFailed(Collection<? extends Prerequisite<?>> failed) throws InferenceException;
     }
