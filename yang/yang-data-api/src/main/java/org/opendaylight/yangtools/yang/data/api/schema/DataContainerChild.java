@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 /**
  *
  * Marker interface for direct children of {@link DataContainerNode}.
- * 
+ *
  * <h3>Implementation notes</h3>
  * This interface should not be implemented directly, but rather using one
  * of its subinterfaces:
