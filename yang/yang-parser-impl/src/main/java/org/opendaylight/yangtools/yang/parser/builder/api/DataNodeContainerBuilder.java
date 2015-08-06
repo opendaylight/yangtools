@@ -60,14 +60,15 @@ public interface DataNodeContainerBuilder extends Builder {
     /**
      * Add builder of child node to this node.
      *
-     * @param childNode
+     * @param childNode name of child node to add
      */
     void addChildNode(DataSchemaNodeBuilder childNode);
 
     /**
      * Add builder of child node to this node at specified position.
      *
-     * @param childNode
+     * @param index position at which the child node will be added
+     * @param childNode name of child node to add at specified position
      */
     void addChildNode(int index, DataSchemaNodeBuilder childNode);
 
@@ -92,7 +93,7 @@ public interface DataNodeContainerBuilder extends Builder {
     /**
      * Add builder of grouping statement to this node.
      *
-     * @param groupingBuilder
+     * @param groupingBuilder grouping statement builder
      */
     void addGrouping(GroupingBuilder groupingBuilder);
 
@@ -106,7 +107,7 @@ public interface DataNodeContainerBuilder extends Builder {
     /**
      * Add builder of uses statement to this node.
      *
-     * @param usesBuilder
+     * @param usesBuilder uses statement builder
      */
     void addUsesNode(UsesNodeBuilder usesBuilder);
 

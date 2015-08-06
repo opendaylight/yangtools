@@ -90,6 +90,7 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
      *
      * @param name YANG source name. Used only for error reporting.
      * @param tree ANTLR abstract syntax tree
+     * @param text YANG text source
      * @return A new representation instance.
      * @throws YangSyntaxErrorException if we fail to extract dependency information.
      *

@@ -158,6 +158,7 @@ public abstract class YangModelDependencyInfo {
      * Extracts {@link YangModelDependencyInfo} from an abstract syntax tree of
      * a YANG model.
      *
+     * @param name name of a yang module
      * @param tree
      *            Abstract syntax tree
      * @return {@link YangModelDependencyInfo}
@@ -464,6 +465,7 @@ public abstract class YangModelDependencyInfo {
         /**
          * Returns name of parent module.
          *
+         * @return name of the parent module
          */
         public String getParentModule() {
             return belongsTo;

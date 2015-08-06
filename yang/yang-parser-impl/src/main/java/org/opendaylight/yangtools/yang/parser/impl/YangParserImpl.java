@@ -665,6 +665,8 @@ public final class YangParserImpl implements YangContextParser {
      * Mini parser: This parsing context does not validate full YANG module,
      * only parses header up to the revisions and imports.
      *
+     * @param yangStream input stream containing a yang module
+     * @return new instance of YangContext
      * @see org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo
      */
     public static YangContext parseStreamWithoutErrorListeners(final InputStream yangStream) {
