@@ -143,6 +143,14 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @Override
+    public void startOrderedLeafSet(final NodeIdentifier name,final int childSizeHint) throws IllegalArgumentException {
+        checkDataNodeContainer();
+        ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = Builders.orderedLeafSetBuilder();
+        builder.withNodeIdentifier(name);
+        enter(builder);
+    }
+
+    @Override
     public void anyxmlNode(final NodeIdentifier name, final Object value) throws IllegalArgumentException {
         checkDataNodeContainer();
 

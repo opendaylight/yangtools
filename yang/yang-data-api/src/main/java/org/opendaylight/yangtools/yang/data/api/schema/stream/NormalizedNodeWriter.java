@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.OrderedLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
@@ -247,8 +248,14 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
             writer.startMapNode(n.getIdentifier(), childSizeHint(n.getValue()));
             processedAsCompositeNode = writeChildren(n.getValue());
         }
+        if (node instanceof OrderedLeafSetNode) {
+            final LeafSetNode<?> n = (LeafSetNode<?>) node;
+            writer.startOrderedLeafSet(n.getIdentifier(), childSizeHint(n.getValue()));
+            currentDepth++;
+            processedAsCompositeNode = writeChildren(n.getValue());
+            currentDepth--;
+        }
         if (node instanceof LeafSetNode) {
-            // covers also OrderedLeafSetNode for which doesn't exist start* method
             final LeafSetNode<?> n = (LeafSetNode<?>) node;
             writer.startLeafSet(n.getIdentifier(), childSizeHint(n.getValue()));
             currentDepth++;
