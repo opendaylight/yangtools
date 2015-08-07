@@ -72,6 +72,11 @@ module opendaylight-yangtools-binding-test {
         leaf-list top-level-leaf-list {
             type string;
         }
+
+        leaf-list top-level-ordered-leaf-list {
+            type string;
+            ordered-by user;
+        }
     }
 
     grouping choice {
