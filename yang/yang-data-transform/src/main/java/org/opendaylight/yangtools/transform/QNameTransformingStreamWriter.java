@@ -109,6 +109,11 @@ public abstract class QNameTransformingStreamWriter extends ForwardingObject imp
     }
 
     @Override
+    public void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint) throws IOException, IllegalArgumentException {
+        delegate().startOrderedLeafSet(transform(name), childSizeHint);
+    }
+
+    @Override
     public void leafSetEntryNode(final Object value) throws IOException, IllegalArgumentException {
         delegate().leafSetEntryNode(value);
     }

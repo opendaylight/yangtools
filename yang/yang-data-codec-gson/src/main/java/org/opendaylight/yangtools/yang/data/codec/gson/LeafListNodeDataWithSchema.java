@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import java.io.IOException;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
 class LeafListNodeDataWithSchema extends CompositeNodeDataWithSchema {
     public LeafListNodeDataWithSchema(final DataSchemaNode schema) {
@@ -18,8 +19,13 @@ class LeafListNodeDataWithSchema extends CompositeNodeDataWithSchema {
 
     @Override
     public void write(final SchemaAwareNormalizedNodeStreamWriter writer) throws IOException {
-        writer.nextDataSchemaNode(getSchema());
-        writer.startLeafSet(provideNodeIdentifier(), childSizeHint());
+        final LeafListSchemaNode schema = (LeafListSchemaNode) getSchema();
+        writer.nextDataSchemaNode(schema);
+        if (schema.isUserOrdered()) {
+            writer.startOrderedLeafSet(provideNodeIdentifier(), childSizeHint());
+        } else {
+            writer.startLeafSet(provideNodeIdentifier(), childSizeHint());
+        }
         super.write(writer);
         writer.endNode();
     }
