@@ -40,6 +40,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableCo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
@@ -170,11 +171,27 @@ public class ImmutableNormalizedNodeStreamWriter implements SchemaAwareNormalize
 
     @Override
     public void leafSetEntryNode(final Object value) {
-        Preconditions.checkArgument(getCurrent() instanceof ImmutableLeafSetNodeBuilder<?>);
-        @SuppressWarnings("unchecked")
-        final ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = ((ImmutableLeafSetNodeBuilder<Object>) getCurrent());
-        builder.withChildValue(value);
+        if (getCurrent() instanceof ImmutableOrderedLeafSetNodeBuilder) {
+            @SuppressWarnings("unchecked")
+            ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = ((ImmutableOrderedLeafSetNodeBuilder<Object>) getCurrent());
+            builder.withChildValue(value);
+        } else if (getCurrent() instanceof ImmutableLeafSetNodeBuilder) {
+            @SuppressWarnings("unchecked")
+            ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = ((ImmutableLeafSetNodeBuilder<Object>) getCurrent());
+            builder.withChildValue(value);
+        } else {
+            throw new IllegalArgumentException("LeafSetEntryNode is not valid for parent " + getCurrent());
+        }
+
         nextSchema = null;
+    }
+
+    @Override
+    public void startOrderedLeafSet(final NodeIdentifier name,final int childSizeHint) {
+        checkDataNodeContainer();
+        final ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = Builders.orderedLeafSetBuilder();
+        builder.withNodeIdentifier(name);
+        enter(builder);
     }
 
     @Override
