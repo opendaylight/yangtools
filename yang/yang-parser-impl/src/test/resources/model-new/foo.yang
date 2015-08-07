@@ -194,7 +194,7 @@ module foo {
                                         "(ifType = 'ethernet' and ifMTU = 1500)" {
                         error-message "An ethernet MTU must be 1500";
                     }
-                    mountpoint "mnt-extension";
+                    foo:mountpoint "mnt-extension";
                 }
                 refine port {
                     description "description of port defined by refine";
