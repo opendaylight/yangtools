@@ -140,7 +140,13 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
         } else if (child instanceof AnyXmlSchemaNode) {
             b.append(statement(anyxmlNode(child.getQName().getLocalName(), getterName)));
         } else if (child instanceof LeafListSchemaNode) {
-            b.append(statement(startLeafSet(child.getQName().getLocalName(),invoke(getterName, "size"))));
+            final CharSequence startEvent;
+            if (((LeafListSchemaNode) child).isUserOrdered()) {
+                startEvent = startOrderedLeafSet(child.getQName().getLocalName(),invoke(getterName, "size"));
+            } else {
+                startEvent = startLeafSet(child.getQName().getLocalName(),invoke(getterName, "size"));
+            }
+            b.append(statement(startEvent));
             Type valueType = ((ParameterizedType) childType).getActualTypeArguments()[0];
             b.append(forEach(getterName, valueType, statement(leafSetEntryNode(CURRENT))));
             b.append(statement(endNode()));

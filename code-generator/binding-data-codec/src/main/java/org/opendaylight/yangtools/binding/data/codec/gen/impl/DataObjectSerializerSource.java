@@ -66,6 +66,11 @@ abstract class DataObjectSerializerSource extends AbstractSource {
         return invoke(STREAM, "startLeafSet", escape(localName),expected);
     }
 
+    protected final CharSequence startOrderedLeafSet(final String localName,final CharSequence expected) {
+        return invoke(STREAM, "startOrderedLeafSet", escape(localName),expected);
+    }
+
+
     protected final CharSequence leafSetEntryNode(final CharSequence value) {
         return invoke(STREAM, "leafSetEntryNode", value);
 

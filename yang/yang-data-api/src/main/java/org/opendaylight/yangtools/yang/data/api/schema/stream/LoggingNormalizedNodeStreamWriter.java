@@ -80,6 +80,12 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     @Override
+    public void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint) {
+        LOG.debug("{}{}(leaf-list)", ind(), name);
+        incIndent();
+    }
+
+    @Override
     public void startContainerNode(final NodeIdentifier name, final int childSizeHint) {
         LOG.debug("{}{}(container)", ind(), name);
         incIndent();

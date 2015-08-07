@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
 
@@ -135,11 +136,26 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void leafSetEntryNode(final Object value) throws IllegalArgumentException {
-        Preconditions.checkArgument(getCurrent() instanceof ImmutableLeafSetNodeBuilder<?>);
-        @SuppressWarnings("unchecked")
-        ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = ((ImmutableLeafSetNodeBuilder<Object>) getCurrent());
+        Preconditions.checkArgument(getCurrent() instanceof ImmutableLeafSetNodeBuilder<?> || getCurrent() instanceof
+                ImmutableOrderedLeafSetNodeBuilder<?>);
+        ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder;
+
+        if (getCurrent() instanceof ImmutableOrderedLeafSetNodeBuilder<?>) {
+            builder = ((ImmutableOrderedLeafSetNodeBuilder<Object>) getCurrent());
+        } else {
+            builder = ((ImmutableLeafSetNodeBuilder<Object>) getCurrent());
+        }
         builder.withChildValue(value);
+    }
+
+    @Override
+    public void startOrderedLeafSet(final NodeIdentifier name,final int childSizeHint) throws IllegalArgumentException {
+        checkDataNodeContainer();
+        ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = Builders.orderedLeafSetBuilder();
+        builder.withNodeIdentifier(name);
+        enter(builder);
     }
 
     @Override
