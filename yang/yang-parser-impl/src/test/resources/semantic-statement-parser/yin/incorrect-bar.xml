@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="bar" xmlns="urn:ietf:params:xml:ns:yang:yin:1">
+
+    <namespace uri="urn:opendaylight/bar"/>
+    <prefix value="bar"/>
+
+    <list name="testing-list">
+        <key value="testing-string testing-string"/>
+        <leaf name="testing-string">
+            <type name="string"/>
+        </leaf>
+        <leaf name="testing-number">
+            <type name="int32"/>
+            <description>
+                <text>Description of the number leaf.</text>
+            </description>
+        </leaf>
+    </list>
+</module>

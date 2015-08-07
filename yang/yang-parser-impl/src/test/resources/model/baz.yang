@@ -41,7 +41,7 @@ module baz {
     }
 
     container network {
-        c-define point {
+        baz:c-define point {
         }
 
         description "network-description";
