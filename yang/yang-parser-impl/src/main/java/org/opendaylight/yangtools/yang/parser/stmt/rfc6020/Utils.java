@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
+
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
@@ -33,7 +34,6 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
-import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -167,10 +167,10 @@ public final class Utils {
                 String prefix = namesParts[0];
                 String localName = namesParts[1];
                 if (prefixes != null && prefixes.get(prefix) != null
-                        && stmtDef.get(QName.create(YangConstants.RFC6020_YIN_MODULE, localName)) != null) {
+                        && stmtDef.get(QName.create(identifier.getNamespace(), null, localName)) != null) {
                     return true;
                 } else {
-                    if (stmtDef.get(QName.create(YangConstants.RFC6020_YIN_MODULE, localName)) != null) {
+                    if (stmtDef.get(QName.create(identifier.getNamespace(), null, localName)) != null) {
                         return true;
                     }
                 }

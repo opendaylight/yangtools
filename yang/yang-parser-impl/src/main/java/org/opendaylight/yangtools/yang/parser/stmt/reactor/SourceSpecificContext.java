@@ -21,7 +21,6 @@ import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -101,8 +100,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                     final StatementContextBase<?,?,?> extension = (StatementContextBase<?, ?, ?>) currentContext
                             .getAllFromNamespace(ExtensionNamespace.class).get(key);
                     if (extension != null) {
-                        final QName qName = QName.create(((QName) ((SubstatementContext<?, ?, ?>) extension).getStatementArgument())
-                                .getModule().getNamespace(), ((QName) ((SubstatementContext<?, ?, ?>) extension).
+                        final QName qName = QName.create(((QName) extension.getStatementArgument())
+                                .getModule().getNamespace(), ((QName) extension.
                                 getStatementArgument()).getModule().getRevision(), extension.getIdentifier().getArgument());
 
                         def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition
@@ -376,7 +375,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                 for (Map.Entry<QName, StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>>> extension : extensions
                         .entrySet()) {
                     qNameToStmtDefMap
-                            .put(QName.create(YangConstants.RFC6020_YIN_MODULE,
+                            .put(QName.create(extension.getKey().getNamespace(), null,
                                     extension.getKey().getLocalName()),
                                     (StatementDefinition) ((StatementContextBase<?, ?, ?>) extension
                                             .getValue()).definition()
