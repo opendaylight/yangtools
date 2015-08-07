@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<submodule name="child" xmlns="urn:ietf:params:xml:ns:yang:yin:1">
+
+    <belongs-to module="parent">
+        <prefix value="parent"/>
+    </belongs-to>
+
+    <revision date="2010-05-18">
+        <description>
+            <text>Initial module draft.</text>
+        </description>
+        <reference>
+            <text>Random reference text</text>
+        </reference>
+    </revision>
+
+    <list name="testing-list">
+        <key value="testing-string"/>
+        <leaf name="testing-string">
+            <type name="string"/>
+        </leaf>
+        <leaf name="testing-number">
+            <type name="int32"/>
+            <description>
+                <text>Description of the number leaf.</text>
+            </description>
+        </leaf>
+    </list>
+
+</submodule>

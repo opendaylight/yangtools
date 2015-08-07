@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="main-impl"
+        xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+        xmlns:main-impl="urn:opendaylight:l2switch:main-impl"
+        xmlns:config="urn:opendaylight:params:xml:ns:yang:controller:config"
+        xmlns:mdsal="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding">
+  <yang-version value="1"/>
+  <namespace uri="urn:opendaylight:l2switch:main-impl"/>
+  <prefix value="main-impl"/>
+  <import module="config">
+    <prefix value="config"/>
+    <revision-date date="2013-04-05"/>
+  </import>
+  <import module="opendaylight-md-sal-binding">
+    <prefix value="mdsal"/>
+    <revision-date date="2013-10-28"/>
+  </import>
+  <description>
+    <text>This module contains the base YANG definitions for
+main-impl implementation.</text>
+  </description>
+  <revision date="2014-05-28">
+    <description>
+      <text>Initial module draft.</text>
+    </description>
+  </revision>
+  <identity name="main-impl">
+    <base name="config:module-type"/>
+    <config:java-name-prefix java-prefix="L2SwitchMain"/>
+  </identity>
+  <augment target-node="/config:modules/config:module/config:configuration">
+    <case name="main-impl">
+      <when condition="/config:modules/config:module/config:type = 'main-impl'"/>
+      <leaf name="is-learning-only-mode">
+        <type name="boolean"/>
+      </leaf>
+      <leaf name="is-install-dropall-flow">
+        <type name="boolean"/>
+      </leaf>
+      <leaf name="dropall-flow-table-id">
+        <type name="uint8"/>
+      </leaf>
+      <leaf name="dropall-flow-priority">
+        <type name="uint16"/>
+      </leaf>
+      <leaf name="dropall-flow-hard-timeout">
+        <type name="uint16"/>
+      </leaf>
+      <leaf name="dropall-flow-idle-timeout">
+        <type name="uint16"/>
+      </leaf>
+      <leaf name="reactive-flow-table-id">
+        <type name="uint8"/>
+      </leaf>
+      <leaf name="reactive-flow-priority">
+        <type name="uint16"/>
+      </leaf>
+      <leaf name="reactive-flow-hard-timeout">
+        <type name="uint16"/>
+      </leaf>
+      <leaf name="reactive-flow-idle-timeout">
+        <type name="uint16"/>
+      </leaf>
+      <container name="notification-service">
+        <uses name="config:service-ref">
+          <refine target-node="type">
+            <mandatory value="true"/>
+            <config:required-identity name="mdsal:binding-notification-service"/>
+          </refine>
+        </uses>
+      </container>
+      <container name="data-broker">
+        <uses name="config:service-ref">
+          <refine target-node="type">
+            <mandatory value="false"/>
+            <config:required-identity name="mdsal:binding-async-data-broker"/>
+          </refine>
+        </uses>
+      </container>
+      <container name="rpc-registry">
+        <uses name="config:service-ref">
+          <refine target-node="type">
+            <mandatory value="true"/>
+            <config:required-identity name="mdsal:binding-rpc-registry"/>
+          </refine>
+        </uses>
+      </container>
+    </case>
+  </augment>
+</module>

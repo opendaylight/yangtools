@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="extension"
+        xmlns="urn:ietf:params:xml:ns:yang:yin:1">
+    <yang-version value="1"/>
+    <namespace uri="urn:opendaylight:params:xml:ns:yang:controller:extension"/>
+    <prefix value="extension"/>
+    <revision date="2013-04-05">
+        <description>
+            <text>Reworked to give modules their own space.</text>
+        </description>
+    </revision>
+    <extension name="provided-service">
+        <description>
+            <text>YANG language extension which indicates that a particular
+                module provides certain service. This extension can be placed
+                on identities that are based on module-type. Zero or more services
+                can be provided.
+                This extension takes one argument - name - which MUST be the name
+                of an identity. Furthermore, this identity MUST be based on
+                service-type.
+            </text>
+        </description>
+        <argument name="name"/>
+    </extension>
+
+    <container name="cont"></container>
+</module>

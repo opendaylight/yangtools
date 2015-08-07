@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.stmt.retest;
 
 import static org.junit.Assert.assertEquals;
+
 import java.io.File;
 import java.io.InputStream;
 import java.net.URI;
@@ -33,19 +34,32 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YinStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
-final class TestUtils {
+public final class TestUtils {
 
     private TestUtils() {
     }
 
-    public static Set<Module> loadModules(final URI resourceDirectory) throws SourceException, ReactorException {
+    public static Set<Module> loadModules(final URI resourceDirectory) throws ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         File[] files = new File(resourceDirectory).listFiles();
 
         for (File file : files) {
             addSources(reactor, new YangStatementSourceImpl(file.getPath(), true));
+        }
+
+        EffectiveSchemaContext ctx = reactor.buildEffective();
+        return ctx.getModules();
+    }
+
+    public static Set<Module> loadYinModules(final URI resourceDirectory) throws ReactorException {
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        File[] files = new File(resourceDirectory).listFiles();
+
+        for (File file : files) {
+            addYinSources(reactor, new YinStatementSourceImpl(file.getPath(), true));
         }
 
         EffectiveSchemaContext ctx = reactor.buildEffective();
@@ -62,9 +76,26 @@ final class TestUtils {
         return ctx.getModules();
     }
 
+    public static Set<Module> loadYinModules(final List<InputStream> streams) throws SourceException, ReactorException {
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        for (InputStream inputStream : streams) {
+            addYinSources(reactor, new YinStatementSourceImpl(inputStream));
+        }
+
+        EffectiveSchemaContext ctx = reactor.buildEffective();
+        return ctx.getModules();
+    }
+
     public static Module loadModule(final InputStream stream) throws SourceException, ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         addSources(reactor, new YangStatementSourceImpl(stream));
+        EffectiveSchemaContext ctx = reactor.buildEffective();
+        return ctx.getModules().iterator().next();
+    }
+
+    public static Module loadYinModule(final InputStream stream) throws SourceException, ReactorException {
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        addYinSources(reactor, new YinStatementSourceImpl(stream));
         EffectiveSchemaContext ctx = reactor.buildEffective();
         return ctx.getModules().iterator().next();
     }
@@ -185,6 +216,13 @@ final class TestUtils {
 
     private static void addSources(CrossSourceStatementReactor.BuildAction reactor, YangStatementSourceImpl... sources) {
         for (YangStatementSourceImpl source : sources) {
+            reactor.addSource(source);
+        }
+    }
+
+    private static void addYinSources(CrossSourceStatementReactor.BuildAction reactor, YinStatementSourceImpl...
+            sources) {
+        for (YinStatementSourceImpl source : sources) {
             reactor.addSource(source);
         }
     }

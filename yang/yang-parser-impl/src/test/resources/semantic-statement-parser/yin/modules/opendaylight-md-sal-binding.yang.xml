@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="opendaylight-md-sal-binding"
+        xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+        xmlns:md-sal-binding="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding"
+        xmlns:config="urn:opendaylight:params:xml:ns:yang:controller:config">
+  <yang-version value="1"/>
+  <namespace uri="urn:opendaylight:params:xml:ns:yang:controller:md:sal:binding"/>
+  <prefix value="md-sal-binding"/>
+  <import module="config">
+    <prefix value="config"/>
+    <revision-date date="2013-04-05"/>
+  </import>
+  <description>
+    <text>Service definition for Binding Aware MD-SAL.</text>
+  </description>
+  <revision date="2013-10-28">
+    <description>
+      <text>Initial revision</text>
+    </description>
+  </revision>
+  <identity name="binding-broker-osgi-registry">
+    <base name="config:service-type"/>
+    <config:java-class name="org.opendaylight.controller.sal.binding.api.BindingAwareBroker"/>
+  </identity>
+  <identity name="binding-data-broker">
+    <base name="config:service-type"/>
+    <config:java-class name="org.opendaylight.controller.sal.binding.api.data.DataProviderService"/>
+  </identity>
+  <identity name="binding-async-data-broker">
+    <base name="config:service-type"/>
+    <config:java-class name="org.opendaylight.controller.md.sal.binding.api.DataBroker"/>
+  </identity>
+  <identity name="binding-data-consumer-broker">
+    <base name="config:service-type"/>
+    <config:java-class name="org.opendaylight.controller.sal.binding.api.data.DataBrokerService"/>
+  </identity>
+  <identity name="binding-rpc-registry">
+    <base name="config:service-type"/>
+    <config:java-class name="org.opendaylight.controller.sal.binding.api.RpcProviderRegistry"/>
+  </identity>
+  <identity name="binding-notification-service">
+    <base name="config:service-type"/>
+    <config:java-class name="org.opendaylight.controller.sal.binding.api.NotificationProviderService"/>
+  </identity>
+  <identity name="binding-notification-subscription-service">
+    <base name="config:service-type"/>
+    <config:java-class name="org.opendaylight.controller.sal.binding.api.NotificationService"/>
+  </identity>
+</module>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<module name="foo" xmlns="urn:ietf:params:xml:ns:yang:yin:1">
+
+    <namespace uri="urn:opendaylight/foo"/>
+    <prefix value="foo"/>
+
+    <import module="baar">
+        <prefix value="bar"/>
+    </import>
+
+    <revision date="2010-04-15"></revision>
+
+    <list name="testing-list">
+        <key value="name"/>
+        <leaf name="name">
+            <type name="string"/>
+        </leaf>
+        <leaf name="number">
+            <type name="uint32"/>
+            <description>
+                <text>Description of the number leaf.</text>
+            </description>
+        </leaf>
+    </list>
+</module>
