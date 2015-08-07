@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="config"
+        xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+        xmlns:config="urn:opendaylight:params:xml:ns:yang:controller:config">
+  <yang-version value="1"/>
+  <namespace uri="urn:opendaylight:params:xml:ns:yang:controller:config"/>
+  <prefix value="config"/>
+  <description>
+    <text>This module contains the base YANG definitions for NS-OS
+configuration subsystem. The system modeled revolves around two
+major concepts: modules and services.</text>
+  </description>
+  <revision date="2013-04-05">
+    <description>
+      <text>Reworked to give modules their own space.</text>
+    </description>
+  </revision>
+  <revision date="2013-04-03">
+    <description>
+      <text>Initial revision.</text>
+    </description>
+  </revision>
+  <extension name="java-class">
+    <description>
+      <text>YANG language extension carrying the fully-qualified name of
+a Java class. Code generation tools use the provided reference
+to tie a specific construct to its Java representation.</text>
+    </description>
+    <argument name="name"/>
+  </extension>
+  <extension name="required-identity">
+    <description>
+      <text>YANG language extension which indicates that a particular
+leafref, which points to a identityref, should additionally
+require the target node is actually set to a descendant to
+of a particular identity.
+
+This is a workaround to two YANG deficiencies:
+1) not being able to leafref instances of identityref
+2) not being able to refine an identityref
+
+This extension takes one argument, name, which MUST be the name
+of an identity. Furthermore, that identity MUST be based,
+directly or indirectly, on the identity, which is referenced by
+the leaf reference, which is annotated with this extension.</text>
+    </description>
+    <argument name="name"/>
+  </extension>
+  <extension name="inner-state-bean">
+    <description>
+      <text>YANG language extension which indicates that a particular
+list located under module's state should be treated as a list
+of child state beans instead of just an ordinary list attribute</text>
+    </description>
+  </extension>
+  <extension name="provided-service">
+    <description>
+      <text>YANG language extension which indicates that a particular
+module provides certain service. This extension can be placed
+on identities that are based on module-type. Zero or more services
+can be provided.
+This extension takes one argument - name - which MUST be the name
+of an identity. Furthermore, this identity MUST be based on
+service-type.</text>
+    </description>
+    <argument name="name"/>
+  </extension>
+  <extension name="java-name-prefix">
+    <description>
+      <text>YANG language extension carrying java simple class name prefix
+that will be taken into account when generating java code from
+identities that are based on module-type.</text>
+    </description>
+    <argument name="java-prefix"/>
+  </extension>
+  <identity name="module-type">
+    <description>
+      <text>Module identity base type. All module identities must be derived
+from this type. A module type uniquely defines a single atomic
+component, such as an application. Each such component is assumed
+to have its unique, stable and versioned configuration structure.</text>
+    </description>
+  </identity>
+  <identity name="service-type">
+    <description>
+      <text>Service identity base type. All service identities must be
+derived from this type. A service type uniquely defines a single
+atomic API contract, such as a Java interface, a set of C
+function declarations, or similar.
+
+If the service type has a corresponding Java interface, the name
+of that interface should be attached to the derived identity MUST
+include a java-class keyword, whose name argument points to that
+interface.</text>
+    </description>
+  </identity>
+  <typedef name="service-type-ref">
+    <description>
+      <text>Internal type of references to service type identity.</text>
+    </description>
+    <type name="identityref">
+      <base name="service-type"/>
+    </type>
+  </typedef>
+  <grouping name="service-ref">
+    <description>
+      <text>Type of references to a particular service instance. This type
+can be used when defining module configuration to refer to a
+particular service instance. Containers using this grouping
+should not define anything else. The run-time implementation
+is expected to inject a reference to the service as the value
+of the container.</text>
+    </description>
+    <leaf name="type">
+      <description>
+        <text>Type of the service being referenced. Users of this grouping
+should refine this leaf with required-identity pointing to
+the actual service-type which is actually required.</text>
+      </description>
+      <mandatory value="true"/>
+      <type name="service-type-ref"/>
+    </leaf>
+    <leaf name="name">
+      <mandatory value="true"/>
+      <type name="leafref">
+        <path value="/config:services/config:service[config:type=current()/../type]/config:instance/config:name"/>
+      </type>
+    </leaf>
+  </grouping>
+  <container name="modules">
+    <description>
+      <text>Top level container encapsulating configuration of all modules.</text>
+    </description>
+    <list name="module">
+      <key value="name"/>
+      <leaf name="name">
+        <description>
+          <text>Unique module instance name</text>
+        </description>
+        <type name="string"/>
+        <mandatory value="true"/>
+      </leaf>
+      <leaf name="type">
+        <type name="identityref">
+          <base name="module-type"/>
+        </type>
+        <mandatory value="true"/>
+      </leaf>
+      <choice name="configuration">
+        <mandatory value="true"/>
+        <config value="true"/>
+      </choice>
+      <choice name="state">
+        <config value="false"/>
+      </choice>
+    </list>
+  </container>
+  <container name="services">
+    <list name="service">
+      <key value="type"/>
+      <leaf name="type">
+        <type name="service-type-ref"/>
+      </leaf>
+      <list name="instance">
+        <key value="name"/>
+        <leaf name="name">
+          <type name="string"/>
+        </leaf>
+        <leaf name="provider">
+          <mandatory value="true"/>
+          <type name="leafref">
+            <path value="/modules/module/name"/>
+          </type>
+        </leaf>
+      </list>
+    </list>
+  </container>
+</module>

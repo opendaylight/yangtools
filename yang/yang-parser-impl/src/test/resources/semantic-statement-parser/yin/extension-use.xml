@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="extension-use"
+        xmlns="urn:ietf:params:xml:ns:yang:yin:1"
+        xmlns:extension="urn:opendaylight:params:xml:ns:yang:controller:extension">
+    <yang-version value="1"/>
+    <namespace uri="urn:opendaylight:params:xml:ns:yang:controller:extension"/>
+    <prefix value="extension-use"/>
+
+    <extension:provided-service name="extension:cont"/>
+
+    <import module="extension">
+        <prefix value="extension"/>
+        <revision-date date="2013-04-05"/>
+    </import>
+
+</module>
