@@ -28,6 +28,11 @@ public abstract class ForwardingNormalizedNodeStreamWriter extends ForwardingObj
     }
 
     @Override
+    public void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint) throws IOException {
+        delegate().startOrderedLeafSet(name, childSizeHint);
+    }
+
+    @Override
     public void leafSetEntryNode(final Object value) throws IOException {
         delegate().leafSetEntryNode(value);
     }
