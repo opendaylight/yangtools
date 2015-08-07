@@ -153,14 +153,19 @@ class BindingToNormalizedStreamWriter implements BindingStreamEventWriter, Deleg
     @Override
     public void startLeafSet(final String localName, final int childSizeHint) throws IOException, IllegalArgumentException {
         getDelegate().startLeafSet(enter(localName, NodeIdentifier.class), childSizeHint);
-    };
+    }
+
+    @Override
+    public void startOrderedLeafSet(final String localName, final int childSizeHint) throws IOException, IllegalArgumentException {
+        getDelegate().startOrderedLeafSet(enter(localName, NodeIdentifier.class), childSizeHint);
+    }
 
     @Override
     public void startMapEntryNode(final Identifier<?> key, final int childSizeHint) throws IOException, IllegalArgumentException {
         duplicateSchemaEnter();
         NodeIdentifierWithPredicates identifier = ((ListNodeCodecContext) current()).serialize(key);
         getDelegate().startMapEntryNode(identifier, childSizeHint);
-    };
+    }
 
     @Override
     public <T extends DataObject & Identifiable<?>> void startMapNode(final Class<T> mapEntryType,

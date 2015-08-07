@@ -162,6 +162,12 @@ public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWrite
         writeValue(codec.serialize(value), codec.needQuotes());
     }
 
+    @Override
+    public void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint) throws IOException {
+        tracker.startLeafSet(name);
+        context = new JSONStreamWriterListContext(context, name);
+    }
+
     /*
      * Warning suppressed due to static final constant which triggers a warning
      * for the call to schema.isPresenceContainer().
