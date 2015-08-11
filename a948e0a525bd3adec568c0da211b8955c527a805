@@ -16,6 +16,24 @@
       "revId": "a948e0a525bd3adec568c0da211b8955c527a805",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_b14ae753",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/AttributesContainer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 2759
+      },
+      "writtenOn": "2015-08-11T15:03:34Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3a79b1b5_5b5ff472",
+      "revId": "a948e0a525bd3adec568c0da211b8955c527a805",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
