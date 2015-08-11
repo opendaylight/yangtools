@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a79b1b5_5b5ff472",
+        "filename": "yang/yang-data-api/src/main/java/org/opendaylight/yangtools/yang/data/api/AttributesContainer.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-08-11T08:32:11Z",
+      "side": 1,
+      "message": "this does not look right -- there\u0027s nothing wrong with the header and I don\u0027t think we have an empty line mandated between the header and the package declaration.",
+      "revId": "a948e0a525bd3adec568c0da211b8955c527a805",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
