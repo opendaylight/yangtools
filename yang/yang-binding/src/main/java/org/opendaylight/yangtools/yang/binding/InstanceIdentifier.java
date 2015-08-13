@@ -229,8 +229,20 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      *         is not present.
      */
     public final <N extends Identifiable<K> & DataObject, K extends Identifier<N>> K firstKeyOf(final Class<N> listItem, final Class<K> listKey) {
+        return firstKeyOf(listItem);
+    }
+
+    /**
+     * Return the key associated with the first component of specified type in
+     * an identifier.
+     *
+     * @param type component type
+     * @return key associated with the component, or null if the component type
+     *         is not present.
+     */
+    public final <N extends Identifiable<K> & DataObject, K extends Identifier<N>> K firstKeyOf(final Class<N> type) {
         for (final PathArgument i : pathArguments) {
-            if (listItem.equals(i.getType())) {
+            if (type.equals(i.getType())) {
                 @SuppressWarnings("unchecked")
                 final K ret = ((IdentifiableItem<N, K>)i).getKey();
                 return ret;
