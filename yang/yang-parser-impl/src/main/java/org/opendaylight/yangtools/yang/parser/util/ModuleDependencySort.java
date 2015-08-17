@@ -81,6 +81,7 @@ public final class ModuleDependencySort {
     /**
      * Topological sort of module builder dependency graph.
      *
+     * @param builders builders of Module object
      * @return Sorted list of Module builders. Modules can be further processed
      *         in returned order.
      */
@@ -119,6 +120,7 @@ public final class ModuleDependencySort {
     /**
      * Topological sort of module dependency graph.
      *
+     * @param modules YANG modules
      * @return Sorted list of Modules. Modules can be further processed in
      *         returned order.
      */

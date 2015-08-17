@@ -54,6 +54,8 @@ public class URLSchemaContextResolver implements AdvancedSchemaSourceProvider<In
 
     /**
      * Register new yang schema when it appears.
+     * @param source URL of a yang file
+     * @return new instance of SourceContext if the source is not null
      */
     public synchronized ObjectRegistration<URL> registerSource(final URL source) {
         checkArgument(source != null, "Supplied source must not be null");

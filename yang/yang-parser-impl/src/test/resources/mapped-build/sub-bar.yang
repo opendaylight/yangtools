@@ -1,0 +1,9 @@
+submodule sub-bar {
+    belongs-to bar {
+        prefix bar-m;
+    }
+    
+    revision "2015-03-01" {
+        description "Initial version";
+    }
+}
