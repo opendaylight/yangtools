@@ -1,0 +1,9 @@
+module root-without-revision-date {
+    namespace "urn:opendaylight.org/root-without-revision-date";
+    prefix "root-without-date";
+
+    import imported-module-with-revision-date {
+        prefix "imported-with-date";
+    }
+
+}

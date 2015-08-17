@@ -1,0 +1,16 @@
+module illegal-chained-identity-test {
+    namespace "urn:opendaylight.org/illegal-chained-identity-test";
+    prefix icidt;
+
+    identity first-identity {
+        base second-identity;
+    }
+
+    identity second-identity {
+        base third-identity;
+    }
+
+    identity third-identity {
+        base first-identity;
+    }
+}
