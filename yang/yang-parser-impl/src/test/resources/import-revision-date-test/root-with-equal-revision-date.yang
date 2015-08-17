@@ -1,0 +1,10 @@
+module root-with-equal-revision-date {
+    namespace "urn:opendaylight.org/root-with-equal-revision-date";
+    prefix "root-equal-date";
+
+    import imported-module-with-equal-revision-date {
+        prefix "imported-equal-date";
+        revision-date 2010-10-25;
+    }
+
+}

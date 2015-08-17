@@ -1,0 +1,14 @@
+module root-module {
+    namespace "urn:opendaylight.org/root-module";
+    prefix "rtm";
+
+    include child-module;
+
+    leaf new-leaf {
+        type new-string-type;
+    }
+
+    leaf old-leaf {
+        type new-int32-type;
+    }
+}
