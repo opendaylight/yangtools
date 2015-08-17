@@ -1,0 +1,38 @@
+module list-test {
+    namespace "urn:opendaylight.org/list-test";
+    prefix "lt";
+
+    list simple-list {
+        key "key1 key2";
+        ordered-by user;
+        min-elements 1;
+        max-elements 10;
+        config true;
+
+        leaf key1 {
+            type int32;
+            mandatory true;
+        }
+
+        leaf key2 {
+            type int16;
+            mandatory true;
+        }
+
+        leaf old-leaf {
+            type string;
+        }
+
+        leaf young-leaf {
+            type string;
+            default "default-value";
+        }
+
+        leaf-list list-of-leaves {
+            type string;
+            ordered-by user;
+            min-elements 2;
+            max-elements 20;
+        }
+    }
+}
