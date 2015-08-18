@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a79b1b5_e63175a3",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YinStatementParserImpl.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-08-18T12:30:11Z",
+      "side": 1,
+      "message": "This is not class level property and is used only in method walk. Move it to that method and make it variable.",
+      "range": {
+        "startLine": 38,
+        "startChar": 4,
+        "endLine": 38,
+        "endChar": 57
+      },
+      "revId": "a5791d0db04cc65b4cfeb2cd3c7402394a738169",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_c62c794d",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YinStatementParserImpl.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-08-18T12:30:11Z",
+      "side": 1,
+      "message": "Use getNamespaceUri() and getLocalName() to read namespace + local name instead of hardcoding it and relying on YIN namespace to be default.",
+      "range": {
+        "startLine": 69,
+        "startChar": 20,
+        "endLine": 70,
+        "endChar": 20
+      },
+      "revId": "a5791d0db04cc65b4cfeb2cd3c7402394a738169",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_66f6c5d9",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YinStatementParserImpl.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-08-18T12:30:11Z",
+      "side": 1,
+      "message": "Why there is hardcoded element with name \"text\"? Image I have extension named text which is statement and not statement argument.",
+      "range": {
+        "startLine": 70,
+        "startChar": 20,
+        "endLine": 72,
+        "endChar": 21
+      },
+      "revId": "a5791d0db04cc65b4cfeb2cd3c7402394a738169",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
