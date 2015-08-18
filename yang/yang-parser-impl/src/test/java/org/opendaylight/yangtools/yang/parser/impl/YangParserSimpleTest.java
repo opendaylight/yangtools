@@ -46,7 +46,6 @@ public class YangParserSimpleTest {
     private final DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private Set<Module> modules;
 
-    //TODO: uncomment and run this test once commits are merged
     @Before
     public void init() throws Exception {
         snRev = simpleDateFormat.parse("2013-07-30");
