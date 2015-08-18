@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -8,16 +8,15 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedIdentitiesNamespace;
-import java.util.LinkedList;
-import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -73,7 +72,8 @@ public class BaseStatementImpl extends AbstractDeclaredStatement<QName>
                 final QName baseIdentityQName = baseStmtCtx.getStatementArgument();
                 ModelActionBuilder baseIdentityAction = baseStmtCtx.newInferenceAction(ModelProcessingPhase.STATEMENT_DEFINITION);
                 final Prerequisite<StmtContext<?, ?, ?>> requiresPrereq = baseIdentityAction.requiresCtx(baseStmtCtx, IdentityNamespace.class, baseIdentityQName, ModelProcessingPhase.STATEMENT_DEFINITION);
-                final Prerequisite<?> mutatesPrereq = baseIdentityAction.mutatesCtx(baseParentCtx, ModelProcessingPhase.STATEMENT_DEFINITION);
+                final Prerequisite<StmtContext.Mutable<?, ?, ?>> mutatesPrereq = baseIdentityAction.mutatesCtx
+                        (baseParentCtx, ModelProcessingPhase.STATEMENT_DEFINITION);
 
                 baseIdentityAction.apply( new InferenceAction() {
 

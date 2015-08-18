@@ -133,7 +133,7 @@ public class SchemaContextUtilTest {
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
-        GroupingDefinition grouping = myModule.getGroupings().iterator().next();
+        GroupingDefinition grouping = getGroupingByName(myModule,"my-grouping");
         testNode = ((ContainerSchemaNode) grouping.getDataChildByName("my-container-in-grouping"))
                 .getDataChildByName("my-leaf-in-grouping");
 
@@ -235,7 +235,7 @@ public class SchemaContextUtilTest {
         assertNull(testNode);
         assertNull(foundNode);
 
-        GroupingDefinition grouping = myModule.getGroupings().iterator().next();
+        GroupingDefinition grouping = getGroupingByName(myModule,"my-grouping");
         testNode = ((ContainerSchemaNode) grouping.getDataChildByName("my-container-in-grouping"))
                 .getDataChildByName("no-leaf-in-grouping");
 
@@ -327,7 +327,7 @@ public class SchemaContextUtilTest {
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
 
-        testNode = myModule.getGroupings().iterator().next();
+        testNode = getGroupingByName(myModule,"my-grouping");
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-grouping"));
         foundNode = SchemaContextUtil.findNodeInSchemaContext(context, path.getPathFromRoot());
@@ -459,7 +459,7 @@ public class SchemaContextUtilTest {
         Module module = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
                 QName.parseRevision("2014-10-07"));
 
-        GroupingDefinition grouping = module.getGroupings().iterator().next();
+        GroupingDefinition grouping = getGroupingByName(module,"my-grouping");
         SchemaNode testNode = grouping.getDataChildByName("my-leaf-in-gouping2");
 
         RevisionAwareXPath xpath = new RevisionAwareXPathImpl("my:my-grouping/my:my-leaf-in-gouping2", true);

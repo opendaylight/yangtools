@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class BinaryEffectiveStatementImpl extends
-        EffectiveStatementBase<String, TypeStatement.BinarySpecification> implements
+        EffectiveStatementBase<String, TypeStatement> implements
         BinaryTypeDefinition {
 
     private static final String DESCRIPTION = "The binary built-in type represents any binary data, i.e., a sequence of octets.";
@@ -40,7 +40,7 @@ public class BinaryEffectiveStatementImpl extends
     private final List<LengthConstraint> lengthConstraints;
 
     public BinaryEffectiveStatementImpl(
-            final StmtContext<String, TypeStatement.BinarySpecification, EffectiveStatement<String, TypeStatement.BinarySpecification>> ctx) {
+            final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
         super(ctx);
 
         final LengthConstraint lengthConstraint = new LengthConstraintEffectiveImpl(
