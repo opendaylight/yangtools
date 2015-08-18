@@ -89,6 +89,8 @@ public interface TypeDefinitionBuilder extends TypeAwareBuilder, SchemaNodeBuild
     /**
      * Sets fractions digits of resulting type if it is derived from
      * <code>decimal</code> built-in type.
+     *
+     * @param fractionDigits fraction digits
      */
     void setFractionDigits(Integer fractionDigits);
 

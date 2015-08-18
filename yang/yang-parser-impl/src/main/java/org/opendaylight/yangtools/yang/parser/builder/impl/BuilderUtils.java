@@ -343,7 +343,7 @@ public final class BuilderUtils {
     /**
      * Set addedByUses flag to true for node and all its child nodes.
      *
-     * @param node
+     * @param node grouping member node
      */
     public static void setNodeAddedByUses(final GroupingMember node) {
         node.setAddedByUses(true);
@@ -693,7 +693,7 @@ public final class BuilderUtils {
     /**
      * Get module in which this node is defined.
      *
-     * @param node
+     * @param node node
      * @return builder of module where this node is defined
      */
     public static ModuleBuilder getParentModule(final Builder node) {

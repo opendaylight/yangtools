@@ -235,6 +235,14 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     /**
+     * @return collection of substatements
+     */
+    @Override
+    public Collection<StatementContextBase<?, ?, ?>> substatements() {
+        return Collections.unmodifiableCollection(substatements.values());
+    }
+
+    /**
      * @return collection of effective substatements
      */
     @Override
@@ -263,6 +271,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *             if added in declared phase
      * @throws NullPointerException
      *             if statement parameter is null
+     *
+     * @param substatement substatement
      */
     public void addEffectiveSubstatement(StatementContextBase<?, ?, ?> substatement) {
 
@@ -282,6 +292,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *             if added in effective phase
      * @throws NullPointerException
      *             if statement parameter is null
+     *
+     * @param substatement substatement
      */
     public void addDeclaredSubstatement(StatementContextBase<?, ?, ?> substatement) {
 
@@ -295,6 +307,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     /**
      * builds new substatement from statement definition context and statement source reference
+     *
+     * @param def definition context
+     * @param ref source reference
+     *
+     * @return instance of ContextBuilder
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public ContextBuilder<?, ?, ?> substatementBuilder(StatementDefinitionContext<?, ?, ?> def,
@@ -451,7 +468,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     /**
      * occurs when an item is added to model namespace
      *
-     * @throws SourceException
+     * @throws SourceException instance of SourceException
      */
     @Override
     protected <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceElementAdded(Class<N> type, K key, V value) {

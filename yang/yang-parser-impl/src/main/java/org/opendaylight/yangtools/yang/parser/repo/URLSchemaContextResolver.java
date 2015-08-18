@@ -83,6 +83,7 @@ public class URLSchemaContextResolver implements AutoCloseable, SchemaSourceProv
      * @throws YangSyntaxErrorException When the YANG file is syntactically invalid
      * @throws IOException when the URL is not readable
      * @throws SchemaSourceException When parsing encounters general error
+     * @return new instance of AbstractURLRegistration if the URL is not null
      */
     public URLRegistration registerSource(final URL url) throws SchemaSourceException, IOException, YangSyntaxErrorException {
         checkArgument(url != null, "Supplied URL must not be null");

@@ -7,8 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
+import java.util.HashMap;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
+import com.google.common.collect.ImmutableMap;
+import java.util.LinkedHashMap;
+import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
 import java.util.HashSet;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
@@ -60,8 +64,43 @@ public class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
                 new TreeMap<URI, Collection<Module>>(), MODULE_SET_SUPPLIER);
         final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(
                 new TreeMap<String, Collection<Module>>(), MODULE_SET_SUPPLIER);
+        final Map<ModuleIdentifier, String> isMap = new LinkedHashMap<>();
 
         for (Module m : modulesInit) {
+            nameMap.put(m.getName(), m);
+            nsMap.put(m.getNamespace(), m);
+            isMap.put(m, m.getSource());
+        }
+
+        namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
+        nameToModules = ImmutableSetMultimap.copyOf(nameMap);
+        identifiersToSources = ImmutableMap.copyOf(isMap);
+
+    }
+
+    public EffectiveSchemaContext(final Set<Module> modules, final Map<ModuleIdentifier, String> identifiersToSources) {
+        this.identifiersToSources = ImmutableMap.copyOf(identifiersToSources);
+
+         /*
+         * Instead of doing this on each invocation of getModules(), pre-compute
+         * it once and keep it around -- better than the set we got in.
+         */
+        this.modules = ImmutableSet.copyOf(ModuleDependencySort.sort(modules.toArray(new Module[modules.size()])));
+
+         /*
+         * The most common lookup is from Namespace->Module.
+         *
+         * RESTCONF performs lookups based on module name only, where it wants
+         * to receive the latest revision
+         *
+         * Invest some quality time in building up lookup tables for both.
+         */
+        final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(
+                new TreeMap<URI, Collection<Module>>(), MODULE_SET_SUPPLIER);
+        final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(
+                new TreeMap<String, Collection<Module>>(), MODULE_SET_SUPPLIER);
+
+        for (Module m : modules) {
             nameMap.put(m.getName(), m);
             nsMap.put(m.getNamespace(), m);
         }
@@ -69,9 +108,16 @@ public class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
         namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
         nameToModules = ImmutableSetMultimap.copyOf(nameMap);
 
-        // :TODO init identifiersToSources
-        this.identifiersToSources = null;
+        rootDeclaredStatements = null;
+        rootEffectiveStatements = null;
+    }
 
+    public static SchemaContext resolveSchemaContext(final Set<Module> modules) {
+        Map<ModuleIdentifier, String> identifiersToSources = new HashMap<>();
+        for (Module module : modules) {
+            identifiersToSources.put(module, module.getSource());
+        }
+        return new EffectiveSchemaContext(modules, identifiersToSources);
     }
 
     public ImmutableList<DeclaredStatement<?>> getRootDeclaredStatements() {

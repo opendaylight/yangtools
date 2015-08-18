@@ -57,7 +57,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
 
     @Override
     public void enterStatement(YangStatementParser.StatementContext ctx) {
-        final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, ctx
+        final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, ctx.getText(), ctx
                 .getStart().getLine(), ctx.getStart().getCharPositionInLine());
         boolean action = true;
         QName identifier;
@@ -112,7 +112,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
 
     @Override
     public void exitStatement(YangStatementParser.StatementContext ctx) {
-        final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, ctx.getStart().getLine(), ctx
+        final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, ctx.getText(), ctx.getStart().getLine(), ctx
                 .getStart().getCharPositionInLine());
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree child = ctx.getChild(i);

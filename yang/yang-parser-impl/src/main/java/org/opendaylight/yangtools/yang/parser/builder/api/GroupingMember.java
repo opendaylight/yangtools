@@ -22,7 +22,7 @@ public interface GroupingMember extends Builder {
     /**
      * Set if this node is added by uses.
      *
-     * @param addedByUses
+     * @param addedByUses information about uses statement
      */
     void setAddedByUses(boolean addedByUses);
 
