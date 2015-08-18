@@ -33,7 +33,7 @@ public interface SchemaNodeBuilder extends DocumentedNodeBuilder, Builder {
     /**
      * Updates schema path to resulting {@link SchemaNode}.
      *
-     * @param path
+     * @param path schema path
      */
     void setPath(SchemaPath path);
 

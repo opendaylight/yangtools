@@ -1,0 +1,15 @@
+module ietf-netconf-monitoring {
+
+    yang-version 1;
+
+    namespace
+        "urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring";
+
+    prefix ncm;
+
+    import ietf-yang-types { prefix yang; }
+
+    leaf locked-time {
+        type yang:date-and-time;
+    }
+}

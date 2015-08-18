@@ -3,13 +3,13 @@ module testrev {
     namespace "urn:tstrev:yang";
     prefix "tstrev";
 
-    import importedrevtest {
-        prefix "imprevtst";
-    }
+    import importedrevtest { prefix "imprevtst"; }
 
     description "This is a test module";
 
-    revision 2015-07-02;
+    revision 2001-01-01 {
+        description "initial version";
+    }
 
     container mycontainer {
         leaf myleaf {
