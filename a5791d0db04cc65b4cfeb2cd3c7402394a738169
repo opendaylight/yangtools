@@ -68,6 +68,142 @@
       "revId": "a5791d0db04cc65b4cfeb2cd3c7402394a738169",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_98d819f1",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/ImportStatementDefinition.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 68,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-08-19T16:57:38Z",
+      "side": 1,
+      "message": "Why is this getting split into two lines?",
+      "revId": "a5791d0db04cc65b4cfeb2cd3c7402394a738169",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_b8e8757d",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/ImportStatementDefinition.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 82,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-08-19T16:57:38Z",
+      "side": 1,
+      "message": ".equals()?",
+      "revId": "a5791d0db04cc65b4cfeb2cd3c7402394a738169",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_38e545a8",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/ImportStatementDefinition.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-08-19T16:57:38Z",
+      "side": 1,
+      "message": "if (, fix your editor",
+      "revId": "a5791d0db04cc65b4cfeb2cd3c7402394a738169",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_38fc653e",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/YinStatementSourceImpl.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-08-19T16:57:38Z",
+      "side": 1,
+      "message": "reorder fields, please. also xmlInputFactory seems to be reinitialized on each instantiation",
+      "revId": "a5791d0db04cc65b4cfeb2cd3c7402394a738169",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_58f9214c",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/YinStatementSourceImpl.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-08-19T16:57:38Z",
+      "side": 1,
+      "message": "can it be null?",
+      "revId": "a5791d0db04cc65b4cfeb2cd3c7402394a738169",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_b89f1503",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/YinStatementSourceImpl.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-08-19T16:57:38Z",
+      "side": 1,
+      "message": "Logging guidelines, you are not providing any context.",
+      "revId": "a5791d0db04cc65b4cfeb2cd3c7402394a738169",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_78897dc9",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/YinStatementSourceImpl.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-08-19T16:57:38Z",
+      "side": 1,
+      "message": "This looks weird. At the very least rewrite it as an if/else.",
+      "revId": "a5791d0db04cc65b4cfeb2cd3c7402394a738169",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_389305fc",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/stmt/test/yin/YinFileChoiceStmtTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-08-19T16:57:38Z",
+      "side": 1,
+      "message": "do not use wildcard imports, ever. Your editor can expand them automatically.",
+      "revId": "a5791d0db04cc65b4cfeb2cd3c7402394a738169",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
