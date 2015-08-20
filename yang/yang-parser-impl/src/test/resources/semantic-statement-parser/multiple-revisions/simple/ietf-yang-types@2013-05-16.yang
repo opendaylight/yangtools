@@ -1,0 +1,16 @@
+module ietf-yang-types {
+
+    namespace "urn:ietf:params:xml:ns:yang:ietf-yang-types";
+    prefix "yang";
+
+    revision 2013-05-16;
+
+    revision 2010-09-24;
+
+    typedef date-and-time {
+        type string {
+            pattern '\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?'
+            + '(Z|[\+\-]\d{2}:\d{2})';
+        }
+    }
+}

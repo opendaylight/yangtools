@@ -1,0 +1,10 @@
+module bar {
+    namespace bar;
+    prefix bar;
+
+    include sub-bar { revision-date 2015-03-01; }
+    
+    revision "2015-01-01" {
+        description "Initial version";
+    }
+}
