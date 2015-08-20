@@ -139,8 +139,16 @@ class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Effective
             throws SourceException {
         SubstatementContext<A, D, E> copy = new SubstatementContext<>(this,
                 newQNameModule, newParent, typeOfCopy);
-        copy.setTypeOfCopy(typeOfCopy);
-        copy.setOriginalCtx(this);
+
+        copy.addAllToCopyHistory(this.getCopyHistory());
+        copy.addToCopyHistory(typeOfCopy);
+
+        if(this.getOriginalCtx() != null) {
+            copy.setOriginalCtx(this.getOriginalCtx());
+        } else {
+            copy.setOriginalCtx(this);
+        }
+
         return copy;
     }
 

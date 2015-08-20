@@ -137,8 +137,16 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     public StatementContextBase<A, D, E> createCopy(QNameModule newQNameModule,
             StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy) throws SourceException {
         RootStatementContext<A, D, E> copy = new RootStatementContext<>(this, newQNameModule, typeOfCopy);
-        copy.setTypeOfCopy(typeOfCopy);
-        copy.setOriginalCtx(this);
+
+        copy.addAllToCopyHistory(this.getCopyHistory());
+        copy.addToCopyHistory(typeOfCopy);
+
+        if(this.getOriginalCtx() != null) {
+            copy.setOriginalCtx(this.getOriginalCtx());
+        } else {
+            copy.setOriginalCtx(this);
+        }
+
         return copy;
     }
 

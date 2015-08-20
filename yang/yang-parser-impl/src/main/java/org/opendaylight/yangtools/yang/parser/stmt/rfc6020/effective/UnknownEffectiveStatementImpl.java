@@ -8,9 +8,6 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import java.util.Set;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-
 import java.util.ArrayList;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -50,7 +47,7 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<String
 
         nodeType = extension.getQName();
         nodeParameter = argument();
-        qName = argument() != null ? QName.create(Utils.qNameFromArgument(ctx, ctx.getStatementArgument()).getModule(), argument()) : null;
+        qName = argument() != null ? QName.create(Utils.qNameFromArgument(ctx, ctx.getStatementArgument()).getModule(), argument()) : extension.getQName();
         path = Utils.getSchemaPath(ctx);
 
         // TODO init other fields (see Bug1412Test)
@@ -73,7 +70,7 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<String
     private void initCopyType(
             final StmtContext<String, UnknownStatement<String>, ?> ctx) {
 
-        Set<TypeOfCopy> copyTypesFromOriginal = StmtContextUtils.getCopyTypesFromOriginal(ctx);
+        List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
 
         if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
             augmenting = true;
@@ -85,7 +82,7 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<String
             addedByUses = augmenting = true;
         }
 
-        if (ctx.getTypeOfCopy() != TypeOfCopy.ORIGINAL) {
+        if (ctx.getOriginalCtx() != null) {
             original = (UnknownSchemaNode) ctx.getOriginalCtx().buildEffective();
         }
     }

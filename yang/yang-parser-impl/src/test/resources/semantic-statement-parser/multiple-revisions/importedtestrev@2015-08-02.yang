@@ -1,0 +1,13 @@
+module importedrevtest {
+    yang-version 1;
+    namespace "urn:imprevtst:yang";
+    prefix "imprevtst";
+
+    description "This is a test module";
+
+    revision 2015-08-02;
+
+    typedef date-and-time {
+      type string;
+    }
+}
