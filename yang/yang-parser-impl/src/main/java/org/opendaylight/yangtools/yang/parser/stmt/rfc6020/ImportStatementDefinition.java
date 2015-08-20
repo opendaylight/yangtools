@@ -145,7 +145,7 @@ public class ImportStatementDefinition
         });
     }
 
-    private static ModuleIdentifier getImportedModuleIdentifier(
+    private ModuleIdentifier getImportedModuleIdentifier(
             Mutable<String, ImportStatement, ?> stmt) throws SourceException {
 
         String moduleName = stmt.getStatementArgument();

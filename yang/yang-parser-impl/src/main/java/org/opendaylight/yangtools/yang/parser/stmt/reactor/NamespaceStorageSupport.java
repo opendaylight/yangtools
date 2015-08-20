@@ -7,6 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import java.util.Map.Entry;
+
+import java.util.Set;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import java.util.HashMap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -60,13 +65,38 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         getBehaviourRegistry().getNamespaceBehaviour((Class)type).addTo(this, key, value);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> V getFromLocalStorage(Class<N> type, K key) {
-        @SuppressWarnings("unchecked")
         Map<K, V> localNamespace = (Map<K,V>) namespaces.get(type);
+
+        V potential = null;
         if(localNamespace != null) {
-            return localNamespace.get(key);
+            potential = localNamespace.get(key);
         }
+
+        if(potential == null && Utils.isModuleIdentifierWithoutSpecifiedRevision(key)) {
+            potential = getRegardlessOfRevision((ModuleIdentifier)key,(Map<ModuleIdentifier,V>)localNamespace);
+        }
+
+        return potential;
+    }
+
+    private <K, V, N extends IdentifierNamespace<K, V>> V getRegardlessOfRevision(ModuleIdentifier key,
+            Map<ModuleIdentifier, V> localNamespace) {
+
+        if(localNamespace == null) {
+            return null;
+        }
+
+        Set<Entry<ModuleIdentifier, V>> entrySet = localNamespace.entrySet();
+        for (Entry<ModuleIdentifier, V> entry : entrySet) {
+            ModuleIdentifier moduleIdentifierInMap = entry.getKey();
+            if(moduleIdentifierInMap.getName().equals(key.getName())) {
+                return entry.getValue();
+            }
+        }
+
         return null;
     }
 

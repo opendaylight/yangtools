@@ -138,10 +138,10 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
      * the "BaseListener" aspect, which need not be exposed to the user. Maybe
      * factor out a base class into repo.spi?
      *
-     * @param namespaceContext
-     * @param sourcePath
-     * @param walker
-     * @param tree
+     * @param namespaceContext namespaceContext
+     * @param sourcePath sourcePath
+     * @param walker walker
+     * @param tree tree
      * @return new instance of YangParserListenerImpl
      */
     public static YangParserListenerImpl create(final Map<String, NavigableMap<Date, URI>> namespaceContext,

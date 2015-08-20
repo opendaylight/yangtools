@@ -26,7 +26,7 @@ public interface Builder extends Mutable {
     /**
      * Set name of module in which this node is declared.
      *
-     * @param moduleName
+     * @param moduleName name of module
      * @deprecated Module name should be set during creation of builder.
      */
     @Deprecated
@@ -62,7 +62,7 @@ public interface Builder extends Mutable {
      * method, this builder is also built and unknown node is added
      * as child to the product of this builder.
      *
-     * @param unknownNode
+     * @param unknownNode an unknown node builder
      */
     void addUnknownNodeBuilder(UnknownSchemaNodeBuilder unknownNode);
 
