@@ -108,6 +108,7 @@ public class DataTreeCandidateValidatorTest2 {
                 .takeSnapshot().newModification();
         writeModification.write(devicesPath, devicesContainer);
 
+        writeModification.ready();
         final DataTreeCandidate writeDevicesCandidate = inMemoryDataTree
                 .prepare(writeModification);
 
@@ -197,6 +198,7 @@ public class DataTreeCandidateValidatorTest2 {
         final YangInstanceIdentifier path2 = YangInstanceIdentifier.of(deviceTypeStr);
         initialDataTreeModification.write(path2, deviceTypesContainer);
 
+        initialDataTreeModification.ready();
         final DataTreeCandidate writeChipsCandidate = inMemoryDataTree
                 .prepare(initialDataTreeModification);
 
