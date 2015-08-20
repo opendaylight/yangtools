@@ -165,4 +165,19 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
         }
         return result;
     }
+
+    protected final <R> R firstSubstatementOfType(Class<?> type,
+            Class<R> returnType) {
+        R result = null;
+        try {
+            result = returnType.cast(Iterables.find(
+                    substatements,
+                    Predicates.and(Predicates.instanceOf(type),
+                            Predicates.instanceOf(returnType))));
+        } catch (NoSuchElementException e) {
+            result = null;
+        }
+        return result;
+    }
+
 }
