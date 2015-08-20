@@ -270,7 +270,7 @@ module test-type-provider {
 
         leaf foo-cond-bar-item {
             type leafref {
-                path "../../foo/bars/bar-item/[id=10]";
+                path "../../foo/bars/bar-item[id=10]";
             }
         }
 
