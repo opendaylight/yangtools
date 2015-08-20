@@ -5,16 +5,18 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.util;
+package org.opendaylight.yangtools.yang.stmt.retest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import java.io.File;
+
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.Collections;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -34,11 +36,9 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.util.Int32;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public class SchemaContextUtilTest {
     @Mock
@@ -72,14 +72,10 @@ public class SchemaContextUtilTest {
     }
 
     @Test
-    public void findNodeInSchemaContextTest() throws URISyntaxException, IOException, YangSyntaxErrorException,
-            ParseException {
+    public void findNodeInSchemaContextTest() throws URISyntaxException, IOException,
+             SourceException, ReactorException {
 
-        File resourceFile = new File(getClass().getResource("/schema-context-util-test/my-module.yang").toURI());
-        File resourceDir = resourceFile.getParentFile();
-
-        YangParserImpl parser = YangParserImpl.getInstance();
-        SchemaContext context = parser.parseFile(resourceFile, resourceDir);
+        SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
         Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
                 QName.parseRevision("2014-10-07"));
@@ -190,14 +186,10 @@ public class SchemaContextUtilTest {
     }
 
     @Test
-    public void findNodeInSchemaContextTest2() throws URISyntaxException, IOException, YangSyntaxErrorException,
-            ParseException {
+    public void findNodeInSchemaContextTest2() throws URISyntaxException, IOException,
+             SourceException, ReactorException {
 
-        File resourceFile = new File(getClass().getResource("/schema-context-util-test/my-module.yang").toURI());
-        File resourceDir = resourceFile.getParentFile();
-
-        YangParserImpl parser = YangParserImpl.getInstance();
-        SchemaContext context = parser.parseFile(resourceFile, resourceDir);
+        SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
         Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
                 QName.parseRevision("2014-10-07"));
@@ -288,14 +280,10 @@ public class SchemaContextUtilTest {
     }
 
     @Test
-    public void findNodeInSchemaContextTest3() throws URISyntaxException, IOException, YangSyntaxErrorException,
-            ParseException {
+    public void findNodeInSchemaContextTest3() throws URISyntaxException, IOException,
+             SourceException, ReactorException {
 
-        File resourceFile = new File(getClass().getResource("/schema-context-util-test/my-module.yang").toURI());
-        File resourceDir = resourceFile.getParentFile();
-
-        YangParserImpl parser = YangParserImpl.getInstance();
-        SchemaContext context = parser.parseFile(resourceFile, resourceDir);
+        SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
         Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
                 QName.parseRevision("2014-10-07"));
@@ -358,13 +346,9 @@ public class SchemaContextUtilTest {
     }
 
     @Test
-    public void findParentModuleTest() throws URISyntaxException, IOException, YangSyntaxErrorException, ParseException {
+    public void findParentModuleTest() throws URISyntaxException, IOException,   SourceException, ReactorException {
 
-        File resourceFile = new File(getClass().getResource("/schema-context-util-test/my-module.yang").toURI());
-        File resourceDir = resourceFile.getParentFile();
-
-        YangParserImpl parser = YangParserImpl.getInstance();
-        SchemaContext context = parser.parseFile(resourceFile, resourceDir);
+        SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
         Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
                 QName.parseRevision("2014-10-07"));
@@ -419,13 +403,9 @@ public class SchemaContextUtilTest {
     }
 
     @Test
-    public void findDataSchemaNodeTest() throws URISyntaxException, IOException, YangSyntaxErrorException {
+    public void findDataSchemaNodeTest() throws URISyntaxException, IOException,  SourceException, ReactorException {
 
-        File resourceFile = new File(getClass().getResource("/schema-context-util-test/my-module.yang").toURI());
-        File resourceDir = resourceFile.getParentFile();
-
-        YangParserImpl parser = YangParserImpl.getInstance();
-        SchemaContext context = parser.parseFile(resourceFile, resourceDir);
+        SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
         Module module = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
                 QName.parseRevision("2014-10-07"));
@@ -446,15 +426,9 @@ public class SchemaContextUtilTest {
     }
 
     @Test
-    public void findDataSchemaNodeTest2() throws URISyntaxException, IOException, YangSyntaxErrorException {
-        // findDataSchemaNode(final SchemaContext context, final Module module,
-        // final RevisionAwareXPath nonCondXPath) {
+    public void findDataSchemaNodeTest2() throws URISyntaxException, IOException,  SourceException, ReactorException {
 
-        File resourceFile = new File(getClass().getResource("/schema-context-util-test/my-module.yang").toURI());
-        File resourceDir = resourceFile.getParentFile();
-
-        YangParserImpl parser = YangParserImpl.getInstance();
-        SchemaContext context = parser.parseFile(resourceFile, resourceDir);
+        SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
         Module module = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
                 QName.parseRevision("2014-10-07"));
@@ -539,13 +513,9 @@ public class SchemaContextUtilTest {
 
     @Test
     public void findNodeInSchemaContextGroupingsTest() throws URISyntaxException, IOException,
-            YangSyntaxErrorException, ParseException {
+              SourceException, ReactorException {
 
-        File resourceFile = new File(getClass().getResource("/schema-context-util-test/my-module.yang").toURI());
-        File resourceDir = resourceFile.getParentFile();
-
-        YangParserImpl parser = YangParserImpl.getInstance();
-        SchemaContext context = parser.parseFile(resourceFile, resourceDir);
+        SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
         Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
                 QName.parseRevision("2014-10-07"));
@@ -733,13 +703,9 @@ public class SchemaContextUtilTest {
 
     @Test
     public void findNodeInSchemaContextGroupingsTest2() throws URISyntaxException, IOException,
-            YangSyntaxErrorException, ParseException {
+              SourceException, ReactorException {
 
-        File resourceFile = new File(getClass().getResource("/schema-context-util-test/my-module.yang").toURI());
-        File resourceDir = resourceFile.getParentFile();
-
-        YangParserImpl parser = YangParserImpl.getInstance();
-        SchemaContext context = parser.parseFile(resourceFile, resourceDir);
+        SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
         Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
                 QName.parseRevision("2014-10-07"));
@@ -874,13 +840,9 @@ public class SchemaContextUtilTest {
 
     @Test
     public void findNodeInSchemaContextTheSameNameOfSiblingsTest() throws URISyntaxException, IOException,
-            YangSyntaxErrorException, ParseException {
+              SourceException, ReactorException {
 
-        File resourceFile = new File(getClass().getResource("/schema-context-util-test/my-module.yang").toURI());
-        File resourceDir = resourceFile.getParentFile();
-
-        YangParserImpl parser = YangParserImpl.getInstance();
-        SchemaContext context = parser.parseFile(resourceFile, resourceDir);
+        SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
         Module myModule = context.findModuleByNamespaceAndRevision(new URI("uri:my-module"),
                 QName.parseRevision("2014-10-07"));

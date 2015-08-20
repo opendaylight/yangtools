@@ -1,0 +1,30 @@
+module choice-monitoring {
+  yang-version 1;
+  namespace "urn:ietf:params:xml:ns:yang:choice-monitoring";
+  prefix "ncm";
+
+  revision 2013-07-01 {
+  }
+
+  container netconf-state {
+    config false;
+
+    container datastores {
+      list datastore {
+        key name;
+
+        leaf name {
+          type string;
+        }
+        container locks {
+          choice lock-type {
+
+            case original-lock {
+            }
+            
+          }
+        }
+      }
+    }
+  }
+}

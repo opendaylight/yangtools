@@ -11,8 +11,11 @@ package org.opendaylight.yangtools.yang.stmt.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.Set;
+import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
 
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -112,10 +115,21 @@ public class MoreRevisionsTest {
                 .newBuild();
 
         reactor.addSources(TED_20130712, TED_20131021, ISIS_20130712,
-                ISIS_20131021, L3_20130712, L3_20131021, IETF_TYPES, NETWORK_TOPOLOGY_20130712, NETWORK_TOPOLOGY_20131021);
+                ISIS_20131021, L3_20130712, L3_20131021, IETF_TYPES,
+                NETWORK_TOPOLOGY_20130712, NETWORK_TOPOLOGY_20131021);
 
         EffectiveSchemaContext result = reactor.buildEffective();
         assertNotNull(result);
+    }
+
+    @Test
+    public void multipleRevisionsTest() throws SourceException,
+            ReactorException, FileNotFoundException, URISyntaxException {
+        for (int i = 0; i < 25; i++) {
+            SchemaContext context = StmtTestUtils
+                    .parseYangSources("/semantic-statement-parser/multiple-revisions");
+            assertNotNull(context);
+        }
     }
 
 }
