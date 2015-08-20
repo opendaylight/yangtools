@@ -97,7 +97,8 @@ public class AugmentStatementImpl extends
                                         + augmentNode.getStatementArgument(),
                                 augmentNode.getStatementSourceReference());
                     }
-                    if (StmtContextUtils.isInExtensionBody(augmentTargetCtx)) {
+
+                    if (!AugmentUtils.isSupportedAugmentTarget(augmentTargetCtx) || StmtContextUtils.isInExtensionBody(augmentTargetCtx)) {
                         augmentNode.setIsSupportedToBuildEffective(false);
                         return;
                     }
