@@ -1,0 +1,13 @@
+module ietf-interfaces {
+
+    namespace "urn:ietf:params:xml:ns:yang:ietf-interfaces";
+    prefix if;
+
+    import ietf-yang-types { prefix yang; revision-date 2010-09-24; }
+
+    revision 2012-11-15;
+
+    leaf last-change {
+        type yang:date-and-time;
+    }
+}

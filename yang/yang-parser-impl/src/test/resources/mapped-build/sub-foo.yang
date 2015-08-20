@@ -1,0 +1,9 @@
+submodule sub-foo {
+    belongs-to foo {
+        prefix foo-m;
+    }
+    
+    revision "2015-02-01" {
+        description "Initial version";
+    }
+}

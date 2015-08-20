@@ -118,10 +118,9 @@ public class ModuleEffectiveStatementImpl extends
             yangVersion = "1";
         }
 
-        sourcePath = ((DeclarationInTextSource) ctx
-                .getStatementSourceReference()).getSourceName();
-        // TODO source
-        // source =
+        DeclarationInTextSource sourceReference = (DeclarationInTextSource) ctx.getStatementSourceReference();
+        sourcePath = sourceReference.getSourceName();
+        source = sourceReference.getSourceText();
 
         initSubmodules(ctx);
         initSubstatementCollections(ctx);

@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
@@ -74,7 +73,7 @@ public class ModuleStatementSupport extends
                     + "] is missing.");
         }
 
-        Optional<Date> revisionDate = Optional.fromNullable(getLatestRevision(stmt.declaredSubstatements()));
+        Optional<Date> revisionDate = Optional.fromNullable(Utils.getLatestRevision(stmt.declaredSubstatements()));
         if (!revisionDate.isPresent()) {
             revisionDate = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);
         }
@@ -108,21 +107,4 @@ public class ModuleStatementSupport extends
 
         stmt.addContext(NamespaceToModule.class, qNameModule, stmt);
     }
-
-    private static Date getLatestRevision(Iterable<? extends StmtContext<?, ?, ?>> subStmts) {
-        Date revision = null;
-        for (StmtContext<?, ?, ?> subStmt : subStmts) {
-            if (subStmt.getPublicDefinition().getDeclaredRepresentationClass().isAssignableFrom(RevisionStatement
-                    .class)) {
-                if (revision == null && subStmt.getStatementArgument() != null) {
-                    revision = (Date) subStmt.getStatementArgument();
-                } else if (subStmt.getStatementArgument() != null && ((Date) subStmt.getStatementArgument()).compareTo
-                        (revision) > 0) {
-                    revision = (Date) subStmt.getStatementArgument();
-                }
-            }
-        }
-        return revision;
-    }
-
 }
