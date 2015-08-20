@@ -1,0 +1,73 @@
+/*
+ * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+module encoding-javadoc {
+    yang-version 1;
+    namespace "urn:opendaylight:encoding-javadoc";
+    prefix "enc";
+
+    revision "2014-04-09" {
+    }
+
+    container cont1 {
+        description "/e.g. 1/*/*";
+        reference "RFC 6020 - http://tools.ietf.org/html/rfc6020";
+
+        list list1 {
+            description "/e.g. 1/*/*";
+            reference "RFC 6020 - http://tools.ietf.org/html/rfc6020";
+
+            key "topology-id";
+            leaf topology-id {
+                description "/e.g. 1/*/*";
+                reference "RFC 6020 - http://tools.ietf.org/html/rfc6020";
+                type int32;
+            }
+            uses link1;
+        }
+    }
+
+    grouping link1 {
+        list link1 {
+            description "/e.g. 1/*/*";
+            reference "RFC 6020 - http://tools.ietf.org/html/rfc6020";
+            key "link-id";
+            uses link-attributes;
+        }
+    }
+
+    grouping link-attributes {
+        leaf link-id {
+            description "/e.g. 1/*/*";
+            reference "RFC 6020 - http://tools.ietf.org/html/rfc6020";
+            type int8;
+        }
+    }
+
+    leaf inclusion-rulez {
+        description "/e.g. 1/*/*";
+        reference "RFC 6020 http://technet.com";
+
+        type string;
+    }
+
+    leaf inclusion-rule {
+        description "/e.g. 1/*/*";
+        default include;
+
+        type enumeration {
+            enum include {
+                description
+                    "/e.g. 1/*/*";
+            }
+            enum exclude {
+                description
+                    "/e.g. 1/*/*";
+            }
+        }
+    }
+}

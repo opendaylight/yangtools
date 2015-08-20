@@ -1,0 +1,119 @@
+module opendaylight-yangtools-binding-test {
+
+    namespace "urn:opendaylight:params:xml:ns:yang:yangtools:test:binding";
+    prefix list-test;
+
+
+    description
+        "This module contains a collection of YANG definitions used for
+        some test cases.";
+
+    revision 2014-07-01 {
+        description
+        "Test model for testing data broker with nested lists.";
+    }
+
+    typedef int32-string-union {
+        type union {
+            type int32;
+            type string;
+        }
+    }
+
+    identity test-root;
+
+    identity test-one {
+        base test-root;
+    }
+
+    identity test-two {
+        base test-root;
+    }
+
+    typedef test-identityref {
+        type identityref {
+            base test-root;
+        }
+    }
+
+    grouping two-level-list {
+        list top-level-list {
+            description
+                "Top Level List";
+            key "name";
+            leaf name {
+                type string;
+            }
+
+            choice choice-in-list {
+                case simple-case {
+                    leaf simple {
+                        type string;
+                    }
+                }
+            }
+
+            list nested-list {
+                key "name";
+                leaf name {
+                    type string;
+                }
+                leaf type {
+                    type string;
+                    mandatory true;
+                    description
+                        "Mandatory type of list.";
+                }
+                ordered-by user;
+                description
+                    "A list of service functions that compose the service chain";
+            }
+        }
+        leaf-list top-level-leaf-list {
+            type string;
+        }
+    }
+
+    grouping choice {
+        choice identifier {
+            case simple {
+                container simple-id {
+                    leaf id {
+                        type int32;
+                    }
+                }
+            }
+            case extended {
+                container extended-id {
+                    leaf id {
+                        type string;
+                    }
+                }
+            }
+        }
+    }
+
+    container top {
+        uses two-level-list;
+    }
+
+    container choice-container {
+        uses choice;
+    }
+
+    rpc put-top {
+        input {
+            uses two-level-list;
+        }
+    }
+
+    notification two-level-list-changed {
+        uses two-level-list;
+    }
+
+    rpc get-top {
+        output {
+            uses two-level-list;
+        }
+    }
+}

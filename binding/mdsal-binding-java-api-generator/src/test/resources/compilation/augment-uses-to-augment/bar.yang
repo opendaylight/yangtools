@@ -1,0 +1,81 @@
+/*
+ * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+module bar {
+    yang-version 1;
+    namespace "urn:opendaylight.bar";
+    prefix "bar";
+	
+	description "bar - Network topology is the arrangement of the various elements (links, nodes, etc.) of a computer network.[1][2] Essentially, it is the topological[3] structure of a network, and may be depicted physically or logically. Physical topology is the placement of the various components of a network, including device location and cable installation, while logical topology illustrates how data flows within a network, regardless of its physical design. Distances between nodes, physical interconnections, transmission rates, or signal types may differ between two networks, yet their topologies may be identical.";
+	reference "RFC 6020 - http://tools.ietf.org/html/rfc6020";
+
+    revision "2013-10-08" {
+    }
+
+    container network-topology {
+		description "network-topology - Network topology is the arrangement of the various elements (links, nodes, etc.) of a computer network.[1][2] Essentially, it is the topological[3] structure of a network, and may be depicted physically or logically. Physical topology is the placement of the various components of a network, including device location and cable installation, while logical topology illustrates how data flows within a network, regardless of its physical design. Distances between nodes, physical interconnections, transmission rates, or signal types may differ between two networks, yet their topologies may be identical.";
+		reference "RFC 6020 - http://tools.ietf.org/html/rfc6020";
+		
+        list topology {
+			description "topology - Network topology is the arrangement of the various elements (links, nodes, etc.) of a computer network.[1][2] Essentially, it is the topological[3] structure of a network, and may be depicted physically or logically. Physical topology is the placement of the various components of a network, including device location and cable installation, while logical topology illustrates how data flows within a network, regardless of its physical design. Distances between nodes, physical interconnections, transmission rates, or signal types may differ between two networks, yet their topologies may be identical.";
+			reference "RFC 6020 - http://tools.ietf.org/html/rfc6020";
+			
+            key "topology-id";
+            leaf topology-id {
+				description "topology-id - Network topology is the arrangement of the various elements (links, nodes, etc.) of a computer network.[1][2] Essentially, it is the topological[3] structure of a network, and may be depicted physically or logically. Physical topology is the placement of the various components of a network, including device location and cable installation, while logical topology illustrates how data flows within a network, regardless of its physical design. Distances between nodes, physical interconnections, transmission rates, or signal types may differ between two networks, yet their topologies may be identical.";
+				reference "RFC 6020 - http://tools.ietf.org/html/rfc6020";
+                type int32;
+            }
+            uses link;
+        }
+    }
+
+    grouping link {
+        list link {
+			description "Link - Network topology is the arrangement of the various elements (links, nodes, etc.) of a computer network.[1][2] Essentially, it is the topological[3] structure of a network, and may be depicted physically or logically. Physical topology is the placement of the various components of a network, including device location and cable installation, while logical topology illustrates how data flows within a network, regardless of its physical design. Distances between nodes, physical interconnections, transmission rates, or signal types may differ between two networks, yet their topologies may be identical.";
+			reference "RFC 6020 - http://tools.ietf.org/html/rfc6020";
+            key "link-id";
+            uses link-attributes;
+        }
+    }
+
+    grouping link-attributes {
+        leaf link-id {
+			description "Link-attributes - Network topology is the arrangement of the various elements (links, nodes, etc.) of a computer network.[1][2] Essentially, it is the topological[3] structure of a network, and may be depicted physically or logically. Physical topology is the placement of the various components of a network, including device location and cable installation, while logical topology illustrates how data flows within a network, regardless of its physical design. Distances between nodes, physical interconnections, transmission rates, or signal types may differ between two networks, yet their topologies may be identical.";
+			reference "RFC 6020 - http://tools.ietf.org/html/rfc6020";
+            type int8;
+        }
+    }
+	
+	leaf inclusion-rulez {
+		description "Specified rulez description.";
+		reference "RFC 6020 http://technet.com";
+		
+		type string;
+	}
+
+	leaf inclusion-rule {
+        description "Specify how inheritance will work for this label";
+        default include;
+
+        type enumeration {
+            enum include {
+                description 
+                    "This label will be included normally in the 
+                     matching. This seems to be a little bit longer comment. I hear you very weel my darling.
+					 Network topology is the arrangement of the various elements (links, nodes, etc.) of any other builder nodes types.";
+            }
+            enum exclude {
+                description 
+                    "This label will be excluded from the 
+                    matching.  This allows removing labels that
+                    would have otherwise been included because of
+                    inheritence rules.";
+            }
+        }
+    }
+}

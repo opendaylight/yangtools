@@ -1,0 +1,195 @@
+/*
+ * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+module foo {
+    yang-version 1;
+    namespace "urn:opendaylight.foo";
+    prefix "foo";
+
+    revision "2013-10-08" {
+    }
+
+
+    typedef bits-ext {
+        type bits {
+            bit pc {
+                position 0;
+            }
+            bit bpc {
+                position 1;
+            }
+            bit dpc {
+                position 2;
+            }
+            bit lbpc {
+                position 3;
+            }
+            bit spc {
+                position 4;
+            }
+            bit sfmof {
+                position 5;
+            }
+            bit sfapc {
+                position 6;
+            }
+        }
+    }
+
+    typedef myenum {
+        type enumeration {
+            enum zero;
+            enum one;
+            enum seven {
+                value 7;
+            }
+        }
+        default one;
+    }
+
+    typedef int32-ext0 {
+        type int32;
+    }
+
+    typedef int32-ext1 {
+        type int32 {
+            range "2..2147483647";
+        }
+    }
+
+    typedef int32-ext2 {
+        type int32-ext1 {
+            range "3..9|11..max";
+        }
+        units "mile";
+        default "11";
+    }
+
+    typedef string-ext1 {
+        type string {
+            pattern "[a-k]*";
+            length "5..11";
+        }
+    }
+
+    typedef string-ext2 {
+        type string-ext1 {
+            length "6..10";
+        }
+    }
+
+    typedef string-ext3 {
+        type string-ext2 {
+            pattern "[b-u]*";
+        }
+    }
+
+    typedef my-decimal-type {
+        type decimal64 {
+            fraction-digits 6;
+            range "1.5..5.5";
+        }
+    }
+
+    typedef my-decimal-type2 {
+        type decimal64 {
+            fraction-digits 18;
+            range "0..1";
+        }
+    }
+
+    typedef union-ext1 {
+        type union {
+            type int16 {
+                range "1..100";
+            }
+            type int32;
+        }
+    }
+
+    typedef union-ext2 {
+        type union-ext1;
+    }
+
+    typedef union-ext3 {
+        type union {
+            type union-ext2;
+            type string;
+        }
+        units "object id";
+    }
+
+    typedef union-ext4 {
+        type union {
+            type union-ext3;
+            type int32-ext2;
+            type empty;
+            type my-decimal-type;
+        }
+    }
+
+    typedef b1 {
+        type binary;
+    }
+
+    typedef b2 {
+        type b1;
+    }
+
+    typedef b3 {
+        type b2 {
+            length 1..10;
+        }
+    }
+
+    container c1 {
+        leaf id {
+            type b3;
+        }
+    }
+
+
+    typedef a {
+        type int8;
+    }
+
+    typedef b {
+        type int16;
+    }
+
+    typedef c {
+        type int32;
+    }
+
+    typedef d {
+        type int64 {
+            range 0..max;
+        }
+    }
+
+    typedef e {
+        type uint8;
+    }
+
+    typedef f {
+        type uint16;
+    }
+
+    typedef g {
+        type uint32;
+    }
+
+    typedef h {
+        type uint64;
+    }
+    container cont1 {
+        leaf leaf1 {
+            type union-ext1;
+        }
+    }
+
+}

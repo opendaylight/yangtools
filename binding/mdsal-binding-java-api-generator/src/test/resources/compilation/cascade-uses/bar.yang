@@ -1,0 +1,35 @@
+/*
+ * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+module bar {
+    yang-version 1;
+    namespace "urn:opendaylight:bar";
+    prefix "bar";
+
+    import baz { prefix bz; revision-date 2013-10-08; }
+
+    revision "2013-10-08" {
+    }
+
+    grouping bar_gr1 {
+        leaf bar1 {
+            type int8;
+        }
+        leaf bar2 {
+            type int16;
+        }
+    }
+
+    grouping bar_gr2 {
+        leaf bar3 {
+            type int32;
+        }
+        uses bar_gr1;
+        uses bz:baz_gr1;
+    }
+
+}

@@ -1,0 +1,103 @@
+/*
+ * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+module test {
+    yang-version 1;
+    namespace "urn:opendaylight:test";
+    prefix "t";
+
+    revision "2013-10-08" {
+    }
+
+    container nodes {
+        leaf id-binary {
+            type binary {
+                length 1..10;
+            }
+        }
+        leaf id-bits {
+            type bits {
+                bit ctrl;
+                bit alt {
+                    position 5;
+                }
+                bit delete;
+            }
+        }
+        leaf id-boolean {
+            type boolean;
+        }
+        leaf id-decimal64 {
+            type decimal64 {
+                fraction-digits 4;
+                range "1.5..5.5";
+            }
+        }
+        leaf id-empty {
+            type empty;
+        }
+        leaf id-enumeration {
+            type enumeration {
+                enum zero;
+                enum one;
+                enum seven {
+                    value 7;
+                }
+            }
+        }
+        leaf id-identityref {
+            type identityref {
+                base alg;
+            }
+        }
+        leaf id-instance-identifier {
+            type instance-identifier;
+        }
+        leaf id-8 {
+            type int8;
+        }
+        leaf id-16 {
+            type int16;
+        }
+        leaf id-32 {
+            type int32;
+        }
+        leaf id-64 {
+            type int64;
+        }
+        leaf id-leafref {
+            type leafref {
+                path "/nodes/id-64";
+            }
+        }
+        leaf id-string {
+            type string;
+        }
+        leaf id-u8 {
+            type uint8;
+        }
+        leaf id-u16 {
+            type uint16;
+        }
+        leaf id-u32 {
+            type uint32;
+        }
+        leaf id-u64 {
+            type uint64;
+        }
+        leaf id-union {
+            type union {
+                type string;
+                type binary;
+            }
+        }
+    }
+
+    identity alg {
+    }
+
+}

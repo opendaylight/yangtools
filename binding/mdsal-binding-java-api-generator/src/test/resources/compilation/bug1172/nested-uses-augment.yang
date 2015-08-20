@@ -1,0 +1,40 @@
+module nested-uses-augment {
+    yang-version 1;
+    namespace "odl:test:nua";
+    prefix "nua";
+
+    revision "2014-07-11" {
+    }
+
+    grouping machine-types {
+        container types {
+            choice machine-type {
+            }
+        }
+    }
+
+    grouping machine-ext {
+        uses machine-types {
+            augment "types/machine-type" {
+                case type-a {
+                    leaf id {
+                        type string;
+                    }
+                }
+            }
+        }
+    }
+
+    grouping machine-ext2 {
+        uses machine-ext {
+            augment "types/machine-type" {
+                case type-b {
+                    leaf name {
+                        type string;
+                    }
+                }
+            }
+        }
+    }
+
+}

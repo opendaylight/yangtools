@@ -1,0 +1,21 @@
+module foo {
+  namespace "urn:test:foo";
+  prefix foo;
+
+  revision 2014-07-17 {
+  }
+
+
+    grouping action {
+        choice action {
+            case output-action-case {
+                container output-action {
+                    leaf id {
+                        type string;
+                    }
+                }
+            }
+        }
+    }
+
+}

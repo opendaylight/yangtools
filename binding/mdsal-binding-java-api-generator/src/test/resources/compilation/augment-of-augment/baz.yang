@@ -1,0 +1,39 @@
+/*
+ * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+module baz {
+    yang-version 1;
+    namespace "urn:opendaylight:baz";
+    prefix "baz";
+
+    import foo { prefix fo; revision-date 2013-10-08; }
+    import bar { prefix br; revision-date 2013-10-08; }
+
+    revision "2013-10-08" {
+    }
+
+    augment "/fo:update/fo:path-attributes/br:mp-unreach-nlri/br:withdrawn-routes/br:destination-type" {
+        case destination-linkstate {
+            uses linkstate-destination;
+            container links {
+                container source {
+                    container address {}
+                }
+            }
+        }
+    }
+
+    grouping linkstate-destination {
+        leaf nlri-type {
+            type string;
+        }
+        leaf protocol-id {
+            type string;
+        }
+    }
+
+}
