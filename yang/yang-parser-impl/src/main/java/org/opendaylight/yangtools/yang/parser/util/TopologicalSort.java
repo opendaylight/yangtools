@@ -27,6 +27,7 @@ public final class TopologicalSort {
     /**
      * Topological sort of dependent nodes in acyclic graphs.
      *
+     * @param nodes graph nodes
      * @return Sorted {@link List} of {@link Node}s. Order: Nodes with no
      *         dependencies starting.
      * @throws IllegalStateException

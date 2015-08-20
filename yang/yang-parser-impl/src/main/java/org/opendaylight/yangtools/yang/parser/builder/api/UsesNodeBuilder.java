@@ -81,7 +81,7 @@ public interface UsesNodeBuilder extends GroupingMember {
     /**
      * Set information if this uses node is defined in augment.
      *
-     * @param augmenting
+     * @param augmenting information about augmentation
      */
     void setAugmenting(boolean augmenting);
 
@@ -155,6 +155,8 @@ public interface UsesNodeBuilder extends GroupingMember {
      *
      * @deprecated Do not use this, this should be internal to the implementation
      *  and public API contract.
+     *
+     *  @param resolved resolved
      */
     @Deprecated
     void setResolved(boolean resolved);

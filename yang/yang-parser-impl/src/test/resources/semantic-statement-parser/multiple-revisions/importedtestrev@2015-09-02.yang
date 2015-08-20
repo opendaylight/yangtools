@@ -8,6 +8,8 @@ module importedrevtest {
     revision 2015-09-02;
 
     typedef date-and-time {
-      type string;
+        type string {
+            pattern "[0-9]+";
+        }
     }
 }

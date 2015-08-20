@@ -36,7 +36,7 @@ public interface AugmentationSchemaBuilder extends DataNodeContainerBuilder,Docu
      * for a particular instance, then the node defined by the parent data
      * definition statement is valid; otherwise, it is not.
      *
-     * @param whenCondition
+     * @param whenCondition string representation of when condition
      */
     void addWhenCondition(String whenCondition);
 
@@ -72,7 +72,7 @@ public interface AugmentationSchemaBuilder extends DataNodeContainerBuilder,Docu
     /**
      * Set information about augmentation process.
      *
-     * @param resolved
+     * @param resolved information about augmentation process
      */
     void setResolved(boolean resolved);
 
@@ -88,12 +88,16 @@ public interface AugmentationSchemaBuilder extends DataNodeContainerBuilder,Docu
     /**
      *  Set true if target of augment is unsupported (e.g. node in body of extension).
      *  In such case, augmentation is skipped and AugmentationSchema is not built.
+     *
+     *  @param unsupportedTarget information about target of augment statement
      */
     void setUnsupportedTarget(boolean unsupportedTarget);
 
     /**
      *  Return true if target of augment is unsupported (e.g. node in body of extension).
      *  In such case, augmentation is skipped and AugmentationSchema is not built.
+     *
+     *  @return information about target of augment statement
      */
     boolean isUnsupportedTarget();
 }

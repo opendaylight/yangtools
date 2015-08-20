@@ -1,0 +1,10 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    include sub-foo { revision-date 2015-02-01; }
+    
+    revision "2015-01-02" {
+        description "Initial version";
+    }
+}

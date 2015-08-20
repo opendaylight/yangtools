@@ -42,7 +42,7 @@ public interface DataSchemaNodeBuilder extends SchemaNodeBuilder, GroupingMember
     /**
      * Set if the product of the builder node is introduced by augmentation.
      *
-     * @param augmenting
+     * @param augmenting information about augmentation
      */
     void setAugmenting(boolean augmenting);
 

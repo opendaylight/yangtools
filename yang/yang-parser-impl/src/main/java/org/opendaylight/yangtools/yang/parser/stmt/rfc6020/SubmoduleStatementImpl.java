@@ -9,6 +9,9 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
+
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+
 import java.net.URI;
 import java.util.Date;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
@@ -16,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
@@ -67,10 +69,10 @@ public class SubmoduleStatementImpl extends
                 Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> stmt)
                 throws SourceException {
 
-            Optional<Date> revisionDate = Optional
-                    .fromNullable(firstAttributeOf(
-                            stmt.declaredSubstatements(),
-                            RevisionStatement.class));
+            Optional<Date> revisionDate = Optional.fromNullable(Utils.getLatestRevision(stmt.declaredSubstatements()));
+            if (!revisionDate.isPresent()) {
+                revisionDate = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);
+            }
 
             ModuleIdentifier submoduleIdentifier = new ModuleIdentifierImpl(
                     stmt.getStatementArgument(), Optional.<URI> absent(),

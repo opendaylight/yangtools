@@ -120,7 +120,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     /**
      * @return copy of this considering {@link TypeOfCopy} (augment, uses)
      *
-     * @throws SourceException
+     * @throws SourceException instance of SourceException
      */
     @Override
     public StatementContextBase<?, ?, ?> createCopy(StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
@@ -131,7 +131,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     /**
      * @return copy of this considering {@link TypeOfCopy} (augment, uses)
      *
-     * @throws SourceException
+     * @throws SourceException instance of SourceException
      */
     @Override
     public StatementContextBase<A, D, E> createCopy(QNameModule newQNameModule,

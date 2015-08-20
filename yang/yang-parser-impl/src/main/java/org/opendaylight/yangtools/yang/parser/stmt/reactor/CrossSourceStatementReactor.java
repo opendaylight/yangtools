@@ -7,8 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
+import java.util.Set;
 
+import java.io.FileNotFoundException;
+import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
+import java.util.HashMap;
+import java.util.Collections;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import java.io.File;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import java.io.InputStream;
 import java.util.List;
@@ -107,7 +114,31 @@ public class CrossSourceStatementReactor {
             return buildEffective();
         }
 
+        public Map<File, Module> buildEffectiveMappedToSource(
+                List<File> yangFiles) throws SourceException, ReactorException,
+                FileNotFoundException {
+
+            if (yangFiles == null || yangFiles.isEmpty()) {
+                return Collections.emptyMap();
+            }
+
+            Map<String, File> pathToFile = new HashMap<>();
+            Map<File, Module> sourceFileToModule = new HashMap<>();
+
+            for (File yangFile : yangFiles) {
+                addSource(new YangStatementSourceImpl(new NamedFileInputStream(
+                        yangFile, yangFile.getPath())));
+                pathToFile.put(yangFile.getPath(), yangFile);
+            }
+
+            EffectiveSchemaContext schema = buildEffective();
+            Set<Module> modules = schema.getModules();
+            for (Module module : modules) {
+                sourceFileToModule.put(
+                        pathToFile.get(module.getModuleSourcePath()), module);
+            }
+
+            return sourceFileToModule;
+        }
     }
-
-
 }
