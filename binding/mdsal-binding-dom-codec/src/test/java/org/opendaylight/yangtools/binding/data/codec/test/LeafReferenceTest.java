@@ -12,13 +12,13 @@ import static org.junit.Assert.assertEquals;
 import java.util.Map.Entry;
 import javassist.ClassPool;
 import org.junit.Test;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.augment.rev140709.ThirdParty;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.augment.rev140709.TreeComplexLeaves;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.augment.rev140709.TreeComplexLeavesBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.binding.rev140701.Int32StringUnion;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.binding.rev140701.Top;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.binding.rev140701.two.level.list.TopLevelList;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.binding.rev140701.two.level.list.TopLevelListKey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.ThirdParty;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexLeaves;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexLeavesBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Int32StringUnion;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
 import org.opendaylight.yangtools.binding.data.codec.gen.impl.StreamWriterGenerator;
 import org.opendaylight.yangtools.binding.data.codec.impl.BindingNormalizedNodeCodecRegistry;
 import org.opendaylight.yangtools.sal.binding.generator.util.JavassistUtils;
@@ -39,14 +39,14 @@ public class LeafReferenceTest extends AbstractBindingRuntimeTest {
     @Override
     public void setup() {
         super.setup();
-        JavassistUtils utils = JavassistUtils.forClassPool(ClassPool.getDefault());
+        final JavassistUtils utils = JavassistUtils.forClassPool(ClassPool.getDefault());
         registry = new BindingNormalizedNodeCodecRegistry(StreamWriterGenerator.create(utils));
         registry.onBindingRuntimeContextUpdated(getRuntimeContext());
     }
 
     @Test
     public void testCaseWithLeafReferencesType() {
-        TreeComplexLeaves binding = new TreeComplexLeavesBuilder()
+        final TreeComplexLeaves binding = new TreeComplexLeavesBuilder()
             .setIdentity(ThirdParty.class)
             .setIdentityRef(ThirdParty.class)
             .setSimpleType(10)
@@ -54,9 +54,9 @@ public class LeafReferenceTest extends AbstractBindingRuntimeTest {
             .setSchemaUnawareUnion(new Int32StringUnion("foo"))
             .setSchemaUnawareUnionRef(new Int32StringUnion(10))
         .build();
-        Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> dom = registry.toNormalizedNode(BA_TOP_LEVEL_LIST, binding);
-        Entry<InstanceIdentifier<?>, DataObject> readed = registry.fromNormalizedNode(dom.getKey(),dom.getValue());
-        TreeComplexLeaves readedAugment = ((TreeComplexLeaves) readed.getValue());
+        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> dom = registry.toNormalizedNode(BA_TOP_LEVEL_LIST, binding);
+        final Entry<InstanceIdentifier<?>, DataObject> readed = registry.fromNormalizedNode(dom.getKey(),dom.getValue());
+        final TreeComplexLeaves readedAugment = ((TreeComplexLeaves) readed.getValue());
 
         assertEquals(binding,readedAugment);
 

@@ -142,4 +142,6 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
      */
     @Beta
     @Nullable InstanceIdentifier.PathArgument deserializePathArgument(@Nullable YangInstanceIdentifier.PathArgument arg);
+
+    Object getSchema();
 }

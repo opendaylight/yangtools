@@ -37,7 +37,8 @@ abstract class DataContainerCodecContext<D extends DataObject,T> extends NodeCod
         this.prototype = prototype;
     }
 
-    protected final T schema() {
+    @Override
+    public final T getSchema() {
         return prototype.getSchema();
     }
 

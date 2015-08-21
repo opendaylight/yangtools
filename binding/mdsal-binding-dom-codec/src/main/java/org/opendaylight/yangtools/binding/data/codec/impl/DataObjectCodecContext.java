@@ -83,7 +83,7 @@ abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeCon
     protected DataObjectCodecContext(final DataContainerCodecPrototype<T> prototype) {
         super(prototype);
 
-        this.leafChild = factory().getLeafNodes(getBindingClass(), schema());
+        this.leafChild = factory().getLeafNodes(getBindingClass(), getSchema());
 
         final Map<Class<?>, Method> clsToMethod = BindingReflections.getChildrenClassToMethod(getBindingClass());
 
@@ -118,7 +118,7 @@ abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeCon
 
 
         if (Augmentable.class.isAssignableFrom(getBindingClass())) {
-            this.possibleAugmentations = factory().getRuntimeContext().getAvailableAugmentationTypes(schema());
+            this.possibleAugmentations = factory().getRuntimeContext().getAvailableAugmentationTypes(getSchema());
         } else {
             this.possibleAugmentations = ImmutableMap.of();
         }
@@ -205,7 +205,7 @@ abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeCon
         } else {
             childSupplier = byYang.get(arg);
         }
-        childNonNull(childSupplier != null, arg, "Argument %s is not valid child of %s", arg, schema());
+        childNonNull(childSupplier != null, arg, "Argument %s is not valid child of %s", arg, getSchema());
         return (NodeCodecContext<D>) childSupplier.get();
     }
 
@@ -220,7 +220,7 @@ abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeCon
         // was defined.
         DataSchemaNode sameName;
         try {
-            sameName = schema().getDataChildByName(origDef.getQName());
+            sameName = getSchema().getDataChildByName(origDef.getQName());
         } catch (final IllegalArgumentException e) {
             sameName = null;
         }
@@ -240,7 +240,7 @@ abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeCon
         } else {
             // We are looking for instantiation via uses in other module
             final QName instantiedName = QName.create(namespace(), origDef.getQName().getLocalName());
-            final DataSchemaNode potential = schema().getDataChildByName(instantiedName);
+            final DataSchemaNode potential = getSchema().getDataChildByName(instantiedName);
             // We check if it is really instantiated from same
             // definition as class was derived
             if (potential != null && origDef.equals(SchemaNodeUtils.getRootOriginalIfPossible(potential))) {
@@ -250,7 +250,7 @@ abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeCon
             }
         }
         final DataSchemaNode nonNullChild =
-                childNonNull(childSchema, childClass, "Node %s does not have child named %s", schema(), childClass);
+                childNonNull(childSchema, childClass, "Node %s does not have child named %s", getSchema(), childClass);
         return DataContainerCodecPrototype.from(childClass, nonNullChild, factory());
     }
 
@@ -316,7 +316,7 @@ abstract class DataObjectCodecContext<D extends DataObject,T extends DataNodeCon
 
         @SuppressWarnings("unchecked")
         final Entry<AugmentationIdentifier, AugmentationSchema> augSchema = factory().getRuntimeContext()
-                .getResolvedAugmentationSchema(schema(), augClass);
+                .getResolvedAugmentationSchema(getSchema(), augClass);
         return DataContainerCodecPrototype.from(augClass, augSchema.getKey(), augSchema.getValue(), factory());
     }
 

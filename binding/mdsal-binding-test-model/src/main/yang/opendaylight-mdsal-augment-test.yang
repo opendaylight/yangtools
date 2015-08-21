@@ -1,9 +1,9 @@
-module opendaylight-yangtools-augment-test {
+module opendaylight-mdsal-augment-test {
 
-    namespace "urn:opendaylight:params:xml:ns:yang:yangtools:test:augment";
+    namespace "urn:opendaylight:params:xml:ns:yang:mdsal:test:augment";
     prefix aug-test;
 
-    import opendaylight-yangtools-binding-test {
+    import opendaylight-mdsal-binding-test {
         prefix test;
     }
     import yang-ext {

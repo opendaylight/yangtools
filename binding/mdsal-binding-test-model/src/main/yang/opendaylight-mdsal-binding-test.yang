@@ -1,6 +1,6 @@
-module opendaylight-yangtools-binding-test {
+module opendaylight-mdsal-binding-test {
 
-    namespace "urn:opendaylight:params:xml:ns:yang:yangtools:test:binding";
+    namespace "urn:opendaylight:params:xml:ns:yang:mdsal:test:binding";
     prefix list-test;
 
 

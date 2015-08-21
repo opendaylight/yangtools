@@ -71,8 +71,8 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
                 @SuppressWarnings("unchecked")
                 @Override
                 public DataContainerCodecContext<?,?> load(final QName qname) {
-                    final DataSchemaNode childSchema = schema().getDataChildByName(qname);
-                    childNonNull(childSchema, qname,"Argument %s is not valid child of %s", qname,schema());
+                    final DataSchemaNode childSchema = getSchema().getDataChildByName(qname);
+                    childNonNull(childSchema, qname,"Argument %s is not valid child of %s", qname,getSchema());
                     if (childSchema instanceof DataNodeContainer || childSchema instanceof ChoiceSchemaNode) {
                         @SuppressWarnings("rawtypes")
                         final Class childCls = factory().getRuntimeContext().getClassForSchema(childSchema);
@@ -89,7 +89,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
                 @SuppressWarnings({ "rawtypes", "unchecked" })
                 @Override
                 public ContainerNodeCodecContext load(final SchemaPath key) {
-                    final ContainerSchemaNode schema = SchemaContextUtil.getRpcDataSchema(schema(), key);
+                    final ContainerSchemaNode schema = SchemaContextUtil.getRpcDataSchema(getSchema(), key);
                     final Class cls = factory().getRuntimeContext().getClassForSchema(schema);
                     return getRpc(cls);
                 }
@@ -101,7 +101,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
                 @SuppressWarnings({ "rawtypes", "unchecked" })
                 @Override
                 public NotificationCodecContext load(final SchemaPath key) throws Exception {
-                    final NotificationDefinition schema = SchemaContextUtil.getNotificationSchema(schema(), key);
+                    final NotificationDefinition schema = SchemaContextUtil.getNotificationSchema(getSchema(), key);
                     final Class clz = factory().getRuntimeContext().getClassForSchema(schema);
                     return getNotification(clz);
                 }
@@ -176,7 +176,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         final Class<Object> parent = ClassLoaderUtils.findFirstGenericArgument(key, ChildOf.class);
         IncorrectNestingException.check(DataRoot.class.isAssignableFrom(parent), "Class %s is not top level item.", key);
         final QName qname = BindingReflections.findQName(key);
-        final DataSchemaNode childSchema = childNonNull(schema().getDataChildByName(qname),key,"%s is not top-level item.",key);
+        final DataSchemaNode childSchema = childNonNull(getSchema().getDataChildByName(qname),key,"%s is not top-level item.",key);
         return DataContainerCodecPrototype.from(key, childSchema, factory()).get();
     }
 
@@ -185,7 +185,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         final QName qname = BindingReflections.findQName(key);
         final QNameModule module = qname.getModule();
         RpcDefinition rpc = null;
-        for (final RpcDefinition potential : schema().getOperations()) {
+        for (final RpcDefinition potential : getSchema().getOperations()) {
             final QName potentialQName = potential.getQName();
             /*
              *
@@ -218,7 +218,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
          *  FIXME: After Lithium cleanup of yang-model-api, use direct call on schema context
          *  to retrieve notification via index.
          */
-        final NotificationDefinition schema = SchemaContextUtil.getNotificationSchema(schema(),
+        final NotificationDefinition schema = SchemaContextUtil.getNotificationSchema(getSchema(),
                 SchemaPath.create(true, qname));
         Preconditions.checkArgument(schema != null, "Supplied %s is not valid notification", notificationType);
 

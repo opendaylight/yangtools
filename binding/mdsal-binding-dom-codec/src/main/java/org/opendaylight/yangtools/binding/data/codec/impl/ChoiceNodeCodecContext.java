@@ -128,19 +128,19 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
     }
 
     protected DataContainerCodecPrototype<ChoiceCaseNode> loadCase(final Class<?> childClass) {
-        final Optional<ChoiceCaseNode> childSchema = factory().getRuntimeContext().getCaseSchemaDefinition(schema(), childClass);
+        final Optional<ChoiceCaseNode> childSchema = factory().getRuntimeContext().getCaseSchemaDefinition(getSchema(), childClass);
         if (childSchema.isPresent()) {
             return DataContainerCodecPrototype.from(childClass, childSchema.get(), factory());
         }
 
-        LOG.debug("Supplied class %s is not valid case in schema %s", childClass, schema());
+        LOG.debug("Supplied class %s is not valid case in schema %s", childClass, getSchema());
         return null;
     }
 
     @Override
     public NodeCodecContext<?> yangPathArgumentChild(final YangInstanceIdentifier.PathArgument arg) {
         final DataContainerCodecPrototype<?> cazeProto = byYangCaseChild.get(arg);
-        childNonNull(cazeProto != null, arg,"Argument %s is not valid child of %s", arg, schema());
+        childNonNull(cazeProto != null, arg,"Argument %s is not valid child of %s", arg, getSchema());
         return cazeProto.get().yangPathArgumentChild(arg);
     }
 

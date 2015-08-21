@@ -28,7 +28,7 @@ final class KeyedListNodeCodecContext<D extends DataObject & Identifiable<?>> ex
     KeyedListNodeCodecContext(final DataContainerCodecPrototype<ListSchemaNode> prototype) {
         super(prototype);
 
-        this.codec = factory().getPathArgumentCodec(getBindingClass(), schema());
+        this.codec = factory().getPathArgumentCodec(getBindingClass(), getSchema());
         try {
             this.keyGetter = getBindingClass().getMethod("getKey");
         } catch (NoSuchMethodException e) {

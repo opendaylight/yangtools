@@ -33,11 +33,13 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
     private final YangInstanceIdentifier.PathArgument yangIdentifier;
     private final Codec<Object, Object> valueCodec;
     private final Method getter;
+    private final DataSchemaNode schema;
 
     public LeafNodeCodecContext(final DataSchemaNode schema, final Codec<Object, Object> codec, final Method getter) {
         this.yangIdentifier = new YangInstanceIdentifier.NodeIdentifier(schema.getQName());
         this.valueCodec = codec;
         this.getter = getter;
+        this.schema = schema;
     }
 
     @Override
@@ -131,6 +133,11 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
     @Override
     public YangInstanceIdentifier.PathArgument serializePathArgument(final InstanceIdentifier.PathArgument arg) {
         return getDomPathArgument();
+    }
+
+    @Override
+    public Object getSchema() {
+        return schema;
     }
 
 }

@@ -10,11 +10,14 @@ package org.opendaylight.yangtools.binding.data.codec.test;
 import static org.junit.Assert.assertEquals;
 import static org.opendaylight.controller.md.sal.test.model.util.ListsBindingUtils.top;
 import static org.opendaylight.controller.md.sal.test.model.util.ListsBindingUtils.topLevelList;
-import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.*;
+import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.augmentationBuilder;
+import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
+import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntry;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
+
 import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -24,28 +27,29 @@ import java.util.Set;
 import javassist.ClassPool;
 import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.augment.rev140709.TopChoiceAugment1;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.augment.rev140709.TopChoiceAugment1Builder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.augment.rev140709.TopChoiceAugment2;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.augment.rev140709.TopChoiceAugment2Builder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.augment.rev140709.TreeComplexUsesAugment;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.augment.rev140709.TreeLeafOnlyAugment;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.augment.rev140709.TreeLeafOnlyAugmentBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.augment.rev140709.top.augment.choice1.Case1Builder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.augment.rev140709.top.augment.choice1.case1.augment.choice2.Case11Builder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.augment.rev140709.top.augment.choice1.case1.augment.choice2.case11.Case11ChoiceCaseContainerBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.binding.rev140701.ChoiceContainer;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.binding.rev140701.ChoiceContainerBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.binding.rev140701.Top;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.binding.rev140701.TopBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.binding.rev140701.choice.identifier.ExtendedBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.binding.rev140701.choice.identifier.extended.ExtendedIdBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.binding.rev140701.two.level.list.TopLevelList;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.binding.rev140701.two.level.list.TopLevelListBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.binding.rev140701.two.level.list.TopLevelListKey;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.binding.rev140701.two.level.list.top.level.list.NestedList;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.binding.rev140701.two.level.list.top.level.list.NestedListBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.binding.rev140701.two.level.list.top.level.list.NestedListKey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TopChoiceAugment1;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TopChoiceAugment1Builder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TopChoiceAugment2;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TopChoiceAugment2Builder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyAugment;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyAugmentBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.top.AugmentChoice1;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.top.augment.choice1.Case1Builder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.top.augment.choice1.case1.augment.choice2.Case11Builder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.top.augment.choice1.case1.augment.choice2.case11.Case11ChoiceCaseContainerBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.ChoiceContainer;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.ChoiceContainerBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.TopBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.choice.identifier.ExtendedBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.choice.identifier.extended.ExtendedIdBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedList;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedListBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedListKey;
 import org.opendaylight.yangtools.binding.data.codec.gen.impl.StreamWriterGenerator;
 import org.opendaylight.yangtools.binding.data.codec.impl.BindingNormalizedNodeCodecRegistry;
 import org.opendaylight.yangtools.sal.binding.generator.util.JavassistUtils;
@@ -57,9 +61,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
@@ -73,15 +74,13 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingRunti
     public static final String TOP_LEVEL_LIST_FOO_KEY_VALUE = "foo";
     public static final TopLevelListKey TOP_LEVEL_LIST_FOO_KEY = new TopLevelListKey(TOP_LEVEL_LIST_FOO_KEY_VALUE);
 
-    public static final QName TOP_QNAME =
-            QName.create("urn:opendaylight:params:xml:ns:yang:yangtools:test:binding", "2014-07-01", "top");
+    public static final QName TOP_QNAME = Top.QNAME;
     public static final QName TOP_LEVEL_LIST_QNAME = QName.create(TOP_QNAME, "top-level-list");
     public static final QName TOP_LEVEL_LIST_KEY_QNAME = QName.create(TOP_QNAME, "name");
     public static final QName TOP_LEVEL_LEAF_LIST_QNAME = QName.create(TOP_QNAME, "top-level-leaf-list");
     public static final QName NESTED_LIST_QNAME = QName.create(TOP_QNAME, "nested-list");
     public static final QName NESTED_LIST_KEY_QNAME = QName.create(TOP_QNAME, "name");
-    public static final QName CHOICE_CONTAINER_QNAME =
-            QName.create("urn:opendaylight:params:xml:ns:yang:yangtools:test:binding", "2014-07-01", "choice-container");
+    public static final QName CHOICE_CONTAINER_QNAME = ChoiceContainer.QNAME;
     public static final QName CHOICE_IDENTIFIER_QNAME = QName.create(CHOICE_CONTAINER_QNAME, "identifier");
     public static final QName CHOICE_IDENTIFIER_ID_QNAME = QName.create(CHOICE_CONTAINER_QNAME, "id");
     public static final QName SIMPLE_ID_QNAME = QName.create(CHOICE_CONTAINER_QNAME, "simple-id");
@@ -103,19 +102,20 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingRunti
 
     private BindingNormalizedNodeCodecRegistry registry;
 
+    @Override
     @Before
     public void setup() {
         super.setup();
-        JavassistUtils utils = JavassistUtils.forClassPool(ClassPool.getDefault());
+        final JavassistUtils utils = JavassistUtils.forClassPool(ClassPool.getDefault());
         registry = new BindingNormalizedNodeCodecRegistry(StreamWriterGenerator.create(utils));
         registry.onBindingRuntimeContextUpdated(getRuntimeContext());
     }
 
     @Test
     public void containerToNormalized() {
-        Map.Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry =
+        final Map.Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry =
                 registry.toNormalizedNode(InstanceIdentifier.create(Top.class), top());
-        ContainerNode topNormalized = ImmutableContainerNodeBuilder.create()
+        final ContainerNode topNormalized = ImmutableContainerNodeBuilder.create()
                 .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TOP_QNAME))
                 .withChild(mapNodeBuilder(TOP_LEVEL_LIST_QNAME).build()).build();
         assertEquals(topNormalized, entry.getValue());
@@ -123,18 +123,18 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingRunti
 
     @Test
     public void containerFromNormalized() {
-        ContainerNode topNormalized = ImmutableContainerNodeBuilder.create()
+        final ContainerNode topNormalized = ImmutableContainerNodeBuilder.create()
                 .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TOP_QNAME))
                 .withChild(mapNodeBuilder(TOP_LEVEL_LIST_QNAME).build()).build();
-        Map.Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(BI_TOP_PATH, topNormalized);
+        final Map.Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(BI_TOP_PATH, topNormalized);
         assertEquals(top(), entry.getValue());
     }
 
     @Test
     public void listWithKeysToNormalized() {
-        Map.Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry =
+        final Map.Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry =
                 registry.toNormalizedNode(BA_TOP_LEVEL_LIST, topLevelList(TOP_LEVEL_LIST_FOO_KEY));
-        MapEntryNode topLevelListNormalized = ImmutableMapEntryNodeBuilder.create()
+        final MapEntryNode topLevelListNormalized = ImmutableMapEntryNodeBuilder.create()
                 .withNodeIdentifier(
                         new YangInstanceIdentifier.NodeIdentifierWithPredicates(
                                 TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
@@ -145,24 +145,24 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingRunti
 
     @Test
     public void listWithKeysFromNormalized() {
-        MapEntryNode topLevelListNormalized = ImmutableMapEntryNodeBuilder.create()
+        final MapEntryNode topLevelListNormalized = ImmutableMapEntryNodeBuilder.create()
                 .withNodeIdentifier(
                         new YangInstanceIdentifier.NodeIdentifierWithPredicates(
                                 TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
                 .withChild(leafNode(TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
                 .build();
-        Map.Entry<InstanceIdentifier<?>, DataObject> entry =
+        final Map.Entry<InstanceIdentifier<?>, DataObject> entry =
                 registry.fromNormalizedNode(BI_TOP_LEVEL_LIST_FOO_PATH, topLevelListNormalized);
         assertEquals(topLevelList(TOP_LEVEL_LIST_FOO_KEY), entry.getValue());
     }
 
     @Test
     public void leafOnlyAugmentationToNormalized() {
-        Map.Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry =
+        final Map.Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry =
                 registry.toNormalizedNode(BA_TREE_LEAF_ONLY, new TreeLeafOnlyAugmentBuilder().setSimpleValue("simpleValue").build());
-        Set<QName> augmentationChildren = new HashSet<>();
+        final Set<QName> augmentationChildren = new HashSet<>();
         augmentationChildren.add(SIMPLE_VALUE_QNAME);
-        AugmentationNode augmentationNode = ImmutableAugmentationNodeBuilder.create()
+        final AugmentationNode augmentationNode = ImmutableAugmentationNodeBuilder.create()
                 .withNodeIdentifier(new YangInstanceIdentifier.AugmentationIdentifier(augmentationChildren))
                 .withChild(leafNode(SIMPLE_VALUE_QNAME, "simpleValue"))
                 .build();
@@ -171,26 +171,26 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingRunti
 
     @Test
     public void leafOnlyAugmentationFromNormalized() {
-        Set<QName> augmentationChildren = new HashSet<>();
+        final Set<QName> augmentationChildren = new HashSet<>();
         augmentationChildren.add(SIMPLE_VALUE_QNAME);
-        AugmentationNode augmentationNode = ImmutableAugmentationNodeBuilder.create()
+        final AugmentationNode augmentationNode = ImmutableAugmentationNodeBuilder.create()
                 .withNodeIdentifier(new YangInstanceIdentifier.AugmentationIdentifier(augmentationChildren))
                 .withChild(leafNode(SIMPLE_VALUE_QNAME, "simpleValue"))
                 .build();
-        Map.Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(BI_TOP_LEVEL_LIST_FOO_PATH.node(
+        final Map.Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(BI_TOP_LEVEL_LIST_FOO_PATH.node(
                 new YangInstanceIdentifier.AugmentationIdentifier(augmentationChildren)), augmentationNode);
         assertEquals(new TreeLeafOnlyAugmentBuilder().setSimpleValue("simpleValue").build(), entry.getValue());
     }
 
     @Test
     public void leafListToNormalized() {
-        List<String> topLevelLeafList = new ArrayList<>();
+        final List<String> topLevelLeafList = new ArrayList<>();
         topLevelLeafList.add("foo");
-        Top top = new TopBuilder().setTopLevelLeafList(topLevelLeafList).build();
+        final Top top = new TopBuilder().setTopLevelLeafList(topLevelLeafList).build();
 
-        Map.Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry =
+        final Map.Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry =
                 registry.toNormalizedNode(InstanceIdentifier.create(Top.class), top);
-        ContainerNode containerNode = ImmutableContainerNodeBuilder.create()
+        final ContainerNode containerNode = ImmutableContainerNodeBuilder.create()
                 .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TOP_QNAME))
                 .withChild(ImmutableLeafSetNodeBuilder.create()
                         .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TOP_LEVEL_LEAF_LIST_QNAME))
@@ -206,26 +206,26 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingRunti
 
     @Test
     public void leafListFromNormalized() {
-        ContainerNode topWithLeafList = ImmutableContainerNodeBuilder.create()
+        final ContainerNode topWithLeafList = ImmutableContainerNodeBuilder.create()
                 .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TOP_QNAME))
                 .withChild(ImmutableLeafSetNodeBuilder.create().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TOP_LEVEL_LEAF_LIST_QNAME))
                         .withChild(ImmutableLeafSetEntryNodeBuilder.create().withNodeIdentifier(
                                 new YangInstanceIdentifier.NodeWithValue(TOP_LEVEL_LEAF_LIST_QNAME, "foo")).withValue("foo").build()).build())
                 .build();
-        Map.Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(BI_TOP_PATH, topWithLeafList);
-        List<String> topLevelLeafList = new ArrayList<>();
+        final Map.Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(BI_TOP_PATH, topWithLeafList);
+        final List<String> topLevelLeafList = new ArrayList<>();
         topLevelLeafList.add("foo");
-        Top top = new TopBuilder().setTopLevelLeafList(topLevelLeafList).build();
+        final Top top = new TopBuilder().setTopLevelLeafList(topLevelLeafList).build();
         assertEquals(top, entry.getValue());
     }
 
     @Test
     public void choiceToNormalized() {
-        ChoiceContainer choiceContainerBA = new ChoiceContainerBuilder().setIdentifier(new ExtendedBuilder().setExtendedId(
+        final ChoiceContainer choiceContainerBA = new ChoiceContainerBuilder().setIdentifier(new ExtendedBuilder().setExtendedId(
                 new ExtendedIdBuilder().setId("identifier_value").build()).build()).build();
-        Map.Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry =
+        final Map.Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry =
                 registry.toNormalizedNode(InstanceIdentifier.create(ChoiceContainer.class), choiceContainerBA);
-        ContainerNode choiceContainer = ImmutableContainerNodeBuilder.create()
+        final ContainerNode choiceContainer = ImmutableContainerNodeBuilder.create()
                 .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(CHOICE_CONTAINER_QNAME))
                 .withChild(ImmutableChoiceNodeBuilder.create().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(CHOICE_IDENTIFIER_QNAME))
                         .withChild(ImmutableContainerNodeBuilder.create().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(EXTENDED_ID_QNAME))
@@ -236,27 +236,27 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingRunti
 
     @Test
     public void choiceFromNormalized() {
-        ContainerNode choiceContainerBI = ImmutableContainerNodeBuilder.create()
+        final ContainerNode choiceContainerBI = ImmutableContainerNodeBuilder.create()
                 .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(CHOICE_CONTAINER_QNAME))
                 .withChild(ImmutableChoiceNodeBuilder.create().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(CHOICE_IDENTIFIER_QNAME))
                         .withChild(ImmutableContainerNodeBuilder.create().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(EXTENDED_ID_QNAME))
                                 .withChild(leafNode(CHOICE_IDENTIFIER_ID_QNAME, "identifier_value")).build()).build())
                 .build();
-        Map.Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(BI_CHOICE_CONTAINER_PATH, choiceContainerBI);
-        ChoiceContainer choiceContainerBA = new ChoiceContainerBuilder().setIdentifier(new ExtendedBuilder().setExtendedId(
+        final Map.Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(BI_CHOICE_CONTAINER_PATH, choiceContainerBI);
+        final ChoiceContainer choiceContainerBA = new ChoiceContainerBuilder().setIdentifier(new ExtendedBuilder().setExtendedId(
                 new ExtendedIdBuilder().setId("identifier_value").build()).build()).build();
         assertEquals(choiceContainerBA, entry.getValue());
     }
 
     @Test
     public void orderedLisToNormalized() {
-        InstanceIdentifier<TopLevelList> ii = BA_TOP_LEVEL_LIST;
-        List<NestedList> nestedLists = new ArrayList<>();
+        final InstanceIdentifier<TopLevelList> ii = BA_TOP_LEVEL_LIST;
+        final List<NestedList> nestedLists = new ArrayList<>();
         nestedLists.add(new NestedListBuilder().setKey(new NestedListKey("foo")).build());
         nestedLists.add(new NestedListBuilder().setKey(new NestedListKey("bar")).build());
-        TopLevelList topLevelList = new TopLevelListBuilder().setKey(TOP_LEVEL_LIST_FOO_KEY).setNestedList(nestedLists).build();
-        Map.Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = registry.toNormalizedNode(ii, topLevelList);
-        MapEntryNode foo = mapEntryBuilder().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifierWithPredicates(
+        final TopLevelList topLevelList = new TopLevelListBuilder().setKey(TOP_LEVEL_LIST_FOO_KEY).setNestedList(nestedLists).build();
+        final Map.Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = registry.toNormalizedNode(ii, topLevelList);
+        final MapEntryNode foo = mapEntryBuilder().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifierWithPredicates(
                 TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
                 .withChild(leafNode(TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
                 .withChild(
@@ -268,28 +268,27 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingRunti
 
     @Test
     public void orderedLisFromNormalized() {
-        MapEntryNode foo = mapEntryBuilder().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifierWithPredicates(
+        final MapEntryNode foo = mapEntryBuilder().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifierWithPredicates(
                 TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
                 .withChild(leafNode(TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE))
                 .withChild(
                         ImmutableOrderedMapNodeBuilder.create().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(NESTED_LIST_QNAME))
                                 .withChild(mapEntry(NESTED_LIST_QNAME, NESTED_LIST_KEY_QNAME, "foo"))
                                 .withChild(mapEntry(NESTED_LIST_QNAME, NESTED_LIST_KEY_QNAME, "bar")).build()).build();
-        InstanceIdentifier<TopLevelList> ii = BA_TOP_LEVEL_LIST;
+        final InstanceIdentifier<TopLevelList> ii = BA_TOP_LEVEL_LIST;
 
-        Map.Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(BI_TOP_LEVEL_LIST_FOO_PATH, foo);
-        List<NestedList> nestedLists = new ArrayList<>();
+        final Map.Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(BI_TOP_LEVEL_LIST_FOO_PATH, foo);
+        final List<NestedList> nestedLists = new ArrayList<>();
         nestedLists.add(new NestedListBuilder().setKey(new NestedListKey("foo")).build());
         nestedLists.add(new NestedListBuilder().setKey(new NestedListKey("bar")).build());
-        TopLevelList topLevelList = new TopLevelListBuilder().setKey(TOP_LEVEL_LIST_FOO_KEY).setNestedList(nestedLists).build();
+        final TopLevelList topLevelList = new TopLevelListBuilder().setKey(TOP_LEVEL_LIST_FOO_KEY).setNestedList(nestedLists).build();
         assertEquals(topLevelList, entry.getValue());
     }
 
     @Test
     public void augmentMultipleChoices() {
-        QName augmentChoice1QName = QName.create("urn:opendaylight:params:xml:ns:yang:yangtools:test:augment",
-                "2014-07-09", "augment-choice1");
-        QName augmentChoice2QName = QName.create(augmentChoice1QName, "augment-choice2");
+        final QName augmentChoice1QName = AugmentChoice1.QNAME;
+        final QName augmentChoice2QName = QName.create(augmentChoice1QName, "augment-choice2");
         final QName containerQName = QName.create(augmentChoice1QName, "case11-choice-case-container");
         final QName leafQName = QName.create(augmentChoice1QName, "case11-choice-case-leaf");
 
@@ -304,12 +303,12 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingRunti
         final YangInstanceIdentifier.NodeIdentifier containerId =
                 new YangInstanceIdentifier.NodeIdentifier(containerQName);
 
-        TopBuilder tBuilder = new TopBuilder();
-        TopChoiceAugment1Builder tca1Builder = new TopChoiceAugment1Builder();
-        Case1Builder c1Builder = new Case1Builder();
-        TopChoiceAugment2Builder tca2Builder = new TopChoiceAugment2Builder();
-        Case11Builder c11Builder = new Case11Builder();
-        Case11ChoiceCaseContainerBuilder cccc1Builder = new Case11ChoiceCaseContainerBuilder();
+        final TopBuilder tBuilder = new TopBuilder();
+        final TopChoiceAugment1Builder tca1Builder = new TopChoiceAugment1Builder();
+        final Case1Builder c1Builder = new Case1Builder();
+        final TopChoiceAugment2Builder tca2Builder = new TopChoiceAugment2Builder();
+        final Case11Builder c11Builder = new Case11Builder();
+        final Case11ChoiceCaseContainerBuilder cccc1Builder = new Case11ChoiceCaseContainerBuilder();
         cccc1Builder.setCase11ChoiceCaseLeaf("leaf-value");
         c11Builder.setCase11ChoiceCaseContainer(cccc1Builder.build());
         tca2Builder.setAugmentChoice2(c11Builder.build());
