@@ -1,0 +1,24 @@
+module foo {
+    namespace "foo:ns";
+    prefix foo;
+
+    import bar { prefix bar; revision-date 2015-20-08; }
+
+    revision 2000-01-01 {
+        description "Initial version";
+    }
+
+    extension container;
+
+    container container {
+        foo:container {
+            foo:container;
+        }
+        leaf leaf {
+            type empty;
+        }
+        bar:leaf;
+    }
+
+    bar:leaf;
+}
