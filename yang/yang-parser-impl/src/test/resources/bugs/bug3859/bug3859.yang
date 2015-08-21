@@ -1,0 +1,31 @@
+module reference-in-unknown {
+  namespace "urn:ref:unknown";
+  prefix "riu";
+
+  extension test-extension {
+    argument test;
+  }
+
+  riu:test-extension {
+    container cont {
+      description
+        "This is just a plain text";
+
+      list mylist {
+        description
+          "This is a just another plain text";
+
+        reference "refers somewhere...";
+
+        leaf myleaf1 {
+          type string;
+        }
+
+        leaf myleaf2 {
+          type string;
+        }
+      }
+    }
+  }
+}
+
