@@ -11,7 +11,7 @@
 
     <parent>
         <artifactId>model-parent</artifactId>
-        <groupId>org.opendaylight.yangtools.model</groupId>
+        <groupId>org.opendaylight.mdsal.model</groupId>
         <version>0.8.0-SNAPSHOT</version>
     </parent>
 
