@@ -1,0 +1,46 @@
+module keyword-conflicts {
+
+    namespace "http://wiki.opendaylight.org/YANG_Tools:Keyword_Conflicts";
+    prefix description;
+
+    import foo { prefix foo; revision-date 2000-01-01; }
+
+    description "I
+               desc.";
+
+    identity description {
+        description "desc.";
+    }
+
+    extension description {
+        description "sdf
+                   desc.";
+        argument description {
+            yin-element true;
+        }
+    }
+
+    augment "/foo:container" {
+        container container;
+    }
+
+    container s6541-64-54 {
+        description "desc";
+
+        description:description "unknown" {
+            description "uknown2";
+            description:description "unknown_statement3";
+        }
+
+        container description {
+
+            container description {
+                list list {
+                    leaf leaf {
+                        type string;
+                    }
+                }
+            }
+        }
+    }
+}
