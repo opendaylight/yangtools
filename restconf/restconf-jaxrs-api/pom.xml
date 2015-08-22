@@ -13,7 +13,7 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>restconf-parent</artifactId>
-        <version>0.7.1-SNAPSHOT</version>
+        <version>0.7.1-Lithium-SR1</version>
     </parent>
     <artifactId>restconf-jaxrs-api</artifactId>
     <name>restconf-jaxrs-api</name>
