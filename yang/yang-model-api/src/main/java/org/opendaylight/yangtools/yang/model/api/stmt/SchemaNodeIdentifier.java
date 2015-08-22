@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import com.google.common.base.Objects;
-import com.google.common.base.Objects.ToStringHelper;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -337,7 +337,7 @@ public abstract class SchemaNodeIdentifier implements Immutable {
 
     @Override
     public final String toString() {
-        return addToStringAttributes(Objects.toStringHelper(this)).toString();
+        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
     }
 
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
