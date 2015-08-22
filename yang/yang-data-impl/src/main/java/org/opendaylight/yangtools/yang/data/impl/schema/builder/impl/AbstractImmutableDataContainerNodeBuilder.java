@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.CloneableChildrenMap;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.CloneableMap;
 
 abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument, R extends DataContainerNode<I>> implements DataContainerNodeBuilder<I, R> {
     private static final int DEFAULT_CAPACITY = 4;
@@ -75,8 +75,8 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
 
     private void checkDirty() {
         if (dirty) {
-            if (value instanceof CloneableChildrenMap) {
-                value = ((CloneableChildrenMap) value).createMutableClone();
+            if (value instanceof CloneableMap) {
+                value = ((CloneableMap<PathArgument, DataContainerChild<? extends PathArgument, ?>>) value).createMutableClone();
             } else {
                 value = new HashMap<>(value);
             }

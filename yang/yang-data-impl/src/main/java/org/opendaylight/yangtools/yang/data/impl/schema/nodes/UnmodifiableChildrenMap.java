@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
  * Internal equivalent of {@link Collections}' unmodifiable Map. It does not retain
  * keySet/entrySet references, thus lowering the memory overhead.
  */
-final class UnmodifiableChildrenMap extends CloneableChildrenMap implements Serializable {
+final class UnmodifiableChildrenMap implements CloneableMap<PathArgument, DataContainerChild<? extends PathArgument, ?>>, Serializable {
     private static final long serialVersionUID = 1L;
     /*
      * Do not wrap maps which are smaller than this and instead copy them into
