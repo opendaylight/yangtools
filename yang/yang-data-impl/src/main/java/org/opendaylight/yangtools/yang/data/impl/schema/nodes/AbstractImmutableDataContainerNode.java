@@ -22,7 +22,7 @@ public abstract class AbstractImmutableDataContainerNode<K extends PathArgument>
             final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children, final K nodeIdentifier) {
         super(nodeIdentifier);
 
-        this.children = UnmodifiableChildrenMap.create(children);
+        this.children = ImmutableOffsetMap.copyOf(children);
     }
 
     @Override
