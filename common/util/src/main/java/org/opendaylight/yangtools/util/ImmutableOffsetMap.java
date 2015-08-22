@@ -18,6 +18,7 @@ import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.AbstractSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -115,6 +116,50 @@ public class ImmutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> impleme
     @Override
     public final boolean isEmpty() {
         return offsets.isEmpty();
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (o == null) {
+            return false;
+        }
+
+        if (o instanceof ImmutableOffsetMap) {
+            final ImmutableOffsetMap<?, ?> om = (ImmutableOffsetMap<?, ?>) o;
+            if (offsets.equals(om.offsets) && Arrays.deepEquals(objects, om.objects)) {
+                return true;
+            }
+        } else if (o instanceof MutableOffsetMap) {
+            // Let MutableOffsetMap do the actual work.
+            return o.equals(this);
+        } else if (o instanceof Map) {
+            final Map<?, ?> om = (Map<?, ?>)o;
+
+            // Size and key sets have to match
+            if (size() != om.size() || !keySet().equals(om.keySet())) {
+                return false;
+            }
+
+            try {
+                // Ensure all objects are present
+                for (Entry<K, Integer> e : offsets.entrySet()) {
+                    final V v = objectToValue(e.getKey(), objects[e.getValue()]);
+                    if (!v.equals(om.get(e.getKey()))) {
+                        return false;
+                    }
+                }
+            } catch (ClassCastException e) {
+                // Can be thrown by om.get() and indicate we have incompatible key types
+                return false;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     @Override

@@ -127,7 +127,7 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
     @Override
     public final V put(final K key, final V value) {
         Preconditions.checkNotNull(value);
-        final Integer offset = offsets.get(key);
+        final Integer offset = offsets.get(Preconditions.checkNotNull(key));
         if (offset == null) {
             final V ret = newKeys.put(key, value);
             if (ret == null) {
@@ -253,6 +253,68 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
         return new MutableOffsetMap<K, V>(this);
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (o == this) {
+            return true;
+        }
+        if (o == null) {
+            return false;
+        }
+
+        if (o instanceof ImmutableOffsetMap) {
+            final ImmutableOffsetMap<?, ?> om = (ImmutableOffsetMap<?, ?>) o;
+            if (newKeys.isEmpty() && offsets == om.offsets() && Arrays.deepEquals(objects, om.objects())) {
+                return true;
+            }
+        } else if (o instanceof MutableOffsetMap) {
+            final MutableOffsetMap<?, ?> om = (MutableOffsetMap<?, ?>) o;
+            if (offsets == om.offsets && Arrays.deepEquals(objects, om.objects) && newKeys.equals(om.newKeys)) {
+                return true;
+            }
+        } else if (o instanceof Map) {
+            final Map<?, ?> om = (Map<?, ?>)o;
+
+            // Size and key sets have to match
+            if (size() != om.size() || !keySet().equals(om.keySet())) {
+                return false;
+            }
+
+            try {
+                // Ensure all newKeys are present. Note newKeys is guaranteed to
+                // not contain null value.
+                for (Entry<K, V> e : newKeys.entrySet()) {
+                    if (!e.getValue().equals(om.get(e.getKey()))) {
+                        return false;
+                    }
+                }
+
+                // Ensure all objects are present
+                for (Entry<K, Integer> e : offsets.entrySet()) {
+                    final Object obj = objects[e.getValue()];
+                    if (!NO_VALUE.equals(obj)) {
+                        final V v = objectToValue(e.getKey(), obj);
+                        if (!v.equals(om.get(e.getKey()))) {
+                            return false;
+                        }
+                    }
+                }
+            } catch (ClassCastException e) {
+                // Can be thrown by om.get() and indicate we have incompatible key types
+                return false;
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
+    public final Set<K> keySet() {
+        return new KeySet();
+    }
+
     @VisibleForTesting
     boolean needClone() {
         return needClone;
@@ -271,7 +333,13 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
     private final class EntrySet extends AbstractSet<Entry<K, V>> {
         @Override
         public Iterator<Entry<K, V>> iterator() {
-            return new EntrySetIterator();
+            return new AbstractSetIterator<Entry<K, V>>() {
+                @Override
+                public Entry<K, V> next() {
+                    final K key = nextKey();
+                    return new SimpleEntry<>(key, get(key));
+                }
+            };
         }
 
         @Override
@@ -327,17 +395,34 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
         }
     }
 
-    private final class EntrySetIterator implements Iterator<Entry<K, V>> {
+    private final class KeySet extends AbstractSet<K> {
+        @Override
+        public Iterator<K> iterator() {
+            return new AbstractSetIterator<K>() {
+                @Override
+                public K next() {
+                    return nextKey();
+                }
+            };
+        }
+
+        @Override
+        public int size() {
+            return MutableOffsetMap.this.size();
+        }
+    }
+
+    private abstract class AbstractSetIterator<E> implements Iterator<E> {
         private final Iterator<Entry<K, Integer>> oldIterator = offsets.entrySet().iterator();
-        private final Iterator<Entry<K, V>> newIterator = newKeys.entrySet().iterator();
+        private final Iterator<K> newIterator = newKeys.keySet().iterator();
         private int expectedModCount = modCount;
         private K currentKey, nextKey;
 
-        EntrySetIterator() {
-            calculateNextKey();
+        AbstractSetIterator() {
+            updateNextKey();
         }
 
-        private void calculateNextKey() {
+        private void updateNextKey() {
             while (oldIterator.hasNext()) {
                 final Entry<K, Integer> e = oldIterator.next();
                 if (!NO_VALUE.equals(objects[e.getValue()])) {
@@ -346,7 +431,7 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
                 }
             }
 
-            nextKey = newIterator.hasNext() ? newIterator.next().getKey() : null;
+            nextKey = newIterator.hasNext() ? newIterator.next() : null;
         }
 
         private void checkModCount() {
@@ -356,26 +441,13 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
         }
 
         @Override
-        public boolean hasNext() {
+        public final boolean hasNext() {
             checkModCount();
             return nextKey != null;
         }
 
         @Override
-        public Entry<K, V> next() {
-            if (nextKey == null) {
-                throw new NoSuchElementException();
-            }
-
-            checkModCount();
-            currentKey = nextKey;
-            calculateNextKey();
-
-            return new SimpleEntry<>(currentKey, get(currentKey));
-        }
-
-        @Override
-        public void remove() {
+        public final void remove() {
             Preconditions.checkState(currentKey != null);
 
             checkModCount();
@@ -390,6 +462,18 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
 
             expectedModCount = ++modCount;
             currentKey = null;
+        }
+
+        protected final K nextKey() {
+            if (nextKey == null) {
+                throw new NoSuchElementException();
+            }
+
+            checkModCount();
+            currentKey = nextKey;
+            updateNextKey();
+
+            return currentKey;
         }
     }
 }
