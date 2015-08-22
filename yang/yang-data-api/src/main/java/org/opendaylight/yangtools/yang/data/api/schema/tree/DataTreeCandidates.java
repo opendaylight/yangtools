@@ -77,13 +77,11 @@ public final class DataTreeCandidates {
             final DataTreeCandidate candidate) {
         final YangInstanceIdentifier candidatePath = candidate.getRootPath();
         if (candidatePath.isEmpty()) {
-            try (DataTreeModificationCursor cursor =
-                    ((CursorAwareDataTreeModification) modification).createCursor(candidatePath)) {
+            try (DataTreeModificationCursor cursor = modification.createCursor(candidatePath)) {
                 DataTreeCandidateNodes.applyRootToCursor(cursor, candidate.getRootNode());
             }
         } else {
-            try (DataTreeModificationCursor cursor =
-                    ((CursorAwareDataTreeModification) modification).createCursor(candidatePath.getParent())) {
+            try (DataTreeModificationCursor cursor = modification.createCursor(candidatePath.getParent())) {
                 DataTreeCandidateNodes.applyToCursor(cursor, candidate.getRootNode());
             }
         }
