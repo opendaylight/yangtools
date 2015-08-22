@@ -563,17 +563,17 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      * Simple path argument identifying a {@link LeafSetEntryNode} leaf
      * overall data tree.
      */
-    public static final class NodeWithValue extends AbstractPathArgument {
+    public static final class NodeWithValue<T> extends AbstractPathArgument {
         private static final long serialVersionUID = -3637456085341738431L;
 
-        private final Object value;
+        private final T value;
 
-        public NodeWithValue(final QName node, final Object value) {
+        public NodeWithValue(final QName node, final T value) {
             super(node);
             this.value = value;
         }
 
-        public Object getValue() {
+        public T getValue() {
             return value;
         }
 
@@ -581,7 +581,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         protected int hashCodeImpl() {
             final int prime = 31;
             int result = super.hashCodeImpl();
-            result = prime * result + ((value == null) ? 0 : YangInstanceIdentifier.hashCode(value));
+            result = prime * result + YangInstanceIdentifier.hashCode(value);
             return result;
         }
 
@@ -590,7 +590,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
             if (!super.equals(obj)) {
                 return false;
             }
-            final NodeWithValue other = (NodeWithValue) obj;
+            final NodeWithValue<?> other = (NodeWithValue<?>) obj;
             return Objects.deepEquals(value, other.value);
         }
 
