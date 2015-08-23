@@ -11,13 +11,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerAttrNode;
 
-abstract class AbstractImmutableDataContainerNodeAttrBuilder<I extends YangInstanceIdentifier.PathArgument, R extends DataContainerNode<I>> extends AbstractImmutableDataContainerNodeBuilder<I, R> implements DataContainerNodeAttrBuilder<I, R> {
+abstract class AbstractImmutableDataContainerNodeAttrBuilder<I extends PathArgument, R extends DataContainerNode<I>> extends AbstractImmutableDataContainerNodeBuilder<I, R> implements DataContainerNodeAttrBuilder<I, R> {
     private Map<QName, String> attributes;
 
     protected AbstractImmutableDataContainerNodeAttrBuilder() {
@@ -45,7 +45,7 @@ abstract class AbstractImmutableDataContainerNodeAttrBuilder<I extends YangInsta
     }
 
     @Override
-    public DataContainerNodeAttrBuilder<I, R> withValue(final Collection<DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>> value) {
+    public DataContainerNodeAttrBuilder<I, R> withValue(final Collection<DataContainerChild<? extends PathArgument, ?>> value) {
         return (DataContainerNodeAttrBuilder<I, R>) super.withValue(value);
     }
 

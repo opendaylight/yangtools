@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
@@ -26,16 +26,16 @@ public class ImmutableChoiceNodeSchemaAwareBuilder extends ImmutableChoiceNodeBu
 
     protected ImmutableChoiceNodeSchemaAwareBuilder(final ChoiceSchemaNode schema) {
         this.schema = Preconditions.checkNotNull(schema, "Schema was null");
-        super.withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(schema.getQName()));
+        super.withNodeIdentifier(new NodeIdentifier(schema.getQName()));
     }
 
     @Override
-    public DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ChoiceNode> withNodeIdentifier(final YangInstanceIdentifier.NodeIdentifier nodeIdentifier) {
+    public DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> withNodeIdentifier(final NodeIdentifier nodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 
     @Override
-    public DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ChoiceNode> withChild(final DataContainerChild<?, ?> child) {
+    public DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> withChild(final DataContainerChild<?, ?> child) {
         if(validator == null) {
             Optional<ChoiceCaseNode> detectedCaseOpt = SchemaUtils.detectCase(schema, child);
             DataValidationException.checkLegalChild(detectedCaseOpt.isPresent(), child.getIdentifier(), schema);
@@ -51,7 +51,7 @@ public class ImmutableChoiceNodeSchemaAwareBuilder extends ImmutableChoiceNodeBu
         return super.build();
     }
 
-    public static DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ChoiceNode> create(final ChoiceSchemaNode schema) {
+    public static DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> create(final ChoiceSchemaNode schema) {
         return new ImmutableChoiceNodeSchemaAwareBuilder(schema);
     }
 }

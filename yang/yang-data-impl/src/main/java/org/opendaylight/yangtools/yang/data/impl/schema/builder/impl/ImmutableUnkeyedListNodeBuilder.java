@@ -14,7 +14,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
@@ -26,7 +25,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableN
 
 public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> {
     private List<UnkeyedListEntryNode> value;
-    private YangInstanceIdentifier.NodeIdentifier nodeIdentifier;
+    private NodeIdentifier nodeIdentifier;
     private boolean dirty;
 
     protected ImmutableUnkeyedListNodeBuilder() {
@@ -73,7 +72,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
 
     @Override
     public CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> withoutChild(
-            final YangInstanceIdentifier.PathArgument key) {
+            final PathArgument key) {
         checkDirty();
         throw new UnsupportedOperationException("Children does not have identifiers.");
     }
@@ -90,7 +89,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
 
     @Override
     public CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> withNodeIdentifier(
-            final YangInstanceIdentifier.NodeIdentifier nodeIdentifier) {
+            final NodeIdentifier nodeIdentifier) {
         this.nodeIdentifier = nodeIdentifier;
         return this;
     }
@@ -116,7 +115,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         return withoutChild(key);
     }
 
-    protected static final class EmptyImmutableUnkeyedListNode extends AbstractImmutableNormalizedNode<YangInstanceIdentifier.NodeIdentifier, Collection<UnkeyedListEntryNode>> implements Immutable, UnkeyedListNode {
+    protected static final class EmptyImmutableUnkeyedListNode extends AbstractImmutableNormalizedNode<NodeIdentifier, Collection<UnkeyedListEntryNode>> implements Immutable, UnkeyedListNode {
         protected EmptyImmutableUnkeyedListNode(final NodeIdentifier nodeIdentifier) {
             super(nodeIdentifier);
         }
@@ -148,12 +147,12 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
     }
 
     protected static final class ImmutableUnkeyedListNode extends
-            AbstractImmutableNormalizedValueNode<YangInstanceIdentifier.NodeIdentifier, Collection<UnkeyedListEntryNode>>
+            AbstractImmutableNormalizedValueNode<NodeIdentifier, Collection<UnkeyedListEntryNode>>
             implements Immutable, UnkeyedListNode {
 
         private final ImmutableList<UnkeyedListEntryNode> children;
 
-        ImmutableUnkeyedListNode(final YangInstanceIdentifier.NodeIdentifier nodeIdentifier,
+        ImmutableUnkeyedListNode(final NodeIdentifier nodeIdentifier,
                 final ImmutableList<UnkeyedListEntryNode> children) {
             super(nodeIdentifier, children);
             this.children = children;

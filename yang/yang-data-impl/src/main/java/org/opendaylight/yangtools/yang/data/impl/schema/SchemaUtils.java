@@ -22,7 +22,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -338,8 +338,7 @@ public final class SchemaUtils {
     public static Optional<ChoiceCaseNode> detectCase(final ChoiceSchemaNode schema, final DataContainerChild<?, ?> child) {
         for (ChoiceCaseNode choiceCaseNode : schema.getCases()) {
             if (child instanceof AugmentationNode
-                    && belongsToCaseAugment(choiceCaseNode,
-                            (YangInstanceIdentifier.AugmentationIdentifier) child.getIdentifier())) {
+                    && belongsToCaseAugment(choiceCaseNode, (AugmentationIdentifier) child.getIdentifier())) {
                 return Optional.of(choiceCaseNode);
             } else if (choiceCaseNode.getDataChildByName(child.getNodeType()) != null) {
                 return Optional.of(choiceCaseNode);
@@ -349,7 +348,7 @@ public final class SchemaUtils {
         return Optional.absent();
     }
 
-    public static boolean belongsToCaseAugment(final ChoiceCaseNode caseNode, final YangInstanceIdentifier.AugmentationIdentifier childToProcess) {
+    public static boolean belongsToCaseAugment(final ChoiceCaseNode caseNode, final AugmentationIdentifier childToProcess) {
         for (AugmentationSchema augmentationSchema : caseNode.getAvailableAugmentations()) {
 
             Set<QName> currentAugmentChildNodes = Sets.newHashSet();
@@ -381,9 +380,9 @@ public final class SchemaUtils {
         return null;
     }
 
-    public static YangInstanceIdentifier.AugmentationIdentifier getNodeIdentifierForAugmentation(final AugmentationSchema schema) {
+    public static AugmentationIdentifier getNodeIdentifierForAugmentation(final AugmentationSchema schema) {
         final Collection<QName> qnames = Collections2.transform(schema.getChildNodes(), QNAME_FUNCTION);
-        return new YangInstanceIdentifier.AugmentationIdentifier(ImmutableSet.copyOf(qnames));
+        return new AugmentationIdentifier(ImmutableSet.copyOf(qnames));
     }
 
 }
