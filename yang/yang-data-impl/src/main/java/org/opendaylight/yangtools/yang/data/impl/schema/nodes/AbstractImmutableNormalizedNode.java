@@ -10,13 +10,12 @@ package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
-
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-public abstract class AbstractImmutableNormalizedNode<K extends YangInstanceIdentifier.PathArgument,V> implements NormalizedNode<K, V>, Immutable {
+public abstract class AbstractImmutableNormalizedNode<K extends PathArgument,V> implements NormalizedNode<K, V>, Immutable {
     private final K nodeIdentifier;
 
     protected AbstractImmutableNormalizedNode(final K nodeIdentifier) {

@@ -8,20 +8,19 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.api;
 
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-public interface CollectionNodeBuilder<V extends NormalizedNode<?, ?>, R extends NormalizedNode<YangInstanceIdentifier.NodeIdentifier, ?>>
-        extends NormalizedNodeContainerBuilder<NodeIdentifier,PathArgument, V, R> {
+public interface CollectionNodeBuilder<V extends NormalizedNode<?, ?>, R extends NormalizedNode<NodeIdentifier, ?>>
+        extends NormalizedNodeContainerBuilder<NodeIdentifier, PathArgument, V, R> {
 
     @Override
     CollectionNodeBuilder<V, R> withValue(Collection<V> value);
 
     @Override
-    CollectionNodeBuilder<V, R> withNodeIdentifier(YangInstanceIdentifier.NodeIdentifier nodeIdentifier);
+    CollectionNodeBuilder<V, R> withNodeIdentifier(NodeIdentifier nodeIdentifier);
 
     CollectionNodeBuilder<V, R> withChild(V child);
-    CollectionNodeBuilder<V, R> withoutChild(YangInstanceIdentifier.PathArgument key);
+    CollectionNodeBuilder<V, R> withoutChild(PathArgument key);
 }

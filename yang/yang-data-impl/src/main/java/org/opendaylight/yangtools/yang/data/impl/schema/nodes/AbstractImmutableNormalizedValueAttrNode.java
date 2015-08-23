@@ -12,9 +12,9 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
-public abstract class AbstractImmutableNormalizedValueAttrNode<K extends YangInstanceIdentifier.PathArgument,V>
+public abstract class AbstractImmutableNormalizedValueAttrNode<K extends PathArgument,V>
         extends AbstractImmutableNormalizedValueNode<K, V>
         implements AttributesContainer {
 

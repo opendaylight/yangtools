@@ -8,7 +8,10 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import javax.xml.transform.dom.DOMSource;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
@@ -64,29 +67,29 @@ public final class Builders {
         throw new UnsupportedOperationException("Utilities class should not be instantiated");
     }
 
-    public static <T> NormalizedNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, T, LeafNode<T>> leafBuilder() {
+    public static <T> NormalizedNodeAttrBuilder<NodeIdentifier, T, LeafNode<T>> leafBuilder() {
         return ImmutableLeafNodeBuilder.create();
     }
 
-    public static <T> NormalizedNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, T, LeafNode<T>> leafBuilder(
+    public static <T> NormalizedNodeAttrBuilder<NodeIdentifier, T, LeafNode<T>> leafBuilder(
             final LeafSchemaNode schema) {
         return ImmutableLeafNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static <T> NormalizedNodeAttrBuilder<YangInstanceIdentifier.NodeWithValue, T, LeafSetEntryNode<T>> leafSetEntryBuilder() {
+    public static <T> NormalizedNodeAttrBuilder<NodeWithValue, T, LeafSetEntryNode<T>> leafSetEntryBuilder() {
         return ImmutableLeafSetEntryNodeBuilder.create();
     }
 
-    public static <T> NormalizedNodeAttrBuilder<YangInstanceIdentifier.NodeWithValue, T, LeafSetEntryNode<T>> leafSetEntryBuilder(
+    public static <T> NormalizedNodeAttrBuilder<NodeWithValue, T, LeafSetEntryNode<T>> leafSetEntryBuilder(
             final LeafListSchemaNode schema) {
         return ImmutableLeafSetEntryNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static <T> NormalizedNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, DOMSource, AnyXmlNode> anyXmlBuilder() {
+    public static <T> NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> anyXmlBuilder() {
         return ImmutableAnyXmlNodeBuilder.create();
     }
 
-    public static <T> NormalizedNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, DOMSource, AnyXmlNode> anyXmlBuilder(
+    public static <T> NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> anyXmlBuilder(
             final AnyXmlSchemaNode schema) {
         return ImmutableAnyXmlNodeSchemaAwareBuilder.create(schema);
     }
@@ -115,29 +118,29 @@ public final class Builders {
         return ImmutableLeafSetNodeSchemaAwareBuilder.<T>create(schema, node);
     }
 
-    public static DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> containerBuilder() {
+    public static DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> containerBuilder() {
         return ImmutableContainerNodeBuilder.create();
     }
 
-    public static DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> containerBuilder(final ContainerNode node) {
+    public static DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> containerBuilder(final ContainerNode node) {
         return ImmutableContainerNodeBuilder.create(node);
     }
 
-    public static DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> containerBuilder(
+    public static DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> containerBuilder(
             final ContainerSchemaNode schema) {
         return ImmutableContainerNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> containerBuilder(
+    public static DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> containerBuilder(
             final ContainerSchemaNode schema, final ContainerNode node) {
         return ImmutableContainerNodeSchemaAwareBuilder.create(schema, node);
     }
 
-    public static DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder() {
+    public static DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder() {
         return ImmutableMapEntryNodeBuilder.create();
     }
 
-    public static DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(
+    public static DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(
             final ListSchemaNode schema) {
         return ImmutableMapEntryNodeSchemaAwareBuilder.create(schema);
     }
@@ -170,23 +173,23 @@ public final class Builders {
         return ImmutableMapNodeSchemaAwareBuilder.create(schema, node);
     }
 
-    public static DataContainerNodeBuilder<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> augmentationBuilder() {
+    public static DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> augmentationBuilder() {
         return ImmutableAugmentationNodeBuilder.create();
     }
 
-    public static DataContainerNodeBuilder<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> augmentationBuilder(final AugmentationSchema schema) {
+    public static DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> augmentationBuilder(final AugmentationSchema schema) {
         return ImmutableAugmentationNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ChoiceNode> choiceBuilder() {
+    public static DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> choiceBuilder() {
         return ImmutableChoiceNodeBuilder.create();
     }
 
-    public static DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ChoiceNode> choiceBuilder(final ChoiceSchemaNode schema) {
+    public static DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> choiceBuilder(final ChoiceSchemaNode schema) {
         return ImmutableChoiceNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, UnkeyedListEntryNode> unkeyedListEntryBuilder() {
+    public static DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> unkeyedListEntryBuilder() {
         return ImmutableUnkeyedListEntryNodeBuilder.create();
     }
 

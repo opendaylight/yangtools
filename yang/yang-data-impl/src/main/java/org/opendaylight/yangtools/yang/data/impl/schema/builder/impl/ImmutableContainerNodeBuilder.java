@@ -8,15 +8,15 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import java.util.Map;
-
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerAttrNode;
 
-public class ImmutableContainerNodeBuilder extends AbstractImmutableDataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> {
+public class ImmutableContainerNodeBuilder extends AbstractImmutableDataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> {
 
     protected ImmutableContainerNodeBuilder() {
         super();
@@ -30,15 +30,15 @@ public class ImmutableContainerNodeBuilder extends AbstractImmutableDataContaine
         super(node);
     }
 
-    public static DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> create() {
+    public static DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> create() {
         return new ImmutableContainerNodeBuilder();
     }
 
-    public static DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> create(final int sizeHint) {
+    public static DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> create(final int sizeHint) {
         return new ImmutableContainerNodeBuilder(sizeHint);
     }
 
-    public static DataContainerNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> create(final ContainerNode node) {
+    public static DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> create(final ContainerNode node) {
         if (!(node instanceof ImmutableContainerNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }
@@ -50,12 +50,11 @@ public class ImmutableContainerNodeBuilder extends AbstractImmutableDataContaine
         return new ImmutableContainerNode(getNodeIdentifier(), buildValue(), getAttributes());
     }
 
-    protected static final class ImmutableContainerNode extends
-    AbstractImmutableDataContainerAttrNode<YangInstanceIdentifier.NodeIdentifier> implements ContainerNode {
+    protected static final class ImmutableContainerNode extends AbstractImmutableDataContainerAttrNode<NodeIdentifier> implements ContainerNode {
 
         ImmutableContainerNode(
-                final YangInstanceIdentifier.NodeIdentifier nodeIdentifier,
-                final Map<YangInstanceIdentifier.PathArgument, DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>> children,
+                final NodeIdentifier nodeIdentifier,
+                final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children,
                 final Map<QName, String> attributes) {
             super(children, nodeIdentifier, attributes);
         }
