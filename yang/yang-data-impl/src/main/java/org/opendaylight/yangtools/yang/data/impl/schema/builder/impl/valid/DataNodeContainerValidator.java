@@ -9,9 +9,11 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Sets;
+import java.util.HashSet;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -27,9 +29,9 @@ public class DataNodeContainerValidator {
 
     private final DataNodeContainer schema;
     private final Set<QName> childNodes;
-    private final Set<YangInstanceIdentifier.AugmentationIdentifier> augments = Sets.newHashSet();
+    private final Set<AugmentationIdentifier> augments = new HashSet<>();
 
-    public DataNodeContainerValidator(DataNodeContainer schema) {
+    public DataNodeContainerValidator(final DataNodeContainer schema) {
         this.schema = Preconditions.checkNotNull(schema, "Schema was null");
 
         this.childNodes = getChildNodes(schema);
@@ -41,19 +43,19 @@ public class DataNodeContainerValidator {
         }
     }
 
-    private boolean isKnownChild(YangInstanceIdentifier.PathArgument child) {
-        if(child instanceof YangInstanceIdentifier.AugmentationIdentifier) {
+    private boolean isKnownChild(final PathArgument child) {
+        if (child instanceof AugmentationIdentifier) {
             return augments.contains(child);
         }
 
         return childNodes.contains(child.getNodeType());
     }
 
-    public void validateChild(YangInstanceIdentifier.PathArgument child) {
+    public void validateChild(final PathArgument child) {
         DataValidationException.checkLegalChild(isKnownChild(child), child, schema, childNodes, augments);
     }
 
-    public DataContainerChild<?, ?> validateChild(DataContainerChild<?, ?> child) {
+    public DataContainerChild<?, ?> validateChild(final DataContainerChild<?, ?> child) {
         validateChild(child.getIdentifier());
         return child;
     }
@@ -61,7 +63,7 @@ public class DataNodeContainerValidator {
     /**
      * Map all direct child nodes. Skip augments since they have no qname. List cases since cases do not exist in NormalizedNode API.
      */
-    private static Set<QName> getChildNodes(DataNodeContainer nodeContainer) {
+    private static Set<QName> getChildNodes(final DataNodeContainer nodeContainer) {
         Set<QName> allChildNodes = Sets.newHashSet();
 
         for (DataSchemaNode childSchema : nodeContainer.getChildNodes()) {

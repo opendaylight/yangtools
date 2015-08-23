@@ -7,34 +7,34 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
+import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataNodeContainerValidator;
-import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 
 public class ImmutableAugmentationNodeSchemaAwareBuilder extends ImmutableAugmentationNodeBuilder {
 
     private final DataNodeContainerValidator validator;
 
-    protected ImmutableAugmentationNodeSchemaAwareBuilder(AugmentationSchema schema) {
+    protected ImmutableAugmentationNodeSchemaAwareBuilder(final AugmentationSchema schema) {
         this.validator = new DataNodeContainerValidator(schema);
         super.withNodeIdentifier(SchemaUtils.getNodeIdentifierForAugmentation(schema));
     }
 
     @Override
-    public DataContainerNodeBuilder<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> withNodeIdentifier(YangInstanceIdentifier.AugmentationIdentifier nodeIdentifier) {
+    public DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> withNodeIdentifier(final AugmentationIdentifier nodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 
     @Override
-    public DataContainerNodeBuilder<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> withChild(DataContainerChild<?, ?> child) {
+    public DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> withChild(final DataContainerChild<?, ?> child) {
         return super.withChild(validator.validateChild(child));
     }
 
-    public static DataContainerNodeBuilder<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> create(AugmentationSchema schema) {
+    public static DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> create(final AugmentationSchema schema) {
         return new ImmutableAugmentationNodeSchemaAwareBuilder(schema);
     }
 

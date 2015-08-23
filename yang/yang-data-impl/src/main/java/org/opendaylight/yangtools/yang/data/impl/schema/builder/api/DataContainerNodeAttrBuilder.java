@@ -8,16 +8,15 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.api;
 
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 
-public interface DataContainerNodeAttrBuilder<I extends YangInstanceIdentifier.PathArgument, R extends DataContainerNode<I>>
-        extends DataContainerNodeBuilder<I, R>,
-        AttributesBuilder<DataContainerNodeAttrBuilder<I, R>> {
+public interface DataContainerNodeAttrBuilder<I extends PathArgument, R extends DataContainerNode<I>>
+        extends DataContainerNodeBuilder<I, R>, AttributesBuilder<DataContainerNodeAttrBuilder<I, R>> {
 
     @Override
-    DataContainerNodeAttrBuilder<I, R> withValue(Collection<DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>> value);
+    DataContainerNodeAttrBuilder<I, R> withValue(Collection<DataContainerChild<? extends PathArgument, ?>> value);
 
     @Override
     DataContainerNodeAttrBuilder<I, R> withNodeIdentifier(I nodeIdentifier);

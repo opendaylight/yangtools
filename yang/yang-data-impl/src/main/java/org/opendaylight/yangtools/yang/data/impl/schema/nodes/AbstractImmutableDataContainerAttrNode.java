@@ -7,24 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Map;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 
-import com.google.common.base.MoreObjects.ToStringHelper;
-
 // FIXME: are attributes part of hashCode/equals?
-public abstract class AbstractImmutableDataContainerAttrNode<K extends YangInstanceIdentifier.PathArgument>
+public abstract class AbstractImmutableDataContainerAttrNode<K extends PathArgument>
         extends AbstractImmutableDataContainerNode<K>
     implements AttributesContainer {
 
     private final Map<QName, String> attributes;
 
     public AbstractImmutableDataContainerAttrNode(
-            final Map<YangInstanceIdentifier.PathArgument, DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>> children,
+            final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children,
             final K nodeIdentifier, final Map<QName, String> attributes) {
         super(children, nodeIdentifier);
         this.attributes = attributes;

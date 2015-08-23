@@ -7,29 +7,29 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
 public final class ImmutableLeafNodeSchemaAwareBuilder<T> extends ImmutableLeafNodeBuilder<T> {
 
-    private ImmutableLeafNodeSchemaAwareBuilder(LeafSchemaNode schema) {
-        super.withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(schema.getQName()));
+    private ImmutableLeafNodeSchemaAwareBuilder(final LeafSchemaNode schema) {
+        super.withNodeIdentifier(new NodeIdentifier(schema.getQName()));
     }
 
-    public static <T> NormalizedNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, T, LeafNode<T>> create(LeafSchemaNode schema) {
+    public static <T> NormalizedNodeAttrBuilder<NodeIdentifier, T, LeafNode<T>> create(final LeafSchemaNode schema) {
         return new ImmutableLeafNodeSchemaAwareBuilder<>(schema);
     }
 
     @Override
-    public NormalizedNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, T, LeafNode<T>> withValue(T value) {
+    public NormalizedNodeAttrBuilder<NodeIdentifier, T, LeafNode<T>> withValue(final T value) {
 //        TODO check value type
         return super.withValue(value);
     }
 
     @Override
-    public NormalizedNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, T, LeafNode<T>> withNodeIdentifier(YangInstanceIdentifier.NodeIdentifier nodeIdentifier) {
+    public NormalizedNodeAttrBuilder<NodeIdentifier, T, LeafNode<T>> withNodeIdentifier(final NodeIdentifier nodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 }

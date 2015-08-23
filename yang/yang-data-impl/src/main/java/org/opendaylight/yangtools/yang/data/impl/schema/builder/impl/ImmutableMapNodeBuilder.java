@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
@@ -26,8 +27,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableN
 
 public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNode, MapNode> {
     private static final int DEFAULT_CAPACITY = 4;
-    private final Map<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> value;
-    private YangInstanceIdentifier.NodeIdentifier nodeIdentifier;
+    private final Map<NodeIdentifierWithPredicates, MapEntryNode> value;
+    private NodeIdentifier nodeIdentifier;
 
     protected ImmutableMapNodeBuilder() {
         this.value = new HashMap<>(DEFAULT_CAPACITY);
@@ -69,7 +70,7 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, MapNode> withoutChild(final YangInstanceIdentifier.PathArgument key) {
+    public CollectionNodeBuilder<MapEntryNode, MapNode> withoutChild(final PathArgument key) {
         this.value.remove(key);
         return this;
     }
@@ -85,7 +86,7 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, MapNode> withNodeIdentifier(final YangInstanceIdentifier.NodeIdentifier nodeIdentifier) {
+    public CollectionNodeBuilder<MapEntryNode, MapNode> withNodeIdentifier(final NodeIdentifier nodeIdentifier) {
         this.nodeIdentifier = nodeIdentifier;
         return this;
     }

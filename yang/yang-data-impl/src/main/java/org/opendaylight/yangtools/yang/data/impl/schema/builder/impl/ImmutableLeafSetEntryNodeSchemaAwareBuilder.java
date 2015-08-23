@@ -7,34 +7,33 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import com.google.common.base.Preconditions;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-
-import com.google.common.base.Preconditions;
 
 public final class ImmutableLeafSetEntryNodeSchemaAwareBuilder<T> extends ImmutableLeafSetEntryNodeBuilder<T> {
 
     private final LeafListSchemaNode schema;
 
-    private ImmutableLeafSetEntryNodeSchemaAwareBuilder(LeafListSchemaNode schema) {
+    private ImmutableLeafSetEntryNodeSchemaAwareBuilder(final LeafListSchemaNode schema) {
         this.schema = Preconditions.checkNotNull(schema);
     }
 
-    public static <T> NormalizedNodeAttrBuilder<YangInstanceIdentifier.NodeWithValue, T, LeafSetEntryNode<T>> create(LeafListSchemaNode schema) {
+    public static <T> NormalizedNodeAttrBuilder<NodeWithValue, T, LeafSetEntryNode<T>> create(final LeafListSchemaNode schema) {
         return new ImmutableLeafSetEntryNodeSchemaAwareBuilder<>(schema);
     }
 
     @Override
-    public NormalizedNodeAttrBuilder<YangInstanceIdentifier.NodeWithValue, T, LeafSetEntryNode<T>> withValue(T value) {
-        super.withNodeIdentifier(new YangInstanceIdentifier.NodeWithValue(schema.getQName(), value));
+    public NormalizedNodeAttrBuilder<NodeWithValue, T, LeafSetEntryNode<T>> withValue(final T value) {
+        super.withNodeIdentifier(new NodeWithValue(schema.getQName(), value));
         // TODO check value type using TypeProvider ?
         return super.withValue(value);
     }
 
     @Override
-    public NormalizedNodeAttrBuilder<YangInstanceIdentifier.NodeWithValue, T, LeafSetEntryNode<T>> withNodeIdentifier(YangInstanceIdentifier.NodeWithValue nodeIdentifier) {
+    public NormalizedNodeAttrBuilder<NodeWithValue, T, LeafSetEntryNode<T>> withNodeIdentifier(final NodeWithValue nodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 
