@@ -227,8 +227,23 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      * @param listKey component key type
      * @return key associated with the component, or null if the component type
      *         is not present.
+     *
+     * @deprecated Use {@link #firstKeyOf(Class)} instead.
      */
+    @Deprecated
     public final <N extends Identifiable<K> & DataObject, K extends Identifier<N>> K firstKeyOf(final Class<N> listItem, final Class<K> listKey) {
+        return firstKeyOf(listItem);
+    }
+
+    /**
+     * Return the key associated with the first component of specified type in
+     * an identifier.
+     *
+     * @param listItem component type
+     * @return key associated with the component, or null if the component type
+     *         is not present.
+     */
+    public final <N extends Identifiable<K> & DataObject, K extends Identifier<N>> K firstKeyOf(final Class<N> listItem) {
         for (final PathArgument i : pathArguments) {
             if (listItem.equals(i.getType())) {
                 @SuppressWarnings("unchecked")
