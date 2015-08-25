@@ -5,20 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.data.codec.api;
+package org.opendaylight.mdsal.binding.dom.codec.api;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.sal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-
-/**
- *
- * @deprecated Use {@link org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeFactory}
- *             instead.
- */
-@Deprecated
-public interface BindingCodecTreeFactory {
+public interface BindingCodecTreeFactory extends
+        org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTreeFactory {
 
     /**
      *
@@ -29,6 +23,7 @@ public interface BindingCodecTreeFactory {
      *            instantiated.
      * @return Binding Codec Tree for specified Binding runtime context.
      */
+    @Override
     BindingCodecTree create(BindingRuntimeContext context);
 
     /**
@@ -44,6 +39,7 @@ public interface BindingCodecTreeFactory {
      *            deserialization in multi-classloader environment.
      * @return Binding Codec Tree for specified Binding runtime context.
      */
+    @Override
     @Beta
    BindingCodecTree create(SchemaContext context, Class<?>... bindingClasses);
 

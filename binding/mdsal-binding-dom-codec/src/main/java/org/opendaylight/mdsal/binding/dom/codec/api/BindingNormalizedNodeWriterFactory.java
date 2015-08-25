@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.data.codec.api;
+package org.opendaylight.mdsal.binding.dom.codec.api;
 
 import java.util.Map.Entry;
 import javax.annotation.Nonnull;
@@ -23,8 +23,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
  * {@link NormalizedNodeStreamWriter}.
  *
  */
-@Deprecated
-public interface BindingNormalizedNodeWriterFactory {
+public interface BindingNormalizedNodeWriterFactory extends
+        org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeWriterFactory {
 
     /**
      *
@@ -49,6 +49,7 @@ public interface BindingNormalizedNodeWriterFactory {
      *         which will write to supplied {@link NormalizedNodeStreamWriter}.
      * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
      */
+    @Override
     @Nonnull Entry<YangInstanceIdentifier, BindingStreamEventWriter> newWriterAndIdentifier(@Nonnull InstanceIdentifier<?> path,
             @Nonnull NormalizedNodeStreamWriter domWriter);
 
@@ -70,6 +71,7 @@ public interface BindingNormalizedNodeWriterFactory {
      *         which will write to supplied {@link NormalizedNodeStreamWriter}.
      * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
      */
+    @Override
     @Nonnull
     BindingStreamEventWriter newWriter(@Nonnull InstanceIdentifier<?> path,
             @Nonnull NormalizedNodeStreamWriter domWriter);
@@ -87,6 +89,7 @@ public interface BindingNormalizedNodeWriterFactory {
      * @return {@link BindingStreamEventWriter} which will write to supplied
      *         {@link NormalizedNodeStreamWriter}.
      */
+    @Override
     @Nonnull
     BindingStreamEventWriter newRpcWriter(@Nonnull Class<? extends DataContainer> rpcInputOrOutput,
             @Nonnull NormalizedNodeStreamWriter domWriter);
@@ -104,6 +107,7 @@ public interface BindingNormalizedNodeWriterFactory {
      * @return {@link BindingStreamEventWriter} which will write to supplied
      *         {@link NormalizedNodeStreamWriter}.
      */
+    @Override
     @Nonnull
     BindingStreamEventWriter newNotificationWriter(@Nonnull Class<? extends Notification> notification,
             @Nonnull NormalizedNodeStreamWriter domWriter);

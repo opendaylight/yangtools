@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.data.codec.api;
+package org.opendaylight.mdsal.binding.dom.codec.api;
 
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -20,15 +20,20 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
  * This navigable tree is associated to conrete set of YANG models, represented by SchemaContext and
  * provides access to subtree specific serialization context.
  *
- * @deprecated Use {@link org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTree} instead.
+ * TODO: Add more detailed documentation
  **/
-@Deprecated
-public interface BindingCodecTree {
+public interface BindingCodecTree extends org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTree {
 
-      @Nullable <T extends DataObject> BindingCodecTreeNode<T> getSubtreeCodec(InstanceIdentifier<T> path);
+    @Override
+    @Nullable
+    <T extends DataObject> BindingCodecTreeNode<T> getSubtreeCodec(InstanceIdentifier<T> path);
 
-      @Nullable BindingCodecTreeNode<?> getSubtreeCodec(YangInstanceIdentifier path);
+    @Override
+    @Nullable
+    BindingCodecTreeNode<?> getSubtreeCodec(YangInstanceIdentifier path);
 
-      @Nullable BindingCodecTreeNode<?> getSubtreeCodec(SchemaPath path);
+    @Override
+    @Nullable
+    BindingCodecTreeNode<?> getSubtreeCodec(SchemaPath path);
 
 }

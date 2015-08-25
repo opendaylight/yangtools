@@ -5,8 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.data.codec.api;
+package org.opendaylight.mdsal.binding.dom.codec.api;
 
+import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 
 /**
@@ -17,8 +18,10 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
  *
  * @param <T> Binding representtion of data
  */
-@Deprecated
-public interface BindingNormalizedNodeCachingCodec<T extends DataObject> extends BindingNormalizedNodeCodec<T>, AutoCloseable {
+@Beta
+public interface BindingNormalizedNodeCachingCodec<T extends DataObject> extends
+        org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCachingCodec<T>,
+        BindingNormalizedNodeCodec<T>, AutoCloseable {
     /**
      * Invoking close will invalidate this codec and any of its child
      * codecs and will invalidate cache.

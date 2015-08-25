@@ -5,8 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.data.codec.api;
+package org.opendaylight.mdsal.binding.dom.codec.api;
 
+import com.google.common.annotations.Beta;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -19,8 +20,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  *
  * @param <T> Binding representation of data
  */
-@Deprecated
-public interface BindingNormalizedNodeCodec<T extends DataObject> {
+@Beta
+public interface BindingNormalizedNodeCodec<T extends DataObject> extends
+        org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCodec<T> {
 
     /**
      * Converts from Normalized Node to Binding representation of data.
@@ -28,6 +30,7 @@ public interface BindingNormalizedNodeCodec<T extends DataObject> {
      * @param data Normalized Node representation of data
      * @return Binding representation of data
      */
+    @Override
     @Nonnull T deserialize(@Nonnull NormalizedNode<?,?> data);
 
     /**
@@ -36,6 +39,7 @@ public interface BindingNormalizedNodeCodec<T extends DataObject> {
      * @param data Binding representation of data
      * @return Normalized Node representation of data
      */
+    @Override
     @Nonnull NormalizedNode<?,?> serialize(@Nonnull T data);
 
 }
