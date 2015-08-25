@@ -11,6 +11,8 @@ import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import org.opendaylight.yangtools.util.ModifiableMapPhase;
+import org.opendaylight.yangtools.util.UnmodifiableMapPhase;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
@@ -69,13 +71,19 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
     }
 
     protected final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> buildValue() {
+        if (value instanceof ModifiableMapPhase) {
+            return ((ModifiableMapPhase<PathArgument, DataContainerChild<? extends PathArgument, ?>>)value).toUnmodifiableMap();
+        }
+
         dirty = true;
         return value;
     }
 
     private void checkDirty() {
         if (dirty) {
-            if (value instanceof CloneableMap) {
+            if (value instanceof UnmodifiableMapPhase) {
+                value = ((UnmodifiableMapPhase<PathArgument, DataContainerChild<? extends PathArgument, ?>>) value).toModifiableMap();
+            } else if (value instanceof CloneableMap) {
                 value = ((CloneableMap<PathArgument, DataContainerChild<? extends PathArgument, ?>>) value).createMutableClone();
             } else {
                 value = new HashMap<>(value);
