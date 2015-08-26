@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.binding.data.codec.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.opendaylight.controller.md.sal.test.model.util.ListsBindingUtils.top;
-import static org.opendaylight.controller.md.sal.test.model.util.ListsBindingUtils.topLevelList;
+import static org.opendaylight.mdsal.binding.test.model.util.ListsBindingUtils.top;
+import static org.opendaylight.mdsal.binding.test.model.util.ListsBindingUtils.topLevelList;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.augmentationBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
