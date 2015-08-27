@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
+import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
@@ -530,7 +531,8 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
         public NodeIdentifierWithPredicates(final QName node, final Map<QName, Object> keyValues) {
             super(node);
-            this.keyValues = ImmutableMap.copyOf(keyValues);
+            // Retains ImmutableMap for maps with size() <= 1. For larger sizes uses a shared key set.
+            this.keyValues = ImmutableOffsetMap.copyOf(keyValues);
         }
 
         public NodeIdentifierWithPredicates(final QName node, final QName key, final Object value) {
