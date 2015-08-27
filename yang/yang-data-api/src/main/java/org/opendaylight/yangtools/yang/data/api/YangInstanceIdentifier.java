@@ -454,61 +454,6 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
     }
 
     /**
-     * Fluent Builder of Instance Identifier instances
-     */
-    public interface InstanceIdentifierBuilder extends Builder<YangInstanceIdentifier> {
-        /**
-         * Adds a {@link PathArgument} to to path arguments of resulting instance identifier.
-         *
-         * @param arg A {@link PathArgument} to be added
-         * @return this builder
-         */
-        InstanceIdentifierBuilder node(PathArgument arg);
-
-        /**
-         * Adds {@link NodeIdentifier} with supplied QName to path arguments of resulting instance identifier.
-         *
-         * @param nodeType QName of {@link NodeIdentifier} which will be added
-         * @return this builder
-         */
-        InstanceIdentifierBuilder node(QName nodeType);
-
-        /**
-         * Adds {@link NodeIdentifierWithPredicates} with supplied QName and key values to path arguments of resulting instance identifier.
-         *
-         * @param nodeType QName of {@link NodeIdentifierWithPredicates} which will be added
-         * @param keyValues Map of key components and their respective values for {@link NodeIdentifierWithPredicates}
-         * @return this builder
-         */
-        InstanceIdentifierBuilder nodeWithKey(QName nodeType, Map<QName, Object> keyValues);
-
-        /**
-         * Adds {@link NodeIdentifierWithPredicates} with supplied QName and key, value.
-         *
-         * @param nodeType QName of {@link NodeIdentifierWithPredicates} which will be added
-         * @param key QName of key which will be added
-         * @param value value of key which will be added
-         * @return this builder
-         */
-        InstanceIdentifierBuilder nodeWithKey(QName nodeType, QName key, Object value);
-
-        /**
-         *
-         * Builds an {@link YangInstanceIdentifier} with path arguments from this builder
-         *
-         * @return {@link YangInstanceIdentifier}
-         */
-        @Override
-        YangInstanceIdentifier build();
-
-        /*
-         * @deprecated use #build()
-         */
-        @Deprecated
-        YangInstanceIdentifier toInstance();
-    }
-
-    /**
      * Simple path argument identifying a {@link org.opendaylight.yangtools.yang.data.api.schema.ContainerNode} or
      * {@link org.opendaylight.yangtools.yang.data.api.schema.LeafNode} leaf in particular subtree.
      */
@@ -738,5 +683,60 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
                 return -1;
             }
         }
+    }
+
+    /**
+     * Fluent Builder of Instance Identifier instances
+     */
+    public interface InstanceIdentifierBuilder extends Builder<YangInstanceIdentifier> {
+        /**
+         * Adds a {@link PathArgument} to to path arguments of resulting instance identifier.
+         *
+         * @param arg A {@link PathArgument} to be added
+         * @return this builder
+         */
+        InstanceIdentifierBuilder node(PathArgument arg);
+
+        /**
+         * Adds {@link NodeIdentifier} with supplied QName to path arguments of resulting instance identifier.
+         *
+         * @param nodeType QName of {@link NodeIdentifier} which will be added
+         * @return this builder
+         */
+        InstanceIdentifierBuilder node(QName nodeType);
+
+        /**
+         * Adds {@link NodeIdentifierWithPredicates} with supplied QName and key values to path arguments of resulting instance identifier.
+         *
+         * @param nodeType QName of {@link NodeIdentifierWithPredicates} which will be added
+         * @param keyValues Map of key components and their respective values for {@link NodeIdentifierWithPredicates}
+         * @return this builder
+         */
+        InstanceIdentifierBuilder nodeWithKey(QName nodeType, Map<QName, Object> keyValues);
+
+        /**
+         * Adds {@link NodeIdentifierWithPredicates} with supplied QName and key, value.
+         *
+         * @param nodeType QName of {@link NodeIdentifierWithPredicates} which will be added
+         * @param key QName of key which will be added
+         * @param value value of key which will be added
+         * @return this builder
+         */
+        InstanceIdentifierBuilder nodeWithKey(QName nodeType, QName key, Object value);
+
+        /**
+         *
+         * Builds an {@link YangInstanceIdentifier} with path arguments from this builder
+         *
+         * @return {@link YangInstanceIdentifier}
+         */
+        @Override
+        YangInstanceIdentifier build();
+
+        /*
+         * @deprecated use #build()
+         */
+        @Deprecated
+        YangInstanceIdentifier toInstance();
     }
 }
