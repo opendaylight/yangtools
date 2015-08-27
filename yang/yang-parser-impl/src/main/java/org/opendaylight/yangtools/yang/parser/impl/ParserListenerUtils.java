@@ -13,6 +13,7 @@ import static com.google.common.base.Preconditions.checkState;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -147,6 +148,124 @@ public final class ParserListenerUtils {
     private static final Splitter DOT_DOT_SPLITTER = Splitter.on("..").trimResults();
     private static final CharMatcher DOUBLE_QUOTE_MATCHER = CharMatcher.is('"');
     private static final CharMatcher SINGLE_QUOTE_MATCHER = CharMatcher.is('\'');
+    private static final Pattern UNICODE_SCRIPT_PATTERN = Pattern.compile("\\\\p\\{Is");
+    private static final Set<String> javaUnicodeScripts;
+    private static final Set<String> javaUnicodeBinaryProperties;
+
+    static {
+        javaUnicodeScripts = ImmutableSet.<String>builder()
+        .add("(\\p{IsArabic})*")
+        .add("(\\p{IsArmenian})*")
+        .add("(\\p{IsAvestan})*")
+        .add("(\\p{IsBalinese})*")
+        .add("(\\p{IsBamum})*")
+        .add("(\\p{IsBatak})*")
+        .add("(\\p{IsBengali})*")
+        .add("(\\p{IsBopomofo})*")
+        .add("(\\p{IsBrahmi})*")
+        .add("(\\p{IsBraille})*")
+        .add("(\\p{IsBuginese})*")
+        .add("(\\p{IsBuhid})*")
+        .add("(\\p{IsCanadian_Aboriginal})*")
+        .add("(\\p{IsCarian})*")
+        .add("(\\p{IsCham})*")
+        .add("(\\p{IsCherokee})*")
+        .add("(\\p{IsCommon})*")
+        .add("(\\p{IsCoptic})*")
+        .add("(\\p{IsCuneiform})*")
+        .add("(\\p{IsCypriot})*")
+        .add("(\\p{IsCyrillic})*")
+        .add("(\\p{IsDeseret})*")
+        .add("(\\p{IsDevanagari})*")
+        .add("(\\p{IsEgyptian_Hieroglyphs})*")
+        .add("(\\p{IsEthiopic})*")
+        .add("(\\p{IsGeorgian})*")
+        .add("(\\p{IsGlagolitic})*")
+        .add("(\\p{IsGothic})*")
+        .add("(\\p{IsGreek})*")
+        .add("(\\p{IsGujarati})*")
+        .add("(\\p{IsGurmukhi})*")
+        .add("(\\p{IsHan})*")
+        .add("(\\p{IsHangul})*")
+        .add("(\\p{IsHanunoo})*")
+        .add("(\\p{IsHebrew})*")
+        .add("(\\p{IsHiragana})*")
+        .add("(\\p{IsImperial_Aramaic})*")
+        .add("(\\p{IsInherited})*")
+        .add("(\\p{IsInscriptional_Pahlavi})*")
+        .add("(\\p{IsInscriptional_Parthian})*")
+        .add("(\\p{IsJavanese})*")
+        .add("(\\p{IsKaithi})*")
+        .add("(\\p{IsKannada})*")
+        .add("(\\p{IsKatakana})*")
+        .add("(\\p{IsKayah_Li})*")
+        .add("(\\p{IsKharoshthi})*")
+        .add("(\\p{IsKhmer})*")
+        .add("(\\p{IsLao})*")
+        .add("(\\p{IsLatin})*")
+        .add("(\\p{IsLepcha})*")
+        .add("(\\p{IsLimbu})*")
+        .add("(\\p{IsLinear_B})*")
+        .add("(\\p{IsLisu})*")
+        .add("(\\p{IsLycian})*")
+        .add("(\\p{IsLydian})*")
+        .add("(\\p{IsMalayalam})*")
+        .add("(\\p{IsMandaic})*")
+        .add("(\\p{IsMeetei_Mayek})*")
+        .add("(\\p{IsMongolian})*")
+        .add("(\\p{IsMyanmar})*")
+        .add("(\\p{IsNew_Tai_Lue})*")
+        .add("(\\p{IsNko})*")
+        .add("(\\p{IsOgham})*")
+        .add("(\\p{IsOl_Chiki})*")
+        .add("(\\p{IsOld_Italic})*")
+        .add("(\\p{IsOld_Persian})*")
+        .add("(\\p{IsOld_South_Arabian})*")
+        .add("(\\p{IsOld_Turkic})*")
+        .add("(\\p{IsOriya})*")
+        .add("(\\p{IsOsmanya})*")
+        .add("(\\p{IsPhags_Pa})*")
+        .add("(\\p{IsPhoenician})*")
+        .add("(\\p{IsRejang})*")
+        .add("(\\p{IsRunic})*")
+        .add("(\\p{IsSamaritan})*")
+        .add("(\\p{IsSaurashtra})*")
+        .add("(\\p{IsShavian})*")
+        .add("(\\p{IsSinhala})*")
+        .add("(\\p{IsSundanese})*")
+        .add("(\\p{IsSyloti_Nagri})*")
+        .add("(\\p{IsSyriac})*")
+        .add("(\\p{IsTagalog})*")
+        .add("(\\p{IsTagbanwa})*")
+        .add("(\\p{IsTai_Le})*")
+        .add("(\\p{IsTai_Tham})*")
+        .add("(\\p{IsTai_Viet})*")
+        .add("(\\p{IsTamil})*")
+        .add("(\\p{IsTelugu})*")
+        .add("(\\p{IsThaana})*")
+        .add("(\\p{IsThai})*")
+        .add("(\\p{IsTibetan})*")
+        .add("(\\p{IsTifinagh})*")
+        .add("(\\p{IsUgaritic})*")
+        .add("(\\p{IsUnknown})*")
+        .add("(\\p{IsVai})*")
+        .add("(\\p{IsYi})*").build();
+
+        javaUnicodeBinaryProperties = ImmutableSet.<String>builder()
+        .add("(\\p{IsAlphabetic})*")
+        .add("(\\p{IsIdeographic})*")
+        .add("(\\p{IsLetter})*")
+        .add("(\\p{IsLowercase})*")
+        .add("(\\p{IsUppercase})*")
+        .add("(\\p{IsTitlecase})*")
+        .add("(\\p{IsPunctuation})*")
+        .add("(\\p{IsControl})*")
+        .add("(\\p{IsWhite_Space})*")
+        .add("(\\p{IsDigit})*")
+        .add("(\\p{IsHex_Digit})*")
+        .add("(\\p{IsNoncharacter_Code_Point})*")
+        .add("(\\p{IsAssigned})*").build();
+    }
 
     private ParserListenerUtils() {
     }
@@ -761,11 +880,19 @@ public final class ParserListenerUtils {
             }
         }
         final String rawPattern = parsePatternString(ctx);
-        final String pattern = wrapPattern(rawPattern);
+        final String fixedRawPattern = fixUnicodeScriptPattern(rawPattern);
+        final String pattern = wrapPattern(fixedRawPattern);
         if (isValidPattern(pattern, ctx, moduleName)) {
             return BaseConstraints.newPatternConstraint(pattern, description, reference);
         }
         return null;
+    }
+
+    private static String fixUnicodeScriptPattern(String rawPattern) {
+        if (!javaUnicodeScripts.contains(rawPattern) && !javaUnicodeBinaryProperties.contains(rawPattern)) {
+            rawPattern = UNICODE_SCRIPT_PATTERN.matcher(rawPattern).replaceAll("\\\\p{In");
+        }
+        return rawPattern;
     }
 
     private static String wrapPattern(String rawPattern) {
