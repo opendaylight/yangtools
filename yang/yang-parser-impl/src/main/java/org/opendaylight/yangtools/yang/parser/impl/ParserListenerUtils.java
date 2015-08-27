@@ -761,11 +761,16 @@ public final class ParserListenerUtils {
             }
         }
         final String rawPattern = parsePatternString(ctx);
-        final String pattern = wrapPattern(rawPattern);
+        final String fixedRawPattern = fixUnicodeScriptPattern(rawPattern);
+        final String pattern = wrapPattern(fixedRawPattern);
         if (isValidPattern(pattern, ctx, moduleName)) {
             return BaseConstraints.newPatternConstraint(pattern, description, reference);
         }
         return null;
+    }
+
+    private static String fixUnicodeScriptPattern(String rawPattern) {
+        return rawPattern.replaceAll("\\\\p\\{Is", "\\\\p\\{In");
     }
 
     private static String wrapPattern(String rawPattern) {
