@@ -13,7 +13,7 @@ import java.io.ObjectStreamException;
 import java.util.List;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 
-final class FixedYangInstanceIdentifier extends YangInstanceIdentifier {
+final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implements Cloneable {
     static final FixedYangInstanceIdentifier EMPTY_INSTANCE = new FixedYangInstanceIdentifier(ImmutableList.<PathArgument>of(), new HashCodeBuilder<>().build());
     private static final long serialVersionUID = 1L;
     private final ImmutableList<PathArgument> path;
@@ -31,6 +31,11 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier {
     @Override
     public boolean isEmpty() {
         return path.isEmpty();
+    }
+
+    @Override
+    public FixedYangInstanceIdentifier clone() {
+        return new FixedYangInstanceIdentifier(path, hashCode());
     }
 
     @Override

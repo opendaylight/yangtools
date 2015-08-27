@@ -18,7 +18,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-final class StackedYangInstanceIdentifier extends YangInstanceIdentifier {
+final class StackedYangInstanceIdentifier extends YangInstanceIdentifier implements Cloneable {
     private static final long serialVersionUID = 1L;
     private static final Field PARENT_FIELD;
 
@@ -44,6 +44,11 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier {
         super(hash);
         this.parent = Preconditions.checkNotNull(parent);
         this.pathArgument = Preconditions.checkNotNull(pathArgument);
+    }
+
+    @Override
+    public StackedYangInstanceIdentifier clone() {
+        return new StackedYangInstanceIdentifier(parent, pathArgument, hashCode());
     }
 
     @Override
