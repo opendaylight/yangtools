@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -147,6 +148,126 @@ public final class ParserListenerUtils {
     private static final Splitter DOT_DOT_SPLITTER = Splitter.on("..").trimResults();
     private static final CharMatcher DOUBLE_QUOTE_MATCHER = CharMatcher.is('"');
     private static final CharMatcher SINGLE_QUOTE_MATCHER = CharMatcher.is('\'');
+    private static final Pattern UNICODE_SCRIPT_PATTERN = Pattern.compile("\\\\p\\{Is");
+    private static final Set<String> javaUnicodeScripts;
+    private static final Set<String> javaUnicodeBinaryProperties;
+
+    static {
+        Set<String> scriptsSet = new HashSet<>();
+        scriptsSet.add("(\\p{IsArabic})*");
+        scriptsSet.add("(\\p{IsArmenian})*");
+        scriptsSet.add("(\\p{IsAvestan})*");
+        scriptsSet.add("(\\p{IsBalinese})*");
+        scriptsSet.add("(\\p{IsBamum})*");
+        scriptsSet.add("(\\p{IsBatak})*");
+        scriptsSet.add("(\\p{IsBengali})*");
+        scriptsSet.add("(\\p{IsBopomofo})*");
+        scriptsSet.add("(\\p{IsBrahmi})*");
+        scriptsSet.add("(\\p{IsBraille})*");
+        scriptsSet.add("(\\p{IsBuginese})*");
+        scriptsSet.add("(\\p{IsBuhid})*");
+        scriptsSet.add("(\\p{IsCanadian_Aboriginal})*");
+        scriptsSet.add("(\\p{IsCarian})*");
+        scriptsSet.add("(\\p{IsCham})*");
+        scriptsSet.add("(\\p{IsCherokee})*");
+        scriptsSet.add("(\\p{IsCommon})*");
+        scriptsSet.add("(\\p{IsCoptic})*");
+        scriptsSet.add("(\\p{IsCuneiform})*");
+        scriptsSet.add("(\\p{IsCypriot})*");
+        scriptsSet.add("(\\p{IsCyrillic})*");
+        scriptsSet.add("(\\p{IsDeseret})*");
+        scriptsSet.add("(\\p{IsDevanagari})*");
+        scriptsSet.add("(\\p{IsEgyptian_Hieroglyphs})*");
+        scriptsSet.add("(\\p{IsEthiopic})*");
+        scriptsSet.add("(\\p{IsGeorgian})*");
+        scriptsSet.add("(\\p{IsGlagolitic})*");
+        scriptsSet.add("(\\p{IsGothic})*");
+        scriptsSet.add("(\\p{IsGreek})*");
+        scriptsSet.add("(\\p{IsGujarati})*");
+        scriptsSet.add("(\\p{IsGurmukhi})*");
+        scriptsSet.add("(\\p{IsHan})*");
+        scriptsSet.add("(\\p{IsHangul})*");
+        scriptsSet.add("(\\p{IsHanunoo})*");
+        scriptsSet.add("(\\p{IsHebrew})*");
+        scriptsSet.add("(\\p{IsHiragana})*");
+        scriptsSet.add("(\\p{IsImperial_Aramaic})*");
+        scriptsSet.add("(\\p{IsInherited})*");
+        scriptsSet.add("(\\p{IsInscriptional_Pahlavi})*");
+        scriptsSet.add("(\\p{IsInscriptional_Parthian})*");
+        scriptsSet.add("(\\p{IsJavanese})*");
+        scriptsSet.add("(\\p{IsKaithi})*");
+        scriptsSet.add("(\\p{IsKannada})*");
+        scriptsSet.add("(\\p{IsKatakana})*");
+        scriptsSet.add("(\\p{IsKayah_Li})*");
+        scriptsSet.add("(\\p{IsKharoshthi})*");
+        scriptsSet.add("(\\p{IsKhmer})*");
+        scriptsSet.add("(\\p{IsLao})*");
+        scriptsSet.add("(\\p{IsLatin})*");
+        scriptsSet.add("(\\p{IsLepcha})*");
+        scriptsSet.add("(\\p{IsLimbu})*");
+        scriptsSet.add("(\\p{IsLinear_B})*");
+        scriptsSet.add("(\\p{IsLisu})*");
+        scriptsSet.add("(\\p{IsLycian})*");
+        scriptsSet.add("(\\p{IsLydian})*");
+        scriptsSet.add("(\\p{IsMalayalam})*");
+        scriptsSet.add("(\\p{IsMandaic})*");
+        scriptsSet.add("(\\p{IsMeetei_Mayek})*");
+        scriptsSet.add("(\\p{IsMongolian})*");
+        scriptsSet.add("(\\p{IsMyanmar})*");
+        scriptsSet.add("(\\p{IsNew_Tai_Lue})*");
+        scriptsSet.add("(\\p{IsNko})*");
+        scriptsSet.add("(\\p{IsOgham})*");
+        scriptsSet.add("(\\p{IsOl_Chiki})*");
+        scriptsSet.add("(\\p{IsOld_Italic})*");
+        scriptsSet.add("(\\p{IsOld_Persian})*");
+        scriptsSet.add("(\\p{IsOld_South_Arabian})*");
+        scriptsSet.add("(\\p{IsOld_Turkic})*");
+        scriptsSet.add("(\\p{IsOriya})*");
+        scriptsSet.add("(\\p{IsOsmanya})*");
+        scriptsSet.add("(\\p{IsPhags_Pa})*");
+        scriptsSet.add("(\\p{IsPhoenician})*");
+        scriptsSet.add("(\\p{IsRejang})*");
+        scriptsSet.add("(\\p{IsRunic})*");
+        scriptsSet.add("(\\p{IsSamaritan})*");
+        scriptsSet.add("(\\p{IsSaurashtra})*");
+        scriptsSet.add("(\\p{IsShavian})*");
+        scriptsSet.add("(\\p{IsSinhala})*");
+        scriptsSet.add("(\\p{IsSundanese})*");
+        scriptsSet.add("(\\p{IsSyloti_Nagri})*");
+        scriptsSet.add("(\\p{IsSyriac})*");
+        scriptsSet.add("(\\p{IsTagalog})*");
+        scriptsSet.add("(\\p{IsTagbanwa})*");
+        scriptsSet.add("(\\p{IsTai_Le})*");
+        scriptsSet.add("(\\p{IsTai_Tham})*");
+        scriptsSet.add("(\\p{IsTai_Viet})*");
+        scriptsSet.add("(\\p{IsTamil})*");
+        scriptsSet.add("(\\p{IsTelugu})*");
+        scriptsSet.add("(\\p{IsThaana})*");
+        scriptsSet.add("(\\p{IsThai})*");
+        scriptsSet.add("(\\p{IsTibetan})*");
+        scriptsSet.add("(\\p{IsTifinagh})*");
+        scriptsSet.add("(\\p{IsUgaritic})*");
+        scriptsSet.add("(\\p{IsUnknown})*");
+        scriptsSet.add("(\\p{IsVai})*");
+        scriptsSet.add("(\\p{IsYi})*");
+        javaUnicodeScripts = Collections.unmodifiableSet(scriptsSet);
+
+        Set<String> binaryPropsSet = new HashSet<>();
+        binaryPropsSet.add("(\\p{IsAlphabetic})*");
+        binaryPropsSet.add("(\\p{IsIdeographic})*");
+        binaryPropsSet.add("(\\p{IsLetter})*");
+        binaryPropsSet.add("(\\p{IsLowercase})*");
+        binaryPropsSet.add("(\\p{IsUppercase})*");
+        binaryPropsSet.add("(\\p{IsTitlecase})*");
+        binaryPropsSet.add("(\\p{IsPunctuation})*");
+        binaryPropsSet.add("(\\p{IsControl})*");
+        binaryPropsSet.add("(\\p{IsWhite_Space})*");
+        binaryPropsSet.add("(\\p{IsDigit})*");
+        binaryPropsSet.add("(\\p{IsHex_Digit})*");
+        binaryPropsSet.add("(\\p{IsNoncharacter_Code_Point})*");
+        binaryPropsSet.add("(\\p{IsAssigned})*");
+        javaUnicodeBinaryProperties = Collections.unmodifiableSet(binaryPropsSet);
+    }
 
     private ParserListenerUtils() {
     }
@@ -761,11 +882,19 @@ public final class ParserListenerUtils {
             }
         }
         final String rawPattern = parsePatternString(ctx);
-        final String pattern = wrapPattern(rawPattern);
+        final String fixedRawPattern = fixUnicodeScriptPattern(rawPattern);
+        final String pattern = wrapPattern(fixedRawPattern);
         if (isValidPattern(pattern, ctx, moduleName)) {
             return BaseConstraints.newPatternConstraint(pattern, description, reference);
         }
         return null;
+    }
+
+    private static String fixUnicodeScriptPattern(String rawPattern) {
+        if(!javaUnicodeScripts.contains(rawPattern) && !javaUnicodeBinaryProperties.contains(rawPattern)) {
+            rawPattern = UNICODE_SCRIPT_PATTERN.matcher(rawPattern).replaceAll("\\\\p{In");
+        }
+            return rawPattern;
     }
 
     private static String wrapPattern(String rawPattern) {
