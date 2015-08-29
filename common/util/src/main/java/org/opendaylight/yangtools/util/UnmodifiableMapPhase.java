@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.util;
 import com.google.common.annotations.Beta;
 import java.util.Map;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
  * A {@link Map} which cannot be modified and supports efficient conversion to a {@link ModifiableMapPhase}.
@@ -18,7 +19,7 @@ import javax.annotation.Nonnull;
  * @param <V> the type of mapped values
  */
 @Beta
-public interface UnmodifiableMapPhase<K, V> extends Map<K, V> {
+public interface UnmodifiableMapPhase<K, V> extends Map<K, V>, Immutable {
     /**
      * Return an isolated modifiable version of this map. Its mappings must match the mappings present in this map. Any
      * modification of the returned map must not be affect the contents of this map.

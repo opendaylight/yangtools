@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.concepts.Mutable;
 
 /**
  * A {@link Map} which can be modified and supports efficient conversion to an unmodifiable map. This interface is the
@@ -22,7 +23,7 @@ import javax.annotation.Nonnull;
  * @param <V> the type of mapped values
  */
 @Beta
-public interface ModifiableMapPhase<K, V> extends Map<K, V> {
+public interface ModifiableMapPhase<K, V> extends Map<K, V>, Mutable {
     /**
      * Return an isolated unmodifiable version of this map. Returned object must not allow removal, addition or changing
      * of mappings. Its mappings must match the mappings currently present in this map, but must not be affected by any
