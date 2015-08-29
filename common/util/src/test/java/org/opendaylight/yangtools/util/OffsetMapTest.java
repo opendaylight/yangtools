@@ -15,6 +15,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -39,6 +40,11 @@ public class OffsetMapTest {
         return (ImmutableOffsetMap<String, String>) ImmutableOffsetMap.copyOf(twoEntryMap);
     }
 
+    @Test(expected=IllegalArgumentException.class)
+    public void testWrongImmutableConstruction() {
+        new ImmutableOffsetMap<String, String>(Collections.<String, Integer>emptyMap(), new Object[1]);
+    }
+
     @Test
     public void testCopyEmptyMap() {
         final Map<String, String> source = Collections.emptyMap();
@@ -59,19 +65,43 @@ public class OffsetMapTest {
 
     @Test
     public void testCopyMap() {
-        final Map<String, String> result = createMap();
-
-        assertTrue(result instanceof ImmutableOffsetMap);
+        final ImmutableOffsetMap<String, String> map = createMap();
 
         // Equality in both directions
-        assertEquals(twoEntryMap, result);
-        assertEquals(result, twoEntryMap);
+        assertEquals(twoEntryMap, map);
+        assertEquals(map, twoEntryMap);
 
         // Iterator order needs to be preserved
-        assertTrue(Iterators.elementsEqual(twoEntryMap.entrySet().iterator(), result.entrySet().iterator()));
+        assertTrue(Iterators.elementsEqual(twoEntryMap.entrySet().iterator(), map.entrySet().iterator()));
 
         // Should result in the same object
-        assertSame(result, ImmutableOffsetMap.copyOf(result));
+        assertSame(map, ImmutableOffsetMap.copyOf(map));
+
+        final Map<String, String> mutable = map.toModifiableMap();
+        final Map<String, String> copy = ImmutableOffsetMap.copyOf(mutable);
+
+        assertEquals(mutable, copy);
+        assertEquals(map, copy);
+        assertNotSame(mutable, copy);
+        assertNotSame(map, copy);
+    }
+
+    @Test
+    public void testImmutableSimpleEquals() {
+        final Map<String, String> map = createMap();
+
+        assertTrue(map.equals(map));
+        assertFalse(map.equals(null));
+        assertFalse(map.equals("string"));
+    }
+
+    @Test
+    public void testImmutableCopyConstructor() {
+        final ImmutableOffsetMap<String, String> source = createMap();
+        final ImmutableOffsetMap<String, String> result = new ImmutableOffsetMap<>(source);
+
+        assertSame(source.offsets(), result.offsets());
+        assertSame(source.objects(), result.objects());
     }
 
     @Test
@@ -222,6 +252,17 @@ public class OffsetMapTest {
         assertTrue(map.containsKey("k2"));
         assertFalse(map.containsKey("non-existent"));
         assertFalse(map.containsKey(null));
+        assertTrue(map.containsValue("v1"));
+        assertFalse(map.containsValue("non-existent"));
+    }
+
+    @Test
+    public void testImmutableEquals() {
+        final Map<String, String> map = createMap();
+
+        assertFalse(map.equals(threeEntryMap));
+        assertFalse(map.equals(ImmutableMap.of("k1", "v1", "k3", "v3")));
+        assertFalse(map.equals(ImmutableMap.of("k1", "v1", "k2", "different-value")));
     }
 
     @Test
@@ -297,6 +338,25 @@ public class OffsetMapTest {
     }
 
     @Test
+    public void testEmptyMutable() throws CloneNotSupportedException {
+        final MutableOffsetMap<String, String> map = new MutableOffsetMap<>();
+        assertTrue(map.isEmpty());
+
+        final Map<String, String> other = map.clone();
+        assertEquals(other, map);
+        assertNotSame(other, map);
+    }
+
+    @Test
+    public void testMutableWithKeyset() {
+        final MutableOffsetMap<String, String> map = new MutableOffsetMap<>(ImmutableSet.of("k1", "k2"));
+        assertTrue(map.isEmpty());
+        assertTrue(map.keySet().isEmpty());
+        assertNull(map.get("k1"));
+        assertNull(map.remove("k2"));
+    }
+
+    @Test
     public void testMutableToEmpty() {
         final MutableOffsetMap<String, String> mutable = createMap().toModifiableMap();
 
@@ -318,6 +378,19 @@ public class OffsetMapTest {
         // Should devolve to a singleton
         assertTrue(result instanceof ImmutableMap);
         assertEquals(ImmutableMap.of("k2", "v2"), result);
+    }
+
+    @Test
+    public void testMutableToNewSingleton() {
+        final MutableOffsetMap<String, String> mutable = createMap().toModifiableMap();
+
+        mutable.remove("k1");
+        mutable.put("k3", "v3");
+
+        final Map<String, String> result = mutable.toUnmodifiableMap();
+
+        assertTrue(result instanceof ImmutableOffsetMap);
+        assertEquals(ImmutableMap.of("k2", "v2", "k3", "v3"), result);
     }
 
     @Test
@@ -438,6 +511,17 @@ public class OffsetMapTest {
             fail();
         } catch (ConcurrentModificationException e) {
         }
+    }
+
+    @Test
+    public void testMutableSimpleEquals() {
+        final ImmutableOffsetMap<String, String> source = createMap();
+        final Map<String, String> map = source.toModifiableMap();
+
+        assertTrue(map.equals(map));
+        assertFalse(map.equals(null));
+        assertFalse(map.equals("string"));
+        assertTrue(map.equals(source));
     }
 
     @Test

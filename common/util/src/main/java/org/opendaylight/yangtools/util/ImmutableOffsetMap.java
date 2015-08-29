@@ -38,7 +38,7 @@ import javax.annotation.Nonnull;
  * @param <V> the type of mapped values
  */
 @Beta
-public class ImmutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implements Cloneable, UnmodifiableMapPhase<K, V>, Serializable {
+public class ImmutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implements UnmodifiableMapPhase<K, V>, Serializable {
     private static final long serialVersionUID = 1L;
 
     private final Map<K, Integer> offsets;
@@ -218,11 +218,6 @@ public class ImmutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> impleme
     @Override
     public MutableOffsetMap<K, V> toModifiableMap() {
         return new MutableOffsetMap<>(this);
-    }
-
-    @Override
-    public ImmutableOffsetMap<K, V> clone() throws CloneNotSupportedException {
-        return new ImmutableOffsetMap<>(this);
     }
 
     Map<K, Integer> offsets() {
