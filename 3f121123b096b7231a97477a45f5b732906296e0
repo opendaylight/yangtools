@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a79b1b5_022b1695",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/ParserListenerUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 773,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-08-31T12:12:31Z",
+      "side": 1,
+      "message": "I wonder if this is really correct and does not result in false replacements. Can we get a larger test suite?\n\nAlso the first argument is interpreted as a Pattern, while the other is a plain String -- so it does not look entirely correct. At the very least the pattern should be compiled ahead of time.",
+      "revId": "3f121123b096b7231a97477a45f5b732906296e0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
