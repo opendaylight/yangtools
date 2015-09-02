@@ -360,6 +360,30 @@ public final class BuilderUtils {
         }
     }
 
+    public static SchemaNodeBuilder findTargetNode(final Iterable<QName> path,
+            final DataNodeContainerBuilder parent) {
+
+        Preconditions.checkNotNull(parent);
+        Preconditions.checkNotNull(path);
+
+        SchemaNodeBuilder foundNode = null;
+
+        Iterator<QName> pathIterator = path.iterator();
+        if (pathIterator.hasNext()) {
+            String name = pathIterator.next().getLocalName();
+            foundNode = parent.getDataChildByName(name);
+            if (foundNode == null) {
+                foundNode = findUnknownNode(name, parent);
+            }
+        }
+
+        if (pathIterator.hasNext() && foundNode != null) {
+            return findSchemaNode(Iterables.skip(path, 1), foundNode);
+        } else {
+            return foundNode;
+        }
+    }
+
     public static SchemaNodeBuilder findSchemaNode(final Iterable<QName> path, final SchemaNodeBuilder parentNode) {
         SchemaNodeBuilder node = null;
         SchemaNodeBuilder parent = parentNode;

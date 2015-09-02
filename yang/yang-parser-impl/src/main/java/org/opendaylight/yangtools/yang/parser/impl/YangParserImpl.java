@@ -11,8 +11,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.fillAugmentTarget;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findBaseIdentity;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findModuleFromContext;
-import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findSchemaNode;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findSchemaNodeInModule;
+import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findTargetNode;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.processAugmentation;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.TypeUtils.resolveType;
 import static org.opendaylight.yangtools.yang.parser.builder.impl.TypeUtils.resolveTypeUnion;
@@ -957,8 +957,8 @@ public final class YangParserImpl implements YangContextParser {
             // Conflicting elements in other namespaces are still not present
             // since resolveUsesAugment occurs before augmenting from external
             // modules.
-            potentialTargetNode = Optional.<SchemaNodeBuilder> fromNullable(findSchemaNode(augment.getTargetPath()
-                    .getPathFromRoot(), (SchemaNodeBuilder) parentNode));
+            potentialTargetNode = Optional.<SchemaNodeBuilder> fromNullable(findTargetNode(augment.getTargetPath()
+                    .getPathFromRoot(), parentNode));
         }
 
         if (potentialTargetNode.isPresent()) {
