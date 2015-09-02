@@ -46,8 +46,8 @@ final class TestUtils {
     private TestUtils() {
     }
 
-
-    public static Set<Module> loadModules(final URI resourceDirectory) throws IOException {
+    public static SchemaContext loadSchemaContext(final URI resourceDirectory)
+            throws IOException {
         final YangContextParser parser = new YangParserImpl();
         final File testDir = new File(resourceDirectory);
         final String[] fileList = testDir.list();
@@ -58,8 +58,12 @@ final class TestUtils {
         for (String fileName : fileList) {
             testFiles.add(new File(testDir, fileName));
         }
-        SchemaContext ctx = parser.parseFiles(testFiles);
-        return ctx.getModules();
+        return parser.parseFiles(testFiles);
+    }
+
+    public static Set<Module> loadModules(final URI resourceDirectory)
+            throws IOException {
+        return loadSchemaContext(resourceDirectory).getModules();
     }
 
     public static Set<Module> loadModules(final List<InputStream> input) throws IOException, YangSyntaxErrorException {
