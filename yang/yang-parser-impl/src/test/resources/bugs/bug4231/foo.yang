@@ -1,0 +1,38 @@
+module foo {
+    namespace "foo";
+    prefix "foo";
+    yang-version 1;
+
+    revision 2015-09-02 {
+        description "Test";
+    }
+
+    grouping my-grouping {
+        container my-container-in-grouping {
+        }
+    }
+
+    augment /augment-target {
+        uses my-grouping {
+            augment my-container-in-grouping {
+                leaf-list l2 {
+                    type string;
+                    ordered-by "user";
+                    foo:bar "argument";
+                    foo:baz "$X(/a/a/a/@@)";
+                }
+            }
+        }
+    }
+
+    container augment-target {
+    }
+
+    extension bar {
+        argument "arg";
+    }
+
+    extension baz {
+        argument "arg";
+    }
+}
