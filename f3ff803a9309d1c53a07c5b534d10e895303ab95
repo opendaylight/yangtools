@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a79b1b5_06e6c3b4",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/BuilderUtils.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 371,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-02T22:06:27Z",
+      "side": 1,
+      "message": "missing final keyword. An explanation of what is going on would be useful (as would javadoc stating the contract of this method)",
+      "revId": "f3ff803a9309d1c53a07c5b534d10e895303ab95",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
