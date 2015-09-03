@@ -10,6 +10,9 @@ package org.opendaylight.yangtools.yang.data.api;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -459,9 +462,27 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      */
     public static final class NodeIdentifier extends AbstractPathArgument {
         private static final long serialVersionUID = -2255888212390871347L;
+        private static final LoadingCache<QName, NodeIdentifier> CACHE = CacheBuilder.newBuilder().weakValues()
+                .build(new CacheLoader<QName, NodeIdentifier>() {
+                    @Override
+                    public NodeIdentifier load(final QName key) {
+                        return new NodeIdentifier(key);
+                    }
+                });
 
         public NodeIdentifier(final QName node) {
             super(node);
+        }
+
+        /**
+         * Return a NodeIdentifier for a particular QName. Unlike the constructor, this factory method uses a global
+         * instance cache, resulting in object reuse for equal inputs.
+         *
+         * @param node Node's QName
+         * @return A {@link NodeIdentifier}
+         */
+        public static NodeIdentifier create(final QName node) {
+            return CACHE.getUnchecked(node);
         }
     }
 
