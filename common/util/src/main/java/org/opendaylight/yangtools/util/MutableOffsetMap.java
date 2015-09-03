@@ -325,6 +325,15 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
     }
 
     @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + (offsets != null ? offsets.hashCode() : 0);
+        result = 31 * result + (newKeys != null ? newKeys.hashCode() : 0);
+        result = 31 * result + (objects != null ? Arrays.hashCode(objects) : 0);
+        return result;
+    }
+
+    @Override
     public final Set<K> keySet() {
         return new KeySet();
     }
