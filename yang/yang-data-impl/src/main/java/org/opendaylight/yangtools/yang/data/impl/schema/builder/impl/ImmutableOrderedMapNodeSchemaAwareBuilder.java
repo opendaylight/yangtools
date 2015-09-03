@@ -23,13 +23,13 @@ public class ImmutableOrderedMapNodeSchemaAwareBuilder extends ImmutableOrderedM
 
     protected ImmutableOrderedMapNodeSchemaAwareBuilder(final ListSchemaNode schema) {
         this.schema = Preconditions.checkNotNull(schema);
-        super.withNodeIdentifier(new NodeIdentifier(schema.getQName()));
+        super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
     protected ImmutableOrderedMapNodeSchemaAwareBuilder(final ListSchemaNode schema, final ImmutableOrderedMapNode node) {
         super(node);
         this.schema = Preconditions.checkNotNull(schema);
-        super.withNodeIdentifier(new NodeIdentifier(schema.getQName()));
+        super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
     public static CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create(final ListSchemaNode schema) {

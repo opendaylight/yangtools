@@ -20,13 +20,13 @@ public final class ImmutableContainerNodeSchemaAwareBuilder extends ImmutableCon
 
     private ImmutableContainerNodeSchemaAwareBuilder(final ContainerSchemaNode schema) {
         this.validator = new DataNodeContainerValidator(schema);
-        super.withNodeIdentifier(new NodeIdentifier(schema.getQName()));
+        super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
     private ImmutableContainerNodeSchemaAwareBuilder(final ContainerSchemaNode schema, final ImmutableContainerNode node) {
         super(node);
         this.validator = new DataNodeContainerValidator(schema);
-        super.withNodeIdentifier(new NodeIdentifier(schema.getQName()));
+        super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
     public static DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> create(final ContainerSchemaNode schema) {

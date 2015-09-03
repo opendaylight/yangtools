@@ -28,6 +28,6 @@ final class UnkeyedListEntryNodeDomParser extends ListEntryNodeDomParser<YangIns
     @Override
     protected DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, UnkeyedListEntryNode> getBuilder(
             final ListSchemaNode schema) {
-        return Builders.unkeyedListEntryBuilder().withNodeIdentifier(new NodeIdentifier(schema.getQName()));
+        return Builders.unkeyedListEntryBuilder().withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 }

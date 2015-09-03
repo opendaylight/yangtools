@@ -173,8 +173,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
                     .mapEntryBuilder().withNodeIdentifier((NodeIdentifierWithPredicates) currentArg);
             for (final Map.Entry<QName, Object> keyValue : ((NodeIdentifierWithPredicates) currentArg).getKeyValues().entrySet()) {
                 builder.addChild(Builders.leafBuilder()
-                        //
-                        .withNodeIdentifier(new NodeIdentifier(keyValue.getKey())).withValue(keyValue.getValue())
+                        .withNodeIdentifier(NodeIdentifier.create(keyValue.getKey())).withValue(keyValue.getValue())
                         .build());
             }
             return builder;
@@ -189,7 +188,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
     static final class UnkeyedListItemNormalization extends DataContainerNormalizationOperation<NodeIdentifier> {
 
         protected UnkeyedListItemNormalization(final ListSchemaNode schema) {
-            super(new NodeIdentifier(schema.getQName()), schema);
+            super(NodeIdentifier.create(schema.getQName()), schema);
         }
 
         @Override
@@ -205,7 +204,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
 
     static final class ContainerTransformation extends DataContainerNormalizationOperation<NodeIdentifier> {
         protected ContainerTransformation(final ContainerSchemaNode schema) {
-            super(new NodeIdentifier(schema.getQName()), schema);
+            super(NodeIdentifier.create(schema.getQName()), schema);
         }
 
         @Override
@@ -237,7 +236,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         private final InstanceIdToNodes<?> innerOp;
 
         public UnorderedLeafListMixinNormalization(final LeafListSchemaNode potential) {
-            super(new NodeIdentifier(potential.getQName()));
+            super(NodeIdentifier.create(potential.getQName()));
             innerOp = new InstanceIdToSimpleNodes.LeafListEntryNormalization(potential);
         }
 
@@ -282,7 +281,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         private final ListItemNormalization innerNode;
 
         public UnorderedMapMixinNormalization(final ListSchemaNode list) {
-            super(new NodeIdentifier(list.getQName()));
+            super(NodeIdentifier.create(list.getQName()));
             this.innerNode = new ListItemNormalization(new NodeIdentifierWithPredicates(list.getQName(),
                     Collections.<QName, Object>emptyMap()), list);
         }
@@ -324,7 +323,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         private final ImmutableMap<PathArgument, InstanceIdToNodes<?>> byArg;
 
         protected ChoiceNodeNormalization(final ChoiceSchemaNode schema) {
-            super(new NodeIdentifier(schema.getQName()));
+            super(NodeIdentifier.create(schema.getQName()));
             final ImmutableMap.Builder<PathArgument, InstanceIdToNodes<?>> byArgBuilder = ImmutableMap.builder();
 
             for (final ChoiceCaseNode caze : schema.getCases()) {

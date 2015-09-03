@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 public final class ImmutableAnyXmlNodeSchemaAwareBuilder extends ImmutableAnyXmlNodeBuilder {
 
     private ImmutableAnyXmlNodeSchemaAwareBuilder(final AnyXmlSchemaNode schema) {
-        super.withNodeIdentifier(new NodeIdentifier(schema.getQName()));
+        super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
     public static NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> create(final AnyXmlSchemaNode schema) {

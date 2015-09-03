@@ -92,7 +92,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
         private final UnkeyedListItemNormalization innerNode;
 
         public UnkeyedListMixinNormalization(final ListSchemaNode list) {
-            super(new NodeIdentifier(list.getQName()));
+            super(NodeIdentifier.create(list.getQName()));
             this.innerNode = new UnkeyedListItemNormalization(list);
         }
 
@@ -118,7 +118,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
     private static class AnyXmlNormalization extends InstanceIdToNodes<NodeIdentifier> {
 
         protected AnyXmlNormalization(final AnyXmlSchemaNode schema) {
-            super(new NodeIdentifier(schema.getQName()));
+            super(NodeIdentifier.create(schema.getQName()));
         }
 
         @Override

@@ -42,7 +42,7 @@ public final class ImmutableNodes {
     }
 
     public static CollectionNodeBuilder<MapEntryNode, MapNode> mapNodeBuilder(final QName name) {
-        return ImmutableMapNodeBuilder.create().withNodeIdentifier(new NodeIdentifier(name));
+        return ImmutableMapNodeBuilder.create().withNodeIdentifier(NodeIdentifier.create(name));
     }
 
     /**
@@ -52,7 +52,7 @@ public final class ImmutableNodes {
      * @param value Value of leaf node
      * @return Leaf node with supplied identifier and value
      */
-    public static <T> LeafNode<T> leafNode(final NodeIdentifier name,final T value) {
+    public static <T> LeafNode<T> leafNode(final NodeIdentifier name, final T value) {
         return ImmutableLeafNodeBuilder.<T>create()
                 .withNodeIdentifier(name)
                 .withValue(value)
@@ -67,7 +67,7 @@ public final class ImmutableNodes {
      * @return Leaf node with supplied identifier and value
      */
     public static <T> LeafNode<T> leafNode(final QName name,final T value) {
-        return leafNode(new NodeIdentifier(name), value);
+        return leafNode(NodeIdentifier.create(name), value);
     }
 
     public static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(final QName nodeName, final QName keyName, final Object keyValue) {
@@ -85,11 +85,11 @@ public final class ImmutableNodes {
     }
 
     public static ContainerNode containerNode(final QName name) {
-        return ImmutableContainerNodeBuilder.create().withNodeIdentifier(new NodeIdentifier(name)).build();
+        return ImmutableContainerNodeBuilder.create().withNodeIdentifier(NodeIdentifier.create(name)).build();
     }
 
     public static ChoiceNode choiceNode(final QName name) {
-        return ImmutableChoiceNodeBuilder.create().withNodeIdentifier(new NodeIdentifier(name)).build();
+        return ImmutableChoiceNodeBuilder.create().withNodeIdentifier(NodeIdentifier.create(name)).build();
     }
 
     /**

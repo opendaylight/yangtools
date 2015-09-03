@@ -26,7 +26,7 @@ public class ImmutableChoiceNodeSchemaAwareBuilder extends ImmutableChoiceNodeBu
 
     protected ImmutableChoiceNodeSchemaAwareBuilder(final ChoiceSchemaNode schema) {
         this.schema = Preconditions.checkNotNull(schema, "Schema was null");
-        super.withNodeIdentifier(new NodeIdentifier(schema.getQName()));
+        super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
     @Override

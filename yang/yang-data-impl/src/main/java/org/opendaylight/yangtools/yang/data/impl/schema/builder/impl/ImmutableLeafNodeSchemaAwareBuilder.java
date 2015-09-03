@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 public final class ImmutableLeafNodeSchemaAwareBuilder<T> extends ImmutableLeafNodeBuilder<T> {
 
     private ImmutableLeafNodeSchemaAwareBuilder(final LeafSchemaNode schema) {
-        super.withNodeIdentifier(new NodeIdentifier(schema.getQName()));
+        super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
     public static <T> NormalizedNodeAttrBuilder<NodeIdentifier, T, LeafNode<T>> create(final LeafSchemaNode schema) {

@@ -31,8 +31,8 @@ public abstract class UnkeyedListNodeBaseParser<E> extends
     }
 
     @Override
-    protected CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> provideBuilder(ListSchemaNode schema) {
+    protected CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> provideBuilder(final ListSchemaNode schema) {
         CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> listBuilder = Builders.unkeyedListBuilder();
-        return listBuilder.withNodeIdentifier(new NodeIdentifier(schema.getQName()));
+        return listBuilder.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 }

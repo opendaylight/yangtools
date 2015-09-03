@@ -22,13 +22,13 @@ public class ImmutableMapNodeSchemaAwareBuilder extends ImmutableMapNodeBuilder 
 
     protected ImmutableMapNodeSchemaAwareBuilder(final ListSchemaNode schema) {
         this.schema = Preconditions.checkNotNull(schema);
-        super.withNodeIdentifier(new NodeIdentifier(schema.getQName()));
+        super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
     protected ImmutableMapNodeSchemaAwareBuilder(final ListSchemaNode schema, final ImmutableMapNode node) {
         super(node);
         this.schema = Preconditions.checkNotNull(schema);
-        super.withNodeIdentifier(new NodeIdentifier(schema.getQName()));
+        super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
     public static CollectionNodeBuilder<MapEntryNode, MapNode> create(final ListSchemaNode schema) {
