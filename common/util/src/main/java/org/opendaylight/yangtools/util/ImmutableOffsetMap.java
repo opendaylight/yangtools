@@ -163,6 +163,14 @@ public class ImmutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> impleme
     }
 
     @Override
+    public int hashCode() {
+        int result = super.hashCode();
+        result = 31 * result + offsets.hashCode();
+        result = 31 * result + Arrays.hashCode(objects);
+        return result;
+    }
+
+    @Override
     public final boolean containsKey(final Object key) {
         return offsets.containsKey(key);
     }

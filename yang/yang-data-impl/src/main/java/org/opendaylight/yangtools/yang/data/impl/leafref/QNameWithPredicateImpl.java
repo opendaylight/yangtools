@@ -70,6 +70,13 @@ final class QNameWithPredicateImpl implements Immutable, Serializable,
     }
 
     @Override
+    public int hashCode() {
+        int result = moduleQname != null ? moduleQname.hashCode() : 0;
+        result = 31 * result + (localName != null ? localName.hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
 
