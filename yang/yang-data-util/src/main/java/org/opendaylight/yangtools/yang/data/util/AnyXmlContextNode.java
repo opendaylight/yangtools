@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 class AnyXmlContextNode extends DataSchemaContextNode<NodeIdentifier> {
 
     protected AnyXmlContextNode(final AnyXmlSchemaNode schema) {
-        super(new NodeIdentifier(schema.getQName()), schema);
+        super(NodeIdentifier.create(schema.getQName()), schema);
     }
 
     @Override

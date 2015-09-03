@@ -21,7 +21,7 @@ class ChoiceNodeContextNode extends AbstractMixinContextNode<NodeIdentifier> {
     private final ImmutableMap<PathArgument, DataSchemaContextNode<?>> byArg;
 
     protected ChoiceNodeContextNode(final ChoiceSchemaNode schema) {
-        super(new NodeIdentifier(schema.getQName()), schema);
+        super(NodeIdentifier.create(schema.getQName()), schema);
         ImmutableMap.Builder<QName, DataSchemaContextNode<?>> byQNameBuilder = ImmutableMap.builder();
         ImmutableMap.Builder<PathArgument, DataSchemaContextNode<?>> byArgBuilder = ImmutableMap.builder();
 

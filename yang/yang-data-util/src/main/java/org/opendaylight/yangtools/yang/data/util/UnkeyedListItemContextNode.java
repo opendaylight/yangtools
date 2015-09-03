@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 final class UnkeyedListItemContextNode extends DataContainerContextNode<NodeIdentifier> {
 
     protected UnkeyedListItemContextNode(final ListSchemaNode schema) {
-        super(new NodeIdentifier(schema.getQName()), schema, schema);
+        super(NodeIdentifier.create(schema.getQName()), schema, schema);
     }
 
 }

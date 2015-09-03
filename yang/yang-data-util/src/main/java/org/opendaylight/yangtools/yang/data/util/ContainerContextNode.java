@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 final class ContainerContextNode extends DataContainerContextNode<NodeIdentifier> {
 
     protected ContainerContextNode(final ContainerSchemaNode schema) {
-        super(new NodeIdentifier(schema.getQName()), schema, schema);
+        super(NodeIdentifier.create(schema.getQName()), schema, schema);
     }
 
 }
