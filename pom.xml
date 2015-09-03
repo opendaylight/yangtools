@@ -30,15 +30,10 @@
     </scm>
 
     <modules>
-        <module>code-generator</module>
         <module>common</module>
-        <module>integration-test</module>
-        <module>model</module>
-        <module>restconf</module>
-        <module>websocket</module>
         <module>yang</module>
+        <module>websocket</module>
         <module>yang-validation-tool</module>
-      <!-- module>third-party</module -->
     </modules>
 
     <profiles>
