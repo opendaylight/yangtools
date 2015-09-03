@@ -21,7 +21,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>yang-binding</module>
         <module>yang-common</module>
         <module>yang-data-api</module>
         <module>yang-data-util</module>
