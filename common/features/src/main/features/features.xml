@@ -10,38 +10,6 @@
 <features name="odl-yangtools-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.2.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.2.0 http://karaf.apache.org/xmlns/features/v1.2.0">
-    <feature name='odl-yangtools-all' version='${project.version}' description='OpenDaylight Yangtools All'>
-        <feature version='${project.version}'>odl-yangtools-common</feature>
-        <feature version='${project.version}'>odl-yangtools-binding</feature>
-        <feature version='${project.version}'>odl-yangtools-models</feature>
-        <feature version='${project.version}'>odl-yangtools-data-binding</feature>
-        <feature version='${project.version}'>odl-yangtools-binding-generator</feature>
-        <feature version='${project.version}'>odl-yangtools-restconf</feature>
-    </feature>
-
-    <!-- Deprecated -->
-    <feature name='odl-yangtools-models' version='${project.version}' description='OpenDaylight :: Yangtools :: Models'>
-        <feature version='${project.version}'>odl-yangtools-binding</feature>
-        <bundle>mvn:org.opendaylight.yangtools.model/iana-if-type-2014-05-08/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools.model/ietf-inet-types/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools.model/ietf-interfaces/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools.model/ietf-yang-types/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools.model/ietf-yang-types-20130715/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools.model/ietf-restconf/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools.model/yang-ext/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools.model/opendaylight-l2-types/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools.model/ietf-ted/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools.model/ietf-topology/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools.model/ietf-topology-isis/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools.model/ietf-topology-ospf/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools.model/ietf-topology-l3-unicast-igp/{{VERSION}}</bundle>
-    </feature>
-
-    <!-- Deprecated -->
-    <feature name='odl-yangtools-data-binding' version='${project.version}' description='OpenDaylight :: Yangtools :: Data Binding'>
-        <feature version='${project.version}'>odl-yangtools-binding</feature>
-        <feature version='${project.version}'>odl-yangtools-yang-data</feature>
-    </feature>
     
 	<feature name='odl-yangtools-yang-data' version='${project.version}' description='OpenDaylight :: Yangtools :: Data Binding'>
         <feature version='${project.version}'>odl-yangtools-yang-parser</feature>
@@ -53,13 +21,6 @@
         <!-- GSON-based JSON codec. Can be split out -->
         <bundle>mvn:com.google.code.gson/gson/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-data-codec-gson/{{VERSION}}</bundle>
-    </feature>
-
-    <!-- Deprecated -->
-    <feature name='odl-yangtools-binding' version='${project.version}' description='OpenDaylight :: Yangtools :: Binding'>
-        <feature version='${project.version}'>odl-yangtools-common</feature>
-        <bundle>mvn:org.opendaylight.yangtools/yang-binding/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools/util/{{VERSION}}</bundle>
     </feature>
 
     <feature name='odl-yangtools-common' version='${project.version}' description='OpenDaylight :: Yangtools :: Common'>
@@ -82,22 +43,4 @@
         <bundle>mvn:org.opendaylight.yangtools/yang-parser-impl/{{VERSION}}</bundle>
     </feature>
 
-
-    <feature name='odl-yangtools-binding-generator' version='${project.version}' description='OpenDaylight :: Yangtools :: Binding Generator'>
-        <feature version='${project.version}'>odl-yangtools-data-binding</feature>
-        <bundle>mvn:org.javassist/javassist/{{VERSION}}</bundle>
-        <bundle>mvn:org.apache.commons/commons-lang3/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools/binding-generator-api/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools/binding-generator-impl/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools/binding-generator-spi/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools/binding-generator-util/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools/binding-model-api/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools/binding-type-provider/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools/binding-data-codec/{{VERSION}}</bundle>
-    </feature>
-    <feature name='odl-yangtools-restconf' version='${project.version}' description='OpenDaylight :: Yangtools :: Restconf'>
-        <bundle>mvn:org.opendaylight.yangtools/restconf-client-api/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools/restconf-client-impl/{{VERSION}}</bundle>
-        <bundle>mvn:org.opendaylight.yangtools/restconf-common/{{VERSION}}</bundle>
-     </feature>
 </features>
