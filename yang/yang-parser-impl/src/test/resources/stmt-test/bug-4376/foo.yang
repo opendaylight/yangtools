@@ -1,0 +1,21 @@
+module foo {
+    namespace "foo";
+    prefix "foo";
+    yang-version 1;
+
+    revision 2015-09-02 {
+        description "Test";
+    }
+
+    container foo {
+        foo:foo-cli-map "network-status (disable)|(software-interfaces)|(p"            +
+                        "hysical)|(logical) ";
+        leaf bar {
+            type string;
+        }
+    }
+    
+    extension foo-cli-map {
+        argument status;
+    }
+}
