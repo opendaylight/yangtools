@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.common.QName;
+import org.slf4j.Logger;
 
+import org.slf4j.LoggerFactory;
+import org.opendaylight.yangtools.yang.common.QName;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -20,6 +22,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
 public class UnknownStatementImpl extends AbstractDeclaredStatement<QName> implements UnknownStatement<QName> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UnknownStatementImpl.class);
 
     protected UnknownStatementImpl(final StmtContext<QName, ?, ?> context) {
         super(context);
@@ -35,7 +39,13 @@ public class UnknownStatementImpl extends AbstractDeclaredStatement<QName> imple
 
         @Override
         public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) throws SourceException {
-            return Utils.qNameFromArgument(ctx, value);
+            QName qName = null;
+            try {
+                qName = Utils.qNameFromArgument(ctx, value);
+            } catch (IllegalArgumentException e) {
+                LOG.warn(String.format("[%s]: Unable to parse QName from unknown statement argument due to illegal characters. Argument will be accessible as node parameter only.", ctx.getStatementSourceReference()),e);
+            }
+            return qName;
         }
 
         @Override
