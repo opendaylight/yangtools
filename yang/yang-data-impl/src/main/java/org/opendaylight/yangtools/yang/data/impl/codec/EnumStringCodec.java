@@ -9,32 +9,29 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
-import java.util.List;
-import java.util.Set;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import java.util.Map;
 import org.opendaylight.yangtools.yang.data.api.codec.EnumCodec;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
- class EnumStringCodec extends TypeDefinitionAwareCodec<String, EnumTypeDefinition> implements
-        EnumCodec<String> {
-
-    private final Set<String> values;
+class EnumStringCodec extends TypeDefinitionAwareCodec<String, EnumTypeDefinition> implements EnumCodec<String> {
+    private final Map<String, String> values;
 
     protected EnumStringCodec(final Optional<EnumTypeDefinition> typeDef) {
         super(typeDef, String.class);
-        if(typeDef.isPresent()) {
-            final List<EnumPair> enumValues = typeDef.get().getValues();
-            final Set<String> valuesBuilder = Sets.newHashSetWithExpectedSize(enumValues.size());
-            for( final EnumPair pair: enumValues ) {
-                valuesBuilder.add( pair.getName() );
+        if (typeDef.isPresent()) {
+            final Builder<String, String> b = ImmutableMap.<String, String>builder();
+            for (final EnumPair pair : typeDef.get().getValues()) {
+                // Intern the String to get wide reuse
+                final String v = pair.getName().intern();
+                b.put(v, v);
             }
-            values = ImmutableSet.copyOf(valuesBuilder);
+            values = b.build();
         } else {
             values = null;
         }
-
     }
 
     static TypeDefinitionAwareCodec<?,EnumTypeDefinition> from(final EnumTypeDefinition normalizedType) {
@@ -44,10 +41,15 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPai
     @Override
     public final String deserialize(final String s) {
         if (values != null) {
-            Preconditions.checkArgument(values.contains(s), "Invalid value '%s' for enum type. Allowed values are: %s",
-                    s, values);
+            // Lookup the serialized string in the values. Returned string is the interned instance, which we want
+            // to use as the result.
+            final String result = values.get(s);
+            Preconditions.checkArgument(result != null, "Invalid value '%s' for enum type. Allowed values are: %s",
+                s, values.keySet());
+            return result;
+        } else {
+            return s;
         }
-        return s;
     }
 
     @Override
