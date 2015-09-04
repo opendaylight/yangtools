@@ -66,9 +66,11 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
     }
 
     protected MutableOffsetMap(final ImmutableOffsetMap<K, V> m) {
-        this.offsets = m.offsets();
-        this.objects = m.objects();
-        this.newKeys = new LinkedHashMap<>();
+        this(m.offsets(), m.objects());
+    }
+
+    protected MutableOffsetMap(final SingletonImmutableOffsetMap<K, V> m) {
+        this(OffsetMapCache.offsetsFor(m.keySet()), m.values().toArray());
     }
 
     protected MutableOffsetMap(final MutableOffsetMap<K, V> m) {
@@ -76,6 +78,12 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
         this.objects = m.objects;
         this.newKeys = new LinkedHashMap<>(m.newKeys);
         this.removed = m.removed;
+    }
+
+    private MutableOffsetMap(final Map<K, Integer> offsets, final Object... objects) {
+        this.offsets = Preconditions.checkNotNull(offsets);
+        this.objects = Preconditions.checkNotNull(objects);
+        this.newKeys = new LinkedHashMap<>();
     }
 
     @Override

@@ -79,23 +79,25 @@ public class ImmutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> impleme
      * @return An isolated, immutable copy of the input map
      */
     @Nonnull public static <K, V> Map<K, V> copyOf(@Nonnull final Map<K, V> m) {
-        // Prevent a copy
-        if (m instanceof ImmutableOffsetMap) {
+        // Prevent a copy. Note that ImmutableMap is not listed here because of its potentially larger keySet overhead.
+        if (m instanceof ImmutableOffsetMap || m instanceof SingletonImmutableOffsetMap) {
             return m;
         }
 
-        // Better-packed
+        // Familiar and efficient to copy
+        if (m instanceof MutableOffsetMap) {
+            return ((MutableOffsetMap<K, V>) m).toUnmodifiableMap();
+        }
+
         final int size = m.size();
         if (size == 0) {
+            // Shares a single object
             return ImmutableMap.of();
         }
         if (size == 1) {
-            return ImmutableMap.copyOf(m);
-        }
-
-        // Familiar and efficient
-        if (m instanceof MutableOffsetMap) {
-            return ((MutableOffsetMap<K, V>) m).toUnmodifiableMap();
+            // Efficient single-entry implementation
+            final Entry<K, V> e = m.entrySet().iterator().next();
+            return new SingletonImmutableOffsetMap<K, V>(e.getKey(), e.getValue());
         }
 
         final Map<K, Integer> offsets = OffsetMapCache.offsetsFor(m.keySet());
