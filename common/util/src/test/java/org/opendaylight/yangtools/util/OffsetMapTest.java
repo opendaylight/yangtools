@@ -60,7 +60,7 @@ public class OffsetMapTest {
         final Map<String, String> result = ImmutableOffsetMap.copyOf(source);
 
         assertEquals(source, result);
-        assertTrue(result instanceof ImmutableMap);
+        assertTrue(result instanceof SharedSingletonMap);
     }
 
     @Test

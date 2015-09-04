@@ -51,7 +51,7 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
         this(Collections.<K>emptySet());
     }
 
-    public MutableOffsetMap(final Collection<K> keySet) {
+    protected MutableOffsetMap(final Collection<K> keySet) {
         if (!keySet.isEmpty()) {
             removed = keySet.size();
             offsets = OffsetMapCache.offsetsFor(keySet);
@@ -66,9 +66,11 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
     }
 
     protected MutableOffsetMap(final ImmutableOffsetMap<K, V> m) {
-        this.offsets = m.offsets();
-        this.objects = m.objects();
-        this.newKeys = new LinkedHashMap<>();
+        this(m.offsets(), m.objects());
+    }
+
+    protected MutableOffsetMap(final Map<K, V> m) {
+        this(OffsetMapCache.offsetsFor(m.keySet()), m.values().toArray());
     }
 
     protected MutableOffsetMap(final MutableOffsetMap<K, V> m) {
@@ -76,6 +78,34 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
         this.objects = m.objects;
         this.newKeys = new LinkedHashMap<>(m.newKeys);
         this.removed = m.removed;
+    }
+
+    private MutableOffsetMap(final Map<K, Integer> offsets, final Object[] objects) {
+        this.offsets = Preconditions.checkNotNull(offsets);
+        this.objects = Preconditions.checkNotNull(objects);
+        this.newKeys = new LinkedHashMap<>();
+    }
+
+    public static <K, V> MutableOffsetMap<K, V> copyOf(final Map<K, V> m) {
+        if (m instanceof MutableOffsetMap) {
+            return ((MutableOffsetMap<K, V>) m).clone();
+        }
+        if (m instanceof ImmutableOffsetMap) {
+            return ((ImmutableOffsetMap<K, V>) m).toModifiableMap();
+        }
+
+        return new MutableOffsetMap<>(m);
+    }
+
+    public static <K, V> MutableOffsetMap<K, V> forOffsets(final Map<K, Integer> offsets) {
+        final Object[] objects = new Object[offsets.size()];
+        Arrays.fill(objects, NO_VALUE);
+
+        return new MutableOffsetMap<>(offsets, objects);
+    }
+
+    public static <K, V> MutableOffsetMap<K, V> forKeySet(final Collection<K> keySet) {
+        return forOffsets(OffsetMapCache.offsetsFor(keySet));
     }
 
     @Override
@@ -249,7 +279,7 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
     }
 
     @Override
-    public MutableOffsetMap<K, V> clone() throws CloneNotSupportedException {
+    public MutableOffsetMap<K, V> clone() {
         return new MutableOffsetMap<K, V>(this);
     }
 
