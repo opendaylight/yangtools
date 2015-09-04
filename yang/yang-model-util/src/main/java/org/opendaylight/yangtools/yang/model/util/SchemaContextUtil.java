@@ -221,7 +221,7 @@ public final class SchemaContextUtil {
         Preconditions.checkState(schemaNode.getPath() != null, "Schema Path for Schema Node is not "
                 + "set properly (Schema Path is NULL)");
 
-        final QName qname = Iterables.getFirst(schemaNode.getPath().getPathTowardsRoot(), null);
+        final QName qname = schemaNode.getPath().getLastComponent();
         Preconditions.checkState(qname != null,
                 "Schema Path contains invalid state of path parts. " +
                         "The Schema Path MUST contain at least ONE QName which defines namespace and Local name of path.");
