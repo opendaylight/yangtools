@@ -1,0 +1,40 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+
+    revision 2015-09-02 {
+        description test;
+    }
+
+    container root-container {
+        uses grouping-with-node-and-choice {
+            augment "node/choice-in-grouping" {
+                case two {
+                    uses grouping-two;
+                }
+            }
+        }
+    }
+
+    grouping grouping-with-node-and-choice {
+        list node {
+            uses grouping-with-choice;
+        }
+    }
+
+    grouping grouping-with-choice {
+        choice choice-in-grouping {
+            case one {
+                leaf one {
+                    type string;
+                }
+            }
+        }
+    }
+
+    grouping grouping-two {
+        leaf two {
+            type string;
+        }
+    }
+}
