@@ -57,13 +57,12 @@ final class DataContainerCodecPrototype<T> implements NodeContextSupplier {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     static <T extends DataSchemaNode> DataContainerCodecPrototype<T> from(final Class<?> cls, final T schema,
             final CodecContextFactory factory) {
-        final NodeIdentifier arg = new NodeIdentifier(schema.getQName());
-        return new DataContainerCodecPrototype(cls, arg, schema, factory);
+        return new DataContainerCodecPrototype(cls, NodeIdentifier.create(schema.getQName()), schema, factory);
     }
 
     static DataContainerCodecPrototype<SchemaContext> rootPrototype(final CodecContextFactory factory) {
         final SchemaContext schema = factory.getRuntimeContext().getSchemaContext();
-        final NodeIdentifier arg = new NodeIdentifier(schema.getQName());
+        final NodeIdentifier arg = NodeIdentifier.create(schema.getQName());
         return new DataContainerCodecPrototype<SchemaContext>(DataRoot.class, arg, schema, factory);
     }
 
@@ -75,7 +74,7 @@ final class DataContainerCodecPrototype<T> implements NodeContextSupplier {
     }
 
     static DataContainerCodecPrototype<NotificationDefinition> from(final Class<?> augClass, final NotificationDefinition schema, final CodecContextFactory factory) {
-        final PathArgument arg = new NodeIdentifier(schema.getQName());
+        final PathArgument arg = NodeIdentifier.create(schema.getQName());
         return new DataContainerCodecPrototype<NotificationDefinition>(augClass,arg, schema, factory);
     }
 

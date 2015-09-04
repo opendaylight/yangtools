@@ -70,7 +70,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
                             continue;
                         }
                     }
-                    byYangCaseChildBuilder.put(new NodeIdentifier(cazeChild.getQName()), cazeDef);
+                    byYangCaseChildBuilder.put(NodeIdentifier.create(cazeChild.getQName()), cazeDef);
                 }
             } else {
                 /*
