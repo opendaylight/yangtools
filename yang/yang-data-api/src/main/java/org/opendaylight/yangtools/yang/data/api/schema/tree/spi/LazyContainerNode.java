@@ -8,11 +8,21 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 import com.google.common.base.Optional;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import org.opendaylight.yangtools.util.MutableOffsetMap;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class LazyContainerNode extends ContainerNode {
     protected LazyContainerNode(final NormalizedNode<?, ?> data, final Version version) {
@@ -30,6 +40,15 @@ final class LazyContainerNode extends ContainerNode {
         return Optional.absent();
     }
 
+    private Map<PathArgument, TreeNode> fillChildren(final Map<PathArgument, TreeNode> children) {
+        for (NormalizedNode<?, ?> child : castData().getValue()) {
+            PathArgument id = child.getIdentifier();
+            children.put(id, TreeNodeFactory.createTreeNode(child, getVersion()));
+        }
+
+        return children;
+    }
+
     @Override
     public MutableTreeNode mutable() {
         /*
@@ -40,13 +59,39 @@ final class LazyContainerNode extends ContainerNode {
          * The simplest thing to do is to just flush the amortized work and be done
          * with it.
          */
-        final Map<PathArgument, TreeNode> children = new HashMap<>();
-        for (NormalizedNode<?, ?> child : castData().getValue()) {
-            PathArgument id = child.getIdentifier();
-            children.put(id, TreeNodeFactory.createTreeNode(child, getVersion()));
+        return new Mutable(this, fillChildren(new HashMap<PathArgument, TreeNode>()));
+    }
+
+    private static final LoadingCache<DataNodeContainer, Map<PathArgument, Integer>> OFFSET_CACHE =
+            CacheBuilder.newBuilder().weakValues()
+            .build(new CacheLoader<DataNodeContainer, Map<PathArgument, Integer>>() {
+
+                @Override
+                public Map<PathArgument, Integer> load(final DataNodeContainer key) {
+                    final Collection<DataSchemaNode> childSchemas = key.getChildNodes();
+                    final Collection<PathArgument> childKeys = new ArrayList<>(childSchemas.size());
+                    for (DataSchemaNode c : childSchemas) {
+                        childKeys.add(NodeIdentifier.create(c.getQName()));
+                    }
+
+                    return OffsetMapCache.offsetsFor(childKeys);
+                }
+            });
+
+    public MutableTreeNode mutable(final DataNodeContainer schema) {
+        /*
+         * Lists typically have an unbounded number of elements. One exception is a keyed list with leaves having
+         * low value type cardinality.
+         *
+         * TODO: eventhough a list keyed by an enum or boolean is probably not very prevalent, we should take a look
+         *       and optimize those lists, too.
+         */
+        if (schema instanceof ListSchemaNode) {
+            return mutable();
         }
 
-        return new Mutable(this, children);
+        final Map<PathArgument, Integer> offsetMap = OFFSET_CACHE.getUnchecked(schema);
+        return new Mutable(this, fillChildren(new MutableOffsetMap<PathArgument, TreeNode>(offsetMap)));
     }
 
     @SuppressWarnings("unchecked")
