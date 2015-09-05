@@ -12,6 +12,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.UnmodifiableIterator;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -245,7 +246,7 @@ public abstract class SchemaPath implements Immutable {
         return new Iterable<QName>() {
             @Override
             public Iterator<QName> iterator() {
-                return new Iterator<QName>() {
+                return new UnmodifiableIterator<QName>() {
                     private SchemaPath current = SchemaPath.this;
 
                     @Override
@@ -262,11 +263,6 @@ public abstract class SchemaPath implements Immutable {
                         } else {
                             throw new NoSuchElementException("No more elements available");
                         }
-                    }
-
-                    @Override
-                    public void remove() {
-                        throw new UnsupportedOperationException("Component removal not supported");
                     }
                 };
             }
