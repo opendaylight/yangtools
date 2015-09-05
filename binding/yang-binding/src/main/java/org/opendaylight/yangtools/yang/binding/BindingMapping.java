@@ -128,7 +128,9 @@ public final class BindingMapping {
             builder.append(p);
         }
 
-        return builder.toString();
+        // Prevent duplication of input string
+        final String result = builder.toString();
+        return packageName.equals(result) ? packageName : result;
     }
 
     public static String getMethodName(final QName name) {
