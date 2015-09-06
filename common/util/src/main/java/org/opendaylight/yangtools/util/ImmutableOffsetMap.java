@@ -43,6 +43,7 @@ public class ImmutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> impleme
 
     private final Map<K, Integer> offsets;
     private final Object[] objects;
+    private int hashCode;
 
     /**
      * Construct a new instance backed by specified key-to-offset map and array of objects.
@@ -116,6 +117,22 @@ public class ImmutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> impleme
     @Override
     public final boolean isEmpty() {
         return offsets.isEmpty();
+    }
+
+    @Override
+    public int hashCode() {
+        if (hashCode != 0) {
+            return hashCode;
+        }
+
+        int result = 0;
+        for (Entry<K, Integer> e : offsets.entrySet()) {
+            final Object v = objects[e.getValue()];
+            result += e.getKey().hashCode() ^ objectToValue(e.getKey(), v).hashCode();
+        }
+
+        hashCode = result;
+        return result;
     }
 
     @Override
@@ -242,7 +259,7 @@ public class ImmutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> impleme
                 @Override
                 public Entry<K, V> next() {
                     final Entry<K, Integer> e = it.next();
-                    return new SimpleEntry<>(e.getKey(), objectToValue(e.getKey(), objects[e.getValue()]));
+                    return new SimpleImmutableEntry<>(e.getKey(), objectToValue(e.getKey(), objects[e.getValue()]));
                 }
             };
         }

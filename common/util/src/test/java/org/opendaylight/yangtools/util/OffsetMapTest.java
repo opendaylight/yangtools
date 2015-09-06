@@ -71,6 +71,9 @@ public class OffsetMapTest {
         assertEquals(twoEntryMap, map);
         assertEquals(map, twoEntryMap);
 
+        // hashcode has to match
+        assertEquals(twoEntryMap.hashCode(), map.hashCode());
+
         // Iterator order needs to be preserved
         assertTrue(Iterators.elementsEqual(twoEntryMap.entrySet().iterator(), map.entrySet().iterator()));
 
@@ -522,6 +525,13 @@ public class OffsetMapTest {
         assertFalse(map.equals(null));
         assertFalse(map.equals("string"));
         assertTrue(map.equals(source));
+    }
+
+    @Test
+    public void testMutableSimpleHashCode() {
+        final Map<String, String> map = createMap().toModifiableMap();
+
+        assertEquals(twoEntryMap.hashCode(), map.hashCode());
     }
 
     @Test

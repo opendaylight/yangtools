@@ -254,6 +254,20 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
     }
 
     @Override
+    public int hashCode() {
+        int result = 0;
+
+        for (Entry<K, Integer> e : offsets.entrySet()) {
+            final Object v = objects[e.getValue()];
+            if (!NO_VALUE.equals(v)) {
+                result += e.getKey().hashCode() ^ objectToValue(e.getKey(), v).hashCode();
+            }
+        }
+
+        return result + newKeys.hashCode();
+    }
+
+    @Override
     public boolean equals(final Object o) {
         if (o == this) {
             return true;
