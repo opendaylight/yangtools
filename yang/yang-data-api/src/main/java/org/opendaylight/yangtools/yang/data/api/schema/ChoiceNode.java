@@ -12,16 +12,17 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
- *
  * Node representing data instance of <code>choice</code>.
  *
- * Choice node is instance of one of possible alternatives, from which
- * only one is allowed to exist at one time in particular context of parent node.
-   YANG Model and
- * schema for choice is described by instance of  {@link org.opendaylight.yangtools.yang.model.api.ChoiceNode}.
- * Valid alternatives of subtree are described by instances of {@link org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode}
- * which are retrieved via {@link org.opendaylight.yangtools.yang.model.api.ChoiceNode#getCases()}.
+ * Choice node is instance of one of possible alternatives, from which only one is allowed to exist at one time in
+ * particular context of parent node.
  *
+ * YANG Model and schema for choice is described by instance of
+ * {@link org.opendaylight.yangtools.yang.model.api.ChoiceNode}.
+ *
+ * Valid alternatives of subtree are described by instances of
+ * {@link org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode}, which are retrieved via
+ * {@link org.opendaylight.yangtools.yang.model.api.ChoiceNode#getCases()}.
  */
 public interface ChoiceNode extends //
         MixinNode, //

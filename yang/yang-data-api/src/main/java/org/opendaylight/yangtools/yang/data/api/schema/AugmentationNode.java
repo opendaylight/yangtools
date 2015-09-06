@@ -8,13 +8,12 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 
 /**
- * Data instance of <code>augment</code> assiociated with parent node.
+ * Data instance of <code>augment</code> associated with parent node.
  *
  * Augmentation is addition of subtree defined by other external YANG Model and
  * is schema for subtree is described by instance of  {@link AugmentationSchema}
@@ -24,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
  *
  */
 public interface AugmentationNode extends MixinNode, DataContainerNode<AugmentationIdentifier>,
-    DataContainerChild<YangInstanceIdentifier.AugmentationIdentifier, Collection<DataContainerChild<? extends PathArgument, ?>>> {
+    DataContainerChild<AugmentationIdentifier, Collection<DataContainerChild<? extends PathArgument, ?>>> {
 
     /**
      * Gets identifier of augmentation node
