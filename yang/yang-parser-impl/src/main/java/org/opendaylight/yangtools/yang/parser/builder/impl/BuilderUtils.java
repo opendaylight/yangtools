@@ -813,6 +813,25 @@ public final class BuilderUtils {
         if (qname.getRevision() == null) {
             return map.lastEntry().getValue();
         }
+
+        if (qname.getRevision().compareTo(map.lastEntry().getKey()) > 0) {
+            /*
+             * We are trying to find more recent revision of module than is in
+             * the map. Most probably the yang models are not referenced
+             * correctly and the revision of a base module or submodule has not
+             * been updated along with revision of a referenced module or
+             * submodule. However, we should return the most recent entry in the
+             * map, otherwise the null pointer exception occurs (see Bug3799).
+             */
+            LOG.warn(String
+                    .format("Attempt to find more recent revision of module than is available. "
+                            + "The requested revision is [%s], but the most recent available revision of module is [%s]."
+                            + " Most probably some of Yang models do not have updated revision or they are not "
+                            + "referenced correctly.",
+                            qname.getRevision(), map.lastEntry().getKey()));
+            return map.lastEntry().getValue();
+        }
+
         return map.get(qname.getRevision());
     }
 
