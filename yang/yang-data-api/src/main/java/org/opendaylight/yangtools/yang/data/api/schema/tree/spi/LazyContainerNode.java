@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -30,6 +32,30 @@ final class LazyContainerNode extends ContainerNode {
         return Optional.absent();
     }
 
+    // Assumes default load factor of 0.75 and capacity of 16.
+    private static <K, V> Map<K, V> allocateMap(final int hint) {
+        switch (hint) {
+        case 0:
+        case 1:
+            // Zero does not matter, but will be kept small if it is touched in the future
+            return new HashMap<>(1);
+        case 2:
+            // Two entries, may end up being grown to 4
+            return new HashMap<>(2);
+        case 3:
+            // 4 * 0.75 = 3
+            return new HashMap<>(4);
+        case 4:
+        case 5:
+        case 6:
+            // 8 * 0.75 = 6
+            return new HashMap<>(8);
+        default:
+            // No savings, defer to Guava
+            return Maps.newHashMapWithExpectedSize(hint);
+        }
+    }
+
     @Override
     public MutableTreeNode mutable() {
         /*
@@ -40,8 +66,13 @@ final class LazyContainerNode extends ContainerNode {
          * The simplest thing to do is to just flush the amortized work and be done
          * with it.
          */
-        final Map<PathArgument, TreeNode> children = new HashMap<>();
-        for (NormalizedNode<?, ?> child : castData().getValue()) {
+        final Collection<NormalizedNode<?, ?>> oldChildren = castData().getValue();
+
+        // Use a proper sizing hint here, as the default size can suck for both extremely large and extremely small
+        // collections. For the large ones we end up rehashing the table, for small ones we end up using more space
+        // than necessary.
+        final Map<PathArgument, TreeNode> children = allocateMap(oldChildren.size());
+        for (NormalizedNode<?, ?> child : oldChildren) {
             PathArgument id = child.getIdentifier();
             children.put(id, TreeNodeFactory.createTreeNode(child, getVersion()));
         }
