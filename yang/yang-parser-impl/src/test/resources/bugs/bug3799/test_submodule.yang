@@ -1,0 +1,25 @@
+submodule test_submodule {
+
+    belongs-to "test_module" {
+        prefix "sub";
+    }
+
+    organization "some organisation";
+
+    revision 2015-05-05 {
+        description
+                "submodule for testing with grouping";
+    }
+
+    grouping foo {
+        leaf bar {
+            description "some description";
+            type uint64;
+        }
+    }
+
+    notification baz {
+        description "container using grouping";
+        uses foo;
+    }
+}

@@ -1,0 +1,25 @@
+module test_module {
+
+    namespace "http://www.example.com/test";
+    prefix "test";
+
+    include "test_submodule";
+
+    organization "some organisation";
+
+    description
+        "Testing including a submodule with a different revision number";
+
+    revision 2014-06-15 {
+        description "some more changes";
+    }
+    revision 2013-06-15 {
+        description "some changes";
+    }
+
+    container some_container {
+
+        description
+                "some container";
+    }
+}
