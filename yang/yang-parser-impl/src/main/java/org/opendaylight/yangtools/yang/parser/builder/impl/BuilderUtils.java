@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import java.util.Map.Entry;
+
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -813,6 +815,26 @@ public final class BuilderUtils {
         if (qname.getRevision() == null) {
             return map.lastEntry().getValue();
         }
+
+        Entry<Date, ModuleBuilder> lastEntry = map.lastEntry();
+        if (qname.getRevision().compareTo(lastEntry.getKey()) > 0) {
+            /*
+             * We are trying to find more recent revision of module than is in
+             * the map. Most probably the yang models are not referenced
+             * correctly and the revision of a base module or submodule has not
+             * been updated along with revision of a referenced module or
+             * submodule. However, we should return the most recent entry in the
+             * map, otherwise the null pointer exception occurs (see Bug3799).
+             */
+            LOG.warn(String
+                    .format("Attempt to find more recent revision of module than is available. "
+                            + "The requested revision is [%s], but the most recent available revision of module is [%s]."
+                            + " Most probably some of Yang models do not have updated revision or they are not "
+                            + "referenced correctly.",
+                            qname.getRevision(), lastEntry.getKey()));
+            return lastEntry.getValue();
+        }
+
         return map.get(qname.getRevision());
     }
 
