@@ -109,6 +109,7 @@ public final class MapAdaptor {
      * @param input
      * @return
      */
+    @SuppressWarnings("static-method")
     public <K, V> Map<K, V> takeSnapshot(final Map<K, V> input) {
         if (input instanceof ReadOnlyTrieMap) {
             return ((ReadOnlyTrieMap<K, V>)input).toReadWrite();
@@ -116,9 +117,43 @@ public final class MapAdaptor {
 
         LOG.trace("Converting input {} to a HashMap", input);
 
-        // FIXME: be a bit smart about allocation based on observed size
+        /*
+         * The default HashMap copy constructor performs a bad thing for small maps, using the default capacity of 16
+         * as the minimum sizing hint, which can lead to wasted memory. Since the HashMap grows in powers-of-two, we
+         * only kick this in if we are storing 6 entries or less, as that results in 8-entry map -- the next power is
+         * 16, which is the default.
+         */
+        final Map<K, V> ret;
+        final int size = input.size();
+        if (size <= 6) {
+            final int target;
+            switch (size) {
+            case 0:
+            case 1:
+                target = 1;
+                break;
+            case 2:
+                target = 2;
+                break;
+            case 3:
+                target = 4;
+                break;
+            default:
+                target = 8;
+            }
 
-        final Map<K, V> ret = new HashMap<>(input);
+            ret = new HashMap<>(target);
+            ret.putAll(input);
+        } else if (input instanceof HashMap) {
+            // HashMap supports cloning, but we want to make sure we trim it down if entries were removed, so we do
+            // this only after having checked for small sizes.
+            @SuppressWarnings("unchecked")
+            final Map<K, V> tmp = (Map<K, V>) ((HashMap<K, V>) input).clone();
+            ret = tmp;
+        } else {
+            ret = new HashMap<>(input);
+        }
+
         LOG.trace("Read-write HashMap is {}", ret);
         return ret;
     }
