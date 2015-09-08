@@ -10,9 +10,7 @@ package org.opendaylight.yangtools.yang2sources.plugin.it;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
-
 import com.google.common.base.Joiner;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -21,12 +19,21 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class YangToSourcesPluginTestIT {
+    private static String GLOBAL_SETTINGS_OVERRIDE;
+    private static String USER_SETTINGS_OVERRIDE;
+
+    @BeforeClass
+    public static void setupClass() {
+        // OpenDaylight Jenkins does not have settings at the default path, pick file locations from environment
+        GLOBAL_SETTINGS_OVERRIDE = System.getenv("GLOBAL_SETTINGS_FILE");
+        USER_SETTINGS_OVERRIDE = System.getenv("SETTINGS_FILE");
+    }
 
     // TODO Test yang files in transitive dependencies
 
@@ -135,6 +142,14 @@ public class YangToSourcesPluginTestIT {
         Verifier verifier = new Verifier(parent.getParent());
         if (ignoreF) {
             verifier.addCliOption("-fn");
+        }
+        if (GLOBAL_SETTINGS_OVERRIDE != null) {
+            verifier.addCliOption("-gs");
+            verifier.addCliOption(GLOBAL_SETTINGS_OVERRIDE);
+        }
+        if (USER_SETTINGS_OVERRIDE != null) {
+            verifier.addCliOption("-s");
+            verifier.addCliOption(USER_SETTINGS_OVERRIDE);
         }
         verifier.setMavenDebug(true);
         verifier.executeGoal("generate-sources");
