@@ -16,13 +16,14 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Nonnull;
 
@@ -31,18 +32,15 @@ import javax.annotation.Nonnull;
  * a backing array. This is useful for situations where the same key set is shared across a multitude of maps, as this
  * class uses a global cache to share the key-to-offset mapping.
  *
- * This map supports creation of value objects on the fly. To achieve that, subclasses should override {@link #valueToObject(Object)},
- * {@link #objectToValue(Object, Object)}, {@link #clone()} and {@link #toModifiableMap()} methods.
- *
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values
  */
 @Beta
-public class ImmutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implements UnmodifiableMapPhase<K, V>, Serializable {
+public final class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K, V>, Serializable {
     private static final long serialVersionUID = 1L;
 
     private final Map<K, Integer> offsets;
-    private final Object[] objects;
+    private final V[] objects;
     private int hashCode;
 
     /**
@@ -52,7 +50,7 @@ public class ImmutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> impleme
      * @param objects Array of value object, may not be null. The array is stored as is, the caller
      *              is responsible for ensuring its contents remain unmodified.
      */
-    ImmutableOffsetMap(@Nonnull final Map<K, Integer> offsets, @Nonnull final Object[] objects) {
+    ImmutableOffsetMap(@Nonnull final Map<K, Integer> offsets, @Nonnull final V[] objects) {
         this.offsets = Preconditions.checkNotNull(offsets);
         this.objects = Preconditions.checkNotNull(objects);
         Preconditions.checkArgument(offsets.size() == objects.length);
@@ -63,7 +61,7 @@ public class ImmutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> impleme
      *
      * @param m Instance to share data with, may not be null.
      */
-    protected ImmutableOffsetMap(@Nonnull final ImmutableOffsetMap<K, V> m) {
+    ImmutableOffsetMap(@Nonnull final ImmutableOffsetMap<K, V> m) {
         this.offsets = m.offsets;
         this.objects = m.objects;
     }
@@ -112,12 +110,12 @@ public class ImmutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> impleme
     }
 
     @Override
-    public final int size() {
+    public int size() {
         return offsets.size();
     }
 
     @Override
-    public final boolean isEmpty() {
+    public boolean isEmpty() {
         return offsets.isEmpty();
     }
 
@@ -129,8 +127,7 @@ public class ImmutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> impleme
 
         int result = 0;
         for (Entry<K, Integer> e : offsets.entrySet()) {
-            final Object v = objects[e.getValue()];
-            result += e.getKey().hashCode() ^ objectToValue(e.getKey(), v).hashCode();
+            result += e.getKey().hashCode() ^ objects[e.getValue()].hashCode();
         }
 
         hashCode = result;
@@ -165,13 +162,12 @@ public class ImmutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> impleme
             try {
                 // Ensure all objects are present
                 for (Entry<K, Integer> e : offsets.entrySet()) {
-                    final V v = objectToValue(e.getKey(), objects[e.getValue()]);
-                    if (!v.equals(om.get(e.getKey()))) {
+                    if (!objects[e.getValue()].equals(om.get(e.getKey()))) {
                         return false;
                     }
                 }
             } catch (ClassCastException e) {
-                // Can be thrown by om.get() and indicate we have incompatible key types
+                // Can be thrown by om.get() indicating we have incompatible key types
                 return false;
             }
 
@@ -182,55 +178,58 @@ public class ImmutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> impleme
     }
 
     @Override
-    public final boolean containsKey(final Object key) {
+    public boolean containsKey(final Object key) {
         return offsets.containsKey(key);
     }
 
     @Override
-    public final boolean containsValue(final Object value) {
-        @SuppressWarnings("unchecked")
-        final Object obj = valueToObject((V)value);
+    public boolean containsValue(final Object value) {
         for (Object o : objects) {
-            if (Objects.equals(obj, o)) {
+            if (value.equals(o)) {
                 return true;
             }
         }
         return false;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public final V get(final Object key) {
+    public V get(final Object key) {
         final Integer offset = offsets.get(key);
-        if (offset == null) {
-            return null;
-        }
-
-        return objectToValue((K) key, objects[offset]);
+        return offset == null ? null : objects[offset];
     }
 
     @Override
-    public final V remove(final Object key) {
+    public V remove(final Object key) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void putAll(final Map<? extends K, ? extends V> m) {
+    public V put(final K key, final V value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final void clear() {
+    public void putAll(final Map<? extends K, ? extends V> m) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public final Set<K> keySet() {
+    public void clear() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Set<K> keySet() {
         return offsets.keySet();
     }
 
     @Override
-    public final Set<Entry<K, V>> entrySet() {
+    public Collection<V> values() {
+        return new ConstantArrayCollection<>(objects);
+    }
+
+    @Override
+    public Set<Entry<K, V>> entrySet() {
         return new EntrySet();
     }
 
@@ -243,7 +242,7 @@ public class ImmutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> impleme
         return offsets;
     }
 
-    Object[] objects() {
+    V[] objects() {
         return objects;
     }
 
@@ -261,7 +260,7 @@ public class ImmutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> impleme
                 @Override
                 public Entry<K, V> next() {
                     final Entry<K, Integer> e = it.next();
-                    return new SimpleImmutableEntry<>(e.getKey(), objectToValue(e.getKey(), objects[e.getValue()]));
+                    return new SimpleImmutableEntry<>(e.getKey(), objects[e.getValue()]);
                 }
             };
         }
