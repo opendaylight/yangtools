@@ -9,7 +9,9 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ServiceLoader;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -21,6 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
+import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathSchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -35,6 +38,21 @@ import org.slf4j.LoggerFactory;
 
 abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaAwareApplyOperation.class);
+
+    /*
+     * Eagerly-bound XPath factory. If we cannot find it, we will not enforce SchemaPaths
+     */
+    private static final XPathSchemaContextFactory XPATH_CONTEXT_FACTORY;
+    static {
+        final Iterator<XPathSchemaContextFactory> it = ServiceLoader.load(XPathSchemaContextFactory.class).iterator();
+        if (!it.hasNext()) {
+            LOG.info("Failed to find a service for {}, 'must' and 'when' statements will not be enforced",
+                XPathSchemaContextFactory.class);
+            XPATH_CONTEXT_FACTORY = null;
+        } else {
+            XPATH_CONTEXT_FACTORY = it.next();
+        }
+    }
 
     static SchemaAwareApplyOperation from(final ContainerSchemaNode schemaNode, final TreeType treeType) {
         return new ContainerModificationStrategy(schemaNode, treeType);
