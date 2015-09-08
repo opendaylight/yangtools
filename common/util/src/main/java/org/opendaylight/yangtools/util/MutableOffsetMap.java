@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
+import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,16 +34,17 @@ import java.util.Set;
  * </code>
  * results in source and result sharing the backing objects.
  *
+ * This map does not support null keys nor values.
+ *
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values
  */
 @Beta
-public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implements Cloneable, ModifiableMapPhase<K, V> {
+public final class MutableOffsetMap<K, V> extends AbstractMap<K, V> implements Cloneable, ModifiableMapPhase<K, V> {
     private static final Object[] EMPTY_ARRAY = new Object[0];
-    private static final Object NO_VALUE = new Object();
     private final Map<K, Integer> offsets;
     private final Map<K, V> newKeys;
-    private Object[] objects;
+    private V[] objects;
     private int removed = 0;
     private transient volatile int modCount;
     private boolean needClone = true;
@@ -51,15 +53,15 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
         this(Collections.<K>emptySet());
     }
 
+    @SuppressWarnings("unchecked")
     protected MutableOffsetMap(final Collection<K> keySet) {
         if (!keySet.isEmpty()) {
             removed = keySet.size();
             offsets = OffsetMapCache.offsetsFor(keySet);
-            objects = new Object[removed];
-            Arrays.fill(objects, NO_VALUE);
+            objects = (V[])new Object[removed];
         } else {
             offsets = ImmutableMap.of();
-            objects = EMPTY_ARRAY;
+            objects = (V[])EMPTY_ARRAY;
         }
 
         this.newKeys = new LinkedHashMap<>();
@@ -69,8 +71,9 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
         this(m.offsets(), m.objects());
     }
 
+    @SuppressWarnings("unchecked")
     protected MutableOffsetMap(final Map<K, V> m) {
-        this(OffsetMapCache.offsetsFor(m.keySet()), m.values().toArray());
+        this(OffsetMapCache.offsetsFor(m.keySet()), (V[])m.values().toArray());
     }
 
     protected MutableOffsetMap(final MutableOffsetMap<K, V> m) {
@@ -80,7 +83,7 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
         this.removed = m.removed;
     }
 
-    private MutableOffsetMap(final Map<K, Integer> offsets, final Object[] objects) {
+    private MutableOffsetMap(final Map<K, Integer> offsets, final V[] objects) {
         this.offsets = Preconditions.checkNotNull(offsets);
         this.objects = Preconditions.checkNotNull(objects);
         this.newKeys = new LinkedHashMap<>();
@@ -98,9 +101,8 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
     }
 
     public static <K, V> MutableOffsetMap<K, V> forOffsets(final Map<K, Integer> offsets) {
-        final Object[] objects = new Object[offsets.size()];
-        Arrays.fill(objects, NO_VALUE);
-
+        @SuppressWarnings("unchecked")
+        final V[] objects = (V[]) new Object[offsets.size()];
         return new MutableOffsetMap<>(offsets, objects);
     }
 
@@ -109,40 +111,25 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
     }
 
     @Override
-    public final int size() {
+    public int size() {
         return offsets.size() + newKeys.size() - removed;
     }
 
     @Override
-    public final boolean isEmpty() {
+    public boolean isEmpty() {
         return size() == 0;
     }
 
     @Override
-    public final boolean containsKey(final Object key) {
+    public boolean containsKey(final Object key) {
         final Integer offset = offsets.get(key);
-        if (offset == null) {
-            return newKeys.containsKey(key);
-        }
-
-        return !NO_VALUE.equals(objects[offset]);
+        return offset == null ? newKeys.containsKey(key) : objects[offset] != null;
     }
 
     @Override
-    public final V get(final Object key) {
+    public V get(final Object key) {
         final Integer offset = offsets.get(key);
-        if (offset == null) {
-            return newKeys.get(key);
-        }
-
-        final Object o = objects[offset];
-        if (!NO_VALUE.equals(o)) {
-            @SuppressWarnings("unchecked")
-            final K k = (K)key;
-            return objectToValue(k, o);
-        } else {
-            return null;
-        }
+        return offset == null ? newKeys.get(key) : objects[offset];
     }
 
     private void cloneArray() {
@@ -167,19 +154,18 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
         }
 
         cloneArray();
-        final Object ret = objects[offset];
-        objects[offset] = valueToObject(value);
-        if (NO_VALUE.equals(ret)) {
+        final V ret = objects[offset];
+        objects[offset] = value;
+        if (ret == null) {
             modCount++;
             removed--;
-            return null;
         }
 
-        return objectToValue(key, ret);
+        return ret;
     }
 
     @Override
-    public final V remove(final Object key) {
+    public V remove(final Object key) {
         final Integer offset = offsets.get(key);
         if (offset == null) {
             final V ret = newKeys.remove(key);
@@ -190,32 +176,28 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
         }
 
         cloneArray();
-        final Object ret = objects[offset];
-        objects[offset] = NO_VALUE;
-        if (!NO_VALUE.equals(ret)) {
+        final V ret = objects[offset];
+        objects[offset] = null;
+        if (ret != null) {
             modCount++;
             removed++;
-            @SuppressWarnings("unchecked")
-            final K k = (K)key;
-            return objectToValue(k, ret);
-        } else {
-            return null;
         }
+        return ret;
     }
 
     @Override
-    public final void clear() {
+    public void clear() {
         if (size() != 0) {
             newKeys.clear();
             cloneArray();
-            Arrays.fill(objects, NO_VALUE);
+            Arrays.fill(objects, null);
             removed = objects.length;
             modCount++;
         }
     }
 
     @Override
-    public final Set<Entry<K, V>> entrySet() {
+    public Set<Entry<K, V>> entrySet() {
         return new EntrySet();
     }
 
@@ -245,7 +227,7 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
         if (removed != 0) {
             if (removed != offsets.size()) {
                 for (Entry<K, Integer> e : offsets.entrySet()) {
-                    if (!NO_VALUE.equals(objects[e.getValue()])) {
+                    if (objects[e.getValue()] != null) {
                         keyset.add(e.getKey());
                     }
                 }
@@ -256,13 +238,14 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
         keyset.addAll(newKeys.keySet());
 
         // Construct the values
-        final Object[] values = new Object[keyset.size()];
+        @SuppressWarnings("unchecked")
+        final V[] values = (V[])new Object[keyset.size()];
         int i = 0;
         if (removed != 0) {
             if (removed != offsets.size()) {
                 for (Entry<K, Integer> e : offsets.entrySet()) {
-                    final Object o = objects[e.getValue()];
-                    if (!NO_VALUE.equals(o)) {
+                    final V o = objects[e.getValue()];
+                    if (o != null) {
                         values[i++] = o;
                     }
                 }
@@ -272,7 +255,7 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
             i = offsets.size();
         }
         for (V v : newKeys.values()) {
-            values[i++] = valueToObject(v);
+            values[i++] = v;
         }
 
         return new ImmutableOffsetMap<>(OffsetMapCache.offsetsFor(keyset), values);
@@ -280,6 +263,7 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
 
     @Override
     public MutableOffsetMap<K, V> clone() {
+        // FIXME: super.clone()
         return new MutableOffsetMap<K, V>(this);
     }
 
@@ -289,8 +273,8 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
 
         for (Entry<K, Integer> e : offsets.entrySet()) {
             final Object v = objects[e.getValue()];
-            if (!NO_VALUE.equals(v)) {
-                result += e.getKey().hashCode() ^ objectToValue(e.getKey(), v).hashCode();
+            if (v != null) {
+                result += e.getKey().hashCode() ^ v.hashCode();
             }
         }
 
@@ -335,12 +319,9 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
 
                 // Ensure all objects are present
                 for (Entry<K, Integer> e : offsets.entrySet()) {
-                    final Object obj = objects[e.getValue()];
-                    if (!NO_VALUE.equals(obj)) {
-                        final V v = objectToValue(e.getKey(), obj);
-                        if (!v.equals(om.get(e.getKey()))) {
-                            return false;
-                        }
+                    final V v = objects[e.getValue()];
+                    if (v != null && !v.equals(om.get(e.getKey()))) {
+                        return false;
                     }
                 }
             } catch (ClassCastException e) {
@@ -469,7 +450,7 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
         private void updateNextKey() {
             while (oldIterator.hasNext()) {
                 final Entry<K, Integer> e = oldIterator.next();
-                if (!NO_VALUE.equals(objects[e.getValue()])) {
+                if (objects[e.getValue()] != null) {
                     nextKey = e.getKey();
                     return;
                 }
@@ -498,7 +479,7 @@ public class MutableOffsetMap<K, V> extends AbstractLazyValueMap<K, V> implement
             final Integer offset = offsets.get(currentKey);
             if (offset != null) {
                 cloneArray();
-                objects[offset] = NO_VALUE;
+                objects[offset] = null;
                 removed++;
             } else {
                 newIterator.remove();
