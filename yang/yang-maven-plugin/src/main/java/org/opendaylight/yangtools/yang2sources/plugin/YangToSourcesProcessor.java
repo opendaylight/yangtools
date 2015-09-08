@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
+import java.io.BufferedInputStream;
+
+import org.apache.commons.io.IOUtils;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
 import java.io.Closeable;
@@ -147,7 +150,9 @@ class YangToSourcesProcessor {
                     YangsInZipsResult dependentYangResult = Util.findYangFilesInDependenciesAsStream(log, project);
                     Closeable dependentYangResult1 = dependentYangResult;
                     closeables.add(dependentYangResult1);
-                    all.addAll(dependentYangResult.getYangStreams());
+                    List<InputStream> yangStreams = removeDuplicities(dependentYangResult.getYangStreams());
+                    all.addAll(yangStreams);
+                    closeables.addAll(yangStreams);
                 }
 
                 allYangModules = parser.parseYangModelsFromStreamsMapped(all);
@@ -178,6 +183,39 @@ class YangToSourcesProcessor {
             log.error(message, e);
             throw new MojoExecutionException(message, e);
         }
+    }
+
+    private List<InputStream> removeDuplicities(List<InputStream> yangsFromDependencies) throws IOException {
+        List<InputStream> yangStreams = new ArrayList<>();
+
+        for(InputStream yangFromDependencies : yangsFromDependencies) {
+            BufferedInputStream yangFromDependenciesBuff  = new BufferedInputStream(yangFromDependencies);
+            if(!isDuplicity(yangFromDependenciesBuff, yangStreams)) {
+                yangStreams.add(yangFromDependenciesBuff);
+            }
+        }
+
+        return yangStreams;
+    }
+
+    private boolean isDuplicity(InputStream yangFromDependencies,
+            List<InputStream> yangStreams) throws IOException {
+
+        for (InputStream yangStream : yangStreams) {
+            yangStream.mark(0);
+            yangFromDependencies.mark(0);
+            if(IOUtils.contentEquals(yangFromDependencies, yangStream)) {
+                log.warn(String.format("Attempt to add duplicate yang model from dependencies. ([%s])",yangFromDependencies));
+                yangStream.reset();
+                yangFromDependencies.reset();
+                return true;
+            } else {
+                yangStream.reset();
+                yangFromDependencies.reset();
+            }
+        }
+
+        return false;
     }
 
     static class YangProvider {
