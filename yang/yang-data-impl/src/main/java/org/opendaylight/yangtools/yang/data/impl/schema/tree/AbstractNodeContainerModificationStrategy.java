@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.Collection;
@@ -134,45 +133,41 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     }
 
     @Override
-    public TreeNode applyTouch(final ModifiedNode modification,
-            final TreeNode currentMeta, final Version version) {
-        final MutableTreeNode newMeta = currentMeta.mutable();
-        newMeta.setSubtreeVersion(version);
-
+    public TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
         /*
-         * The user has issued an empty merge operation. In this case we do not perform
+         * The user may have issued an empty merge operation. In this case we do not perform
          * a data tree mutation, do not pass GO, and do not collect useless garbage. It
          * also means the ModificationType is UNMODIFIED.
          */
         final Collection<ModifiedNode> children = modification.getChildren();
-        if (children.isEmpty()) {
-            modification.resolveModificationType(ModificationType.UNMODIFIED);
-            newMeta.setData(currentMeta.getData());
-            return newMeta.seal();
-        }
+        if (!children.isEmpty()) {
+            @SuppressWarnings("rawtypes")
+            final NormalizedNodeContainerBuilder dataBuilder = createBuilder(currentMeta.getData());
+            final MutableTreeNode newMeta = currentMeta.mutable();
+            newMeta.setSubtreeVersion(version);
+            final TreeNode ret = mutateChildren(newMeta, dataBuilder, version, children);
 
-        @SuppressWarnings("rawtypes")
-        final NormalizedNodeContainerBuilder dataBuilder = createBuilder(currentMeta.getData());
-        final TreeNode ret = mutateChildren(newMeta, dataBuilder, version, children);
-
-        /*
-         * It is possible that the only modifications under this node were empty merges,
-         * which were turned into UNMODIFIED. If that is the case, we can turn this operation
-         * into UNMODIFIED, too, potentially cascading it up to root. This has the benefit
-         * of speeding up any users, who can skip processing child nodes.
-         *
-         * In order to do that, though, we have to check all child operations are UNMODIFIED.
-         * Let's do precisely that, stopping as soon we find a different result.
-         */
-        for (final ModifiedNode child : children) {
-            if (child.getModificationType() != ModificationType.UNMODIFIED) {
-                modification.resolveModificationType(ModificationType.SUBTREE_MODIFIED);
-                return ret;
+            /*
+             * It is possible that the only modifications under this node were empty merges,
+             * which were turned into UNMODIFIED. If that is the case, we can turn this operation
+             * into UNMODIFIED, too, potentially cascading it up to root. This has the benefit
+             * of speeding up any users, who can skip processing child nodes.
+             *
+             * In order to do that, though, we have to check all child operations are UNMODIFIED.
+             * Let's do precisely that, stopping as soon we find a different result.
+             */
+            for (final ModifiedNode child : children) {
+                if (child.getModificationType() != ModificationType.UNMODIFIED) {
+                    modification.resolveModificationType(ModificationType.SUBTREE_MODIFIED);
+                    return ret;
+                }
             }
         }
 
+        // The merge operation did not have any children, or all of them turned out to be UNMODIFIED, hence do not
+        // replace the metadata node.
         modification.resolveModificationType(ModificationType.UNMODIFIED);
-        return ret;
+        return currentMeta;
     }
 
     @Override
