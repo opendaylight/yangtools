@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentMap;
+import org.apache.commons.io.IOUtils;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -28,6 +30,7 @@ import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
+import org.opendaylight.yangtools.yang.parser.repo.URLSchemaContextResolver;
 import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.ContextHolder;
@@ -52,6 +55,7 @@ class YangToSourcesProcessor {
     private final boolean inspectDependencies;
     private final BuildContext buildContext;
     private final YangProvider yangProvider;
+    private final URLSchemaContextResolver resolver;
 
     @VisibleForTesting
     YangToSourcesProcessor(Log log, File yangFilesRootDir, File[] excludedFiles, List<CodeGeneratorArg> codeGenerators,
@@ -73,6 +77,7 @@ class YangToSourcesProcessor {
         this.project = Util.checkNotNull(project, "project");
         this.inspectDependencies = inspectDependencies;
         this.yangProvider = yangProvider;
+        this.resolver = URLSchemaContextResolver.create("maven-plugin");
     }
 
     YangToSourcesProcessor(BuildContext buildContext, Log log, File yangFilesRootDir, File[] excludedFiles, List<CodeGeneratorArg> codeGenerators,
@@ -99,6 +104,8 @@ class YangToSourcesProcessor {
              * dependencies.
              */
             final Collection<File> yangFilesInProject = Util.listFiles(yangFilesRootDir, excludedFiles, log);
+
+
             final Collection<File> allFiles = new ArrayList<>(yangFilesInProject);
             if (inspectDependencies) {
                 allFiles.addAll(Util.findYangFilesInDependencies(log, project));
@@ -128,6 +135,7 @@ class YangToSourcesProcessor {
 
             final List<InputStream> yangsInProject = new ArrayList<>();
             for (final File f : yangFilesInProject) {
+                // FIXME: This is hack - normal path should be reported.
                 yangsInProject.add(new NamedFileInputStream(f, META_INF_YANG_STRING + File.separator + f.getName()));
             }
 
@@ -147,7 +155,9 @@ class YangToSourcesProcessor {
                     YangsInZipsResult dependentYangResult = Util.findYangFilesInDependenciesAsStream(log, project);
                     Closeable dependentYangResult1 = dependentYangResult;
                     closeables.add(dependentYangResult1);
-                    all.addAll(dependentYangResult.getYangStreams());
+                    List<InputStream> yangStreams = toStreamsWithoutDuplicates(dependentYangResult.getYangStreams());
+                    all.addAll(yangStreams);
+                    closeables.addAll(yangStreams);
                 }
 
                 allYangModules = parser.parseYangModelsFromStreamsMapped(all);
@@ -178,6 +188,23 @@ class YangToSourcesProcessor {
             log.error(message, e);
             throw new MojoExecutionException(message, e);
         }
+    }
+
+    private List<InputStream> toStreamsWithoutDuplicates(List<YangSourceFromDependency> list) throws IOException {
+        ConcurrentMap<String, YangSourceFromDependency> byContent = Maps.newConcurrentMap();
+
+        for (YangSourceFromDependency yangFromDependency : list) {
+            try (InputStream dataStream = yangFromDependency.openStream()) {
+                String contents = IOUtils.toString(dataStream);
+                byContent.putIfAbsent(contents, yangFromDependency);
+            }
+
+        }
+        List<InputStream> inputs = new ArrayList<>(byContent.size());
+        for (YangSourceFromDependency entry : byContent.values()) {
+            inputs.add(entry.openStream());
+        }
+        return inputs;
     }
 
     static class YangProvider {
