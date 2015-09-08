@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a79b1b5_3878ac2a",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/BuilderUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 817,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-08T19:38:33Z",
+      "side": 1,
+      "message": "cache map.lastEntry() in a local variable, as it is potentially an expensive operation and in this particular case we can end up referencing it three times",
+      "revId": "eff0502d9ba3f2c15dd2f39aa0ed724f6c7ef9dc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
