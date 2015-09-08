@@ -42,7 +42,7 @@ public class OffsetMapTest {
 
     @Test(expected=IllegalArgumentException.class)
     public void testWrongImmutableConstruction() {
-        new ImmutableOffsetMap<String, String>(Collections.<String, Integer>emptyMap(), new Object[1]);
+        new ImmutableOffsetMap<String, String>(Collections.<String, Integer>emptyMap(), new String[1]);
     }
 
     @Test
