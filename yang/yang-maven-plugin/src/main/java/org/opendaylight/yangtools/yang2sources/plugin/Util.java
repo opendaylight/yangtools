@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -35,14 +36,9 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.repository.RepositorySystem;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
-import org.apache.maven.repository.RepositorySystem;
-
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 
 final class Util {
 
@@ -256,32 +252,29 @@ final class Util {
     }
 
     static final class YangsInZipsResult implements Closeable {
-        private final List<InputStream> yangStreams;
+        private final List<YangSourceFromDependency> yangStreams;
         private final List<Closeable> zipInputStreams;
 
-        private YangsInZipsResult(List<InputStream> yangStreams, List<Closeable> zipInputStreams) {
+        private YangsInZipsResult(List<YangSourceFromDependency> yangStreams, List<Closeable> zipInputStreams) {
             this.yangStreams = yangStreams;
             this.zipInputStreams = zipInputStreams;
         }
 
         @Override
         public void close() throws IOException {
-            for (InputStream is : yangStreams) {
-                is.close();
-            }
             for (Closeable is : zipInputStreams) {
                 is.close();
             }
         }
 
-        public List<InputStream> getYangStreams() {
+        public List<YangSourceFromDependency> getYangStreams() {
             return this.yangStreams;
         }
     }
 
     static YangsInZipsResult findYangFilesInDependenciesAsStream(Log log, MavenProject project)
             throws MojoFailureException {
-        List<InputStream> yangsFromDependencies = new ArrayList<>();
+        List<YangSourceFromDependency> yangsFromDependencies = new ArrayList<>();
         List<Closeable> zips = new ArrayList<>();
         try {
             List<File> filesOnCp = Util.getClassPath(project);
@@ -301,8 +294,8 @@ final class Util {
                                 return name.endsWith(".yang") && new File(dir, name).isFile();
                             }
                         });
-                        for (File yangFile : yangFiles) {
-                            yangsFromDependencies.add(new NamedFileInputStream(yangFile, YangToSourcesProcessor.META_INF_YANG_STRING + File.separator + yangFile.getName()));
+                        for (final File yangFile : yangFiles) {
+                            yangsFromDependencies.add(new YangSourceFromFile(file));
                         }
                     }
 
@@ -318,10 +311,7 @@ final class Util {
                         if (entryName.startsWith(YangToSourcesProcessor.META_INF_YANG_STRING_JAR)
                                 && !entry.isDirectory() && entryName.endsWith(".yang")) {
                             foundFilesForReporting.add(entryName);
-                            // This will be closed after all streams are
-                            // parsed.
-                            InputStream entryStream = zip.getInputStream(entry);
-                            yangsFromDependencies.add(entryStream);
+                            yangsFromDependencies.add(new YangSourceInZipFile(zip, entry));
                         }
                     }
                 }
@@ -337,6 +327,18 @@ final class Util {
         return new YangsInZipsResult(yangsFromDependencies, zips);
     }
 
+    /**
+     * Find all dependencies which contains yang sources
+     *
+     * Returns collection of YANG files and Zip files which contains YANG files.
+     *
+     * FIXME: Rename to what class is actually doing.
+     *
+     * @param log
+     * @param project
+     * @return
+     * @throws MojoFailureException
+     */
     static Collection<File> findYangFilesInDependencies(Log log, MavenProject project) throws MojoFailureException {
         final List<File> yangsFilesFromDependencies = new ArrayList<>();
 
