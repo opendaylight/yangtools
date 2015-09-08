@@ -34,6 +34,24 @@
       "revId": "25224ce00e3d83ab27d00b5f3c84e3c81841f2fc",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_882f35f6",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/QName.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-08T12:28:09Z",
+      "side": 1,
+      "message": "Actually, we have had that dependency since I522c76691a7885aa16a1324fe7bb49548018b8dd (which you waved in).",
+      "parentUuid": "3aa0d159_f4b4a036",
+      "revId": "25224ce00e3d83ab27d00b5f3c84e3c81841f2fc",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
