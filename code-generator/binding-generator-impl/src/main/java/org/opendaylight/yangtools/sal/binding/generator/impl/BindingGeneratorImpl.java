@@ -25,6 +25,9 @@ import static org.opendaylight.yangtools.binding.generator.util.Types.typeForCla
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findDataSchemaNode;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findNodeInSchemaContext;
 import static org.opendaylight.yangtools.yang.model.util.SchemaContextUtil.findParentModule;
+
+import com.google.common.base.Optional;
+
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
@@ -913,21 +916,32 @@ public class BindingGeneratorImpl implements BindingGenerator {
             return null;
         }
 
-        boolean fromUses = ((DataSchemaNode) result).isAddedByUses();
-        final Iterator<UsesNode> groupingUses = grouping.getUses().iterator();
-        while (groupingUses.hasNext() && fromUses) {
-            result = findOriginalTargetFromGrouping(targetPath, groupingUses.next());
-            if (result != null) {
-                fromUses = ((DataSchemaNode) result).isAddedByUses();
+        if (result instanceof DerivableSchemaNode) {
+            DerivableSchemaNode castedResult = (DerivableSchemaNode) result;
+            Optional<? extends SchemaNode> originalNode = castedResult
+                    .getOriginal();
+            if (castedResult.isAddedByUses() && originalNode.isPresent()) {
+                result = originalNode.get();
             }
         }
-        if (fromUses) {
-            // this indicates invalid yang and thus possible bug in code because
-            // invalid yang should be already spotted by parser
-            throw new IllegalStateException("Failed to generate code for augment in " + parentUsesNode);
-        }
 
-        return (DataSchemaNode) result;
+        if (result instanceof DataSchemaNode) {
+            DataSchemaNode resultDataSchemaNode = (DataSchemaNode) result;
+            if (resultDataSchemaNode.isAddedByUses()) {
+                // The original node is required, but we have only the copy of
+                // the original node.
+                // Maybe this indicates a bug in Yang parser.
+                throw new IllegalStateException(
+                        "Failed to generate code for augment in "
+                                + parentUsesNode);
+            } else {
+                return resultDataSchemaNode;
+            }
+        } else {
+            throw new IllegalStateException(
+                    "Target node of uses-augment statement must be DataSchemaNode. Failed to generate code for augment in "
+                            + parentUsesNode);
+        }
     }
 
     /**
