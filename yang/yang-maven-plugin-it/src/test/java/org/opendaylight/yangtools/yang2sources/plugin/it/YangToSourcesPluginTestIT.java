@@ -22,7 +22,6 @@ import java.util.Properties;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class YangToSourcesPluginTestIT {
@@ -108,7 +107,6 @@ public class YangToSourcesPluginTestIT {
     }
 
     @Test
-    @Ignore
     public void testInvalidVersion() throws Exception {
         Verifier v = setUp("test-parent/InvalidVersion/", false);
         v.verifyErrorFreeLog();
