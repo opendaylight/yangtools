@@ -43,8 +43,8 @@ final class OperationWithModification {
     private void recursiveMerge(final NormalizedNode<?,?> data) {
         if (data instanceof NormalizedNodeContainer) {
             @SuppressWarnings({ "rawtypes", "unchecked" })
-            final
-            NormalizedNodeContainer<?,?,NormalizedNode<PathArgument, ?>> dataContainer = (NormalizedNodeContainer) data;
+            final NormalizedNodeContainer<?,?, NormalizedNode<PathArgument, ?>> dataContainer =
+                    (NormalizedNodeContainer) data;
 
             /*
              * if there was write before on this node and it is of NormalizedNodeContainer type
@@ -54,12 +54,14 @@ final class OperationWithModification {
              */
             if (modification.getOperation() == LogicalOperation.WRITE) {
                 @SuppressWarnings({ "rawtypes", "unchecked" })
-                final
-                NormalizedNodeContainer<?,?,NormalizedNode<PathArgument, ?>> odlDataContainer =
+                final NormalizedNodeContainer<?,?, NormalizedNode<PathArgument, ?>> oldDataContainer =
                         (NormalizedNodeContainer) modification.getWrittenValue();
-                for (final NormalizedNode<PathArgument, ?> child : odlDataContainer.getValue()) {
+                for (final NormalizedNode<PathArgument, ?> child : oldDataContainer.getValue()) {
                     final PathArgument childId = child.getIdentifier();
-                    forChild(childId).write(child);
+                    // Make sure we do not overwrite existing child modifications
+                    if (!modification.getChild(childId).isPresent()) {
+                        forChild(childId).write(child);
+                    }
                 }
             }
             for (final NormalizedNode<PathArgument, ?> child : dataContainer.getValue()) {
