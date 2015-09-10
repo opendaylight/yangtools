@@ -43,23 +43,33 @@ final class OperationWithModification {
     private void recursiveMerge(final NormalizedNode<?,?> data) {
         if (data instanceof NormalizedNodeContainer) {
             @SuppressWarnings({ "rawtypes", "unchecked" })
-            final
-            NormalizedNodeContainer<?,?,NormalizedNode<PathArgument, ?>> dataContainer = (NormalizedNodeContainer) data;
+            final NormalizedNodeContainer<?,?, NormalizedNode<PathArgument, ?>> dataContainer =
+                    (NormalizedNodeContainer) data;
 
             /*
-             * if there was write before on this node and it is of NormalizedNodeContainer type
-             * merge would overwrite our changes. So we create write modifications from data children to
-             * retain children created by past write operation.
-             * These writes will then be pushed down in the tree while there are merge modifications on these children
+             * If there was write before on this node and it is of NormalizedNodeContainer type merge would overwrite
+             * our changes. So we create write modifications from data children to retain children created by previous
+             * write operation. These writes will then be pushed down in the tree while there are merge modifications
+             * on these children
              */
             if (modification.getOperation() == LogicalOperation.WRITE) {
                 @SuppressWarnings({ "rawtypes", "unchecked" })
-                final
-                NormalizedNodeContainer<?,?,NormalizedNode<PathArgument, ?>> odlDataContainer =
+                final NormalizedNodeContainer<?,?, NormalizedNode<PathArgument, ?>> oldDataContainer =
                         (NormalizedNodeContainer) modification.getWrittenValue();
-                for (final NormalizedNode<PathArgument, ?> child : odlDataContainer.getValue()) {
-                    final PathArgument childId = child.getIdentifier();
-                    forChild(childId).write(child);
+                for (final NormalizedNode<PathArgument, ?> c : oldDataContainer.getValue()) {
+                    final PathArgument childId = c.getIdentifier();
+
+                    // Acquire the child operation type if available, fall back to NONE
+                    final Optional<ModifiedNode> maybeChild = modification.getChild(childId);
+                    if (maybeChild.isPresent()) {
+                        final ModifiedNode child = maybeChild.get();
+                        if (child.getOperation() == LogicalOperation.TOUCH) {
+                            child.pushWrite(c);
+                        }
+                    } else {
+                        // Not present, issue a write
+                        forChild(childId).write(c);
+                    }
                 }
             }
             for (final NormalizedNode<PathArgument, ?> child : dataContainer.getValue()) {
