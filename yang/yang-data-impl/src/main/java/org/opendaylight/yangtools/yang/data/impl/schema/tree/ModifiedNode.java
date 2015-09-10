@@ -256,9 +256,14 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * @param value
      */
     void write(final NormalizedNode<?, ?> value) {
+        pushWrite(value);
+        children.clear();
+    }
+
+    // Promote the node to write, but do not lose children
+    void pushWrite(final NormalizedNode<?, ?> value) {
         clearSnapshot();
         updateOperationType(LogicalOperation.WRITE);
-        children.clear();
         this.value = value;
     }
 
@@ -285,8 +290,9 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     }
 
     /**
-     * Seal the modification node and prune any children which has not been
-     * modified.
+     * Seal the modification node and prune any children which has not been modified.
+     *
+     * @param schema
      */
     void seal(final ModificationApplyOperation schema) {
         clearSnapshot();
