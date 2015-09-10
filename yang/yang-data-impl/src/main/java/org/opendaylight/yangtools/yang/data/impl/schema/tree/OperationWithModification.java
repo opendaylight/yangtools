@@ -59,7 +59,10 @@ final class OperationWithModification {
                         (NormalizedNodeContainer) modification.getWrittenValue();
                 for (final NormalizedNode<PathArgument, ?> child : odlDataContainer.getValue()) {
                     final PathArgument childId = child.getIdentifier();
-                    forChild(childId).write(child);
+                    // Make sure we do not overwrite existing child modifications
+                    if (modification.getChild(childId) == null) {
+                        forChild(childId).write(child);
+                    }
                 }
             }
             for (final NormalizedNode<PathArgument, ?> child : dataContainer.getValue()) {
