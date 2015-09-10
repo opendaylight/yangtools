@@ -25,6 +25,7 @@
     <properties>
         <yangtools.version>0.8.0-SNAPSHOT</yangtools.version>
         <mdsal.version>2.0.0-SNAPSHOT</mdsal.version>
+        <mdsalmodel.version>0.8.0-SNAPSHOT</mdsalmodel.version>
         <salGeneratorPath>src/main/yang-gen-sal</salGeneratorPath>
     </properties>
 
@@ -43,6 +44,13 @@
                 <version>${mdsal.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+              <groupId>org.opendaylight.mdsal.model</groupId>
+              <artifactId>mdsal-model-artifacts</artifactId>
+              <version>${mdsalmodel.version}</version>
+              <type>pom</type>
+              <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
