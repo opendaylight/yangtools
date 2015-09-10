@@ -238,6 +238,24 @@ public final class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K, V
         return new MutableOffsetMap<>(this);
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("{");
+        final Iterator<K> it = offsets.keySet().iterator();
+        int i = 0;
+        while (it.hasNext()) {
+            sb.append(it.next());
+            sb.append('=');
+            sb.append(objects[i++]);
+
+            if (it.hasNext()) {
+                sb.append(", ");
+            }
+        }
+
+        return sb.append('}').toString();
+    }
+
     Map<K, Integer> offsets() {
         return offsets;
     }
