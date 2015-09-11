@@ -35,6 +35,17 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
     }
 
     @Override
+    public boolean equals(Object o) {
+        if(this == o)
+            return true;
+        if(!(o instanceof InstanceIdentifierBuilderImpl))
+            return false;
+        InstanceIdentifierBuilderImpl<T> other = (InstanceIdentifierBuilderImpl<T>) o;
+
+        return !(hashBuilder != null ? !hashBuilder.equals(other.hashBuilder) : other.hashBuilder != null);
+    }
+
+    @Override
     public int hashCode() {
         return hashBuilder.build();
     }
