@@ -12,7 +12,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 
@@ -40,48 +39,6 @@ final class OperationWithModification {
         applyOperation.verifyStructure(value, false);
     }
 
-    private void recursiveMerge(final NormalizedNode<?,?> data, final Version version) {
-        if (data instanceof NormalizedNodeContainer) {
-            @SuppressWarnings({ "rawtypes", "unchecked" })
-            final NormalizedNodeContainer<?,?, NormalizedNode<PathArgument, ?>> dataContainer =
-                    (NormalizedNodeContainer) data;
-
-            /*
-             * If there was write before on this node and it is of NormalizedNodeContainer type merge would overwrite
-             * our changes. So we create write modifications from data children to retain children created by previous
-             * write operation. These writes will then be pushed down in the tree while there are merge modifications
-             * on these children
-             */
-            if (modification.getOperation() == LogicalOperation.WRITE) {
-                @SuppressWarnings({ "rawtypes", "unchecked" })
-                final NormalizedNodeContainer<?,?, NormalizedNode<PathArgument, ?>> oldDataContainer =
-                        (NormalizedNodeContainer) modification.getWrittenValue();
-                for (final NormalizedNode<PathArgument, ?> c : oldDataContainer.getValue()) {
-                    final PathArgument childId = c.getIdentifier();
-
-                    // Acquire the child operation type if available, fall back to NONE
-                    final Optional<ModifiedNode> maybeChild = modification.getChild(childId);
-                    if (maybeChild.isPresent()) {
-                        final ModifiedNode child = maybeChild.get();
-                        final LogicalOperation op = child.getOperation();
-                        if (op == LogicalOperation.TOUCH || op == LogicalOperation.NONE) {
-                            child.pushWrite(c);
-                        }
-                    } else {
-                        // Not present, issue a write
-                        forChild(childId, version).write(c);
-                    }
-                }
-            }
-            for (final NormalizedNode<PathArgument, ?> child : dataContainer.getValue()) {
-                final PathArgument childId = child.getIdentifier();
-                forChild(childId, version).recursiveMerge(child, version);
-            }
-        }
-
-        modification.merge(data);
-    }
-
     void merge(final NormalizedNode<?, ?> data, final Version version) {
         /*
          * A merge operation will end up overwriting parts of the tree, retaining others. We want to
@@ -89,11 +46,9 @@ final class OperationWithModification {
          * written. In order to do that, we first pretend the data was written, run verification and
          * then perform the merge -- with the explicit assumption that adding the newly-validated
          * data with the previously-validated data will not result in invalid data.
-         *
-         * FIXME: Should be this moved to recursive merge and run for each node?
          */
         applyOperation.verifyStructure(data, false);
-        recursiveMerge(data, version);
+        applyOperation.mergeIntoModifiedNode(modification, data, version);
     }
 
     void delete() {
@@ -149,16 +104,5 @@ final class OperationWithModification {
     public static OperationWithModification from(final ModificationApplyOperation operation,
             final ModifiedNode modification) {
         return new OperationWithModification(operation, modification);
-    }
-
-    private OperationWithModification forChild(final PathArgument childId, final Version version) {
-        final Optional<ModificationApplyOperation> maybeChildOp = applyOperation.getChild(childId);
-        Preconditions.checkArgument(maybeChildOp.isPresent(),
-            "Attempted to apply operation to non-existent child %s", childId);
-
-        final ModificationApplyOperation childOp = maybeChildOp.get();
-        final ModifiedNode childMod = modification.modifyChild(childId, childOp.getChildPolicy(), version);
-
-        return from(childOp, childMod);
     }
 }
