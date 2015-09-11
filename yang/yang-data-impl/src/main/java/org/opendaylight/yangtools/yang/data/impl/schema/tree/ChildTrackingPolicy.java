@@ -7,11 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.opendaylight.yangtools.util.MutableOffsetMap;
+import org.opendaylight.yangtools.util.OffsetMapCache;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 
 /**
  * Child ordering policy. It defines how a {@link ModifiedNode} tracks its children.
@@ -54,4 +60,22 @@ abstract class ChildTrackingPolicy {
      * @return An empty map instance
      */
     abstract Map<PathArgument, ModifiedNode> createMap();
+
+    /**
+     * Create a {@link ChildTrackingPolicy}, which will instantiate {@link MutableOffsetMap} for tracking children with
+     * of a {@link DataNodeContainer}.
+     *
+     * @param childNodes Set of possible children
+     * @return A ChildTracingPolicy instance
+     */
+    static ChildTrackingPolicy forSchema(final DataNodeContainer schema) {
+        final Collection<PathArgument> possibleKeys = new ArrayList<>(SchemaUtils.possibleChildIdentifiers(schema));
+        final Map<PathArgument, Integer> offsets = OffsetMapCache.offsetsFor(possibleKeys);
+        return new ChildTrackingPolicy() {
+            @Override
+            Map<PathArgument, ModifiedNode> createMap() {
+                return MutableOffsetMap.forOffsets(offsets);
+            }
+        };
+    }
 }
