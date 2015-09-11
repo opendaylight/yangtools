@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,8 +28,11 @@ import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.ActionNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -542,5 +546,31 @@ public final class SchemaUtils {
 
     private static <T extends SchemaNode> Optional<T> tryFind(final Collection<T> nodes, final QName qname) {
         return nodes.stream().filter(node -> qname.equals(node.getQName())).findFirst();
+    }
+
+    /**
+     * Compute the set of {@link PathArgument}s which can be instantiated in a {@link NormalizedNodeContainer}
+     * associated with a particular {@link DataNodeContainer}.
+     *
+     * @param schema DataNodeContainer schema
+     * @return The set of identifiers
+     */
+    public static Set<PathArgument> possibleChildIdentifiers(final DataNodeContainer schema) {
+        final Set<PathArgument> result = new LinkedHashSet<>();
+        for (DataSchemaNode childSchema : schema.getChildNodes()) {
+            if (childSchema instanceof CaseSchemaNode) {
+                result.addAll(possibleChildIdentifiers((DataNodeContainer) childSchema));
+            } else if (!(childSchema instanceof AugmentationSchemaNode)) {
+                result.add(NodeIdentifier.create(childSchema.getQName()));
+            }
+        }
+
+        if (schema instanceof AugmentationTarget) {
+            for (AugmentationSchemaNode augmentationSchema : ((AugmentationTarget) schema).getAvailableAugmentations()) {
+                result.add(DataSchemaContextNode.augmentationIdentifierFrom(augmentationSchema));
+            }
+        }
+
+        return result;
     }
 }

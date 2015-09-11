@@ -56,6 +56,10 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             super(OffsetMapCache.orderedOffsets(source.keySet()), source, new LinkedHashMap<>());
         }
 
+        Ordered(final ImmutableMap<K, Integer> offsets) {
+            super(offsets, new LinkedHashMap<>());
+        }
+
         Ordered(final ImmutableMap<K, Integer> offsets, final V[] objects) {
             super(offsets, objects, new LinkedHashMap<>());
         }
@@ -88,6 +92,10 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
         Unordered(final Map<K, V> source) {
             super(OffsetMapCache.unorderedOffsets(source.keySet()), source, new HashMap<>());
+        }
+
+        Unordered(final ImmutableMap<K, Integer> offsets) {
+            super(offsets, new HashMap<>());
         }
 
         Unordered(final ImmutableMap<K, Integer> offsets, final V[] objects) {
@@ -139,6 +147,19 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     @SuppressWarnings("unchecked")
     MutableOffsetMap(final HashMap<K, V> newKeys) {
         this(ImmutableMap.of(), (V[]) EMPTY_ARRAY, newKeys);
+    }
+
+    @SuppressWarnings("unchecked")
+    MutableOffsetMap(final ImmutableMap<K, Integer> offsets, final HashMap<K, V> newKeys) {
+        this(offsets, (V[]) removedObjects(offsets.size()), newKeys);
+        this.removed = objects.length;
+        needClone = false;
+    }
+
+    private static Object[] removedObjects(final int size) {
+        final Object[] ret = new Object[size];
+        Arrays.fill(ret, REMOVED);
+        return ret;
     }
 
     @SuppressWarnings("unchecked")
