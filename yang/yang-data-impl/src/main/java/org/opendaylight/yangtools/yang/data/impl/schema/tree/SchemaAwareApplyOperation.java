@@ -202,7 +202,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
 
             // This is a slight optimization: a merge on a non-existing node equals to a write
             if (currentMeta.isPresent()) {
-                result = applyMerge(modification,currentMeta.get(), version);
+                result = applyMerge(modification, currentMeta.get(), version);
             } else {
                 modification.resolveModificationType(ModificationType.WRITE);
                 result = applyWrite(modification, currentMeta, version);
