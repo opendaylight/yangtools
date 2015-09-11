@@ -12,7 +12,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 
@@ -40,37 +39,6 @@ final class OperationWithModification {
         applyOperation.verifyStructure(value, false);
     }
 
-    private void recursiveMerge(final NormalizedNode<?,?> data) {
-        if (data instanceof NormalizedNodeContainer) {
-            @SuppressWarnings({ "rawtypes", "unchecked" })
-            final
-            NormalizedNodeContainer<?,?,NormalizedNode<PathArgument, ?>> dataContainer = (NormalizedNodeContainer) data;
-
-            /*
-             * if there was write before on this node and it is of NormalizedNodeContainer type
-             * merge would overwrite our changes. So we create write modifications from data children to
-             * retain children created by past write operation.
-             * These writes will then be pushed down in the tree while there are merge modifications on these children
-             */
-            if (modification.getOperation() == LogicalOperation.WRITE) {
-                @SuppressWarnings({ "rawtypes", "unchecked" })
-                final
-                NormalizedNodeContainer<?,?,NormalizedNode<PathArgument, ?>> odlDataContainer =
-                        (NormalizedNodeContainer) modification.getWrittenValue();
-                for (final NormalizedNode<PathArgument, ?> child : odlDataContainer.getValue()) {
-                    final PathArgument childId = child.getIdentifier();
-                    forChild(childId).write(child);
-                }
-            }
-            for (final NormalizedNode<PathArgument, ?> child : dataContainer.getValue()) {
-                final PathArgument childId = child.getIdentifier();
-                forChild(childId).recursiveMerge(child);
-            }
-        }
-
-        modification.merge(data);
-    }
-
     void merge(final NormalizedNode<?, ?> data) {
         /*
          * A merge operation will end up overwriting parts of the tree, retaining others. We want to
@@ -82,7 +50,7 @@ final class OperationWithModification {
          * FIXME: Should be this moved to recursive merge and run for each node?
          */
         applyOperation.verifyStructure(data, false);
-        recursiveMerge(data);
+        applyOperation.mergeIntoModifiedNode(modification, data);
     }
 
     void delete() {
@@ -98,6 +66,11 @@ final class OperationWithModification {
      * @return
      */
     Optional<NormalizedNode<?, ?>> read(final PathArgument child, final Version version) {
+        // FIXME: this assumes this node has been resolved up to the top-most terminal node e.g. DELETE or WRITE by
+        //        ascending a chain of TOUCH or MERGE operations.
+        //        That works for DELETE and WRITE, but certainly not for lazy MERGE operations.
+
+
         final Optional<ModifiedNode> maybeChild = modification.getChild(child);
         if (maybeChild.isPresent()) {
             final ModifiedNode childNode = maybeChild.get();
@@ -138,15 +111,5 @@ final class OperationWithModification {
     public static OperationWithModification from(final ModificationApplyOperation operation,
             final ModifiedNode modification) {
         return new OperationWithModification(operation, modification);
-    }
-
-    private OperationWithModification forChild(final PathArgument childId) {
-        final Optional<ModificationApplyOperation> maybeChildOp = applyOperation.getChild(childId);
-        Preconditions.checkArgument(maybeChildOp.isPresent(), "Attempted to apply operation to non-existent child %s", childId);
-
-        final ModificationApplyOperation childOp = maybeChildOp.get();
-        final ModifiedNode childMod = modification.modifyChild(childId, childOp.getChildPolicy());
-
-        return from(childOp, childMod);
     }
 }
