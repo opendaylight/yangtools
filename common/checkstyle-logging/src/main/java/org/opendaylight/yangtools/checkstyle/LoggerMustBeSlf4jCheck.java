@@ -28,19 +28,19 @@ public class LoggerMustBeSlf4jCheck extends Check {
     @Override
     public void visitToken(DetailAST aAST) {
         if(aAST.getType() == TokenTypes.VARIABLE_DEF) {
-            final String typeName = CheckLoggingUtil.getTypeName(aAST);
-            if (CheckLoggingUtil.isAFieldVariable(aAST) && typeName.contains("." + LOGGER_TYPE_NAME)) {
-                if(!typeName.equals(LOGGER_TYPE_FULL_NAME)) {
+            if (CheckLoggingUtil.isAFieldVariable(aAST)) {
+                final String typeName = CheckLoggingUtil.getTypeName(aAST);
+                if (typeName.contains("." + LOGGER_TYPE_NAME) && !typeName.equals(LOGGER_TYPE_FULL_NAME)) {
                     log(aAST.getLineNo(), LOG_MESSAGE);
                 }
             }
         } else if(aAST.getType() == TokenTypes.IMPORT) {
             final String importType = aAST.getFirstChild().findFirstToken(TokenTypes.IDENT).getText();
             if(importType.equals(CheckLoggingUtil.LOGGER_TYPE_NAME)) {
-               final String importIdent = aAST.getFirstChild().getFirstChild().getLastChild().getText();
+                final String importIdent = aAST.getFirstChild().getFirstChild().getLastChild().getText();
                 if(!importIdent.equals(SLF4J)) {
-                   log(aAST.getLineNo(), LOG_MESSAGE);
-               }
+                    log(aAST.getLineNo(), LOG_MESSAGE);
+                }
             }
         }
     }

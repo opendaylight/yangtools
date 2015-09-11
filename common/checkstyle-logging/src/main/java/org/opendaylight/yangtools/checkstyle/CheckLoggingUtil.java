@@ -34,10 +34,7 @@ public class CheckLoggingUtil {
 
     public static boolean isLoggerType(final DetailAST aAST) {
         final String typeName = getTypeName(aAST);
-        if(typeName.equals(LOGGER_TYPE_FULL_NAME) || typeName.equals(LOGGER_TYPE_NAME)) {
-            return true;
-        }
-        return false;
+        return typeName.equals(LOGGER_TYPE_FULL_NAME) || typeName.equals(LOGGER_TYPE_NAME);
     }
 
     public static String getVariableName(final DetailAST aAST) {

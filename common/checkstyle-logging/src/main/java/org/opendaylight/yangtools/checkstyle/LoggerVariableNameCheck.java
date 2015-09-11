@@ -25,8 +25,8 @@ public class LoggerVariableNameCheck extends Check {
 
     @Override
     public void visitToken(DetailAST aAST) {
-        final String variableName = CheckLoggingUtil.getVariableName(aAST);
-        if (CheckLoggingUtil.isAFieldVariable(aAST) && CheckLoggingUtil.isLoggerType(aAST) && !variableName.equals(LOGGER_VAR_NAME)) {
+        if (CheckLoggingUtil.isAFieldVariable(aAST) && CheckLoggingUtil.isLoggerType(aAST)
+                && !LOGGER_VAR_NAME.equals(CheckLoggingUtil.getVariableName(aAST))) {
             log(aAST.getLineNo(), LOG_MESSAGE);
         }
     }

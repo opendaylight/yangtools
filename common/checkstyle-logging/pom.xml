@@ -18,10 +18,11 @@
   <artifactId>checkstyle-logging</artifactId>
 
   <dependencies>
+    <!-- This pulls in the appropriate version of checkstyle -->
     <dependency>
-      <groupId>com.puppycrawl.tools</groupId>
-      <artifactId>checkstyle</artifactId>
-      <version>6.1.1</version>
+      <groupId>org.apache.maven.plugins</groupId>
+      <artifactId>maven-checkstyle-plugin</artifactId>
+      <version>${checkstyle.version}</version>
     </dependency>
     <dependency>
         <groupId>org.slf4j</groupId>
