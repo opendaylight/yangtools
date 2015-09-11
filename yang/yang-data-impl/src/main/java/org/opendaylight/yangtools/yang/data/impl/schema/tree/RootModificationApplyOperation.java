@@ -104,6 +104,11 @@ abstract class RootModificationApplyOperation extends ModificationApplyOperation
         return getDelegate().getChildPolicy();
     }
 
+    @Override
+    final void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value) {
+        getDelegate().mergeIntoModifiedNode(node, value);
+    }
+
     /**
      * Return the underlying delegate.
      *
