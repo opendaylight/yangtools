@@ -279,6 +279,11 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         }
     }
 
+    @Override
+    public void emitAttributes(@Nonnull final Map<QName, String> attributes) throws IOException {
+        writeAttributes(attributes);
+    }
+
     /**
      * Delegate writer that ignores writeEndDocument event. Used for AnyXml serialization.
      */
