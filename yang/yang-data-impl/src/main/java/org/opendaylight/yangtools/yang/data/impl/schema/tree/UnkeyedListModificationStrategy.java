@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.IncorrectDataStructureException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
@@ -38,10 +37,8 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
     }
 
     @Override
-    protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
-            final Version version) {
-        modification.resolveModificationType(ModificationType.WRITE);
-        return applyWrite(modification, Optional.of(currentMeta), version);
+    protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
+        throw new IllegalStateException("Invalid merge into unkeyed list");
     }
 
     @Override
@@ -131,5 +128,11 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
     protected void checkTouchApplicable(final YangInstanceIdentifier path, final NodeModification modification,
             final Optional<TreeNode> current) throws IncorrectDataStructureException {
         throw new IncorrectDataStructureException(path, "Subtree modification is not allowed.");
+    }
+
+    @Override
+    void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value) {
+        // Unkeyed lists are always replaced
+        node.write(value);
     }
 }
