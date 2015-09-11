@@ -23,8 +23,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -385,4 +388,29 @@ public final class SchemaUtils {
         return new AugmentationIdentifier(ImmutableSet.copyOf(qnames));
     }
 
+    /**
+     * Compute the set of {@link PathArgument}s which can be instantiated in a {@link NormalizedNodeContainer}
+     * associated with a particular {@link DataNodeContainer}.
+     *
+     * @param schema DataNodeContainer schema
+     * @return The set of identifiers
+     */
+    public static Set<PathArgument> possibleChildIdentifiers(final DataNodeContainer schema) {
+        final Set<PathArgument> result = new HashSet<>();
+        for (DataSchemaNode childSchema : schema.getChildNodes()) {
+            if (childSchema instanceof ChoiceCaseNode) {
+                result.addAll(possibleChildIdentifiers(((DataNodeContainer) childSchema)));
+            } else if (!(childSchema instanceof AugmentationSchema)) {
+                result.add(NodeIdentifier.create(childSchema.getQName()));
+            }
+        }
+
+        if (schema instanceof AugmentationTarget) {
+            for (AugmentationSchema augmentationSchema : ((AugmentationTarget) schema).getAvailableAugmentations()) {
+                result.add(SchemaUtils.getNodeIdentifierForAugmentation(augmentationSchema));
+            }
+        }
+
+        return result;
+    }
 }
