@@ -43,9 +43,11 @@ final class ConstantArrayCollection<E> implements Collection<E>, Serializable {
 
     @Override
     public boolean contains(final Object o) {
-        for (Object wlk : array) {
-            if (o.equals(wlk)) {
-                return true;
+        if (o != null) {
+            for (Object wlk : array) {
+                if (o.equals(wlk)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -129,5 +131,19 @@ final class ConstantArrayCollection<E> implements Collection<E>, Serializable {
     @Override
     public void clear() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String toString() {
+        if (array.length == 0) {
+            return "[]";
+        }
+
+        StringBuilder sb = new StringBuilder("[");
+        int i = 0;
+        while (i < array.length - 1) {
+            sb.append(String.valueOf(array[i++])).append(", ");
+        }
+        return sb.append(String.valueOf(array[i])).append(']').toString();
     }
 }
