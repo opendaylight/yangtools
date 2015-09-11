@@ -8,10 +8,23 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.collect.ImmutableMap;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
+import org.opendaylight.yangtools.util.MutableOffsetMap;
+import org.opendaylight.yangtools.util.OffsetMapCache;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 /**
  * Child ordering policy. It defines how a {@link ModifiedNode} tracks its children.
@@ -54,4 +67,42 @@ abstract class ChildTrackingPolicy {
      * @return An empty map instance
      */
     abstract Map<PathArgument, ModifiedNode> createMap();
+
+    /**
+     * Create a {@link ChildTrackingPolicy}, which will instantiate {@link MutableOffsetMap} for tracking children with
+     * of a {@link DataNodeContainer}.
+     *
+     * @param childNodes Set of possible children
+     * @return A ChildTracingPolicy instance
+     */
+    static ChildTrackingPolicy forSchema(final DataNodeContainer schema) {
+        final Collection<PathArgument> possibleKeys = new ArrayList<>(possibleChildren(schema));
+        final Map<PathArgument, Integer> offsets = OffsetMapCache.offsetsFor(possibleKeys);
+        return new ChildTrackingPolicy() {
+            @Override
+            Map<PathArgument, ModifiedNode> createMap() {
+                return MutableOffsetMap.forOffsets(offsets);
+            }
+        };
+    }
+
+    // FIXME: is there a utility for this?
+    private static Set<PathArgument> possibleChildren(final DataNodeContainer schema) {
+        final Set<PathArgument> result = new HashSet<>();
+        for (DataSchemaNode childSchema : schema.getChildNodes()) {
+            if (childSchema instanceof ChoiceCaseNode) {
+                result.addAll(possibleChildren(((DataNodeContainer) childSchema)));
+            } else if (!(childSchema instanceof AugmentationSchema)) {
+                result.add(NodeIdentifier.create(childSchema.getQName()));
+            }
+        }
+
+        if (schema instanceof AugmentationTarget) {
+            for (AugmentationSchema augmentationSchema : ((AugmentationTarget) schema).getAvailableAugmentations()) {
+                result.add(SchemaUtils.getNodeIdentifierForAugmentation(augmentationSchema));
+            }
+        }
+
+        return result;
+    }
 }

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.util;
 
+import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -15,7 +16,8 @@ import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Collection;
 import java.util.Map;
 
-final class OffsetMapCache {
+@Beta
+public final class OffsetMapCache {
     private static final LoadingCache<Collection<?>, Map<Object, Integer>> CACHE =
             CacheBuilder.newBuilder().weakValues().build(new CacheLoader<Collection<?>, Map<Object, Integer>>() {
                 @Override
@@ -36,7 +38,7 @@ final class OffsetMapCache {
     }
 
     @SuppressWarnings("unchecked")
-    static <T> Map<T, Integer> offsetsFor(final Collection<T> args) {
+    public static <T> Map<T, Integer> offsetsFor(final Collection<T> args) {
         return (Map<T, Integer>) CACHE.getUnchecked(args);
     }
 }

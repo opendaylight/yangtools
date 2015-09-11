@@ -48,11 +48,13 @@ abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeC
             });
     private final T schema;
     private final TreeType treeType;
+    private final ChildTrackingPolicy childPolicy;
 
     protected AbstractDataNodeContainerModificationStrategy(final T schema, final Class<? extends NormalizedNode<?, ?>> nodeClass, final TreeType treeType) {
         super(nodeClass, treeType);
         this.schema = Preconditions.checkNotNull(schema,"schema");
         this.treeType = Preconditions.checkNotNull(treeType,"treeType");
+        this.childPolicy = ChildTrackingPolicy.forSchema(schema);
     }
 
     protected final T getSchema() {
@@ -67,6 +69,11 @@ abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeC
             LOG.trace("Child {} not present in container schema {} children {}", identifier, this, schema.getChildNodes(), e.getCause());
             return Optional.absent();
         }
+    }
+
+    @Override
+    protected ChildTrackingPolicy getChildPolicy() {
+        return childPolicy;
     }
 
     @Override
