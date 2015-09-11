@@ -12,6 +12,7 @@ import com.google.common.base.Strings;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
@@ -29,7 +30,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.Augmentat
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamAttributeWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeAttributeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
@@ -47,7 +48,7 @@ import org.w3c.dom.Element;
  * A {@link NormalizedNodeStreamWriter} which translates the events into an
  * {@link XMLStreamWriter}, resulting in a RFC 6020 XML encoding.
  */
-public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNodeStreamAttributeWriter {
+public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNodeAttributeStreamWriter {
 
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
 
@@ -330,6 +331,10 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
         } catch (XMLStreamException e) {
             throw new IOException("Failed to flush writer", e);
         }
+    }
+
+    @Override public void emitAttributes(@Nonnull final Map<QName, String> attributes) throws IOException {
+        writeAttributes(attributes);
     }
 
     /**
