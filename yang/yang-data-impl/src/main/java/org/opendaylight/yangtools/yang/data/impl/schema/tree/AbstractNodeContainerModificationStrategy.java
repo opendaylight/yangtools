@@ -10,8 +10,10 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
@@ -130,9 +132,18 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     }
 
     @Override
-    protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
-            final Version version) {
-        // For Node Containers - merge is same as subtree change - we only replace children.
+    protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
+        // Force materialization of all child nodes implied by the data node
+        final NormalizedNode<?, ?> value = modification.getWrittenValue();
+        Verify.verify(value instanceof NormalizedNodeContainer, "Attempted to merge non-container %s", value);
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        final Collection<NormalizedNode<?, ?>> children = ((NormalizedNodeContainer)value).getValue();
+        for (NormalizedNode<?, ?> c : children) {
+            final PathArgument id = c.getIdentifier();
+            modification.modifyChild(id, resolveChildOperation(id).getChildPolicy());
+        }
+
+        // Now all modification needed are carried in this node's children, so the work required is the same as TOUCH
         return applyTouch(modification, currentMeta, version);
     }
 

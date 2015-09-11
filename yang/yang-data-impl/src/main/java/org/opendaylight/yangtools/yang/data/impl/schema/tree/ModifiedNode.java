@@ -18,7 +18,12 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
+import org.opendaylight.yangtools.yang.data.api.schema.OrderedLeafSetNode;
+import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
@@ -26,11 +31,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 /**
  * Node Modification Node and Tree
  *
- * Tree which structurally resembles data tree and captures client modifications
- * to the data store tree.
+ * Tree which structurally resembles data tree and captures client modifications to the data store tree. This tree is
+ * lazily created and populated via {@link #modifyChild(PathArgument)} and {@link TreeNode} which represents original
+ * state as tracked by {@link #getOriginal()}.
  *
- * This tree is lazily created and populated via {@link #modifyChild(PathArgument)}
- * and {@link TreeNode} which represents original state as tracked by {@link #getOriginal()}.
+ * The contract is that the state information exposed here preserves the temporal ordering of whatever modifications
+ * were executed. A child's effects pertain to data node as modified by its ancestors. This means that in order to
+ * reconstruct the effective data node presentation, it is sufficient to perform a depth-first pre-order traversal of
+ * the tree.
  */
 @NotThreadSafe
 final class ModifiedNode extends NodeModification implements StoreTreeNode<ModifiedNode> {
@@ -80,18 +88,14 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         }
     }
 
-    /**
-     * Return the value which was written to this node.
-     *
-     * @return Currently-written value
-     */
-    public NormalizedNode<?, ?> getWrittenValue() {
-        return value;
-    }
-
     @Override
     public PathArgument getIdentifier() {
         return identifier;
+    }
+
+    @Override
+    LogicalOperation getOperation() {
+        return operation;
     }
 
     @Override
@@ -99,9 +103,16 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         return original;
     }
 
-    @Override
-    LogicalOperation getOperation() {
-        return operation;
+    /**
+     * Return the value which was written to this node. The returned object is only valid for
+     * {@link LogicalOperation#MERGE} and {@link LogicalOperation#WRITE}.
+     * operations. It should only be consulted when this modification is going to end up being
+     * {@link ModificationType#WRITE}.
+     *
+     * @return Currently-written value
+     */
+    NormalizedNode<?, ?> getWrittenValue() {
+        return value;
     }
 
     /**
@@ -149,6 +160,20 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         }
 
         final ModifiedNode newlyCreated = new ModifiedNode(child, currentMetadata, childPolicy);
+
+        /*
+         * MERGE operations need to retain temporal order. In order to do that when we are creating a child of a MERGE
+         * node, we need to check if this node's value includes a data node for the child being created. If it does,
+         * the instantiated node needs to be promoted to MERGE.
+         */
+        if (operation == LogicalOperation.MERGE) {
+            @SuppressWarnings({ "rawtypes", "unchecked" })
+            final Optional<NormalizedNode<?, ?>> childData = ((NormalizedNodeContainer)value).getChild(child);
+            if (childData.isPresent()) {
+                newlyCreated.merge(childData.get());
+            }
+        }
+
         children.put(child, newlyCreated);
         return newlyCreated;
     }
@@ -210,31 +235,119 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         this.value = value;
     }
 
-    void merge(final NormalizedNode<?, ?> value) {
-        clearSnapshot();
-        updateOperationType(LogicalOperation.MERGE);
+    /**
+     * Guess the appropriate tracking policy based on the data being introduced.
+     *
+     * FIXME: the proper way would be to get this from ModificationApplyOperation, which should be doable, as the only
+     *        call site is merge() path.
+     *
+     * @param data Data being introduced
+     * @return The child tracking policy
+     */
+    // FIXME: this is used only from merge, hence we could be propagating the apply stre
+    private static ChildTrackingPolicy policyForData(final NormalizedNode<?, ?> data) {
+        if (data instanceof LeafSetEntryNode || data instanceof LeafNode) {
+            return ChildTrackingPolicy.NONE;
+        }
+        if (data instanceof OrderedLeafSetNode || data instanceof OrderedMapNode) {
+            return ChildTrackingPolicy.ORDERED;
+        }
 
-        /*
-         * Blind overwrite of any previous data is okay, no matter whether the node
-         * is simple or complex type.
-         *
-         * If this is a simple or complex type with unkeyed children, this merge will
-         * be turned into a write operation, overwriting whatever was there before.
-         *
-         * If this is a container with keyed children, there are two possibilities:
-         * - if it existed before, this value will never be consulted and the children
-         *   will get explicitly merged onto the original data.
-         * - if it did not exist before, this value will be used as a seed write and
-         *   children will be merged into it.
-         * In either case we rely on OperationWithModification to manipulate the children
-         * before calling this method, so unlike a write we do not want to clear them.
-         */
-        this.value = value;
+        return ChildTrackingPolicy.UNORDERED;
+    }
+
+    /**
+     * Records a merge for the associated node
+     *
+     * @param value
+     */
+    void merge(final NormalizedNode<?, ?> value) {
+        switch (operation) {
+        case DELETE:
+            /**
+             * MERGE on a DELETEd node. DELETE records precondition on previous node (or its non-presence) and results
+             * in an empty subtree. Since MERGE ensures data presence, this case is almost a WRITE, except we do not
+             * prune all children unconditionally but rather rebase or prune them as needed.
+             *
+             * FIXME: what is the exact logic?
+             */
+            throw new UnsupportedOperationException();
+        case MERGE:
+            /**
+             * MERGE on a MERGEd node. The type does not change, but we need to ensure we have enough information to
+             * reconstruct the combined data value -- which is bound to get interesting.
+             *
+             * Value nodes are simple: just replace the value and we're done (as there are no children).
+             *
+             * Unkeyed containers behave as if they were value nodes, so we can just replace the value and it does not
+             * matter what happens to any children.
+             *
+             * Keyed containers are interesting as they need to produce a combined data value of both previous and this
+             * value, taking into account any modifications which are not replaced by this merge. To do that we'll keep
+             * the original value and run an explicit merge for all data value children, which will propagate
+             * recursively, expanding the old value into MERGE nodes as needed.
+             *
+             * We probably could unify the container case, but that would entail a lot more work to rebase child nodes
+             * onto the newly-provided value.
+             */
+            if (value instanceof OrderedLeafSetNode || value instanceof OrderedMapNode) {
+                clearSnapshot();
+                updateOperationType(LogicalOperation.MERGE);
+                this.value = value;
+                children.clear();
+            } else if (value instanceof NormalizedNodeContainer) {
+                @SuppressWarnings({ "unchecked", "rawtypes" })
+                final Collection<NormalizedNode<?, ?>> children = ((NormalizedNodeContainer)value).getValue();
+                for (NormalizedNode<?, ?> c : children) {
+                    modifyChild(c.getIdentifier(), policyForData(c)).merge(c);
+                }
+                clearSnapshot();
+                updateOperationType(LogicalOperation.MERGE);
+            } else {
+                clearSnapshot();
+                updateOperationType(LogicalOperation.MERGE);
+                this.value = value;
+            }
+            return;
+        case WRITE:
+            /**
+             * MERGE on a WRITTEn node. This is essentially an update of what should be written into the tree and
+             * is tricky. We will update stored value to the one provided -- which means we could end up losing some
+             * children.
+             *
+             * To counter that we will walk the old node's children and turn them into writes into descendants. That is
+             * a bit problematic, as the original WRITE may have been already amended by other operations and we would
+             * end up losing them. So we propagate these only if the child does not exist or has operation of NONE or
+             * TOUCH.
+             *
+             * The final bit is making sure that the data in the value is not being overridden by child modifications
+             * (due to children being applied on top of the value). We do that by walking the value's data children and
+             * if they have a child node present, we issue a merge on that node -- which will be propagated as needed.
+             */
+            throw new UnsupportedOperationException();
+        case NONE:
+            /**
+             * MERGE on a fresh node. Just record the value and make it a MERGE node.
+             */
+            clearSnapshot();
+            updateOperationType(LogicalOperation.MERGE);
+            this.value = value;
+            return;
+        case TOUCH:
+            /**
+             * MERGE on a TOUCHed node. Touch itself is just a precondition check, and an explicit merge makes it
+             * superfluous. Promote this node to MERGEd and record the value. Then deal with the temporal effects by
+             * running a merge on any pre-existing child nodes affected by the data value.
+             */
+            throw new UnsupportedOperationException();
+        }
+
+        throw new IllegalStateException(String.format("Unsupported base state %s", operation));
     }
 
     /**
      * Seal the modification node and prune any children which has not been modified.
-     * 
+     *
      * @param schema
      */
     void seal(final ModificationApplyOperation schema) {
