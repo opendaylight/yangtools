@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -71,5 +70,11 @@ abstract class AbstractValueNodeModificationStrategy<T extends DataSchemaNode> e
     protected final void checkTouchApplicable(final YangInstanceIdentifier path, final NodeModification modification,
             final Optional<TreeNode> current) throws IncorrectDataStructureException {
         throw new IncorrectDataStructureException(path, "Subtree modification is not allowed.");
+    }
+
+    @Override
+    void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value) {
+        // Value nodes do not perform merges, just plain overwrites
+        node.write(value);
     }
 }
