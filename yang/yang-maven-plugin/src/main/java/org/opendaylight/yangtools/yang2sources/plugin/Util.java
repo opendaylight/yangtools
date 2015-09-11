@@ -295,7 +295,7 @@ final class Util {
                             }
                         });
                         for (final File yangFile : yangFiles) {
-                            yangsFromDependencies.add(new YangSourceFromFile(file));
+                            yangsFromDependencies.add(new YangSourceFromFile(yangFile));
                         }
                     }
 
