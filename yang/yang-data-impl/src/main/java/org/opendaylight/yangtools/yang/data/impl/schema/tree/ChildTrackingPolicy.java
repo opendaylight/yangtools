@@ -7,21 +7,51 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import com.google.common.collect.ImmutableMap;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+
 /**
  * Child ordering policy. It defines how a {@link ModifiedNode} tracks its children.
  */
-enum ChildTrackingPolicy {
+abstract class ChildTrackingPolicy {
+    private static final int DEFAULT_CHILD_COUNT = 8;
+
     /**
      * No child nodes are possible, ever.
      */
-    NONE,
+    static final ChildTrackingPolicy NONE = new ChildTrackingPolicy() {
+        @Override
+        Map<PathArgument, ModifiedNode> createMap() {
+            return ImmutableMap.of();
+        }
+    };
     /**
      * Child nodes are possible and we need to make sure that their iteration order
      * matches the order in which they are introduced.
      */
-    ORDERED,
+    static final ChildTrackingPolicy ORDERED = new ChildTrackingPolicy() {
+        @Override
+        Map<PathArgument, ModifiedNode> createMap() {
+            return new LinkedHashMap<>(DEFAULT_CHILD_COUNT);
+        }
+    };
     /**
      * Child nodes are possible, but their iteration order can be undefined.
      */
-    UNORDERED,
+    static final ChildTrackingPolicy UNORDERED = new ChildTrackingPolicy() {
+        @Override
+        Map<PathArgument, ModifiedNode> createMap() {
+            return new HashMap<>();
+        }
+    };
+
+    /**
+     * Instantiate a new map for all possible children.
+     *
+     * @return An empty map instance
+     */
+    abstract Map<PathArgument, ModifiedNode> createMap();
 }
