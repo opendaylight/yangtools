@@ -19,6 +19,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
@@ -26,11 +27,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 /**
  * Node Modification Node and Tree
  *
- * Tree which structurally resembles data tree and captures client modifications
- * to the data store tree.
+ * Tree which structurally resembles data tree and captures client modifications to the data store tree. This tree is
+ * lazily created and populated via {@link #modifyChild(PathArgument)} and {@link TreeNode} which represents original
+ * state as tracked by {@link #getOriginal()}.
  *
- * This tree is lazily created and populated via {@link #modifyChild(PathArgument)}
- * and {@link TreeNode} which represents original state as tracked by {@link #getOriginal()}.
+ * The contract is that the state information exposed here preserves the temporal ordering of whatever modifications
+ * were executed. A child's effects pertain to data node as modified by its ancestors. This means that in order to
+ * reconstruct the effective data node presentation, it is sufficient to perform a depth-first pre-order traversal of
+ * the tree.
  */
 @NotThreadSafe
 final class ModifiedNode extends NodeModification implements StoreTreeNode<ModifiedNode> {
@@ -80,18 +84,14 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         }
     }
 
-    /**
-     * Return the value which was written to this node.
-     *
-     * @return Currently-written value
-     */
-    public NormalizedNode<?, ?> getWrittenValue() {
-        return value;
-    }
-
     @Override
     public PathArgument getIdentifier() {
         return identifier;
+    }
+
+    @Override
+    LogicalOperation getOperation() {
+        return operation;
     }
 
     @Override
@@ -99,9 +99,16 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         return original;
     }
 
-    @Override
-    LogicalOperation getOperation() {
-        return operation;
+    /**
+     * Return the value which was written to this node. The returned object is only valid for
+     * {@link LogicalOperation#MERGE} and {@link LogicalOperation#WRITE}.
+     * operations. It should only be consulted when this modification is going to end up being
+     * {@link ModificationType#WRITE}.
+     *
+     * @return Currently-written value
+     */
+    NormalizedNode<?, ?> getWrittenValue() {
+        return value;
     }
 
     /**
@@ -149,6 +156,18 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         }
 
         final ModifiedNode newlyCreated = new ModifiedNode(child, currentMetadata, childPolicy);
+        if (operation == LogicalOperation.MERGE) {
+            /*
+             * We are attempting to modify a previously-unmodified part of a MERGE node. If the value contains this
+             * component, we need to materialize it as a MERGE modification.
+             */
+            @SuppressWarnings({ "rawtypes", "unchecked" })
+            final Optional<NormalizedNode<?, ?>> childData = ((NormalizedNodeContainer)value).getChild(child);
+            if (childData.isPresent()) {
+                newlyCreated.updateValue(LogicalOperation.MERGE, childData.get());
+            }
+        }
+
         children.put(child, newlyCreated);
         return newlyCreated;
     }
@@ -204,37 +223,13 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * @param value
      */
     void write(final NormalizedNode<?, ?> value) {
-        clearSnapshot();
-        updateOperationType(LogicalOperation.WRITE);
+        updateValue(LogicalOperation.WRITE, value);
         children.clear();
-        this.value = value;
-    }
-
-    void merge(final NormalizedNode<?, ?> value) {
-        clearSnapshot();
-        updateOperationType(LogicalOperation.MERGE);
-
-        /*
-         * Blind overwrite of any previous data is okay, no matter whether the node
-         * is simple or complex type.
-         *
-         * If this is a simple or complex type with unkeyed children, this merge will
-         * be turned into a write operation, overwriting whatever was there before.
-         *
-         * If this is a container with keyed children, there are two possibilities:
-         * - if it existed before, this value will never be consulted and the children
-         *   will get explicitly merged onto the original data.
-         * - if it did not exist before, this value will be used as a seed write and
-         *   children will be merged into it.
-         * In either case we rely on OperationWithModification to manipulate the children
-         * before calling this method, so unlike a write we do not want to clear them.
-         */
-        this.value = value;
     }
 
     /**
      * Seal the modification node and prune any children which has not been modified.
-     * 
+     *
      * @param schema
      */
     void seal(final ModificationApplyOperation schema) {
@@ -268,7 +263,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         return snapshot;
     }
 
-    private void updateOperationType(final LogicalOperation type) {
+    void updateOperationType(final LogicalOperation type) {
         operation = type;
         modType = null;
         clearSnapshot();
@@ -285,6 +280,17 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     }
 
     /**
+     * Update this node's value and operation type without disturbing any of its child modifications.
+     *
+     * @param type New operation type
+     * @param value New node value
+     */
+    void updateValue(final LogicalOperation type, final NormalizedNode<?, ?> value) {
+        this.value = Preconditions.checkNotNull(value);
+        updateOperationType(type);
+    }
+
+    /**
      * Return the physical modification done to data. May return null if the
      * operation has not been applied to the underlying tree. This is different
      * from the logical operation in that it can actually be a no-op if the
@@ -294,30 +300,6 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      */
     ModificationType getModificationType() {
         return modType;
-    }
-
-    /**
-     * Create a node which will reflect the state of this node, except it will behave as newly-written
-     * value. This is useful only for merge validation.
-     *
-     * @param value Value associated with the node
-     * @return An isolated node. This node should never reach a datatree.
-     */
-    ModifiedNode asNewlyWritten(final NormalizedNode<?, ?> value) {
-        /*
-         * We are instantiating an "equivalent" of this node. Currently the only callsite does not care
-         * about the actual iteration order, so we do not have to specify the same tracking policy as
-         * we were instantiated with. Since this is the only time we need to know that policy (it affects
-         * only things in constructor), we do not want to retain it (saves some memory on per-instance
-         * basis).
-         *
-         * We could reconstruct it using two instanceof checks (to undo what the constructor has done),
-         * which would give perfect results. The memory saving would be at most 32 bytes of a short-lived
-         * object, so let's not bother with that.
-         */
-        final ModifiedNode ret = new ModifiedNode(getIdentifier(), Optional.<TreeNode>absent(), ChildTrackingPolicy.UNORDERED);
-        ret.write(value);
-        return ret;
     }
 
     public static ModifiedNode createUnmodified(final TreeNode metadataTree, final ChildTrackingPolicy childPolicy) {

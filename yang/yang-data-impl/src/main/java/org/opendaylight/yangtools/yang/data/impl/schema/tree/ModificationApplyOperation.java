@@ -89,6 +89,16 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
     abstract ChildTrackingPolicy getChildPolicy();
 
     /**
+     * Stage a merge operation into a {@link ModifiedNode} such that it will be processed correctly by
+     * {@link #apply(ModifiedNode, Optional, Version)}. This method is the context which is introducing this operation,
+     * and so any overheads are charged to whoever is in control of the access pattern.
+     *
+     * @param modification Original modification node
+     * @param value Value which should be merge into the modification
+     */
+    abstract void mergeIntoModifiedNode(ModifiedNode modification, NormalizedNode<?, ?> value);
+
+    /**
      * Returns a suboperation for specified tree node
      *
      * @return Reference to suboperation for specified tree node, {@link Optional#absent()}
