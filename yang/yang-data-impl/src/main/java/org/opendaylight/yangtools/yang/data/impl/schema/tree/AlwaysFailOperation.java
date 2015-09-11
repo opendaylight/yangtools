@@ -34,7 +34,8 @@ final class AlwaysFailOperation extends ModificationApplyOperation {
     }
 
     @Override
-    void checkApplicable(final YangInstanceIdentifier path,final NodeModification modification, final Optional<TreeNode> storeMetadata) {
+    void checkApplicable(final YangInstanceIdentifier path,final NodeModification modification,
+            final Optional<TreeNode> storeMetadata) {
         throw new IllegalStateException("Schema Context is not available.");
     }
 
@@ -50,6 +51,11 @@ final class AlwaysFailOperation extends ModificationApplyOperation {
 
     @Override
     ChildTrackingPolicy getChildPolicy() {
+        throw new IllegalStateException("Schema Context is not available.");
+    }
+
+    @Override
+    void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value) {
         throw new IllegalStateException("Schema Context is not available.");
     }
 }
