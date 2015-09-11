@@ -13,11 +13,16 @@ package org.opendaylight.yangtools.restconf.client.api.data;
 public final class DefaultRetrievalStrategy implements RetrievalStrategy {
 
 	private static final class Holder {
+
+		private Holder () {
+			throw new UnsupportedOperationException("Utility class should not be instantiated!");
+		}
+
 		private static final DefaultRetrievalStrategy INSTANCE = new DefaultRetrievalStrategy();
 	}
 
 	private DefaultRetrievalStrategy() {
-
+		throw new UnsupportedOperationException("Utility class should not be instantiated!");
 	}
 
 	public static DefaultRetrievalStrategy getInstance() {

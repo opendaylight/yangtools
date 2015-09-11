@@ -50,7 +50,7 @@ public final class CompositeObjectRegistration<T> extends AbstractObjectRegistra
         }
 
         public CompositeObjectRegistrationBuilder<T> add(final ObjectRegistration<? super T> registration) {
-            if (registration.getInstance() != instance) {
+            if (!registration.getInstance().equals(instance)) {
                 throw new IllegalArgumentException("Instance must be same.");
             }
             registrations.add(registration);
@@ -58,7 +58,7 @@ public final class CompositeObjectRegistration<T> extends AbstractObjectRegistra
         }
 
         public CompositeObjectRegistrationBuilder<T> remove(final ObjectRegistration<? super T> registration) {
-            if (registration.getInstance() != instance) {
+            if (!registration.getInstance().equals(instance)) {
                 throw new IllegalArgumentException("Instance must be same.");
             }
             registrations.remove(registration);

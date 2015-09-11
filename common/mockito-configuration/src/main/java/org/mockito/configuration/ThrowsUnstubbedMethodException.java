@@ -18,7 +18,7 @@ public class ThrowsUnstubbedMethodException implements Answer<Object>, Serializa
     private static final long serialVersionUID = 1L;
 
     @Override
-    public Object answer(final InvocationOnMock invocation) throws UnstubbedMethodException {
+    public Object answer(final InvocationOnMock invocation) {
         throw new UnstubbedMethodException(invocation.toString() + " was not stubbed");
     }
 }
