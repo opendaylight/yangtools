@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
 import java.util.Arrays;
 
-public class ListsBindingUtils {
+public final class ListsBindingUtils {
 
     private static final InstanceIdentifier<Top> TOP_PATH = InstanceIdentifier.create(Top.class);
 
