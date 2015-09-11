@@ -10,8 +10,10 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
@@ -130,10 +132,71 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     }
 
     @Override
-    protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
-            final Version version) {
-        // For Node Containers - merge is same as subtree change - we only replace children.
+    protected final TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
+        /*
+         * The node which we are merging exists. We now need to expand any child operations implied by the value. Once
+         * we do that, ModifiedNode children will look like this node were a TOUCH and we will let applyTouch() do the
+         * heavy lifting of applying the children recursively (either through here or through applyWrite().
+         */
+        final NormalizedNode<?, ?> value = modification.getWrittenValue();
+        Verify.verify(value instanceof NormalizedNodeContainer, "Attempted to merge non-container %s", value);
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        final Collection<NormalizedNode<?, ?>> children = ((NormalizedNodeContainer)value).getValue();
+        for (NormalizedNode<?, ?> c : children) {
+            final PathArgument id = c.getIdentifier();
+            modification.modifyChild(id, resolveChildOperation(id).getChildPolicy());
+        }
+
         return applyTouch(modification, currentMeta, version);
+    }
+
+    private void mergeChildrenIntoModification(final ModifiedNode modification, final Collection<NormalizedNode<?, ?>> children) {
+        for (NormalizedNode<?, ?> c : children) {
+            final ModificationApplyOperation childOp = resolveChildOperation(c.getIdentifier());
+            final ModifiedNode childNode = modification.modifyChild(c.getIdentifier(), childOp.getChildPolicy());
+            childOp.mergeIntoModifiedNode(childNode, c);
+        }
+    }
+
+    @Override
+    final void mergeIntoModifiedNode(final ModifiedNode modification, final NormalizedNode<?, ?> value) {
+        @SuppressWarnings({ "unchecked", "rawtypes" })
+        final Collection<NormalizedNode<?, ?>> children = ((NormalizedNodeContainer)value).getValue();
+
+        switch (modification.getOperation()) {
+        case NONE:
+            // Fresh node, just record a MERGE with a value
+            modification.updateValue(LogicalOperation.MERGE, value);
+            return;
+        case MERGE:
+        case TOUCH:
+            // Merging into an existing node. Merge data children modifications (maybe recursively) and mark as MERGE,
+            // invalidating cached snapshot
+            mergeChildrenIntoModification(modification, children);
+            modification.updateOperationType(LogicalOperation.MERGE);
+            return;
+        case DELETE:
+            // Delete performs a data dependency check on existence of the node. Performing a merge on DELETE means we
+            // are really performing a write. One thing that ruins that are any child modifications. If there are any,
+            // we will perform a read() to get the current state of affairs, turn this into into a WRITE and then
+            // append any child entries.
+            if (!modification.getChildren().isEmpty()) {
+                // FIXME: modification.updateValue(LogicalOperation.WRITE, read(modification, version));
+                mergeChildrenIntoModification(modification, children);
+                throw new UnsupportedOperationException("Merge into DELETE is with children is not supported yet");
+            } else {
+                modification.updateValue(LogicalOperation.WRITE, value);
+            }
+            return;
+        case WRITE:
+            // We are augmenting a previous write. We'll just walk value's children, get the corresponding ModifiedNode
+            // and run recursively on it
+            mergeChildrenIntoModification(modification, children);
+            modification.updateOperationType(LogicalOperation.WRITE);
+            return;
+        }
+
+        throw new IllegalArgumentException("Unsupported operation " + modification.getOperation());
     }
 
     @Override

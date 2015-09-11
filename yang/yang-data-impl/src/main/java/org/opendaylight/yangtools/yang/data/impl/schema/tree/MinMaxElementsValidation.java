@@ -178,4 +178,9 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
     protected ChildTrackingPolicy getChildPolicy() {
         return delegate.getChildPolicy();
     }
+
+    @Override
+    void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value) {
+        delegate.mergeIntoModifiedNode(node, value);
+    }
 }
