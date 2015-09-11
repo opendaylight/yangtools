@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2015 Cisco Systems, Inc. and others. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -14,111 +14,82 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.Augmentat
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 
-
 /**
- * Event Stream Writer based on Normalized Node tree representation
+ * Event Stream sink based on Normalized Node tree representation.
  *
  * <h3>Writing Event Stream</h3>
  *
  * <ul>
- * <li><code>container</code> - Container node representation, start event is
- * emitted using {@link #startContainerNode(NodeIdentifier, int)} and node end event is
- * emitted using {@link #endNode()}. Container node is implementing
- * the org.opendaylight.yangtools.yang.binding.DataObject interface.
+ * <li><code>container</code> - Container node representation, start event is emitted using
+ * {@link #startContainerNode(NodeIdentifier, int)} and node end event is emitted using {@link #endNode()}.
  *
- * <li><code>list</code> - YANG list statement has two representation in event
- * stream - unkeyed list and map. Unkeyed list is YANG list which did not
- * specify key.
+ * <li><code>list</code> - YANG list statement has two representation in event stream - unkeyed list and map. An
+ * unkeyedlist is YANG list which does not have a key specified.
  *
  * <ul>
- * <li><code>Map</code> - Map start event is emitted using
- * {@link #startMapNode(NodeIdentifier, int)} and is ended using {@link #endNode()}. Each map
- * entry start is emitted using {@link #startMapEntryNode(NodeIdentifierWithPredicates, int)} with Map of keys
- * and finished using {@link #endNode()}.</li>
+ * <li><code>Map</code> - Map start event is emitted using {@link #startMapNode(NodeIdentifier, int)} and is ended
+ * using {@link #endNode()}. Each map entry start is emitted using
+ * {@link #startMapEntryNode(NodeIdentifierWithPredicates, int)} with Map of keys and finished using
+ * {@link #endNode()}.</li>
  *
- * <li><code>UnkeyedList</code> - Unkeyed list represent list without keys,
- * unkeyed list start is emitted using {@link #startUnkeyedList(NodeIdentifier, int)} list
- * end is emitted using {@link #endNode()}. Each list item is emitted using
- * {@link #startUnkeyedListItem(NodeIdentifier, int)} and ended using {@link #endNode()}.</li>
+ * <li><code>UnkeyedList</code> - Unkeyed list represent list without keys, unkeyed list start is emitted using
+ * {@link #startUnkeyedList(NodeIdentifier, int)}, list end is emitted using {@link #endNode()}. Each list item is
+ * emitted using {@link #startUnkeyedListItem(NodeIdentifier, int)} and ended using {@link #endNode()}.</li>
  * </ul></li>
  *
  * <li><code>leaf</code> - Leaf node event is emitted using
- * {@link #leafNode(NodeIdentifier, Object)}. {@link #endNode()} MUST NOT BE emitted for
- * leaf node.</li>
+ * {@link #startLeafNode(NodeIdentifier, Object)}. {@link #endNode()} MUST BE emitted for leaf node.</li>
  *
  * <li><code>leaf-list</code> - Leaf list start is emitted using
  * {@link #startLeafSet(NodeIdentifier, int)}. Leaf list end is emitted using
- * {@link #endNode()}. Leaf list entries are emmited using
- * {@link #leafSetEntryNode(Object)}.
+ * {@link #endNode()}. Leaf list entries are emitted using {@link #leafSetEntryNode(Object)}.</li>
  *
- * <li><code>anyxml - AN node event is emitted using
- * {@link #anyxmlNode(NodeIdentifier, Object)}. {@link #endNode()} MUST NOT BE emitted
- * for anyxml node.</code></li>
+ * <li><code>anyxml - A node event is emitted using
+ * {@link #startAnyxmlNode(NodeIdentifier, Object)}. {@link #endNode()} MUST BE emitted for anyxml node.</code></li>
  *
- *
- * <li><code>choice</code> Choice node event is emmited by
- * {@link #startChoiceNode(NodeIdentifier, int)} event and
- * finished by invoking {@link #endNode()}
+ * <li><code>choice</code> Choice node event is emitted by {@link #startChoiceNode(NodeIdentifier, int)} event and
+ * finished by invoking {@link #endNode()}</li>
  * <li>
  * <code>augment</code> - Represents augmentation, augmentation node is started
  * by invoking {@link #startAugmentationNode(AugmentationIdentifier)} and
  * finished by invoking {@link #endNode()}.</li>
- *
  * </ul>
  *
  * <h3>Implementation notes</h3>
  *
  * <p>
- * Implementations of this interface must not hold user suppled objects
- * and resources needlessly.
- *
- * @deprecated This interface is asymmetric with respect to handling of container nodes versus leaf and anyxml nodes,
- *             which prevents clean event extensions. Users are encouraged to use {@link NormalizedNodeStreamSink},
- *             which follows the same startFooNode/endNode pattern.
+ * Implementations of this interface must not hold user supplied objects and resources needlessly.
  */
-@Deprecated
-public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
-
+public interface NormalizedNodeStreamSink extends Closeable, Flushable {
     /**
-     * Methods in this interface allow users to hint the underlying
-     * implementation about the sizing of container-like constructors
-     * (leafLists, containers, etc.). These hints may be taken into account by a
-     * particular implementation to improve performance, but clients are not
-     * required to provide hints. This constant should be used by clients who
-     * either do not have the sizing information, or do not wish to divulge it
-     * (for whatever reasons). Implementations are free to ignore these hints
-     * completely, but if they do use them, they are expected to be resilient in
-     * face of missing and mismatched hints, which is to say the user can
-     * specify startLeafSet(..., 1) and then call leafNode() 15 times.
+     * Methods in this interface allow users to hint the underlying implementation about the sizing of container-like
+     * constructors (leafLists, containers, etc.). These hints may be taken into account by a particular implementation
+     * to improve performance, but clients are not required to provide hints. This constant should be used by clients
+     * who either do not have the sizing information, or do not wish to divulge it (for whatever reasons).
+     * Implementations are free to ignore these hints completely, but if they do use them, they are expected to be
+     * resilient in face of missing and mismatched hints, specify startLeafSet(..., 1) and then call leafNode() 15
+     * times.
      * <p>
-     * The acceptable hint values are non-negative integers and this constant,
-     * all other values will result, based on implementation preference, in the
-     * hint being completely ignored or IllegalArgumentException being thrown.
+     * The acceptable hint values are non-negative integers and this constant, all other values will result, based on
+     * implementation preference, in the hint being completely ignored or IllegalArgumentException being thrown.
      */
     int UNKNOWN_SIZE = -1;
 
     /**
+     * Emits the start of a leaf node event with supplied value.
      *
-     * Emits a leaf node event with supplied value.
-     *
-     * @param name
-     *            name of node as defined in schema, namespace and revision are
-     *            derived from parent node.
-     * @param value
-     *            Value of leaf node. v
-     * @throws IllegalArgumentException
-     *             If emitted leaf node has invalid value in current context or
-     *             was emitted multiple times.
-     * @throws IllegalStateException
-     *             If node was emitted inside <code>map</code>,
-     *             <code>choice</code> <code>unkeyed list</code> node.
+     * @param name name of node as defined in schema, namespace and revision are derived from parent node.
+     * @param value Value of leaf node.
+     * @throws IllegalArgumentException If emitted leaf node has invalid value in current context or was emitted
+     *                                  multiple times.
+     * @throws IllegalStateException If node was emitted inside <code>map</code>, <code>choice</code> or
+     *                               <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void leafNode(NodeIdentifier name, Object value) throws IOException;
+    void startLeafNode(NodeIdentifier name, Object value) throws IOException;
 
     /**
-     *
-     * Emits a start of leaf set (leaf-list).
+     * Emits the start of a leaf set (leaf-list).
      * <p>
      * Emits start of leaf set, during writing leaf set event, only
      * {@link #leafSetEntryNode(Object)} calls are valid. Leaf set event is
@@ -143,7 +114,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
     void startLeafSet(NodeIdentifier name, int childSizeHint) throws IOException;
 
     /**
-     * Emits a leaf set entry node
+     * Emits the start of a leaf set entry node
      *
      * @param value
      *            Value of leaf set entry node. Supplied object MUST BE constant over time.
@@ -153,7 +124,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *             If node was emitted outside <code>leaf set</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void leafSetEntryNode(Object value) throws IOException;
+    void startLeafSetEntryNode(Object value) throws IOException;
 
     /**
      *
@@ -373,10 +344,10 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void anyxmlNode(NodeIdentifier name, Object value) throws IOException;
+    void startAnyxmlNode(NodeIdentifier name, Object value) throws IOException;
 
     /**
-     * Emits end event for node.
+     * Emits end event for a node.
      *
      * @throws IllegalStateException If there is no start* event to be closed.
      * @throws IOException if an underlying IO error occurs
