@@ -82,7 +82,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         final QNameModule cacheMod = QNameModule.cachedReference(myMod);
 
         final QName what;
-        if (cacheMod == myMod) {
+        if (cacheMod.equals(myMod)) {
             what = qname;
         } else {
             what = QName.create(cacheMod, qname.localName);
