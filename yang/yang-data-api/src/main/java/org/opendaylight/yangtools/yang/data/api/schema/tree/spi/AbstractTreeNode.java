@@ -7,13 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
+import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-import com.google.common.base.Preconditions;
-
 /**
- * A very basic data tree node.
+ * A very basic data tree node. Contains some versioned data.
  */
 abstract class AbstractTreeNode implements TreeNode {
     private final NormalizedNode<?, ?> data;
@@ -25,7 +24,7 @@ abstract class AbstractTreeNode implements TreeNode {
     }
 
     @Override
-    public PathArgument getIdentifier() {
+    public final PathArgument getIdentifier() {
         return data.getIdentifier();
     }
 
