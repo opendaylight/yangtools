@@ -32,13 +32,13 @@ public final class TreeNodeFactory {
         if (data instanceof NormalizedNodeContainer<?, ?, ?>) {
             @SuppressWarnings("unchecked")
             NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container = (NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>>) data;
-            return ContainerNode.createNormalizedNodeRecursively(version, container);
+            return AbstractContainerNode.createNormalizedNodeRecursively(version, container);
 
         }
         if (data instanceof OrderedNodeContainer<?>) {
             @SuppressWarnings("unchecked")
             OrderedNodeContainer<NormalizedNode<?, ?>> container = (OrderedNodeContainer<NormalizedNode<?, ?>>) data;
-            return ContainerNode.createOrderedNodeRecursively(version, container);
+            return AbstractContainerNode.createOrderedNodeRecursively(version, container);
         }
 
         return new ValueNode(data, version);
@@ -55,12 +55,12 @@ public final class TreeNodeFactory {
         if (data instanceof NormalizedNodeContainer<?, ?, ?>) {
             @SuppressWarnings("unchecked")
             NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container = (NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>>) data;
-            return ContainerNode.createNormalizedNode(version, container);
+            return AbstractContainerNode.createNormalizedNode(version, container);
         }
         if (data instanceof OrderedNodeContainer<?>) {
             @SuppressWarnings("unchecked")
             OrderedNodeContainer<NormalizedNode<?, ?>> container = (OrderedNodeContainer<NormalizedNode<?, ?>>) data;
-            return ContainerNode.createOrderedNode(version, container);
+            return AbstractContainerNode.createOrderedNode(version, container);
         }
         return new ValueNode(data, version);
     }

@@ -22,8 +22,8 @@ public interface StoreTreeNode<C extends StoreTreeNode<C>> {
     /**
      * Returns a direct child of the node
      *
-     * @param child Identifier of child
+     * @param childId Identifier of child
      * @return Optional with node if the child is existing, {@link Optional#absent()} otherwise.
      */
-    Optional<C> getChild(PathArgument child);
+    Optional<C> getChild(PathArgument childId);
 }

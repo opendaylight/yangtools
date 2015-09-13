@@ -9,11 +9,8 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-
 import java.util.HashMap;
 import java.util.Map;
-
-import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -23,10 +20,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.OrderedNodeContainer;
  * A TreeNode capable of holding child nodes. The fact that any of the children
  * changed is tracked by the subtree version.
  */
-abstract class ContainerNode extends AbstractTreeNode {
+abstract class AbstractContainerNode extends AbstractTreeNode {
     private final Version subtreeVersion;
 
-    protected ContainerNode(final NormalizedNode<?, ?> data, final Version version, final Version subtreeVersion) {
+    protected AbstractContainerNode(final NormalizedNode<?, ?> data, final Version version, final Version subtreeVersion) {
         super(data, version);
         this.subtreeVersion = Preconditions.checkNotNull(subtreeVersion);
     }
@@ -36,52 +33,20 @@ abstract class ContainerNode extends AbstractTreeNode {
         return subtreeVersion;
     }
 
-    protected static final class Mutable implements MutableTreeNode {
-        private final Version version;
-        private Map<PathArgument, TreeNode> children;
-        private NormalizedNode<?, ?> data;
-        private Version subtreeVersion;
+    @SuppressWarnings("unchecked")
+    protected final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> castData() {
+        return (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>) getData();
+    }
 
-        Mutable(final ContainerNode parent, final Map<PathArgument, TreeNode> children) {
-            this.data = parent.getData();
-            this.version = parent.getVersion();
-            this.subtreeVersion = parent.getSubtreeVersion();
-            this.children = Preconditions.checkNotNull(children);
-        }
+    static final TreeNode getChildFromData(final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> data,
+            final PathArgument childId, final Version version) {
+        final Optional<NormalizedNode<?, ?>> child = data.getChild(childId);
+        return child.isPresent() ? TreeNodeFactory.createTreeNode(child.get(), version) : null;
+    }
 
-        @Override
-        public Optional<TreeNode> getChild(final PathArgument child) {
-            return Optional.fromNullable(children.get(child));
-        }
-
-        @Override
-        public void setSubtreeVersion(final Version subtreeVersion) {
-            this.subtreeVersion = Preconditions.checkNotNull(subtreeVersion);
-        }
-
-        @Override
-        public void addChild(final TreeNode child) {
-            children.put(child.getIdentifier(), child);
-        }
-
-        @Override
-        public void removeChild(final PathArgument id) {
-            children.remove(id);
-        }
-
-        @Override
-        public TreeNode seal() {
-            final TreeNode ret = new MaterializedContainerNode(data, version, MapAdaptor.getDefaultInstance().optimize(children), subtreeVersion);
-
-            // This forces a NPE if this class is accessed again. Better than corruption.
-            children = null;
-            return ret;
-        }
-
-        @Override
-        public void setData(final NormalizedNode<?, ?> data) {
-            this.data = Preconditions.checkNotNull(data);
-        }
+    protected final Optional<TreeNode> getChildFromData(final PathArgument childId) {
+        // We do not cache the instantiated node as it is dirt cheap
+        return Optional.fromNullable(getChildFromData(castData(), childId, getVersion()));
     }
 
     /**
@@ -99,7 +64,7 @@ abstract class ContainerNode extends AbstractTreeNode {
      * @param children direct children of root node that is being created
      * @return Root node with reference to data node and whole subtree of child nodes
      */
-    private static ContainerNode createNodeRecursively(final Version version, final NormalizedNode<?, ?> data,
+    private static AbstractContainerNode createNodeRecursively(final Version version, final NormalizedNode<?, ?> data,
         final Iterable<NormalizedNode<?, ?>> children) {
 
         final Map<PathArgument, TreeNode> map = new HashMap<>();
@@ -122,7 +87,7 @@ abstract class ContainerNode extends AbstractTreeNode {
      * @param container Normalized Node Container
      * @return Normalized Node Container as root and all whole subtree created from container iterables.
      */
-    public static ContainerNode createNormalizedNodeRecursively(final Version version,
+    public static AbstractContainerNode createNormalizedNodeRecursively(final Version version,
         final NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container) {
         return createNodeRecursively(version, container, container.getValue());
     }
@@ -139,7 +104,7 @@ abstract class ContainerNode extends AbstractTreeNode {
      * @param container Ordered Node Container
      * @return Normalized Ordered Container as root and all whole subtree created from container iterables.
      */
-    public static ContainerNode createOrderedNodeRecursively(final Version version,
+    public static AbstractContainerNode createOrderedNodeRecursively(final Version version,
         final OrderedNodeContainer<NormalizedNode<?, ?>> container) {
         return createNodeRecursively(version, container, container.getValue());
     }
@@ -151,9 +116,9 @@ abstract class ContainerNode extends AbstractTreeNode {
      * @param container Normalized Node Container
      * @return single instance of Normalized node with provided version and data reference stored in NormalizedNodeContainer
      */
-    public static ContainerNode createNormalizedNode(final Version version,
+    public static AbstractContainerNode createNormalizedNode(final Version version,
         final NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> container) {
-        return new LazyContainerNode(container, version);
+        return new UnmaterializedContainerNode(container, version);
     }
 
     /**
@@ -163,8 +128,8 @@ abstract class ContainerNode extends AbstractTreeNode {
      * @param container Ordered Node Container
      * @return single instance of Ordered Node Container with provided version and data reference stored in OrderedNodeContainer.
      */
-    public static ContainerNode createOrderedNode(final Version version,
+    public static AbstractContainerNode createOrderedNode(final Version version,
         final OrderedNodeContainer<NormalizedNode<?, ?>> container) {
-        return new LazyContainerNode(container, version);
+        return new UnmaterializedContainerNode(container, version);
     }
 }
