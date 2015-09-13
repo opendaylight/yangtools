@@ -100,6 +100,12 @@ public final class MapAdaptor {
             return new ReadWriteTrieMap<>();
         }
 
+        if (expectedSize < 2) {
+            return new HashMap<>(1);
+        }
+        if (expectedSize == 2) {
+            return new HashMap<>(2);
+        }
         return Maps.newHashMapWithExpectedSize(expectedSize);
     }
 
