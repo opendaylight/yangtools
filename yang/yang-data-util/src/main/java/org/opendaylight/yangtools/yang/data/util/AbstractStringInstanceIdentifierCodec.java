@@ -32,15 +32,16 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
         DataSchemaContextNode<?> current = getDataContextTree().getRoot();
         for (PathArgument arg : data.getPathArguments()) {
             current = current.getChild(arg);
+            Preconditions.checkArgument(current != null,
+                    "Invalid input %s: schema for argument %s (after %s) not found", data, arg, sb);
 
-            if(current.isMixin()) {
+            if (current.isMixin()) {
                 /*
                  * XML/YANG instance identifier does not have concept
                  * of augmentation identifier, or list as whole which
-                 * identifies mixin (same as paretn element),
+                 * identifies a mixin (same as the parent element),
                  * so we can safely ignore it if it is part of path
                  * (since child node) is identified in same fashion.
-                 *
                  */
                 continue;
             }
@@ -84,7 +85,7 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
      */
     protected abstract @Nonnull DataSchemaContextTree getDataContextTree();
 
-    protected Object deserializeKeyValue(DataSchemaNode schemaNode, String value) {
+    protected Object deserializeKeyValue(final DataSchemaNode schemaNode, final String value) {
         return value;
     }
 
