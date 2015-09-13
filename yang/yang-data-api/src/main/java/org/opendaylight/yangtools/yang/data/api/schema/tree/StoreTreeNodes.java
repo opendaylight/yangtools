@@ -9,10 +9,9 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Iterables;
+import com.google.common.base.Verify;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -52,7 +51,7 @@ public final class StoreTreeNodes {
             Optional<T> potential = current.getChild(pathArg);
             if (!potential.isPresent()) {
                 throw new IllegalArgumentException(String.format("Child %s is not present in tree.",
-                        Iterables.toString(Iterables.limit(path.getPathArguments(), i))));
+                        path.getAncestor(i)));
             }
             current = potential.get();
             ++i;
@@ -86,19 +85,18 @@ public final class StoreTreeNodes {
             nesting++;
         }
         if (current.isPresent()) {
-            final YangInstanceIdentifier currentPath = YangInstanceIdentifier.create(Iterables.limit(path.getPathArguments(), nesting));
-            return new SimpleImmutableEntry<YangInstanceIdentifier,T>(currentPath,current.get());
+            final YangInstanceIdentifier currentPath = path.getAncestor(nesting);
+            return new SimpleImmutableEntry<YangInstanceIdentifier, T>(currentPath, current.get());
         }
 
         /*
          * Subtracting 1 from nesting level at this point is safe, because we
          * cannot reach here with nesting == 0: that would mean the above check
          * for current.isPresent() failed, which it cannot, as current is always
-         * present. At any rate we check state just to be on the safe side.
+         * present. At any rate we verify state just to be on the safe side.
          */
-        Preconditions.checkState(nesting > 0);
-        final YangInstanceIdentifier parentPath = YangInstanceIdentifier.create(Iterables.limit(path.getPathArguments(), nesting - 1));
-        return new SimpleImmutableEntry<YangInstanceIdentifier,T>(parentPath,parent.get());
+        Verify.verify(nesting > 0);
+        return new SimpleImmutableEntry<YangInstanceIdentifier, T>(path.getAncestor(nesting - 1), parent.get());
     }
 
     public static <T extends StoreTreeNode<T>> Optional<T> getChild(final Optional<T> parent, final PathArgument child) {
