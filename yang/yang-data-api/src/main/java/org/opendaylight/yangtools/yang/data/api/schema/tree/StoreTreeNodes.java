@@ -13,9 +13,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Iterables;
-import java.util.AbstractMap.SimpleEntry;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.Map.Entry;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
@@ -68,11 +68,13 @@ public final class StoreTreeNodes {
      * @return Map.Entry Entry with key which is path to closest parent and value is parent node.
      *
      */
-    public static <T extends StoreTreeNode<T>> Map.Entry<YangInstanceIdentifier, T> findClosest(final T tree, final YangInstanceIdentifier path) {
+    public static <T extends StoreTreeNode<T>> Entry<YangInstanceIdentifier, T> findClosest(final T tree,
+            final YangInstanceIdentifier path) {
         return findClosestsOrFirstMatch(tree, path, Predicates.<T>alwaysFalse());
     }
 
-    public static <T extends StoreTreeNode<T>> Map.Entry<YangInstanceIdentifier, T> findClosestsOrFirstMatch(final T tree, final YangInstanceIdentifier path, final Predicate<T> predicate) {
+    public static <T extends StoreTreeNode<T>> Entry<YangInstanceIdentifier, T> findClosestsOrFirstMatch(final T tree,
+            final YangInstanceIdentifier path, final Predicate<T> predicate) {
         Optional<T> parent = Optional.<T>of(tree);
         Optional<T> current = Optional.<T> of(tree);
 
@@ -85,7 +87,7 @@ public final class StoreTreeNodes {
         }
         if (current.isPresent()) {
             final YangInstanceIdentifier currentPath = YangInstanceIdentifier.create(Iterables.limit(path.getPathArguments(), nesting));
-            return new SimpleEntry<YangInstanceIdentifier,T>(currentPath,current.get());
+            return new SimpleImmutableEntry<YangInstanceIdentifier,T>(currentPath,current.get());
         }
 
         /*
@@ -96,7 +98,7 @@ public final class StoreTreeNodes {
          */
         Preconditions.checkState(nesting > 0);
         final YangInstanceIdentifier parentPath = YangInstanceIdentifier.create(Iterables.limit(path.getPathArguments(), nesting - 1));
-        return new SimpleEntry<YangInstanceIdentifier,T>(parentPath,parent.get());
+        return new SimpleImmutableEntry<YangInstanceIdentifier,T>(parentPath,parent.get());
     }
 
     public static <T extends StoreTreeNode<T>> Optional<T> getChild(final Optional<T> parent, final PathArgument child) {
