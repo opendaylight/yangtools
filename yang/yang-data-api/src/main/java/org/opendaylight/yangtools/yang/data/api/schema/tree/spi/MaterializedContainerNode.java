@@ -9,14 +9,16 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-
 import java.util.Map;
-
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-final class MaterializedContainerNode extends ContainerNode {
+/**
+ * A fully-modified node. It is the same thing as {@link LazyContainerNode}, except we know we have all children
+ * in the map, so we skip lookups in the data.
+ */
+final class MaterializedContainerNode extends AbstractModifiedContainerNode {
     private final Map<PathArgument, TreeNode> children;
 
     protected MaterializedContainerNode(final NormalizedNode<?, ?> data, final Version version,
@@ -32,6 +34,6 @@ final class MaterializedContainerNode extends ContainerNode {
 
     @Override
     public MutableTreeNode mutable() {
-        return new Mutable(this, MapAdaptor.getDefaultInstance().takeSnapshot(children));
+        return new MaterializedMutableContainerNode(this, MapAdaptor.getDefaultInstance().takeSnapshot(children));
     }
 }
