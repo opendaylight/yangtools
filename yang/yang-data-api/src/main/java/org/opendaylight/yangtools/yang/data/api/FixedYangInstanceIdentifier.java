@@ -54,6 +54,21 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
     }
 
     @Override
+    public YangInstanceIdentifier getAncestor(final int depth) {
+        Preconditions.checkArgument(depth >= 0, "Negative depth is not allowed");
+        Preconditions.checkArgument(depth <= path.size(), "Depth %s exceeds maximum depth %s", depth, path.size());
+
+        if (depth == path.size()) {
+            return this;
+        }
+        if (depth == path.size() - 1) {
+            // Use the parent cache
+            return getParent();
+        }
+        return YangInstanceIdentifier.create(path.subList(0, depth));
+    }
+
+    @Override
     public List<PathArgument> getPathArguments() {
         return path;
     }

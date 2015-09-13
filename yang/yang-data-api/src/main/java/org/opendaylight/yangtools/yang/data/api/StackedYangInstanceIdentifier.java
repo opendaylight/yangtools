@@ -57,6 +57,38 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
     }
 
     @Override
+    public YangInstanceIdentifier getAncestor(final int depth) {
+        Preconditions.checkArgument(depth >= 0, "Steps cannot be negative");
+
+        // Calculate how far up our FixedYangInstanceIdentifier ancestor is
+        int stackedDepth = 1;
+        YangInstanceIdentifier wlk = getParent();
+        while (wlk instanceof StackedYangInstanceIdentifier) {
+            wlk = wlk.getParent();
+            stackedDepth++;
+        }
+
+        // Guaranteed to come from FixedYangInstanceIdentifier
+        final int fixedDepth = wlk.getPathArguments().size();
+        if (fixedDepth >= depth) {
+            return wlk.getAncestor(depth);
+        }
+
+        // Calculate our depth and check argument
+        final int ourDepth = stackedDepth + fixedDepth;
+        Preconditions.checkArgument(depth <= ourDepth, "Depth %s exceeds maximum depth %s", depth, ourDepth);
+
+        // Requested depth is covered by the stack, traverse up for specified number of steps
+        final int toWalk = ourDepth - depth;
+        YangInstanceIdentifier result = this;
+        for (int i = 0; i < toWalk; ++i) {
+            result = result.getParent();
+        }
+
+        return result;
+    }
+
+    @Override
     public boolean isEmpty() {
         return false;
     }
