@@ -114,9 +114,18 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      * Return the conceptual parent {@link YangInstanceIdentifier}, which has
      * one item less in {@link #getPathArguments()}.
      *
-     * @return Parent {@link YangInstanceIdentifier}, or null if this is object is {@link #EMPTY}.
+     * @return Parent {@link YangInstanceIdentifier}, or null if this object is {@link #EMPTY}.
      */
     @Nullable public abstract YangInstanceIdentifier getParent();
+
+    /**
+     * Return the ancestor {@link YangInstanceIdentifier} with a particular depth, e.g. number of path arguments.
+     *
+     * @param depth Ancestor depth
+     * @return Ancestor {@link YangInstanceIdentifier}
+     * @throws IllegalArgumentException if the specified depth is negative or is greater than the depth of this object.
+     */
+   @Nonnull public abstract YangInstanceIdentifier getAncestor(int depth);
 
     /**
      * Returns an ordered iteration of path arguments.
