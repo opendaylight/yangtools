@@ -11,57 +11,37 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class CodeGeneratorTestImpl implements BasicCodeGenerator, MavenLogAware, MavenProjectAware {
+public class CodeGeneratorTestImpl implements BasicCodeGenerator, MavenProjectAware {
 
-    private Log log;
+    private static final Logger LOG = LoggerFactory.getLogger(CodeGeneratorTestImpl.class);
 
     @Override
-    public Collection<File> generateSources(SchemaContext context,
-            File outputBaseDir, Set<Module> currentModuleBuilders) {
-        if (log != null) {
-            log.debug(getClass().getCanonicalName()
-                    + " generateSources:context: " + context);
-            log.debug(getClass().getCanonicalName()
-                    + " generateSources:outputBaseDir: " + outputBaseDir);
-            log.debug(getClass().getCanonicalName()
-                    + " generateSources:currentModuleBuilders: "
-                    + currentModuleBuilders);
-
-        }
+    public Collection<File> generateSources(final SchemaContext context,
+            final File outputBaseDir, final Set<Module> currentModuleBuilders) {
+        LOG.debug("{} generateSources:context: {}", getClass().getCanonicalName(), context);
+        LOG.debug("{} generateSources:outputBaseDir: {}", getClass().getCanonicalName(), outputBaseDir);
+        LOG.debug("{} generateSources:currentModuleBuilders: {}", getClass().getCanonicalName(), currentModuleBuilders);
         return null;
     }
 
     @Override
-    public void setLog(Log log) {
-        this.log = log;
+    public void setAdditionalConfig(final Map<String, String> additionalConfiguration) {
+        LOG.debug("{} additionalConfig: {}", getClass().getCanonicalName(), additionalConfiguration);
     }
 
     @Override
-    public void setAdditionalConfig(Map<String, String> additionalConfiguration) {
-        if (log != null)
-            log.debug(getClass().getCanonicalName() + " additionalConfig: "
-                    + additionalConfiguration);
-    }
-
-
-    @Override
-    public void setResourceBaseDir(File resourceBaseDir) {
-        if (log != null)
-            log.debug(getClass().getCanonicalName() + " resourceBaseDir: "
-                    + resourceBaseDir);
+    public void setResourceBaseDir(final File resourceBaseDir) {
+        LOG.debug("{} resourceBaseDir: {}", getClass().getCanonicalName(), resourceBaseDir);
     }
 
     @Override
-    public void setMavenProject(MavenProject project) {
-        if (log != null)
-            log.debug(getClass().getCanonicalName() + " maven project: "
-                    + project);
+    public void setMavenProject(final MavenProject project) {
+        LOG.debug("{} maven project: {}", getClass().getCanonicalName(), project);
     }
-
 }
