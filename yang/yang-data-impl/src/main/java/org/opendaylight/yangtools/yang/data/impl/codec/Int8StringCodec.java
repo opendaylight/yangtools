@@ -12,9 +12,9 @@ import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.Int8Codec;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 
-class Int8StringCodec extends AbstractIntegerStringCodec<Byte, IntegerTypeDefinition> implements Int8Codec<String> {
+final class Int8StringCodec extends AbstractIntegerStringCodec<Byte, IntegerTypeDefinition> implements Int8Codec<String> {
 
-    protected Int8StringCodec(final Optional<IntegerTypeDefinition> typeDef) {
+    Int8StringCodec(final Optional<IntegerTypeDefinition> typeDef) {
         super(typeDef, extractRange(typeDef.orNull()), Byte.class);
     }
 

@@ -15,12 +15,12 @@ import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class StringPatternCheckingCodec extends StringStringCodec {
+final class StringPatternCheckingCodec extends StringStringCodec {
 
     private static final Logger LOG = LoggerFactory.getLogger(StringPatternCheckingCodec.class);
     private final Collection<CompiledPatternContext> patterns;
 
-    protected StringPatternCheckingCodec(final StringTypeDefinition typeDef) {
+    StringPatternCheckingCodec(final StringTypeDefinition typeDef) {
         super(typeDef);
         patterns = new ArrayList<>(typeDef.getPatternConstraints().size());
         for (final PatternConstraint yangPattern : typeDef.getPatternConstraints()) {

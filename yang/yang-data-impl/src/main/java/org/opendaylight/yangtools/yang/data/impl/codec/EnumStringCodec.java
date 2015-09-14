@@ -16,10 +16,10 @@ import org.opendaylight.yangtools.yang.data.api.codec.EnumCodec;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
-class EnumStringCodec extends TypeDefinitionAwareCodec<String, EnumTypeDefinition> implements EnumCodec<String> {
+final class EnumStringCodec extends TypeDefinitionAwareCodec<String, EnumTypeDefinition> implements EnumCodec<String> {
     private final Map<String, String> values;
 
-    protected EnumStringCodec(final Optional<EnumTypeDefinition> typeDef) {
+    private EnumStringCodec(final Optional<EnumTypeDefinition> typeDef) {
         super(typeDef, String.class);
         if (typeDef.isPresent()) {
             final Builder<String, String> b = ImmutableMap.<String, String>builder();
