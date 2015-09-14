@@ -57,13 +57,13 @@ class YangToSourcesProcessor {
     private final URLSchemaContextResolver resolver;
 
     @VisibleForTesting
-    YangToSourcesProcessor(Log log, File yangFilesRootDir, File[] excludedFiles, List<CodeGeneratorArg> codeGenerators,
-            MavenProject project, boolean inspectDependencies, YangProvider yangProvider) {
+    YangToSourcesProcessor(final Log log, final File yangFilesRootDir, final File[] excludedFiles, final List<CodeGeneratorArg> codeGenerators,
+            final MavenProject project, final boolean inspectDependencies, final YangProvider yangProvider) {
         this(new DefaultBuildContext(), log, yangFilesRootDir, excludedFiles, codeGenerators, project, inspectDependencies, yangProvider);
     }
 
-    private YangToSourcesProcessor(BuildContext buildContext,  Log log, File yangFilesRootDir, File[] excludedFiles,
-            List<CodeGeneratorArg> codeGenerators, MavenProject project, boolean inspectDependencies, YangProvider yangProvider) {
+    private YangToSourcesProcessor(final BuildContext buildContext,  final Log log, final File yangFilesRootDir, final File[] excludedFiles,
+            final List<CodeGeneratorArg> codeGenerators, final MavenProject project, final boolean inspectDependencies, final YangProvider yangProvider) {
         this.buildContext = Util.checkNotNull(buildContext, "buildContext");
         this.log = Util.checkNotNull(log, "log");
         this.yangFilesRootDir = Util.checkNotNull(yangFilesRootDir, "yangFilesRootDir");
@@ -79,8 +79,8 @@ class YangToSourcesProcessor {
         this.resolver = URLSchemaContextResolver.create("maven-plugin");
     }
 
-    YangToSourcesProcessor(BuildContext buildContext, Log log, File yangFilesRootDir, File[] excludedFiles, List<CodeGeneratorArg> codeGenerators,
-            MavenProject project, boolean inspectDependencies) {
+    YangToSourcesProcessor(final BuildContext buildContext, final Log log, final File yangFilesRootDir, final File[] excludedFiles, final List<CodeGeneratorArg> codeGenerators,
+            final MavenProject project, final boolean inspectDependencies) {
         this(log, yangFilesRootDir, excludedFiles, codeGenerators, project, inspectDependencies, new YangProvider());
     }
 
@@ -189,7 +189,7 @@ class YangToSourcesProcessor {
         }
     }
 
-    private List<InputStream> toStreamsWithoutDuplicates(List<YangSourceFromDependency> list) throws IOException {
+    private static List<InputStream> toStreamsWithoutDuplicates(final List<YangSourceFromDependency> list) throws IOException {
         ConcurrentMap<String, YangSourceFromDependency> byContent = Maps.newConcurrentMap();
 
         for (YangSourceFromDependency yangFromDependency : list) {
@@ -208,7 +208,7 @@ class YangToSourcesProcessor {
 
     static class YangProvider {
 
-        void addYangsToMetaInf(Log log, MavenProject project, File yangFilesRootDir, File[] excludedFiles)
+        void addYangsToMetaInf(final Log log, final MavenProject project, final File yangFilesRootDir, final File[] excludedFiles)
                 throws MojoFailureException {
 
             // copy project's src/main/yang/*.yang to target/generated-sources/yang/META-INF/yang/*.yang
@@ -226,8 +226,8 @@ class YangToSourcesProcessor {
             }
         }
 
-        private void addYangsToMetaInf(Log log, MavenProject project, File yangFilesRootDir,
-                File[] excludedFiles, File generatedYangDir)
+        private static void addYangsToMetaInf(final Log log, final MavenProject project, final File yangFilesRootDir,
+                final File[] excludedFiles, final File generatedYangDir)
                 throws MojoFailureException {
 
             File withMetaInf = new File(generatedYangDir, META_INF_YANG_STRING);
@@ -249,7 +249,7 @@ class YangToSourcesProcessor {
                     META_INF_YANG_STRING_JAR));
         }
 
-        private static void setResource(File targetYangDir, MavenProject project) {
+        private static void setResource(final File targetYangDir, final MavenProject project) {
             Resource res = new Resource();
             res.setDirectory(targetYangDir.getPath());
             project.addResource(res);
@@ -259,7 +259,7 @@ class YangToSourcesProcessor {
     /**
      * Call generate on every generator from plugin configuration
      */
-    private void generateSources(ContextHolder context) throws MojoFailureException {
+    private void generateSources(final ContextHolder context) throws MojoFailureException {
         if (codeGenerators.size() == 0) {
             log.warn(Util.message("No code generators provided", LOG_PREFIX));
             return;
@@ -290,7 +290,7 @@ class YangToSourcesProcessor {
     /**
      * Instantiate generator from class and call required method
      */
-    private void generateSourcesWithOneGenerator(ContextHolder context, CodeGeneratorArg codeGeneratorCfg)
+    private void generateSourcesWithOneGenerator(final ContextHolder context, final CodeGeneratorArg codeGeneratorCfg)
             throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
 
         codeGeneratorCfg.check();

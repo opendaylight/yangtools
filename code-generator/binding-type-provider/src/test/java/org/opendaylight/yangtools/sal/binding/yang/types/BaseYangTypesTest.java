@@ -10,7 +10,9 @@ package org.opendaylight.yangtools.sal.binding.yang.types;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import java.io.InputStream;
+import com.google.common.io.ByteSource;
+import com.google.common.io.Resources;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Collections;
@@ -21,7 +23,6 @@ import org.junit.Test;
 import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.sal.binding.generator.spi.TypeProvider;
 import org.opendaylight.yangtools.sal.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
@@ -34,6 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
@@ -62,15 +64,12 @@ public class BaseYangTypesTest {
     private static EmptyTypeDefinition empty = null;
     private static BooleanTypeDefinition bool = null;
 
-    @SuppressWarnings("deprecation")
     @BeforeClass
-    public static void setup() {
-        final List<InputStream> modelsToParse = Collections
-            .singletonList(BaseYangTypesTest.class.getResourceAsStream("/base-yang-types.yang"));
+    public static void setup() throws IOException, YangSyntaxErrorException {
+        final List<ByteSource> modelsToParse = Collections
+            .singletonList(Resources.asByteSource(BaseYangTypesTest.class.getResource("/base-yang-types.yang")));
         final YangContextParser parser = new YangParserImpl();
-        final Set<Module> modules = parser.parseYangModelsFromStreams(modelsToParse);
-        assertTrue(!modules.isEmpty());
-        schemaContext = parser.resolveSchemaContext(modules);
+        schemaContext = parser.parseSources(modelsToParse);
         assertNotNull(schemaContext);
         initTypeDefinitionsFromSchemaContext();
     }

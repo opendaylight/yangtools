@@ -10,11 +10,12 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import com.google.common.base.Optional;
-import java.io.InputStream;
+import com.google.common.io.ByteSource;
+import com.google.common.io.Resources;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -36,8 +37,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLe
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,7 +76,7 @@ public class ListConstraintsValidationTest {
             .node(UNKEYED_LIST_QNAME).build();
 
     @Before
-    public void prepare() {
+    public void prepare() throws IOException, YangSyntaxErrorException {
         schemaContext = createTestContext();
         assertNotNull("Schema context must not be null.", schemaContext);
         rootOper = RootModificationApplyOperation.from(SchemaAwareApplyOperation.from(schemaContext, TreeType.OPERATIONAL));
@@ -91,18 +92,13 @@ public class ListConstraintsValidationTest {
 
     }
 
-    public static final InputStream getDatastoreTestInputStream() {
-        return getInputStream(CONSTRAINTS_VALIDATION_TEST_YANG);
+    private static ByteSource getInputStream() {
+        return Resources.asByteSource(TestModel.class.getResource(CONSTRAINTS_VALIDATION_TEST_YANG));
     }
 
-    private static InputStream getInputStream(final String resourceName) {
-        return TestModel.class.getResourceAsStream(CONSTRAINTS_VALIDATION_TEST_YANG);
-    }
-
-    public static SchemaContext createTestContext() {
+    public static SchemaContext createTestContext() throws IOException, YangSyntaxErrorException {
         final YangParserImpl parser = new YangParserImpl();
-        final Set<Module> modules = parser.parseYangModelsFromStreams(Collections.singletonList(getDatastoreTestInputStream()));
-        return parser.resolveSchemaContext(modules);
+        return parser.parseSources(Collections.singletonList(getInputStream()));
     }
 
     @Test

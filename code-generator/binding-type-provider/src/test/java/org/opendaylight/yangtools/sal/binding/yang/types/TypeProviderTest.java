@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.sal.binding.yang.types;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
+import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Set;
@@ -25,19 +25,33 @@ import org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil;
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl;
 import org.opendaylight.yangtools.binding.generator.util.generated.type.builder.GeneratedTOBuilderImpl;
 import org.opendaylight.yangtools.sal.binding.generator.spi.TypeProvider;
-import org.opendaylight.yangtools.sal.binding.model.api.*;
+import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType;
+import org.opendaylight.yangtools.sal.binding.model.api.Enumeration;
+import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.sal.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.sal.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.sal.binding.model.api.Type;
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
-import org.opendaylight.yangtools.yang.model.api.*;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 
 /**
  * Test suite for testing public methods in TypeProviderImpl class
  *
  * @see org.opendaylight.yangtools.sal.binding.yang.types.TypeProviderImpl
  *
- * @author Lukas Sedlak <lsedlak@cisco.com>
+ * @author Lukas Sedlak &lt;lsedlak@cisco.com&gt;
  */
 @RunWith(JUnit4.class)
 public class TypeProviderTest {
@@ -53,7 +67,7 @@ public class TypeProviderTest {
     private SchemaNode schemaNode;
 
     @Before
-    public void setUp() {
+    public void setUp() throws IOException, YangSyntaxErrorException {
         MockitoAnnotations.initMocks(this);
         schemaContext = TypeProviderModel.createTestContext();
         assertNotNull(schemaContext);
@@ -303,7 +317,7 @@ public class TypeProviderTest {
         assertTrue(leafrefResolvedType2 instanceof ParameterizedType);
     }
 
-    private void setReferencedTypeForTypeProvider(TypeProvider provider) {
+    private void setReferencedTypeForTypeProvider(final TypeProvider provider) {
         final LeafSchemaNode enumLeafNode = provideLeafNodeFromTopLevelContainer(testTypeProviderModule, "foo",
             "resolve-direct-use-of-enum");
         final TypeDefinition<?> enumLeafTypedef = enumLeafNode.getType();

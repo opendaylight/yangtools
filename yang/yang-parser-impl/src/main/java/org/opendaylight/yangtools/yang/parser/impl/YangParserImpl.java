@@ -83,7 +83,6 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleImpl;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnionTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
-import org.opendaylight.yangtools.yang.parser.util.NamedByteArrayInputStream;
 import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 import org.opendaylight.yangtools.yang.parser.util.NamedInputStream;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
@@ -97,16 +96,6 @@ public final class YangParserImpl implements YangContextParser {
 
     public static YangParserImpl getInstance() {
         return INSTANCE;
-    }
-
-    @Override
-    @Deprecated
-    public Set<Module> parseYangModels(final File yangFile, final File directory) {
-        try {
-            return parseFile(yangFile, directory).getModules();
-        } catch (IOException | YangSyntaxErrorException e) {
-            throw new YangParseException("Failed to parse yang data", e);
-        }
     }
 
     @Override
@@ -150,27 +139,11 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     @Override
-    @Deprecated
-    public Set<Module> parseYangModels(final List<File> yangFiles) {
-        return parseFiles(yangFiles).getModules();
-    }
-
-    @Override
     public SchemaContext parseFiles(final Collection<File> yangFiles) {
         Collection<Module> unsorted = parseYangModelsMapped(yangFiles).values();
         Set<Module> sorted = new LinkedHashSet<>(
                 ModuleDependencySort.sort(unsorted.toArray(new Module[unsorted.size()])));
         return resolveSchemaContext(sorted);
-    }
-
-    @Override
-    @Deprecated
-    public Set<Module> parseYangModels(final List<File> yangFiles, final SchemaContext context) {
-        try {
-            return parseFiles(yangFiles, context).getModules();
-        } catch (IOException | YangSyntaxErrorException e) {
-            throw new YangParseException("Failed to parse yang data", e);
-        }
     }
 
     @Override
@@ -185,30 +158,8 @@ public final class YangParserImpl implements YangContextParser {
     }
 
     @Override
-    @Deprecated
-    public Set<Module> parseYangModelsFromStreams(final List<InputStream> yangModelStreams) {
-        try {
-            Collection<ByteSource> sources = BuilderUtils.streamsToByteSources(yangModelStreams);
-            return parseSources(sources).getModules();
-        } catch (IOException | YangSyntaxErrorException e) {
-            throw new YangParseException("Failed to parse yang data", e);
-        }
-    }
-
-    @Override
     public SchemaContext parseSources(final Collection<ByteSource> sources) throws IOException,YangSyntaxErrorException {
         return assembleContext(parseYangModelSources(sources, null).values());
-    }
-
-    @Override
-    @Deprecated
-    public Set<Module> parseYangModelsFromStreams(final List<InputStream> yangModelStreams, final SchemaContext context) {
-        try {
-            Collection<ByteSource> sources = BuilderUtils.streamsToByteSources(yangModelStreams);
-            return parseSources(sources, context).getModules();
-        } catch (IOException | YangSyntaxErrorException e) {
-            throw new YangParseException("Failed to parse yang data", e);
-        }
     }
 
     @Override
@@ -261,8 +212,7 @@ public final class YangParserImpl implements YangContextParser {
         return modules;
     }
 
-    @Override
-    public Map<File, Module> parseYangModelsMapped(final Collection<File> yangFiles) {
+    private Map<File, Module> parseYangModelsMapped(final Collection<File> yangFiles) {
         if (yangFiles == null || yangFiles.isEmpty()) {
             return Collections.emptyMap();
         }
@@ -291,38 +241,7 @@ public final class YangParserImpl implements YangContextParser {
         return result;
     }
 
-    @Override
-    public Map<InputStream, Module> parseYangModelsFromStreamsMapped(final Collection<InputStream> yangModelStreams) {
-        if (yangModelStreams == null || yangModelStreams.isEmpty()) {
-            return Collections.emptyMap();
-        }
-
-        Map<ByteSource, InputStream> sourceToStream = new HashMap<>();
-        for (final InputStream stream : yangModelStreams) {
-            ByteSource source = new ByteSource() {
-                @Override
-                public InputStream openStream() throws IOException {
-                    return NamedByteArrayInputStream.create(stream);
-                }
-            };
-            sourceToStream.put(source, stream);
-        }
-
-        Map<ByteSource, Module> sourceToModule;
-        try {
-            sourceToModule = parseYangModelSources(sourceToStream.keySet(), null);
-        } catch (IOException | YangSyntaxErrorException e) {
-            throw new YangParseException("Failed to parse yang data", e);
-        }
-        Map<InputStream, Module> result = new LinkedHashMap<>();
-        for (Map.Entry<ByteSource, Module> entry : sourceToModule.entrySet()) {
-            result.put(sourceToStream.get(entry.getKey()), entry.getValue());
-        }
-        return result;
-    }
-
-    @Override
-    public SchemaContext resolveSchemaContext(final Set<Module> modules) {
+    private static SchemaContext resolveSchemaContext(final Set<Module> modules) {
         // after merging parse method with this one, add support for getting
         // submodule sources.
         Map<ModuleIdentifier, String> identifiersToSources = new HashMap<>();
@@ -341,7 +260,7 @@ public final class YangParserImpl implements YangContextParser {
         return builderToModule.values();
     }
 
-    public SchemaContext assembleContext(final Collection<Module> modules) {
+    public static SchemaContext assembleContext(final Collection<Module> modules) {
         final Set<Module> sorted = new LinkedHashSet<>(
                 ModuleDependencySort.sort(modules.toArray(new Module[modules.size()])));
         return resolveSchemaContext(sorted);

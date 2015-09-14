@@ -11,9 +11,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import com.google.common.base.Optional;
-import java.io.InputStream;
+import com.google.common.io.ByteSource;
+import com.google.common.io.Resources;
+import java.io.IOException;
 import java.util.Collections;
-import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -27,8 +28,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailed
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public class Bug2690FixTest {
@@ -39,7 +40,7 @@ public class Bug2690FixTest {
     private InMemoryDataTree inMemoryDataTree;
 
     @Before
-    public void prepare() {
+    public void prepare() throws IOException, YangSyntaxErrorException {
         schemaContext = createTestContext();
         assertNotNull("Schema context must not be null.", schemaContext);
         rootOper = RootModificationApplyOperation.from(SchemaAwareApplyOperation.from(schemaContext, TreeType.OPERATIONAL));
@@ -47,18 +48,13 @@ public class Bug2690FixTest {
         inMemoryDataTree.setSchemaContext(schemaContext);
     }
 
-    public static final InputStream getDatastoreTestInputStream() {
-        return getInputStream(ODL_DATASTORE_TEST_YANG);
+    private static ByteSource getInputStream() {
+        return Resources.asByteSource(TestModel.class.getResource(ODL_DATASTORE_TEST_YANG));
     }
 
-    private static InputStream getInputStream(final String resourceName) {
-        return TestModel.class.getResourceAsStream(ODL_DATASTORE_TEST_YANG);
-    }
-
-    public static SchemaContext createTestContext() {
+    public static SchemaContext createTestContext() throws IOException, YangSyntaxErrorException {
         final YangParserImpl parser = new YangParserImpl();
-        final Set<Module> modules = parser.parseYangModelsFromStreams(Collections.singletonList(getDatastoreTestInputStream()));
-        return parser.resolveSchemaContext(modules);
+        return parser.parseSources(Collections.singletonList(getInputStream()));
     }
 
     @Test
