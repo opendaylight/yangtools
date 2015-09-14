@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a79b1b5_8abab808",
+        "filename": "restconf/restconf-jaxrs-api/src/main/java/org/opendaylight/yangtools/draft/Draft01.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-14T10:21:02Z",
+      "side": 1,
+      "message": "should be final, too",
+      "revId": "dd8544c5c156e76a1ec5886de5b90b7de8e894dd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_6abf1cfc",
+        "filename": "restconf/restconf-jaxrs-api/src/main/java/org/opendaylight/yangtools/draft/Draft01.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-14T10:21:02Z",
+      "side": 1,
+      "message": "should be final, too",
+      "revId": "dd8544c5c156e76a1ec5886de5b90b7de8e894dd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
