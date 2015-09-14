@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.lang.reflect.Method;
@@ -132,7 +131,7 @@ public class YangModuleInfoCompilationTest {
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
-    private void generateTestSources(String resourceDirPath, File sourcesOutputDir) throws Exception {
+    private static void generateTestSources(final String resourceDirPath, final File sourcesOutputDir) throws Exception {
         final List<File> sourceFiles = getSourceFiles(resourceDirPath);
         YangContextParser parser = new YangParserImpl();
         final SchemaContext context = parser.parseFiles(sourceFiles);
@@ -141,7 +140,7 @@ public class YangModuleInfoCompilationTest {
         codegen.generateSources(context, sourcesOutputDir, context.getModules());
     }
 
-    private static void testCompilation(File sourcesOutputDir, File compiledOutputDir) {
+    private static void testCompilation(final File sourcesOutputDir, final File compiledOutputDir) {
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
         StandardJavaFileManager fileManager = compiler.getStandardFileManager(null, null, null);
         List<File> filesList = getJavaFiles(sourcesOutputDir);
@@ -151,7 +150,7 @@ public class YangModuleInfoCompilationTest {
         assertTrue(compiled);
     }
 
-    private static List<File> getJavaFiles(File directory) {
+    private static List<File> getJavaFiles(final File directory) {
         List<File> result = new ArrayList<>();
         File[] filesToRead = directory.listFiles();
         if (filesToRead != null) {
@@ -169,7 +168,7 @@ public class YangModuleInfoCompilationTest {
         return result;
     }
 
-    private static List<File> getSourceFiles(String path) throws Exception {
+    private static List<File> getSourceFiles(final String path) throws Exception {
         final URI resPath = YangModuleInfoCompilationTest.class.getResource(path).toURI();
         final File sourcesDir = new File(resPath);
         final URI currentDir = new File(System.getProperty("user.dir")).toURI();
@@ -188,7 +187,7 @@ public class YangModuleInfoCompilationTest {
         }
     }
 
-    private static void deleteTestDir(File file) {
+    private static void deleteTestDir(final File file) {
         if (file.isDirectory()) {
             File[] filesToDelete = file.listFiles();
             if (filesToDelete != null) {
@@ -202,7 +201,7 @@ public class YangModuleInfoCompilationTest {
         }
     }
 
-    private static Method assertContainsMethod(Class<?> clazz, Class<?> returnType, String name, Class<?>... args) {
+    private static Method assertContainsMethod(final Class<?> clazz, final Class<?> returnType, final String name, final Class<?>... args) {
         try {
             Method m = clazz.getDeclaredMethod(name, args);
             assertEquals(returnType, m.getReturnType());
@@ -213,7 +212,7 @@ public class YangModuleInfoCompilationTest {
         }
     }
 
-    private static void cleanUp(File... resourceDirs) {
+    private static void cleanUp(final File... resourceDirs) {
         for (File resourceDir : resourceDirs) {
             if (resourceDir.exists()) {
                 deleteTestDir(resourceDir);

@@ -10,10 +10,11 @@ package org.opendaylight.yangtools.sal.binding.generator.impl;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.io.ByteSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
-import java.util.Set;
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
@@ -23,17 +24,16 @@ import org.opendaylight.yangtools.sal.binding.generator.api.ModuleInfoRegistry;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
-        implements //
-        ModuleInfoRegistry, SchemaContextProvider {
+public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy
+        implements ModuleInfoRegistry, SchemaContextProvider {
 
     private ModuleInfoBackedContext(final ClassLoadingStrategy loadingStrategy) {
         this.backingLoadingStrategy = loadingStrategy;
@@ -79,13 +79,12 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
 
     private synchronized Optional<SchemaContext> recreateSchemaContext() {
         try {
-            ImmutableList<InputStream> streams = getAvailableStreams();
+            Collection<ByteSource> streams = getAvailableStreams();
             YangParserImpl parser = new YangParserImpl();
-            Set<Module> modules = parser.parseYangModelsFromStreams(streams);
-            SchemaContext schemaContext = parser.resolveSchemaContext(modules);
+            SchemaContext schemaContext = parser.parseSources(streams);
             return Optional.of(schemaContext);
-        } catch (IOException e) {
-            LOG.error("Schema was not recreated.",e);
+        } catch (IOException | YangSyntaxErrorException e) {
+            LOG.error("Schema was not recreated.", e);
         }
         return Optional.absent();
     }
@@ -98,12 +97,19 @@ public class ModuleInfoBackedContext extends GeneratedClassLoadingStrategy //
         return recreateSchemaContext();
     }
 
-    private ImmutableList<InputStream> getAvailableStreams() throws IOException {
+    private Collection<ByteSource> getAvailableStreams() throws IOException {
         ImmutableSet<YangModuleInfo> moduleInfos = ImmutableSet.copyOf(sourceIdentifierToModuleInfo.values());
 
-        ImmutableList.Builder<InputStream> sourceStreams = ImmutableList.<InputStream> builder();
-        for (YangModuleInfo moduleInfo : moduleInfos) {
-            sourceStreams.add(moduleInfo.getModuleSourceStream());
+        ImmutableList.Builder<ByteSource> sourceStreams = ImmutableList.<ByteSource> builder();
+        for (final YangModuleInfo moduleInfo : moduleInfos) {
+            sourceStreams.add(new ByteSource() {
+
+                @Override
+                public InputStream openStream() throws IOException {
+                    return moduleInfo.getModuleSourceStream();
+                }
+            });
+            ;
         }
         return sourceStreams.build();
     }

@@ -12,11 +12,12 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import java.io.InputStream;
+import com.google.common.io.ByteSource;
+import com.google.common.io.Resources;
+import java.io.IOException;
 import java.net.URI;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -41,6 +42,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 public class NormalizedDataBuilderTest {
@@ -48,19 +50,18 @@ public class NormalizedDataBuilderTest {
     private ContainerSchemaNode containerNode;
     private SchemaContext schema;
 
-    SchemaContext parseTestSchema(final String... yangPath) {
+    SchemaContext parseTestSchema(final String... yangPath) throws IOException, YangSyntaxErrorException {
         YangParserImpl yangParserImpl = new YangParserImpl();
-        Set<Module> modules = yangParserImpl.parseYangModelsFromStreams(getTestYangs(yangPath));
-        return yangParserImpl.resolveSchemaContext(modules);
+        return yangParserImpl.parseSources(getTestYangs(yangPath));
     }
 
-    List<InputStream> getTestYangs(final String... yangPaths) {
+    List<ByteSource> getTestYangs(final String... yangPaths) {
 
         return Lists.newArrayList(Collections2.transform(Lists.newArrayList(yangPaths),
-                new Function<String, InputStream>() {
+                new Function<String, ByteSource>() {
             @Override
-            public InputStream apply(final String input) {
-                InputStream resourceAsStream = getClass().getResourceAsStream(input);
+            public ByteSource apply(final String input) {
+                ByteSource resourceAsStream = Resources.asByteSource(getClass().getResource(input));
                 Preconditions.checkNotNull(resourceAsStream, "File %s was null", resourceAsStream);
                 return resourceAsStream;
             }
