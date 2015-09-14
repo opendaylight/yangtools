@@ -104,41 +104,42 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
     private static TreeMultimap<String, Module> getStringModuleTreeMultimap() {
         return TreeMultimap.create(new Comparator<String>() {
                 @Override
-                public int compare(String o1, String o2) {
+                public int compare(final String o1, final String o2) {
                     return o1.compareTo(o2);
                 }
             }, REVISION_COMPARATOR);
     }
 
-    private void processForAdditionalModules(SchemaContext delegate, final Set<ModuleId> additionalModuleIds, Builder<Module> filteredModulesBuilder) {
+    private static void processForAdditionalModules(final SchemaContext delegate,
+            final Set<ModuleId> additionalModuleIds, final Builder<Module> filteredModulesBuilder) {
         filteredModulesBuilder.addAll(Collections2.filter(delegate.getModules(), new Predicate<Module>() {
             @Override
-            public boolean apply(@Nullable Module module) {
+            public boolean apply(@Nullable final Module module) {
                 return selectAdditionalModules(module, additionalModuleIds);
             }
         }));
     }
 
-    private void processForRootModules(SchemaContext delegate, final Collection<ModuleId> rootModules, Builder<Module> filteredModulesBuilder) {
+    private void processForRootModules(final SchemaContext delegate, final Collection<ModuleId> rootModules, final Builder<Module> filteredModulesBuilder) {
         filteredModulesBuilder.addAll(Collections2.filter(delegate.getModules(), new Predicate<Module>() {
             @Override
-            public boolean apply(@Nullable Module module) {
+            public boolean apply(@Nullable final Module module) {
                 return checkModuleDependency(module, rootModules);
             }
         }));
     }
 
-    private Multimap<String, Module> getStringModuleMap(SchemaContext delegate) {
+    private static Multimap<String, Module> getStringModuleMap(final SchemaContext delegate) {
         return Multimaps.index(delegate.getModules(), new Function<Module, String>() {
             @Override
-            public String apply(Module input) {
+            public String apply(final Module input) {
                 return input.getName();
             }
         });
     }
 
     //dealing with imported module other than root and directly importing root
-    private static Collection<Module> getImportedModules(Map<ModuleId, Module> allModules, Set<Module> baseModules, TreeMultimap<String, Module> nameToModulesAll) {
+    private static Collection<Module> getImportedModules(final Map<ModuleId, Module> allModules, final Set<Module> baseModules, final TreeMultimap<String, Module> nameToModulesAll) {
 
         List<Module> relatedModules = Lists.newLinkedList();
 
@@ -168,6 +169,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
         return identifiersToSources;
     }
 
+    @Override
     public Set<Module> getModules() {
         return filteredModules;
     }
@@ -182,18 +184,12 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
         return nameToModules;
     }
 
-    private boolean selectAdditionalModules(Module module, Set<ModuleId> additionalModules){
-
-        if(additionalModules.contains(new ModuleId(module.getName(), module.getRevision()))){
-
-            return true;
-        }
-
-        return false;
+    private static boolean selectAdditionalModules(final Module module, final Set<ModuleId> additionalModules){
+        return additionalModules.contains(new ModuleId(module.getName(), module.getRevision()));
     }
 
     //check for any dependency regarding given string
-    private boolean checkModuleDependency(Module module, Collection<ModuleId> rootModules) {
+    private boolean checkModuleDependency(final Module module, final Collection<ModuleId> rootModules) {
 
         for (ModuleId rootModule : rootModules) {
 
@@ -232,7 +228,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
         private final String name;
         private final Date rev;
 
-        public ModuleId(String name, Date rev) {
+        public ModuleId(final String name, final Date rev) {
             Preconditions.checkArgument(!Strings.isNullOrEmpty(name), "No module dependency name given. Nothing to do.");
             this.name = name;
             this.rev = Preconditions.checkNotNull(rev, "No revision date given. Nothing to do.");
@@ -248,13 +244,13 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
 
         public static final Function<Module, ModuleId> MODULE_TO_MODULE_ID = new Function<Module, ModuleId>() {
             @Override
-            public ModuleId apply(Module input) {
+            public ModuleId apply(final Module input) {
                 return new ModuleId(input.getName(), input.getRevision());
             }
         };
 
         @Override
-        public boolean equals(Object o) {
+        public boolean equals(final Object o) {
             if (this == o) {
                 return true;
             }

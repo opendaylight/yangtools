@@ -90,7 +90,7 @@ public class FilesystemSchemaSourceCacheTest {
         assertEquals(2, storedFilesAfterNewCache.size());
     }
 
-    private Collection<String> filesToFilenamesWithoutRevision(final List<File> storedFiles) {
+    private static Collection<String> filesToFilenamesWithoutRevision(final List<File> storedFiles) {
         return Collections2.transform(storedFiles, new Function<File, String>() {
             @Override
             public String apply(final File input) {
