@@ -7,8 +7,13 @@
  */
 package org.opendaylight.yangtools.draft;
 
-public class Draft02 {
-    public static class MediaTypes {
+public final class Draft02 {
+
+    private Draft02() {
+        throw new UnsupportedOperationException("Utility class should not be instantiated!");
+    }
+
+    public static final class MediaTypes {
         public static final String API = "application/yang.api";
         public static final String DATASTORE = "application/yang.datastore";
         public static final String DATA = "application/yang.data";
@@ -16,6 +21,10 @@ public class Draft02 {
         public static final String PATCH = "application/yang.patch";
         public static final String PATCH_STATUS = "application/yang.patch-status";
         public static final String STREAM = "application/yang.stream";
+
+        private MediaTypes() {
+            throw new UnsupportedOperationException("Utility class should not be instantiated!");
+        }
     }
 
     public static class Paths {
