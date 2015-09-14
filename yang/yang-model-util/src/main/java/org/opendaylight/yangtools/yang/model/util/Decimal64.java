@@ -73,10 +73,8 @@ public final class Decimal64 implements DecimalTypeDefinition {
      *
      * @see DecimalTypeDefinition
      * @exception IllegalArgumentException
-     * @deprecated Use static factory {@link #create(SchemaPath, Integer)}.
      */
-    @Deprecated
-    public Decimal64(final SchemaPath path, final Integer fractionDigits) {
+    private Decimal64(final SchemaPath path, final Integer fractionDigits) {
         if (!((fractionDigits.intValue() >= 1) && (fractionDigits.intValue() <= MAX_NUMBER_OF_FRACTION_DIGITS))) {
             throw new IllegalArgumentException(
                     "The fraction digits outside of boundaries. Fraction digits MUST be integer between 1 and 18 inclusively");

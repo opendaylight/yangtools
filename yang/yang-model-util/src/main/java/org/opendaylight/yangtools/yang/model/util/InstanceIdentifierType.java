@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import java.util.Collections;
 import java.util.List;
-
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -36,35 +35,12 @@ public final class InstanceIdentifierType implements InstanceIdentifierTypeDefin
     private static final String DESCRIPTION = "The instance-identifier built-in type is used to "
             + "uniquely identify a particular instance node in the data tree.";
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.13";
-
     private static final String UNITS = "";
-    private final Boolean requireInstance;
 
     private static final InstanceIdentifierType INSTANCE_WITH_REQUIRED_TRUE = new InstanceIdentifierType(true);
     private static final InstanceIdentifierType INSTANCE_WITH_REQUIRED_FALSE = new InstanceIdentifierType(false);
 
-    /**
-     * Constructs new instance identifier.
-     *
-     * @param xpath
-     * @deprecated Use {@link #getInstance()} for default one, since Instance Identifier does not have xpath.
-     */
-    @Deprecated
-    public InstanceIdentifierType(final RevisionAwareXPath xpath) {
-        requireInstance = true;
-    }
-
-    /**
-     * Constructs new instance identifier.
-     *
-     * @param xpath
-     * @param requireInstance if instance of data is required
-     * @deprecated Use {@link #create(boolean)}, since Instance Identifier does not have xpath.
-     */
-    @Deprecated
-    public InstanceIdentifierType(final RevisionAwareXPath xpath, final boolean requireInstance) {
-        this.requireInstance = requireInstance;
-    }
+    private final Boolean requireInstance;
 
     private InstanceIdentifierType(final boolean requiredInstance) {
         this.requireInstance = requiredInstance;
@@ -103,8 +79,7 @@ public final class InstanceIdentifierType implements InstanceIdentifierTypeDefin
      * (non-Javadoc)
      *
      * @see
-     * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue
-     * ()
+     * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue()
      */
     @Override
     public Object getDefaultValue() {
@@ -166,8 +141,7 @@ public final class InstanceIdentifierType implements InstanceIdentifierTypeDefin
      * (non-Javadoc)
      *
      * @see
-     * org.opendaylight.yangtools.yang.model.api.SchemaNode#getExtensionSchemaNodes
-     * ()
+     * org.opendaylight.yangtools.yang.model.api.SchemaNode#getExtensionSchemaNodes()
      */
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
@@ -219,7 +193,4 @@ public final class InstanceIdentifierType implements InstanceIdentifierTypeDefin
         InstanceIdentifierType other = (InstanceIdentifierType) obj;
         return requireInstance.equals(other.requireInstance);
     }
-
-
-
 }
