@@ -142,7 +142,7 @@ public final class MutableOffsetMap<K, V> extends AbstractMap<K, V> implements C
     }
 
     @Override
-    public final V put(final K key, final V value) {
+    public V put(final K key, final V value) {
         Preconditions.checkNotNull(value);
         final Integer offset = offsets.get(Preconditions.checkNotNull(key));
         if (offset == null) {
@@ -202,7 +202,7 @@ public final class MutableOffsetMap<K, V> extends AbstractMap<K, V> implements C
     }
 
     @Override
-    public final Map<K, V> toUnmodifiableMap() {
+    public Map<K, V> toUnmodifiableMap() {
         if (newKeys.isEmpty() && removed == 0) {
             // Make sure next modification clones the array, as we leak it to the map we return.
             needClone = true;
@@ -336,7 +336,7 @@ public final class MutableOffsetMap<K, V> extends AbstractMap<K, V> implements C
     }
 
     @Override
-    public final Set<K> keySet() {
+    public Set<K> keySet() {
         return new KeySet();
     }
 
