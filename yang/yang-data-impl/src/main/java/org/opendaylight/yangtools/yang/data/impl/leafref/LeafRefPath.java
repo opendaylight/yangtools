@@ -12,7 +12,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -104,19 +103,6 @@ public abstract class LeafRefPath implements Immutable {
         }
 
         return ret;
-    }
-
-    /**
-     * Returns the complete path to schema node.
-     *
-     * @return list of <code>QNameWithPredicate</code> instances which
-     *         represents complete path to schema node
-     *
-     * @deprecated Use {@link #getPathFromRoot()} instead.
-     */
-    @Deprecated
-    public List<QNameWithPredicate> getPath() {
-        return getLegacyPath();
     }
 
     protected LeafRefPath(final LeafRefPath parent,
