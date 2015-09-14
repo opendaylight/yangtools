@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadModules;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
-
 import com.google.gson.stream.JsonReader;
 import java.io.File;
 import java.io.IOException;
@@ -28,6 +27,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWrit
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,8 +101,9 @@ public class StreamToNormalizedNodeTest {
         final StringWriter writer = new StringWriter();
 
         // StreamWriter which outputs JSON strings
-        final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.create(schemaContext, writer, 2);
-
+        final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.
+                createExclusiveWriter(JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, null,
+                    JsonWriterFactory.createJsonWriter(writer, 2));
         // NormalizedNode -> StreamWriter
         final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
 

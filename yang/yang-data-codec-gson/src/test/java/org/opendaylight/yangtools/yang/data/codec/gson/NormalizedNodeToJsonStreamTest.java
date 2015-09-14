@@ -15,7 +15,6 @@ import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.childArr
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.childPrimitive;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadModules;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.resolveCont1;
-
 import com.google.common.collect.Sets;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -40,6 +39,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWrit
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 /**
  * Each test tests whether json output obtained after transformation contains is corect. The transformation takes
@@ -404,10 +404,12 @@ public class NormalizedNodeToJsonStreamTest {
         assertTrue(emptyObj.getAsJsonArray().get(0) instanceof JsonNull);
     }
 
-    private String normalizedNodeToJsonStreamTransformation(final Writer writer,
+    private static String normalizedNodeToJsonStreamTransformation(final Writer writer,
             final NormalizedNode<?, ?> inputStructure) throws IOException {
 
-        final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.create(schemaContext, writer, 2);
+        final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.
+                createExclusiveWriter(JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, null,
+                    JsonWriterFactory.createJsonWriter(writer, 2));
         final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
         nodeWriter.write(inputStructure);
 
