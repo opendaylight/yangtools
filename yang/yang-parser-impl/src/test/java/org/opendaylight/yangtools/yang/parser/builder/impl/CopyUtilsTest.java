@@ -335,7 +335,6 @@ public class CopyUtilsTest extends AbstractBuilderTest {
         //TODO: add additional asserts
     }
 
-    @Ignore
     @Test
     public void testCopyTypeDefinitionBuilderWithUnknownNodes() {
         final String typedefLocalName = "test-typedef-with-ext";
@@ -348,7 +347,6 @@ public class CopyUtilsTest extends AbstractBuilderTest {
         typedefBuilder.addUnknownNodeBuilder(provideUnknownNodeBuilder());
 
         TypeDefinitionBuilder copy = CopyUtils.copy(typedefBuilder, module, true);
-        //FIXME: remove @Ignore annotation once bug 2220 will be resolved and merged
         assertNotNull(copy);
         assertFalse(copy.getUnknownNodes().isEmpty());
     }
