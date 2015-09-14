@@ -17,6 +17,8 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
+import com.google.common.io.ByteSource;
+import com.google.common.io.Resources;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -70,9 +72,9 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser.DomToNormalizedNodeParserFactory;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -243,7 +245,7 @@ public class NormalizedNodeXmlTranslationTest {
         return new YangInstanceIdentifier.AugmentationIdentifier(qn);
     }
 
-    public NormalizedNodeXmlTranslationTest(final String yangPath, final String xmlPath, final ContainerNode expectedNode) {
+    public NormalizedNodeXmlTranslationTest(final String yangPath, final String xmlPath, final ContainerNode expectedNode) throws IOException, YangSyntaxErrorException {
         schema = parseTestSchema(yangPath);
         this.xmlPath = xmlPath;
         this.containerNode = (ContainerSchemaNode) NormalizedDataBuilderTest.getSchemaNode(schema, "test", "container");
@@ -255,21 +257,21 @@ public class NormalizedNodeXmlTranslationTest {
     private final String xmlPath;
 
 
-    SchemaContext parseTestSchema(final String... yangPath) {
+    SchemaContext parseTestSchema(final String... yangPath) throws IOException, YangSyntaxErrorException {
         final YangParserImpl yangParserImpl = new YangParserImpl();
-        final Set<Module> modules = yangParserImpl.parseYangModelsFromStreams(getTestYangs(yangPath));
-        return yangParserImpl.resolveSchemaContext(modules);
+        return yangParserImpl.parseSources(getTestYangs(yangPath));
     }
 
-    List<InputStream> getTestYangs(final String... yangPaths) {
+    List<ByteSource> getTestYangs(final String... yangPaths) {
 
         return Lists.newArrayList(Collections2.transform(Lists.newArrayList(yangPaths),
-                new Function<String, InputStream>() {
+                new Function<String, ByteSource>() {
             @Override
-            public InputStream apply(final String input) {
-                final InputStream resourceAsStream = NormalizedDataBuilderTest.class.getResourceAsStream(input);
-                Preconditions.checkNotNull(resourceAsStream, "File %s was null", resourceAsStream);
-                return resourceAsStream;
+            public ByteSource apply(final String input) {
+                final ByteSource source = Resources.asByteSource(
+                    NormalizedDataBuilderTest.class.getResource(input));
+                Preconditions.checkNotNull(source, "File %s was null", source);
+                return source;
             }
         }));
     }

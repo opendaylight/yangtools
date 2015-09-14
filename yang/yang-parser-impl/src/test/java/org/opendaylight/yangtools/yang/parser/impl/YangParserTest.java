@@ -29,9 +29,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
@@ -863,22 +861,6 @@ public class YangParserTest {
             streams.add(new FileInputStream(f));
         }
         newModules = parser.parseSources(BuilderUtils.filesToByteSources(testFiles), null).getModules();
-        assertSetEquals(newModules, modules);
-        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String> emptyMap());
-        assertSetEquals(newModules, ctx.getModules());
-        // ##########
-        Map<File, Module> mapped = parser.parseYangModelsMapped(testFiles);
-        newModules = new LinkedHashSet<>(mapped.values());
-        assertSetEquals(newModules, modules);
-        ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String> emptyMap());
-        assertSetEquals(newModules, ctx.getModules());
-        // ##########
-        streams.clear();
-        for (File f : testFiles) {
-            streams.add(new FileInputStream(f));
-        }
-        Map<InputStream, Module> mappedStreams = parser.parseYangModelsFromStreamsMapped(streams);
-        newModules = new LinkedHashSet<>(mappedStreams.values());
         assertSetEquals(newModules, modules);
         ctx = new SchemaContextImpl(newModules, Collections.<ModuleIdentifier, String> emptyMap());
         assertSetEquals(newModules, ctx.getModules());

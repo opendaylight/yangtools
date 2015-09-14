@@ -12,8 +12,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import com.google.common.collect.Lists;
+import com.google.common.io.ByteSource;
+import com.google.common.io.Resources;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
 import java.net.URI;
@@ -47,21 +50,27 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.parser.api.YangContextParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 
 public class YangParserWithContextTest {
     private final DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private final YangParserImpl parser = new YangParserImpl();
 
+    private final SchemaContext createContext(final String... resources) throws IOException, YangSyntaxErrorException {
+        final List<ByteSource> srcs = new ArrayList<>(resources.length);
+        for (String resource : resources) {
+            srcs.add(Resources.asByteSource(getClass().getResource(resource)));
+        }
+
+        return parser.parseSources(srcs);
+    }
+
     @Test
     public void testTypeFromContext() throws Exception {
-        String resource = "/ietf/ietf-inet-types@2010-09-24.yang";
-        InputStream stream = new FileInputStream(new File(getClass().getResource(resource).toURI()));
-        SchemaContext context = parser.resolveSchemaContext(TestUtils.loadModules(Lists.newArrayList(stream)));
-        stream.close();
+        SchemaContext context = createContext("/ietf/ietf-inet-types@2010-09-24.yang");
 
-        resource = "/context-test/test1.yang";
-        InputStream stream2 = new FileInputStream(new File(getClass().getResource(resource).toURI()));
+        InputStream stream2 = new FileInputStream(new File(getClass().getResource("/context-test/test1.yang").toURI()));
         Module module = TestUtils.loadModuleWithContext("test1", stream2, context);
         stream2.close();
         assertNotNull(module);
@@ -90,15 +99,7 @@ public class YangParserWithContextTest {
 
     @Test
     public void testUsesFromContext() throws Exception {
-        SchemaContext context;
-        try (InputStream stream1 = new FileInputStream(new File(getClass().getResource("/model/baz.yang").toURI()));
-                InputStream stream2 = new FileInputStream(new File(getClass().getResource("/model/bar.yang").toURI()));
-                InputStream stream3 = new FileInputStream(new File(getClass().getResource("/model/foo.yang").toURI()));
-                InputStream stream4 = new FileInputStream(
-                        new File(getClass().getResource("/model/subfoo.yang").toURI()))) {
-            context = parser.resolveSchemaContext(TestUtils.loadModules(Lists.newArrayList(stream1, stream2, stream3,
-                    stream4)));
-        }
+        SchemaContext context = createContext("/model/baz.yang", "/model/bar.yang", "/model/foo.yang", "/model/subfoo.yang");
         Module testModule;
         try (InputStream stream = new FileInputStream(new File(getClass().getResource("/context-test/test2.yang")
                 .toURI()))) {
@@ -197,15 +198,8 @@ public class YangParserWithContextTest {
 
     @Test
     public void testUsesRefineFromContext() throws Exception {
-        SchemaContext context;
-        try (InputStream stream1 = new FileInputStream(new File(getClass().getResource("/model/baz.yang").toURI()));
-                InputStream stream2 = new FileInputStream(new File(getClass().getResource("/model/bar.yang").toURI()));
-                InputStream stream3 = new FileInputStream(new File(getClass().getResource("/model/foo.yang").toURI()));
-                InputStream stream4 = new FileInputStream(
-                        new File(getClass().getResource("/model/subfoo.yang").toURI()))) {
-            context = parser.resolveSchemaContext(TestUtils.loadModules(Lists.newArrayList(stream1, stream2, stream3,
-                    stream4)));
-        }
+        SchemaContext context = createContext("/model/baz.yang", "/model/bar.yang", "/model/foo.yang", "/model/subfoo.yang");
+
         Module module;
         try (InputStream stream = new FileInputStream(new File(getClass().getResource("/context-test/test2.yang")
                 .toURI()))) {
@@ -371,12 +365,8 @@ public class YangParserWithContextTest {
     @Test
     public void testDeviation() throws Exception {
         // load first module
-        SchemaContext context;
-        String resource = "/model/bar.yang";
-
-        try (InputStream stream = new FileInputStream(new File(getClass().getResource(resource).toURI()))) {
-            context = parser.resolveSchemaContext(TestUtils.loadModules(Lists.newArrayList(stream)));
-        }
+        SchemaContext context = parser.parseFiles(Collections.singleton(
+            new File(getClass().getResource("/model/bar.yang").toURI())));
 
         // load another modules and parse them against already existing context
         Set<Module> modules;
