@@ -38,7 +38,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.YangProvider;
 import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
-import org.opendaylight.yangtools.yang2sources.spi.MavenLogAware;
 import org.opendaylight.yangtools.yang2sources.spi.MavenProjectAware;
 
 public class GenerateSourcesTest {
@@ -77,17 +76,15 @@ public class GenerateSourcesTest {
         assertEquals(1, GeneratorMock.called);
         assertEquals(outDir, GeneratorMock.outputDir);
         assertEquals(project, GeneratorMock.project);
-        assertNotNull(GeneratorMock.log);
         assertTrue(GeneratorMock.additionalCfg.isEmpty());
         assertThat(GeneratorMock.resourceBaseDir.toString(), containsString("target" + File.separator
                 + "generated-sources" + File.separator + "spi"));
     }
 
-    public static class GeneratorMock implements BasicCodeGenerator, MavenLogAware, MavenProjectAware {
+    public static class GeneratorMock implements BasicCodeGenerator, MavenProjectAware {
 
         private static int called = 0;
         private static File outputDir;
-        private static Log log;
         private static Map<String, String> additionalCfg;
         private static File resourceBaseDir;
         private static MavenProject project;
@@ -98,11 +95,6 @@ public class GenerateSourcesTest {
             called++;
             outputDir = outputBaseDir;
             return Lists.newArrayList();
-        }
-
-        @Override
-        public void setLog(final Log log) {
-            GeneratorMock.log = log;
         }
 
         @Override
