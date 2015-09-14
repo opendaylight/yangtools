@@ -15,14 +15,12 @@ import static org.opendaylight.yangtools.util.concurrent.AsyncNotifyingListening
 import static org.opendaylight.yangtools.util.concurrent.CommonTestUtils.SUBMIT_CALLABLE;
 import static org.opendaylight.yangtools.util.concurrent.CommonTestUtils.SUBMIT_RUNNABLE;
 import static org.opendaylight.yangtools.util.concurrent.CommonTestUtils.SUBMIT_RUNNABLE_WITH_RESULT;
-
-import com.google.common.base.Function;
+import com.google.common.base.Supplier;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -30,7 +28,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,9 +62,9 @@ public class DeadlockDetectingListeningExecutorServiceTest {
     public static class TestDeadlockException extends Exception {
     }
 
-    public static Function<Void, Exception> DEADLOCK_EXECUTOR_FUNCTION = new Function<Void, Exception>() {
+    private static final Supplier<Exception> DEADLOCK_EXECUTOR_SUPPLIER = new Supplier<Exception>() {
         @Override
-        public Exception apply( final Void notUsed ) {
+        public Exception get() {
             return new TestDeadlockException();
         }
     };
@@ -87,7 +84,7 @@ public class DeadlockDetectingListeningExecutorServiceTest {
 
     DeadlockDetectingListeningExecutorService newExecutor() {
         return new DeadlockDetectingListeningExecutorService( Executors.newSingleThreadExecutor(),
-                DEADLOCK_EXECUTOR_FUNCTION );
+                DEADLOCK_EXECUTOR_SUPPLIER );
     }
 
     @Test
@@ -228,7 +225,7 @@ public class DeadlockDetectingListeningExecutorServiceTest {
         executor = new DeadlockDetectingListeningExecutorService(
                 Executors.newSingleThreadExecutor(
                         new ThreadFactoryBuilder().setNameFormat( "SingleThread" ).build() ),
-                        DEADLOCK_EXECUTOR_FUNCTION, listenerExecutor );
+                        DEADLOCK_EXECUTOR_SUPPLIER, listenerExecutor );
 
         try {
             testListenerCallback( executor, SUBMIT_CALLABLE, listenerThreadPrefix );
