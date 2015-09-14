@@ -13,9 +13,9 @@ import javax.xml.bind.DatatypeConverter;
 import org.opendaylight.yangtools.yang.data.api.codec.BinaryCodec;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 
-class BinaryStringCodec extends TypeDefinitionAwareCodec<byte[], BinaryTypeDefinition> implements BinaryCodec<String> {
+final class BinaryStringCodec extends TypeDefinitionAwareCodec<byte[], BinaryTypeDefinition> implements BinaryCodec<String> {
 
-    protected BinaryStringCodec(final Optional<BinaryTypeDefinition> typeDef) {
+    private BinaryStringCodec(final Optional<BinaryTypeDefinition> typeDef) {
         super(typeDef, byte[].class);
     }
 
