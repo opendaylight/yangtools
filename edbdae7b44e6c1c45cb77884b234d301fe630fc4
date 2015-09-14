@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a79b1b5_ea59ecfe",
+        "filename": "restconf/restconf-client-api/src/main/java/org/opendaylight/yangtools/restconf/client/api/data/DefaultRetrievalStrategy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-14T10:27:26Z",
+      "side": 1,
+      "message": "this code will be removed, let\u0027s not touch it",
+      "revId": "edbdae7b44e6c1c45cb77884b234d301fe630fc4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_4a6340b1",
+        "filename": "websocket/websocket-client/src/main/java/org/opendaylight/yangtools/websocket/client/WebSocketClientHandler.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-14T10:27:26Z",
+      "side": 1,
+      "message": "this is dead code which will be removed in this release, let\u0027s not churn it.",
+      "revId": "edbdae7b44e6c1c45cb77884b234d301fe630fc4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_8a5158da",
+        "filename": "yang/yang-common/src/main/java/org/opendaylight/yangtools/yang/common/QName.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-14T10:27:26Z",
+      "side": 1,
+      "message": "This change is wrong. A cached reference by definition equals myMod. We actually want to compare whether it is the same object (in which case we skip QName instantiation)",
+      "revId": "edbdae7b44e6c1c45cb77884b234d301fe630fc4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
