@@ -73,9 +73,4 @@ public final class HashCodeBuilder<T> implements Builder<Integer> {
     public Integer build() {
         return currentHash;
     }
-
-    @Deprecated
-    public Integer toInstance() {
-        return currentHash;
-    }
 }
