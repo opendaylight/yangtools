@@ -12,6 +12,7 @@ public interface ClassBasedPropertyBuilder<P, T extends ClassBasedPropertyBuilde
      * Sets a value of property uniquely identified by its
      * class.
      *
+     * @param <V> value type
      * @param type Type of property to set
      * @param value Value of property
      * @return Builder instance
@@ -21,6 +22,7 @@ public interface ClassBasedPropertyBuilder<P, T extends ClassBasedPropertyBuilde
     /**
      * Gets a value of property based on its type.
      *
+     * @param <V> value type
      * @param type Type of property to get
      * @return Builder instance
      */
