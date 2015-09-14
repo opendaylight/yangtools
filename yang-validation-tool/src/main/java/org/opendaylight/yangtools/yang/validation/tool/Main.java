@@ -11,8 +11,13 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class Main {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Main.class);
+
     private Main() {
 
     }
@@ -27,7 +32,7 @@ public final class Main {
             try {
                 yangParser.parseFiles(Arrays.asList(yangModels));
             } catch (Exception e) {
-
+                LOG.error("Yang files could not be parsed.", e);
             }
         }
     }

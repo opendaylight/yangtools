@@ -12,9 +12,12 @@ import java.net.URISyntaxException;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.annotation.Arg;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class Params {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(Params.class);
     @Arg(dest = "yang-source-dir")
     private File yangSourceDir;
 
@@ -39,15 +42,15 @@ final class Params {
             return false;
         }
         if (!yangSourceDir.exists()) {
-            System.err.println("Yang source directory has to exist");
+            LOGGER.error("Yang source directory has to exist");
             return false;
         }
         if (!yangSourceDir.canRead()) {
-            System.err.println("Yang source directory has to be readable");
+            LOGGER.error("Yang source directory has to be readable");
             return false;
         }
         if (yangSourceDir.list().length == 0) {
-            System.err.printf("Yang source directory '%s' does't contain any model%n", yangSourceDir.getPath());
+            LOGGER.error("Yang source directory {} doesn't contain any model", yangSourceDir.getPath());
             return false;
         }
 
