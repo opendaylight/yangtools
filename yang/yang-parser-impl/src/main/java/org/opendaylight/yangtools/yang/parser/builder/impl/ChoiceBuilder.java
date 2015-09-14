@@ -97,7 +97,7 @@ AugmentationTargetBuilder {
         instance.addedByUses = addedByUses;
         instance.configuration = configuration;
 
-        instance.constraints = constraints.toInstance();
+        instance.constraints = constraints.build();
         instance.defaultCase = defaultCase;
 
         // ORIGINAL NODE

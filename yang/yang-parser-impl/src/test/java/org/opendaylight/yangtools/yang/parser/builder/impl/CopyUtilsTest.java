@@ -353,109 +353,131 @@ public class CopyUtilsTest extends AbstractBuilderTest {
         assertFalse(copy.getUnknownNodes().isEmpty());
     }
 
+    // FIXME: Use Mockito instead of this monstrosity
     private static final class InvalidDataSchemaNodeBuilder implements DataSchemaNodeBuilder {
 
-        @Override public SchemaNodeBuilder getOriginal() {
+        @Override
+        public SchemaNodeBuilder getOriginal() {
             return null;
         }
 
-        @Override public void setOriginal(final SchemaNodeBuilder original) {
+        @Override
+        public void setOriginal(final SchemaNodeBuilder original) {
 
         }
 
-        @Override public boolean isAugmenting() {
+        @Override
+        public boolean isAugmenting() {
             return false;
         }
 
-        @Override public void setAugmenting(final boolean augmenting) {
+        @Override
+        public void setAugmenting(final boolean augmenting) {
 
         }
 
-        @Override public boolean isConfiguration() {
+        @Override
+        public boolean isConfiguration() {
             return false;
         }
 
-        @Override public void setConfiguration(final boolean config) {
+        @Override
+        public void setConfiguration(final boolean config) {
 
         }
 
-        @Override public ConstraintsBuilder getConstraints() {
+        @Override
+        public ConstraintsBuilder getConstraints() {
             return null;
         }
 
-        @Override public QName getQName() {
+        @Override
+        public QName getQName() {
             return null;
         }
 
-        @Override public SchemaPath getPath() {
+        @Override
+        public SchemaPath getPath() {
             return null;
         }
 
-        @Override public void setPath(final SchemaPath path) {
+        @Override
+        public void setPath(final SchemaPath path) {
 
         }
 
-        @Override public String getModuleName() {
+        @Override
+        public String getModuleName() {
             return null;
         }
 
-        @Override public void setModuleName(final String moduleName) {
-
-        }
-
-        @Override public int getLine() {
+        @Override
+        public int getLine() {
             return 0;
         }
 
-        @Override public Builder getParent() {
+        @Override
+        public Builder getParent() {
             return null;
         }
 
-        @Override public void setParent(final Builder parent) {
+        @Override
+        public void setParent(final Builder parent) {
 
         }
 
-        @Override public void addUnknownNodeBuilder(final UnknownSchemaNodeBuilder unknownNode) {
+        @Override
+        public void addUnknownNodeBuilder(final UnknownSchemaNodeBuilder unknownNode) {
 
         }
 
-        @Override public List<UnknownSchemaNodeBuilder> getUnknownNodes() {
+        @Override
+        public List<UnknownSchemaNodeBuilder> getUnknownNodes() {
             return null;
         }
 
-        @Override public DataSchemaNode build() {
+        @Override
+        public DataSchemaNode build() {
             return null;
         }
 
-        @Override public String getDescription() {
+        @Override
+        public String getDescription() {
             return null;
         }
 
-        @Override public void setDescription(final String description) {
+        @Override
+        public void setDescription(final String description) {
 
         }
 
-        @Override public String getReference() {
+        @Override
+        public String getReference() {
             return null;
         }
 
-        @Override public void setReference(final String reference) {
+        @Override
+        public void setReference(final String reference) {
 
         }
 
-        @Override public Status getStatus() {
+        @Override
+        public Status getStatus() {
             return null;
         }
 
-        @Override public void setStatus(final Status status) {
+        @Override
+        public void setStatus(final Status status) {
 
         }
 
-        @Override public boolean isAddedByUses() {
+        @Override
+        public boolean isAddedByUses() {
             return false;
         }
 
-        @Override public void setAddedByUses(final boolean addedByUses) {
+        @Override
+        public void setAddedByUses(final boolean addedByUses) {
 
         }
     }

@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -15,8 +17,6 @@ import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractSchemaNodeBuilder;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements DataSchemaNodeBuilder {
     private AnyXmlSchemaNodeImpl instance;
@@ -64,7 +64,7 @@ public final class AnyXmlBuilder extends AbstractSchemaNodeBuilder implements Da
         instance.augmenting = augmenting;
         instance.addedByUses = addedByUses;
         instance.configuration = configuration;
-        instance.constraintsDef = constraints.toInstance();
+        instance.constraintsDef = constraints.build();
 
         // ORIGINAL NODE
         if (originalNode == null && originalBuilder != null) {
