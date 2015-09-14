@@ -7,12 +7,13 @@
  */
 package org.opendaylight.yangtools.sal.binding.yang.types;
 
-import java.io.InputStream;
+import com.google.common.io.ByteSource;
+import com.google.common.io.Resources;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
 /**
@@ -29,22 +30,20 @@ final class TypeProviderModel {
     private static final String TEST_TYPE_PROVIDER_PATH = "/"+TEST_TYPE_PROVIDER_MODULE_NAME+".yang";
     private static final String TEST_TYPE_PROVIDER_B_PATH = "/test-type-provider-b.yang";
 
-    private static InputStream getInputStream(final String resourceName) {
-        return TypeProviderModel.class.getResourceAsStream(resourceName);
+    private static ByteSource getByteSource(final String resourceName) {
+        return Resources.asByteSource(TypeProviderModel.class.getResource(resourceName));
     }
 
-    private static List<InputStream> provideTestModelStreams() {
-        final List<InputStream> arrayList = new ArrayList<>();
+    private static List<ByteSource> provideTestModelStreams() {
+        final List<ByteSource> arrayList = new ArrayList<>();
 
-        arrayList.add(getInputStream(BASE_YANG_TYPES_PATH));
-        arrayList.add(getInputStream(TEST_TYPE_PROVIDER_PATH));
-        arrayList.add(getInputStream(TEST_TYPE_PROVIDER_B_PATH));
+        arrayList.add(getByteSource(BASE_YANG_TYPES_PATH));
+        arrayList.add(getByteSource(TEST_TYPE_PROVIDER_PATH));
+        arrayList.add(getByteSource(TEST_TYPE_PROVIDER_B_PATH));
         return arrayList;
     }
 
-    public static SchemaContext createTestContext() {
-        YangParserImpl parser = new YangParserImpl();
-        Set<Module> modules = parser.parseYangModelsFromStreams(provideTestModelStreams());
-        return parser.resolveSchemaContext(modules);
+    public static SchemaContext createTestContext() throws IOException, YangSyntaxErrorException {
+        return new YangParserImpl().parseSources(provideTestModelStreams());
     }
 }
