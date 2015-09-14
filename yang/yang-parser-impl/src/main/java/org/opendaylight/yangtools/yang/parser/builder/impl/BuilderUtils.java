@@ -122,22 +122,6 @@ public final class BuilderUtils {
     }
 
     /**
-     * Create new SchemaPath from given path and qname.
-     *
-     * @param schemaPath
-     *            base path
-     * @param qname
-     *            one or more qnames added to base path
-     * @return new SchemaPath from given path and qname
-     *
-     * @deprecated Use {@link SchemaPath#createChild(QName...)} instead.
-     */
-    @Deprecated
-    public static SchemaPath createSchemaPath(final SchemaPath schemaPath, final QName... qname) {
-        return schemaPath.createChild(qname);
-    }
-
-    /**
      * Find dependent module based on given prefix
      *
      * @param modules
@@ -180,7 +164,7 @@ public final class BuilderUtils {
         return dependentModule;
     }
 
-    public static ModuleBuilder findModuleFromBuilders(ModuleImport imp, Iterable<ModuleBuilder> modules) {
+    public static ModuleBuilder findModuleFromBuilders(final ModuleImport imp, final Iterable<ModuleBuilder> modules) {
         String name = imp.getModuleName();
         Date revision = imp.getRevision();
         NavigableMap<Date, ModuleBuilder> map = new TreeMap<>();

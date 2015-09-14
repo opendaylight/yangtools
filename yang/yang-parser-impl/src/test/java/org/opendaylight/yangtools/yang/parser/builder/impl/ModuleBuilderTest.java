@@ -6,8 +6,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import static org.junit.Assert.*;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -85,35 +88,38 @@ public class ModuleBuilderTest {
     @Test(expected = YangParseException.class)
     public void testSetParent() throws Exception {
         moduleBuilder.setParent(new Builder() {
-            @Override public String getModuleName() {
+            @Override
+            public String getModuleName() {
                 return null;
             }
 
-            @Override public void setModuleName(String moduleName) {
-
-            }
-
-            @Override public int getLine() {
+            @Override
+            public int getLine() {
                 return 0;
             }
 
-            @Override public Builder getParent() {
+            @Override
+            public Builder getParent() {
                 return null;
             }
 
-            @Override public void setParent(Builder parent) {
+            @Override
+            public void setParent(final Builder parent) {
 
             }
 
-            @Override public void addUnknownNodeBuilder(UnknownSchemaNodeBuilder unknownNode) {
+            @Override
+            public void addUnknownNodeBuilder(final UnknownSchemaNodeBuilder unknownNode) {
 
             }
 
-            @Override public List<UnknownSchemaNodeBuilder> getUnknownNodes() {
+            @Override
+            public List<UnknownSchemaNodeBuilder> getUnknownNodes() {
                 return null;
             }
 
-            @Override public Object build() {
+            @Override
+            public Object build() {
                 return null;
             }
         });
@@ -767,35 +773,38 @@ public class ModuleBuilderTest {
             this.path = path;
         }
 
-        @Override public String getModuleName() {
+        @Override
+        public String getModuleName() {
             return moduleName;
         }
 
-        @Override public void setModuleName(String moduleName) {
-            this.moduleName = moduleName;
-        }
-
-        @Override public int getLine() {
+        @Override
+        public int getLine() {
             return line;
         }
 
-        @Override public Builder getParent() {
+        @Override
+        public Builder getParent() {
             return null;
         }
 
-        @Override public void setParent(Builder parent) {
+        @Override
+        public void setParent(final Builder parent) {
 
         }
 
-        @Override public void addUnknownNodeBuilder(UnknownSchemaNodeBuilder unknownNode) {
+        @Override
+        public void addUnknownNodeBuilder(final UnknownSchemaNodeBuilder unknownNode) {
 
         }
 
-        @Override public List<UnknownSchemaNodeBuilder> getUnknownNodes() {
+        @Override
+        public List<UnknownSchemaNodeBuilder> getUnknownNodes() {
             return null;
         }
 
-        @Override public Object build() {
+        @Override
+        public Object build() {
             return null;
         }
     }

@@ -121,7 +121,9 @@ public interface ConstraintsBuilder extends Builder<ConstraintDefinition> {
      * Build constraint definition
      *
      * @return instance of ConstraintDefinition created from this builder
+     *
+     * @deprecated Use {@link #build()} instead
      */
+    @Deprecated
     ConstraintDefinition toInstance();
-
 }

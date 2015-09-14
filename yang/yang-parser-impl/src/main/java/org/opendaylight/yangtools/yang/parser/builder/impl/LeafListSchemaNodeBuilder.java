@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -16,8 +18,6 @@ import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractTypeAwareBuilder;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder implements DataSchemaNodeBuilder {
     private LeafListSchemaNodeImpl instance;
@@ -73,7 +73,7 @@ public final class LeafListSchemaNodeBuilder extends AbstractTypeAwareBuilder im
         instance.augmenting = augmenting;
         instance.addedByUses = addedByUses;
         instance.configuration = configuration;
-        instance.constraintsDef = constraints.toInstance();
+        instance.constraintsDef = constraints.build();
         instance.userOrdered = userOrdered;
 
         if (type == null) {

@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuild
  *
  */
 public abstract class AbstractBuilder implements Builder {
-    private String moduleName;
+    private final String moduleName;
     private final int line;
     private Builder parentBuilder;
 
@@ -35,12 +35,6 @@ public abstract class AbstractBuilder implements Builder {
     @Override
     public String getModuleName() {
         return moduleName;
-    }
-
-    @Override
-    @Deprecated
-    public void setModuleName(final String moduleName) {
-        this.moduleName = moduleName;
     }
 
     @Override

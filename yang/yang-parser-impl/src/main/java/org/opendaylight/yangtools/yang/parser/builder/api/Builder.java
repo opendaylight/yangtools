@@ -24,15 +24,6 @@ public interface Builder extends Mutable {
     String getModuleName();
 
     /**
-     * Set name of module in which this node is declared.
-     *
-     * @param moduleName name of module
-     * @deprecated Module name should be set during creation of builder.
-     */
-    @Deprecated
-    void setModuleName(String moduleName);
-
-    /**
      * Get current line in yang file, on which statement
      * associated with this builder was declared.
      *
