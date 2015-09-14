@@ -3,25 +3,23 @@ package org.opendaylight.yangtools.yang.stmt.effective.build.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-
-import org.opendaylight.yangtools.yang.common.QName;
-
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import java.net.URISyntaxException;
 import java.net.URI;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import java.net.URISyntaxException;
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import java.util.Set;
+import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.stmt.test.StmtTestUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
-import org.junit.Test;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
+import org.opendaylight.yangtools.yang.stmt.test.StmtTestUtils;
 
 public class EffectiveModulesAndSubmodulesTest {
 
@@ -160,16 +158,16 @@ public class EffectiveModulesAndSubmodulesTest {
 
     }
 
-    private void getDataChildByNameSubTest(EffectiveSchemaContext result,
-            Module root) {
+    private static void getDataChildByNameSubTest(final EffectiveSchemaContext result,
+            final Module root) {
         DataSchemaNode containerInRoot = result.getDataChildByName(QName
                 .create(root.getQNameModule(), "container-in-root-module"));
         assertNotNull(containerInRoot);
         assertEquals("desc", containerInRoot.getDescription());
     }
 
-    private void findModulesSubTest(EffectiveSchemaContext result, Module root,
-            Module imported) throws URISyntaxException {
+    private static void findModulesSubTest(final EffectiveSchemaContext result, final Module root,
+            final Module imported) throws URISyntaxException {
         Module foundRoot = result.findModuleByName("root-module",
                 SimpleDateFormatUtil.DEFAULT_DATE_REV);
         Set<Module> foundRoots = result.findModuleByNamespace(new URI(

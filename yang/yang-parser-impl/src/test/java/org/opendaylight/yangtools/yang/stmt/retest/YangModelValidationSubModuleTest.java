@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.stmt.retest;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
-
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.junit.Before;
 import org.junit.Test;
@@ -77,7 +76,7 @@ public class YangModelValidationSubModuleTest {
         }
     }
 
-    private Submodule_stmtContext mockSubmoduleParent(final ParseTree child,
+    private static Submodule_stmtContext mockSubmoduleParent(final ParseTree child,
             final String moduleName) {
         Submodule_stmtContext ctx = YangModelValidationTest.mockStatement(
                 Submodule_stmtContext.class, moduleName);

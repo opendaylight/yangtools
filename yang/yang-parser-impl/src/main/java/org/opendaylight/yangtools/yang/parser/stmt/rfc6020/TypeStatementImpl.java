@@ -7,11 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BinaryEffectiveStatementImpl;
-
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ExtendedTypeEffectiveStatementImpl;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -20,6 +16,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ExtendedTypeEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BinaryEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BooleanEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EmptyEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Int16EffectiveStatementImpl;
@@ -35,7 +34,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UInt8E
 public class TypeStatementImpl extends AbstractDeclaredStatement<String>
         implements TypeStatement {
 
-    protected TypeStatementImpl(StmtContext<String, TypeStatement, ?> context) {
+    protected TypeStatementImpl(final StmtContext<String, TypeStatement, ?> context) {
         super(context);
     }
 
@@ -48,29 +47,29 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value)
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value)
                 throws SourceException {
             return value;
         }
 
         @Override
         public TypeStatement createDeclared(
-                StmtContext<String, TypeStatement, ?> ctx) {
+                final StmtContext<String, TypeStatement, ?> ctx) {
             return new TypeStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<String, TypeStatement> createEffective(
-                StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
+                final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
 
             // :FIXME improve the test of isExtended - e.g. unknown statements,
             // etc..
             Collection<StatementContextBase<?, ?, ?>> declaredSubstatements = ctx
                     .declaredSubstatements();
-            boolean isExtended = declaredSubstatements.isEmpty() ? false
-                    : true;
-            if (isExtended)
+            boolean isExtended = !declaredSubstatements.isEmpty();
+            if (isExtended) {
                 return new ExtendedTypeEffectiveStatementImpl(ctx, true);
+            }
 
             switch (ctx.getStatementArgument()) {
             case TypeUtils.INT8:

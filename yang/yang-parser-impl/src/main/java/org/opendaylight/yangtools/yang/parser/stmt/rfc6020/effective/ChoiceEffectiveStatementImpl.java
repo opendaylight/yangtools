@@ -7,36 +7,36 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import java.util.SortedSet;
-import java.util.TreeSet;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
+import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public class ChoiceEffectiveStatementImpl extends
         AbstractEffectiveDocumentedNode<QName, ChoiceStatement> implements
@@ -56,7 +56,7 @@ public class ChoiceEffectiveStatementImpl extends
     ImmutableList<UnknownSchemaNode> unknownNodes;
 
     public ChoiceEffectiveStatementImpl(
-            StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
+            final StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
         super(ctx);
 
         this.qname = ctx.getStatementArgument();
@@ -68,7 +68,7 @@ public class ChoiceEffectiveStatementImpl extends
     }
 
     private void initCopyType(
-            StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
+            final StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
 
         List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
 
@@ -145,7 +145,7 @@ public class ChoiceEffectiveStatementImpl extends
         this.cases = ImmutableSet.copyOf(casesInit);
     }
 
-    private void resetAugmenting(DataSchemaNode dataSchemaNode) {
+    private static void resetAugmenting(final DataSchemaNode dataSchemaNode) {
         if (dataSchemaNode instanceof LeafEffectiveStatementImpl) {
             LeafEffectiveStatementImpl leaf = (LeafEffectiveStatementImpl) dataSchemaNode;
             leaf.augmenting = false;

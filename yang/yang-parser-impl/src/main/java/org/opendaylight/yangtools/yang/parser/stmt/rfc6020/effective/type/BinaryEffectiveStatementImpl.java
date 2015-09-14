@@ -8,8 +8,6 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
-
 import com.google.common.base.Optional;
 import java.util.Collections;
 import java.util.List;
@@ -23,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
 public class BinaryEffectiveStatementImpl extends
         EffectiveStatementBase<String, TypeStatement> implements
@@ -32,10 +31,9 @@ public class BinaryEffectiveStatementImpl extends
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.8";
     private static final String UNITS = "";
 
-    private final static QName QNAME = QName.create(
-            YangConstants.RFC6020_YANG_MODULE, "binary");
-
-    private final static SchemaPath PATH = SchemaPath.create(true, QNAME);
+    private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "binary");
+    private static final SchemaPath PATH = SchemaPath.create(true, QNAME);
+    private static final Optional<String> OPTIONAL_EMPTY = Optional.of("");
     private final List<Byte> defaultValue = Collections.emptyList();
     private final List<LengthConstraint> lengthConstraints;
 
@@ -44,7 +42,7 @@ public class BinaryEffectiveStatementImpl extends
         super(ctx);
 
         final LengthConstraint lengthConstraint = new LengthConstraintEffectiveImpl(
-                0, Long.MAX_VALUE, Optional.of(""), Optional.of(""));
+                0, Long.MAX_VALUE, OPTIONAL_EMPTY, OPTIONAL_EMPTY);
         lengthConstraints = Collections.singletonList(lengthConstraint);
     }
 

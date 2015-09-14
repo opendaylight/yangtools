@@ -33,7 +33,7 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
         implements BelongsToStatement {
 
     protected BelongsToStatementImpl(
-            StmtContext<String, BelongsToStatement, ?> context) {
+            final StmtContext<String, BelongsToStatement, ?> context) {
         super(context);
     }
 
@@ -46,19 +46,19 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 
         @Override
         public BelongsToStatement createDeclared(
-                StmtContext<String, BelongsToStatement, ?> ctx) {
+                final StmtContext<String, BelongsToStatement, ?> ctx) {
             return new BelongsToStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<String, BelongsToStatement> createEffective(
-                StmtContext<String, BelongsToStatement, EffectiveStatement<String, BelongsToStatement>> ctx) {
+                final StmtContext<String, BelongsToStatement, EffectiveStatement<String, BelongsToStatement>> ctx) {
             return new BelongsEffectiveToStatementImpl(ctx);
         }
 
@@ -80,7 +80,7 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
                 }
 
                 @Override
-                public void prerequisiteFailed(Collection<? extends ModelActionBuilder.Prerequisite<?>> failed) throws InferenceException {
+                public void prerequisiteFailed(final Collection<? extends ModelActionBuilder.Prerequisite<?>> failed) throws InferenceException {
                     if (failed.contains(belongsToPrereq)) {
                         throw new InferenceException("Module from belongs-to was not found: " + belongsToCtx.getStatementArgument(), belongsToCtx
                                 .getStatementSourceReference());
@@ -89,7 +89,7 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
             });
         }
 
-        private ModuleIdentifier getModuleIdentifier(StmtContext.Mutable<String, BelongsToStatement, EffectiveStatement<String, BelongsToStatement>> belongsToCtx) {
+        private static ModuleIdentifier getModuleIdentifier(final StmtContext.Mutable<String, BelongsToStatement, EffectiveStatement<String, BelongsToStatement>> belongsToCtx) {
             String moduleName = belongsToCtx.getStatementArgument();
             return new ModuleIdentifierImpl(moduleName, Optional.<URI> absent(), Optional.of(SimpleDateFormatUtil.DEFAULT_BELONGS_TO_DATE));
         }

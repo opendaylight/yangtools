@@ -13,7 +13,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
 import java.io.File;
 import java.math.BigInteger;
 import java.net.URI;
@@ -383,7 +382,7 @@ public class TypesResolutionTest {
         }
     }
 
-    private void addSources(CrossSourceStatementReactor.BuildAction reactor, YangStatementSourceImpl... sources) {
+    private static void addSources(final CrossSourceStatementReactor.BuildAction reactor, final YangStatementSourceImpl... sources) {
         for (YangStatementSourceImpl source : sources) {
             reactor.addSource(source);
         }

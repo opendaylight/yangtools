@@ -7,6 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.stmt.retest;
 
+import static org.mockito.Mockito.doReturn;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.util.Collections;
+import java.util.Date;
+import java.util.Map;
 import org.junit.Before;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -14,16 +21,6 @@ import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 //import org.opendaylight.yangtools.yang.parser.impl.SchemaContextImpl;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Map;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.doReturn;
 
 public class SchemaContextTest {
     @Mock

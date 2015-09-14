@@ -3,22 +3,21 @@ package org.opendaylight.yangtools.yang.stmt.effective.build.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import java.util.Collection;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import java.util.Set;
-import java.net.URISyntaxException;
 import java.io.FileNotFoundException;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Collection;
+import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -129,8 +128,7 @@ public class EffectiveBuildTest {
         assertNotNull(result);
     }
 
-    private void addSources(BuildAction reactor,
-            YangStatementSourceImpl... sources) {
+    private static void addSources(final BuildAction reactor, final YangStatementSourceImpl... sources) {
         for (YangStatementSourceImpl source : sources) {
             reactor.addSource(source);
         }

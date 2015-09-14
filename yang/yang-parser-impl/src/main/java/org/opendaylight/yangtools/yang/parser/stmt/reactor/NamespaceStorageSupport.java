@@ -7,19 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import java.util.Map.Entry;
-
-import java.util.Set;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 abstract class NamespaceStorageSupport implements NamespaceStorageNode {
 
@@ -31,43 +30,43 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
 
     public abstract NamespaceBehaviour.Registry getBehaviourRegistry();
 
-    protected void checkLocalNamespaceAllowed(Class<? extends IdentifierNamespace<?, ?>> type) {
+    protected void checkLocalNamespaceAllowed(final Class<? extends IdentifierNamespace<?, ?>> type) {
         // NOOP
     }
 
-    protected <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceElementAdded(Class<N> type, K key, V value) {
+    protected <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceElementAdded(final Class<N> type, final K key, final V value) {
         // NOOP
     }
 
     //<K,V,N extends IdentifierNamespace<K, V>> V
     //public final <K, VT, V extends VT ,N extends IdentifierNamespace<K, V>> VT getFromNamespace(Class<N> type, K key)
-    public final <K,V, KT extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(Class<N> type, KT key)
+    public final <K,V, KT extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(final Class<N> type, final KT key)
             throws NamespaceNotAvailableException {
         return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this,key);
     }
 
-    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromNamespace(Class<N> type){
+    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromNamespace(final Class<N> type){
         return getBehaviourRegistry().getNamespaceBehaviour(type).getAllFrom(this);
     }
 
-    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromCurrentStmtCtxNamespace(Class<N> type){
+    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromCurrentStmtCtxNamespace(final Class<N> type){
         return (Map<K, V>) namespaces.get(type);
     }
 
-    public final <K,V, KT extends K, VT extends V,N extends IdentifierNamespace<K, V>> void addToNs(Class<N> type, KT key, VT value)
+    public final <K,V, KT extends K, VT extends V,N extends IdentifierNamespace<K, V>> void addToNs(final Class<N> type, final KT key, final VT value)
             throws NamespaceNotAvailableException {
         getBehaviourRegistry().getNamespaceBehaviour(type).addTo(this,key,value);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    public final <K, N extends StatementNamespace<K, ?,?>> void addContextToNamespace(Class<N> type, K key, StmtContext<?, ?, ?> value)
+    public final <K, N extends StatementNamespace<K, ?,?>> void addContextToNamespace(final Class<N> type, final K key, final StmtContext<?, ?, ?> value)
             throws NamespaceNotAvailableException {
         getBehaviourRegistry().getNamespaceBehaviour((Class)type).addTo(this, key, value);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> V getFromLocalStorage(Class<N> type, K key) {
+    public <K, V, N extends IdentifierNamespace<K, V>> V getFromLocalStorage(final Class<N> type, final K key) {
         Map<K, V> localNamespace = (Map<K,V>) namespaces.get(type);
 
         V potential = null;
@@ -82,17 +81,17 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         return potential;
     }
 
-    private <K, V, N extends IdentifierNamespace<K, V>> V getRegardlessOfRevision(ModuleIdentifier key,
-            Map<ModuleIdentifier, V> localNamespace) {
+    private static <K, V, N extends IdentifierNamespace<K, V>> V getRegardlessOfRevision(final ModuleIdentifier key,
+            final Map<ModuleIdentifier, V> localNamespace) {
 
-        if(localNamespace == null) {
+        if (localNamespace == null) {
             return null;
         }
 
         Set<Entry<ModuleIdentifier, V>> entrySet = localNamespace.entrySet();
         for (Entry<ModuleIdentifier, V> entry : entrySet) {
             ModuleIdentifier moduleIdentifierInMap = entry.getKey();
-            if(moduleIdentifierInMap.getName().equals(key.getName())) {
+            if (moduleIdentifierInMap.getName().equals(key.getName())) {
                 return entry.getValue();
             }
         }
@@ -101,14 +100,14 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromLocalStorage(Class<N> type) {
+    public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromLocalStorage(final Class<N> type) {
         @SuppressWarnings("unchecked")
         Map<K, V> localNamespace = (Map<K, V>) namespaces.get(type);
         return localNamespace;
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> void addToLocalStorage(Class<N> type, K key, V value) {
+    public <K, V, N extends IdentifierNamespace<K, V>> void addToLocalStorage(final Class<N> type, final K key, final V value) {
         @SuppressWarnings("unchecked")
         Map<K, V> localNamespace = (Map<K,V>) namespaces.get(type);
         if(localNamespace == null) {

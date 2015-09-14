@@ -7,52 +7,51 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-
-import org.opendaylight.yangtools.yang.model.util.ModuleImportImpl;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
-import java.util.LinkedHashSet;
-import java.util.LinkedHashMap;
+import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
-import java.util.Map;
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
-import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
-import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
+import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
+import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.util.ModuleImportImpl;
+import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
+import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
-import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public class SubmoduleEffectiveStatementImpl
         extends
@@ -61,7 +60,7 @@ public class SubmoduleEffectiveStatementImpl
 
     private final QNameModule qNameModule;
     private final String name;
-    private String sourcePath;
+    private final String sourcePath;
     private String prefix;
     private String yangVersion;
     private String organization;
@@ -86,7 +85,7 @@ public class SubmoduleEffectiveStatementImpl
     private ImmutableSet<DataSchemaNode> publicChildNodes;
 
     public SubmoduleEffectiveStatementImpl(
-            StmtContext<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> ctx) {
+            final StmtContext<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> ctx) {
         super(ctx);
 
         name = argument();
@@ -131,7 +130,7 @@ public class SubmoduleEffectiveStatementImpl
     }
 
     private void initSubmodules(
-            StmtContext<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> ctx) {
+            final StmtContext<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> ctx) {
         Map<String, ModuleIdentifier> includedSubmodulesMap = ctx
                 .getAllFromCurrentStmtCtxNamespace(IncludedSubmoduleNameToIdentifier.class);
 
@@ -159,7 +158,7 @@ public class SubmoduleEffectiveStatementImpl
         this.substatementsOfSubmodules = ImmutableList.copyOf(substatementsOfSubmodulesInit);
     }
 
-    private void initSubstatementCollections(StmtContext<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> ctx) {
+    private void initSubstatementCollections(final StmtContext<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> ctx) {
         List<EffectiveStatement<?, ?>> effectiveSubstatements = new LinkedList<>();
 
         effectiveSubstatements.addAll(effectiveSubstatements());
@@ -266,9 +265,9 @@ public class SubmoduleEffectiveStatementImpl
         this.uses = ImmutableSet.copyOf(mutableUses);
     }
 
-    private Set<ModuleImport> resolveModuleImports(
-            Set<ModuleImport> importsInit,
-            StmtContext<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> ctx) {
+    private static Set<ModuleImport> resolveModuleImports(
+            final Set<ModuleImport> importsInit,
+            final StmtContext<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> ctx) {
         Set<ModuleImport> resolvedModuleImports = new LinkedHashSet<>();
         for (ModuleImport moduleImport : importsInit) {
             if (moduleImport.getRevision().equals(

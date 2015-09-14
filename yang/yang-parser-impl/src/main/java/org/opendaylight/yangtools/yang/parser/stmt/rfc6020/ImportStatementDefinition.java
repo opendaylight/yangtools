@@ -9,21 +9,19 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
-
-import java.util.Set;
-
-import java.util.Map.Entry;
-import java.util.Map;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import com.google.common.base.Optional;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
@@ -48,19 +46,19 @@ public class ImportStatementDefinition
     }
 
     @Override
-    public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+    public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return value;
     }
 
     @Override
     public ImportStatement createDeclared(
-            StmtContext<String, ImportStatement, ?> ctx) {
+            final StmtContext<String, ImportStatement, ?> ctx) {
         return new ImportStatementImpl(ctx);
     }
 
     @Override
     public EffectiveStatement<String, ImportStatement> createEffective(
-            StmtContext<String, ImportStatement, EffectiveStatement<String, ImportStatement>> ctx) {
+            final StmtContext<String, ImportStatement, EffectiveStatement<String, ImportStatement>> ctx) {
         return new ImportEffectiveStatementImpl(ctx);
     }
 
@@ -107,8 +105,8 @@ public class ImportStatementDefinition
             }
 
             private Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> findRecentModule(
-                    ModuleIdentifier impIdentifier,
-                    Map<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> allModules) {
+                    final ModuleIdentifier impIdentifier,
+                    final Map<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> allModules) {
 
                 ModuleIdentifier recentModuleIdentifier = impIdentifier;
                 Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> recentModuleEntry = null;
@@ -134,7 +132,7 @@ public class ImportStatementDefinition
 
             @Override
             public void prerequisiteFailed(
-                    Collection<? extends Prerequisite<?>> failed)
+                    final Collection<? extends Prerequisite<?>> failed)
                     throws InferenceException {
                 if (failed.contains(imported)) {
                     throw new InferenceException(String.format(
@@ -145,8 +143,8 @@ public class ImportStatementDefinition
         });
     }
 
-    private ModuleIdentifier getImportedModuleIdentifier(
-            Mutable<String, ImportStatement, ?> stmt) throws SourceException {
+    private static ModuleIdentifier getImportedModuleIdentifier(
+            final Mutable<String, ImportStatement, ?> stmt) throws SourceException {
 
         String moduleName = stmt.getStatementArgument();
         Date revision = firstAttributeOf(stmt.declaredSubstatements(),

@@ -51,7 +51,7 @@ public final class AugmentUtils {
     private AugmentUtils() {
     }
 
-    public static Iterable<QName> parseAugmentPath(StmtContext<?, ?, ?> ctx, String path) {
+    public static Iterable<QName> parseAugmentPath(final StmtContext<?, ?, ?> ctx, final String path) {
 
         if (path.matches(REGEX_PATH_REL1) || path.matches(REGEX_PATH_REL2)) {
             throw new IllegalArgumentException(
@@ -61,18 +61,18 @@ public final class AugmentUtils {
         return Utils.parseXPath(ctx, path);
     }
 
-    public static void copyFromSourceToTarget(StatementContextBase<?, ?, ?> sourceCtx,
-            StatementContextBase<?, ?, ?> targetCtx) throws SourceException {
+    public static void copyFromSourceToTarget(final StatementContextBase<?, ?, ?> sourceCtx,
+            final StatementContextBase<?, ?, ?> targetCtx) throws SourceException {
 
         copyDeclaredStmts(sourceCtx, targetCtx);
         copyEffectiveStmts(sourceCtx, targetCtx);
     }
 
-    public static void copyDeclaredStmts(StatementContextBase<?, ?, ?> sourceCtx,
-            StatementContextBase<?, ?, ?> targetCtx) throws SourceException {
+    public static void copyDeclaredStmts(final StatementContextBase<?, ?, ?> sourceCtx,
+            final StatementContextBase<?, ?, ?> targetCtx) throws SourceException {
 
         Collection<? extends StatementContextBase<?, ?, ?>> declaredSubStatements = sourceCtx.declaredSubstatements();
-        final List<StatementContextBase> subStatements = new Builder<StatementContextBase>()
+        final List<StatementContextBase<?, ?, ?>> subStatements = new Builder<StatementContextBase<?, ?, ?>>()
                 .addAll(targetCtx.declaredSubstatements()).addAll(targetCtx.effectiveSubstatements()).build();
         boolean sourceAndTargetInSameModule = Utils.getRootModuleQName(sourceCtx).equals(
                 Utils.getRootModuleQName(targetCtx));
@@ -92,11 +92,11 @@ public final class AugmentUtils {
         }
     }
 
-    public static void copyEffectiveStmts(StatementContextBase<?, ?, ?> sourceCtx,
-            StatementContextBase<?, ?, ?> targetCtx) throws SourceException {
+    public static void copyEffectiveStmts(final StatementContextBase<?, ?, ?> sourceCtx,
+            final StatementContextBase<?, ?, ?> targetCtx) throws SourceException {
 
         Collection<? extends StatementContextBase<?, ?, ?>> effectiveSubstatements = sourceCtx.effectiveSubstatements();
-        final List<StatementContextBase> subStatements = new Builder<StatementContextBase>()
+        final List<StatementContextBase<?, ?, ?>> subStatements = new Builder<StatementContextBase<?, ?, ?>>()
                 .addAll(targetCtx.declaredSubstatements()).addAll(targetCtx.effectiveSubstatements()).build();
         boolean sourceAndTargetInSameModule = Utils.getRootModuleQName(sourceCtx).equals(
                 Utils.getRootModuleQName(targetCtx));
@@ -117,17 +117,17 @@ public final class AugmentUtils {
     }
 
     private static void validateNodeCanBeCopiedByAugment(final StatementContextBase<?, ?, ?> sourceCtx,
-            final List<StatementContextBase> targetSubStatements, boolean sourceAndTargetInSameModule) {
+            final List<StatementContextBase<?, ?, ?>> targetSubStatements, final boolean sourceAndTargetInSameModule) {
 
         if (sourceCtx.getPublicDefinition().getDeclaredRepresentationClass().equals(WhenStatement.class)) {
             return;
         }
 
         if (!sourceAndTargetInSameModule) {
-            final List<StatementContextBase> sourceSubStatements = new Builder<StatementContextBase>()
+            final List<StatementContextBase<?, ?, ?>> sourceSubStatements = new Builder<StatementContextBase<?, ?, ?>>()
                     .addAll(sourceCtx.declaredSubstatements()).addAll(sourceCtx.effectiveSubstatements()).build();
 
-            for (final StatementContextBase sourceSubStatement : sourceSubStatements) {
+            for (final StatementContextBase<?, ?, ?> sourceSubStatement : sourceSubStatements) {
                 if (sourceSubStatement.getPublicDefinition().getDeclaredRepresentationClass()
                         .equals(MandatoryStatement.class)) {
                     throw new IllegalArgumentException(
@@ -138,7 +138,7 @@ public final class AugmentUtils {
             }
         }
 
-        for (final StatementContextBase subStatement : targetSubStatements) {
+        for (final StatementContextBase<?, ?, ?> subStatement : targetSubStatements) {
 
             final boolean sourceIsDataNode = DataDefinitionStatement.class.isAssignableFrom(sourceCtx
                     .getPublicDefinition().getDeclaredRepresentationClass());
@@ -155,8 +155,8 @@ public final class AugmentUtils {
         }
     }
 
-    public static QNameModule getNewQNameModule(StatementContextBase<?, ?, ?> targetCtx,
-            StatementContextBase<?, ?, ?> sourceCtx) {
+    public static QNameModule getNewQNameModule(final StatementContextBase<?, ?, ?> targetCtx,
+            final StatementContextBase<?, ?, ?> sourceCtx) {
         Object targetStmtArgument = targetCtx.getStatementArgument();
 
         final StatementContextBase<?, ?, ?> root = sourceCtx.getRoot();
@@ -176,7 +176,7 @@ public final class AugmentUtils {
         }
     }
 
-    public static boolean needToCopyByAugment(StmtContext<?, ?, ?> stmtContext) {
+    public static boolean needToCopyByAugment(final StmtContext<?, ?, ?> stmtContext) {
 
         Set<StatementDefinition> noCopyDefSet = new HashSet<>();
         noCopyDefSet.add(Rfc6020Mapping.USES);
@@ -185,7 +185,7 @@ public final class AugmentUtils {
         return !noCopyDefSet.contains(def);
     }
 
-    public static boolean isReusedByAugment(StmtContext<?, ?, ?> stmtContext) {
+    public static boolean isReusedByAugment(final StmtContext<?, ?, ?> stmtContext) {
 
         Set<StatementDefinition> reusedDefSet = new HashSet<>();
         reusedDefSet.add(Rfc6020Mapping.TYPEDEF);
@@ -230,15 +230,16 @@ public final class AugmentUtils {
         StatementContextBase<?, ?, ?> augmentTargetCtx = null;
         for (final StatementContextBase<?, ?, ?> rootStatementCtx : rootStatementCtxList) {
             augmentTargetCtx = findCtxOfNodeInRoot(rootStatementCtx, augmentTargetNode);
-            if (augmentTargetCtx != null)
+            if (augmentTargetCtx != null) {
                 break;
+            }
         }
 
         return augmentTargetCtx;
     }
 
     @Nullable
-    public static StatementContextBase<?, ?, ?> findCtxOfNodeInSubstatements(StatementContextBase<?, ?, ?> rootStmtCtx,
+    public static StatementContextBase<?, ?, ?> findCtxOfNodeInSubstatements(final StatementContextBase<?, ?, ?> rootStmtCtx,
             final Iterable<QName> path) {
 
         StatementContextBase<?, ?, ?> parent = rootStmtCtx;
@@ -261,8 +262,8 @@ public final class AugmentUtils {
         return null;
     }
 
-    public static StatementContextBase<?, ?, ?> getSubstatementByQName(StatementContextBase<?, ?, ?> parent,
-            QName nextPathQName) {
+    public static StatementContextBase<?, ?, ?> getSubstatementByQName(final StatementContextBase<?, ?, ?> parent,
+            final QName nextPathQName) {
 
         Collection<StatementContextBase<?, ?, ?>> declaredSubstatement = parent.declaredSubstatements();
         Collection<StatementContextBase<?, ?, ?>> effectiveSubstatement = parent.effectiveSubstatements();
@@ -297,7 +298,7 @@ public final class AugmentUtils {
         return null;
     }
 
-    public static boolean isSupportedAugmentTarget(StatementContextBase<?, ?, ?> substatementCtx) {
+    public static boolean isSupportedAugmentTarget(final StatementContextBase<?, ?, ?> substatementCtx) {
 
         /*
          * :TODO Substatement must be allowed augment target type e.g. Container, etc... and must be not for example
@@ -315,7 +316,7 @@ public final class AugmentUtils {
     }
 
     @Nullable
-    public static StatementContextBase<?, ?, ?> findCtxOfNodeInRoot(StatementContextBase<?, ?, ?> rootStmtCtx,
+    public static StatementContextBase<?, ?, ?> findCtxOfNodeInRoot(final StatementContextBase<?, ?, ?> rootStmtCtx,
             final SchemaNodeIdentifier node) {
         return findCtxOfNodeInSubstatements(rootStmtCtx, node.getPathFromRoot());
     }
