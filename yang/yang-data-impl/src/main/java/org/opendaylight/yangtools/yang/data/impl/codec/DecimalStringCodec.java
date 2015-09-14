@@ -13,10 +13,10 @@ import java.math.BigDecimal;
 import org.opendaylight.yangtools.yang.data.api.codec.DecimalCodec;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 
-class DecimalStringCodec extends TypeDefinitionAwareCodec<BigDecimal, DecimalTypeDefinition>
+final class DecimalStringCodec extends TypeDefinitionAwareCodec<BigDecimal, DecimalTypeDefinition>
         implements DecimalCodec<String> {
 
-    protected DecimalStringCodec(final Optional<DecimalTypeDefinition> typeDef) {
+    private DecimalStringCodec(final Optional<DecimalTypeDefinition> typeDef) {
         super(typeDef, BigDecimal.class);
     }
 
@@ -25,12 +25,12 @@ class DecimalStringCodec extends TypeDefinitionAwareCodec<BigDecimal, DecimalTyp
     }
 
     @Override
-    public final String serialize(final BigDecimal data) {
+    public String serialize(final BigDecimal data) {
         return data == null ? "" : data.toString();
     }
 
     @Override
-    public final BigDecimal deserialize(final String stringRepresentation) {
+    public BigDecimal deserialize(final String stringRepresentation) {
         Preconditions.checkArgument( stringRepresentation != null , "Input cannot be null" );
         return new BigDecimal(stringRepresentation);
     }

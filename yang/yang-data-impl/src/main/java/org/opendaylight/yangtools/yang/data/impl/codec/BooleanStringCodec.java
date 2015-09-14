@@ -12,10 +12,10 @@ import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.codec.BooleanCodec;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 
-class BooleanStringCodec extends TypeDefinitionAwareCodec<Boolean, BooleanTypeDefinition>
+final class BooleanStringCodec extends TypeDefinitionAwareCodec<Boolean, BooleanTypeDefinition>
         implements BooleanCodec<String> {
 
-    protected BooleanStringCodec(final Optional<BooleanTypeDefinition> typeDef) {
+    BooleanStringCodec(final Optional<BooleanTypeDefinition> typeDef) {
         super(typeDef, Boolean.class);
     }
 

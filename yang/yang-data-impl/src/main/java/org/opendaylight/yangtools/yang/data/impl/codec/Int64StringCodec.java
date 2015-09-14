@@ -12,19 +12,19 @@ import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.Int64Codec;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 
-class Int64StringCodec extends AbstractIntegerStringCodec<Long, IntegerTypeDefinition> implements Int64Codec<String> {
+final class Int64StringCodec extends AbstractIntegerStringCodec<Long, IntegerTypeDefinition> implements Int64Codec<String> {
 
-    protected Int64StringCodec(final Optional<IntegerTypeDefinition> typeDef) {
+    Int64StringCodec(final Optional<IntegerTypeDefinition> typeDef) {
         super(typeDef, extractRange(typeDef.orNull()), Long.class);
     }
 
     @Override
-    public final Long deserialize(final String stringRepresentation, final int base) {
+    public Long deserialize(final String stringRepresentation, final int base) {
         return Long.valueOf(stringRepresentation, base);
     }
 
     @Override
-    public final String serialize(final Long data) {
+    public String serialize(final Long data) {
         return data == null ? "" : data.toString();
     }
 

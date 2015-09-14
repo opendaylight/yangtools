@@ -12,20 +12,20 @@ import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint8Codec;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
-class Uint8StringCodec extends AbstractIntegerStringCodec<Short, UnsignedIntegerTypeDefinition> implements
+final class Uint8StringCodec extends AbstractIntegerStringCodec<Short, UnsignedIntegerTypeDefinition> implements
         Uint8Codec<String> {
 
-    protected Uint8StringCodec(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
+    Uint8StringCodec(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
         super(typeDef, extractRange(typeDef.orNull()), Short.class);
     }
 
     @Override
-    public final String serialize(final Short data) {
+    public String serialize(final Short data) {
         return data == null ? "" : data.toString();
     }
 
     @Override
-    public final Short deserialize(final String stringRepresentation, final int base) {
+    public Short deserialize(final String stringRepresentation, final int base) {
         return Short.valueOf(stringRepresentation, base);
     }
 

@@ -13,22 +13,22 @@ import com.google.common.base.Strings;
 import org.opendaylight.yangtools.yang.data.api.codec.EmptyCodec;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 
-class EmptyStringCodec extends TypeDefinitionAwareCodec<Void, EmptyTypeDefinition> implements
+final class EmptyStringCodec extends TypeDefinitionAwareCodec<Void, EmptyTypeDefinition> implements
         EmptyCodec<String> {
+    static final EmptyStringCodec INSTANCE = new EmptyStringCodec();
 
-    protected EmptyStringCodec(final Optional<EmptyTypeDefinition> typeDef) {
-        super(typeDef, Void.class);
+    private EmptyStringCodec() {
+        super(Optional.<EmptyTypeDefinition>absent(), Void.class);
     }
 
     @Override
-    public final String serialize(final Void data) {
+    public String serialize(final Void data) {
         return "";
     }
 
     @Override
-    public final Void deserialize(final String stringRepresentation) {
-        Preconditions.checkArgument( Strings.isNullOrEmpty( stringRepresentation ),
-                                     "The value must be empty" );
+    public Void deserialize(final String stringRepresentation) {
+        Preconditions.checkArgument(Strings.isNullOrEmpty(stringRepresentation), "The value must be empty");
         return null;
     }
 }

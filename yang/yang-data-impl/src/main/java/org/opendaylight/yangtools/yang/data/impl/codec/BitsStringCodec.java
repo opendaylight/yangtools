@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.codec.BitsCodec;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
-class BitsStringCodec extends TypeDefinitionAwareCodec<Set<String>, BitsTypeDefinition>
+final class BitsStringCodec extends TypeDefinitionAwareCodec<Set<String>, BitsTypeDefinition>
         implements BitsCodec<String> {
 
     private static final Joiner JOINER = Joiner.on(" ").skipNulls();
@@ -28,7 +28,7 @@ class BitsStringCodec extends TypeDefinitionAwareCodec<Set<String>, BitsTypeDefi
     private final Set<String> bits;
 
     @SuppressWarnings("unchecked")
-    protected BitsStringCodec(final Optional<BitsTypeDefinition> typeDef) {
+    private BitsStringCodec(final Optional<BitsTypeDefinition> typeDef) {
         super(typeDef, (Class<Set<String>>) ((Class<?>) Set.class));
         if (typeDef.isPresent()) {
             final List<Bit> yangBits = typeDef.get().getBits();
@@ -47,12 +47,12 @@ class BitsStringCodec extends TypeDefinitionAwareCodec<Set<String>, BitsTypeDefi
     }
 
     @Override
-    public final String serialize(final Set<String> data) {
+    public String serialize(final Set<String> data) {
         return data == null ? "" : JOINER.join(data);
     }
 
     @Override
-    public final Set<String> deserialize(final String stringRepresentation) {
+    public Set<String> deserialize(final String stringRepresentation) {
         if (stringRepresentation == null) {
             return ImmutableSet.of();
         }

@@ -12,19 +12,19 @@ import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint16Codec;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
-class Uint16StringCodec extends AbstractIntegerStringCodec<Integer, UnsignedIntegerTypeDefinition> implements
+final class Uint16StringCodec extends AbstractIntegerStringCodec<Integer, UnsignedIntegerTypeDefinition> implements
         Uint16Codec<String> {
-    protected Uint16StringCodec(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
+    Uint16StringCodec(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
         super(typeDef, extractRange(typeDef.orNull()), Integer.class);
     }
 
     @Override
-    public final Integer deserialize(final String stringRepresentation, final int base) {
+    public Integer deserialize(final String stringRepresentation, final int base) {
         return Integer.valueOf(stringRepresentation, base);
     }
 
     @Override
-    public final String serialize(final Integer data) {
+    public String serialize(final Integer data) {
         return data == null ? "" : data.toString();
     }
 
