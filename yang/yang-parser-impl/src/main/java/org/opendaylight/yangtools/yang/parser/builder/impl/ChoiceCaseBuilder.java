@@ -73,7 +73,7 @@ AugmentationTargetBuilder {
         instance.augmenting = augmenting;
         instance.addedByUses = addedByUses;
 
-        instance.constraints = constraints.toInstance();
+        instance.constraints = constraints.build();
 
         // ORIGINAL NODE
         if (originalNode == null && originalBuilder != null) {
@@ -142,7 +142,7 @@ AugmentationTargetBuilder {
     }
 
     @Override
-    public void addGrouping(GroupingBuilder groupingBuilder) {
+    public void addGrouping(final GroupingBuilder groupingBuilder) {
         throw new YangParseException(getModuleName(), groupingBuilder.getLine(), "Can not add grouping to choice case.");
     }
 

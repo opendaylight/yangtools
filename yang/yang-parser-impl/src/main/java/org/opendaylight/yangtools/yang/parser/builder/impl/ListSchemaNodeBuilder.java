@@ -83,7 +83,7 @@ public final class ListSchemaNodeBuilder extends AbstractDocumentedDataNodeConta
         instance.augmenting = augmenting;
         instance.addedByUses = addedByUses;
         instance.configuration = configuration;
-        instance.constraints = constraints.toInstance();
+        instance.constraints = constraints.build();
         instance.userOrdered = userOrdered;
 
         // KEY

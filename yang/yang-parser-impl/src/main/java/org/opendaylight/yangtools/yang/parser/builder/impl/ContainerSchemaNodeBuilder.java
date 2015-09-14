@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -20,9 +23,6 @@ import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainerBuilder;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 public final class ContainerSchemaNodeBuilder extends AbstractDocumentedDataNodeContainerBuilder implements
         AugmentationTargetBuilder, DataSchemaNodeBuilder {
@@ -82,7 +82,7 @@ public final class ContainerSchemaNodeBuilder extends AbstractDocumentedDataNode
         instance.augmenting = augmenting;
         instance.addedByUses = addedByUses;
         instance.configuration = configuration;
-        instance.constraints = constraints.toInstance();
+        instance.constraints = constraints.build();
         instance.presence = presence;
 
         // ORIGINAL NODE
