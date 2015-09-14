@@ -7,17 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import com.google.common.base.Preconditions;
 import java.util.Collections;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
-
-import com.google.common.base.Preconditions;
 
 /**
  * The <code>default</code> implementation of Identityref Type Definition
@@ -27,22 +25,12 @@ import com.google.common.base.Preconditions;
  */
 public final class IdentityrefType implements IdentityrefTypeDefinition {
     private static final QName NAME = BaseTypes.IDENTITYREF_QNAME;
-    private final SchemaPath path;
     private static final String DESCRIPTION = "The identityref type is used to reference an existing identity.";
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.10";
-    private final IdentitySchemaNode identity;
     private static final String UNITS = "";
 
-    /**
-     * Constructs new {@link IdentityrefTypeDefinition} definition.
-     *
-     * @param identity
-     * @param schemaPath
-     */
-    @Deprecated
-    public IdentityrefType(final IdentitySchemaNode identity, final SchemaPath schemaPath) {
-        this(schemaPath,identity);
-    }
+    private final IdentitySchemaNode identity;
+    private final SchemaPath path;
 
     private IdentityrefType(final SchemaPath path, final IdentitySchemaNode baseIdentity) {
         this.path = Preconditions.checkNotNull(path, "Path must be specified");
@@ -50,8 +38,7 @@ public final class IdentityrefType implements IdentityrefTypeDefinition {
     }
 
     /**
-     *
-     * Constructs new {@link IdentityrefTypeDefinition} definition.
+     * Constructs a new {@link IdentityrefTypeDefinition} definition.
      *
      * @param path Path to the definition.
      * @param baseIdentity Base Identity, all derived identities are valid arguments for instance of this type.
@@ -115,5 +102,4 @@ public final class IdentityrefType implements IdentityrefTypeDefinition {
     public String toString() {
         return "identityref " + identity.getQName().getLocalName();
     }
-
 }

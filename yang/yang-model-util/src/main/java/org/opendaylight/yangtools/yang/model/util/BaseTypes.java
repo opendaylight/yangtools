@@ -10,16 +10,10 @@ package org.opendaylight.yangtools.yang.model.util;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
-
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
@@ -55,25 +49,26 @@ public final class BaseTypes {
     public static final QName UINT64_QNAME = constructQName("uint64");
     public static final QName UNION_QNAME = constructQName("union");
 
-    private static final Set<String> BUILD_IN_TYPES = ImmutableSet.<String> builder().add(BINARY_QNAME.getLocalName()) //
-            .add(BITS_QNAME.getLocalName()) //
-            .add(BOOLEAN_QNAME.getLocalName()) //
-            .add(DECIMAL64_QNAME.getLocalName()) //
-            .add(EMPTY_QNAME.getLocalName()) //
-            .add(ENUMERATION_QNAME.getLocalName()) //
-            .add(IDENTITYREF_QNAME.getLocalName()) //
-            .add(INSTANCE_IDENTIFIER_QNAME.getLocalName()) //
-            .add(INT8_QNAME.getLocalName()) //
-            .add(INT16_QNAME.getLocalName()) //
-            .add(INT32_QNAME.getLocalName()) //
-            .add(INT64_QNAME.getLocalName()) //
-            .add(LEAFREF_QNAME.getLocalName()) //
-            .add(STRING_QNAME.getLocalName()) //
-            .add(UINT8_QNAME.getLocalName()) //
-            .add(UINT16_QNAME.getLocalName()) //
-            .add(UINT32_QNAME.getLocalName()) //
-            .add(UINT64_QNAME.getLocalName()) //
-            .add(UNION_QNAME.getLocalName()) //
+    private static final Set<String> BUILD_IN_TYPES = ImmutableSet.<String> builder()
+            .add(BINARY_QNAME.getLocalName())
+            .add(BITS_QNAME.getLocalName())
+            .add(BOOLEAN_QNAME.getLocalName())
+            .add(DECIMAL64_QNAME.getLocalName())
+            .add(EMPTY_QNAME.getLocalName())
+            .add(ENUMERATION_QNAME.getLocalName())
+            .add(IDENTITYREF_QNAME.getLocalName())
+            .add(INSTANCE_IDENTIFIER_QNAME.getLocalName())
+            .add(INT8_QNAME.getLocalName())
+            .add(INT16_QNAME.getLocalName())
+            .add(INT32_QNAME.getLocalName())
+            .add(INT64_QNAME.getLocalName())
+            .add(LEAFREF_QNAME.getLocalName())
+            .add(STRING_QNAME.getLocalName())
+            .add(UINT8_QNAME.getLocalName())
+            .add(UINT16_QNAME.getLocalName())
+            .add(UINT32_QNAME.getLocalName())
+            .add(UINT64_QNAME.getLocalName())
+            .add(UNION_QNAME.getLocalName())
             .build();
 
     /**
@@ -85,50 +80,7 @@ public final class BaseTypes {
      * @return built-in base yang type QName.
      */
     public static QName constructQName(final String typeName) {
-        return QName.create(BASE_TYPES_MODULE, typeName);
-    }
-
-    /**
-     * Creates Schema Path from {@link QName}.
-     *
-     * @param typeName
-     *            yang type QName
-     * @return Schema Path from Qname.
-     * @deprecated Use {@link SchemaPath#create(boolean, QName...)} instead.
-     */
-    @Deprecated
-    public static SchemaPath schemaPath(final QName typeName) {
-        return SchemaPath.create(true, typeName);
-    }
-
-    /**
-     * Creates Schema Path from List of partial paths defined as Strings, module
-     * Namespace and module latest Revision Date.
-     *
-     * @param actualPath
-     *            List of partial paths
-     * @param namespace
-     *            Module Namespace
-     * @param revision
-     *            Revision Date
-     * @return Schema Path
-     *
-     * @deprecated Use {@link SchemaPath#create(Iterable, boolean)} with QNames
-     *             manually constructed.
-     */
-    @Deprecated
-    public static SchemaPath schemaPath(final List<String> actualPath, final URI namespace, final Date revision) {
-        if (actualPath == null) {
-            throw new IllegalArgumentException("The actual path List MUST be specified.");
-        }
-        final List<QName> pathList = new ArrayList<QName>();
-        for (final String path : actualPath) {
-            final QName qname = QName.create(namespace, revision, path);
-            if (qname != null) {
-                pathList.add(qname);
-            }
-        }
-        return SchemaPath.create(pathList, true);
+        return QName.cachedReference(QName.create(BASE_TYPES_MODULE, typeName));
     }
 
     /**

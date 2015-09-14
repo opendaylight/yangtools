@@ -7,18 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import java.util.Collections;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
-
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 /**
  * The <code>default</code> implementation of Enumeration Type Definition
@@ -35,32 +33,6 @@ public final class EnumerationType implements EnumTypeDefinition {
     private final EnumPair defaultEnum;
     private final List<EnumPair> enums;
 
-
-    /**
-     * Constructs EnumerationType
-     *
-     * @param path
-     * @param enums
-     * @deprecated Use {@link #create(SchemaPath, List, Optional)} instead.
-     */
-    @Deprecated
-    public EnumerationType(final SchemaPath path, final List<EnumPair> enums) {
-        this(path,enums,Optional.<EnumPair>absent());
-    }
-
-    /**
-     * Constructs EnumerationType
-     *
-     * @param path
-     * @param defaultEnum
-     * @param enums
-     * @deprecated Use {@link #create(SchemaPath, List, Optional)} instead.
-     */
-    @Deprecated
-    public EnumerationType(final SchemaPath path, final EnumPair defaultEnum, final List<EnumPair> enums) {
-        this(path,enums,Optional.fromNullable(defaultEnum));
-    }
-
     private EnumerationType(final SchemaPath path, final List<EnumPair> enums, final Optional<EnumPair> defaultEnum) {
         this.path = Preconditions.checkNotNull(path,"path must not be null");
         this.enums = ImmutableList.copyOf(Preconditions.checkNotNull(enums, "enums must not be null."));
@@ -73,14 +45,12 @@ public final class EnumerationType implements EnumTypeDefinition {
     }
 
     /**
-     *
-     * Constructs new enumeration
+     * Constructs a new enumeration
      *
      * @param path Schema Path to definition point of this enumeration
      * @param enums List of defined enumeration values
      * @param defaultValue {@link Optional#of(Object)} of default value, {@link Optional#absent()} if no default value is defined.
      *        If defaultValue is set, it must be present in provided list of enumerations.
-     *
      */
     public static EnumerationType create(final SchemaPath path, final List<EnumPair> enums, final Optional<EnumPair> defaultValue) {
         return new EnumerationType(path, enums, defaultValue);
@@ -111,8 +81,7 @@ public final class EnumerationType implements EnumTypeDefinition {
      * (non-Javadoc)
      *
      * @see
-     * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue
-     * ()
+     * org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue()
      */
     @Override
     public Object getDefaultValue() {
@@ -174,8 +143,7 @@ public final class EnumerationType implements EnumTypeDefinition {
      * (non-Javadoc)
      *
      * @see
-     * org.opendaylight.yangtools.yang.model.base.type.api.EnumTypeDefinition
-     * #getValues()
+     * org.opendaylight.yangtools.yang.model.base.type.api.EnumTypeDefinition#getValues()
      */
     @Override
     public List<EnumPair> getValues() {
