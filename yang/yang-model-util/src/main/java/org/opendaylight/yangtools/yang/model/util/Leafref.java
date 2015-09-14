@@ -34,8 +34,7 @@ public final class Leafref implements LeafrefTypeDefinition {
 
     @Deprecated
     public Leafref(final RevisionAwareXPath xpath) {
-        this(PATH,xpath);
-
+        this(PATH, xpath);
     }
 
     private Leafref(final SchemaPath path, final RevisionAwareXPath target) {
@@ -43,7 +42,7 @@ public final class Leafref implements LeafrefTypeDefinition {
         this.xpath = Preconditions.checkNotNull(target,"target must not be null.");
     }
 
-    public static Leafref create(final SchemaPath path,final RevisionAwareXPath target) {
+    public static Leafref create(final SchemaPath path, final RevisionAwareXPath target) {
         return new Leafref(path,target);
     }
 

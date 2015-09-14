@@ -34,31 +34,15 @@ public final class BitsType implements BitsTypeDefinition {
     private final List<Bit> bits;
 
     /**
-     * Default constructor. <br>
-     * Instantiates Bits type as empty bits list.
-     *
-     * @param path
-     * @deprecated Use static factory method {@link #create(SchemaPath, List)} instead.
-     */
-    @Deprecated
-    public BitsType(final SchemaPath path) {
-        super();
-        this.bits = Collections.emptyList();
-        this.path = Preconditions.checkNotNull(path,"path must not be null");
-    }
-
-    /**
      * Constructor with explicit definition of bits assigned to BitsType.
      *
      * @param path
      * @param bits
-     * @deprecated Use static factory method {@link #create(SchemaPath, List)} instead.
      */
-    @Deprecated
-    public BitsType(final SchemaPath path, final List<Bit> bits) {
+    private BitsType(final SchemaPath path, final List<Bit> bits) {
         super();
         this.bits = ImmutableList.copyOf(bits);
-        this.path = Preconditions.checkNotNull(path,"path must not be null");
+        this.path = Preconditions.checkNotNull(path, "path must not be null");
     }
 
     public static BitsType create(final SchemaPath path, final List<Bit> bits) {

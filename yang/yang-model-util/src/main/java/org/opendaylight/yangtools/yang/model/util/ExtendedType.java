@@ -9,12 +9,8 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-
-import java.net.URI;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -41,15 +37,15 @@ public class ExtendedType implements TypeDefinition<TypeDefinition<?>> {
     private final String reference;
     private final List<UnknownSchemaNode> unknownSchemaNodes;
 
-    private List<RangeConstraint> ranges = Collections.emptyList();
-    private List<LengthConstraint> lengths = Collections.emptyList();
-    private List<PatternConstraint> patterns = Collections.emptyList();
-    private Integer fractionDigits = null;
-
     private final Status status;
     private final String units;
     private final Object defaultValue;
     private final boolean addedByUses;
+
+    private List<RangeConstraint> ranges = Collections.emptyList();
+    private List<LengthConstraint> lengths = Collections.emptyList();
+    private List<PatternConstraint> patterns = Collections.emptyList();
+    private Integer fractionDigits = null;
 
     /**
      *
@@ -61,7 +57,8 @@ public class ExtendedType implements TypeDefinition<TypeDefinition<?>> {
      * @param reference Reference of Type
      * @param path Schema path to type definition.
      */
-    public static final Builder builder(final QName typeName,final TypeDefinition<?> baseType,final Optional<String> description,final Optional<String> reference,final SchemaPath path) {
+    public static final Builder builder(final QName typeName, final TypeDefinition<?> baseType,
+            final Optional<String> description, final Optional<String> reference, final SchemaPath path) {
         return new Builder(typeName, baseType, description.or(""), reference.or(""), path);
     }
 
@@ -86,27 +83,6 @@ public class ExtendedType implements TypeDefinition<TypeDefinition<?>> {
         private Integer fractionDigits = null;
 
         /**
-         *
-         * @param actualPath
-         * @param namespace
-         * @param revision
-         * @param typeName
-         * @param baseType
-         * @param description
-         * @param reference
-         *
-         * @deprecated Use {@link ExtendedType#builder(QName, TypeDefinition, Optional, Optional, SchemaPath)} instead.
-         */
-        @Deprecated
-        public Builder(final List<String> actualPath, final URI namespace,
-                final Date revision, final QName typeName,
-                final TypeDefinition<?> baseType, final String description,
-                final String reference) {
-            this(typeName,baseType,description,reference,BaseTypes.schemaPath(actualPath, namespace, revision));
-        }
-
-        /**
-         *
          * Creates Builder for extended / derived type.
          *
          * @param typeName QName of derived type
@@ -114,11 +90,8 @@ public class ExtendedType implements TypeDefinition<TypeDefinition<?>> {
          * @param description Description of type
          * @param reference Reference of Type
          * @param path Schema path to type definition.
-         *
-         * @deprecated Use {@link ExtendedType#builder(QName, TypeDefinition, Optional, Optional, SchemaPath)} instead.
          */
-        @Deprecated
-        public Builder(final QName typeName, final TypeDefinition<?> baseType,
+        protected Builder(final QName typeName, final TypeDefinition<?> baseType,
                 final String description, final String reference,
                 final SchemaPath path) {
             this.typeName = Preconditions.checkNotNull(typeName, "type name must not be null.");

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.util;
 
+import com.google.common.base.Optional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,22 +58,27 @@ public final class TypeConstraints {
             if (max instanceof UnknownBoundaryNumber) {
                 max = resolveMaxRange(max);
             }
-            firstRange = BaseConstraints.rangeConstraint(min, max, firstRange.getDescription(),
-                    firstRange.getReference());
+            firstRange = BaseConstraints.newRangeConstraint(min, max,
+                Optional.fromNullable(firstRange.getDescription()),
+                Optional.fromNullable(firstRange.getReference()));
             resolved.set(0, firstRange);
-            lastRange = BaseConstraints.rangeConstraint(min, max, lastRange.getDescription(), lastRange.getReference());
+            lastRange = BaseConstraints.newRangeConstraint(min, max,
+                Optional.fromNullable(lastRange.getDescription()),
+                Optional.fromNullable(lastRange.getReference()));
             resolved.set(resolved.size() - 1, lastRange);
         } else {
             if (min instanceof UnknownBoundaryNumber) {
                 min = resolveMinRange(min);
-                firstRange = BaseConstraints.rangeConstraint(min, firstRange.getMax(), firstRange.getDescription(),
-                        firstRange.getReference());
+                firstRange = BaseConstraints.newRangeConstraint(min, firstRange.getMax(),
+                    Optional.fromNullable(firstRange.getDescription()),
+                    Optional.fromNullable(firstRange.getReference()));
                 resolved.set(0, firstRange);
             }
             if (max instanceof UnknownBoundaryNumber) {
                 max = resolveMaxRange(max);
-                lastRange = BaseConstraints.rangeConstraint(lastRange.getMin(), max, lastRange.getDescription(),
-                        lastRange.getReference());
+                lastRange = BaseConstraints.newRangeConstraint(lastRange.getMin(), max,
+                    Optional.fromNullable(lastRange.getDescription()),
+                    Optional.fromNullable(lastRange.getReference()));
                 resolved.set(resolved.size() - 1, lastRange);
             }
         }
@@ -139,23 +145,27 @@ public final class TypeConstraints {
             if (max instanceof UnknownBoundaryNumber) {
                 max = resolveMaxLength(max);
             }
-            firstLength = BaseConstraints.lengthConstraint(min, max, firstLength.getDescription(),
-                    firstLength.getReference());
+            firstLength = BaseConstraints.newLengthConstraint(min, max,
+                Optional.fromNullable(firstLength.getDescription()),
+                Optional.fromNullable(firstLength.getReference()));
             resolved.set(0, firstLength);
-            lastLength = BaseConstraints.lengthConstraint(min, max, lastLength.getDescription(),
-                    lastLength.getReference());
+            lastLength = BaseConstraints.newLengthConstraint(min, max,
+                Optional.fromNullable(lastLength.getDescription()),
+                Optional.fromNullable(lastLength.getReference()));
             resolved.set(resolved.size() - 1, lastLength);
         } else {
             if (min instanceof UnknownBoundaryNumber) {
                 min = resolveMinLength(min);
-                firstLength = BaseConstraints.lengthConstraint(min, firstLength.getMax(), firstLength.getDescription(),
-                        firstLength.getReference());
+                firstLength = BaseConstraints.newLengthConstraint(min, firstLength.getMax(),
+                    Optional.fromNullable(firstLength.getDescription()),
+                    Optional.fromNullable(firstLength.getReference()));
                 resolved.set(0, firstLength);
             }
             if (max instanceof UnknownBoundaryNumber) {
                 max = resolveMaxLength(max);
-                lastLength = BaseConstraints.lengthConstraint(lastLength.getMin(), max, lastLength.getDescription(),
-                        lastLength.getReference());
+                lastLength = BaseConstraints.newLengthConstraint(lastLength.getMin(), max,
+                    Optional.fromNullable(lastLength.getDescription()),
+                    Optional.fromNullable(lastLength.getReference()));
                 resolved.set(resolved.size() - 1, lastLength);
             }
         }
@@ -225,7 +235,7 @@ public final class TypeConstraints {
         validateRange(getRange());
     }
 
-    private void validateRange(List<RangeConstraint> typeRange) {
+    private void validateRange(final List<RangeConstraint> typeRange) {
         if (ranges.size() < 2) {
             return;
         }
@@ -245,7 +255,7 @@ public final class TypeConstraints {
         }
     }
 
-    private boolean areRangesSubintervalsOfParentRanges(List<RangeConstraint> parentRanges, final BigDecimal min,
+    private boolean areRangesSubintervalsOfParentRanges(final List<RangeConstraint> parentRanges, final BigDecimal min,
             final BigDecimal max) {
         boolean check = false;
         for (RangeConstraint r : parentRanges) {
@@ -273,7 +283,7 @@ public final class TypeConstraints {
         validateLength(getLength());
     }
 
-    private void validateLength(List<LengthConstraint> typeLength) {
+    private void validateLength(final List<LengthConstraint> typeLength) {
         if (lengths.size() < 2) {
             return;
         }

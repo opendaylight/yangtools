@@ -7,16 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-
 /**
- *
  * Immutable implementation of {@link MustDefinition}
- *
  */
 public final class MustDefinitionImpl implements MustDefinition {
     private final String mustStr;
@@ -26,7 +23,6 @@ public final class MustDefinitionImpl implements MustDefinition {
     private final String errorMessage;
 
     /**
-     *
      * Creates new Must Definition
      *
      * @param mustStr must string statement, Must not be null.
@@ -34,10 +30,8 @@ public final class MustDefinitionImpl implements MustDefinition {
      * @param reference Reference for condition
      * @param errorAppTag error application tag which should be used for error reporting when condition fails
      * @param errorMessage message  which should be used for error reporting when condition fails
-     * @deprecated Use {@link #create(String, Optional, Optional, Optional, Optional)} instead.
      */
-    @Deprecated
-    public MustDefinitionImpl(final String mustStr, final String description, final String reference, final String errorAppTag, final String errorMessage) {
+    private MustDefinitionImpl(final String mustStr, final String description, final String reference, final String errorAppTag, final String errorMessage) {
         this.mustStr = Preconditions.checkNotNull(mustStr);
         this.description = description;
         this.reference = reference;
@@ -55,7 +49,8 @@ public final class MustDefinitionImpl implements MustDefinition {
     * @param errorAppTag error application tag which should be used for error reporting when condition fails
     * @param errorMessage message  which should be used for error reporting when condition fails
     */
-    public static MustDefinitionImpl create(final String mustStr, final Optional<String> description, final Optional<String> reference, final Optional<String> errorAppTag, final Optional<String> errorMessage) {
+    public static MustDefinitionImpl create(final String mustStr, final Optional<String> description,
+            final Optional<String> reference, final Optional<String> errorAppTag, final Optional<String> errorMessage) {
         return new MustDefinitionImpl(mustStr, description.orNull(), reference.orNull(), errorAppTag.orNull(), errorMessage.orNull());
     }
 
