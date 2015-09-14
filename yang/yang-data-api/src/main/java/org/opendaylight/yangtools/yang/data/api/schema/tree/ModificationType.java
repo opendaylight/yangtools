@@ -34,17 +34,4 @@ public enum ModificationType {
      * This node has been deleted along with any of its child nodes.
      */
     DELETE,
-
-    /**
-     * Node has been written into the tree, but instead of replacing pre-existing
-     * contents, it has been merged. This means that any incoming nodes which
-     * were present in the tree have been replaced, but their child nodes have
-     * been retained.
-     *
-     * @deprecated This value is never reported. Whenever it would be reported, based
-     *             on the actual effects, either {@link #WRITE} or {@link #SUBTREE_MODIFIED}
-     *             is reported.
-     */
-    @Deprecated
-    MERGE,
 }
