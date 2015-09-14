@@ -7,19 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
-
-import com.google.common.base.Optional;
 
 /**
  * The <code>default</code> implementation of Decimal Type Definition interface.
@@ -28,8 +27,6 @@ import com.google.common.base.Optional;
  * @see DecimalTypeDefinition
  */
 public final class Decimal64 implements DecimalTypeDefinition {
-    private static final QName NAME = BaseTypes.DECIMAL64_QNAME;
-    private final SchemaPath path;
     private static final String UNITS = "";
     private static final BigDecimal DEFAULT_VALUE = null;
 
@@ -39,10 +36,24 @@ public final class Decimal64 implements DecimalTypeDefinition {
             + "'i x 10^-n' where i is an integer64 and n is an integer between 1 and 18, inclusively.";
 
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.3";
+    private static final int MAX_NUMBER_OF_FRACTION_DIGITS = 18;
+
+    /**
+     * Immutable List with default definition of Range Statements.
+     */
+    private static final List<RangeConstraint> DEFAULT_RANGE_STATEMENTS;
+    static {
+        final BigDecimal min = new BigDecimal("-922337203685477580.8");
+        final BigDecimal max = new BigDecimal("922337203685477580.7");
+        final String rangeDescription = "Integer values between " + min + " and " + max + ", inclusively.";
+
+        DEFAULT_RANGE_STATEMENTS = ImmutableList.of(BaseConstraints.newRangeConstraint(min, max,
+            Optional.of(rangeDescription), Optional.of("https://tools.ietf.org/html/rfc6020#section-9.2.4")));
+    }
 
     private final List<RangeConstraint> rangeStatements;
     private final Integer fractionDigits;
-    private static final int MAX_NUMBER_OF_FRACTION_DIGITS = 18;
+    private final SchemaPath path;
 
     /**
      * Default Decimal64 Type Constructor. <br>
@@ -71,27 +82,12 @@ public final class Decimal64 implements DecimalTypeDefinition {
                     "The fraction digits outside of boundaries. Fraction digits MUST be integer between 1 and 18 inclusively");
         }
         this.fractionDigits = fractionDigits;
-        rangeStatements = defaultRangeStatements();
+        rangeStatements = DEFAULT_RANGE_STATEMENTS;
         this.path = path;
     }
 
     public static Decimal64 create(final SchemaPath path, final Integer fractionDigits) {
         return new Decimal64(path, fractionDigits);
-    }
-
-    /**
-     * Returns unmodifiable List with default definition of Range Statements.
-     *
-     * @return unmodifiable List with default definition of Range Statements.
-     */
-    private List<RangeConstraint> defaultRangeStatements() {
-        final List<RangeConstraint> rangeStmts = new ArrayList<RangeConstraint>();
-        final BigDecimal min = new BigDecimal("-922337203685477580.8");
-        final BigDecimal max = new BigDecimal("922337203685477580.7");
-        final String rangeDescription = "Integer values between " + min + " and " + max + ", inclusively.";
-        rangeStmts.add(BaseConstraints.newRangeConstraint(min, max, Optional.of(rangeDescription),
-                Optional.of("https://tools.ietf.org/html/rfc6020#section-9.2.4")));
-        return Collections.unmodifiableList(rangeStmts);
     }
 
     @Override
@@ -111,7 +107,7 @@ public final class Decimal64 implements DecimalTypeDefinition {
 
     @Override
     public QName getQName() {
-        return NAME;
+        return BaseTypes.DECIMAL64_QNAME;
     }
 
     @Override
@@ -153,8 +149,8 @@ public final class Decimal64 implements DecimalTypeDefinition {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((NAME == null) ? 0 : NAME.hashCode());
-        result = prime * result + ((path == null) ? 0 : path.hashCode());
+        result = prime * result + BaseTypes.DECIMAL64_QNAME.hashCode();
+        result = prime * result + Objects.hashCode(path);
         return result;
     }
 
@@ -182,6 +178,7 @@ public final class Decimal64 implements DecimalTypeDefinition {
 
     @Override
     public String toString() {
-        return Decimal64.class.getSimpleName() + "[qname=" + NAME + ", fractionDigits=" + fractionDigits + "]";
+        return Decimal64.class.getSimpleName() + "[qname=" + BaseTypes.DECIMAL64_QNAME + ", fractionDigits="
+                + fractionDigits + "]";
     }
 }
