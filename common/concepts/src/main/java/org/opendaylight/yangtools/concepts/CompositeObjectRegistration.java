@@ -69,13 +69,5 @@ public final class CompositeObjectRegistration<T> extends AbstractObjectRegistra
         public CompositeObjectRegistration<T> build() {
             return new CompositeObjectRegistration<>(instance, registrations);
         }
-
-        /*
-         * @deprecated Use #build() instead.
-         */
-        @Deprecated
-        public CompositeObjectRegistration<T> toInstance() {
-            return build();
-        }
     }
 }
