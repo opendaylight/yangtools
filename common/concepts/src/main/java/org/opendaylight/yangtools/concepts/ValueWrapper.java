@@ -7,8 +7,16 @@
  */
 package org.opendaylight.yangtools.concepts;
 
+/**
+ * Wraps around a value object.
+ *
+ * @param <T> Value type
+ */
 public interface ValueWrapper<T> {
-
+    /**
+     * Return the wrapped value object.
+     *
+     * @return wrapped value.
+     */
     T getValue();
-
 }

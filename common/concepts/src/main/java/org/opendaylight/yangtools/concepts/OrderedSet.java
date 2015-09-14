@@ -6,11 +6,18 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 package org.opendaylight.yangtools.concepts;
+
 import java.util.List;
 import java.util.Set;
 
+/**
+ * @deprecated There is no way an object can satisfy both the {@link Set} and {@link List} interface contracts, as
+ *             they contradict on hashCode() specification. See {@link Set#hashCode()} and {@link List#hashCode()}.
+ *             This class interface will be removed in a future release.
+ *
+ * @param <E> Element type
+ */
+@Deprecated
+public interface OrderedSet<E> extends Set<E>, List<E> {
 
-public interface OrderedSet<E> extends Set<E>,List<E> {
-
-    
 }
