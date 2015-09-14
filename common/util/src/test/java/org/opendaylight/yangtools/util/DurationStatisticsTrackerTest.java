@@ -9,7 +9,6 @@
 package org.opendaylight.yangtools.util;
 
 import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 
 /**
@@ -17,12 +16,12 @@ import org.junit.Test;
  *
  * @author Thomas Pantelis
  */
-public class DurationStatsTrackerTest {
+public class DurationStatisticsTrackerTest {
 
     @Test
     public void test() {
 
-        DurationStatsTracker tracker = new DurationStatsTracker();
+        DurationStatisticsTracker tracker = DurationStatisticsTracker.createConcurrent();
 
         tracker.addDuration(10000);
         assertEquals("getTotalDurations", 1, tracker.getTotalDurations());
@@ -68,7 +67,7 @@ public class DurationStatsTrackerTest {
         assertEquals("getShortestDuration", 10000, tracker.getShortestDuration());
     }
 
-    private void verifyDisplayableString(String name, String actual, String expPrefix) {
+    private static void verifyDisplayableString(final String name, final String actual, final String expPrefix) {
         assertEquals(name + " starts with " + expPrefix + ". Actual: " + actual,
                 true, actual.startsWith(expPrefix));
     }
