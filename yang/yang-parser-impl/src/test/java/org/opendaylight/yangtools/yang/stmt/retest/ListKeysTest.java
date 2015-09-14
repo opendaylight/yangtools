@@ -108,7 +108,7 @@ public class ListKeysTest {
         }
     }
 
-    private void addSources(CrossSourceStatementReactor.BuildAction reactor, YangStatementSourceImpl... sources) {
+    private static void addSources(final CrossSourceStatementReactor.BuildAction reactor, final YangStatementSourceImpl... sources) {
         for (YangStatementSourceImpl source : sources) {
             reactor.addSource(source);
         }

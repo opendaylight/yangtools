@@ -67,7 +67,7 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
     private final boolean isExtended;
 
     public ExtendedTypeEffectiveStatementImpl(
-            StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx, boolean isExtended) {
+            final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx, final boolean isExtended) {
         super(ctx);
 
         this.isExtended = isExtended;
@@ -90,7 +90,7 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
         validateTypeConstraints(ctx);
     }
 
-    private QName initQName(final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
+    private static QName initQName(final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
             final boolean isExtended) {
 
         QName qName;
@@ -117,7 +117,7 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
         return qName;
     }
 
-    private TypeDefinition<?> parseBaseTypeFromCtx(
+    private static TypeDefinition<?> parseBaseTypeFromCtx(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
 
         TypeDefinition<?> baseType;
@@ -155,7 +155,7 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
         typeConstraints.validateConstraints();
     }
 
-    private TypeConstraints addConstraintsFromBaseType(final TypeConstraints typeConstraints,
+    private static TypeConstraints addConstraintsFromBaseType(final TypeConstraints typeConstraints,
             final TypeDefinition<?> baseType) {
 
         final String baseTypeName = baseType.getQName().getLocalName();

@@ -7,29 +7,28 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType.Builder;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
-import org.opendaylight.yangtools.yang.model.util.Decimal64;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.util.Decimal64;
+import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.util.ExtendedType.Builder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.FractionDigitsEffectiveStatementImpl;
 
 public class Decimal64SpecificationEffectiveStatementImpl extends
@@ -51,6 +50,16 @@ public class Decimal64SpecificationEffectiveStatementImpl extends
             "-922337203685477580.8");
     private static final BigDecimal MAX_VALUE = new BigDecimal(
             "922337203685477580.7");
+    private static final List<RangeConstraint> DEFAULT_RANGE_STATEMENTS;
+    static {
+        final String rangeDescription = "Integer values between " + MIN_VALUE
+                + " and " + MAX_VALUE + ", inclusively.";
+        final String rangeReference = RangeConstraintEffectiveImpl.DEFAULT_REFERENCE;
+
+        DEFAULT_RANGE_STATEMENTS = ImmutableList.<RangeConstraint>of(
+                new RangeConstraintEffectiveImpl(MIN_VALUE, MAX_VALUE, Optional.of(rangeDescription),
+                Optional.of(rangeReference)));
+    }
 
     private List<RangeConstraint> rangeConstraints;
     private Integer fractionDigits;
@@ -61,7 +70,7 @@ public class Decimal64SpecificationEffectiveStatementImpl extends
     private final boolean isExtended;
 
     public Decimal64SpecificationEffectiveStatementImpl(
-            StmtContext<String, TypeStatement.Decimal64Specification, EffectiveStatement<String, TypeStatement.Decimal64Specification>> ctx) {
+            final StmtContext<String, TypeStatement.Decimal64Specification, EffectiveStatement<String, TypeStatement.Decimal64Specification>> ctx) {
         super(ctx);
 
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
@@ -81,12 +90,12 @@ public class Decimal64SpecificationEffectiveStatementImpl extends
             path = parentPath.createChild(extendedTypeQName);
         } else {
             isExtended = false;
-            rangeConstraints = defaultRangeStatements();
+            rangeConstraints = DEFAULT_RANGE_STATEMENTS;
             path = Utils.getSchemaPath(ctx.getParentContext()).createChild(QNAME);
         }
     }
 
-    private boolean validateRanges(List<RangeConstraint> initRanges) {
+    private static boolean validateRanges(final List<RangeConstraint> initRanges) {
         for (RangeConstraint rangeConstraint : initRanges) {
 
             String maxValueString = rangeConstraint.getMax().toString();
@@ -106,19 +115,6 @@ public class Decimal64SpecificationEffectiveStatementImpl extends
         final RangeEffectiveStatementImpl rangeConstraints = firstEffective(RangeEffectiveStatementImpl.class);
         return rangeConstraints != null ? rangeConstraints.argument()
                 : Collections.<RangeConstraint> emptyList();
-    }
-
-    private List<RangeConstraint> defaultRangeStatements() {
-
-        final List<RangeConstraint> rangeStmts = new ArrayList<>();
-        final String rangeDescription = "Integer values between " + MIN_VALUE
-                + " and " + MAX_VALUE + ", inclusively.";
-        final String rangeReference = RangeConstraintEffectiveImpl.DEFAULT_REFERENCE;
-
-        rangeStmts.add(new RangeConstraintEffectiveImpl(MIN_VALUE, MAX_VALUE,
-                Optional.of(rangeDescription), Optional.of(rangeReference)));
-
-        return ImmutableList.copyOf(rangeStmts);
     }
 
     public boolean isExtended() {

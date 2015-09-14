@@ -12,14 +12,11 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.NoSuchElementException;
-
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -28,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
@@ -43,7 +39,7 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
 
     private final A argument;
 
-    public EffectiveStatementBase(StmtContext<A, D, ?> ctx) {
+    public EffectiveStatementBase(final StmtContext<A, D, ?> ctx) {
 
         this.stmtCtx = ctx;
         this.statementDefinition = ctx.getPublicDefinition();
@@ -61,7 +57,7 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
             if(declaredSubstatement.getPublicDefinition() == Rfc6020Mapping.USES) {
                 substatementsInit.add(declaredSubstatement);
                 substatementsInit.addAll(declaredSubstatement.getEffectOfStatement());
-                ((StatementContextBase)ctx).removeStatementsFromEffectiveSubstatements(declaredSubstatement
+                ((StatementContextBase<?, ?, ?>)ctx).removeStatementsFromEffectiveSubstatements(declaredSubstatement
                         .getEffectOfStatement());
             } else {
                 substatementsInit.add(declaredSubstatement);
@@ -99,14 +95,14 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
 
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> V get(
-            Class<N> namespace, K identifier) {
+            final Class<N> namespace, final K identifier) {
         return stmtCtx.getFromNamespace(namespace, identifier);
     }
 
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(
-            Class<N> namespace) {
-        return (Map<K, V>) stmtCtx.getAllFromNamespace(namespace);
+            final Class<N> namespace) {
+        return stmtCtx.getAllFromNamespace(namespace);
     }
 
     @Override
@@ -119,7 +115,7 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
     }
 
     protected final <S extends EffectiveStatement<?, ?>> S firstEffective(
-            Class<S> type) {
+            final Class<S> type) {
         S result = null;
         try {
             result = type.cast(Iterables.find(substatements,
@@ -130,7 +126,7 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
         return result;
     }
 
-    protected final <S extends SchemaNode> S firstSchemaNode(Class<S> type) {
+    protected final <S extends SchemaNode> S firstSchemaNode(final Class<S> type) {
         S result = null;
         try {
             result = type.cast(Iterables.find(substatements,
@@ -143,7 +139,7 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
 
     @SuppressWarnings("unchecked")
     protected final <T> Collection<T> allSubstatementsOfType(
-            Class<T> type) {
+            final Class<T> type) {
         Collection<T> result = null;
 
         try {
@@ -155,7 +151,7 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
         return result;
     }
 
-    protected final <T> T firstSubstatementOfType(Class<T> type) {
+    protected final <T> T firstSubstatementOfType(final Class<T> type) {
         T result = null;
         try {
             result = type.cast(Iterables.find(substatements,
@@ -166,8 +162,8 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
         return result;
     }
 
-    protected final <R> R firstSubstatementOfType(Class<?> type,
-            Class<R> returnType) {
+    protected final <R> R firstSubstatementOfType(final Class<?> type,
+            final Class<R> returnType) {
         R result = null;
         try {
             result = returnType.cast(Iterables.find(

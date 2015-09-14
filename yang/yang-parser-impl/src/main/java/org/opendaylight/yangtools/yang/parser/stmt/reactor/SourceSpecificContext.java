@@ -7,13 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Objects;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -22,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImportedNamespaceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -31,6 +36,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModuleMap;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
@@ -41,7 +47,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.BitsSpecificationImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Decimal64SpecificationImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.EnumSpecificationImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.IdentityRefSpecificationImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.InstanceIdentifierSpecificationImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.LeafrefSpecificationImpl;
@@ -49,12 +54,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnionSpecificationImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Objects;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
 public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBehaviour.Registry, Mutable {
 
@@ -73,11 +73,11 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     private ModelProcessingPhase inProgressPhase;
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
-    private QNameToStatementDefinitionMap qNameToStmtDefMap = new QNameToStatementDefinitionMap();
-    private PrefixToModuleMap prefixToModuleMap = new PrefixToModuleMap();
+    private final QNameToStatementDefinitionMap qNameToStmtDefMap = new QNameToStatementDefinitionMap();
+    private final PrefixToModuleMap prefixToModuleMap = new PrefixToModuleMap();
 
 
-    SourceSpecificContext(BuildGlobalContext currentContext, StatementStreamSource source) {
+    SourceSpecificContext(final BuildGlobalContext currentContext, final StatementStreamSource source) {
         this.source = source;
         this.currentContext = currentContext;
     }
@@ -86,11 +86,11 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         return inProgressPhase;
     }
 
-    StatementDefinitionContext<?, ?, ?> getDefinition(QName name) {
+    StatementDefinitionContext<?, ?, ?> getDefinition(final QName name) {
         return currentContext.getStatementDefinition(name);
     }
 
-    ContextBuilder<?, ?, ?> createDeclaredChild(StatementContextBase<?, ?, ?> current, QName name, StatementSourceReference ref) {
+    ContextBuilder<?, ?, ?> createDeclaredChild(final StatementContextBase<?, ?, ?> current, final QName name, final StatementSourceReference ref) {
         StatementDefinitionContext<?, ?, ?> def = getDefinition(name);
 
         if (def == null) {
@@ -101,8 +101,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                     final StatementContextBase<?,?,?> extension = (StatementContextBase<?, ?, ?>) currentContext
                             .getAllFromNamespace(ExtensionNamespace.class).get(key);
                     if (extension != null) {
-                        final QName qName = QName.create(((QName) ((SubstatementContext) extension).getStatementArgument())
-                                .getModule().getNamespace(), ((QName) ((SubstatementContext) extension).
+                        final QName qName = QName.create(((QName) ((SubstatementContext<?, ?, ?>) extension).getStatementArgument())
+                                .getModule().getNamespace(), ((QName) ((SubstatementContext<?, ?, ?>) extension).
                                 getStatementArgument()).getModule().getRevision(), extension.getIdentifier().getArgument());
 
                         def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition
@@ -159,7 +159,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private ContextBuilder<?, ?, ?> createDeclaredRoot(StatementDefinitionContext<?, ?, ?> def, StatementSourceReference ref) {
+    private ContextBuilder<?, ?, ?> createDeclaredRoot(final StatementDefinitionContext<?, ?, ?> def, final StatementSourceReference ref) {
         return new ContextBuilder(def, ref) {
 
             @Override
@@ -330,7 +330,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         }
     }
 
-    private StatementDefinitionContext<?, ?, ?> resolveTypeBodyStmts(String typeArgument) {
+    private static StatementDefinitionContext<?, ?, ?> resolveTypeBodyStmts(final String typeArgument) {
         switch (typeArgument) {
             case TypeUtils.DECIMAL64:
                 return new StatementDefinitionContext<>(new Decimal64SpecificationImpl.Definition());

@@ -23,8 +23,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.PatternConstraintEffectiveImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.PatternEffectiveStatementImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConstraint> implements PatternStatement {
+    private static final Logger LOG = LoggerFactory.getLogger(PatternStatementImpl.class);
+    private static final Optional<String> OPTIONAL_EMPTY = Optional.of("");
 
     protected PatternStatementImpl(StmtContext<PatternConstraint, PatternStatement, ?> context) {
         super(context);
@@ -40,17 +44,13 @@ public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConst
 
         @Override
         public PatternConstraint parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
-
-            final StringBuilder wrapPatternBuilder = new StringBuilder(value.length() + 2);
-            wrapPatternBuilder.append('^');
-            wrapPatternBuilder.append(value);
-            wrapPatternBuilder.append('$');
-            final String pattern = wrapPatternBuilder.toString();
+            final String pattern = "^" + value + '$';
 
             try {
                 Pattern.compile(pattern);
-                return new PatternConstraintEffectiveImpl(pattern, Optional.of(""), Optional.of(""));
+                return new PatternConstraintEffectiveImpl(pattern, OPTIONAL_EMPTY, OPTIONAL_EMPTY);
             } catch (PatternSyntaxException e) {
+                LOG.debug("Pattern {} failed to compile", pattern, e);
                 return null;
             }
         }

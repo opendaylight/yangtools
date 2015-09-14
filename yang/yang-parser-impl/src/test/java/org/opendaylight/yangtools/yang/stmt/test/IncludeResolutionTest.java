@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
 import java.util.logging.Logger;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -85,7 +84,7 @@ public class IncludeResolutionTest {
 
     }
 
-    private void addSources(final BuildAction reactor, final YangStatementSourceImpl... sources) {
+    private static void addSources(final BuildAction reactor, final YangStatementSourceImpl... sources) {
         for (YangStatementSourceImpl source : sources) {
             reactor.addSource(source);
         }

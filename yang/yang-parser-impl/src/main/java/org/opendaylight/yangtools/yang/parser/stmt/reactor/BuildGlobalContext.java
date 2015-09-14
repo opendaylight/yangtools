@@ -7,29 +7,24 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
-
-import java.util.Map.Entry;
-import java.util.Collection;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
@@ -42,7 +37,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceSpecificContext.PhaseCompletionProgress;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 
 class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBehaviour.Registry {
 
@@ -63,12 +61,12 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     private ModelProcessingPhase currentPhase = ModelProcessingPhase.INIT;
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
 
-    public BuildGlobalContext(Map<ModelProcessingPhase, StatementSupportBundle> supports) {
+    public BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports) {
         super();
         this.supports = Preconditions.checkNotNull(supports, "BuildGlobalContext#supports cannot be null");
     }
 
-    public BuildGlobalContext(Map<ModelProcessingPhase, StatementSupportBundle> supports,  Map<ValidationBundleType,Collection<?>> supportedValidation) {
+    public BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports,  final Map<ValidationBundleType,Collection<?>> supportedValidation) {
         super();
         this.supports = Preconditions.checkNotNull(supports, "BuildGlobalContext#supports cannot be null");
 
@@ -78,11 +76,11 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         }
     }
 
-    public StatementSupportBundle getSupportsForPhase(ModelProcessingPhase currentPhase) {
+    public StatementSupportBundle getSupportsForPhase(final ModelProcessingPhase currentPhase) {
         return supports.get(currentPhase);
     }
 
-    public void addSource(@Nonnull StatementStreamSource source) {
+    public void addSource(@Nonnull final StatementStreamSource source) {
         sources.add(new SourceSpecificContext(this,source));
     }
 
@@ -102,7 +100,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> getNamespaceBehaviour(Class<N> type) {
+    public <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> getNamespaceBehaviour(final Class<N> type) {
         NamespaceBehaviourWithListeners<?, ?, ?> potential = supportedNamespaces.get(type);
         if (potential == null) {
             NamespaceBehaviour<K, V, N> potentialRaw = supports.get(currentPhase).getNamespaceBehaviour(type);
@@ -123,7 +121,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         throw new NamespaceNotAvailableException("Namespace " + type + " is not available in phase " + currentPhase);
     }
 
-    public StatementDefinitionContext<?, ?, ?> getStatementDefinition(QName name) {
+    public StatementDefinitionContext<?, ?, ?> getStatementDefinition(final QName name) {
         StatementDefinitionContext<?, ?, ?> potential = definitions.get(name);
         if(potential == null) {
             StatementSupport<?, ?, ?> potentialRaw = supports.get(currentPhase).getStatementDefinition(name);
@@ -181,7 +179,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         return new EffectiveSchemaContext(rootStatements,rootEffectiveStatements);
     }
 
-    private void startPhase(ModelProcessingPhase phase) {
+    private void startPhase(final ModelProcessingPhase phase) {
         Preconditions.checkState(Objects.equals(finishedPhase, phase.getPreviousPhase()));
         for(SourceSpecificContext source : sources) {
             source.startPhase(phase);
@@ -196,8 +194,8 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         }
     }
 
-    private SomeModifiersUnresolvedException addSourceExceptions(SomeModifiersUnresolvedException buildFailure,
-            List<SourceSpecificContext> sourcesToProgress) {
+    private SomeModifiersUnresolvedException addSourceExceptions(final SomeModifiersUnresolvedException buildFailure,
+            final List<SourceSpecificContext> sourcesToProgress) {
         for(SourceSpecificContext failedSource : sourcesToProgress) {
             SourceException sourceEx = failedSource.failModifiers(currentPhase);
             buildFailure.addSuppressed(sourceEx);
@@ -242,7 +240,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         }
     }
 
-    private  void endPhase(ModelProcessingPhase phase) {
+    private  void endPhase(final ModelProcessingPhase phase) {
         Preconditions.checkState(currentPhase == phase);
         finishedPhase = currentPhase;
     }

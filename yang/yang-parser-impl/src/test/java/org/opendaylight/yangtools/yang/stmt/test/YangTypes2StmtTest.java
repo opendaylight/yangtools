@@ -9,9 +9,6 @@ package org.opendaylight.yangtools.yang.stmt.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
-
 import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -19,6 +16,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.BooleanType;
+import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.Int16;
 import org.opendaylight.yangtools.yang.model.util.Int32;
 import org.opendaylight.yangtools.yang.model.util.Int64;
@@ -111,7 +109,7 @@ public class YangTypes2StmtTest {
         assertEquals(BooleanType.class, lfBoolNode.getType().getClass());
     }
 
-    private void addSources(CrossSourceStatementReactor.BuildAction reactor, StatementStreamSource... sources) {
+    private static  void addSources(final CrossSourceStatementReactor.BuildAction reactor, final StatementStreamSource... sources) {
         for (StatementStreamSource source : sources) {
             reactor.addSource(source);
         }

@@ -4,20 +4,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-
-import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import java.net.URISyntaxException;
+import java.util.Set;
+import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import java.util.Set;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import java.net.URISyntaxException;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
@@ -25,7 +24,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 import org.opendaylight.yangtools.yang.stmt.test.StmtTestUtils;
-import org.junit.Test;
 
 public class EffectiveUsesRefineAndConstraintsTest {
 
@@ -88,8 +86,8 @@ public class EffectiveUsesRefineAndConstraintsTest {
 
     }
 
-    private void checkOriginalContainer(EffectiveSchemaContext result,
-            SchemaPath path) {
+    private static void checkOriginalContainer(final EffectiveSchemaContext result,
+            final SchemaPath path) {
         SchemaNode containerInContainerNode = SchemaContextUtil
                 .findDataSchemaNode(result, path);
         assertNotNull(containerInContainerNode);
@@ -105,8 +103,8 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertEquals(0, containerConstraints.getMustConstraints().size());
     }
 
-    private void checkOriginalChoice(EffectiveSchemaContext result,
-            SchemaPath path) {
+    private static void checkOriginalChoice(final EffectiveSchemaContext result,
+            final SchemaPath path) {
         SchemaNode choiceInContainerNode = SchemaContextUtil
                 .findDataSchemaNode(result, path);
         assertNotNull(choiceInContainerNode);
@@ -119,8 +117,8 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertTrue(choiceConstraints.getMustConstraints().isEmpty());
     }
 
-    private void checkOriginalList(EffectiveSchemaContext result,
-            SchemaPath path) {
+    private static void checkOriginalList(final EffectiveSchemaContext result,
+            final SchemaPath path) {
         SchemaNode listInContainerNode = SchemaContextUtil.findDataSchemaNode(
                 result, path);
         assertNotNull(listInContainerNode);
@@ -136,8 +134,8 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertEquals(1, listConstraints.getMustConstraints().size());
     }
 
-    private void checkRefinedContainer(EffectiveSchemaContext result,
-            SchemaPath path) {
+    private static void checkRefinedContainer(final EffectiveSchemaContext result,
+            final SchemaPath path) {
         SchemaNode containerInContainerNode = SchemaContextUtil
                 .findDataSchemaNode(result, path);
         assertNotNull(containerInContainerNode);
@@ -153,8 +151,8 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertEquals(1, containerConstraints.getMustConstraints().size());
     }
 
-    private void checkRefinedChoice(EffectiveSchemaContext result,
-            SchemaPath path) {
+    private static void checkRefinedChoice(final EffectiveSchemaContext result,
+            final SchemaPath path) {
         SchemaNode choiceInContainerNode = SchemaContextUtil
                 .findDataSchemaNode(result, path);
         assertNotNull(choiceInContainerNode);
@@ -167,7 +165,7 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertTrue(choiceConstraints.getMustConstraints().isEmpty());
     }
 
-    private void checkRefinedList(EffectiveSchemaContext result, SchemaPath path) {
+    private static void checkRefinedList(final EffectiveSchemaContext result, final SchemaPath path) {
         SchemaNode listInContainerNode = SchemaContextUtil.findDataSchemaNode(
                 result, path);
         assertNotNull(listInContainerNode);

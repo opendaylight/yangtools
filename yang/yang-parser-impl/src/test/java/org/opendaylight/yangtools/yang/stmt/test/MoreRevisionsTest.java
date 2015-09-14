@@ -11,23 +11,22 @@ package org.opendaylight.yangtools.yang.stmt.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import java.io.FileNotFoundException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Date;
-import org.opendaylight.yangtools.yang.common.QName;
-import java.net.URI;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import java.util.Set;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
@@ -154,7 +153,7 @@ public class MoreRevisionsTest {
         }
     }
 
-    private void checkContentFullTest(SchemaContext context) throws ParseException,
+    private static void checkContentFullTest(final SchemaContext context) throws ParseException,
             URISyntaxException {
 
         String yangTypesNSStr = "urn:ietf:params:xml:ns:yang:ietf-yang-types";
@@ -206,7 +205,7 @@ public class MoreRevisionsTest {
 
     }
 
-    private void checkInterfacesModuleFullTest(SchemaContext context, Date rev20100924,
+    private static void checkInterfacesModuleFullTest(final SchemaContext context, final Date rev20100924,
             final QName dateTimeTypeDef_20100924) throws URISyntaxException,
             ParseException {
         Date rev20121115 = SimpleDateFormatUtil.getRevisionFormat().parse(
@@ -223,8 +222,8 @@ public class MoreRevisionsTest {
         assertEquals(rev20100924, interfacesImport.getRevision());
     }
 
-    private void checkNetconfMonitoringModuleFullTest(SchemaContext context,
-            Date rev20130715, final QName dateTimeTypeDef_20130715)
+    private static void checkNetconfMonitoringModuleFullTest(final SchemaContext context,
+            final Date rev20130715, final QName dateTimeTypeDef_20130715)
             throws ParseException, URISyntaxException {
         Date rev20101004 = SimpleDateFormatUtil.getRevisionFormat().parse(
                 "2010-10-04");
@@ -255,7 +254,7 @@ public class MoreRevisionsTest {
         }
     }
 
-    private void checkContentSimpleTest(SchemaContext context)
+    private static void checkContentSimpleTest(final SchemaContext context)
             throws ParseException, URISyntaxException {
 
         String yangTypesNSStr = "urn:ietf:params:xml:ns:yang:ietf-yang-types";
@@ -308,8 +307,8 @@ public class MoreRevisionsTest {
 
     }
 
-    private void checkInterfacesModuleSimpleTest(SchemaContext context,
-            Date rev20100924, final QName dateTimeTypeDef_20100924)
+    private static void checkInterfacesModuleSimpleTest(final SchemaContext context,
+            final Date rev20100924, final QName dateTimeTypeDef_20100924)
             throws URISyntaxException, ParseException {
         String interfacesNSStr = "urn:ietf:params:xml:ns:yang:ietf-interfaces";
         URI interfacesNS = new URI(interfacesNSStr);
@@ -339,8 +338,8 @@ public class MoreRevisionsTest {
         assertEquals(rev20100924, interfacesImport.getRevision());
     }
 
-    private void checkNetconfMonitoringModuleSimpleTest(SchemaContext context,
-            Date rev20130715, final QName dateTimeTypeDef_20130715)
+    private static void checkNetconfMonitoringModuleSimpleTest(final SchemaContext context,
+            final Date rev20130715, final QName dateTimeTypeDef_20130715)
             throws ParseException, URISyntaxException {
         String monitoringNSStr = "urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring";
         URI monitoringNS = new URI(monitoringNSStr);
@@ -371,7 +370,7 @@ public class MoreRevisionsTest {
         assertEquals(rev20130715, monitoringImport.getRevision());
     }
 
-    private boolean findTypeDef(Module module, QName typedef) {
+    private static boolean findTypeDef(final Module module, final QName typedef) {
         Set<TypeDefinition<?>> typeDefinitions = module.getTypeDefinitions();
         for (TypeDefinition<?> typeDefinition : typeDefinitions) {
             if (typeDefinition.getQName().equals(typedef)) {

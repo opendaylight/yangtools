@@ -7,32 +7,32 @@
  */
 package org.opendaylight.yangtools.yang.stmt.test;
 
-import static org.junit.Assert.*;
-
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-
-import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import java.net.URI;
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import java.util.List;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import java.util.Set;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import java.text.ParseException;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import java.io.FileNotFoundException;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.util.List;
+import java.util.Set;
+import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.junit.Test;
 
 public class ControllerStmtParserTest {
 
@@ -47,7 +47,7 @@ public class ControllerStmtParserTest {
         configModuleTest(context);
     }
 
-    private void salDomBrokerImplModuleTest(SchemaContext context)
+    private static void salDomBrokerImplModuleTest(final SchemaContext context)
             throws ParseException {
         Module module = context.findModuleByName(
                 "opendaylight-sal-dom-broker-impl", SimpleDateFormatUtil
@@ -85,7 +85,7 @@ public class ControllerStmtParserTest {
         assertTrue(checked);
     }
 
-    private void configModuleTest(SchemaContext context) throws ParseException,
+    private static void configModuleTest(final SchemaContext context) throws ParseException,
             URISyntaxException {
         Module configModule = context.findModuleByName("config",
                 SimpleDateFormatUtil.getRevisionFormat().parse("2013-04-05"));
@@ -166,7 +166,7 @@ public class ControllerStmtParserTest {
                 .getPath().getLastComponent());
     }
 
-    private int getChildNodeSizeWithoutUses(final DataNodeContainer csn) {
+    private static int getChildNodeSizeWithoutUses(final DataNodeContainer csn) {
         int result = 0;
         for (DataSchemaNode dsn : csn.getChildNodes()) {
             if (dsn.isAddedByUses() == false) {

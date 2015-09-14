@@ -36,16 +36,18 @@ public class StringEffectiveStatementImpl extends EffectiveStatementBase<String,
             + "Legal characters are tab, carriage return, line feed, and the legal "
             + "characters of Unicode and ISO/IEC 10646";
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.4";
+    private static final String UNITS = "";
+    private static final Optional<String> OPTIONAL_EMPTY = Optional.of("");
+
     private final List<LengthConstraint> lengthConstraints;
     private final List<PatternConstraint> patternConstraints;
-    private static final String UNITS = "";
 
     public StringEffectiveStatementImpl(
-            StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
+            final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
         super(ctx);
 
-        final LengthConstraint defLength = new LengthConstraintEffectiveImpl(0, Integer.MAX_VALUE, Optional.of(""),
-                Optional.of(""));
+        final LengthConstraint defLength = new LengthConstraintEffectiveImpl(0, Integer.MAX_VALUE, OPTIONAL_EMPTY,
+            OPTIONAL_EMPTY);
 
         lengthConstraints = Collections.singletonList(defLength);
         patternConstraints = Collections.emptyList();
