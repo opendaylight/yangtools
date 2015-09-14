@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a79b1b5_2a07e4cb",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/BuilderUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-14T10:31:02Z",
+      "side": 1,
+      "message": "misordered import",
+      "revId": "72b27f71eeb6e40dc31f430809295d3c425a1779",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a79b1b5_4a0a60d3",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/BuilderUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 819,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-14T10:31:02Z",
+      "side": 1,
+      "message": "should be final",
+      "revId": "72b27f71eeb6e40dc31f430809295d3c425a1779",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
