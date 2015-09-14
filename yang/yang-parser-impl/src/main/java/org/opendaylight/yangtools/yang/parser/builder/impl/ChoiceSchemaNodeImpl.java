@@ -16,7 +16,6 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
@@ -24,8 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
-// FIXME: BUG-1513: remove ChoiceNode in Beryllium timeframe
-final class ChoiceNodeImpl implements ChoiceNode, ChoiceSchemaNode, DerivableSchemaNode {
+final class ChoiceSchemaNodeImpl implements ChoiceSchemaNode, DerivableSchemaNode {
     private final QName qname;
     private final SchemaPath path;
     String description;
@@ -41,7 +39,7 @@ final class ChoiceNodeImpl implements ChoiceNode, ChoiceSchemaNode, DerivableSch
     ImmutableList<UnknownSchemaNode> unknownNodes;
     String defaultCase;
 
-    ChoiceNodeImpl(final QName qname, final SchemaPath path) {
+    ChoiceSchemaNodeImpl(final QName qname, final SchemaPath path) {
         this.qname = qname;
         this.path = path;
     }
@@ -163,7 +161,7 @@ final class ChoiceNodeImpl implements ChoiceNode, ChoiceSchemaNode, DerivableSch
         if (getClass() != obj.getClass()) {
             return false;
         }
-        ChoiceNodeImpl other = (ChoiceNodeImpl) obj;
+        ChoiceSchemaNodeImpl other = (ChoiceSchemaNodeImpl) obj;
         if (qname == null) {
             if (other.qname != null) {
                 return false;
@@ -183,7 +181,7 @@ final class ChoiceNodeImpl implements ChoiceNode, ChoiceSchemaNode, DerivableSch
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(ChoiceNodeImpl.class.getSimpleName());
+        StringBuilder sb = new StringBuilder(ChoiceSchemaNodeImpl.class.getSimpleName());
         sb.append("[");
         sb.append("qname=").append(qname);
         sb.append("]");

@@ -18,7 +18,7 @@ package org.opendaylight.yangtools.yang.model.api;
  * @see ContainerSchemaNode
  * @see ListSchemaNode
  * @see LeafListSchemaNode
- * @see ChoiceNode
+ * @see ChoiceSchemaNode
  * @see ChoiceCaseNode
  * @see LeafSchemaNode
  * @see AnyXmlSchemaNode
