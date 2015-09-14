@@ -99,27 +99,6 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
         augmentationNodeParser = new AugmentationNodeDomParser(buildingStratProvider.forAugmentation(), dispatcher, strictParsing);
     }
 
-    @Deprecated
-    private DomToNormalizedNodeParserFactory(final XmlCodecProvider codecProvider) {
-        leafNodeParser = new LeafNodeDomParser(codecProvider);
-        leafSetEntryNodeParser = new LeafSetEntryNodeDomParser(codecProvider);
-        leafSetNodeParser = new LeafSetNodeDomParser(leafSetEntryNodeParser);
-        anyXmlNodeParser = new AnyXmlDomParser();
-
-        final NodeParserDispatcher<Element> dispatcher = new NodeParserDispatcher.BaseNodeParserDispatcher<Element>(this) {
-
-        };
-
-        containerNodeParser = new ContainerNodeDomParser(dispatcher);
-        mapEntryNodeParser = new MapEntryNodeDomParser(dispatcher);
-        mapNodeParser = new MapNodeDomParser(mapEntryNodeParser);
-        orderedListNodeParser = new OrderedListNodeDomParser(mapEntryNodeParser);
-        unkeyedListEntryNodeParser = new UnkeyedListEntryNodeDomParser(dispatcher);
-        unkeyedListNodeParser = new UnkeyedListNodeDomParser(unkeyedListEntryNodeParser);
-        choiceNodeParser = new ChoiceNodeDomParser(dispatcher);
-        augmentationNodeParser = new AugmentationNodeDomParser(dispatcher);
-    }
-
     public static DomToNormalizedNodeParserFactory getInstance(final XmlCodecProvider codecProvider, final SchemaContext schema, final boolean strictParsing) {
         return new DomToNormalizedNodeParserFactory(codecProvider, schema, strictParsing);
     }
@@ -137,11 +116,6 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
                                                                final BuildingStrategyProvider buildingStratProvider,
                                                                final boolean strictParsing) {
         return new DomToNormalizedNodeParserFactory(codecProvider, schema, buildingStratProvider, strictParsing);
-    }
-
-    @Deprecated
-    public static DomToNormalizedNodeParserFactory getInstance(final XmlCodecProvider codecProvider) {
-        return new DomToNormalizedNodeParserFactory(codecProvider);
     }
 
     @Override

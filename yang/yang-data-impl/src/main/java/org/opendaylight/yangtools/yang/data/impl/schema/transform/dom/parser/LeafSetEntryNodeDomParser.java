@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 import com.google.common.base.Preconditions;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.LeafSetEntryNodeBaseParser;
@@ -29,24 +29,21 @@ final class LeafSetEntryNodeDomParser extends LeafSetEntryNodeBaseParser<Element
         this.codecProvider = Preconditions.checkNotNull(codecProvider);
     }
 
-    LeafSetEntryNodeDomParser(final XmlCodecProvider codecProvider, final SchemaContext schema, final  BuildingStrategy<YangInstanceIdentifier.NodeWithValue, LeafSetEntryNode<?>> strategy) {
+    LeafSetEntryNodeDomParser(final XmlCodecProvider codecProvider, final SchemaContext schema,
+        final  BuildingStrategy<NodeWithValue, LeafSetEntryNode<?>> strategy) {
         super(strategy);
         this.ctx = schema;
         this.codecProvider = Preconditions.checkNotNull(codecProvider);
     }
 
-    @Deprecated
-    public LeafSetEntryNodeDomParser(final XmlCodecProvider codecProvider) {
-        this(codecProvider, null);
+    @Override
+    protected Object parseLeafListEntry(final Element xmlElement, final LeafListSchemaNode schema) {
+        return ctx == null ? DomUtils.parseXmlValue(xmlElement, codecProvider, schema.getType()) :
+            DomUtils.parseXmlValue(xmlElement, codecProvider, schema, schema.getType(), ctx);
     }
 
     @Override
-    protected Object parseLeafListEntry(Element xmlElement, LeafListSchemaNode schema) {
-        return ctx == null ? DomUtils.parseXmlValue(xmlElement, codecProvider, schema.getType()) : DomUtils.parseXmlValue(xmlElement, codecProvider, schema, schema.getType(), ctx);
-    }
-
-    @Override
-    protected Map<QName, String> getAttributes(Element element) {
+    protected Map<QName, String> getAttributes(final Element element) {
         return DomUtils.toAttributes(element.getAttributes());
     }
 
