@@ -48,7 +48,11 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
 
     @Override
     public StackedYangInstanceIdentifier clone() {
-        return new StackedYangInstanceIdentifier(parent, pathArgument, hashCode());
+        try {
+            return (StackedYangInstanceIdentifier) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new IllegalStateException("clone() should be supported", e);
+        }
     }
 
     @Override

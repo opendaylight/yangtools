@@ -35,7 +35,11 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
 
     @Override
     public FixedYangInstanceIdentifier clone() {
-        return new FixedYangInstanceIdentifier(path, hashCode());
+        try {
+            return (FixedYangInstanceIdentifier) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new IllegalStateException("clone() should be supported", e);
+        }
     }
 
     @Override
@@ -122,7 +126,7 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
     }
 
     @Override
-    public YangInstanceIdentifier toOptimized() {
+    public FixedYangInstanceIdentifier toOptimized() {
         return this;
     }
 }
