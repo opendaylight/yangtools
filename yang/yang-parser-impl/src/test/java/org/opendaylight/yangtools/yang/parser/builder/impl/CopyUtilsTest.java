@@ -11,7 +11,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import java.util.List;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -319,7 +318,6 @@ public class CopyUtilsTest extends AbstractBuilderTest {
         assertFalse(copy.getUnknownNodes().isEmpty());
     }
 
-    @Ignore
     @Test
     public void testCopyIdentityrefTypeBuilder() {
         final String typedefLocalName = "identity-ref-test-type";
@@ -328,7 +326,6 @@ public class CopyUtilsTest extends AbstractBuilderTest {
         final IdentityrefTypeBuilder typeBuilder = new IdentityrefTypeBuilder(module.getModuleName(), 12,
             "base:parent-identity", typedefPath);
 
-        //FIXME remove Ignore annotation once fix for bug 2219 will be resolved and merged
         final TypeDefinitionBuilder copy = CopyUtils.copy(typeBuilder, module, true);
         assertNotNull(copy);
 
