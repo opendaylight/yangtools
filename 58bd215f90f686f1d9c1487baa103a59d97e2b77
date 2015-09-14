@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a79b1b5_c0364fe7",
+        "filename": "code-generator/binding-java-api-generator/src/main/java/org/opendaylight/yangtools/sal/java/api/generator/UnionTemplate.xtend",
+        "patchSetId": 1
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-14T17:41:37Z",
+      "side": 1,
+      "message": "do not split the instanceof expression into two lines",
+      "revId": "58bd215f90f686f1d9c1487baa103a59d97e2b77",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
