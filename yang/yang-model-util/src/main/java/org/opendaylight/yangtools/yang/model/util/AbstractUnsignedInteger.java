@@ -8,10 +8,8 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.Optional;
-
 import java.util.Collections;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -36,11 +34,12 @@ import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinit
  *
  */
 abstract class AbstractUnsignedInteger implements UnsignedIntegerTypeDefinition {
+    private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.2";
+    private static final Optional<String> OPT_REF = Optional.of("https://tools.ietf.org/html/rfc6020#section-9.2.4");
     private static final long MIN_VALUE = 0;
     private final QName name;
     private final SchemaPath path;
     private final String description;
-    private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.2";
     private final String units;
     private final List<RangeConstraint> rangeStatements;
 
@@ -58,8 +57,8 @@ abstract class AbstractUnsignedInteger implements UnsignedIntegerTypeDefinition 
         this.description = description;
         this.units = units;
         final String rangeDescription = "Integer values between " + MIN_VALUE + " and " + maxRange + ", inclusively.";
-        this.rangeStatements = Collections.singletonList(BaseConstraints.newRangeConstraint(MIN_VALUE, maxRange, Optional.of(rangeDescription),
-                Optional.of("https://tools.ietf.org/html/rfc6020#section-9.2.4")));
+        this.rangeStatements = Collections.singletonList(BaseConstraints.newRangeConstraint(MIN_VALUE, maxRange,
+                Optional.of(rangeDescription), OPT_REF));
     }
 
     @Override

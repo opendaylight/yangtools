@@ -230,10 +230,6 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
 
         protected abstract void storeAsType(final File file, final T cast);
 
-        public Class<T> getSupportedType() {
-            return supportedType;
-        }
-
         public T restore(final SourceIdentifier sourceIdentifier, final File cachedSource) {
             Preconditions.checkArgument(cachedSource.isFile());
             Preconditions.checkArgument(cachedSource.exists());
@@ -295,9 +291,9 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
             return fileVisitResult;
         }
 
-        private Optional<SourceIdentifier> getSourceIdentifier(final String fileName) {
+        private static Optional<SourceIdentifier> getSourceIdentifier(final String fileName) {
             final Matcher matcher = CACHED_FILE_PATTERN.matcher(fileName);
-            if(matcher.matches()) {
+            if (matcher.matches()) {
                 final String moduleName = matcher.group("moduleName");
                 final String revision = matcher.group("revision");
                 return Optional.of(new SourceIdentifier(moduleName, Optional.fromNullable(revision)));
