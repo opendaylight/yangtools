@@ -37,7 +37,6 @@ import org.opendaylight.yangtools.yang2sources.plugin.Util.ContextHolder;
 import org.opendaylight.yangtools.yang2sources.plugin.Util.YangsInZipsResult;
 import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
 import org.opendaylight.yangtools.yang2sources.spi.BuildContextAware;
-import org.opendaylight.yangtools.yang2sources.spi.MavenLogAware;
 import org.opendaylight.yangtools.yang2sources.spi.MavenProjectAware;
 import org.sonatype.plexus.build.incremental.BuildContext;
 import org.sonatype.plexus.build.incremental.DefaultBuildContext;
@@ -313,9 +312,6 @@ class YangToSourcesProcessor {
         log.debug(Util.message("Additional configuration picked up for : %s: %s", LOG_PREFIX,
                 codeGeneratorCfg.getCodeGeneratorClass(), codeGeneratorCfg.getAdditionalConfiguration()));
 
-        if (g instanceof MavenLogAware) {
-            ((MavenLogAware)g).setLog(log);
-        }
         if (g instanceof BuildContextAware) {
             ((BuildContextAware)g).setBuildContext(buildContext);
         }
