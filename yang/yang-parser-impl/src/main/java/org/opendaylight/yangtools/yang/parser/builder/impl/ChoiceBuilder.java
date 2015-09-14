@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements DataSchemaNodeBuilder,
 AugmentationTargetBuilder {
-    private ChoiceNodeImpl instance;
+    private ChoiceSchemaNodeImpl instance;
 
     // DataSchemaNode args
     private boolean augmenting;
@@ -88,7 +88,7 @@ AugmentationTargetBuilder {
             return instance;
         }
 
-        instance = new ChoiceNodeImpl(qname, schemaPath);
+        instance = new ChoiceSchemaNodeImpl(qname, schemaPath);
 
         instance.description = description;
         instance.reference = reference;

@@ -18,11 +18,11 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * particular context of parent node.
  *
  * YANG Model and schema for choice is described by instance of
- * {@link org.opendaylight.yangtools.yang.model.api.ChoiceNode}.
+ * {@link org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode}.
  *
  * Valid alternatives of subtree are described by instances of
  * {@link org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode}, which are retrieved via
- * {@link org.opendaylight.yangtools.yang.model.api.ChoiceNode#getCases()}.
+ * {@link org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode#getCases()}.
  */
 public interface ChoiceNode extends //
         MixinNode, //
