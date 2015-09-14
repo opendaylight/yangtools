@@ -8,19 +8,16 @@
 
 package org.opendaylight.yangtools.util.concurrent;
 
-import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Supplier;
 import com.google.common.util.concurrent.ForwardingListenableFuture;
 import com.google.common.util.concurrent.ListenableFuture;
-
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -59,52 +56,6 @@ public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingLis
      */
     private final SettableBooleanThreadLocal deadlockDetector = new SettableBooleanThreadLocal();
     private final Supplier<Exception> deadlockExceptionFunction;
-
-    // Compatibility wrapper, needs to be removed once the deprecated constructors are gone.
-    private static final class CompatExceptionSupplier implements Supplier<Exception> {
-        private final Function<Void, Exception> function;
-
-        private CompatExceptionSupplier(final Function<Void, Exception> function) {
-            this.function = Preconditions.checkNotNull(function);
-        }
-
-        @Override
-        public Exception get() {
-            return function.apply(null);
-        }
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param delegate the backing ExecutorService.
-     * @param deadlockExceptionFunction Function that returns an Exception instance to set as the
-     *             cause of the ExecutionException when a deadlock is detected.
-     * @deprecated Use {@link #DeadlockDetectingListeningExecutorService(ExecutorService, Supplier)} instead.
-     */
-    @Deprecated
-    public DeadlockDetectingListeningExecutorService(final ExecutorService delegate,
-            final Function<Void, Exception> deadlockExceptionFunction) {
-        this(delegate, deadlockExceptionFunction, null);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param delegate the backing ExecutorService.
-     * @param deadlockExceptionFunction Function that returns an Exception instance to set as the
-     *             cause of the ExecutionException when a deadlock is detected.
-     * @param listenableFutureExecutor the executor used to run listener callbacks asynchronously.
-     *             If null, no executor is used.
-     * @deprecated Use {@link #DeadlockDetectingListeningExecutorService(ExecutorService, Supplier, Executor)} instead.
-     */
-    @Deprecated
-    public DeadlockDetectingListeningExecutorService(final ExecutorService delegate,
-            final Function<Void, Exception> deadlockExceptionFunction,
-            @Nullable final Executor listenableFutureExecutor) {
-        super(delegate, listenableFutureExecutor);
-        this.deadlockExceptionFunction = new CompatExceptionSupplier(deadlockExceptionFunction);
-    }
 
     /**
      * Constructor.
