@@ -405,7 +405,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         private static final long serialVersionUID = -4546547994250849340L;
         private final QName nodeType;
         private transient int hashValue;
-        private volatile transient boolean hashGuard = false;
+        private transient volatile boolean hashGuard = false;
 
         protected AbstractPathArgument(final QName nodeType) {
             this.nodeType = Preconditions.checkNotNull(nodeType);
