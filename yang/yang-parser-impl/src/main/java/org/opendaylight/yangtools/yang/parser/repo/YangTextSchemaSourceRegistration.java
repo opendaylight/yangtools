@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -10,11 +10,7 @@ package org.opendaylight.yangtools.yang.parser.repo;
 import org.opendaylight.yangtools.concepts.ObjectRegistration;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 
-/**
- * @deprecated Replaced by {@link YangTextSchemaSourceRegistration}.
- */
-@Deprecated
-public interface URLRegistration extends ObjectRegistration<YangTextSchemaSource> {
+public interface YangTextSchemaSourceRegistration extends ObjectRegistration<YangTextSchemaSource> {
     @Override
     void close();
 }
