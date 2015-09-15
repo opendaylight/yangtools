@@ -7,18 +7,21 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 
 class YangSourceInZipFile extends YangSourceFromDependency {
 
     private final ZipFile file;
     private final ZipEntry entry;
 
-    YangSourceInZipFile(ZipFile file, ZipEntry entry) {
+    YangSourceInZipFile(final ZipFile file, final ZipEntry entry) {
+        super(YangTextSchemaSource.identifierFromFilename(entry.getName()));
         this.file = Preconditions.checkNotNull(file);
         this.entry = Preconditions.checkNotNull(entry);
     }
@@ -31,5 +34,10 @@ class YangSourceInZipFile extends YangSourceFromDependency {
     @Override
     public InputStream openStream() throws IOException {
         return file.getInputStream(entry);
+    }
+
+    @Override
+    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+        return toStringHelper.add("file", file).add("entry", entry);
     }
 }
