@@ -7,7 +7,12 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
-import com.google.common.io.ByteSource;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 
-abstract class YangSourceFromDependency extends ByteSource {
+abstract class YangSourceFromDependency extends YangTextSchemaSource {
+    protected YangSourceFromDependency(final SourceIdentifier identifier) {
+        super(identifier);
+    }
+
 }
