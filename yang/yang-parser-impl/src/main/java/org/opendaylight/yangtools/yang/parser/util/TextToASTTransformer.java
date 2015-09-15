@@ -10,13 +10,10 @@ package org.opendaylight.yangtools.yang.parser.util;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Charsets;
-import com.google.common.io.ByteSource;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
-
 import java.io.IOException;
 import java.io.InputStream;
-
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.YangContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
@@ -49,12 +46,7 @@ public final class TextToASTTransformer extends SchemaSourceTransformer<YangText
                 LOG.debug("Model {} validated successfully", input);
 
                 // Backwards compatibility
-                final String text = new ByteSource() {
-                    @Override
-                    public InputStream openStream() throws IOException {
-                        return input.openStream();
-                    }
-                }.asCharSource(Charsets.UTF_8).read();
+                final String text = input.asCharSource(Charsets.UTF_8).read();
 
                 return Futures.immediateCheckedFuture(ASTSchemaSource.create(input.getIdentifier().getName(), ctx, text));
             }
