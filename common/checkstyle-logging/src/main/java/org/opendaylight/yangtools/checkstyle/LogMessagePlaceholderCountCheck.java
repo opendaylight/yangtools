@@ -26,15 +26,16 @@ public class LogMessagePlaceholderCountCheck extends Check {
     @Override
     public void visitToken(DetailAST aAST) {
         final String methodName = CheckLoggingUtil.getMethodName(aAST);
-        if(CheckLoggingUtil.isLogMethod(methodName)) {
+        if (CheckLoggingUtil.isLogMethod(methodName)) {
             final String logMessage = aAST.findFirstToken(TokenTypes.ELIST).getFirstChild().getFirstChild().getText();
             int placeholdersCount = placeholdersCount(logMessage);
             int argumentsCount = aAST.findFirstToken(TokenTypes.ELIST).getChildCount(TokenTypes.EXPR) - 1;
             final String lastArg = aAST.findFirstToken(TokenTypes.ELIST).getLastChild().getFirstChild().getText();
-            if(hasCatchBlockParentWithArgument(lastArg, aAST) || hasMethodDefinitionWithExceptionArgument(lastArg, aAST)) {
+            if (hasCatchBlockParentWithArgument(lastArg, aAST) || hasMethodDefinitionWithExceptionArgument(lastArg,
+                    aAST)) {
                 argumentsCount--;
             }
-            if(placeholdersCount > argumentsCount) {
+            if (placeholdersCount > argumentsCount) {
                 log(aAST.getLineNo(), LOG_MESSAGE);
             }
         }
@@ -49,11 +50,10 @@ public class LogMessagePlaceholderCountCheck extends Check {
         while(parent != null && parent.getType() != TokenTypes.LITERAL_CATCH) {
             parent = parent.getParent();
         }
-        if(parent != null) {
-            if(parent.findFirstToken(TokenTypes.PARAMETER_DEF) != null &&
-                    parent.findFirstToken(TokenTypes.PARAMETER_DEF).findFirstToken(TokenTypes.IDENT).getText().equals(argumentName)) {
-                return true;
-            }
+        if (parent != null && parent.findFirstToken(TokenTypes.PARAMETER_DEF) != null &&
+                parent.findFirstToken(TokenTypes.PARAMETER_DEF).findFirstToken(TokenTypes.IDENT).getText().equals
+                        (argumentName)) {
+            return true;
         }
         return false;
     }
@@ -63,29 +63,28 @@ public class LogMessagePlaceholderCountCheck extends Check {
         while(parent != null && parent.getType() != TokenTypes.METHOD_DEF) {
             parent = parent.getParent();
         }
-        if(parent != null) {
-            if(parent.findFirstToken(TokenTypes.PARAMETERS).findFirstToken(TokenTypes.PARAMETER_DEF) != null) {
-                DetailAST paramDef = parent.findFirstToken(TokenTypes.PARAMETERS).getFirstChild();
-                while(paramDef != null) {
-                    if(paramDef.getType() == TokenTypes.PARAMETER_DEF) {
-                        final String paramName = paramDef.findFirstToken(TokenTypes.IDENT).getText();
-                        if(paramName.equals(argumentName) && isExceptionType(paramDef)) {
-                            return true;
-                        }
+        if (parent != null && parent.findFirstToken(TokenTypes.PARAMETERS).findFirstToken(TokenTypes.PARAMETER_DEF)
+                != null) {
+            DetailAST paramDef = parent.findFirstToken(TokenTypes.PARAMETERS).getFirstChild();
+            while(paramDef != null) {
+                if (paramDef.getType() == TokenTypes.PARAMETER_DEF) {
+                    final String paramName = paramDef.findFirstToken(TokenTypes.IDENT).getText();
+                    if (paramName.equals(argumentName) && isExceptionType(paramDef)) {
+                        return true;
                     }
-                    paramDef = paramDef.getNextSibling();
                 }
+                paramDef = paramDef.getNextSibling();
             }
         }
         return false;
     }
 
     private boolean isExceptionType(final DetailAST parameterDef) {
-        if(parameterDef != null) {
+        if (parameterDef != null) {
             final DetailAST type = parameterDef.findFirstToken(TokenTypes.TYPE);
-            if(type != null && type.findFirstToken(TokenTypes.IDENT) != null) {
+            if (type != null && type.findFirstToken(TokenTypes.IDENT) != null) {
                 final String argumentType = type.findFirstToken(TokenTypes.IDENT).getText();
-                if(argumentType.contains(EXCEPTION_TYPE)) {
+                if (argumentType.contains(EXCEPTION_TYPE)) {
                     return true;
                 }
             }

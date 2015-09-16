@@ -12,6 +12,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.LinkedList;
+import java.util.List;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -70,7 +71,7 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Iterable<PathArgu
     private final AbstractStringInstanceIdentifierCodec codec;
     private final String data;
 
-    private final LinkedList<PathArgument> product = new LinkedList<>();
+    private final List<PathArgument> product = new LinkedList<>();
 
     private DataSchemaContextNode<?> current;
     private int offset;
