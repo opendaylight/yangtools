@@ -19,7 +19,6 @@ final class AugmentationContextNode extends
         DataContainerContextNode<AugmentationIdentifier> {
 
     public AugmentationContextNode(final AugmentationSchema augmentation, final DataNodeContainer schema) {
-        // super();
         super(augmentationIdentifierFrom(augmentation), augmentationProxy(augmentation, schema), null);
     }
 
