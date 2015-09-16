@@ -7,58 +7,51 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableSet;
+import java.util.Map;
+import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 public final class YangValidationBundles {
-
-    public static final HashSet<StatementDefinition> SUPPORTED_REFINE_SUBSTATEMENTS = new HashSet<>(
-            Arrays.asList(new StatementDefinition[] { Rfc6020Mapping.DEFAULT,
-                    Rfc6020Mapping.DESCRIPTION, Rfc6020Mapping.REFERENCE,
-                    Rfc6020Mapping.CONFIG, Rfc6020Mapping.MANDATORY,
-                    Rfc6020Mapping.MUST, Rfc6020Mapping.PRESENCE,
-                    Rfc6020Mapping.MIN_ELEMENTS, Rfc6020Mapping.MAX_ELEMENTS }));
-
-    public static final HashMap<StatementDefinition, HashSet<StatementDefinition>> SUPPORTED_REFINE_TARGETS = new HashMap<>();
-    static {
-        SUPPORTED_REFINE_TARGETS.put(Rfc6020Mapping.DEFAULT, new HashSet<>(
-            Arrays.asList(new StatementDefinition[] { Rfc6020Mapping.LEAF, Rfc6020Mapping.CHOICE })));
-        SUPPORTED_REFINE_TARGETS.put(Rfc6020Mapping.MANDATORY, new HashSet<>(
-                Arrays.asList(new StatementDefinition[] { Rfc6020Mapping.LEAF, Rfc6020Mapping.CHOICE, Rfc6020Mapping.ANYXML })));
-        SUPPORTED_REFINE_TARGETS.put(Rfc6020Mapping.PRESENCE, new HashSet<>(
-                Arrays.asList(new StatementDefinition[] { Rfc6020Mapping.CONTAINER })));
-        SUPPORTED_REFINE_TARGETS.put(Rfc6020Mapping.MUST, new HashSet<>(
-                Arrays.asList(new StatementDefinition[] { Rfc6020Mapping.CONTAINER,
-                        Rfc6020Mapping.LIST, Rfc6020Mapping.LEAF,
-                        Rfc6020Mapping.LEAF_LIST, Rfc6020Mapping.ANYXML, })));
-        SUPPORTED_REFINE_TARGETS.put(Rfc6020Mapping.MIN_ELEMENTS, new HashSet<>(
-                Arrays.asList(new StatementDefinition[]{Rfc6020Mapping.LIST, Rfc6020Mapping.LEAF_LIST})));
-        SUPPORTED_REFINE_TARGETS.put(Rfc6020Mapping.MAX_ELEMENTS, new HashSet<>(
-                Arrays.asList(new StatementDefinition[]{Rfc6020Mapping.LIST, Rfc6020Mapping.LEAF_LIST})));
-    }
-
-
-    public static final HashSet<StatementDefinition> SUPPORTED_AUGMENT_TARGETS = new HashSet<>(
-            Arrays.asList(new StatementDefinition[] { Rfc6020Mapping.CONTAINER,
-                    Rfc6020Mapping.LIST, Rfc6020Mapping.CASE,
-                    Rfc6020Mapping.INPUT, Rfc6020Mapping.OUTPUT,
-                    Rfc6020Mapping.NOTIFICATION, Rfc6020Mapping.CHOICE,
-                    Rfc6020Mapping.RPC }));
-
-    public static final HashSet<StatementDefinition> SUPPORTED_CASE_SHORTHANDS = new HashSet<>(
-            Arrays.asList(new StatementDefinition[] { Rfc6020Mapping.CONTAINER,
-                    Rfc6020Mapping.LIST, Rfc6020Mapping.LEAF,
-                    Rfc6020Mapping.LEAF_LIST, Rfc6020Mapping.ANYXML, }));
-
-    public static final HashSet<StatementDefinition> SUPPORTED_DATA_NODES = new HashSet<>(
-            Arrays.asList(new StatementDefinition[] { Rfc6020Mapping.CONTAINER,
-                    Rfc6020Mapping.LIST, Rfc6020Mapping.LEAF,
-                    Rfc6020Mapping.LEAF_LIST, Rfc6020Mapping.ANYXML, }));
-
     private YangValidationBundles() {
         throw new UnsupportedOperationException("Utility class");
     }
+
+    public static final Set<StatementDefinition> SUPPORTED_REFINE_SUBSTATEMENTS = ImmutableSet.<StatementDefinition>of(
+        Rfc6020Mapping.DEFAULT, Rfc6020Mapping.DESCRIPTION, Rfc6020Mapping.REFERENCE, Rfc6020Mapping.CONFIG,
+        Rfc6020Mapping.MANDATORY, Rfc6020Mapping.MUST, Rfc6020Mapping.PRESENCE, Rfc6020Mapping.MIN_ELEMENTS,
+        Rfc6020Mapping.MAX_ELEMENTS);
+
+    public static final Map<StatementDefinition, Set<StatementDefinition>> SUPPORTED_REFINE_TARGETS;
+    static {
+        final Builder<StatementDefinition, Set<StatementDefinition>> b = ImmutableMap.builder();
+        b.put(Rfc6020Mapping.DEFAULT, ImmutableSet.<StatementDefinition>of(Rfc6020Mapping.LEAF, Rfc6020Mapping.CHOICE));
+        b.put(Rfc6020Mapping.MANDATORY, ImmutableSet.<StatementDefinition>of(
+                Rfc6020Mapping.LEAF, Rfc6020Mapping.CHOICE, Rfc6020Mapping.ANYXML));
+        b.put(Rfc6020Mapping.PRESENCE, ImmutableSet.<StatementDefinition>of(Rfc6020Mapping.CONTAINER));
+        b.put(Rfc6020Mapping.MUST, ImmutableSet.<StatementDefinition>of(
+                Rfc6020Mapping.CONTAINER, Rfc6020Mapping.LIST, Rfc6020Mapping.LEAF,
+                Rfc6020Mapping.LEAF_LIST, Rfc6020Mapping.ANYXML));
+        b.put(Rfc6020Mapping.MIN_ELEMENTS, ImmutableSet.<StatementDefinition>of(
+                Rfc6020Mapping.LIST, Rfc6020Mapping.LEAF_LIST));
+        b.put(Rfc6020Mapping.MAX_ELEMENTS, ImmutableSet.<StatementDefinition>of(
+                Rfc6020Mapping.LIST, Rfc6020Mapping.LEAF_LIST));
+        SUPPORTED_REFINE_TARGETS = b.build();
+    }
+
+
+    public static final Set<StatementDefinition> SUPPORTED_AUGMENT_TARGETS = ImmutableSet.<StatementDefinition>of(
+        Rfc6020Mapping.CONTAINER, Rfc6020Mapping.LIST, Rfc6020Mapping.CASE, Rfc6020Mapping.INPUT, Rfc6020Mapping.OUTPUT,
+        Rfc6020Mapping.NOTIFICATION, Rfc6020Mapping.CHOICE, Rfc6020Mapping.RPC);
+
+    public static final Set<StatementDefinition> SUPPORTED_CASE_SHORTHANDS = ImmutableSet.<StatementDefinition>of(
+        Rfc6020Mapping.CONTAINER, Rfc6020Mapping.LIST, Rfc6020Mapping.LEAF, Rfc6020Mapping.LEAF_LIST,
+        Rfc6020Mapping.ANYXML);
+
+    public static final Set<StatementDefinition> SUPPORTED_DATA_NODES = ImmutableSet.<StatementDefinition>of(
+        Rfc6020Mapping.CONTAINER, Rfc6020Mapping.LIST, Rfc6020Mapping.LEAF, Rfc6020Mapping.LEAF_LIST,
+        Rfc6020Mapping.ANYXML);
 }
