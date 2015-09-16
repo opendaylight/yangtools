@@ -121,8 +121,7 @@ public class ChoiceEffectiveStatementImpl extends
                         dataSchemaNode);
                 casesInit.add(shorthandCase);
 
-                if (dataSchemaNode.isAugmenting() == true
-                        && this.augmenting == false) {
+                if (dataSchemaNode.isAugmenting() && !this.augmenting) {
                     resetAugmenting(dataSchemaNode);
                 }
             }

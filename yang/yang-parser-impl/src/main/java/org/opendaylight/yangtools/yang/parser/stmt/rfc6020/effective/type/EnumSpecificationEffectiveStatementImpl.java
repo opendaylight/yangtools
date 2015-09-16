@@ -8,11 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import com.google.common.base.Optional;
-import org.opendaylight.yangtools.yang.model.util.EnumerationType;
-
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,11 +16,15 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.EnumerationType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
 public class EnumSpecificationEffectiveStatementImpl extends
         EffectiveStatementBase<String, TypeStatement.EnumSpecification> implements EnumTypeDefinition, TypeDefinitionEffectiveBuilder {
@@ -37,10 +36,11 @@ public class EnumSpecificationEffectiveStatementImpl extends
     private static final String UNITS = "";
 
     private final SchemaPath path;
-    private EnumPair defaultEnum;
+    private final EnumPair defaultEnum;
     private final List<EnumPair> enums;
+    private EnumerationType enumerationTypeInstance = null;
 
-    public EnumSpecificationEffectiveStatementImpl(StmtContext<String, TypeStatement.EnumSpecification, EffectiveStatement<String, TypeStatement.EnumSpecification>> ctx) {
+    public EnumSpecificationEffectiveStatementImpl(final StmtContext<String, TypeStatement.EnumSpecification, EffectiveStatement<String, TypeStatement.EnumSpecification>> ctx) {
         super(ctx);
 
         List<EnumPair> enumsInit = new ArrayList<>();
@@ -53,7 +53,8 @@ public class EnumSpecificationEffectiveStatementImpl extends
             }
         }
 
-        defaultEnum = null; // TODO get from parentContext
+        // FIXME: get from parentContext
+        defaultEnum = null;
         enums = ImmutableList.copyOf(enumsInit);
     }
 
@@ -176,7 +177,6 @@ public class EnumSpecificationEffectiveStatementImpl extends
         return builder.toString();
     }
 
-    private EnumerationType enumerationTypeInstance = null;
     @Override
     public TypeDefinition<?> buildType() {
 
@@ -184,7 +184,7 @@ public class EnumSpecificationEffectiveStatementImpl extends
             return enumerationTypeInstance;
         }
 
-        //:FIXME set defaultValue as parameter
+        // FIXME: set defaultValue as parameter
         enumerationTypeInstance = EnumerationType.create(path, enums, Optional.<EnumPair>absent());
 
         return enumerationTypeInstance;
