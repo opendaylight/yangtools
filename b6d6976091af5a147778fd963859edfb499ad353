@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a79b1b5_3ba64dc2",
+        "filename": "yang/yang-binding/src/main/java/org/opendaylight/yangtools/yang/binding/InstanceIdentifierBuilderImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-16T12:32:03Z",
+      "side": 1,
+      "message": "it statements are still missing curly braces",
+      "revId": "b6d6976091af5a147778fd963859edfb499ad353",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
