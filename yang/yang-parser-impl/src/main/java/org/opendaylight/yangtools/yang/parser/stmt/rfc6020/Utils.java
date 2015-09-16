@@ -8,18 +8,13 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
-
-import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
-
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.RootStatementContext;
-import java.util.Date;
-import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -44,6 +39,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
@@ -59,6 +56,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.RootStatementContext;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,8 +76,8 @@ public final class Utils {
     private Utils() {
     }
 
-    public static Collection<SchemaNodeIdentifier.Relative> transformKeysStringToKeyNodes(StmtContext<?, ?, ?> ctx,
-            String value) {
+    public static Collection<SchemaNodeIdentifier.Relative> transformKeysStringToKeyNodes(final StmtContext<?, ?, ?> ctx,
+            final String value) {
         Splitter keySplitter = Splitter.on(SEPARATOR).omitEmptyStrings().trimResults();
         List<String> keyTokens = keySplitter.splitToList(value);
 
@@ -100,13 +98,13 @@ public final class Utils {
         return keyNodes;
     }
 
-    public static List<String> splitPathToNodeNames(String path) {
+    public static List<String> splitPathToNodeNames(final String path) {
 
         Splitter keySplitter = Splitter.on(SEPARATOR_NODENAME).omitEmptyStrings().trimResults();
         return keySplitter.splitToList(path);
     }
 
-    public static void validateXPath(final StmtContext<?, ?, ?> ctx, String path) {
+    public static void validateXPath(final StmtContext<?, ?, ?> ctx, final String path) {
 
         final XPath xPath = XPathFactory.newInstance().newXPath();
 
@@ -122,14 +120,14 @@ public final class Utils {
         return path.replaceAll("/$", "");
     }
 
-    public static boolean isXPathAbsolute(final StmtContext<?, ?, ?> ctx, String path) {
+    public static boolean isXPathAbsolute(final StmtContext<?, ?, ?> ctx, final String path) {
 
         validateXPath(ctx, trimSingleLastSlashFromXPath(path));
 
         return path.matches(REGEX_PATH_ABS);
     }
 
-    public static QName trimPrefix(QName identifier) {
+    public static QName trimPrefix(final QName identifier) {
         String prefixedLocalName = identifier.getLocalName();
         String[] namesParts = prefixedLocalName.split(":");
 
@@ -141,7 +139,7 @@ public final class Utils {
         return identifier;
     }
 
-    public static String getPrefixFromArgument(String prefixedLocalName) {
+    public static String getPrefixFromArgument(final String prefixedLocalName) {
         String[] namesParts = prefixedLocalName.split(":");
         if (namesParts.length == 2) {
             return namesParts[0];
@@ -149,8 +147,8 @@ public final class Utils {
         return null;
     }
 
-    public static boolean isValidStatementDefinition(PrefixToModule prefixes, QNameToStatementDefinition stmtDef,
-            QName identifier) {
+    public static boolean isValidStatementDefinition(final PrefixToModule prefixes, final QNameToStatementDefinition stmtDef,
+            final QName identifier) {
         if (stmtDef.get(identifier) != null) {
             return true;
         } else {
@@ -173,7 +171,7 @@ public final class Utils {
         return false;
     }
 
-    public static Iterable<QName> parseXPath(StmtContext<?, ?, ?> ctx, String path) {
+    public static Iterable<QName> parseXPath(final StmtContext<?, ?, ?> ctx, final String path) {
 
         String trimmedPath = trimSingleLastSlashFromXPath(path);
 
@@ -217,7 +215,7 @@ public final class Utils {
         return sb.toString();
     }
 
-    public static QName qNameFromArgument(StmtContext<?, ?, ?> ctx, String value) {
+    public static QName qNameFromArgument(StmtContext<?, ?, ?> ctx, final String value) {
 
         if (value == null || value.equals("")) {
             return ctx.getPublicDefinition().getStatementName();
@@ -263,7 +261,7 @@ public final class Utils {
         return QName.create(resultQNameModule, localName);
     }
 
-    public static QNameModule getModuleQNameByPrefix(StmtContext<?, ?, ?> ctx, String prefix) {
+    public static QNameModule getModuleQNameByPrefix(final StmtContext<?, ?, ?> ctx, final String prefix) {
         QNameModule qNameModule;
         ModuleIdentifier impModIdentifier = ctx.getRoot().getFromNamespace(ImpPrefixToModuleIdentifier.class, prefix);
         qNameModule = ctx.getFromNamespace(ModuleIdentifierToModuleQName.class, impModIdentifier);
@@ -275,7 +273,7 @@ public final class Utils {
         return qNameModule;
     }
 
-    public static QNameModule getRootModuleQName(StmtContext<?, ?, ?> ctx) {
+    public static QNameModule getRootModuleQName(final StmtContext<?, ?, ?> ctx) {
 
         if (ctx == null) {
             return null;
@@ -297,7 +295,7 @@ public final class Utils {
     }
 
     @Nullable
-    public static StatementContextBase<?, ?, ?> findNode(StatementContextBase<?, ?, ?> rootStmtCtx,
+    public static StatementContextBase<?, ?, ?> findNode(final StatementContextBase<?, ?, ?> rootStmtCtx,
             final Iterable<QName> path) {
 
         StatementContextBase<?, ?, ?> parent = rootStmtCtx;
@@ -320,8 +318,8 @@ public final class Utils {
         return null;
     }
 
-    public static StatementContextBase<?, ?, ?> getSubstatementByQName(StatementContextBase<?, ?, ?> parent,
-            QName nextPathQName) {
+    public static StatementContextBase<?, ?, ?> getSubstatementByQName(final StatementContextBase<?, ?, ?> parent,
+            final QName nextPathQName) {
 
         Collection<StatementContextBase<?, ?, ?>> declaredSubstatement = parent.declaredSubstatements();
         Collection<StatementContextBase<?, ?, ?>> effectiveSubstatement = parent.effectiveSubstatements();
@@ -340,21 +338,21 @@ public final class Utils {
     }
 
     @Nullable
-    public static StatementContextBase<?, ?, ?> findNode(StatementContextBase<?, ?, ?> rootStmtCtx,
+    public static StatementContextBase<?, ?, ?> findNode(final StatementContextBase<?, ?, ?> rootStmtCtx,
             final SchemaNodeIdentifier node) {
         return findNode(rootStmtCtx, node.getPathFromRoot());
     }
 
-    public static SchemaPath getSchemaPath(StmtContext<?, ?, ?> ctx) {
+    public static SchemaPath getSchemaPath(final StmtContext<?, ?, ?> ctx) {
 
         if (ctx == null) {
             return null;
         }
 
-        Iterator<StmtContext<?, ?, ?>> iteratorFromRoot = ctx.getStmtContextsFromRoot().iterator();
-
+        final Iterator<StmtContext<?, ?, ?>> iteratorFromRoot = ctx.getStmtContextsFromRoot().iterator();
+        // skip root argument
         if (iteratorFromRoot.hasNext()) {
-            iteratorFromRoot.next(); // skip root argument
+            iteratorFromRoot.next();
         }
 
         List<QName> qNamesFromRoot = new LinkedList<>();
@@ -393,12 +391,12 @@ public final class Utils {
         return schemaPath;
     }
 
-    public static boolean isUnknownNode(StmtContext<?, ?, ?> stmtCtx) {
+    public static boolean isUnknownNode(final StmtContext<?, ?, ?> stmtCtx) {
         return stmtCtx.getPublicDefinition().getDeclaredRepresentationClass()
                 .isAssignableFrom(UnknownStatementImpl.class);
     }
 
-    private static boolean isSupportedAsShorthandCase(StmtContext<?, ?, ?> statementCtx) {
+    private static boolean isSupportedAsShorthandCase(final StmtContext<?, ?, ?> statementCtx) {
 
         Collection<?> supportedCaseShorthands = statementCtx.getFromNamespace(ValidationBundlesNamespace.class,
                 ValidationBundleType.SUPPORTED_CASE_SHORTHANDS);
@@ -406,8 +404,8 @@ public final class Utils {
         return supportedCaseShorthands == null || supportedCaseShorthands.contains(statementCtx.getPublicDefinition());
     }
 
-    private static void addQNamesFromSchemaNodeIdentifierToList(List<QName> qNamesFromRoot,
-            SchemaNodeIdentifier augmentTargetPath) {
+    private static void addQNamesFromSchemaNodeIdentifierToList(final List<QName> qNamesFromRoot,
+            final SchemaNodeIdentifier augmentTargetPath) {
         Iterator<QName> augmentTargetPathIterator = augmentTargetPath.getPathFromRoot().iterator();
         while (augmentTargetPathIterator.hasNext()) {
             qNamesFromRoot.add(augmentTargetPathIterator.next());
@@ -431,7 +429,7 @@ public final class Utils {
         }
     }
 
-    public static Status parseStatus(String value) {
+    public static Status parseStatus(final String value) {
 
         Status status = null;
         switch (value) {
@@ -451,15 +449,15 @@ public final class Utils {
         return status;
     }
 
-    public static SchemaPath SchemaNodeIdentifierToSchemaPath(SchemaNodeIdentifier identifier) {
+    public static SchemaPath SchemaNodeIdentifierToSchemaPath(final SchemaNodeIdentifier identifier) {
         return SchemaPath.create(identifier.getPathFromRoot(), identifier.isAbsolute());
     }
 
-    public static Date getLatestRevision(RootStatementContext<?, ?, ?> root) {
+    public static Date getLatestRevision(final RootStatementContext<?, ?, ?> root) {
         return getLatestRevision(root.declaredSubstatements());
     }
 
-    public static Date getLatestRevision(Iterable<? extends StmtContext<?, ?, ?>> subStmts) {
+    public static Date getLatestRevision(final Iterable<? extends StmtContext<?, ?, ?>> subStmts) {
         Date revision = null;
         for (StmtContext<?, ?, ?> subStmt : subStmts) {
             if (subStmt.getPublicDefinition().getDeclaredRepresentationClass().isAssignableFrom(RevisionStatement
@@ -475,7 +473,7 @@ public final class Utils {
         return revision;
     }
 
-    public static boolean isModuleIdentifierWithoutSpecifiedRevision(Object o) {
+    public static boolean isModuleIdentifierWithoutSpecifiedRevision(final Object o) {
         return (o instanceof ModuleIdentifier)
                 && (((ModuleIdentifier) o).getRevision() == SimpleDateFormatUtil.DEFAULT_DATE_IMP ||
                         ((ModuleIdentifier) o).getRevision() == SimpleDateFormatUtil.DEFAULT_BELONGS_TO_DATE);
