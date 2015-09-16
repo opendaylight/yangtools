@@ -18,14 +18,16 @@ import com.puppycrawl.tools.checkstyle.api.FullIdent;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 import com.puppycrawl.tools.checkstyle.checks.CheckUtils;
 
-public class CheckLoggingUtil {
+public final class CheckLoggingUtil {
 
     public static final String LOGGER_TYPE_NAME = Logger.class.getSimpleName();
     public static final String LOGGER_TYPE_FULL_NAME = Logger.class.getName();
     public static final String LOGGER_VAR_NAME = "LOG";
     private static final List<String> LOG_METHODS = Lists.newArrayList("LOG.debug", "LOG.info", "LOG.error", "LOG.warn", "LOG.trace");
 
-    private CheckLoggingUtil() {}
+    private CheckLoggingUtil() {
+        throw new UnsupportedOperationException("Utility class should not be instantiated!");
+    }
 
     public static String getTypeName(final DetailAST aAST) {
         final FullIdent ident = CheckUtils.createFullType(aAST.findFirstToken(TokenTypes.TYPE));
