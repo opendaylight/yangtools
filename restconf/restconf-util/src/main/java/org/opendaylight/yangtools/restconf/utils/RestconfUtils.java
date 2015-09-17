@@ -47,9 +47,9 @@ import org.xml.sax.SAXException;
 
 public class RestconfUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(RestconfUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RestconfUtils.class);
 
-    private static final BiMap<URI, String> uriToModuleName = HashBiMap.<URI, String> create();
+    private static final BiMap<URI, String> URI_TO_MODULE_NAME = HashBiMap.<URI, String> create();
 
     public static Entry<String, DataSchemaNode> toRestconfIdentifier(final YangInstanceIdentifier xmlInstanceIdentifier,
             final SchemaContext schemaContext) {
@@ -82,8 +82,8 @@ public class RestconfUtils {
     private static CharSequence convertListToRestconfIdentifier(
             final YangInstanceIdentifier.NodeIdentifierWithPredicates argument, final ListSchemaNode node,
             final SchemaContext schemaContext) {
-        QName _nodeType = argument.getNodeType();
-        final CharSequence nodeIdentifier = toRestconfIdentifier(_nodeType, schemaContext);
+        QName nodeType = argument.getNodeType();
+        final CharSequence nodeIdentifier = toRestconfIdentifier(nodeType, schemaContext);
         final Map<QName, Object> keyValues = argument.getKeyValues();
 
         StringBuilder sb = new StringBuilder();
@@ -92,15 +92,15 @@ public class RestconfUtils {
         sb.append('/');
 
         List<QName> keyDefinition = node.getKeyDefinition();
-        boolean _hasElements = false;
+        boolean hasElements = false;
         for (final QName key : keyDefinition) {
-            if (_hasElements) {
+            if (hasElements) {
                 sb.append('/');
             } else {
-                _hasElements = true;
+                hasElements = true;
             }
-            Object _get = keyValues.get(key);
-            sb.append(toUriString(_get));
+            Object get = keyValues.get(key);
+            sb.append(toUriString(get));
         }
 
         return sb.toString();
@@ -110,13 +110,13 @@ public class RestconfUtils {
         if (object == null) {
             return "";
         }
-        String _string = object.toString();
-        return URLEncoder.encode(_string);
+        String string = object.toString();
+        return URLEncoder.encode(string);
     }
 
     public static CharSequence toRestconfIdentifier(final QName qname, final SchemaContext schemaContext) {
         URI namespace = qname.getNamespace();
-        String module = uriToModuleName.get(namespace);
+        String module = URI_TO_MODULE_NAME.get(namespace);
         if (module == null) {
             Date revision = qname.getRevision();
             final Module moduleSchema = schemaContext.findModuleByNamespaceAndRevision(namespace, revision);
@@ -124,7 +124,7 @@ public class RestconfUtils {
                 return null;
             }
             String name = moduleSchema.getName();
-            uriToModuleName.put(namespace, name);
+            URI_TO_MODULE_NAME.put(namespace, name);
             module = name;
         }
         return module + ':' + qname.getLocalName();
@@ -173,14 +173,14 @@ public class RestconfUtils {
     }
 
     public String findModuleNameByNamespace(final URI namespace, final SchemaContext schemaContext) {
-        String moduleName = uriToModuleName.get(namespace);
+        String moduleName = URI_TO_MODULE_NAME.get(namespace);
         if (moduleName == null) {
             final Module module = findModuleByNamespace(namespace, schemaContext);
             if (module == null) {
                 return null;
             }
             moduleName = module.getName();
-            uriToModuleName.put(namespace, moduleName);
+            URI_TO_MODULE_NAME.put(namespace, moduleName);
         }
         return moduleName;
     }
@@ -217,11 +217,11 @@ public class RestconfUtils {
              */
             return rpcServices;
         } catch (ParserConfigurationException e) {
-            logger.trace("Parse configuration exception {}", e);
+            LOGGER.trace("Parse configuration exception {}", e);
         } catch (SAXException e) {
-            logger.trace("SAX exception {}", e);
+            LOGGER.trace("SAX exception {}", e);
         } catch (IOException e) {
-            logger.trace("IOException {}", e);
+            LOGGER.trace("IOException {}", e);
         }
         return null;
     }
