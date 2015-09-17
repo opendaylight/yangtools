@@ -8,9 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.FULL_DECLARATION;
-
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -31,18 +28,15 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UsesEffectiveStatementImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implements UsesStatement {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UsesStatementImpl.class);
-
-    protected UsesStatementImpl(StmtContext<QName, UsesStatement, ?> context) {
+    protected UsesStatementImpl(final StmtContext<QName, UsesStatement, ?> context) {
         super(context);
     }
 
@@ -54,7 +48,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
         }
 
         @Override
-        public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return Utils.qNameFromArgument(ctx, value);
         }
 
@@ -86,13 +80,12 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
                         GroupingUtils.copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
                         GroupingUtils.resolveUsesNode(usesNode, targetNodeStmtCtx);
                     } catch (SourceException e) {
-                        LOG.warn(e.getMessage(), e);
-                        throw e;
+                        throw InferenceException.fromSourceException(e);
                     }
                 }
 
                 @Override
-                public void prerequisiteFailed(Collection<? extends Prerequisite<?>> failed) throws InferenceException {
+                public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) throws InferenceException {
                     if (failed.contains(sourceGroupingPre)) {
                         throw new InferenceException("Grouping " + groupingName + " was not resolved.", usesNode
                                 .getStatementSourceReference());
@@ -103,13 +96,13 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
         }
 
         @Override
-        public UsesStatement createDeclared(StmtContext<QName, UsesStatement, ?> ctx) {
+        public UsesStatement createDeclared(final StmtContext<QName, UsesStatement, ?> ctx) {
             return new UsesStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<QName, UsesStatement> createEffective(
-                StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
+                final StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
             return new UsesEffectiveStatementImpl(ctx);
         }
 

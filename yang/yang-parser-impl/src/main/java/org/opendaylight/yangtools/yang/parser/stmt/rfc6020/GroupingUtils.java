@@ -7,13 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
-
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.RootStatementContext;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,11 +16,17 @@ import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.RootStatementContext;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public final class GroupingUtils {
@@ -42,9 +41,9 @@ public final class GroupingUtils {
      * @throws SourceException instance of SourceException
      */
     public static void copyFromSourceToTarget(
-            StatementContextBase<?, ?, ?> sourceGrpStmtCtx,
-            StatementContextBase<?, ?, ?> targetCtx,
-            StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode)
+            final StatementContextBase<?, ?, ?> sourceGrpStmtCtx,
+            final StatementContextBase<?, ?, ?> targetCtx,
+            final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode)
             throws SourceException {
 
         QNameModule newQNameModule = getNewQNameModule(targetCtx,
@@ -56,10 +55,10 @@ public final class GroupingUtils {
     }
 
     public static void copyDeclaredStmts(
-            StatementContextBase<?, ?, ?> sourceGrpStmtCtx,
-            StatementContextBase<?, ?, ?> targetCtx,
-            StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode,
-            QNameModule newQNameModule) throws SourceException {
+            final StatementContextBase<?, ?, ?> sourceGrpStmtCtx,
+            final StatementContextBase<?, ?, ?> targetCtx,
+            final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode,
+            final QNameModule newQNameModule) throws SourceException {
         Collection<? extends StatementContextBase<?, ?, ?>> declaredSubstatements = sourceGrpStmtCtx
                 .declaredSubstatements();
         for (StatementContextBase<?, ?, ?> originalStmtCtx : declaredSubstatements) {
@@ -77,10 +76,10 @@ public final class GroupingUtils {
     }
 
     public static void copyEffectiveStmts(
-            StatementContextBase<?, ?, ?> sourceGrpStmtCtx,
-            StatementContextBase<?, ?, ?> targetCtx,
-            StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode,
-            QNameModule newQNameModule) throws SourceException {
+            final StatementContextBase<?, ?, ?> sourceGrpStmtCtx,
+            final StatementContextBase<?, ?, ?> targetCtx,
+            final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode,
+            final QNameModule newQNameModule) throws SourceException {
         Collection<? extends StatementContextBase<?, ?, ?>> effectiveSubstatements = sourceGrpStmtCtx
                 .effectiveSubstatements();
         for (StatementContextBase<?, ?, ?> originalStmtCtx : effectiveSubstatements) {
@@ -98,8 +97,8 @@ public final class GroupingUtils {
     }
 
     public static QNameModule getNewQNameModule(
-            StatementContextBase<?, ?, ?> targetCtx,
-            StmtContext<?, ?, ?> stmtContext) {
+            final StatementContextBase<?, ?, ?> targetCtx,
+            final StmtContext<?, ?, ?> stmtContext) {
         if (needToCreateNewQName(stmtContext.getPublicDefinition())) {
             if (targetCtx.isRootContext()) {
                 return targetCtx.getFromNamespace(
@@ -130,11 +129,11 @@ public final class GroupingUtils {
     }
 
     public static boolean needToCreateNewQName(
-            StatementDefinition publicDefinition) {
+            final StatementDefinition publicDefinition) {
         return true;
     }
 
-    public static boolean needToCopyByUses(StmtContext<?, ?, ?> stmtContext) {
+    public static boolean needToCopyByUses(final StmtContext<?, ?, ?> stmtContext) {
 
         Set<StatementDefinition> noCopyDefSet = new HashSet<>();
         noCopyDefSet.add(Rfc6020Mapping.USES);
@@ -152,7 +151,7 @@ public final class GroupingUtils {
         return !noCopyDefSet.contains(def) && !dontCopyFromParentGrouping;
     }
 
-    public static boolean isReusedByUses(StmtContext<?, ?, ?> stmtContext) {
+    public static boolean isReusedByUses(final StmtContext<?, ?, ?> stmtContext) {
 
         Set<StatementDefinition> reusedDefSet = new HashSet<>();
         reusedDefSet.add(Rfc6020Mapping.TYPEDEF);
@@ -163,8 +162,7 @@ public final class GroupingUtils {
         return reusedDefSet.contains(def);
     }
 
-    public static boolean isReusedByUsesOnTop(StmtContext<?, ?, ?> stmtContext) {
-
+    public static boolean isReusedByUsesOnTop(final StmtContext<?, ?, ?> stmtContext) {
         Set<StatementDefinition> reusedDefSet = new HashSet<>();
         reusedDefSet.add(Rfc6020Mapping.TYPEDEF);
         reusedDefSet.add(Rfc6020Mapping.TYPE);
@@ -174,9 +172,8 @@ public final class GroupingUtils {
     }
 
     public static void resolveUsesNode(
-            Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode,
-            StatementContextBase<?, ?, ?> targetNodeStmtCtx)
-            throws SourceException {
+            final Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode,
+            final StatementContextBase<?, ?, ?> targetNodeStmtCtx) throws SourceException {
 
         Collection<StatementContextBase<?, ?, ?>> declaredSubstatements = usesNode
                 .declaredSubstatements();
@@ -188,8 +185,8 @@ public final class GroupingUtils {
         }
     }
 
-    private static void performRefine(StatementContextBase<?, ?, ?> refineCtx,
-            StatementContextBase<?, ?, ?> usesParentCtx) {
+    private static void performRefine(final StatementContextBase<?, ?, ?> refineCtx,
+            final StatementContextBase<?, ?, ?> usesParentCtx) throws SourceException {
 
         Object refineArgument = refineCtx.getStatementArgument();
 
@@ -215,9 +212,8 @@ public final class GroupingUtils {
 
     }
 
-    private static void addOrReplaceNodes(
-            StatementContextBase<?, ?, ?> refineCtx,
-            StatementContextBase<?, ?, ?> refineTargetNodeCtx) {
+    private static void addOrReplaceNodes(final StatementContextBase<?, ?, ?> refineCtx,
+            final StatementContextBase<?, ?, ?> refineTargetNodeCtx) throws SourceException {
 
         Collection<StatementContextBase<?, ?, ?>> declaredSubstatements = refineCtx
                 .declaredSubstatements();
@@ -228,9 +224,8 @@ public final class GroupingUtils {
         }
     }
 
-    private static void addOrReplaceNode(
-            StatementContextBase<?, ?, ?> refineSubstatementCtx,
-            StatementContextBase<?, ?, ?> refineTargetNodeCtx) {
+    private static void addOrReplaceNode(final StatementContextBase<?, ?, ?> refineSubstatementCtx,
+            final StatementContextBase<?, ?, ?> refineTargetNodeCtx) throws SourceException {
 
         StatementDefinition refineSubstatementDef = refineSubstatementCtx
                 .getPublicDefinition();
@@ -259,7 +254,7 @@ public final class GroupingUtils {
     }
 
     private static boolean isAllowedToAddByRefine(
-            StatementDefinition publicDefinition) {
+            final StatementDefinition publicDefinition) {
         Set<StatementDefinition> allowedToAddByRefineDefSet = new HashSet<>();
         allowedToAddByRefineDefSet.add(Rfc6020Mapping.MUST);
 
@@ -267,7 +262,7 @@ public final class GroupingUtils {
     }
 
     private static boolean isSupportedRefineSubstatement(
-            StatementContextBase<?, ?, ?> refineSubstatementCtx) {
+            final StatementContextBase<?, ?, ?> refineSubstatementCtx) {
 
         Collection<?> supportedRefineSubstatements = refineSubstatementCtx
                 .getFromNamespace(ValidationBundlesNamespace.class,
@@ -281,8 +276,8 @@ public final class GroupingUtils {
     }
 
     private static boolean isSupportedRefineTarget(
-            StatementContextBase<?, ?, ?> refineSubstatementCtx,
-            StatementContextBase<?, ?, ?> refineTargetNodeCtx) {
+            final StatementContextBase<?, ?, ?> refineSubstatementCtx,
+            final StatementContextBase<?, ?, ?> refineTargetNodeCtx) {
 
         Collection<?> supportedRefineTargets = YangValidationBundles.SUPPORTED_REFINE_TARGETS
                 .get(refineSubstatementCtx.getPublicDefinition());

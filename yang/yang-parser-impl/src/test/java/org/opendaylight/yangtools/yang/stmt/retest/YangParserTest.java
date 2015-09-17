@@ -945,7 +945,7 @@ public class YangParserTest {
     }
 
     @Test
-    public void unknownStatementBetweenRevisionsTest() throws ReactorException {
+    public void unknownStatementBetweenRevisionsTest() throws Exception {
 
         final YangStatementSourceImpl yangModule = new YangStatementSourceImpl(
                 "/yang-grammar-test/revisions-extension.yang", false);

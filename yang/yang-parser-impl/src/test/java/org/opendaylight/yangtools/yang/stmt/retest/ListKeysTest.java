@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
@@ -24,7 +23,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSc
 public class ListKeysTest {
 
     @Test
-    public void correctListKeysTest() throws ReactorException {
+    public void correctListKeysTest() throws Exception {
 
         final YangStatementSourceImpl yangFile = new YangStatementSourceImpl(
                 "/list-keys-test/correct-list-keys-test.yang", false);

@@ -39,7 +39,6 @@ import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
 import org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
@@ -336,7 +335,7 @@ public class TypesResolutionTest {
     }
 
     @Test
-    public void testUnionWithExt() throws ReactorException {
+    public void testUnionWithExt() throws Exception {
 
         final YangStatementSourceImpl yangFile1 = new YangStatementSourceImpl("/types/union-with-ext/extdef.yang",
                 false);
@@ -353,7 +352,7 @@ public class TypesResolutionTest {
     }
 
     @Test
-    public void testUnionWithBits() throws ReactorException {
+    public void testUnionWithBits() throws Exception {
 
         final YangStatementSourceImpl yangFile = new YangStatementSourceImpl(
                 "/types/union-with-bits/union-bits-model.yang", false);

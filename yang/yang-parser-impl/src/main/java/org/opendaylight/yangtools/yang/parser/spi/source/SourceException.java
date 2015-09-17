@@ -15,21 +15,17 @@ import javax.annotation.Nonnull;
  * Thrown to indicate error in YANG model source.
  *
  */
-public class SourceException extends RuntimeException {
-
-    /**
-     *
-     */
+public class SourceException extends Exception {
     private static final long serialVersionUID = 1L;
 
     private final StatementSourceReference sourceRef;
 
-    public SourceException(@Nonnull String message,@Nonnull StatementSourceReference source) {
+    public SourceException(@Nonnull final String message,@Nonnull final StatementSourceReference source) {
         super(Preconditions.checkNotNull(message));
         sourceRef = Preconditions.checkNotNull(source);
     }
 
-    public SourceException(@Nonnull String message,@Nonnull StatementSourceReference source, Throwable cause) {
+    public SourceException(@Nonnull final String message,@Nonnull final StatementSourceReference source, final Throwable cause) {
         super(Preconditions.checkNotNull(message),cause);
         sourceRef = Preconditions.checkNotNull(source);
     }
@@ -37,5 +33,4 @@ public class SourceException extends RuntimeException {
     public @Nonnull StatementSourceReference getSourceReference() {
         return sourceRef;
     }
-
 }

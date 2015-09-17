@@ -13,8 +13,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
@@ -41,13 +39,12 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class GroupingTest {
     private Set<Module> modules;
 
     @Before
-    public void init() throws URISyntaxException, ReactorException {
+    public void init() throws Exception {
         modules = TestUtils.loadModules(getClass().getResource("/model").toURI());
         assertEquals(3, modules.size());
     }
@@ -364,7 +361,7 @@ public class GroupingTest {
     }
 
     @Test
-    public void testCascadeUses() throws ReactorException, ParseException {
+    public void testCascadeUses() throws Exception {
         modules = TestUtils.loadModules(Collections.singletonList(getClass().getResourceAsStream(
                 "/grouping-test/cascade-uses.yang")));
         assertEquals(1, modules.size());
@@ -554,7 +551,7 @@ public class GroupingTest {
     }
 
     @Test
-    public void testAddedByUsesLeafTypeQName() throws URISyntaxException, ReactorException {
+    public void testAddedByUsesLeafTypeQName() throws Exception {
 
         Set<Module> loadModules = TestUtils.loadModules(getClass().getResource("/added-by-uses-leaf-test").toURI());
 

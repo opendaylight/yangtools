@@ -17,16 +17,17 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
  *
  */
 public class InferenceException extends SourceException {
-
-
     private static final long serialVersionUID = 1L;
 
-    public InferenceException(@Nonnull String message, @Nonnull StatementSourceReference source, Throwable cause) {
+    public InferenceException(@Nonnull final String message, @Nonnull final StatementSourceReference source, final Throwable cause) {
         super(message, source, cause);
     }
 
-    public InferenceException(@Nonnull String message, @Nonnull StatementSourceReference source) {
+    public InferenceException(@Nonnull final String message, @Nonnull final StatementSourceReference source) {
         super(message, source);
     }
 
+    public static InferenceException fromSourceException(final SourceException e) {
+        return new InferenceException(e.getMessage(), e.getSourceReference(), e);
+    }
 }
