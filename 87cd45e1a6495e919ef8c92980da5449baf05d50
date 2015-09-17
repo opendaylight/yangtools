@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a79b1b5_b9b582ef",
+        "filename": "yang-validation-tool/src/main/java/org/opendaylight/yangtools/yang/validation/tool/Main.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 19,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-17T11:46:52Z",
+      "side": 1,
+      "message": "as per https://wiki.opendaylight.org/view/BestPractices/Logging_Best_Practices, rename LOGGER to LOG.",
+      "revId": "87cd45e1a6495e919ef8c92980da5449baf05d50",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
