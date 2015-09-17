@@ -117,7 +117,7 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     @Override
-    public void endNode() throws IllegalStateException {
+    public void endNode() {
         decIndent();
         LOG.debug("{}(end)", ind());
     }

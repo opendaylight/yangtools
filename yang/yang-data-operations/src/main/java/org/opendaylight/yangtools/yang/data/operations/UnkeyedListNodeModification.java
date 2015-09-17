@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.operations;
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import java.util.List;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
@@ -32,21 +31,18 @@ public class UnkeyedListNodeModification implements Modification<ListSchemaNode,
         }
 
         List<UnkeyedListEntryNode> resultNodes = Lists.newArrayList();
-        if (actual.isPresent())
+        if (actual.isPresent()) {
             resultNodes = unkeyedListEntries(actual.get());
-
+        }
         // TODO implement ordering for modification nodes
 
         for (UnkeyedListEntryNode unkeyedListEntryModification : modification.get().getValue()) {
 
             operationStack.enteringNode(unkeyedListEntryModification);
 
-            YangInstanceIdentifier.NodeIdentifier entryKey = unkeyedListEntryModification.getIdentifier();
-
             switch (operationStack.getCurrentOperation()) {
             case NONE:
                 break;
-            // DataModificationException.DataMissingException.check(schema.getQName(), actual, mapEntryModification);
             case MERGE:
             case CREATE: {
                 DataModificationException.DataExistsException.check(schema.getQName(), actual,
@@ -57,8 +53,6 @@ public class UnkeyedListNodeModification implements Modification<ListSchemaNode,
                 break;
             }
             case DELETE: {
-                // DataModificationException.DataMissingException.check(schema.getQName(), actual,
-                // unkeyedListEntryModification);
                 break;
             }
             case REMOVE: {
