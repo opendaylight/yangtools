@@ -70,7 +70,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
     @Parameter(property = "project", required = true, readonly = true)
     private MavenProject project;
 
-    @Parameter(property = "inspectDependencies", required = true, readonly = true)
+    @Parameter(property = "inspectDependencies")
     private boolean inspectDependencies;
 
     @Component
