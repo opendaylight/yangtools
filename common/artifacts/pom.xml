@@ -144,6 +144,11 @@
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools.model</groupId>
+                <artifactId>iana-afn-safi</artifactId>
+                <version>2013.07.04.8-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools.model</groupId>
                 <artifactId>iana-if-type-2014-05-08</artifactId>
                 <version>2014.05.08.7.2-SNAPSHOT</version>
             </dependency>
