@@ -20,12 +20,12 @@ final class BooleanStringCodec extends TypeDefinitionAwareCodec<Boolean, Boolean
     }
 
     @Override
-    public final String serialize(final Boolean data) {
+    public String serialize(final Boolean data) {
         return data == null ? "" : data.toString();
     }
 
     @Override
-    public final Boolean deserialize(final String stringRepresentation) {
+    public Boolean deserialize(final String stringRepresentation) {
         if (stringRepresentation == null) {
             return null;
         }

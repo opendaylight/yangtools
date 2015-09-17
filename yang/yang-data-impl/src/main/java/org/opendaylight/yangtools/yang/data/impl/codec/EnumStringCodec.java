@@ -39,7 +39,7 @@ final class EnumStringCodec extends TypeDefinitionAwareCodec<String, EnumTypeDef
     }
 
     @Override
-    public final String deserialize(final String s) {
+    public String deserialize(final String s) {
         if (values != null) {
             // Lookup the serialized string in the values. Returned string is the interned instance, which we want
             // to use as the result.
@@ -53,7 +53,7 @@ final class EnumStringCodec extends TypeDefinitionAwareCodec<String, EnumTypeDef
     }
 
     @Override
-    public final String serialize(final String data) {
+    public String serialize(final String data) {
         return data == null ? "" : data;
     }
 }
