@@ -180,6 +180,10 @@ abstract class AbstractContainerNodeModification<S, N extends DataContainerNode<
         private static final ContainerNodeModification CONTAINER_NODE_MODIFICATION = new ContainerNodeModification();
         private static final ChoiceNodeModification CHOICE_NODE_MODIFICATION = new ChoiceNodeModification();
 
+        private NodeDispatcher() {
+            throw new UnsupportedOperationException("Utility class should not be instantiated!");
+        }
+
         static Optional<? extends DataContainerChild<?, ?>> dispatchChildModification(final Object schemaChild,
                 final Optional<DataContainerChild<?, ?>> actual, final Optional<DataContainerChild<?, ?>> modification,
                 final OperationStack operations) throws DataModificationException {
