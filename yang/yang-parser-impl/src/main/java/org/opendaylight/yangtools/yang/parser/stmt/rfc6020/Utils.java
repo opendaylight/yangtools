@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +22,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Pattern;
 import javax.annotation.Nullable;
+import javax.annotation.concurrent.GuardedBy;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
@@ -66,23 +69,25 @@ public final class Utils {
     private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
     private static final CharMatcher DOUBLE_QUOTE_MATCHER = CharMatcher.is('"');
     private static final CharMatcher SINGLE_QUOTE_MATCHER = CharMatcher.is('\'');
+    private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings().trimResults();
+    private static final Splitter SPACE_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
+    private static final Pattern PATH_ABS = Pattern.compile("/[^/].*");
 
-    private static final char SEPARATOR_NODENAME = '/';
-
-    private static final String REGEX_PATH_ABS = "/[^/].*";
-
-    public static final char SEPARATOR = ' ';
+    // XPathFactory is documented as non-threadsafe
+    @GuardedBy("Utils.class")
+    private static final XPathFactory XPATH_FACTORY = XPathFactory.newInstance();
 
     private Utils() {
+        throw new UnsupportedOperationException();
     }
 
     public static Collection<SchemaNodeIdentifier.Relative> transformKeysStringToKeyNodes(final StmtContext<?, ?, ?> ctx,
             final String value) {
-        Splitter keySplitter = Splitter.on(SEPARATOR).omitEmptyStrings().trimResults();
-        List<String> keyTokens = keySplitter.splitToList(value);
+        List<String> keyTokens = SPACE_SPLITTER.splitToList(value);
 
         // to detect if key contains duplicates
         if ((new HashSet<>(keyTokens)).size() < keyTokens.size()) {
+            // FIXME: report all duplicate keys
             throw new IllegalArgumentException();
         }
 
@@ -99,20 +104,20 @@ public final class Utils {
     }
 
     public static List<String> splitPathToNodeNames(final String path) {
-
-        Splitter keySplitter = Splitter.on(SEPARATOR_NODENAME).omitEmptyStrings().trimResults();
-        return keySplitter.splitToList(path);
+        return SLASH_SPLITTER.splitToList(path);
     }
 
     public static void validateXPath(final StmtContext<?, ?, ?> ctx, final String path) {
-
-        final XPath xPath = XPathFactory.newInstance().newXPath();
+        final XPath xPath;
+        synchronized (Utils.class) {
+            xPath = XPATH_FACTORY.newXPath();
+        }
 
         try {
             xPath.compile(path);
         } catch (XPathExpressionException e) {
             throw new IllegalArgumentException(String.format("Argument %s is not valid XPath string at %s", path, ctx
-                    .getStatementSourceReference().toString()), e);
+                    .getStatementSourceReference()), e);
         }
     }
 
@@ -124,7 +129,7 @@ public final class Utils {
 
         validateXPath(ctx, trimSingleLastSlashFromXPath(path));
 
-        return path.matches(REGEX_PATH_ABS);
+        return PATH_ABS.matcher(path).matches();
     }
 
     public static QName trimPrefix(final QName identifier) {
@@ -178,7 +183,7 @@ public final class Utils {
         validateXPath(ctx, trimmedPath);
 
         List<String> nodeNames = splitPathToNodeNames(trimmedPath);
-        List<QName> qNames = new ArrayList<>();
+        List<QName> qNames = new ArrayList<>(nodeNames.size());
 
         for (String nodeName : nodeNames) {
             try {
@@ -216,8 +221,7 @@ public final class Utils {
     }
 
     public static QName qNameFromArgument(StmtContext<?, ?, ?> ctx, final String value) {
-
-        if (value == null || value.equals("")) {
+        if (Strings.isNullOrEmpty(value)) {
             return ctx.getPublicDefinition().getStatementName();
         }
 
