@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.restconf.client.api.dto.RestModule;
 import org.opendaylight.yangtools.restconf.client.api.dto.RestRpcService;
 import org.opendaylight.yangtools.restconf.client.api.event.EventStreamInfo;
 import org.opendaylight.yangtools.yang.binding.RpcService;
-import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -92,7 +91,8 @@ public final class XmlTools {
         return rpcService;
     }
 
-    private static EventStreamInfo restEventStreamInfoFromNode(final org.w3c.dom.Node node) throws DOMException, DatatypeConfigurationException {
+    private static EventStreamInfo restEventStreamInfoFromNode(final org.w3c.dom.Node node) throws
+            DatatypeConfigurationException {
         Element eElement = (Element) node;
         RestEventStreamInfo eventStreamInfo = new RestEventStreamInfo();
         eventStreamInfo.setDescription(eElement.getElementsByTagName("description").item(0).getTextContent());
@@ -113,12 +113,14 @@ public final class XmlTools {
         return eventStreamInfo;
     }
 
-    public static Set<EventStreamInfo> evenStreamsFromInputStream(final InputStream is) throws DOMException, DatatypeConfigurationException, IOException, ParserConfigurationException, SAXException {
+    public static Set<EventStreamInfo> evenStreamsFromInputStream(final InputStream is) throws
+            DatatypeConfigurationException, IOException, ParserConfigurationException, SAXException {
         Document doc = fromXml(is);
         return streamInfoFromNodeList(doc.getElementsByTagName("stream"));
     }
 
-    private static Set<EventStreamInfo> streamInfoFromNodeList(final NodeList nodeList) throws DOMException, DatatypeConfigurationException {
+    private static Set<EventStreamInfo> streamInfoFromNodeList(final NodeList nodeList) throws
+            DatatypeConfigurationException {
         Set<EventStreamInfo> rpcServices = new HashSet<EventStreamInfo>();
         for (int i =0; i < nodeList.getLength(); i++){
             org.w3c.dom.Node nNode = nodeList.item(i);
