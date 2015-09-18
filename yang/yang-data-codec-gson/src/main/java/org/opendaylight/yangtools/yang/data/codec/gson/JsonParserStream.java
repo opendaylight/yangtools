@@ -69,7 +69,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         return new JsonParserStream(writer, schemaContext, schemaContext);
     }
 
-    public JsonParserStream parse(final JsonReader reader) throws JsonIOException, JsonSyntaxException {
+    public JsonParserStream parse(final JsonReader reader) {
         // code copied from gson's JsonParser and Stream classes
 
         final boolean lenient = reader.isLenient();
@@ -83,11 +83,9 @@ public final class JsonParserStream implements Closeable, Flushable {
             compositeNodeDataWithSchema.write(writer);
 
             return this;
-            // return read(reader);
         } catch (final EOFException e) {
             if (isEmpty) {
                 return this;
-                // return JsonNull.INSTANCE;
             }
             // The stream ended prematurely so it is likely a syntax error.
             throw new JsonSyntaxException(e);

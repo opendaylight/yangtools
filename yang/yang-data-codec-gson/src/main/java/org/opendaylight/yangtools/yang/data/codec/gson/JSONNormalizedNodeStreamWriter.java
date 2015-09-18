@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
  * Values of leaf and leaf-list are NOT translated according to codecs.
  *
  */
-public class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
+public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
     /**
      * RFC6020 deviation: we are not required to emit empty containers unless they
      * are marked as 'presence'.
