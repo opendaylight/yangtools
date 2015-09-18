@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -113,52 +113,34 @@ public final class GroupingUtils {
         return true;
     }
 
+    private static final Set<Rfc6020Mapping> NOCOPY_DEF_SET = ImmutableSet.of(
+        Rfc6020Mapping.USES, Rfc6020Mapping.TYPEDEF, Rfc6020Mapping.TYPE);
+    private static final Set<Rfc6020Mapping> NOCOPY_FROM_GROUPING_SET = ImmutableSet.of(
+        Rfc6020Mapping.DESCRIPTION, Rfc6020Mapping.REFERENCE);
+    private static final Set<Rfc6020Mapping> REUSED_DEF_SET = ImmutableSet.of(
+        Rfc6020Mapping.TYPEDEF, Rfc6020Mapping.TYPE, Rfc6020Mapping.USES);
+    private static final Set<Rfc6020Mapping> TOP_REUSED_DEF_SET = ImmutableSet.of(
+        Rfc6020Mapping.TYPEDEF, Rfc6020Mapping.TYPE);
+
     public static boolean needToCopyByUses(final StmtContext<?, ?, ?> stmtContext) {
+        final StatementDefinition def = stmtContext.getPublicDefinition();
 
-        Set<StatementDefinition> noCopyDefSet = new HashSet<>();
-        noCopyDefSet.add(Rfc6020Mapping.USES);
-        noCopyDefSet.add(Rfc6020Mapping.TYPEDEF);
-        noCopyDefSet.add(Rfc6020Mapping.TYPE);
-
-        final Set<StatementDefinition> noCopyFromGroupingSet = new HashSet<>();
-        noCopyFromGroupingSet.add(Rfc6020Mapping.DESCRIPTION);
-        noCopyFromGroupingSet.add(Rfc6020Mapping.REFERENCE);
-
-        StatementDefinition def = stmtContext.getPublicDefinition();
-        boolean dontCopyFromParentGrouping = noCopyFromGroupingSet.contains(def) && stmtContext.getParentContext()
-                .getPublicDefinition().equals(Rfc6020Mapping.GROUPING);
-
-        return !noCopyDefSet.contains(def) && !dontCopyFromParentGrouping;
+        return !(NOCOPY_DEF_SET.contains(def) || (NOCOPY_FROM_GROUPING_SET.contains(def)
+                && Rfc6020Mapping.GROUPING.equals(stmtContext.getParentContext().getPublicDefinition())));
     }
 
     public static boolean isReusedByUses(final StmtContext<?, ?, ?> stmtContext) {
-
-        Set<StatementDefinition> reusedDefSet = new HashSet<>();
-        reusedDefSet.add(Rfc6020Mapping.TYPEDEF);
-        reusedDefSet.add(Rfc6020Mapping.TYPE);
-        reusedDefSet.add(Rfc6020Mapping.USES);
-
-        StatementDefinition def = stmtContext.getPublicDefinition();
-        return reusedDefSet.contains(def);
+        return REUSED_DEF_SET.contains(stmtContext.getPublicDefinition());
     }
 
     public static boolean isReusedByUsesOnTop(final StmtContext<?, ?, ?> stmtContext) {
-
-        Set<StatementDefinition> reusedDefSet = new HashSet<>();
-        reusedDefSet.add(Rfc6020Mapping.TYPEDEF);
-        reusedDefSet.add(Rfc6020Mapping.TYPE);
-
-        StatementDefinition def = stmtContext.getPublicDefinition();
-        return reusedDefSet.contains(def);
+        return TOP_REUSED_DEF_SET.contains(stmtContext.getPublicDefinition());
     }
 
     public static void resolveUsesNode(
             final Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode,
-            final StatementContextBase<?, ?, ?> targetNodeStmtCtx)
-            throws SourceException {
-
-        Collection<StatementContextBase<?, ?, ?>> declaredSubstatements = usesNode.declaredSubstatements();
-        for (StatementContextBase<?, ?, ?> subStmtCtx : declaredSubstatements) {
+            final StatementContextBase<?, ?, ?> targetNodeStmtCtx) throws SourceException {
+        for (StatementContextBase<?, ?, ?> subStmtCtx : usesNode.declaredSubstatements()) {
             if (StmtContextUtils.producesDeclared(subStmtCtx, RefineStatement.class)) {
                 performRefine(subStmtCtx, targetNodeStmtCtx);
             }
@@ -183,9 +165,7 @@ public final class GroupingUtils {
 
     private static void addOrReplaceNodes(final StatementContextBase<?, ?, ?> refineCtx,
             final StatementContextBase<?, ?, ?> refineTargetNodeCtx) {
-
-        Collection<StatementContextBase<?, ?, ?>> declaredSubstatements = refineCtx.declaredSubstatements();
-        for (StatementContextBase<?, ?, ?> refineSubstatementCtx : declaredSubstatements) {
+        for (StatementContextBase<?, ?, ?> refineSubstatementCtx : refineCtx.declaredSubstatements()) {
             if (isSupportedRefineSubstatement(refineSubstatementCtx)) {
                 addOrReplaceNode(refineSubstatementCtx, refineTargetNodeCtx);
             }
@@ -195,10 +175,8 @@ public final class GroupingUtils {
     private static void addOrReplaceNode(final StatementContextBase<?, ?, ?> refineSubstatementCtx,
             final StatementContextBase<?, ?, ?> refineTargetNodeCtx) {
 
-        StatementDefinition refineSubstatementDef = refineSubstatementCtx
-                .getPublicDefinition();
-        StatementDefinition refineTargetNodeDef = refineTargetNodeCtx
-                .getPublicDefinition();
+        StatementDefinition refineSubstatementDef = refineSubstatementCtx.getPublicDefinition();
+        StatementDefinition refineTargetNodeDef = refineTargetNodeCtx.getPublicDefinition();
 
         if (!isSupportedRefineTarget(refineSubstatementCtx, refineTargetNodeCtx)) {
             throw new SourceException("Error in module '"
@@ -218,15 +196,13 @@ public final class GroupingUtils {
         }
     }
 
-    private static boolean isAllowedToAddByRefine(final StatementDefinition publicDefinition) {
-        Set<StatementDefinition> allowedToAddByRefineDefSet = new HashSet<>();
-        allowedToAddByRefineDefSet.add(Rfc6020Mapping.MUST);
+    private static final Set<Rfc6020Mapping> ALLOWED_TO_ADD_BY_REFINE_DEF_SET = ImmutableSet.of(Rfc6020Mapping.MUST);
 
-        return allowedToAddByRefineDefSet.contains(publicDefinition);
+    private static boolean isAllowedToAddByRefine(final StatementDefinition publicDefinition) {
+        return ALLOWED_TO_ADD_BY_REFINE_DEF_SET.contains(publicDefinition);
     }
 
     private static boolean isSupportedRefineSubstatement(final StatementContextBase<?, ?, ?> refineSubstatementCtx) {
-
         Collection<?> supportedRefineSubstatements = refineSubstatementCtx.getFromNamespace(
             ValidationBundlesNamespace.class, ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS);
 
