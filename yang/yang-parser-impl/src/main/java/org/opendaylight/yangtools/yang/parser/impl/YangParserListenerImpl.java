@@ -78,8 +78,10 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
+import org.opendaylight.yangtools.yang.parser.builder.api.DataSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.ExtensionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.GroupingBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
@@ -87,6 +89,7 @@ import org.opendaylight.yangtools.yang.parser.builder.impl.AnyXmlBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ChoiceCaseBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ContainerSchemaNodeBuilder;
+import org.opendaylight.yangtools.yang.parser.builder.impl.CopyUtils;
 import org.opendaylight.yangtools.yang.parser.builder.impl.DeviationBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.FeatureBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.IdentitySchemaNodeBuilder;
@@ -875,6 +878,33 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
 
         final ChoiceBuilder builder = moduleBuilder.addChoice(line, choiceQName, path);
         moduleBuilder.enterNode(builder);
+
+
+        for (int i=0; i<moduleBuilder.getAllAugments().size(); i++) {
+            List<DataSchemaNodeBuilder> found = new ArrayList<>();
+            AugmentationSchemaBuilder augment = moduleBuilder.getAllAugments().get(i);
+            if (augment.getTargetPath().getLastComponent().equals(choiceQName)) {
+                for (int j=0; j<augment.getChildNodeBuilders().size(); j++) {
+                    SchemaNodeBuilder addedChildNode = augment.getChildNodeBuilders().get(j);
+                    if (!(addedChildNode instanceof ChoiceCaseBuilder) &&
+                         (addedChildNode instanceof DataSchemaNodeBuilder)) {
+                        final QName caseQName = QName.create(moduleQName, addedChildNode.getQName().getLocalName()
+                                .concat("Case"));
+                        ChoiceCaseBuilder choiceCaseBuilder = (ChoiceCaseBuilder) CopyUtils.copy(new
+                                ChoiceCaseBuilder(moduleName, addedChildNode.getLine(), caseQName , addedChildNode
+                                .getPath().getParent().createChild(caseQName)), augment, false);
+                        augment.addChildNode(choiceCaseBuilder);
+                        choiceCaseBuilder.addChildNode(CopyUtils.copy((DataSchemaNodeBuilder) addedChildNode,
+                                choiceCaseBuilder, false));
+                        found.add((DataSchemaNodeBuilder) addedChildNode);
+                    }
+                }
+
+            }
+            if (!found.isEmpty()) {
+                augment.getChildNodeBuilders().removeAll(found);
+            }
+        }
 
         parseSchemaNodeArgs(ctx, builder);
         parseConstraints(ctx, builder.getConstraints());
