@@ -35,11 +35,14 @@ public class LoggerMustBeSlf4jCheck extends Check {
                 }
             }
         } else if (aAST.getType() == TokenTypes.IMPORT) {
-            final String importType = aAST.getFirstChild().findFirstToken(TokenTypes.IDENT).getText();
-            if (importType.equals(CheckLoggingUtil.LOGGER_TYPE_NAME)) {
-                final String importIdent = aAST.getFirstChild().getFirstChild().getLastChild().getText();
-                if (!importIdent.equals(SLF4J)) {
-                    log(aAST.getLineNo(), LOG_MESSAGE);
+            final DetailAST typeToken = aAST.getFirstChild().findFirstToken(TokenTypes.IDENT);
+            if (typeToken != null) {
+                final String importType = typeToken.getText();
+                if (CheckLoggingUtil.LOGGER_TYPE_NAME.equals(importType)) {
+                    final String importIdent = aAST.getFirstChild().getFirstChild().getLastChild().getText();
+                    if (!importIdent.equals(SLF4J)) {
+                        log(aAST.getLineNo(), LOG_MESSAGE);
+                    }
                 }
             }
         }
