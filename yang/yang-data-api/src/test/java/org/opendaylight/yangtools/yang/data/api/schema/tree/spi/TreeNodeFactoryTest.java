@@ -30,7 +30,7 @@ public class TreeNodeFactoryTest {
         final Version version = Version.initial();
         final TreeNode node = TreeNodeFactory.createTreeNode(data, version);
 
-        assertTrue(node instanceof LazyContainerNode);
+        assertTrue(node instanceof SimpleContainerNode);
         checkTreeNode(node, data, version);
     }
 
@@ -40,7 +40,7 @@ public class TreeNodeFactoryTest {
         final Version version = Version.initial();
         final TreeNode node = TreeNodeFactory.createTreeNode(data, version);
 
-        assertTrue(node instanceof LazyContainerNode);
+        assertTrue(node instanceof SimpleContainerNode);
         checkTreeNode(node, data, version);
     }
 
