@@ -1,0 +1,34 @@
+module uses-augment-shortcase-test {
+
+  yang-version 1;
+  prefix "uat";
+  namespace "urn:uat";
+
+  revision 2015-09-01;
+
+  grouping grp1 {
+    uses grp2 {
+      augment mychoice {
+        leaf myleaf1 {
+          type string;
+        }
+      }
+    }
+  }
+
+  grouping grp2 {
+    choice mychoice {
+      leaf myleaf2 {
+        type string;
+      }
+    }
+  }
+
+  container cont {
+    uses grp1;
+    leaf myleaf3 {
+      type string;
+    }
+  }
+
+}
