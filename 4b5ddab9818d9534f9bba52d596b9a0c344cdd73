@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_99bd9b05",
+        "filename": "yang/yang-data-transform/src/main/java/org/opendaylight/yangtools/transform/NormalizedNodeTransformations.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-21T16:01:55Z",
+      "side": 1,
+      "message": "add @Beta, should be a final class",
+      "revId": "4b5ddab9818d9534f9bba52d596b9a0c344cdd73",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_793c3f94",
+        "filename": "yang/yang-data-transform/src/main/java/org/opendaylight/yangtools/transform/QNameModuleReplacementFunction.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-21T16:01:55Z",
+      "side": 1,
+      "message": "Can we use Guava\u0027s Converters for this?",
+      "revId": "4b5ddab9818d9534f9bba52d596b9a0c344cdd73",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_19418b0b",
+        "filename": "yang/yang-data-transform/src/main/java/org/opendaylight/yangtools/transform/QNameTransformingStreamWriter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-21T16:01:55Z",
+      "side": 1,
+      "message": "extends ForwardingObject ?",
+      "revId": "4b5ddab9818d9534f9bba52d596b9a0c344cdd73",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
