@@ -73,7 +73,6 @@ public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedNod
     private ImmutableList<ExtensionDefinition> extensionNodes;
     private ImmutableSet<IdentitySchemaNode> identities;
     private ImmutableList<UnknownSchemaNode> unknownNodes;
-    private final String source;
     private ImmutableList<EffectiveStatement<?, ?>> substatementsOfSubmodules;
 
     private ImmutableMap<QName, DataSchemaNode> childNodes;
@@ -110,10 +109,12 @@ public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedNod
         if (yangVersion == null) {
             yangVersion = "1";
         }
+        if(ctx.getStatementSourceReference() instanceof DeclarationInTextSource) {
+            sourcePath = ((DeclarationInTextSource) ctx.getStatementSourceReference()).getSourceName();
+        } else {
+            sourcePath = null;
+        }
 
-        DeclarationInTextSource sourceReference = (DeclarationInTextSource) ctx.getStatementSourceReference();
-        sourcePath = sourceReference.getSourceName();
-        source = sourceReference.getSourceText();
 
         initSubmodules(ctx);
         initSubstatementCollections(ctx);
@@ -406,7 +407,7 @@ public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedNod
 
     @Override
     public String getSource() {
-        return source;
+        return null;
     }
 
     @Override

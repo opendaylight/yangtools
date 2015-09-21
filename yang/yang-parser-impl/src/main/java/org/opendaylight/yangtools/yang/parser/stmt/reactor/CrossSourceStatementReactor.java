@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import java.util.Set;
+import java.io.IOException;
 
+import com.google.common.io.ByteSource;
+import java.util.Set;
 import java.io.FileNotFoundException;
 import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 import java.util.HashMap;
@@ -103,6 +105,15 @@ public class CrossSourceStatementReactor {
 
         public EffectiveSchemaContext buildEffective() throws SourceException, ReactorException {
             return context.buildEffective();
+        }
+
+        public SchemaContext buildEffective(Collection<ByteSource> yangByteSources) throws SourceException, ReactorException, IOException {
+
+            for(ByteSource yangByteSource : yangByteSources) {
+                addSource(new YangStatementSourceImpl(yangByteSource.openStream()));
+            }
+
+            return buildEffective();
         }
 
         public SchemaContext buildEffective(List<InputStream> yangInputStreams) throws SourceException, ReactorException {

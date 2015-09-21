@@ -25,7 +25,6 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
 import org.sonatype.plexus.build.incremental.BuildContext;
@@ -35,7 +34,7 @@ import org.sonatype.plexus.build.incremental.BuildContext;
  * {@link BasicCodeGenerator}s. Steps of this process:
  * <ol>
  * <li>List yang files from {@link #yangFilesRootDir}</li>
- * <li>Process yang files using {@link YangParserImpl}</li>
+ * <li>Process yang files using Yang Parser</li>
  * <li>For each {@link BasicCodeGenerator} from {@link #codeGenerators}:
  * <ol>
  * <li>Instantiate using default constructor</li>

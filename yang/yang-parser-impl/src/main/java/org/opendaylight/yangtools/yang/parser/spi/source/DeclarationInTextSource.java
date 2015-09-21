@@ -20,12 +20,12 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
  *
  *  To create source reference use one of this static factories:
  *  <ul>
- *  <li>{@link #atPosition(String, String, int, int)} - provides most specific reference of statement location,
+ *  <li>{@link #atPosition(String, int, int)} - provides most specific reference of statement location,
  *  this is most prefered since it provides most context to debug YANG model.
  *  </li>
- *  <li>{@link #atLine(String, String, int)}- provides source and line of statement location.
+ *  <li>{@link #atLine(String, int)}- provides source and line of statement location.
  *  </li>
- *  <li>{@link #inSource(String, String)} - least specific reference, should be used only if any of previous
+ *  <li>{@link #inSource(String)} - least specific reference, should be used only if any of previous
  *  references are unable to create / derive from source.
  *  </li>
  *  </ul>
@@ -33,20 +33,14 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
  */
 public abstract class DeclarationInTextSource implements StatementSourceReference {
 
-    private final String sourceText;
     private final String sourceName;
 
-    DeclarationInTextSource(String sourceName, String sourceText) {
+    DeclarationInTextSource(String sourceName) {
         this.sourceName = sourceName;
-        this.sourceText = sourceText;
     }
 
     public String getSourceName() {
         return sourceName;
-    }
-
-    public String getSourceText() {
-        return sourceText;
     }
 
     @Override
@@ -57,22 +51,22 @@ public abstract class DeclarationInTextSource implements StatementSourceReferenc
     @Override
     public abstract String toString();
 
-    public static final DeclarationInTextSource inSource(String sourceName, String sourceText) {
-        return new InSource(sourceName, sourceText);
+    public static final DeclarationInTextSource inSource(String sourceName) {
+        return new InSource(sourceName);
     }
 
-    public static final DeclarationInTextSource atLine(String sourceName, String sourceText, int line) {
-        return new AtLine(sourceName, sourceText, line);
+    public static final DeclarationInTextSource atLine(String sourceName, int line) {
+        return new AtLine(sourceName, line);
     }
 
-    public static final DeclarationInTextSource atPosition(String sourceName, String sourceText, int line, int position) {
-        return new AtPosition(sourceName, sourceText, line,position);
+    public static final DeclarationInTextSource atPosition(String sourceName, int line, int position) {
+        return new AtPosition(sourceName, line,position);
     }
 
     private static class InSource extends DeclarationInTextSource {
 
-        public InSource(String sourceName, String sourceText) {
-            super(sourceName, sourceText);
+        InSource(String sourceName) {
+            super(sourceName);
         }
 
         @Override
@@ -82,12 +76,12 @@ public abstract class DeclarationInTextSource implements StatementSourceReferenc
 
     }
 
-    private static class AtLine extends DeclarationInTextSource {
+    private static class AtLine extends InSource {
 
         private final int line;
 
-        public AtLine(String sourceName, String sourceText, int line) {
-            super(sourceName, sourceText);
+        AtLine(String sourceName, int line) {
+            super(sourceName);
             this.line = line;
         }
 
@@ -95,23 +89,25 @@ public abstract class DeclarationInTextSource implements StatementSourceReferenc
         public String toString() {
             return String.format("%s:%d", getSourceName(),line);
         }
+        
+        public int getLine() {
+            return line;
+        }
 
     }
 
-    private static class AtPosition extends DeclarationInTextSource {
+    private static class AtPosition extends AtLine {
 
-        private int line;
-        private int character;
+        private final int character;
 
-        public AtPosition(String sourceName, String sourceText, int line, int character) {
-            super(sourceName, sourceText);
-            this.line = line;
+        AtPosition(String sourceName, int line, int character) {
+            super(sourceName, line);
             this.character = character;
         }
 
         @Override
         public String toString() {
-            return String.format("%s:%d:%d", getSourceName(),line,character);
+            return String.format("%s:%d:%d", getSourceName(),getLine(),character);
         }
 
     }

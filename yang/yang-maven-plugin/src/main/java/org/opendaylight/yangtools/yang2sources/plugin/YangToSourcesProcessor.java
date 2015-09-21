@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
+import java.util.HashSet;
+
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
 import java.io.Closeable;
@@ -16,7 +20,6 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -29,7 +32,6 @@ import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.opendaylight.yangtools.yang.parser.repo.URLSchemaContextResolver;
 import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
@@ -93,7 +95,8 @@ class YangToSourcesProcessor {
     }
 
     private ContextHolder processYang() throws MojoExecutionException {
-        YangParserImpl parser = new YangParserImpl();
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        SchemaContext resolveSchemaContext;
         List<Closeable> closeables = new ArrayList<>();
         log.info(Util.message("Inspecting %s", LOG_PREFIX, yangFilesRootDir));
         try {
@@ -140,7 +143,6 @@ class YangToSourcesProcessor {
 
             List<InputStream> all = new ArrayList<>(yangsInProject);
             closeables.addAll(yangsInProject);
-            Map<InputStream, Module> allYangModules;
 
             /**
              * Set contains all modules generated from input sources. Number of
@@ -159,24 +161,21 @@ class YangToSourcesProcessor {
                     closeables.addAll(yangStreams);
                 }
 
-                allYangModules = parser.parseYangModelsFromStreamsMapped(all);
+                resolveSchemaContext = reactor.buildEffective(all);
 
+                Set<Module> parsedAllYangModules = resolveSchemaContext.getModules();
                 projectYangModules = new HashSet<>();
-                for (InputStream inProject : yangsInProject) {
-                    Module module = allYangModules.get(inProject);
-                    if (module != null) {
+                for (Module module : parsedAllYangModules) {
+                    if(module.getModuleSourcePath()!=null) {
                         projectYangModules.add(module);
                     }
                 }
-
             } finally {
                 for (AutoCloseable closeable : closeables) {
                     closeable.close();
                 }
             }
 
-            Set<Module> parsedAllYangModules = new HashSet<>(allYangModules.values());
-            SchemaContext resolveSchemaContext = parser.resolveSchemaContext(parsedAllYangModules);
             log.info(Util.message("%s files parsed from %s", LOG_PREFIX, Util.YANG_SUFFIX.toUpperCase(), yangsInProject));
             return new ContextHolder(resolveSchemaContext, projectYangModules);
 
