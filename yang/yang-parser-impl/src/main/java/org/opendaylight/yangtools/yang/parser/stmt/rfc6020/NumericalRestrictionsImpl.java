@@ -33,7 +33,7 @@ public class NumericalRestrictionsImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) throws SourceException {
+        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
             return value;
         }
 

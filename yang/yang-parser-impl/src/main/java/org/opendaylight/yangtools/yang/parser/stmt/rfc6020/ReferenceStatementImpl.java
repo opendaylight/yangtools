@@ -32,7 +32,7 @@ public class ReferenceStatementImpl extends AbstractDeclaredStatement<String> im
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) throws SourceException {
+        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
             return value;
         }
 
