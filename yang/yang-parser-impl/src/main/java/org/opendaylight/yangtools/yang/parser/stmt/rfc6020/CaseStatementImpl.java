@@ -41,8 +41,7 @@ public class CaseStatementImpl extends AbstractDeclaredStatement<QName> implemen
             super(Rfc6020Mapping.CASE);
         }
 
-        @Override public QName parseArgumentValue(StmtContext<?, ?, ?> ctx,
-                String value) throws SourceException {
+        @Override public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
             return Utils.qNameFromArgument(ctx, value);
         }
 

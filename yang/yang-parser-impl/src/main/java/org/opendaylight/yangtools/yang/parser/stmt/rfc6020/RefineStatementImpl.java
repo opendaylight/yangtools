@@ -37,7 +37,7 @@ public class RefineStatementImpl extends AbstractDeclaredStatement<SchemaNodeIde
         }
 
         @Override
-        public SchemaNodeIdentifier parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) throws SourceException {
+        public SchemaNodeIdentifier parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
             return SchemaNodeIdentifier.create(Utils.parseXPath(ctx, value), Utils.isXPathAbsolute(ctx, value));
         }
 
