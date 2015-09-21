@@ -34,7 +34,7 @@ public class BitsSpecificationImpl extends AbstractDeclaredStatement<String> imp
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) throws SourceException {
+        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
             return value;
         }
 

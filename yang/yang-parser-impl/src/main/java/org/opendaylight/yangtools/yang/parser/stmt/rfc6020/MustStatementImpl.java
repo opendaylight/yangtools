@@ -40,7 +40,7 @@ public class MustStatementImpl extends AbstractDeclaredStatement<RevisionAwareXP
         }
 
         @Override public RevisionAwareXPath parseArgumentValue(
-                StmtContext<?, ?, ?> ctx, String value) throws SourceException {
+                StmtContext<?, ?, ?> ctx, String value) {
             return new RevisionAwareXPathImpl(value, Utils.isXPathAbsolute(ctx, value));
         }
 
