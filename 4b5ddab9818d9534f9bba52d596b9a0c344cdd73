@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_99483bce",
+        "filename": "yang/yang-data-transform/src/main/java/org/opendaylight/yangtools/transform/NormalizedNodeTransformations.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-09-21T18:30:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_99bd9b05",
+      "revId": "4b5ddab9818d9534f9bba52d596b9a0c344cdd73",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_793c3f94",
         "filename": "yang/yang-data-transform/src/main/java/org/opendaylight/yangtools/transform/QNameModuleReplacementFunction.java",
         "patchSetId": 4
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "1a76adc5_d93eb329",
+        "filename": "yang/yang-data-transform/src/main/java/org/opendaylight/yangtools/transform/QNameModuleReplacementFunction.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-09-21T18:30:58Z",
+      "side": 1,
+      "message": "Will explore about that in subsequent patch\n\nConverters do not provide out of the box behaviour which returns supplied value when is not present in map (BiMaps.asConverter).\nAlso converters require BiMap like behaviour which would not allow eg. for merging two namespaces",
+      "parentUuid": "1a76adc5_793c3f94",
+      "revId": "4b5ddab9818d9534f9bba52d596b9a0c344cdd73",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1a76adc5_19418b0b",
         "filename": "yang/yang-data-transform/src/main/java/org/opendaylight/yangtools/transform/QNameTransformingStreamWriter.java",
         "patchSetId": 4
@@ -47,6 +83,24 @@
       "writtenOn": "2015-09-21T16:01:55Z",
       "side": 1,
       "message": "extends ForwardingObject ?",
+      "revId": "4b5ddab9818d9534f9bba52d596b9a0c344cdd73",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_f93b6f36",
+        "filename": "yang/yang-data-transform/src/main/java/org/opendaylight/yangtools/transform/QNameTransformingStreamWriter.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-09-21T18:30:58Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1a76adc5_19418b0b",
       "revId": "4b5ddab9818d9534f9bba52d596b9a0c344cdd73",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
