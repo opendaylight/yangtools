@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
 
 public class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
 
-    private final Map<ModuleIdentifier, String> identifiersToSources;
     private final SetMultimap<URI, Module> namespaceToModules;
     private final SetMultimap<String, Module> nameToModules;
     private final Set<Module> modules;
@@ -70,13 +69,10 @@ public class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
 
         namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
         nameToModules = ImmutableSetMultimap.copyOf(nameMap);
-        identifiersToSources = ImmutableMap.copyOf(isMap);
-
     }
 
-    public EffectiveSchemaContext(final Set<Module> modules, final Map<ModuleIdentifier, String> identifiersToSources) {
-        this.identifiersToSources = ImmutableMap.copyOf(identifiersToSources);
-
+    public EffectiveSchemaContext(final Set<Module> modules) {
+        
          /*
          * Instead of doing this on each invocation of getModules(), pre-compute
          * it once and keep it around -- better than the set we got in.
@@ -109,11 +105,7 @@ public class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
     }
 
     public static SchemaContext resolveSchemaContext(final Set<Module> modules) {
-        Map<ModuleIdentifier, String> identifiersToSources = new HashMap<>();
-        for (Module module : modules) {
-            identifiersToSources.put(module, module.getSource());
-        }
-        return new EffectiveSchemaContext(modules, identifiersToSources);
+       return new EffectiveSchemaContext(modules);
     }
 
     public ImmutableList<DeclaredStatement<?>> getRootDeclaredStatements() {
@@ -126,7 +118,7 @@ public class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
 
     @Override
     protected Map<ModuleIdentifier, String> getIdentifiersToSources() {
-        return identifiersToSources;
+        return ImmutableMap.of();
     }
 
     @Override

@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.tree;
 
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -107,7 +110,7 @@ public class InMemoryDataTreeBenchmark {
     }
 
     @Setup(Level.Trial)
-    public void setup() throws DataValidationFailedException {
+    public void setup() throws DataValidationFailedException, SourceException, ReactorException {
         schemaContext = BenchmarkModel.createTestContext();
         final InMemoryDataTreeFactory factory = InMemoryDataTreeFactory.getInstance();
         datastore = factory.create();

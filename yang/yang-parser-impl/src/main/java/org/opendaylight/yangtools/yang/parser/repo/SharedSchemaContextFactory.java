@@ -7,8 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
+import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
+
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicate;
 import com.google.common.cache.Cache;
@@ -23,32 +30,21 @@ import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.NavigableMap;
 import java.util.Set;
 import javax.annotation.Nullable;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.opendaylight.yangtools.util.concurrent.ExceptionMapper;
 import org.opendaylight.yangtools.util.concurrent.ReflectiveExceptionMapper;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils;
-import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
-import org.opendaylight.yangtools.yang.parser.impl.YangParserListenerImpl;
-import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
 import org.opendaylight.yangtools.yang.parser.util.ASTSchemaSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +63,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
 
     private final AsyncFunction<List<ASTSchemaSource>, SchemaContext> assembleSources = new AsyncFunction<List<ASTSchemaSource>, SchemaContext>() {
         @Override
-        public ListenableFuture<SchemaContext> apply(final List<ASTSchemaSource> sources) throws SchemaResolutionException {
+        public ListenableFuture<SchemaContext> apply(final List<ASTSchemaSource> sources) throws SchemaResolutionException, SourceException, ReactorException {
             final Map<SourceIdentifier, ASTSchemaSource> srcs =
                     Maps.uniqueIndex(sources, ASTSchemaSource.GET_IDENTIFIER);
             final Map<SourceIdentifier, YangModelDependencyInfo> deps =
@@ -78,34 +74,32 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
             final DependencyResolver res = DependencyResolver.create(deps);
             if (!res.getUnresolvedSources().isEmpty()) {
                 LOG.debug("Omitting models {} due to unsatisfied imports {}", res.getUnresolvedSources(), res.getUnsatisfiedImports());
-
-                // FIXME: push into DependencyResolver
-
                 throw new SchemaResolutionException("Failed to resolve required models",
                         res.getResolvedSources(), res.getUnsatisfiedImports());
             }
 
             final Map<SourceIdentifier, ParserRuleContext> asts =
                     Maps.transformValues(srcs, ASTSchemaSource.GET_AST);
-            final Map<String, NavigableMap<Date, URI>> namespaceContext = BuilderUtils.createYangNamespaceContext(
-                    asts.values(), Optional.<SchemaContext>absent());
 
-            final ParseTreeWalker walker = new ParseTreeWalker();
-            final Map<SourceIdentifier, ModuleBuilder> sourceToBuilder = new LinkedHashMap<>();
+            CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
+                    .newBuild();
 
-            for (final Entry<SourceIdentifier, ParserRuleContext> entry : asts.entrySet()) {
-                final ModuleBuilder moduleBuilder = YangParserListenerImpl.create(namespaceContext, entry.getKey().getName(),
-                        walker, entry.getValue()).getModuleBuilder();
-
-                moduleBuilder.setSource(srcs.get(entry.getKey()).getYangText());
-                sourceToBuilder.put(entry.getKey(), moduleBuilder);
+            for (final Entry<SourceIdentifier, ParserRuleContext> entry : asts
+                    .entrySet()) {
+                ParserRuleContext parserRuleCtx = entry.getValue();
+                if (parserRuleCtx instanceof YangStatementParser.StatementContext) {
+                    YangStatementSourceImpl source = new YangStatementSourceImpl(
+                            entry.getKey(),
+                            (YangStatementParser.StatementContext) parserRuleCtx);
+                    reactor.addSource(source);
+                } else {
+                    throw new IllegalArgumentException("Only YangStatementParser.StatementContext is supported.");
+                }
             }
-            LOG.debug("Modules ready for integration");
 
-            final YangParserImpl parser = YangParserImpl.getInstance();
-            final Collection<Module> modules = parser.buildModules(sourceToBuilder.values());
-            LOG.debug("Integrated cross-references modules");
-            return Futures.immediateCheckedFuture(parser.assembleContext(modules));
+            SchemaContext schemaContext = reactor.buildEffective();
+
+            return Futures.immediateCheckedFuture(schemaContext);
         }
     };
 
