@@ -39,8 +39,7 @@ public class OutputStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value)
-                throws SourceException {
+        public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
             return Utils.qNameFromArgument(ctx, "output");
         }
 

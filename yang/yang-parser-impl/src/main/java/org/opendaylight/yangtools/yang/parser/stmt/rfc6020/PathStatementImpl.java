@@ -35,7 +35,7 @@ public class PathStatementImpl extends AbstractDeclaredStatement<RevisionAwareXP
         }
 
         @Override
-        public RevisionAwareXPath parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) throws SourceException {
+        public RevisionAwareXPath parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
             return new RevisionAwareXPathImpl(value, Utils.isXPathAbsolute(ctx, value));
         }
 
