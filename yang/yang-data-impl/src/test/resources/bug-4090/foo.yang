@@ -1,0 +1,28 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+
+    revision 2015-09-10 {
+        description "Test";
+    }
+
+    typedef bridge-domain-ref {
+        type leafref {
+            path "/target-name";
+        }
+    }
+
+    container l2 {
+        choice interconnection {
+            case bridge-based {
+                leaf bridge-domain {
+                    type bridge-domain-ref;
+                }
+            }
+        }
+    }
+
+    leaf target-name {
+        type int32;
+    }
+}
