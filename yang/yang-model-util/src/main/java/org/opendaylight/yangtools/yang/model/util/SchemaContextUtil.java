@@ -7,6 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import java.util.Arrays;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+
 import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
@@ -598,5 +605,219 @@ public final class SchemaContextUtil {
                         return stringPathPartToQName(context, module, input);
                     }
                 }));
+    }
+
+
+    /**
+     * Extracts the base type of node on which schema node points to. If target
+     * node is again of type LeafrefTypeDefinition, methods will be call
+     * recursively until it reach concrete type definition.
+     *
+     * @param typeDefinition
+     *            type of node which will be extracted
+     * @param schemaContext
+     *            Schema Context
+     * @param schema
+     *            Schema Node
+     * @return recursively found type definition this leafref is pointing to or
+     *         null if the xpath is incorrect (null is there to preserve
+     *         backwards compatibility)
+     */
+    public static TypeDefinition<?> getBaseTypeForLeafRef(
+            final LeafrefTypeDefinition typeDefinition,
+            final SchemaContext schemaContext, final SchemaNode schema) {
+        RevisionAwareXPath pathStatement = typeDefinition.getPathStatement();
+        pathStatement = new RevisionAwareXPathImpl(
+                stripConditionsFromXPathString(pathStatement),
+                pathStatement.isAbsolute());
+
+        Module parentModule = findParentModuleByType(schemaContext, schema);
+
+        final DataSchemaNode dataSchemaNode;
+        if (pathStatement.isAbsolute()) {
+            dataSchemaNode = (DataSchemaNode) SchemaContextUtil
+                    .findDataSchemaNode(schemaContext, parentModule,
+                            pathStatement);
+        } else {
+            dataSchemaNode = (DataSchemaNode) SchemaContextUtil
+                    .findDataSchemaNodeForRelativeXPath(schemaContext,
+                            parentModule, schema, pathStatement);
+        }
+
+        // FIXME this is just to preserve backwards compatibility since
+        // yangtools do not mind wrong leafref xpaths
+        // and current expected behaviour for such cases is to just use pure
+        // string
+        // This should throw an exception about incorrect XPath in leafref
+        if (dataSchemaNode == null) {
+            return null;
+        }
+
+        final TypeDefinition<?> targetTypeDefinition = typeDefinition(dataSchemaNode);
+
+        if (targetTypeDefinition instanceof LeafrefTypeDefinition) {
+            return getBaseTypeForLeafRef(
+                    ((LeafrefTypeDefinition) targetTypeDefinition),
+                    schemaContext, dataSchemaNode);
+        } else {
+            return targetTypeDefinition;
+        }
+    }
+
+    /**
+     * Returns parent Yang Module for specified Schema Context in which Schema
+     * Node is declared. If Schema Node is of type 'ExtendedType' it tries to
+     * find parent module in which the type was originally declared (needed for
+     * correct leafref path resolution). <br>
+     * If the Schema Node is not present in Schema Context the operation will
+     * return <code>null</code>. <br>
+     * If Schema Context or Schema Node contains <code>null</code> references
+     * the method will throw IllegalArgumentException
+     *
+     * @throws IllegalArgumentException
+     *
+     * @param schemaContext
+     *            Schema Context
+     * @param schemaNode
+     *            Schema Node
+     * @return Yang Module for specified Schema Context and Schema Node, if
+     *         Schema Node is NOT present, the method will returns
+     *         <code>null</code>
+     */
+    public static Module findParentModuleByType(
+            final SchemaContext schemaContext, final SchemaNode schemaNode) {
+        Preconditions.checkArgument(schemaContext != null,
+                "Schema Context reference cannot be NULL!");
+        Preconditions.checkArgument(schemaNode != null,
+                "Schema Node cannot be NULL!");
+        TypeDefinition<?> nodeType = null;
+
+        if (schemaNode instanceof LeafSchemaNode) {
+            nodeType = ((LeafSchemaNode) schemaNode).getType();
+        } else if (schemaNode instanceof LeafListSchemaNode) {
+            nodeType = ((LeafListSchemaNode) schemaNode).getType();
+        }
+
+        if (nodeType != null && nodeType instanceof ExtendedType) {
+            while (nodeType.getBaseType() instanceof ExtendedType) {
+                nodeType = nodeType.getBaseType();
+            }
+
+            QNameModule typeDefModuleQname = nodeType.getQName().getModule();
+
+            return schemaContext.findModuleByNamespaceAndRevision(
+                    typeDefModuleQname.getNamespace(),
+                    typeDefModuleQname.getRevision());
+        }
+
+        return SchemaContextUtil.findParentModule(schemaContext, schemaNode);
+    }
+
+    /**
+     * Returns base type for {@code typeDefinition} which belongs to module
+     * specified via {@code qName}. This handle case when leafref type isn't
+     * specified as type substatement of leaf or leaf-list but is defined in
+     * other module as typedef which is then imported to referenced module.
+     *
+     * Because {@code typeDefinition} is definied via typedef statement, only
+     * absolute path is meaningful.
+     *
+     * @param typeDefinition
+     * @param schemaContext
+     * @param qName
+     * @return
+     */
+    public static TypeDefinition<?> getBaseTypeForLeafRef(
+            final LeafrefTypeDefinition typeDefinition,
+            final SchemaContext schemaContext, final QName qName) {
+        final RevisionAwareXPath pathStatement = typeDefinition
+                .getPathStatement();
+        final RevisionAwareXPath strippedPathStatement = new RevisionAwareXPathImpl(
+                stripConditionsFromXPathString(pathStatement),
+                pathStatement.isAbsolute());
+        if (!strippedPathStatement.isAbsolute()) {
+            return null;
+        }
+
+        final Module parentModule = schemaContext
+                .findModuleByNamespaceAndRevision(qName.getNamespace(),
+                        qName.getRevision());
+        final DataSchemaNode dataSchemaNode = (DataSchemaNode) SchemaContextUtil
+                .findDataSchemaNode(schemaContext, parentModule,
+                        strippedPathStatement);
+        final TypeDefinition<?> targetTypeDefinition = typeDefinition(dataSchemaNode);
+        if (targetTypeDefinition instanceof LeafrefTypeDefinition) {
+            return getBaseTypeForLeafRef(
+                    ((LeafrefTypeDefinition) targetTypeDefinition),
+                    schemaContext, dataSchemaNode);
+        } else {
+            return targetTypeDefinition;
+        }
+    }
+
+    /**
+     * Removes conditions from xPath pointed to target node.
+     *
+     * @param pathStatement
+     *            xPath to target node
+     * @return string representation of xPath without conditions
+     *
+     */
+    private static String stripConditionsFromXPathString(
+            final RevisionAwareXPath pathStatement) {
+        return pathStatement.toString().replaceAll("\\[.*\\]", "");
+    }
+
+    /**
+     * Extracts the base type of leaf schema node until it reach concrete type
+     * of TypeDefinition.
+     *
+     * @param node
+     *            a node representing LeafSchemaNode
+     * @return concrete type definition of node value
+     */
+    private static TypeDefinition<? extends Object> typeDefinition(
+            final LeafSchemaNode node) {
+        TypeDefinition<?> baseType = node.getType();
+        while (baseType.getBaseType() != null) {
+            baseType = baseType.getBaseType();
+        }
+        return baseType;
+    }
+
+    /**
+     * Extracts the base type of leaf schema node until it reach concrete type
+     * of TypeDefinition.
+     *
+     * @param node
+     *            a node representing LeafListSchemaNode
+     * @return concrete type definition of node value
+     */
+    private static TypeDefinition<? extends Object> typeDefinition(
+            final LeafListSchemaNode node) {
+        TypeDefinition<?> baseType = node.getType();
+        while (baseType.getBaseType() != null) {
+            baseType = baseType.getBaseType();
+        }
+        return baseType;
+    }
+
+    /**
+     * Gets the base type of DataSchemaNode value.
+     *
+     * @param node
+     *            a node representing DataSchemaNode
+     * @return concrete type definition of node value
+     */
+    private static TypeDefinition<? extends Object> typeDefinition(
+            final DataSchemaNode node) {
+        if (node instanceof LeafListSchemaNode) {
+            return typeDefinition((LeafListSchemaNode) node);
+        } else if (node instanceof LeafSchemaNode) {
+            return typeDefinition((LeafSchemaNode) node);
+        } else {
+            throw new IllegalArgumentException("Unhandled parameter types: "
+                    + Arrays.<Object> asList(node).toString());
+        }
     }
 }

@@ -9,6 +9,9 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import static com.google.common.base.Preconditions.checkState;
 
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
@@ -243,7 +246,13 @@ public class XmlDocumentUtils {
 
     private static Object resolveValueFromSchemaType(final Element xmlElement, final DataSchemaNode schema, final TypeDefinition<?> type,
         final XmlCodecProvider codecProvider,final SchemaContext schemaCtx) {
-        final TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(type);
+
+        TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(type);
+        if (baseType instanceof LeafrefTypeDefinition) {
+            baseType = SchemaContextUtil.getBaseTypeForLeafRef(
+                    (LeafrefTypeDefinition) baseType, schemaCtx, schema);
+        }
+
         final String text = xmlElement.getTextContent();
         final Object value;
 
@@ -252,7 +261,7 @@ public class XmlDocumentUtils {
         } else if (baseType instanceof IdentityrefTypeDefinition) {
             value = InstanceIdentifierForXmlCodec.toIdentity(text, xmlElement, schemaCtx);
         } else {
-            final TypeDefinitionAwareCodec<?, ?> codec = codecProvider.codecFor(type);
+            final TypeDefinitionAwareCodec<?, ?> codec = codecProvider.codecFor(baseType);
             if (codec == null) {
                 LOG.info("No codec for schema {}, falling back to text", schema);
                 value = text;
