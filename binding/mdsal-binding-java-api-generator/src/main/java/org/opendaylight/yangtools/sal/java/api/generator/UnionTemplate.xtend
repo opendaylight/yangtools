@@ -76,8 +76,10 @@ class UnionTemplate extends ClassTemplate {
                                 «ELSEIF "byte[]".equals(propRet.name)»
                                     ««« type binary
                                     this.«other.fieldName» = new «String.importedName»(«property.fieldName»).toCharArray();
-                                «ELSEIF propRet.fullyQualifiedName.startsWith("java.lang") || propRet instanceof Enumeration»
-                                    ««« type int*, uint or enumeration*
+                                «ELSEIF propRet.fullyQualifiedName.startsWith("java.lang")
+                                    || propRet instanceof Enumeration
+                                    || propRet.fullyQualifiedName.startsWith("java.math")»
+                                    ««« type int*, uint, decimal64 or enumeration*
                                     this.«other.fieldName» = «property.fieldName».toString().toCharArray();
                                 «ELSEIF propRet instanceof GeneratedTransferObject && (propRet as GeneratedTransferObject).unionType»
                                     ««« union type
