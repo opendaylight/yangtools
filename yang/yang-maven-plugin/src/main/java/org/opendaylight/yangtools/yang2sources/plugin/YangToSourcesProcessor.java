@@ -25,7 +25,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.maven.model.Resource;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -38,15 +37,18 @@ import org.opendaylight.yangtools.yang2sources.plugin.Util.YangsInZipsResult;
 import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
 import org.opendaylight.yangtools.yang2sources.spi.BuildContextAware;
 import org.opendaylight.yangtools.yang2sources.spi.MavenProjectAware;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonatype.plexus.build.incremental.BuildContext;
 import org.sonatype.plexus.build.incremental.DefaultBuildContext;
 
 class YangToSourcesProcessor {
+    private static final Logger LOG = LoggerFactory.getLogger(YangToSourcesProcessor.class);
+
     static final String LOG_PREFIX = "yang-to-sources:";
     static final String META_INF_YANG_STRING = "META-INF" + File.separator + "yang";
     static final String META_INF_YANG_STRING_JAR = "META-INF" + "/" + "yang";
 
-    private final Log log;
     private final File yangFilesRootDir;
     private final File[] excludedFiles;
     private final List<CodeGeneratorArg> codeGenerators;
@@ -57,15 +59,14 @@ class YangToSourcesProcessor {
     private final URLSchemaContextResolver resolver;
 
     @VisibleForTesting
-    YangToSourcesProcessor(Log log, File yangFilesRootDir, File[] excludedFiles, List<CodeGeneratorArg> codeGenerators,
+    YangToSourcesProcessor(File yangFilesRootDir, File[] excludedFiles, List<CodeGeneratorArg> codeGenerators,
             MavenProject project, boolean inspectDependencies, YangProvider yangProvider) {
-        this(new DefaultBuildContext(), log, yangFilesRootDir, excludedFiles, codeGenerators, project, inspectDependencies, yangProvider);
+        this(new DefaultBuildContext(), yangFilesRootDir, excludedFiles, codeGenerators, project, inspectDependencies, yangProvider);
     }
 
-    private YangToSourcesProcessor(BuildContext buildContext,  Log log, File yangFilesRootDir, File[] excludedFiles,
+    private YangToSourcesProcessor(BuildContext buildContext, File yangFilesRootDir, File[] excludedFiles,
             List<CodeGeneratorArg> codeGenerators, MavenProject project, boolean inspectDependencies, YangProvider yangProvider) {
         this.buildContext = Util.checkNotNull(buildContext, "buildContext");
-        this.log = Util.checkNotNull(log, "log");
         this.yangFilesRootDir = Util.checkNotNull(yangFilesRootDir, "yangFilesRootDir");
         this.excludedFiles = new File[excludedFiles.length];
         int i = 0;
@@ -79,39 +80,39 @@ class YangToSourcesProcessor {
         this.resolver = URLSchemaContextResolver.create("maven-plugin");
     }
 
-    YangToSourcesProcessor(BuildContext buildContext, Log log, File yangFilesRootDir, File[] excludedFiles, List<CodeGeneratorArg> codeGenerators,
+    YangToSourcesProcessor(BuildContext buildContext, File yangFilesRootDir, File[] excludedFiles, List<CodeGeneratorArg> codeGenerators,
             MavenProject project, boolean inspectDependencies) {
-        this(log, yangFilesRootDir, excludedFiles, codeGenerators, project, inspectDependencies, new YangProvider());
+        this(yangFilesRootDir, excludedFiles, codeGenerators, project, inspectDependencies, new YangProvider());
     }
 
     public void execute() throws MojoExecutionException, MojoFailureException {
         ContextHolder context = processYang();
         if (context != null) {
             generateSources(context);
-            yangProvider.addYangsToMetaInf(log, project, yangFilesRootDir, excludedFiles);
+            yangProvider.addYangsToMetaInf(project, yangFilesRootDir, excludedFiles);
         }
     }
 
     private ContextHolder processYang() throws MojoExecutionException {
         YangParserImpl parser = new YangParserImpl();
         List<Closeable> closeables = new ArrayList<>();
-        log.info(Util.message("Inspecting %s", LOG_PREFIX, yangFilesRootDir));
+        LOG.info(Util.message("Inspecting %s", LOG_PREFIX, yangFilesRootDir));
         try {
             /*
              * Collect all files which affect YANG context. This includes all
              * files in current project and optionally any jars/files in the
              * dependencies.
              */
-            final Collection<File> yangFilesInProject = Util.listFiles(yangFilesRootDir, excludedFiles, log);
+            final Collection<File> yangFilesInProject = Util.listFiles(yangFilesRootDir, excludedFiles);
 
 
             final Collection<File> allFiles = new ArrayList<>(yangFilesInProject);
             if (inspectDependencies) {
-                allFiles.addAll(Util.findYangFilesInDependencies(log, project));
+                allFiles.addAll(Util.findYangFilesInDependencies(project));
             }
 
             if (allFiles.isEmpty()) {
-            	log.info(Util.message("No input files found", LOG_PREFIX));
+            	LOG.info(Util.message("No input files found", LOG_PREFIX));
             	return null;
             }
 
@@ -122,13 +123,14 @@ class YangToSourcesProcessor {
             boolean noChange = true;
             for (final File f : allFiles) {
                 if (buildContext.hasDelta(f)) {
-                    log.debug(Util.message("buildContext %s indicates %s changed, forcing regeneration", LOG_PREFIX, buildContext, f));
+                    LOG.debug(Util.message("buildContext %s indicates %s changed, forcing regeneration", LOG_PREFIX,
+                            buildContext, f));
                     noChange = false;
                 }
             }
 
             if (noChange) {
-                log.info(Util.message("None of %s input files changed", LOG_PREFIX, allFiles.size()));
+                LOG.info(Util.message("None of %s input files changed", LOG_PREFIX, allFiles.size()));
                 return null;
             }
 
@@ -151,7 +153,7 @@ class YangToSourcesProcessor {
             Set<Module> projectYangModules;
             try {
                 if (inspectDependencies) {
-                    YangsInZipsResult dependentYangResult = Util.findYangFilesInDependenciesAsStream(log, project);
+                    YangsInZipsResult dependentYangResult = Util.findYangFilesInDependenciesAsStream(project);
                     Closeable dependentYangResult1 = dependentYangResult;
                     closeables.add(dependentYangResult1);
                     List<InputStream> yangStreams = toStreamsWithoutDuplicates(dependentYangResult.getYangStreams());
@@ -177,14 +179,15 @@ class YangToSourcesProcessor {
 
             Set<Module> parsedAllYangModules = new HashSet<>(allYangModules.values());
             SchemaContext resolveSchemaContext = parser.resolveSchemaContext(parsedAllYangModules);
-            log.info(Util.message("%s files parsed from %s", LOG_PREFIX, Util.YANG_SUFFIX.toUpperCase(), yangsInProject));
+            LOG.info(Util.message("%s files parsed from %s", LOG_PREFIX, Util.YANG_SUFFIX.toUpperCase(),
+                    yangsInProject));
             return new ContextHolder(resolveSchemaContext, projectYangModules);
 
             // MojoExecutionException is thrown since execution cannot continue
         } catch (Exception e) {
             String message = Util.message("Unable to parse %s files from %s", LOG_PREFIX, Util.YANG_SUFFIX,
                     yangFilesRootDir);
-            log.error(message, e);
+            LOG.error(message, e);
             throw new MojoExecutionException(message, e);
         }
     }
@@ -207,14 +210,15 @@ class YangToSourcesProcessor {
     }
 
     static class YangProvider {
+        private static final Logger LOG = LoggerFactory.getLogger(YangProvider.class);
 
-        void addYangsToMetaInf(Log log, MavenProject project, File yangFilesRootDir, File[] excludedFiles)
+        void addYangsToMetaInf(MavenProject project, File yangFilesRootDir, File[] excludedFiles)
                 throws MojoFailureException {
 
             // copy project's src/main/yang/*.yang to target/generated-sources/yang/META-INF/yang/*.yang
 
             File generatedYangDir = new File(project.getBasedir(), CodeGeneratorArg.YANG_GENERATED_DIR);
-            addYangsToMetaInf(log, project, yangFilesRootDir, excludedFiles, generatedYangDir);
+            addYangsToMetaInf(project, yangFilesRootDir, excludedFiles, generatedYangDir);
 
             // Also copy to the actual build output dir if different than "target". When running in
             // Eclipse this can differ (eg "target-ide").
@@ -222,11 +226,11 @@ class YangToSourcesProcessor {
             File actualGeneratedYangDir = new File(project.getBuild().getDirectory(),
                     CodeGeneratorArg.YANG_GENERATED_DIR.replace("target" + File.separator, ""));
             if(!actualGeneratedYangDir.equals(generatedYangDir)) {
-                addYangsToMetaInf(log, project, yangFilesRootDir, excludedFiles, actualGeneratedYangDir);
+                addYangsToMetaInf(project, yangFilesRootDir, excludedFiles, actualGeneratedYangDir);
             }
         }
 
-        private void addYangsToMetaInf(Log log, MavenProject project, File yangFilesRootDir,
+        private void addYangsToMetaInf(MavenProject project, File yangFilesRootDir,
                 File[] excludedFiles, File generatedYangDir)
                 throws MojoFailureException {
 
@@ -234,18 +238,18 @@ class YangToSourcesProcessor {
             withMetaInf.mkdirs();
 
             try {
-                Collection<File> files = Util.listFiles(yangFilesRootDir, excludedFiles, log);
+                Collection<File> files = Util.listFiles(yangFilesRootDir, excludedFiles);
                 for (File file : files) {
                     org.apache.commons.io.FileUtils.copyFile(file, new File(withMetaInf, file.getName()));
                 }
             } catch (IOException e) {
-                log.warn(String.format("Failed to generate files into root %s", yangFilesRootDir), e);
+                LOG.warn(String.format("Failed to generate files into root %s", yangFilesRootDir), e);
                 throw new MojoFailureException("Unable to list yang files into resource folder", e);
             }
 
             setResource(generatedYangDir, project);
 
-            log.debug(Util.message("Yang files from: %s marked as resources: %s", LOG_PREFIX, yangFilesRootDir,
+            LOG.debug(Util.message("Yang files from: %s marked as resources: %s", LOG_PREFIX, yangFilesRootDir,
                     META_INF_YANG_STRING_JAR));
         }
 
@@ -261,7 +265,7 @@ class YangToSourcesProcessor {
      */
     private void generateSources(ContextHolder context) throws MojoFailureException {
         if (codeGenerators.size() == 0) {
-            log.warn(Util.message("No code generators provided", LOG_PREFIX));
+            LOG.warn(Util.message("No code generators provided", LOG_PREFIX));
             return;
         }
 
@@ -271,9 +275,8 @@ class YangToSourcesProcessor {
                 generateSourcesWithOneGenerator(context, codeGenerator);
             } catch (Exception e) {
                 // try other generators, exception will be thrown after
-                log.error(
-                        Util.message("Unable to generate sources with %s generator", LOG_PREFIX,
-                                codeGenerator.getCodeGeneratorClass()), e);
+                LOG.error(Util.message("Unable to generate sources with %s generator", LOG_PREFIX, codeGenerator
+                        .getCodeGeneratorClass()), e);
                 thrown.put(codeGenerator.getCodeGeneratorClass(), e.getClass().getCanonicalName());
             }
         }
@@ -282,7 +285,7 @@ class YangToSourcesProcessor {
             String message = Util.message(
                     "One or more code generators failed, including failed list(generatorClass=exception) %s",
                     LOG_PREFIX, thrown.toString());
-            log.error(message);
+            LOG.error(message);
             throw new MojoFailureException(message);
         }
     }
@@ -296,7 +299,7 @@ class YangToSourcesProcessor {
         codeGeneratorCfg.check();
 
         BasicCodeGenerator g = Util.getInstance(codeGeneratorCfg.getCodeGeneratorClass(), BasicCodeGenerator.class);
-        log.info(Util.message("Code generator instantiated from %s", LOG_PREFIX,
+        LOG.info(Util.message("Code generator instantiated from %s", LOG_PREFIX,
                 codeGeneratorCfg.getCodeGeneratorClass()));
 
         File outputDir = codeGeneratorCfg.getOutputBaseDir(project);
@@ -307,9 +310,9 @@ class YangToSourcesProcessor {
           throw new NullPointerException("outputBaseDir is null. Please provide a valid outputBaseDir value in the pom.xml");
         }
 
-        log.info(Util.message("Sources will be generated to %s", LOG_PREFIX, outputDir));
-        log.debug(Util.message("Project root dir is %s", LOG_PREFIX, project.getBasedir()));
-        log.debug(Util.message("Additional configuration picked up for : %s: %s", LOG_PREFIX,
+        LOG.info(Util.message("Sources will be generated to %s", LOG_PREFIX, outputDir));
+        LOG.debug(Util.message("Project root dir is %s", LOG_PREFIX, project.getBasedir()));
+        LOG.debug(Util.message("Additional configuration picked up for : %s: %s", LOG_PREFIX,
                 codeGeneratorCfg.getCodeGeneratorClass(), codeGeneratorCfg.getAdditionalConfiguration()));
 
         if (g instanceof BuildContextAware) {
@@ -323,12 +326,12 @@ class YangToSourcesProcessor {
 
         YangProvider.setResource(resourceBaseDir, project);
         g.setResourceBaseDir(resourceBaseDir);
-        log.debug(Util.message("Folder: %s marked as resources for generator: %s", LOG_PREFIX, resourceBaseDir,
+        LOG.debug(Util.message("Folder: %s marked as resources for generator: %s", LOG_PREFIX, resourceBaseDir,
                 codeGeneratorCfg.getCodeGeneratorClass()));
 
         Collection<File> generated = g.generateSources(context.getContext(), outputDir, context.getYangModules());
 
-        log.info(Util.message("Sources generated by %s: %s", LOG_PREFIX, codeGeneratorCfg.getCodeGeneratorClass(),
+        LOG.info(Util.message("Sources generated by %s: %s", LOG_PREFIX, codeGeneratorCfg.getCodeGeneratorClass(),
                 generated));
     }
 
