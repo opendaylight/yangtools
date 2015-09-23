@@ -26,7 +26,7 @@
         <yangtools.version>0.8.0-SNAPSHOT</yangtools.version>
         <mdsal.version>2.0.0-SNAPSHOT</mdsal.version>
         <mdsalmodel.version>0.8.0-SNAPSHOT</mdsalmodel.version>
-        <salGeneratorPath>src/main/yang-gen-sal</salGeneratorPath>
+        <salGeneratorPath>target/generated-classes/mdsal-binding</salGeneratorPath>
     </properties>
 
     <dependencyManagement>
