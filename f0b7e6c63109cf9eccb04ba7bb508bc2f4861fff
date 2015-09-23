@@ -1,0 +1,174 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_12f5dd82",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaContextUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-23T09:18:20Z",
+      "side": 1,
+      "message": "wrong import order",
+      "revId": "f0b7e6c63109cf9eccb04ba7bb508bc2f4861fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_b2f18997",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaContextUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 626,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-23T09:18:20Z",
+      "side": 1,
+      "message": "line width is capped at 120 columns, please use them instead of wasting terminal space",
+      "revId": "f0b7e6c63109cf9eccb04ba7bb508bc2f4861fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d2ee85b4",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaContextUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 629,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-23T09:18:20Z",
+      "side": 1,
+      "message": "make this final...",
+      "revId": "f0b7e6c63109cf9eccb04ba7bb508bc2f4861fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_722bf1eb",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaContextUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 630,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-23T09:18:20Z",
+      "side": 1,
+      "message": "... and use two variables, as this replacement is non-obvious.",
+      "revId": "f0b7e6c63109cf9eccb04ba7bb508bc2f4861fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_92300d58",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaContextUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 642,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-23T09:18:20Z",
+      "side": 1,
+      "message": "why is this method referenced via SchemaContextUtil prefix?",
+      "revId": "f0b7e6c63109cf9eccb04ba7bb508bc2f4861fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_523a7537",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaContextUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 701,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-23T09:18:20Z",
+      "side": 1,
+      "message": "unneeded check for null: instanceof on null returns false",
+      "revId": "f0b7e6c63109cf9eccb04ba7bb508bc2f4861fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_f23e2129",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaContextUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 733,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-23T09:18:20Z",
+      "side": 1,
+      "message": "do not split object/method to two lines, it makes the thing unreadable",
+      "revId": "f0b7e6c63109cf9eccb04ba7bb508bc2f4861fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d24525b4",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaContextUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 738,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-23T09:18:20Z",
+      "side": 1,
+      "message": "isAbsolute seems to be inherited, hence we should be able to check for it earlier",
+      "revId": "f0b7e6c63109cf9eccb04ba7bb508bc2f4861fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_b248a9cd",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaContextUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 768,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-23T09:18:20Z",
+      "side": 1,
+      "message": "use a pre-compiled pattern",
+      "revId": "f0b7e6c63109cf9eccb04ba7bb508bc2f4861fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_123cfd2e",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaContextUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 820,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-23T09:18:20Z",
+      "side": 1,
+      "message": "this is just a single type, so concatenating it directly to the string should work just fine",
+      "revId": "f0b7e6c63109cf9eccb04ba7bb508bc2f4861fff",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
