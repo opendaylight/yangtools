@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.restconf.client;
 
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
+import com.sun.jersey.api.client.ClientResponse;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.opendaylight.yangtools.restconf.client.to.RestRpcError;
 import org.opendaylight.yangtools.restconf.client.to.RestRpcResult;
 import org.opendaylight.yangtools.restconf.common.ResourceUri;
@@ -36,22 +38,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
-import com.sun.jersey.api.client.ClientResponse;
-
 public class BindingToRestRpc implements InvocationHandler {
 
     private final RestconfClientImpl client;
     private static final Logger logger = LoggerFactory.getLogger(BindingToRestRpc.class);
     private final BindingIndependentMappingService mappingService;
-    private final SchemaContext schcemaContext;
+    private final SchemaContext schemaContext;
     private final Module module;
 
     public BindingToRestRpc(final Class<?> proxiedInterface,final BindingIndependentMappingService mappingService,final RestconfClientImpl client,final SchemaContext schemaContext) throws Exception {
         this.mappingService = mappingService;
         this.client  = client;
-        this.schcemaContext = schemaContext;
+        this.schemaContext = schemaContext;
         YangModuleInfo moduleInfo = BindingReflections.getModuleInfo(proxiedInterface);
         this.module = schemaContext.findModuleByName(moduleInfo.getName(),org.opendaylight.yangtools.yang.common.QName.parseRevision(moduleInfo.getRevision()));
     }
@@ -66,7 +64,7 @@ public class BindingToRestRpc implements InvocationHandler {
                 Document rpcInputDoc = null;
                 for (Object component:objects){
                     CompositeNode rpcInput = mappingService.toDataDom((DataObject) component);
-                    rpcInputDoc = XmlDocumentUtils.toDocument(rpcInput,rpcDef.getInput(),XmlDocumentUtils.defaultValueCodecProvider());
+                    rpcInputDoc = XmlDocumentUtils.toDocument(rpcInput,rpcDef.getInput(),XmlDocumentUtils.defaultValueCodecProvider(), schemaContext);
                 }
                 DOMImplementationLS lsImpl = (DOMImplementationLS)rpcInputDoc.getImplementation().getFeature("LS", "3.0");
                 LSSerializer serializer = lsImpl.createLSSerializer();

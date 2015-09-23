@@ -29,21 +29,20 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
  * A {@link NormalizedNodeStreamWriter} which translates the events into an
  * {@link XMLStreamWriter}, resulting in a RFC 6020 XML encoding.
  */
 public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
-    private static final XmlStreamUtils UTILS = XmlStreamUtils.create(XmlUtils.DEFAULT_XML_CODEC_PROVIDER);
-
+    private final XmlStreamUtils utils;
     private final XMLStreamWriter writer;
     private final SchemaTracker tracker;
 
     private XMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final SchemaContext context, final SchemaPath path) {
         this.writer = Preconditions.checkNotNull(writer);
         this.tracker = SchemaTracker.create(context, path);
+        this.utils = XmlStreamUtils.create(XmlUtils.DEFAULT_XML_CODEC_PROVIDER, context);
     }
 
     /**
@@ -78,11 +77,11 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
         }
     }
 
-    private void writeElement(final QName qname, final TypeDefinition<?> type, final Object value) throws IOException {
+    private void writeElement(final SchemaNode schemaNode, final Object value) throws IOException {
         try {
-            writeStartElement(qname);
+            writeStartElement(schemaNode.getQName());
             if (value != null) {
-                UTILS.writeValue(writer, type, value);
+                utils.writeValue(writer, schemaNode, value);
             }
             writer.writeEndElement();
         } catch (XMLStreamException e) {
@@ -110,8 +109,7 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
     @Override
     public void leafNode(final NodeIdentifier name, final Object value) throws IOException {
         final LeafSchemaNode schema = tracker.leafNode(name);
-
-        writeElement(schema.getQName(), schema.getType(), value);
+        writeElement(schema, value);
     }
 
     @Override
@@ -122,7 +120,7 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
     @Override
     public void leafSetEntryNode(final Object value) throws IOException {
         final LeafListSchemaNode schema = tracker.leafSetEntryNode();
-        writeElement(schema.getQName(), schema.getType(), value);
+        writeElement(schema, value);
     }
 
     @Override
@@ -173,7 +171,7 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
         try {
             writeStartElement(qname);
             if (value != null) {
-                UTILS.writeValue(writer, (Node<?>)value, schema);
+                utils.writeValue(writer, (Node<?>)value, schema);
             }
             writer.writeEndElement();
         } catch (XMLStreamException e) {

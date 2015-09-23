@@ -122,7 +122,7 @@ public class XmlDocumentUtilsTest {
 
     public Document inputCompositeNodeToXml(final CompositeNode cNode)
             throws UnsupportedDataTypeException {
-        return XmlDocumentUtils.toDocument(cNode, testRpc.getInput(), XmlDocumentUtils.defaultValueCodecProvider());
+        return XmlDocumentUtils.toDocument(cNode, testRpc.getInput(), XmlDocumentUtils.defaultValueCodecProvider(), schema);
     }
 
     public CompositeNode inputXmlToCompositeNode(final Element e) {

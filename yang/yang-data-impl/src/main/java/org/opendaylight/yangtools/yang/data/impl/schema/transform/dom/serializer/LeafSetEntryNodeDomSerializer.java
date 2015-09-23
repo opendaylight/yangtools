@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.serializer;
 
+import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
@@ -15,8 +16,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import com.google.common.base.Preconditions;
 
 final class LeafSetEntryNodeDomSerializer extends
         LeafSetEntryNodeBaseSerializer<Element> {
@@ -33,7 +32,7 @@ final class LeafSetEntryNodeDomSerializer extends
     protected Element serializeLeaf(LeafListSchemaNode schema, LeafSetEntryNode<?> node) {
         Element itemEl = XmlDocumentUtils.createElementFor(doc, node);
 
-        DomUtils.serializeXmlValue(itemEl, schema.getType(), codecProvider, node.getValue());
+        DomUtils.serializeXmlValue(itemEl, schema, codecProvider, node.getValue());
 
         return itemEl;
     }

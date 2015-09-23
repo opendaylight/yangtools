@@ -2,6 +2,7 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.net.URI;
 import java.util.Collection;
@@ -25,10 +26,13 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,9 +44,15 @@ import org.slf4j.LoggerFactory;
 public class XmlStreamUtils {
     private static final Logger LOG = LoggerFactory.getLogger(XmlStreamUtils.class);
     private final XmlCodecProvider codecProvider;
+    private final Optional<SchemaContext> schemaContext;
 
     protected XmlStreamUtils(final XmlCodecProvider codecProvider) {
+        this(codecProvider, null);
+    }
+
+    private XmlStreamUtils(final XmlCodecProvider codecProvider, final SchemaContext schemaContext) {
         this.codecProvider = Preconditions.checkNotNull(codecProvider);
+        this.schemaContext = Optional.fromNullable(schemaContext);
     }
 
     /**
@@ -53,6 +63,10 @@ public class XmlStreamUtils {
      */
     public static XmlStreamUtils create(final XmlCodecProvider codecProvider) {
         return new XmlStreamUtils(codecProvider);
+    }
+
+    public static XmlStreamUtils create(final XmlCodecProvider codecProvider, final SchemaContext schemaContext) {
+        return new XmlStreamUtils(codecProvider, schemaContext);
     }
 
     /**
@@ -180,10 +194,8 @@ public class XmlStreamUtils {
 
         if (data instanceof SimpleNode<?>) {
             // Simple node
-            if (schema instanceof LeafListSchemaNode) {
-                writeValue(writer, ((LeafListSchemaNode) schema).getType(), data.getValue());
-            } else if (schema instanceof LeafSchemaNode) {
-                writeValue(writer, ((LeafSchemaNode) schema).getType(), data.getValue());
+            if (schema instanceof LeafListSchemaNode || schema instanceof LeafSchemaNode) {
+                writeValue(writer, schema, data.getValue());
             } else {
                 Object value = data.getValue();
                 if (value != null) {
@@ -262,20 +274,57 @@ public class XmlStreamUtils {
 
     /**
      * Write a value into a XML stream writer. This method assumes the start and end of element is
-     * emitted by the caller.
+     * emitted by the caller. This method handles also leafref schema nodes.
      *
      * @param writer XML Stream writer
-     * @param type data type
+     * @param schemaNode SchemaNode (it can be also leafref node, but SchemaContext must be present)
      * @param value data value
      * @throws XMLStreamException if an encoding problem occurs
      */
-    public void writeValue(final @Nonnull XMLStreamWriter writer, final @Nonnull TypeDefinition<?> type, final Object value) throws XMLStreamException {
+    public void writeValue(final @Nonnull XMLStreamWriter writer, final SchemaNode schemaNode, final Object value)
+            throws XMLStreamException {
+        if (value == null) {
+            LOG.debug("Value of {}:{} is null, not encoding it", schemaNode.getQName().getNamespace(), schemaNode
+                    .getQName().getLocalName());
+            return;
+        }
+
+        Preconditions
+                .checkArgument(
+                        schemaNode instanceof LeafSchemaNode || schemaNode instanceof LeafListSchemaNode,
+                        "Unable to write value for node %s, only nodes of type: leaf and leaf-list can be written at this point",
+                        schemaNode.getQName());
+
+        TypeDefinition<?> type = schemaNode instanceof LeafSchemaNode ? ((LeafSchemaNode) schemaNode).getType()
+                : ((LeafListSchemaNode) schemaNode).getType();
+
+        TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(type);
+
+        if (schemaContext.isPresent() && baseType instanceof LeafrefTypeDefinition) {
+            LeafrefTypeDefinition leafrefTypeDefinition = (LeafrefTypeDefinition) baseType;
+            baseType = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypeDefinition, schemaContext.get(), schemaNode);
+        }
+
+        writeValue(writer, baseType, value);
+    }
+
+    /**
+     * Write a value into a XML stream writer. This method assumes the start and end of element is
+     * emitted by the caller.
+     *
+     * @param writer XML Stream writer
+     * @param type data type. In case of leaf ref this should be the type of leaf being referenced
+     * @param value data value
+     * @throws XMLStreamException if an encoding problem occurs
+     */
+    public void writeValue(final @Nonnull XMLStreamWriter writer, final TypeDefinition<?> type, final Object value) throws XMLStreamException {
         if (value == null) {
             LOG.debug("Value of {}:{} is null, not encoding it", type.getQName().getNamespace(), type.getQName().getLocalName());
             return;
         }
 
-        final TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(type);
+        TypeDefinition<?> baseType = XmlUtils.resolveBaseTypeFrom(type);
+
         if (baseType instanceof IdentityrefTypeDefinition) {
             write(writer, (IdentityrefTypeDefinition) baseType, value);
         } else if (baseType instanceof InstanceIdentifierTypeDefinition) {

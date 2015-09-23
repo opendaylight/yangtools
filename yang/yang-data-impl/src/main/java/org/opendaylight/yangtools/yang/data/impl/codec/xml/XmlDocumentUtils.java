@@ -9,9 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.codec.xml;
 
 import static com.google.common.base.Preconditions.checkState;
 
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-
-import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
 import com.google.common.base.Optional;
@@ -59,7 +56,9 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
@@ -90,6 +89,40 @@ public class XmlDocumentUtils {
     private static final QName RPC_REPLY_QNAME = QName.create(SchemaContext.NAME, "rpc-reply");
     private static final Logger LOG = LoggerFactory.getLogger(XmlDocumentUtils.class);
     private static final XMLOutputFactory FACTORY = XMLOutputFactory.newFactory();
+
+    /**
+     * Converts Data DOM structure to XML Document for specified XML Codec Provider and corresponding
+     * Data Node Container schema. The CompositeNode data parameter enters as root of Data DOM tree and will
+     * be transformed to root in XML Document. Each element of Data DOM tree is compared against specified Data
+     * Node Container Schema and transformed accordingly.
+     *
+     * @param data Data DOM root element
+     * @param schema Data Node Container Schema
+     * @param codecProvider XML Codec Provider
+     * @param context SchemaContext
+     * @return new instance of XML Document
+     * @throws UnsupportedDataTypeException
+     */
+    public static Document toDocument(final CompositeNode data, final DataNodeContainer schema, final XmlCodecProvider codecProvider, SchemaContext context)
+            throws UnsupportedDataTypeException {
+        Preconditions.checkNotNull(data);
+        Preconditions.checkNotNull(schema);
+
+        if (!(schema instanceof ContainerSchemaNode || schema instanceof ListSchemaNode)) {
+            throw new UnsupportedDataTypeException("Schema can be ContainerSchemaNode or ListSchemaNode. Other types are not supported yet.");
+        }
+
+        final DOMResult result = new DOMResult(getDocument());
+        try {
+            final XMLStreamWriter writer = FACTORY.createXMLStreamWriter(result);
+            XmlStreamUtils.create(codecProvider, context).writeDocument(writer, data, (SchemaNode)schema);
+            writer.close();
+            return (Document)result.getNode();
+        } catch (XMLStreamException e) {
+            LOG.error("Failed to serialize data {}", data, e);
+            return null;
+        }
+    }
 
     /**
      * Converts Data DOM structure to XML Document for specified XML Codec Provider and corresponding
