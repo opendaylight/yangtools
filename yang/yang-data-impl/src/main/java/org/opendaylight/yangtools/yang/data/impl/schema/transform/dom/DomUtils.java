@@ -9,24 +9,22 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom;
 
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.Lists;
-
 import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.xml.XMLConstants;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.dom.DOMResult;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlStreamUtils;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlUtils;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -56,6 +54,15 @@ public final class DomUtils {
         }
 
         return value;
+    }
+
+    public static void serializeXmlValue(final Element element, final SchemaNode schemaNode, final XmlCodecProvider codecProvider, final Object value) {
+        try {
+            XMLStreamWriter writer = XMLOutputFactory.newFactory().createXMLStreamWriter(new DOMResult(element));
+            XmlStreamUtils.create(codecProvider).writeValue(writer, schemaNode, value);
+        } catch (XMLStreamException e) {
+            throw new IllegalStateException("XML encoding failed", e);
+        }
     }
 
     public static void serializeXmlValue(final Element element, final TypeDefinition<? extends TypeDefinition<?>> type, final XmlCodecProvider codecProvider, final Object value) {
