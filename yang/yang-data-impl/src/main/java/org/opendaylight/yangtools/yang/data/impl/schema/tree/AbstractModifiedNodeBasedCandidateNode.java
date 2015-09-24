@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
 import com.google.common.base.Verify;
 import com.google.common.collect.Collections2;
 import java.util.Collection;
@@ -22,8 +23,15 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 
 abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandidateNode {
+    private static final Predicate<? super ModifiedNode> IS_MODIFIED = new Predicate<ModifiedNode>() {
+        @Override
+        public boolean apply(final ModifiedNode input) {
+            return input.getModificationType() != ModificationType.UNMODIFIED;
+        }
+    };
 
-    private static final Function<NormalizedNode<?, ?>, DataTreeCandidateNode> TO_UNMODIFIED_NODE = new Function<NormalizedNode<?, ?>, DataTreeCandidateNode>() {
+    private static final Function<NormalizedNode<?, ?>, DataTreeCandidateNode> TO_UNMODIFIED_NODE =
+            new Function<NormalizedNode<?, ?>, DataTreeCandidateNode>() {
         @Override
         public DataTreeCandidateNode apply(final NormalizedNode<?, ?> input) {
             return AbstractRecursiveCandidateNode.unmodifiedNode(input);
@@ -85,7 +93,8 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     public Collection<DataTreeCandidateNode> getChildNodes() {
         switch (mod.getModificationType()) {
         case SUBTREE_MODIFIED:
-            return Collections2.transform(mod.getChildren(), new Function<ModifiedNode, DataTreeCandidateNode>() {
+            return Collections2.transform(Collections2.filter(mod.getChildren(), IS_MODIFIED),
+                new Function<ModifiedNode, DataTreeCandidateNode>() {
                 @Override
                 public DataTreeCandidateNode apply(final ModifiedNode input) {
                     return childNode(input);
