@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_a59b80c8",
+        "filename": "yang/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/YangToSourcesProcessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-24T18:36:07Z",
+      "side": 1,
+      "message": "LOG.warn(\"Failed to generate files into root {}\", yangFilesRootDir, e);",
+      "revId": "457b0e32a3e2e66e659a2def6e7f75b5e171435f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_65a56803",
+        "filename": "yang/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/YangToSourcesProcessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-24T18:36:07Z",
+      "side": 1,
+      "message": "A new Util.logMessage(Logger, String, Object...) method is needed, as logging it this way forces string formatting even when the logger is set to INFO.",
+      "revId": "457b0e32a3e2e66e659a2def6e7f75b5e171435f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_25af70e5",
+        "filename": "yang/yang-maven-plugin/src/main/java/org/opendaylight/yangtools/yang2sources/plugin/YangToSourcesProcessor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 288,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-24T18:36:07Z",
+      "side": 1,
+      "message": "LOG.error(\"{}\", message);\n\nThe first argument is interpreted as a format string, so if it happens to contain {}, the logger would be looking for a corresponding object (and  not find it in this case, but still...)",
+      "revId": "457b0e32a3e2e66e659a2def6e7f75b5e171435f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
