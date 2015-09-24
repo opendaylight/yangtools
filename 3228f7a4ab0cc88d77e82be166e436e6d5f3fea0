@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_85f8c4e6",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/ParserListenerUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-24T18:49:33Z",
+      "side": 1,
+      "message": "name should be all capitals (just like UNICORE_SCRIPT_PATTERN).",
+      "revId": "3228f7a4ab0cc88d77e82be166e436e6d5f3fea0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_45daac79",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/ParserListenerUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 156,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-24T18:49:33Z",
+      "side": 1,
+      "message": "You have two options here:\n- use a local variable for a builder, and assign the result of .build() -- in which case a static initializer block is needed, or\n- use single-statement initialization as you are doing now, in which case you should just assign the variable.",
+      "revId": "3228f7a4ab0cc88d77e82be166e436e6d5f3fea0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_85cf64b0",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/ParserListenerUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 164,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-24T18:49:33Z",
+      "side": 1,
+      "message": "I wonder ... this will only fix the specific case when the user specifies \u0027zero-or-more instances\u0027, but will not cover other uses ({1,2}, +, etc.), right?",
+      "revId": "3228f7a4ab0cc88d77e82be166e436e6d5f3fea0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_05e4b439",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/ParserListenerUtils.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 254,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-24T18:49:33Z",
+      "side": 1,
+      "message": "when initializing variables via a static initializer block, please use one block per variable (you can have multiple static { } blocks in a single class).",
+      "revId": "3228f7a4ab0cc88d77e82be166e436e6d5f3fea0",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
