@@ -1,0 +1,51 @@
+module test {
+    yang-version 1;
+    namespace "urn:opendaylight.test";
+    prefix "test";
+
+    organization "opendaylight";
+    contact "urn:opendaylight.com";
+    description "test description";
+
+    revision "2015-08-08" {
+        reference "1st edit";
+    }
+
+    container interfaces {
+        list Entry {
+            key "Index";
+
+            leaf Index {
+                type uint32;
+                reference "reference to outside source";
+            }
+            leaf Entry {
+                description "leaf with extension";
+                type string;
+                test:a-define "string input" {
+                    b-define 1;
+                    description "some description";
+                }
+            }
+        }
+    }
+
+    augment "/test:interfaces/test:Entry" {
+        leaf augmented-Leaf {
+            type string;
+        }
+    }
+
+    extension a-define {
+        description "This is a-define description";
+        status "current";
+        argument "name-a" {
+            yin-element "true";
+        }
+    }
+
+    extension b-define {
+        description "This is b-define description";
+        argument "name-b";
+    }
+}

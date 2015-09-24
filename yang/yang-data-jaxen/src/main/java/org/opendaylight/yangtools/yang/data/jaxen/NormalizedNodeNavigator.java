@@ -222,7 +222,7 @@ final class NormalizedNodeNavigator extends DefaultNavigator implements NamedAcc
 
         final QName qname = resolveQName(node, namespacePrefix, localName);
         @SuppressWarnings({ "unchecked", "rawtypes" })
-        final Optional<NormalizedNode<?, ?>> maybeChild = ((DataContainerNode)contextNode).getChild(new NodeIdentifier(qname));
+        final Optional<NormalizedNode<?, ?>> maybeChild = ((DataContainerNode)node).getChild(new NodeIdentifier(qname));
         if (!maybeChild.isPresent()) {
             return null;
         }
