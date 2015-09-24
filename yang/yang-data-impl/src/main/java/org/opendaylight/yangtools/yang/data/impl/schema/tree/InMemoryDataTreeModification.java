@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
@@ -93,7 +92,8 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
          * the requested path which has been modified. If no such node exists,
          * we use the node itself.
          */
-        final Entry<YangInstanceIdentifier, ModifiedNode> entry = StoreTreeNodes.findClosestsOrFirstMatch(rootNode, path, ModifiedNode.IS_TERMINAL_PREDICATE);
+        final Entry<YangInstanceIdentifier, ModifiedNode> entry = StoreTreeNodes.findClosestsOrFirstMatch(rootNode,
+            path, ModifiedNode.IS_TERMINAL_PREDICATE);
         final YangInstanceIdentifier key = entry.getKey();
         final ModifiedNode mod = entry.getValue();
 
@@ -113,8 +113,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         }
 
         try {
-            return resolveModificationStrategy(path).apply(modification, modification.getOriginal(),
-                    version);
+            return resolveModificationStrategy(path).apply(modification, modification.getOriginal(), version);
         } catch (final Exception e) {
             LOG.error("Could not create snapshot for {}:{}", path, modification, e);
             throw e;
@@ -155,7 +154,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             final Optional<ModificationApplyOperation> potential = operation.getChild(pathArg);
             if (!potential.isPresent()) {
                 throw new SchemaValidationFailedException(String.format("Child %s is not present in schema tree.",
-                        Iterables.toString(Iterables.limit(path.getPathArguments(), i))));
+                        path.getAncestor(i)));
             }
             operation = potential.get();
             ++i;
@@ -271,6 +270,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         return openCursor(new InMemoryDataTreeModificationCursor(this, path, op));
     }
 
+    @Override
     public void ready() {
         final boolean wasRunning = SEALED_UPDATER.compareAndSet(this, 0, 1);
         Preconditions.checkState(wasRunning, "Attempted to seal an already-sealed Data Tree.");
