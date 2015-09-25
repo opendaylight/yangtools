@@ -1,0 +1,58 @@
+module test2 {
+    yang-version 1;
+    namespace "urn:opendaylight.test2";
+    prefix "test2";
+
+    organization "opendaylight";
+    contact "urn:opendaylight.com";
+    description "test description";
+
+    revision "2015-08-08" {
+        reference "1st edit";
+    }
+
+    container root {
+        leaf leaf-c {
+            type string;
+        }
+
+        list list-a {
+            key "leaf-a";
+
+            leaf leaf-a {
+                type string;
+            }
+
+            choice choice-a {
+                case one {
+                    leaf one {
+                        type string;
+                    }
+                }
+                case two-three {
+                    leaf two {
+                        type string;
+                    }
+                    leaf three {
+                        type string;
+                    }
+                }
+            }
+
+            list list-b {
+                key "leaf-b";
+                leaf leaf-b {
+                    type string;
+                }
+            }
+        }
+    }
+
+    container container-a {
+        container container-b {
+            leaf leaf-d {
+                type string;
+            }
+        }
+    }
+}
