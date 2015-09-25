@@ -12,6 +12,10 @@ module test2 {
     }
 
     container root {
+        leaf leaf-c {
+            type string;
+        }
+
         list list-a {
             key "leaf-a";
 
@@ -40,6 +44,14 @@ module test2 {
                 leaf leaf-b {
                     type string;
                 }
+            }
+        }
+    }
+
+    container container-a {
+        container container-b {
+            leaf leaf-d {
+                type string;
             }
         }
     }
