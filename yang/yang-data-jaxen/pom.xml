@@ -21,33 +21,7 @@
     <artifactId>yang-data-jaxen</artifactId>
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven.surefire.version}</version>
-                <configuration>
-                <argLine>-Dlog4j.configuration=log4j-test.xml
-                    -Xmx1500m ${jacoco.agent.ut.arg}</argLine>
-                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Export-Package>
-                            org.opendaylight.yangtools.yang.data.jaxen
-                        </Export-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <packaging>bundle</packaging>
 
     <dependencies>
         <dependency>
@@ -61,6 +35,11 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>yang-model-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>yang-parser-impl</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
