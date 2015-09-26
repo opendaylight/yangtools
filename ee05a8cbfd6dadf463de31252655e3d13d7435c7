@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_3448fc2c",
+        "filename": "yang/yang-data-jaxen/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 67,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-26T09:40:28Z",
+      "side": 1,
+      "message": "\u003cscope\u003etest\u003c/scope\u003e",
+      "revId": "ee05a8cbfd6dadf463de31252655e3d13d7435c7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d45428cc",
+        "filename": "yang/yang-data-jaxen/src/main/java/org/opendaylight/yangtools/yang/data/jaxen/NormalizedNodeContext.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-26T09:40:28Z",
+      "side": 1,
+      "message": "ImmutableList.of(this)",
+      "revId": "ee05a8cbfd6dadf463de31252655e3d13d7435c7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
