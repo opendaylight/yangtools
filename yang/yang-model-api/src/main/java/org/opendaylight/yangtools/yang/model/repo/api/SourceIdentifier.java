@@ -143,21 +143,7 @@ public final class SourceIdentifier implements Identifier, Immutable {
             return false;
         }
         SourceIdentifier other = (SourceIdentifier) obj;
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (revision == null) {
-            if (other.revision != null) {
-                return false;
-            }
-        } else if (!revision.equals(other.revision)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(name, other.name) && Objects.equals(revision, other.revision);
     }
 
     public static SourceIdentifier create(final String moduleName, final Optional<String> revision) {
