@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.leafref;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
 class QNameWithPredicateBuilder {
@@ -74,14 +75,7 @@ class QNameWithPredicateBuilder {
             return false;
         }
         final QNameWithPredicateBuilder other = (QNameWithPredicateBuilder) obj;
-        if (localName == null) {
-            if (other.localName != null) {
-                return false;
-            }
-        } else if (!localName.equals(other.localName)) {
-            return false;
-        }
-        return moduleQname.equals(other.moduleQname);
+        return Objects.equals(localName, other.localName) &&  moduleQname.equals(other.moduleQname);
     }
 
     @Override
