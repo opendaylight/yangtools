@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.leafref;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -59,14 +60,7 @@ final class QNameWithPredicateImpl implements Immutable, Serializable,
             return false;
         }
         final QNameWithPredicateImpl other = (QNameWithPredicateImpl) obj;
-        if (localName == null) {
-            if (other.localName != null) {
-                return false;
-            }
-        } else if (!localName.equals(other.localName)) {
-            return false;
-        }
-        return moduleQname.equals(other.moduleQname);
+        return Objects.equals(localName, other.localName) && moduleQname.equals(other.moduleQname);
     }
 
     @Override

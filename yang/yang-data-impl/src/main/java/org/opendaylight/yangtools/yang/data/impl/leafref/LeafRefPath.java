@@ -314,21 +314,7 @@ public abstract class LeafRefPath implements Immutable {
             return false;
         }
         final LeafRefPath other = (LeafRefPath) obj;
-
-        if (qname != null) {
-            if (!qname.equals(other.qname)) {
-                return false;
-            }
-        } else {
-            if (other.qname != null) {
-                return false;
-            }
-        }
-
-        if (parent == null) {
-            return other.parent == null;
-        }
-        return parent.equals(other.parent);
+        return Objects.equals(qname, other.qname) && Objects.equals(parent, other.parent);
     }
 
     @Override
