@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableList;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -187,8 +188,8 @@ public class Decimal64SpecificationEffectiveStatementImpl extends
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((QNAME == null) ? 0 : QNAME.hashCode());
-        result = prime * result + ((path == null) ? 0 : path.hashCode());
+        result = prime * result + Objects.hashCode(QNAME);
+        result = prime * result + Objects.hashCode(path);
         return result;
     }
 

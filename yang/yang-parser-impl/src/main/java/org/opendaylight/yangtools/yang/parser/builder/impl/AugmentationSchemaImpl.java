@@ -15,6 +15,7 @@ import java.net.URI;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.NamespaceRevisionAware;
@@ -77,8 +78,8 @@ final class AugmentationSchemaImpl extends AbstractDocumentedDataNodeContainer i
     public int hashCode() {
         final int prime = 17;
         int result = 1;
-        result = prime * result + ((targetPath == null) ? 0 : targetPath.hashCode());
-        result = prime * result + ((whenCondition == null) ? 0 : whenCondition.hashCode());
+        result = prime * result + Objects.hashCode(targetPath);
+        result = prime * result + Objects.hashCode(whenCondition);
         result = prime * result + getChildNodes().hashCode();
         return result;
     }

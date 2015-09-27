@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -125,8 +126,8 @@ public final class SourceIdentifier implements Identifier, Immutable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((revision == null) ? 0 : revision.hashCode());
+        result = prime * result + Objects.hashCode(name);
+        result = prime * result + Objects.hashCode(revision);
         return result;
     }
 

@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import com.google.common.base.Preconditions;
 import java.util.Collections;
 import java.util.List;
-
+import java.util.Objects;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -17,8 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
-
-import com.google.common.base.Preconditions;
 
 public final class BitImpl implements BitsTypeDefinition.Bit, Immutable {
     private final Long position;
@@ -89,7 +88,7 @@ public final class BitImpl implements BitsTypeDefinition.Bit, Immutable {
         result = prime * result + qname.hashCode();
         result = prime * result + schemaPath.hashCode();
         result = prime * result + position.hashCode();
-        result = prime * result + ((unknownNodes == null) ? 0 : unknownNodes.hashCode());
+        result = prime * result + Objects.hashCode(unknownNodes);
         return result;
     }
 

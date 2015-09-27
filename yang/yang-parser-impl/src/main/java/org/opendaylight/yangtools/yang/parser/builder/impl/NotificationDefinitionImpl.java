@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -57,8 +58,8 @@ NotificationDefinition {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((qname == null) ? 0 : qname.hashCode());
-        result = prime * result + ((path == null) ? 0 : path.hashCode());
+        result = prime * result + Objects.hashCode(qname);
+        result = prime * result + Objects.hashCode(path);
         return result;
     }
 

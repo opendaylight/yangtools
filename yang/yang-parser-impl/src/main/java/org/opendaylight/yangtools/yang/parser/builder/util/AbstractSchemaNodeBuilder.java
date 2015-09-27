@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.builder.util;
 
 import com.google.common.base.Preconditions;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -77,8 +78,8 @@ public abstract class AbstractSchemaNodeBuilder extends AbstractBuilder implemen
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((getParent() == null) ? 0 : getParent().hashCode());
-        result = prime * result + ((schemaPath == null) ? 0 : schemaPath.hashCode());
+        result = prime * result + Objects.hashCode(getParent());
+        result = prime * result + Objects.hashCode(schemaPath);
         return result;
     }
 

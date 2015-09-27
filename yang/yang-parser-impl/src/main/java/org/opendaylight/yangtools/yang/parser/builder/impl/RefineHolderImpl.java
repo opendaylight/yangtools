@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.parser.builder.api.RefineBuilder;
@@ -187,18 +188,18 @@ public final class RefineHolderImpl extends AbstractBuilder implements RefineBui
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((addedUnknownNodes == null) ? 0 : addedUnknownNodes.hashCode());
-        result = prime * result + ((config == null) ? 0 : config.hashCode());
-        result = prime * result + ((defaultStr == null) ? 0 : defaultStr.hashCode());
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((mandatory == null) ? 0 : mandatory.hashCode());
-        result = prime * result + ((maxElements == null) ? 0 : maxElements.hashCode());
-        result = prime * result + ((minElements == null) ? 0 : minElements.hashCode());
-        result = prime * result + ((must == null) ? 0 : must.hashCode());
-        result = prime * result + ((targetPathString == null) ? 0 : targetPathString.hashCode());
-        result = prime * result + ((getParent() == null) ? 0 : getParent().hashCode());
-        result = prime * result + ((presence == null) ? 0 : presence.hashCode());
-        result = prime * result + ((reference == null) ? 0 : reference.hashCode());
+        result = prime * result + Objects.hashCode(addedUnknownNodes);
+        result = prime * result + Objects.hashCode(config);
+        result = prime * result + Objects.hashCode(defaultStr);
+        result = prime * result + Objects.hashCode(description);
+        result = prime * result + Objects.hashCode(mandatory);
+        result = prime * result + Objects.hashCode(maxElements);
+        result = prime * result + Objects.hashCode(minElements);
+        result = prime * result + Objects.hashCode(must);
+        result = prime * result + Objects.hashCode(targetPathString);
+        result = prime * result + Objects.hashCode(getParent());
+        result = prime * result + Objects.hashCode(presence);
+        result = prime * result + Objects.hashCode(reference);
         return result;
     }
 

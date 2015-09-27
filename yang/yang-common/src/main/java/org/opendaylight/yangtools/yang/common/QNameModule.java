@@ -101,8 +101,8 @@ public final class QNameModule implements Immutable, Serializable {
     @Override
     public int hashCode() {
         final int prime = 31;
-        int result = (namespace == null) ? 0 : namespace.hashCode();
-        result = prime * result + ((revision == null) ? 0 : revision.hashCode());
+        int result = Objects.hashCode(namespace);
+        result = prime * result + Objects.hashCode(revision);
         return result;
     }
 

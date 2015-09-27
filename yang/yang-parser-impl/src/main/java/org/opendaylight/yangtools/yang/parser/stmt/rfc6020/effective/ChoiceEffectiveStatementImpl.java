@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -251,8 +252,8 @@ public class ChoiceEffectiveStatementImpl extends
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((qname == null) ? 0 : qname.hashCode());
-        result = prime * result + ((path == null) ? 0 : path.hashCode());
+        result = prime * result + Objects.hashCode(qname);
+        result = prime * result + Objects.hashCode(path);
         return result;
     }
 

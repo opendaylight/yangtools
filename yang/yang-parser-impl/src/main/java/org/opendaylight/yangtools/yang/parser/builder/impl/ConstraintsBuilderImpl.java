@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
@@ -254,10 +255,10 @@ public final class ConstraintsBuilderImpl implements ConstraintsBuilder {
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result + ((whenCondition == null) ? 0 : whenCondition.hashCode());
-            result = prime * result + ((mustConstraints == null) ? 0 : mustConstraints.hashCode());
-            result = prime * result + ((minElements == null) ? 0 : minElements.hashCode());
-            result = prime * result + ((maxElements == null) ? 0 : maxElements.hashCode());
+            result = prime * result + Objects.hashCode(whenCondition);
+            result = prime * result + Objects.hashCode(mustConstraints);
+            result = prime * result + Objects.hashCode(minElements);
+            result = prime * result + Objects.hashCode(maxElements);
             result = prime * result + mandatory.hashCode();
             return result;
         }

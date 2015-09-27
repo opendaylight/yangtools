@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.NavigableSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -190,8 +191,8 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((yangVersion == null) ? 0 : yangVersion.hashCode());
+        result = prime * result + Objects.hashCode(name);
+        result = prime * result + Objects.hashCode(yangVersion);
         result = prime * result + qnameModule.hashCode();
         return result;
     }

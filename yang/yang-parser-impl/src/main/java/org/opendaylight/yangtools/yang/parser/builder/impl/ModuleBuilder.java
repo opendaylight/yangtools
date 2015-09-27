@@ -23,6 +23,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -1070,9 +1071,9 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + Objects.hashCode(name);
         result = prime * result + qnameModule.hashCode();
-        result = prime * result + ((prefix == null) ? 0 : prefix.hashCode());
+        result = prime * result + Objects.hashCode(prefix);
 
         return result;
     }

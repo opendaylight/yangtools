@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import com.google.common.collect.ImmutableList;
 import java.util.LinkedList;
 import java.util.List;
-
+import java.util.Objects;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -18,8 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-
-import com.google.common.collect.ImmutableList;
 
 public class DeviationEffectiveStatementImpl extends EffectiveStatementBase<SchemaNodeIdentifier, DeviationStatement>
         implements Deviation, Immutable {
@@ -76,9 +75,9 @@ public class DeviationEffectiveStatementImpl extends EffectiveStatementBase<Sche
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((targetPath == null) ? 0 : targetPath.hashCode());
-        result = prime * result + ((deviate == null) ? 0 : deviate.hashCode());
-        result = prime * result + ((reference == null) ? 0 : reference.hashCode());
+        result = prime * result + Objects.hashCode(targetPath);
+        result = prime * result + Objects.hashCode(deviate);
+        result = prime * result + Objects.hashCode(reference);
         return result;
     }
 

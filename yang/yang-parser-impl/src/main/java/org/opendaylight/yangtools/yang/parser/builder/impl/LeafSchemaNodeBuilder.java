@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -212,7 +213,7 @@ public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implem
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((schemaPath == null) ? 0 : schemaPath.hashCode());
+        result = prime * result + Objects.hashCode(schemaPath);
         return result;
     }
 

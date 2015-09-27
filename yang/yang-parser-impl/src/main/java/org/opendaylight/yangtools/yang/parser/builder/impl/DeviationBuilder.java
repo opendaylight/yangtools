@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import com.google.common.collect.ImmutableList;
 import java.util.List;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.Deviation.Deviate;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -111,9 +112,9 @@ public final class DeviationBuilder extends AbstractBuilder {
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result + ((targetPath == null) ? 0 : targetPath.hashCode());
-            result = prime * result + ((deviate == null) ? 0 : deviate.hashCode());
-            result = prime * result + ((reference == null) ? 0 : reference.hashCode());
+            result = prime * result + Objects.hashCode(targetPath);
+            result = prime * result + Objects.hashCode(deviate);
+            result = prime * result + Objects.hashCode(reference);
             return result;
         }
 

@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -147,7 +148,7 @@ public final class BitsType implements BitsTypeDefinition {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((bits == null) ? 0 : bits.hashCode());
+        result = prime * result + Objects.hashCode(bits);
         result = prime * result + NAME.hashCode();
         result = prime * result + path.hashCode();
         return result;

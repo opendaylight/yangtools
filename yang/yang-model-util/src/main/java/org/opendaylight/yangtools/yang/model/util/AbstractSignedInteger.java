@@ -8,10 +8,9 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.Optional;
-
 import java.util.Collections;
 import java.util.List;
-
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -112,11 +111,11 @@ abstract class AbstractSignedInteger implements IntegerTypeDefinition {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((path == null) ? 0 : path.hashCode());
-        result = prime * result + ((rangeStatements == null) ? 0 : rangeStatements.hashCode());
-        result = prime * result + ((units == null) ? 0 : units.hashCode());
+        result = prime * result + Objects.hashCode(description);
+        result = prime * result + Objects.hashCode(name);
+        result = prime * result + Objects.hashCode(path);
+        result = prime * result + Objects.hashCode(rangeStatements);
+        result = prime * result + Objects.hashCode(units);
         return result;
     }
 

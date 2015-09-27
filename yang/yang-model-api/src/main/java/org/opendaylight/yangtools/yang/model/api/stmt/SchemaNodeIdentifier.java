@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -104,7 +105,7 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         this.parent = parent;
         this.qname = qname;
 
-        int h = parent == null ? 0 : parent.hashCode();
+        int h = Objects.hashCode(parent);
         if (qname != null) {
             h = h * 31 + qname.hashCode();
         }

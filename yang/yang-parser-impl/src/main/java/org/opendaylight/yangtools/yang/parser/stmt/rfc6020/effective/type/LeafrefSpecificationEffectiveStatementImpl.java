@@ -7,23 +7,23 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-
-import org.opendaylight.yangtools.yang.model.util.Leafref;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.util.Leafref;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PathEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public class LeafrefSpecificationEffectiveStatementImpl extends
         EffectiveStatementBase<String, TypeStatement.LeafrefSpecification> implements LeafrefTypeDefinition, TypeDefinitionEffectiveBuilder {
@@ -104,7 +104,7 @@ public class LeafrefSpecificationEffectiveStatementImpl extends
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((xpath == null) ? 0 : xpath.hashCode());
+        result = prime * result + Objects.hashCode(xpath);
         return result;
     }
 

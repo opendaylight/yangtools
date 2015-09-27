@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -254,7 +255,7 @@ AugmentationTargetBuilder {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((schemaPath == null) ? 0 : schemaPath.hashCode());
+        result = prime * result + Objects.hashCode(schemaPath);
         return result;
     }
 

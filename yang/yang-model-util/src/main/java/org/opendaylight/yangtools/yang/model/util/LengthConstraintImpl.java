@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import java.util.Objects;
+import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
 /**
  * {@link Immutable} implementation of {@link LengthConstraint}.
@@ -82,12 +82,12 @@ final class LengthConstraintImpl implements LengthConstraint, Immutable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + Objects.hashCode(description);
         result = prime * result + errorAppTag.hashCode();
         result = prime * result + errorMessage.hashCode();
         result = prime * result + max.hashCode();
         result = prime * result + min.hashCode();
-        result = prime * result + ((reference == null) ? 0 : reference.hashCode());
+        result = prime * result + Objects.hashCode(reference);
         return result;
     }
 

@@ -7,25 +7,24 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-
-import com.google.common.collect.ImmutableList;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DescriptionEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PositionEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ReferenceEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.StatusEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public class BitEffectiveStatementImpl extends EffectiveStatementBase<QName, BitStatement> implements
         BitsTypeDefinition.Bit {
@@ -114,8 +113,8 @@ public class BitEffectiveStatementImpl extends EffectiveStatementBase<QName, Bit
         int result = 1;
         result = prime * result + qName.hashCode();
         result = prime * result + schemaPath.hashCode();
-        result = prime * result + ((position == null) ? 0 : position.hashCode());
-        result = prime * result + ((unknownSchemaNodes == null) ? 0 : unknownSchemaNodes.hashCode());
+        result = prime * result + Objects.hashCode(position);
+        result = prime * result + Objects.hashCode(unknownSchemaNodes);
         return result;
     }
 

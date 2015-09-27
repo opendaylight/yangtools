@@ -7,20 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import com.google.common.collect.ImmutableList;
 import java.util.LinkedList;
 import java.util.List;
-
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-
-import com.google.common.collect.ImmutableList;
 
 public class FeatureEffectiveStatementImpl extends EffectiveStatementBase<QName, FeatureStatement> implements
         FeatureDefinition {
@@ -98,8 +97,8 @@ public class FeatureEffectiveStatementImpl extends EffectiveStatementBase<QName,
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((qName == null) ? 0 : qName.hashCode());
-        result = prime * result + ((path == null) ? 0 : path.hashCode());
+        result = prime * result + Objects.hashCode(qName);
+        result = prime * result + Objects.hashCode(path);
         return result;
     }
 

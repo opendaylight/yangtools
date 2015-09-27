@@ -11,6 +11,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -228,7 +229,7 @@ public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder im
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((schemaPath == null) ? 0 : schemaPath.hashCode());
+        result = prime * result + Objects.hashCode(schemaPath);
 
         return result;
     }

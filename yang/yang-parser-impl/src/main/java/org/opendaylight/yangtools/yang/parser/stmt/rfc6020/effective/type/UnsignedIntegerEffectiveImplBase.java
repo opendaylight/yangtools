@@ -8,21 +8,21 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 import com.google.common.base.Optional;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 abstract class UnsignedIntegerEffectiveImplBase extends
@@ -107,11 +107,11 @@ abstract class UnsignedIntegerEffectiveImplBase extends
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + ((qName == null) ? 0 : qName.hashCode());
-        result = prime * result + ((path == null) ? 0 : path.hashCode());
-        result = prime * result + ((rangeStatements == null) ? 0 : rangeStatements.hashCode());
-        result = prime * result + ((units == null) ? 0 : units.hashCode());
+        result = prime * result + Objects.hashCode(description);
+        result = prime * result + Objects.hashCode(qName);
+        result = prime * result + Objects.hashCode(path);
+        result = prime * result + Objects.hashCode(rangeStatements);
+        result = prime * result + Objects.hashCode(units);
         return result;
     }
 

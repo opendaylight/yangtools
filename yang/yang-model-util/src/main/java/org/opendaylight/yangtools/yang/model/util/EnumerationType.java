@@ -12,6 +12,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -159,10 +160,10 @@ public final class EnumerationType implements EnumTypeDefinition {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((defaultEnum == null) ? 0 : defaultEnum.hashCode());
-        result = prime * result + ((enums == null) ? 0 : enums.hashCode());
+        result = prime * result + Objects.hashCode(defaultEnum);
+        result = prime * result + Objects.hashCode(enums);
         result = prime * result + BaseTypes.ENUMERATION_QNAME.hashCode();
-        result = prime * result + ((path == null) ? 0 : path.hashCode());
+        result = prime * result + Objects.hashCode(path);
         return result;
     }
 

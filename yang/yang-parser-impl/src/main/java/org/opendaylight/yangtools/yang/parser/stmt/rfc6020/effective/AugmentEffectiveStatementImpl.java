@@ -9,27 +9,28 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
-import java.util.Collection;
-import java.util.LinkedList;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import java.net.URI;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.NamespaceRevisionAware;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public class AugmentEffectiveStatementImpl
         extends
@@ -132,10 +133,8 @@ public class AugmentEffectiveStatementImpl
     public int hashCode() {
         final int prime = 17;
         int result = 1;
-        result = prime * result
-                + ((targetPath == null) ? 0 : targetPath.hashCode());
-        result = prime * result
-                + ((whenCondition == null) ? 0 : whenCondition.hashCode());
+        result = prime * result + Objects.hashCode(targetPath);
+        result = prime * result + Objects.hashCode(whenCondition);
         result = prime * result + getChildNodes().hashCode();
         return result;
     }

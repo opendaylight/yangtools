@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -37,20 +38,16 @@ public class MustEffectiveStatementImpl extends
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
 
             if (effectiveStatement instanceof DescriptionEffectiveStatementImpl) {
-                description = ((DescriptionEffectiveStatementImpl) effectiveStatement)
-                        .argument();
+                description = ((DescriptionEffectiveStatementImpl) effectiveStatement).argument();
             }
             if (effectiveStatement instanceof ErrorAppTagEffectiveStatementImpl) {
-                errorAppTag = ((ErrorAppTagEffectiveStatementImpl) effectiveStatement)
-                        .argument();
+                errorAppTag = ((ErrorAppTagEffectiveStatementImpl) effectiveStatement).argument();
             }
             if (effectiveStatement instanceof ErrorMessageEffectiveStatementImpl) {
-                errorMessage = ((ErrorMessageEffectiveStatementImpl) effectiveStatement)
-                        .argument();
+                errorMessage = ((ErrorMessageEffectiveStatementImpl) effectiveStatement).argument();
             }
             if (effectiveStatement instanceof ReferenceEffectiveStatementImpl) {
-                reference = ((ReferenceEffectiveStatementImpl) effectiveStatement)
-                        .argument();
+                reference = ((ReferenceEffectiveStatementImpl) effectiveStatement).argument();
             }
         }
     }
@@ -84,11 +81,9 @@ public class MustEffectiveStatementImpl extends
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((xPath == null) ? 0 : xPath.hashCode());
-        result = prime * result
-                + ((description == null) ? 0 : description.hashCode());
-        result = prime * result
-                + ((reference == null) ? 0 : reference.hashCode());
+        result = prime * result + Objects.hashCode(xPath);
+        result = prime * result + Objects.hashCode(description);
+        result = prime * result + Objects.hashCode(reference);
         return result;
     }
 

@@ -9,9 +9,8 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
-
 import java.io.IOException;
-
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -51,7 +50,7 @@ abstract class AbstractNodeDataWithSchema {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((schema == null) ? 0 : schema.hashCode());
+        result = prime * result + Objects.hashCode(schema);
         return result;
     }
 

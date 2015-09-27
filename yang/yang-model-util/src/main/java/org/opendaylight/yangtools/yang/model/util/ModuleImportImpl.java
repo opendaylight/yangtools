@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import java.util.Date;
-
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 
 public final class ModuleImportImpl implements ModuleImport {
@@ -41,14 +41,14 @@ public final class ModuleImportImpl implements ModuleImport {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((moduleName == null) ? 0 : moduleName.hashCode());
-        result = prime * result + ((revision == null) ? 0 : revision.hashCode());
-        result = prime * result + ((prefix == null) ? 0 : prefix.hashCode());
+        result = prime * result + Objects.hashCode(moduleName);
+        result = prime * result + Objects.hashCode(revision);
+        result = prime * result + Objects.hashCode(prefix);
         return result;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

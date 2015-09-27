@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -127,8 +128,8 @@ public class UsesEffectiveStatementImpl extends EffectiveStatementBase<QName, Us
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((groupingPath == null) ? 0 : groupingPath.hashCode());
-        result = prime * result + ((augmentations == null) ? 0 : augmentations.hashCode());
+        result = prime * result + Objects.hashCode(groupingPath);
+        result = prime * result + Objects.hashCode(augmentations);
         return result;
     }
 

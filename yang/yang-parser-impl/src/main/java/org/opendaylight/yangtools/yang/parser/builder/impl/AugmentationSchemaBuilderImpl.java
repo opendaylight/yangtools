@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import com.google.common.collect.ImmutableList;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -143,8 +144,8 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataN
     public int hashCode() {
         final int prime = 17;
         int result = 1;
-        result = prime * result + ((augmentTargetStr == null) ? 0 : augmentTargetStr.hashCode());
-        result = prime * result + ((whenCondition == null) ? 0 : whenCondition.hashCode());
+        result = prime * result + Objects.hashCode(augmentTargetStr);
+        result = prime * result + Objects.hashCode(whenCondition);
         result = prime * result + getChildNodeBuilders().hashCode();
         return result;
     }

@@ -8,14 +8,14 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import java.util.Map.Entry;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 
 public class ValueWithQName<V> implements Entry<QName, V>{
-
     final QName qname;
     final V value;
 
-    public ValueWithQName(QName qname, V value) {
+    public ValueWithQName(final QName qname, final V value) {
         super();
         this.qname = qname;
         this.value = value;
@@ -36,7 +36,7 @@ public class ValueWithQName<V> implements Entry<QName, V>{
     }
 
     @Override
-    public V setValue(V value) {
+    public V setValue(final V value) {
         throw new UnsupportedOperationException();
     }
 
@@ -44,13 +44,13 @@ public class ValueWithQName<V> implements Entry<QName, V>{
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((qname == null) ? 0 : qname.hashCode());
-        result = prime * result + ((value == null) ? 0 : value.hashCode());
+        result = prime * result + Objects.hashCode(qname);
+        result = prime * result + Objects.hashCode(value);
         return result;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

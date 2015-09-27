@@ -20,6 +20,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -425,9 +426,8 @@ public class SubmoduleEffectiveStatementImpl
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result
-                + ((yangVersion == null) ? 0 : yangVersion.hashCode());
+        result = prime * result + Objects.hashCode(name);
+        result = prime * result + Objects.hashCode(yangVersion);
         result = prime * result + qNameModule.hashCode();
         return result;
     }

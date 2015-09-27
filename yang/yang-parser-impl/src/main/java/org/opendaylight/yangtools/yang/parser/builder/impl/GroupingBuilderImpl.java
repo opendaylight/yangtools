@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -137,8 +138,8 @@ public final class GroupingBuilderImpl extends AbstractDocumentedDataNodeContain
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((getParent() == null) ? 0 : getParent().hashCode());
-        result = prime * result + ((schemaPath == null) ? 0 : schemaPath.hashCode());
+        result = prime * result + Objects.hashCode(getParent());
+        result = prime * result + Objects.hashCode(schemaPath);
         return result;
     }
 

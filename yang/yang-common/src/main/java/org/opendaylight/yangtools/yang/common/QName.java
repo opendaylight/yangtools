@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.common;
 
 import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.getRevisionFormat;
-
 import com.google.common.base.Preconditions;
 import java.io.Serializable;
 import java.net.URI;
@@ -186,7 +185,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((localName == null) ? 0 : localName.hashCode());
+        result = prime * result + Objects.hashCode(localName);
         result = prime * result + module.hashCode();
         return result;
     }

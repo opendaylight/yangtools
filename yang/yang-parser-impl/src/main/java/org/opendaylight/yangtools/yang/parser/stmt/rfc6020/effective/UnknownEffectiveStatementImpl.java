@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -149,10 +150,10 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<QName,
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((qName == null) ? 0 : qName.hashCode());
-        result = prime * result + ((path == null) ? 0 : path.hashCode());
-        result = prime * result + ((nodeType == null) ? 0 : nodeType.hashCode());
-        result = prime * result + ((nodeParameter == null) ? 0 : nodeParameter.hashCode());
+        result = prime * result + Objects.hashCode(qName);
+        result = prime * result + Objects.hashCode(path);
+        result = prime * result + Objects.hashCode(nodeType);
+        result = prime * result + Objects.hashCode(nodeParameter);
         return result;
     }
 

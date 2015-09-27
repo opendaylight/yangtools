@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableSet;
 import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Belongs_to_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Import_stmtContext;
@@ -112,8 +113,8 @@ public abstract class YangModelDependencyInfo {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((formattedRevision == null) ? 0 : formattedRevision.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + Objects.hashCode(formattedRevision);
+        result = prime * result + Objects.hashCode(name);
         return result;
     }
 
@@ -341,8 +342,8 @@ public abstract class YangModelDependencyInfo {
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            result = prime * result + ((name == null) ? 0 : name.hashCode());
-            result = prime * result + ((revision == null) ? 0 : revision.hashCode());
+            result = prime * result + Objects.hashCode(name);
+            result = prime * result + Objects.hashCode(revision);
             return result;
         }
 

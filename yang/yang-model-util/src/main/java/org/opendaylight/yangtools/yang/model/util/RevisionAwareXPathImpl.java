@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 
 /**
@@ -37,7 +38,7 @@ public class RevisionAwareXPathImpl implements RevisionAwareXPath {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((xpath == null) ? 0 : xpath.hashCode());
+        result = prime * result + Objects.hashCode(xpath);
         result = prime * result + (absolute ? HASH_BOOLEAN_TRUE : HASH_BOOLEAN_FALSE);
         return result;
     }

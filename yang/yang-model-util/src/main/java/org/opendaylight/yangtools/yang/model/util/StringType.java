@@ -8,10 +8,9 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.Optional;
-
 import java.util.Collections;
 import java.util.List;
-
+import java.util.Objects;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -166,10 +165,10 @@ public final class StringType implements StringTypeDefinition, Immutable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((lengthStatements == null) ? 0 : lengthStatements.hashCode());
+        result = prime * result + Objects.hashCode(lengthStatements);
         result = prime * result + NAME.hashCode();
         result = prime * result + PATH.hashCode();
-        result = prime * result + ((patterns == null) ? 0 : patterns.hashCode());
+        result = prime * result + Objects.hashCode(patterns);
         return result;
     }
 

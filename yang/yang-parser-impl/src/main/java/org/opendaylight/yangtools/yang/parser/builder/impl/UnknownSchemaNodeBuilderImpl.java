@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import com.google.common.base.Preconditions;
 import java.util.Collections;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -74,10 +75,10 @@ public final class UnknownSchemaNodeBuilderImpl extends AbstractBuilder implemen
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((qname == null) ? 0 : qname.hashCode());
-        result = prime * result + ((schemaPath == null) ? 0 : schemaPath.hashCode());
-        result = prime * result + ((nodeType == null) ? 0 : nodeType.hashCode());
-        result = prime * result + ((nodeParameter == null) ? 0 : nodeParameter.hashCode());
+        result = prime * result + Objects.hashCode(qname);
+        result = prime * result + Objects.hashCode(schemaPath);
+        result = prime * result + Objects.hashCode(nodeType);
+        result = prime * result + Objects.hashCode(nodeParameter);
         return result;
     }
 

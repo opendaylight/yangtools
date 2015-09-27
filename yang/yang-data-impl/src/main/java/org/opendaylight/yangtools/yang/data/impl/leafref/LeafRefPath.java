@@ -13,6 +13,7 @@ import com.google.common.collect.Iterables;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.opendaylight.yangtools.concepts.Immutable;
 
@@ -105,12 +106,11 @@ public abstract class LeafRefPath implements Immutable {
         return ret;
     }
 
-    protected LeafRefPath(final LeafRefPath parent,
-            final QNameWithPredicate qname) {
+    protected LeafRefPath(final LeafRefPath parent, final QNameWithPredicate qname) {
         this.parent = parent;
         this.qname = qname;
 
-        int h = parent == null ? 0 : parent.hashCode();
+        int h = Objects.hashCode(parent);
         if (qname != null) {
             h = h * 31 + qname.hashCode();
         }

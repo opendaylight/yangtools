@@ -19,6 +19,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -96,20 +97,16 @@ public class ModuleEffectiveStatementImpl extends
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof PrefixEffectiveStatementImpl) {
-                prefix = ((PrefixEffectiveStatementImpl) effectiveStatement)
-                        .argument();
+                prefix = ((PrefixEffectiveStatementImpl) effectiveStatement).argument();
             }
             if (effectiveStatement instanceof YangVersionEffectiveStatementImpl) {
-                yangVersion = ((YangVersionEffectiveStatementImpl) effectiveStatement)
-                        .argument();
+                yangVersion = ((YangVersionEffectiveStatementImpl) effectiveStatement).argument();
             }
             if (effectiveStatement instanceof OrganizationEffectiveStatementImpl) {
-                organization = ((OrganizationEffectiveStatementImpl) effectiveStatement)
-                        .argument();
+                organization = ((OrganizationEffectiveStatementImpl) effectiveStatement).argument();
             }
             if (effectiveStatement instanceof ContactEffectiveStatementImpl) {
-                contact = ((ContactEffectiveStatementImpl) effectiveStatement)
-                        .argument();
+                contact = ((ContactEffectiveStatementImpl) effectiveStatement).argument();
             }
         }
 
@@ -136,20 +133,17 @@ public class ModuleEffectiveStatementImpl extends
             return;
         }
 
-        Collection<ModuleIdentifier> includedSubmodules = includedSubmodulesMap
-                .values();
+        Collection<ModuleIdentifier> includedSubmodules = includedSubmodulesMap.values();
 
         Set<Module> submodulesInit = new HashSet<>();
         List<EffectiveStatement<?, ?>> substatementsOfSubmodulesInit = new LinkedList<>();
         for (ModuleIdentifier submoduleIdentifier : includedSubmodules) {
             Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> submoduleCtx = (Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>) ctx
-                    .getFromNamespace(SubmoduleNamespace.class,
-                            submoduleIdentifier);
+                    .getFromNamespace(SubmoduleNamespace.class, submoduleIdentifier);
             SubmoduleEffectiveStatementImpl submodule = (SubmoduleEffectiveStatementImpl) submoduleCtx
                     .buildEffective();
             submodulesInit.add(submodule);
-            substatementsOfSubmodulesInit.addAll(submodule
-                    .effectiveSubstatements());
+            substatementsOfSubmodulesInit.addAll(submodule.effectiveSubstatements());
         }
 
         this.submodules = ImmutableSet.copyOf(submodulesInit);
@@ -191,8 +185,7 @@ public class ModuleEffectiveStatementImpl extends
                 importsInit.add((ModuleImport) effectiveStatement);
             }
             if (effectiveStatement instanceof NotificationDefinition) {
-                notificationsInit
-                        .add((NotificationDefinition) effectiveStatement);
+                notificationsInit.add((NotificationDefinition) effectiveStatement);
             }
             if (effectiveStatement instanceof RpcDefinition) {
                 rpcsInit.add((RpcDefinition) effectiveStatement);
@@ -207,14 +200,12 @@ public class ModuleEffectiveStatementImpl extends
                 featuresInit.add((FeatureDefinition) effectiveStatement);
             }
             if (effectiveStatement instanceof ExtensionDefinition) {
-                extensionNodesInit
-                        .add((ExtensionDefinition) effectiveStatement);
+                extensionNodesInit.add((ExtensionDefinition) effectiveStatement);
             }
             if (effectiveStatement instanceof DataSchemaNode) {
                 DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;
                 if (!mutableChildNodes.containsKey(dataSchemaNode.getQName())) {
-                    mutableChildNodes.put(dataSchemaNode.getQName(),
-                            dataSchemaNode);
+                    mutableChildNodes.put(dataSchemaNode.getQName(), dataSchemaNode);
                     mutablePublicChildNodes.add(dataSchemaNode);
                 } else {
                     throw EffectiveStmtUtils
@@ -433,9 +424,8 @@ public class ModuleEffectiveStatementImpl extends
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result
-                + ((yangVersion == null) ? 0 : yangVersion.hashCode());
+        result = prime * result + Objects.hashCode(name);
+        result = prime * result + Objects.hashCode(yangVersion);
         result = prime * result + qNameModule.hashCode();
         return result;
     }

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 
 import java.util.Date;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
@@ -57,9 +58,9 @@ public class ImportEffectiveStatementImpl extends EffectiveStatementBase<String,
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((moduleName == null) ? 0 : moduleName.hashCode());
-        result = prime * result + ((revision == null) ? 0 : revision.hashCode());
-        result = prime * result + ((prefix == null) ? 0 : prefix.hashCode());
+        result = prime * result + Objects.hashCode(moduleName);
+        result = prime * result + Objects.hashCode(revision);
+        result = prime * result + Objects.hashCode(prefix);
         return result;
     }
 

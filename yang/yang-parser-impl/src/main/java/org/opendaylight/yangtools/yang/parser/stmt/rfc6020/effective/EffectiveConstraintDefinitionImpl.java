@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.collect.ImmutableSet;
-
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
@@ -26,31 +26,25 @@ public class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
 
         MandatoryEffectiveStatementImpl firstMandatoryStmt = parent
                 .firstEffective(MandatoryEffectiveStatementImpl.class);
-        this.mandatory = (firstMandatoryStmt == null) ? false
-                : firstMandatoryStmt.argument();
+        this.mandatory = (firstMandatoryStmt == null) ? false : firstMandatoryStmt.argument();
 
-        WhenEffectiveStatementImpl firstWhenStmt = parent
-                .firstEffective(WhenEffectiveStatementImpl.class);
-        this.whenCondition = (firstWhenStmt == null) ? null : firstWhenStmt
-                .argument();
+        WhenEffectiveStatementImpl firstWhenStmt = parent.firstEffective(WhenEffectiveStatementImpl.class);
+        this.whenCondition = (firstWhenStmt == null) ? null : firstWhenStmt.argument();
 
         MinElementsEffectiveStatementImpl firstMinElementsStmt = parent
                 .firstEffective(MinElementsEffectiveStatementImpl.class);
-        this.minElements = (firstMinElementsStmt == null) ? 0
-                : firstMinElementsStmt.argument();
+        this.minElements = (firstMinElementsStmt == null) ? 0 : firstMinElementsStmt.argument();
 
         MaxElementsEffectiveStatementImpl firstMaxElementsStmt = parent
                 .firstEffective(MaxElementsEffectiveStatementImpl.class);
-        String maxElementsArg = (firstMaxElementsStmt == null) ? "unbounded"
-                : firstMaxElementsStmt.argument();
+        String maxElementsArg = (firstMaxElementsStmt == null) ? "unbounded" : firstMaxElementsStmt.argument();
         if (maxElementsArg.equals("unbounded")) {
             this.maxElements = Integer.MAX_VALUE;
         } else {
             this.maxElements = Integer.valueOf(maxElementsArg);
         }
 
-        Collection<MustDefinition> mustSubstatements = parent
-                .allSubstatementsOfType(MustDefinition.class);
+        Collection<MustDefinition> mustSubstatements = parent.allSubstatementsOfType(MustDefinition.class);
         this.mustConstraints = ImmutableSet.copyOf(mustSubstatements);
     }
 
@@ -83,14 +77,10 @@ public class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result
-                + ((whenCondition == null) ? 0 : whenCondition.hashCode());
-        result = prime * result
-                + ((mustConstraints == null) ? 0 : mustConstraints.hashCode());
-        result = prime * result
-                + ((minElements == null) ? 0 : minElements.hashCode());
-        result = prime * result
-                + ((maxElements == null) ? 0 : maxElements.hashCode());
+        result = prime * result + Objects.hashCode(whenCondition);
+        result = prime * result + Objects.hashCode(mustConstraints);
+        result = prime * result + Objects.hashCode(minElements);
+        result = prime * result + Objects.hashCode(maxElements);
         result = prime * result + mandatory.hashCode();
         return result;
     }
