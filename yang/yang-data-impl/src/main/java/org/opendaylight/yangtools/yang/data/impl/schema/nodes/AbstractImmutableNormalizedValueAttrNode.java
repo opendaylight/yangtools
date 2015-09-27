@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -52,7 +53,7 @@ public abstract class AbstractImmutableNormalizedValueAttrNode<K extends PathArg
         // We can not call directly getValue.equals because of Empty Type
         // Definition leaves which allways have NULL value
 
-        if (!java.util.Objects.deepEquals(getValue(), other.getValue())) {
+        if (!Objects.deepEquals(getValue(), other.getValue())) {
             return false;
         }
 

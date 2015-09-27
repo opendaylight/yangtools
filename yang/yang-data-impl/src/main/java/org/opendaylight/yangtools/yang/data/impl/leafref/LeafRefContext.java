@@ -38,20 +38,17 @@ final public class LeafRefContext {
         this.currentNodePath = leafRefContextBuilder.getCurrentNodePath();
         this.schemaContext = leafRefContextBuilder.getSchemaContext();
         this.leafRefTargetPath = leafRefContextBuilder.getLeafRefTargetPath();
-        this.absoluteLeafRefTargetPath = leafRefContextBuilder
-                .getAbsoluteLeafRefTargetPath();
-        this.leafRefTargetPathString = leafRefContextBuilder
-                .getLeafRefTargetPathString();
+        this.absoluteLeafRefTargetPath = leafRefContextBuilder.getAbsoluteLeafRefTargetPath();
+        this.leafRefTargetPathString = leafRefContextBuilder.getLeafRefTargetPathString();
         this.isReferencedBy = leafRefContextBuilder.isReferencedBy();
         this.isReferencing = leafRefContextBuilder.isReferencing();
         this.referencingChilds = ImmutableMap.copyOf(leafRefContextBuilder.getReferencingChilds());
         this.referencedByChilds = ImmutableMap.copyOf(leafRefContextBuilder.getReferencedByChilds());
-        this.referencedByLeafRefCtx = ImmutableMap.copyOf(leafRefContextBuilder
-                .getAllReferencedByLeafRefCtxs());
+        this.referencedByLeafRefCtx = ImmutableMap.copyOf(leafRefContextBuilder.getAllReferencedByLeafRefCtxs());
         this.module = leafRefContextBuilder.getLeafRefContextModule();
     }
 
-    public static final LeafRefContext create(final SchemaContext ctx) {
+    public static LeafRefContext create(final SchemaContext ctx) {
         try {
             return new LeafRefContextTreeBuilder(ctx).buildLeafRefContextTree();
         } catch (IOException | LeafRefYangSyntaxErrorException e) {

@@ -7,27 +7,27 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import com.google.common.base.Objects;
 import com.google.common.base.Preconditions;
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 
 class StatementIdentifier {
 
-    private final @Nonnull QName name;
-    private final @Nullable String argument;
+    private final QName name;
+    private final String argument;
 
-    StatementIdentifier(QName name, String argument) {
+    StatementIdentifier(@Nonnull final QName name, @Nullable final String argument) {
         this.name = Preconditions.checkNotNull(name);
         this.argument = argument;
     }
 
-    QName getName() {
+    @Nonnull QName getName() {
         return name;
     }
 
-    String getArgument() {
+    @Nullable String getArgument() {
         return argument;
     }
 
@@ -35,13 +35,13 @@ class StatementIdentifier {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result +  name.hashCode();
-        result = prime * result + ((argument == null) ? 0 : argument.hashCode());
+        result = prime * result + name.hashCode();
+        result = prime * result + Objects.hashCode(argument);
         return result;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -55,16 +55,11 @@ class StatementIdentifier {
         if (!name.equals(other.name)) {
             return false;
         }
-        if (!Objects.equal(argument, other.argument)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(argument, other.argument);
     }
 
     @Override
     public String toString() {
         return "StatementIdentifier [name=" + name + ", argument=" + argument + "]";
     }
-
-
 }

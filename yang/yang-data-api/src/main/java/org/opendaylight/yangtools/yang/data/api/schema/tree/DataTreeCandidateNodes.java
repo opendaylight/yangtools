@@ -67,7 +67,7 @@ public final class DataTreeCandidateNodes {
         }
     }
 
-    private static abstract class AbstractNodeIterator {
+    private abstract static class AbstractNodeIterator {
         private final Iterator<DataTreeCandidateNode> iterator;
 
         AbstractNodeIterator(final Iterator<DataTreeCandidateNode> iterator) {
@@ -122,7 +122,6 @@ public final class DataTreeCandidateNodes {
         protected AbstractNodeIterator getParent() {
             return null;
         }
-
     }
 
     private static final class ExitingNodeIterator extends AbstractNodeIterator {
@@ -141,9 +140,8 @@ public final class DataTreeCandidateNodes {
         }
 
         @Override
-        protected final void exitNode(final DataTreeModificationCursor cursor) {
+        protected void exitNode(final DataTreeModificationCursor cursor) {
             cursor.exit();
         }
-
     }
 }

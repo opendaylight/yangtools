@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
-
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
@@ -23,7 +22,7 @@ final class ListEntryModificationStrategy extends AbstractDataNodeContainerModif
 
     @Override
     @SuppressWarnings("rawtypes")
-    protected final DataContainerNodeBuilder createBuilder(final NormalizedNode<?, ?> original) {
+    protected DataContainerNodeBuilder createBuilder(final NormalizedNode<?, ?> original) {
         checkArgument(original instanceof MapEntryNode);
         return ImmutableMapEntryNodeBuilder.create((MapEntryNode) original);
     }
