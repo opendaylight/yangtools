@@ -210,14 +210,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
             return false;
         }
         final QName other = (QName) obj;
-        if (localName == null) {
-            if (other.localName != null) {
-                return false;
-            }
-        } else if (!localName.equals(other.localName)) {
-            return false;
-        }
-        return module.equals(other.module);
+        return Objects.equals(localName, other.localName) && module.equals(other.module);
     }
 
     public static QName create(final QName base, final String localName) {
