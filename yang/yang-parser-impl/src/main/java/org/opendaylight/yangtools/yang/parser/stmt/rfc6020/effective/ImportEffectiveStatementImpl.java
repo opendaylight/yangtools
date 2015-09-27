@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
-
 import java.util.Date;
 import java.util.Objects;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
@@ -19,11 +18,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 public class ImportEffectiveStatementImpl extends EffectiveStatementBase<String, ImportStatement> implements
         ModuleImport {
 
-    private String moduleName;
+    private final String moduleName;
     private Date revision;
     private String prefix;
 
-    public ImportEffectiveStatementImpl(StmtContext<String, ImportStatement, ?> ctx) {
+    public ImportEffectiveStatementImpl(final StmtContext<String, ImportStatement, ?> ctx) {
         super(ctx);
 
         moduleName = ctx.getStatementArgument();
@@ -65,7 +64,7 @@ public class ImportEffectiveStatementImpl extends EffectiveStatementBase<String,
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -76,25 +75,13 @@ public class ImportEffectiveStatementImpl extends EffectiveStatementBase<String,
             return false;
         }
         ImportEffectiveStatementImpl other = (ImportEffectiveStatementImpl) obj;
-        if (getModuleName() == null) {
-            if (other.getModuleName() != null) {
-                return false;
-            }
-        } else if (!getModuleName().equals(other.getModuleName())) {
+        if (!Objects.equals(getModuleName(), other.getModuleName())) {
             return false;
         }
-        if (getRevision() == null) {
-            if (other.getRevision() != null) {
-                return false;
-            }
-        } else if (!getRevision().equals(other.getRevision())) {
+        if (!Objects.equals(getRevision(), other.getRevision())) {
             return false;
         }
-        if (getPrefix() == null) {
-            if (other.getPrefix() != null) {
-                return false;
-            }
-        } else if (!getPrefix().equals(other.getPrefix())) {
+        if (!Objects.equals(getPrefix(), other.getPrefix())) {
             return false;
         }
         return true;

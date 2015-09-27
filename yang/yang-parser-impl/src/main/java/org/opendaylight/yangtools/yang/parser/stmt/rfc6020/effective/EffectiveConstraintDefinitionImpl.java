@@ -22,7 +22,7 @@ public class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
     private final Integer minElements;
     private final Integer maxElements;
 
-    public EffectiveConstraintDefinitionImpl(EffectiveStatementBase<?, ?> parent) {
+    public EffectiveConstraintDefinitionImpl(final EffectiveStatementBase<?, ?> parent) {
 
         MandatoryEffectiveStatementImpl firstMandatoryStmt = parent
                 .firstEffective(MandatoryEffectiveStatementImpl.class);
@@ -97,35 +97,19 @@ public class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
             return false;
         }
         EffectiveConstraintDefinitionImpl other = (EffectiveConstraintDefinitionImpl) obj;
-        if (whenCondition == null) {
-            if (other.whenCondition != null) {
-                return false;
-            }
-        } else if (!whenCondition.equals(other.whenCondition)) {
-            return false;
-        }
-        if (mustConstraints == null) {
-            if (other.mustConstraints != null) {
-                return false;
-            }
-        } else if (!mustConstraints.equals(other.mustConstraints)) {
-            return false;
-        }
         if (!mandatory.equals(other.mandatory)) {
             return false;
         }
-        if (minElements == null) {
-            if (other.minElements != null) {
-                return false;
-            }
-        } else if (!minElements.equals(other.minElements)) {
+        if (!Objects.equals(whenCondition, other.whenCondition)) {
             return false;
         }
-        if (maxElements == null) {
-            if (other.maxElements != null) {
-                return false;
-            }
-        } else if (!maxElements.equals(other.maxElements)) {
+        if (!Objects.equals(mustConstraints, other.mustConstraints)) {
+            return false;
+        }
+        if (!Objects.equals(minElements, other.minElements)) {
+            return false;
+        }
+        if (!Objects.equals(maxElements, other.maxElements)) {
             return false;
         }
         return true;
@@ -133,8 +117,7 @@ public class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(
-                EffectiveConstraintDefinitionImpl.class.getSimpleName());
+        StringBuilder sb = new StringBuilder(EffectiveConstraintDefinitionImpl.class.getSimpleName());
         sb.append("[");
         sb.append("whenCondition=").append(whenCondition);
         sb.append(", mustConstraints=").append(mustConstraints);

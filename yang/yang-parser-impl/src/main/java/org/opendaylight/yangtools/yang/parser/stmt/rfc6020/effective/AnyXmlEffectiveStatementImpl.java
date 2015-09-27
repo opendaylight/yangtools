@@ -17,10 +17,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
@@ -40,7 +40,7 @@ public class AnyXmlEffectiveStatementImpl extends
     ImmutableList<UnknownSchemaNode> unknownNodes;
 
     public AnyXmlEffectiveStatementImpl(
-            StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx) {
+            final StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx) {
         super(ctx);
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
@@ -51,7 +51,7 @@ public class AnyXmlEffectiveStatementImpl extends
     }
 
     private void initCopyType(
-            StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx) {
+            final StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx) {
 
         List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
 
@@ -141,70 +141,29 @@ public class AnyXmlEffectiveStatementImpl extends
         return result;
     }
 
-    private boolean checkQname(AnyXmlEffectiveStatementImpl other) {
-      if (qname == null) {
-        if (other.qname != null) {
-          return false;
-        }
-      } else if (!qname.equals(other.qname)) {
-        return false;
-      }
-      return true;
-    }
-
-    private boolean checkPath(AnyXmlEffectiveStatementImpl other) {
-      if (path == null) {
-        if (other.path != null) {
-            return false;
-        }
-      } else if (!path.equals(other.path)) {
-        return false;
-      }
-      return true;
-    }
-
-    private boolean checkObject(final Object obj) {
-      if (obj == null) {
-        return false;
-      }
-      if (getClass() != obj.getClass()) {
-        return false;
-      }
-      return true;
-    }
-
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
-
-        if (!checkObject(obj)) {
-          return false;
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
         }
 
         AnyXmlEffectiveStatementImpl other = (AnyXmlEffectiveStatementImpl) obj;
-
-        if (!checkQname(other)) {
-            return false;
-        }
-
-        if (!checkPath(other)) {
-            return false;
-        }
-
-        return true;
+        return Objects.equals(qname, other.qname) && Objects.equals(path, other.path);
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(
-                AnyXmlEffectiveStatementImpl.class.getSimpleName());
+        StringBuilder sb = new StringBuilder(AnyXmlEffectiveStatementImpl.class.getSimpleName());
         sb.append("[");
         sb.append("qname=").append(qname);
         sb.append(", path=").append(path);
         sb.append("]");
         return sb.toString();
     }
-
 }

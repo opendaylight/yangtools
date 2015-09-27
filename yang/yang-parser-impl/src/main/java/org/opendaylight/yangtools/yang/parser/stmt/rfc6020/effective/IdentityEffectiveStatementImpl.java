@@ -18,26 +18,24 @@ import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedIdentitiesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-public class IdentityEffectiveStatementImpl extends
-        AbstractEffectiveDocumentedNode<QName, IdentityStatement> implements
-        IdentitySchemaNode {
+public class IdentityEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, IdentityStatement>
+        implements IdentitySchemaNode {
     private final QName qname;
     private final SchemaPath path;
-    IdentitySchemaNode baseIdentity;
+    private IdentitySchemaNode baseIdentity;
     private ImmutableSet<IdentitySchemaNode> derivedIdentities;
-
-    ImmutableList<UnknownSchemaNode> unknownNodes;
+    private ImmutableList<UnknownSchemaNode> unknownNodes;
 
     public IdentityEffectiveStatementImpl(
-            StmtContext<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> ctx) {
+            final StmtContext<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> ctx) {
         super(ctx);
 
         this.qname = ctx.getStatementArgument();
@@ -48,13 +46,13 @@ public class IdentityEffectiveStatementImpl extends
     }
 
     private void initDerivedIdentities(
-            StmtContext<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> ctx) {
+            final StmtContext<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> ctx) {
 
         Set<IdentitySchemaNode> derivedIdentitiesInit = new HashSet<IdentitySchemaNode>();
         List<StmtContext<?, ?, ?>> derivedIdentitiesCtxList = ctx.getFromNamespace(
                 DerivedIdentitiesNamespace.class, ctx.getStatementArgument());
 
-        if(derivedIdentitiesCtxList == null) {
+        if (derivedIdentitiesCtxList == null) {
             this.derivedIdentities = ImmutableSet.of();
             return;
         }
@@ -68,7 +66,7 @@ public class IdentityEffectiveStatementImpl extends
         this.derivedIdentities = ImmutableSet.copyOf(derivedIdentitiesInit);
     }
 
-    private void initBaseIdentity(IdentityEffectiveStatementImpl baseIdentity) {
+    private void initBaseIdentity(final IdentityEffectiveStatementImpl baseIdentity) {
         this.baseIdentity = baseIdentity;
     }
 
@@ -133,21 +131,7 @@ public class IdentityEffectiveStatementImpl extends
             return false;
         }
         IdentityEffectiveStatementImpl other = (IdentityEffectiveStatementImpl) obj;
-        if (qname == null) {
-            if (other.qname != null) {
-                return false;
-            }
-        } else if (!qname.equals(other.qname)) {
-            return false;
-        }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(qname, other.qname) && Objects.equals(path, other.path);
     }
 
     @Override

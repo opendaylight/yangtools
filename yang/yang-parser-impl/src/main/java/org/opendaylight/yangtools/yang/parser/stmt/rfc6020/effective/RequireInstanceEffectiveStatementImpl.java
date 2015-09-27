@@ -11,10 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class RequireInstanceEffectiveStatementImpl extends EffectiveStatementBase<Boolean, RequireInstanceStatement> {
-
-    public RequireInstanceEffectiveStatementImpl(StmtContext<Boolean, RequireInstanceStatement, ?> ctx) {
+    public RequireInstanceEffectiveStatementImpl(final StmtContext<Boolean, RequireInstanceStatement, ?> ctx) {
         super(ctx);
-
     }
-
 }

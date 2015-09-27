@@ -17,11 +17,11 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
@@ -32,18 +32,19 @@ public class LeafListEffectiveStatementImpl extends AbstractEffectiveDocumentedN
     private final QName qname;
     private final SchemaPath path;
 
+    // FIXME: should be private
     boolean augmenting;
     private boolean addedByUses;
     private LeafListSchemaNode original;
     private boolean configuration = true;
-    private ConstraintDefinition constraintsDef;
+    private final ConstraintDefinition constraintsDef;
     private TypeDefinition<?> type;
     private boolean userOrdered;
 
     private ImmutableList<UnknownSchemaNode> unknownNodes;
 
     public LeafListEffectiveStatementImpl(
-            StmtContext<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> ctx) {
+            final StmtContext<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> ctx) {
         super(ctx);
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
@@ -56,17 +57,17 @@ public class LeafListEffectiveStatementImpl extends AbstractEffectiveDocumentedN
     }
 
     private void initCopyType(
-            StmtContext<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> ctx) {
+            final StmtContext<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> ctx) {
 
         List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
 
-        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
+        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
             augmenting = true;
         }
-        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
+        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
             addedByUses = true;
         }
-        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
+        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
             addedByUses = augmenting = true;
         }
 
@@ -174,21 +175,7 @@ public class LeafListEffectiveStatementImpl extends AbstractEffectiveDocumentedN
             return false;
         }
         LeafListEffectiveStatementImpl other = (LeafListEffectiveStatementImpl) obj;
-        if (qname == null) {
-            if (other.qname != null) {
-                return false;
-            }
-        } else if (!qname.equals(other.qname)) {
-            return false;
-        }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(qname, other.qname) && Objects.equals(path, other.path);
     }
 
     @Override

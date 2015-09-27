@@ -14,25 +14,24 @@ import java.util.List;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-public class ExtensionEffectiveStatementImpl extends
-        AbstractEffectiveDocumentedNode<QName, ExtensionStatement> implements
-        ExtensionDefinition {
+public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, ExtensionStatement>
+        implements ExtensionDefinition {
     private final QName qname;
-    String argument;
+    private String argument;
     private final SchemaPath schemaPath;
 
-    ImmutableList<UnknownSchemaNode> unknownNodes;
-    boolean yin;
+    private ImmutableList<UnknownSchemaNode> unknownNodes;
+    private boolean yin;
 
     public ExtensionEffectiveStatementImpl(
-            StmtContext<QName, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> ctx) {
+            final StmtContext<QName, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> ctx) {
         super(ctx);
 
         this.qname = ctx.getStatementArgument();
@@ -40,7 +39,6 @@ public class ExtensionEffectiveStatementImpl extends
 
         initSubstatementCollections();
         initFields();
-
     }
 
     private void initFields() {
@@ -121,27 +119,12 @@ public class ExtensionEffectiveStatementImpl extends
             return false;
         }
         ExtensionEffectiveStatementImpl other = (ExtensionEffectiveStatementImpl) obj;
-        if (qname == null) {
-            if (other.qname != null) {
-                return false;
-            }
-        } else if (!qname.equals(other.qname)) {
-            return false;
-        }
-        if (schemaPath == null) {
-            if (other.schemaPath != null) {
-                return false;
-            }
-        } else if (!schemaPath.equals(other.schemaPath)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(qname, other.qname) && Objects.equals(schemaPath, other.schemaPath);
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(
-                ExtensionEffectiveStatementImpl.class.getSimpleName());
+        StringBuilder sb = new StringBuilder(ExtensionEffectiveStatementImpl.class.getSimpleName());
         sb.append("[");
         sb.append("argument=").append(argument);
         sb.append(", qname=").append(qname);

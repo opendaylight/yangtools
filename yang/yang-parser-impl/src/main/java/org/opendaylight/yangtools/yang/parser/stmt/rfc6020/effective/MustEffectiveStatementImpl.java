@@ -14,18 +14,16 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class MustEffectiveStatementImpl extends
-        EffectiveStatementBase<RevisionAwareXPath, MustStatement> implements
+public class MustEffectiveStatementImpl extends EffectiveStatementBase<RevisionAwareXPath, MustStatement> implements
         MustDefinition {
 
-    private RevisionAwareXPath xPath;
+    private final RevisionAwareXPath xPath;
     private String description;
     private String errorAppTag;
     private String errorMessage;
     private String reference;
 
-    public MustEffectiveStatementImpl(
-            StmtContext<RevisionAwareXPath, MustStatement, ?> ctx) {
+    public MustEffectiveStatementImpl(final StmtContext<RevisionAwareXPath, MustStatement, ?> ctx) {
         super(ctx);
 
         initFields();
@@ -99,25 +97,13 @@ public class MustEffectiveStatementImpl extends
             return false;
         }
         final MustEffectiveStatementImpl other = (MustEffectiveStatementImpl) obj;
-        if (xPath == null) {
-            if (other.xPath != null) {
-                return false;
-            }
-        } else if (!xPath.equals(other.xPath)) {
+        if (!Objects.equals(xPath, other.xPath)) {
             return false;
         }
-        if (description == null) {
-            if (other.description != null) {
-                return false;
-            }
-        } else if (!description.equals(other.description)) {
+        if (!Objects.equals(description, other.description)) {
             return false;
         }
-        if (reference == null) {
-            if (other.reference != null) {
-                return false;
-            }
-        } else if (!reference.equals(other.reference)) {
+        if (!Objects.equals(reference,other.reference)) {
             return false;
         }
         return true;

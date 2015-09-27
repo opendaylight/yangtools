@@ -11,13 +11,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class IfFeatureEffectiveStatementImpl extends
-        EffectiveStatementBase<QName, IfFeatureStatement> {
-
-    public IfFeatureEffectiveStatementImpl(
-            StmtContext<QName, IfFeatureStatement, ?> ctx) {
+public class IfFeatureEffectiveStatementImpl extends EffectiveStatementBase<QName, IfFeatureStatement> {
+    public IfFeatureEffectiveStatementImpl(final StmtContext<QName, IfFeatureStatement, ?> ctx) {
         super(ctx);
-
     }
-
 }

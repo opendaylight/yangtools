@@ -7,20 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.LinkedList;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-import com.google.common.collect.ImmutableList;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public class RefineEffectiveStatementImpl extends
         AbstractEffectiveDocumentedNode<SchemaNodeIdentifier, RefineStatement>
@@ -28,11 +27,11 @@ public class RefineEffectiveStatementImpl extends
 
     private final QName qname;
     private final SchemaPath path;
-    ImmutableList<UnknownSchemaNode> unknownNodes;
+    private List<UnknownSchemaNode> unknownNodes;
     private final SchemaNode refineTargetNode;
 
     public RefineEffectiveStatementImpl(
-            StmtContext<SchemaNodeIdentifier, RefineStatement, ?> ctx) {
+            final StmtContext<SchemaNodeIdentifier, RefineStatement, ?> ctx) {
         super(ctx);
 
         qname = ctx.getStatementArgument().getLastComponent();
@@ -40,7 +39,6 @@ public class RefineEffectiveStatementImpl extends
         refineTargetNode = (SchemaNode) ctx.getEffectOfStatement().iterator().next().buildEffective();
 
         initSubstatementCollectionsAndFields();
-
     }
 
     public SchemaNode getRefineTargetNode() {

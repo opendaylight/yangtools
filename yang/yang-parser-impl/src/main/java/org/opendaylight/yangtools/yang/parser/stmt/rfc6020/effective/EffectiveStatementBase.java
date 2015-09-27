@@ -28,16 +28,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
-abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
-        implements EffectiveStatement<A, D> {
-
+abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>> implements EffectiveStatement<A, D> {
     private final StmtContext<A, D, ?> stmtCtx;
     private final ImmutableList<? extends EffectiveStatement<?, ?>> substatements;
     private final StatementSource statementSource;
     private final StatementDefinition statementDefinition;
-    private D declaredInstance;
-
     private final A argument;
+    private D declaredInstance;
 
     public EffectiveStatementBase(final StmtContext<A, D, ?> ctx) {
 
@@ -46,10 +43,8 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
         this.argument = ctx.getStatementArgument();
         this.statementSource = ctx.getStatementSource();
 
-        Collection<StatementContextBase<?, ?, ?>> declaredSubstatements = ctx
-                .declaredSubstatements();
-        Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements = ctx
-                .effectiveSubstatements();
+        Collection<StatementContextBase<?, ?, ?>> declaredSubstatements = ctx.declaredSubstatements();
+        Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements = ctx.effectiveSubstatements();
 
         Collection<StatementContextBase<?, ?, ?>> substatementsInit = new LinkedList<>();
 
@@ -94,14 +89,12 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> V get(
-            final Class<N> namespace, final K identifier) {
+    public <K, V, N extends IdentifierNamespace<K, V>> V get(final Class<N> namespace, final K identifier) {
         return stmtCtx.getFromNamespace(namespace, identifier);
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(
-            final Class<N> namespace) {
+    public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(final Class<N> namespace) {
         return stmtCtx.getAllFromNamespace(namespace);
     }
 
@@ -114,12 +107,10 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
         return stmtCtx;
     }
 
-    protected final <S extends EffectiveStatement<?, ?>> S firstEffective(
-            final Class<S> type) {
+    protected final <S extends EffectiveStatement<?, ?>> S firstEffective(final Class<S> type) {
         S result = null;
         try {
-            result = type.cast(Iterables.find(substatements,
-                    Predicates.instanceOf(type)));
+            result = type.cast(Iterables.find(substatements, Predicates.instanceOf(type)));
         } catch (NoSuchElementException e) {
             result = null;
         }
@@ -129,8 +120,7 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
     protected final <S extends SchemaNode> S firstSchemaNode(final Class<S> type) {
         S result = null;
         try {
-            result = type.cast(Iterables.find(substatements,
-                    Predicates.instanceOf(type)));
+            result = type.cast(Iterables.find(substatements, Predicates.instanceOf(type)));
         } catch (NoSuchElementException e) {
             result = null;
         }
@@ -138,13 +128,11 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
     }
 
     @SuppressWarnings("unchecked")
-    protected final <T> Collection<T> allSubstatementsOfType(
-            final Class<T> type) {
+    protected final <T> Collection<T> allSubstatementsOfType(final Class<T> type) {
         Collection<T> result = null;
 
         try {
-            result = Collection.class.cast(Collections2.filter(substatements,
-                    Predicates.instanceOf(type)));
+            result = Collection.class.cast(Collections2.filter(substatements, Predicates.instanceOf(type)));
         } catch (NoSuchElementException e) {
             result = Collections.emptyList();
         }
@@ -154,26 +142,21 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
     protected final <T> T firstSubstatementOfType(final Class<T> type) {
         T result = null;
         try {
-            result = type.cast(Iterables.find(substatements,
-                    Predicates.instanceOf(type)));
+            result = type.cast(Iterables.find(substatements, Predicates.instanceOf(type)));
         } catch (NoSuchElementException e) {
             result = null;
         }
         return result;
     }
 
-    protected final <R> R firstSubstatementOfType(final Class<?> type,
-            final Class<R> returnType) {
+    protected final <R> R firstSubstatementOfType(final Class<?> type, final Class<R> returnType) {
         R result = null;
         try {
-            result = returnType.cast(Iterables.find(
-                    substatements,
-                    Predicates.and(Predicates.instanceOf(type),
-                            Predicates.instanceOf(returnType))));
+            result = returnType.cast(Iterables.find(substatements,
+                    Predicates.and(Predicates.instanceOf(type), Predicates.instanceOf(returnType))));
         } catch (NoSuchElementException e) {
             result = null;
         }
         return result;
     }
-
 }

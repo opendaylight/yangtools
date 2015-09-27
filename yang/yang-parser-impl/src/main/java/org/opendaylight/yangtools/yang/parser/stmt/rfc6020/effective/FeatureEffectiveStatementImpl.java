@@ -13,25 +13,25 @@ import java.util.List;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public class FeatureEffectiveStatementImpl extends EffectiveStatementBase<QName, FeatureStatement> implements
         FeatureDefinition {
 
-    private QName qName;
-    private SchemaPath path;
+    private final QName qName;
+    private final SchemaPath path;
     private List<UnknownSchemaNode> unknownSchemaNodes;
     private String description;
     private String reference;
     private Status status;
 
-    public FeatureEffectiveStatementImpl(StmtContext<QName, FeatureStatement, ?> ctx) {
+    public FeatureEffectiveStatementImpl(final StmtContext<QName, FeatureStatement, ?> ctx) {
         super(ctx);
 
         this.qName = ctx.getStatementArgument();
@@ -114,21 +114,7 @@ public class FeatureEffectiveStatementImpl extends EffectiveStatementBase<QName,
             return false;
         }
         FeatureEffectiveStatementImpl other = (FeatureEffectiveStatementImpl) obj;
-        if (qName == null) {
-            if (other.qName != null) {
-                return false;
-            }
-        } else if (!qName.equals(other.qName)) {
-            return false;
-        }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(qName, other.qName) && Objects.equals(path, other.path);
     }
 
     @Override

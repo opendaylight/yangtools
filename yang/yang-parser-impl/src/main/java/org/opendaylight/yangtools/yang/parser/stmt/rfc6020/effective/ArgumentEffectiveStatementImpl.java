@@ -11,12 +11,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class ArgumentEffectiveStatementImpl extends
-        EffectiveStatementBase<QName, ArgumentStatement> {
-
-    public ArgumentEffectiveStatementImpl(
-            StmtContext<QName, ArgumentStatement, ?> ctx) {
+public class ArgumentEffectiveStatementImpl extends EffectiveStatementBase<QName, ArgumentStatement> {
+    public ArgumentEffectiveStatementImpl(final StmtContext<QName, ArgumentStatement, ?> ctx) {
         super(ctx);
     }
-
 }

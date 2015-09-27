@@ -7,15 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
-
-public class PresenceEffectiveStatementImpl extends EffectiveStatementBase<String, PresenceStatement>  {
-
-    public PresenceEffectiveStatementImpl(
-            StmtContext<String, PresenceStatement, ?> ctx) {
+public class PresenceEffectiveStatementImpl extends EffectiveStatementBase<String, PresenceStatement> {
+    public PresenceEffectiveStatementImpl(final StmtContext<String, PresenceStatement, ?> ctx) {
         super(ctx);
     }
-
 }

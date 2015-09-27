@@ -54,9 +54,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameTo
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-public class SubmoduleEffectiveStatementImpl
-        extends
-        AbstractEffectiveDocumentedNode<String, SubmoduleStatement>
+public class SubmoduleEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<String, SubmoduleStatement>
         implements Module, Immutable {
 
     private final QNameModule qNameModule;
@@ -91,34 +89,27 @@ public class SubmoduleEffectiveStatementImpl
 
         name = argument();
 
-        String belongsToModuleName = firstAttributeOf(
-                ctx.declaredSubstatements(), BelongsToStatement.class);
+        String belongsToModuleName = firstAttributeOf(ctx.declaredSubstatements(), BelongsToStatement.class);
         final QNameModule belongsToModuleQName = ctx.getFromNamespace(
                 ModuleNameToModuleQName.class, belongsToModuleName);
         RevisionEffectiveStatementImpl submoduleRevision = firstEffective(RevisionEffectiveStatementImpl.class);
 
-        qNameModule = submoduleRevision == null ? QNameModule.create(
-                belongsToModuleQName.getNamespace(),
-                SimpleDateFormatUtil.DEFAULT_DATE_REV) : QNameModule.create(
-                belongsToModuleQName.getNamespace(),
-                submoduleRevision.argument());
+        qNameModule = submoduleRevision == null
+                ? QNameModule.create(belongsToModuleQName.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV)
+                : QNameModule.create(belongsToModuleQName.getNamespace(), submoduleRevision.argument());
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof PrefixEffectiveStatementImpl) {
-                prefix = ((PrefixEffectiveStatementImpl) effectiveStatement)
-                        .argument();
+                prefix = ((PrefixEffectiveStatementImpl) effectiveStatement).argument();
             }
             if (effectiveStatement instanceof YangVersionEffectiveStatementImpl) {
-                yangVersion = ((YangVersionEffectiveStatementImpl) effectiveStatement)
-                        .argument();
+                yangVersion = ((YangVersionEffectiveStatementImpl) effectiveStatement).argument();
             }
             if (effectiveStatement instanceof OrganizationEffectiveStatementImpl) {
-                organization = ((OrganizationEffectiveStatementImpl) effectiveStatement)
-                        .argument();
+                organization = ((OrganizationEffectiveStatementImpl) effectiveStatement).argument();
             }
             if (effectiveStatement instanceof ContactEffectiveStatementImpl) {
-                contact = ((ContactEffectiveStatementImpl) effectiveStatement)
-                        .argument();
+                contact = ((ContactEffectiveStatementImpl) effectiveStatement).argument();
             }
         }
 
@@ -444,21 +435,13 @@ public class SubmoduleEffectiveStatementImpl
             return false;
         }
         SubmoduleEffectiveStatementImpl other = (SubmoduleEffectiveStatementImpl) obj;
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
+        if (!Objects.equals(name, other.name)) {
             return false;
         }
         if (!qNameModule.equals(other.qNameModule)) {
             return false;
         }
-        if (yangVersion == null) {
-            if (other.yangVersion != null) {
-                return false;
-            }
-        } else if (!yangVersion.equals(other.yangVersion)) {
+        if (!Objects.equals(yangVersion, other.yangVersion)) {
             return false;
         }
         return true;

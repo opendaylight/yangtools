@@ -36,11 +36,11 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 public class UsesEffectiveStatementImpl extends EffectiveStatementBase<QName, UsesStatement> implements UsesNode {
     private SchemaPath groupingPath;
     private boolean addedByUses;
-    ImmutableMap<SchemaPath, SchemaNode> refines;
-    ImmutableSet<AugmentationSchema> augmentations;
-    ImmutableList<UnknownSchemaNode> unknownNodes;
+    private ImmutableMap<SchemaPath, SchemaNode> refines;
+    private ImmutableSet<AugmentationSchema> augmentations;
+    private ImmutableList<UnknownSchemaNode> unknownNodes;
 
-    public UsesEffectiveStatementImpl(StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
+    public UsesEffectiveStatementImpl(final StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
         super(ctx);
 
         initGroupingPath(ctx);
@@ -48,7 +48,7 @@ public class UsesEffectiveStatementImpl extends EffectiveStatementBase<QName, Us
         initSubstatementCollections();
     }
 
-    private void initGroupingPath(StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
+    private void initGroupingPath(final StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
         StmtContext<?, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> grpCtx = ctx.getFromNamespace(
                 GroupingNamespace.class, ctx.getStatementArgument());
         this.groupingPath = Utils.getSchemaPath(grpCtx);
@@ -83,7 +83,7 @@ public class UsesEffectiveStatementImpl extends EffectiveStatementBase<QName, Us
     }
 
     private void initCopyType(
-            StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
+            final StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
 
         List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
         if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
@@ -145,21 +145,7 @@ public class UsesEffectiveStatementImpl extends EffectiveStatementBase<QName, Us
             return false;
         }
         final UsesEffectiveStatementImpl other = (UsesEffectiveStatementImpl) obj;
-        if (groupingPath == null) {
-            if (other.groupingPath != null) {
-                return false;
-            }
-        } else if (!groupingPath.equals(other.groupingPath)) {
-            return false;
-        }
-        if (augmentations == null) {
-            if (other.augmentations != null) {
-                return false;
-            }
-        } else if (!augmentations.equals(other.augmentations)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(groupingPath, other.groupingPath) && Objects.equals(augmentations, other.augmentations);
     }
 
     @Override
