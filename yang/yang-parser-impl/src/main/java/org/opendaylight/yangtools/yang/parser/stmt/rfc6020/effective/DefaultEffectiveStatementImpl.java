@@ -10,12 +10,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class DefaultEffectiveStatementImpl extends
-        EffectiveStatementBase<String, DefaultStatement> {
-
-    public DefaultEffectiveStatementImpl(
-            StmtContext<String, DefaultStatement, ?> ctx) {
+public class DefaultEffectiveStatementImpl extends EffectiveStatementBase<String, DefaultStatement> {
+    public DefaultEffectiveStatementImpl(final StmtContext<String, DefaultStatement, ?> ctx) {
         super(ctx);
     }
-
 }

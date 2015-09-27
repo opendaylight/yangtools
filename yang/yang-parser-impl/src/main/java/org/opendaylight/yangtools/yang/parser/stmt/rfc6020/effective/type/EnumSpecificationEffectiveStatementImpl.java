@@ -132,25 +132,13 @@ public class EnumSpecificationEffectiveStatementImpl extends
             return false;
         }
         EnumSpecificationEffectiveStatementImpl other = (EnumSpecificationEffectiveStatementImpl) obj;
-        if (defaultEnum == null) {
-            if (other.defaultEnum != null) {
-                return false;
-            }
-        } else if (!defaultEnum.equals(other.defaultEnum)) {
+        if (!Objects.equals(defaultEnum, other.defaultEnum)) {
             return false;
         }
-        if (enums == null) {
-            if (other.enums != null) {
-                return false;
-            }
-        } else if (!enums.equals(other.enums)) {
+        if (!Objects.equals(enums, other.enums)) {
             return false;
         }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
+        if (!Objects.equals(path, other.path)) {
             return false;
         }
         return true;
@@ -181,7 +169,7 @@ public class EnumSpecificationEffectiveStatementImpl extends
     @Override
     public TypeDefinition<?> buildType() {
 
-        if(enumerationTypeInstance !=null) {
+        if (enumerationTypeInstance !=null) {
             return enumerationTypeInstance;
         }
 

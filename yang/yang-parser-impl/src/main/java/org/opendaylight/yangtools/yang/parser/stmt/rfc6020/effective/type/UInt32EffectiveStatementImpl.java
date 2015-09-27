@@ -29,6 +29,6 @@ public class UInt32EffectiveStatementImpl extends UnsignedIntegerEffectiveImplBa
 
     @Override
     public String toString() {
-        return "type " + qName;
+        return "type " + getQName();
     }
 }

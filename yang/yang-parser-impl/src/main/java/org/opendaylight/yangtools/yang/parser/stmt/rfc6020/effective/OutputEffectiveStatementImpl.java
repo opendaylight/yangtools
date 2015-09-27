@@ -19,39 +19,37 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-public class OutputEffectiveStatementImpl extends
-        AbstractEffectiveDocumentedDataNodeContainer<QName, OutputStatement>
+public class OutputEffectiveStatementImpl extends AbstractEffectiveDocumentedDataNodeContainer<QName, OutputStatement>
         implements ContainerSchemaNode {
 
     private final QName qname;
     private final SchemaPath path;
     private final boolean presence;
 
-    boolean augmenting;
-    boolean addedByUses;
-    boolean configuration = true;
-    ContainerSchemaNode original;
-    ConstraintDefinition constraints;
+    private boolean augmenting;
+    private boolean addedByUses;
+    private boolean configuration = true;
+    private ContainerSchemaNode original;
+    private final ConstraintDefinition constraints;
 
-    private ImmutableSet<AugmentationSchema> augmentations;
-    private ImmutableList<UnknownSchemaNode> unknownNodes;
+    private Set<AugmentationSchema> augmentations;
+    private List<UnknownSchemaNode> unknownNodes;
 
     public OutputEffectiveStatementImpl(
-            StmtContext<QName, OutputStatement, EffectiveStatement<QName, OutputStatement>> ctx) {
+            final StmtContext<QName, OutputStatement, EffectiveStatement<QName, OutputStatement>> ctx) {
         super(ctx);
 
         qname = ctx.getStatementArgument();
         path = Utils.getSchemaPath(ctx);
-        presence = (firstEffective(PresenceEffectiveStatementImpl.class) == null) ? false
-                : true;
+        presence = firstEffective(PresenceEffectiveStatementImpl.class) != null;
         this.constraints = new EffectiveConstraintDefinitionImpl(this);
 
         initSubstatementCollections();
@@ -59,20 +57,19 @@ public class OutputEffectiveStatementImpl extends
     }
 
     private void initCopyType(
-            StmtContext<QName, OutputStatement, EffectiveStatement<QName, OutputStatement>> ctx) {
+            final StmtContext<QName, OutputStatement, EffectiveStatement<QName, OutputStatement>> ctx) {
 
         List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
 
-        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
+        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
             augmenting = true;
         }
-        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
+        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
             addedByUses = true;
         }
-        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
+        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
             addedByUses = augmenting = true;
         }
-
         if (ctx.getOriginalCtx() != null) {
             original = (ContainerSchemaNode) ctx.getOriginalCtx().buildEffective();
         }
@@ -94,8 +91,7 @@ public class OutputEffectiveStatementImpl extends
                 AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
                 augmentationsInit.add(augmentationSchema);
             }
-            if (!configurationInit
-                    && effectiveStatement instanceof ConfigEffectiveStatementImpl) {
+            if (!configurationInit && effectiveStatement instanceof ConfigEffectiveStatementImpl) {
                 ConfigEffectiveStatementImpl configStmt = (ConfigEffectiveStatementImpl) effectiveStatement;
                 this.configuration = configStmt.argument();
                 configurationInit = true;
@@ -172,21 +168,7 @@ public class OutputEffectiveStatementImpl extends
             return false;
         }
         OutputEffectiveStatementImpl other = (OutputEffectiveStatementImpl) obj;
-        if (qname == null) {
-            if (other.qname != null) {
-                return false;
-            }
-        } else if (!qname.equals(other.qname)) {
-            return false;
-        }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(qname, other.qname) && Objects.equals(path, other.path);
     }
 
     @Override

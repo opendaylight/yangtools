@@ -9,7 +9,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import java.math.BigInteger;
-
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -31,6 +30,6 @@ public class UInt64EffectiveStatementImpl extends UnsignedIntegerEffectiveImplBa
 
     @Override
     public String toString() {
-        return "type " + qName;
+        return "type " + getQName();
     }
 }

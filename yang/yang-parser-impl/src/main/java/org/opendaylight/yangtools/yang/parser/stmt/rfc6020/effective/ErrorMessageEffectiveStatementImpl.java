@@ -10,13 +10,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class ErrorMessageEffectiveStatementImpl extends
-        EffectiveStatementBase<String, ErrorMessageStatement> {
-
-    public ErrorMessageEffectiveStatementImpl(
-            StmtContext<String, ErrorMessageStatement, ?> ctx) {
+public class ErrorMessageEffectiveStatementImpl extends EffectiveStatementBase<String, ErrorMessageStatement> {
+    public ErrorMessageEffectiveStatementImpl(final StmtContext<String, ErrorMessageStatement, ?> ctx) {
         super(ctx);
-
     }
-
 }

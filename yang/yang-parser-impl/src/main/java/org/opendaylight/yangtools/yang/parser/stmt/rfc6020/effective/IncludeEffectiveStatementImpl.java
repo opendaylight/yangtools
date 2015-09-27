@@ -10,12 +10,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class IncludeEffectiveStatementImpl extends
-        EffectiveStatementBase<String, IncludeStatement> {
-
-    public IncludeEffectiveStatementImpl(
-            StmtContext<String, IncludeStatement, ?> ctx) {
+public class IncludeEffectiveStatementImpl extends EffectiveStatementBase<String, IncludeStatement> {
+    public IncludeEffectiveStatementImpl(final StmtContext<String, IncludeStatement, ?> ctx) {
         super(ctx);
     }
-
 }

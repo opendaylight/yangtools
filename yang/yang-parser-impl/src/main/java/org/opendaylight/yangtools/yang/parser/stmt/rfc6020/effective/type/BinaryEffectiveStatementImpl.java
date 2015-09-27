@@ -23,9 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
-public class BinaryEffectiveStatementImpl extends
-        EffectiveStatementBase<String, TypeStatement> implements
-        BinaryTypeDefinition {
+public class BinaryEffectiveStatementImpl extends EffectiveStatementBase<String, TypeStatement>
+        implements BinaryTypeDefinition {
 
     private static final String DESCRIPTION = "The binary built-in type represents any binary data, i.e., a sequence of octets.";
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.8";
@@ -41,8 +40,8 @@ public class BinaryEffectiveStatementImpl extends
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
         super(ctx);
 
-        final LengthConstraint lengthConstraint = new LengthConstraintEffectiveImpl(
-                0, Long.MAX_VALUE, OPTIONAL_EMPTY, OPTIONAL_EMPTY);
+        final LengthConstraint lengthConstraint =
+                new LengthConstraintEffectiveImpl(0, Long.MAX_VALUE, OPTIONAL_EMPTY, OPTIONAL_EMPTY);
         lengthConstraints = Collections.singletonList(lengthConstraint);
     }
 

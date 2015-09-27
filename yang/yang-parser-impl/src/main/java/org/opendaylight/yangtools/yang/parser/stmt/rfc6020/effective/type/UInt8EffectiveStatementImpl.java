@@ -29,6 +29,6 @@ public class UInt8EffectiveStatementImpl extends UnsignedIntegerEffectiveImplBas
 
     @Override
     public String toString() {
-        return "type " + qName;
+        return "type " + getQName();
     }
 }

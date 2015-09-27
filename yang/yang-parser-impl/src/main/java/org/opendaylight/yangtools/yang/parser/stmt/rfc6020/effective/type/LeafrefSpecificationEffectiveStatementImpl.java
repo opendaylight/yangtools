@@ -12,18 +12,18 @@ import java.util.List;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.Leafref;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PathEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public class LeafrefSpecificationEffectiveStatementImpl extends
         EffectiveStatementBase<String, TypeStatement.LeafrefSpecification> implements LeafrefTypeDefinition, TypeDefinitionEffectiveBuilder {
@@ -35,10 +35,11 @@ public class LeafrefSpecificationEffectiveStatementImpl extends
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.9";
     private static final String UNITS = "";
 
-    private RevisionAwareXPath xpath;
     private final SchemaPath path;
+    private RevisionAwareXPath xpath;
+    private Leafref leafrefInstance = null;
 
-    public LeafrefSpecificationEffectiveStatementImpl(StmtContext<String, TypeStatement.LeafrefSpecification, EffectiveStatement<String, TypeStatement.LeafrefSpecification>> ctx) {
+    public LeafrefSpecificationEffectiveStatementImpl(final StmtContext<String, TypeStatement.LeafrefSpecification, EffectiveStatement<String, TypeStatement.LeafrefSpecification>> ctx) {
         super(ctx);
 
         path = Utils.getSchemaPath(ctx.getParentContext()).createChild(QNAME);
@@ -120,14 +121,7 @@ public class LeafrefSpecificationEffectiveStatementImpl extends
             return false;
         }
         LeafrefSpecificationEffectiveStatementImpl other = (LeafrefSpecificationEffectiveStatementImpl) obj;
-        if (xpath == null) {
-            if (other.xpath != null) {
-                return false;
-            }
-        } else if (!xpath.equals(other.xpath)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(xpath, other.xpath);
     }
 
     @Override
@@ -140,8 +134,6 @@ public class LeafrefSpecificationEffectiveStatementImpl extends
         builder.append("]");
         return builder.toString();
     }
-
-    private Leafref leafrefInstance = null;
 
     @Override
     public Leafref buildType() {

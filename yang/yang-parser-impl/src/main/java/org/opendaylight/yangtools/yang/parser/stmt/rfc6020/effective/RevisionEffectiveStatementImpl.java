@@ -11,14 +11,11 @@ import java.util.Date;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class RevisionEffectiveStatementImpl extends
-        EffectiveStatementBase<Date, RevisionStatement> {
-
+public class RevisionEffectiveStatementImpl extends EffectiveStatementBase<Date, RevisionStatement> {
     private final String reference;
     private final String description;
 
-    public RevisionEffectiveStatementImpl(
-            StmtContext<Date, RevisionStatement, ?> ctx) {
+    public RevisionEffectiveStatementImpl(final StmtContext<Date, RevisionStatement, ?> ctx) {
         super(ctx);
 
         DescriptionEffectiveStatementImpl descStmt = firstEffective(DescriptionEffectiveStatementImpl.class);
@@ -43,5 +40,4 @@ public class RevisionEffectiveStatementImpl extends
     public final String getReference() {
         return reference;
     }
-
 }

@@ -73,8 +73,8 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
         this.isExtended = isExtended;
         qName = initQName(ctx, isExtended);
 
-        final StmtContext<?, TypedefStatement, EffectiveStatement<QName, TypedefStatement>> typeStmt = ctx
-                .getFromNamespace(TypeNamespace.class, qName);
+        final StmtContext<?, TypedefStatement, EffectiveStatement<QName, TypedefStatement>> typeStmt =
+                ctx.getFromNamespace(TypeNamespace.class, qName);
         if (typeStmt == null) {
             path = Utils.getSchemaPath(ctx);
         } else {

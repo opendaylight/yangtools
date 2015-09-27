@@ -69,6 +69,7 @@ public class Decimal64SpecificationEffectiveStatementImpl extends
 
     private ExtendedType extendedType;
     private final boolean isExtended;
+    private Decimal64 decimal64Instance = null;
 
     public Decimal64SpecificationEffectiveStatementImpl(
             final StmtContext<String, TypeStatement.Decimal64Specification, EffectiveStatement<String, TypeStatement.Decimal64Specification>> ctx) {
@@ -205,27 +206,16 @@ public class Decimal64SpecificationEffectiveStatementImpl extends
             return false;
         }
         Decimal64SpecificationEffectiveStatementImpl other = (Decimal64SpecificationEffectiveStatementImpl) obj;
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(path, other.path);
     }
 
     @Override
     public String toString() {
         return Decimal64SpecificationEffectiveStatementImpl.class
                 .getSimpleName()
-                + "[qName="
-                + QNAME
-                + ", fractionDigits="
-                + fractionDigits + "]";
+                + "[qName=" + QNAME
+                + ", fractionDigits=" + fractionDigits + "]";
     }
-
-    private Decimal64 decimal64Instance = null;
 
     @Override
     public TypeDefinition<?> buildType() {
@@ -234,7 +224,7 @@ public class Decimal64SpecificationEffectiveStatementImpl extends
             decimal64Instance = Decimal64.create(path, fractionDigits);
         }
 
-        if(!isExtended) {
+        if (!isExtended) {
             return decimal64Instance;
         }
 
@@ -242,8 +232,8 @@ public class Decimal64SpecificationEffectiveStatementImpl extends
             return extendedType;
         }
 
-        Builder extendedTypeBuilder = ExtendedType.builder(path.getLastComponent(), decimal64Instance, Optional.<String>absent(),
-                Optional.<String>absent(), path);
+        Builder extendedTypeBuilder = ExtendedType.builder(path.getLastComponent(), decimal64Instance,
+            Optional.<String>absent(), Optional.<String>absent(), path);
 
         extendedTypeBuilder.fractionDigits(fractionDigits);
         extendedTypeBuilder.ranges(rangeConstraints);

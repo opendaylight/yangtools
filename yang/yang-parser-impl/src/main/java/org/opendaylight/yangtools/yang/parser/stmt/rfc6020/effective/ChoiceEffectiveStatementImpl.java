@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
@@ -45,16 +46,16 @@ public class ChoiceEffectiveStatementImpl extends
     private final QName qname;
     private final SchemaPath path;
 
-    boolean augmenting;
-    boolean addedByUses;
-    ChoiceSchemaNode original;
-    boolean configuration = true;
-    ConstraintDefinition constraints;
-    String defaultCase;
+    private boolean augmenting;
+    private boolean addedByUses;
+    private ChoiceSchemaNode original;
+    private boolean configuration = true;
+    private final ConstraintDefinition constraints;
+    private String defaultCase;
 
-    ImmutableSet<ChoiceCaseNode> cases;
-    ImmutableSet<AugmentationSchema> augmentations;
-    ImmutableList<UnknownSchemaNode> unknownNodes;
+    private ImmutableSet<ChoiceCaseNode> cases;
+    private ImmutableSet<AugmentationSchema> augmentations;
+    private ImmutableList<UnknownSchemaNode> unknownNodes;
 
     public ChoiceEffectiveStatementImpl(
             final StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
@@ -79,8 +80,7 @@ public class ChoiceEffectiveStatementImpl extends
         if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
             addedByUses = true;
         }
-        if (copyTypesFromOriginal
-                .contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
+        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
             addedByUses = augmenting = true;
         }
 
@@ -118,22 +118,19 @@ public class ChoiceEffectiveStatementImpl extends
                     || effectiveStatement instanceof LeafSchemaNode) {
 
                 DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;
-                ChoiceCaseNode shorthandCase = new CaseShorthandImpl(
-                        dataSchemaNode);
+                ChoiceCaseNode shorthandCase = new CaseShorthandImpl(dataSchemaNode);
                 casesInit.add(shorthandCase);
 
                 if (dataSchemaNode.isAugmenting() && !this.augmenting) {
                     resetAugmenting(dataSchemaNode);
                 }
             }
-            if (!configurationInit
-                    && effectiveStatement instanceof ConfigEffectiveStatementImpl) {
+            if (!configurationInit && effectiveStatement instanceof ConfigEffectiveStatementImpl) {
                 ConfigEffectiveStatementImpl configStmt = (ConfigEffectiveStatementImpl) effectiveStatement;
                 this.configuration = configStmt.argument();
                 configurationInit = true;
             }
-            if (!defaultInit
-                    && effectiveStatement instanceof DefaultEffectiveStatementImpl) {
+            if (!defaultInit && effectiveStatement instanceof DefaultEffectiveStatementImpl) {
                 DefaultEffectiveStatementImpl defaultCaseStmt = (DefaultEffectiveStatementImpl) effectiveStatement;
                 this.defaultCase = defaultCaseStmt.argument();
                 defaultInit = true;
@@ -216,10 +213,8 @@ public class ChoiceEffectiveStatementImpl extends
 
     @Override
     public ChoiceCaseNode getCaseNodeByName(final QName name) {
-        if (name == null) {
-            throw new IllegalArgumentException(
-                    "Choice Case QName cannot be NULL!");
-        }
+        Preconditions.checkArgument(name != null, "Choice Case QName cannot be NULL!");
+
         for (final ChoiceCaseNode caseNode : cases) {
             if (caseNode != null && name.equals(caseNode.getQName())) {
                 return caseNode;
@@ -230,10 +225,8 @@ public class ChoiceEffectiveStatementImpl extends
 
     @Override
     public ChoiceCaseNode getCaseNodeByName(final String name) {
-        if (name == null) {
-            throw new IllegalArgumentException(
-                    "Choice Case string Name cannot be NULL!");
-        }
+        Preconditions.checkArgument(name != null, "Choice Case string Name cannot be NULL!");
+
         for (final ChoiceCaseNode caseNode : cases) {
             if (caseNode != null && (caseNode.getQName() != null)
                     && name.equals(caseNode.getQName().getLocalName())) {
@@ -269,31 +262,15 @@ public class ChoiceEffectiveStatementImpl extends
             return false;
         }
         ChoiceEffectiveStatementImpl other = (ChoiceEffectiveStatementImpl) obj;
-        if (qname == null) {
-            if (other.qname != null) {
-                return false;
-            }
-        } else if (!qname.equals(other.qname)) {
-            return false;
-        }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(qname, other.qname) && Objects.equals(path, other.path);
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(
-                ChoiceEffectiveStatementImpl.class.getSimpleName());
+        StringBuilder sb = new StringBuilder(ChoiceEffectiveStatementImpl.class.getSimpleName());
         sb.append("[");
         sb.append("qname=").append(qname);
         sb.append("]");
         return sb.toString();
     }
-
 }

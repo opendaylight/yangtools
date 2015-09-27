@@ -9,14 +9,13 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import java.util.Collections;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
-import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DescriptionEffectiveStatementImpl;
@@ -25,17 +24,15 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ReferenceEf
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.StatusEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ValueEffectiveStatementImpl;
 
-public class EnumEffectiveStatementImpl extends EffectiveStatementBase<QName, EnumStatement> implements
-        EnumTypeDefinition.EnumPair {
-
-    private QName qName;
-    private SchemaPath path;
+public class EnumEffectiveStatementImpl extends EffectiveStatementBase<QName, EnumStatement> implements EnumPair {
+    private final QName qName;
+    private final SchemaPath path;
     private String description;
     private String reference;
     private Status status;
     private Integer value;
 
-    public EnumEffectiveStatementImpl(StmtContext<QName, EnumStatement, ?> ctx) {
+    public EnumEffectiveStatementImpl(final StmtContext<QName, EnumStatement, ?> ctx) {
         super(ctx);
 
         qName = ctx.getStatementArgument();

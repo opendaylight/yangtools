@@ -13,9 +13,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
 public class PatternEffectiveStatementImpl extends EffectiveStatementBase<PatternConstraint, PatternStatement> {
-
-    public PatternEffectiveStatementImpl(StmtContext<PatternConstraint, PatternStatement, ?> ctx) {
+    public PatternEffectiveStatementImpl(final StmtContext<PatternConstraint, PatternStatement, ?> ctx) {
         super(ctx);
-
     }
 }

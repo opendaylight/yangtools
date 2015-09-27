@@ -36,10 +36,10 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<QName,
     private ExtensionDefinition extension;
     private String description;
     private String reference;
-    private Status status = Status.CURRENT;
+    private final Status status = Status.CURRENT;
     private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
     private QName nodeType;
-    private String nodeParameter;
+    private final String nodeParameter;
 
     public UnknownEffectiveStatementImpl(final StmtContext<QName, UnknownStatement<QName>, ?> ctx) {
         super(ctx);
@@ -169,32 +169,16 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<QName,
             return false;
         }
         UnknownEffectiveStatementImpl other = (UnknownEffectiveStatementImpl) obj;
-        if (qName == null) {
-            if (other.qName != null) {
-                return false;
-            }
-        } else if (!qName.equals(other.qName)) {
+        if (!Objects.equals(qName, other.qName)) {
             return false;
         }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
+        if (!Objects.equals(path, other.path)) {
             return false;
         }
-        if (nodeType == null) {
-            if (other.nodeType != null) {
-                return false;
-            }
-        } else if (!nodeType.equals(other.nodeType)) {
+        if (!Objects.equals(nodeType, other.nodeType)) {
             return false;
         }
-        if (nodeParameter == null) {
-            if (other.nodeParameter != null) {
-                return false;
-            }
-        } else if (!nodeParameter.equals(other.nodeParameter)) {
+        if (!Objects.equals(nodeParameter, other.nodeParameter)) {
             return false;
         }
         return true;

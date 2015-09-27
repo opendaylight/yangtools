@@ -93,32 +93,16 @@ public class RangeConstraintEffectiveImpl implements RangeConstraint {
             return false;
         }
         final RangeConstraintEffectiveImpl other = (RangeConstraintEffectiveImpl) obj;
-        if (description == null) {
-            if (other.description != null) {
-                return false;
-            }
-        } else if (!description.equals(other.description)) {
+        if (!Objects.equals(description, other.description)) {
             return false;
         }
-        if (max == null) {
-            if (other.max != null) {
-                return false;
-            }
-        } else if (!max.equals(other.max)) {
+        if (!Objects.equals(max, other.max)) {
             return false;
         }
-        if (min == null) {
-            if (other.min != null) {
-                return false;
-            }
-        } else if (!min.equals(other.min)) {
+        if (!Objects.equals(min, other.min)) {
             return false;
         }
-        if (reference == null) {
-            if (other.reference != null) {
-                return false;
-            }
-        } else if (!reference.equals(other.reference)) {
+        if (!Objects.equals(reference, other.reference)) {
             return false;
         }
         return true;
