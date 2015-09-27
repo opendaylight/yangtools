@@ -205,20 +205,6 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
             return false;
         }
         final LazyDataObject<?> other = (LazyDataObject<?>) obj;
-        if (context == null) {
-            if (other.context != null) {
-                return false;
-            }
-        } else if (!context.equals(other.context)) {
-            return false;
-        }
-        if (data == null) {
-            if (other.data != null) {
-                return false;
-            }
-        } else if (!data.equals(other.data)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(context, other.context) && Objects.equals(data, other.data);
     }
 }
