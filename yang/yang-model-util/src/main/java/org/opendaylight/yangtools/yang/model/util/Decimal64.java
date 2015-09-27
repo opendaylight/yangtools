@@ -164,14 +164,7 @@ public final class Decimal64 implements DecimalTypeDefinition {
             return false;
         }
         Decimal64 other = (Decimal64) obj;
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(path, other.path);
     }
 
     @Override

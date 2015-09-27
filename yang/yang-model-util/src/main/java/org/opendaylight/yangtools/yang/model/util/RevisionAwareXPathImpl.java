@@ -55,17 +55,7 @@ public class RevisionAwareXPathImpl implements RevisionAwareXPath {
             return false;
         }
         RevisionAwareXPathImpl other = (RevisionAwareXPathImpl) obj;
-        if (xpath == null) {
-            if (other.xpath != null) {
-                return false;
-            }
-        } else if (!xpath.equals(other.xpath)) {
-            return false;
-        }
-        if (absolute != other.absolute) {
-            return false;
-        }
-        return true;
+        return absolute == other.absolute && Objects.equals(xpath, other.xpath);
     }
 
     @Override

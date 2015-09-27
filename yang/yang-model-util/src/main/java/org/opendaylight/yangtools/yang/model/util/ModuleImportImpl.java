@@ -59,25 +59,13 @@ public final class ModuleImportImpl implements ModuleImport {
             return false;
         }
         ModuleImport other = (ModuleImport) obj;
-        if (getModuleName() == null) {
-            if (other.getModuleName() != null) {
-                return false;
-            }
-        } else if (!getModuleName().equals(other.getModuleName())) {
+        if (!Objects.equals(getModuleName(), other.getModuleName())) {
             return false;
         }
-        if (getRevision() == null) {
-            if (other.getRevision() != null) {
-                return false;
-            }
-        } else if (!getRevision().equals(other.getRevision())) {
+        if (!Objects.equals(getRevision(), other.getRevision())) {
             return false;
         }
-        if (getPrefix() == null) {
-            if (other.getPrefix() != null) {
-                return false;
-            }
-        } else if (!getPrefix().equals(other.getPrefix())) {
+        if (!Objects.equals(getPrefix(), other.getPrefix())) {
             return false;
         }
         return true;

@@ -169,21 +169,7 @@ public final class BinaryType implements BinaryTypeDefinition {
             return false;
         }
         BinaryType other = (BinaryType) obj;
-        if (bytes == null) {
-            if (other.bytes != null) {
-                return false;
-            }
-        } else if (!bytes.equals(other.bytes)) {
-            return false;
-        }
-        if (lengthConstraints == null) {
-            if (other.lengthConstraints != null) {
-                return false;
-            }
-        } else if (!lengthConstraints.equals(other.lengthConstraints)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(bytes, other.bytes) && Objects.equals(lengthConstraints, other.lengthConstraints);
     }
 
     @Override
