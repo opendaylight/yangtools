@@ -313,21 +313,7 @@ public abstract class SchemaPath implements Immutable {
             return false;
         }
         final SchemaPath other = (SchemaPath) obj;
-
-        if (qname != null) {
-            if (!qname.equals(other.qname)) {
-                return false;
-            }
-        } else {
-            if (other.qname != null) {
-                return false;
-            }
-        }
-
-        if (parent == null) {
-            return other.parent == null;
-        }
-        return parent.equals(other.parent);
+        return Objects.equals(qname, other.qname) && Objects.equals(parent, other.parent);
     }
 
     @Override
