@@ -30,6 +30,6 @@ public class Int16EffectiveStatementImpl extends IntegerEffectiveImplBase {
 
     @Override
     public String toString() {
-        return "type " + qName;
+        return "type " + getQName();
     }
 }

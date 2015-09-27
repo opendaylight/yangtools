@@ -30,6 +30,6 @@ public class Int8EffectiveStatementImpl extends IntegerEffectiveImplBase {
 
     @Override
     public String toString() {
-        return "type " + qName;
+        return "type " + getQName();
     }
 }

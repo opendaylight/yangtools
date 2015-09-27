@@ -10,13 +10,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class MinElementsEffectiveStatementImpl extends
-        EffectiveStatementBase<Integer, MinElementsStatement> {
-
-    public MinElementsEffectiveStatementImpl(
-            StmtContext<Integer, MinElementsStatement, ?> ctx) {
+public class MinElementsEffectiveStatementImpl extends EffectiveStatementBase<Integer, MinElementsStatement> {
+    public MinElementsEffectiveStatementImpl(final StmtContext<Integer, MinElementsStatement, ?> ctx) {
         super(ctx);
-
     }
-
 }

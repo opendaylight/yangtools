@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import java.net.URI;
@@ -21,13 +20,13 @@ import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.NamespaceRevisionAware;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
@@ -35,20 +34,17 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 public class AugmentEffectiveStatementImpl
         extends
         AbstractEffectiveDocumentedDataNodeContainer<SchemaNodeIdentifier, AugmentStatement>
-        implements AugmentationSchema, NamespaceRevisionAware,
-        Comparable<AugmentEffectiveStatementImpl> {
-    private final int order;
+        implements AugmentationSchema, NamespaceRevisionAware, Comparable<AugmentEffectiveStatementImpl> {
     private final SchemaPath targetPath;
-    RevisionAwareXPath whenCondition;
-
-    URI namespace;
-    Date revision;
-    ImmutableList<UnknownSchemaNode> unknownNodes;
+    private final URI namespace;
+    private final Date revision;
+    private final int order;
+    private ImmutableList<UnknownSchemaNode> unknownNodes;
+    private RevisionAwareXPath whenCondition;
     private AugmentationSchema copyOf;
 
     public AugmentEffectiveStatementImpl(
-            StmtContext<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> ctx){
-
+            final StmtContext<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> ctx) {
         super(ctx);
 
         SchemaNodeIdentifier schemaNodeIdentifier = ctx.getStatementArgument();
@@ -67,7 +63,7 @@ public class AugmentEffectiveStatementImpl
     }
 
     private void initCopyOf(
-            StmtContext<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> ctx) {
+            final StmtContext<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> ctx) {
         StatementContextBase<?, ?, ?> originalCtx = ctx.getOriginalCtx();
         if (originalCtx != null) {
             this.copyOf = (AugmentationSchema) originalCtx.buildEffective();
@@ -151,18 +147,10 @@ public class AugmentEffectiveStatementImpl
             return false;
         }
         AugmentEffectiveStatementImpl other = (AugmentEffectiveStatementImpl) obj;
-        if (targetPath == null) {
-            if (other.targetPath != null) {
-                return false;
-            }
-        } else if (!targetPath.equals(other.targetPath)) {
+        if (!Objects.equals(targetPath, other.targetPath)) {
             return false;
         }
-        if (whenCondition == null) {
-            if (other.whenCondition != null) {
-                return false;
-            }
-        } else if (!whenCondition.equals(other.whenCondition)) {
+        if (!Objects.equals(whenCondition, other.whenCondition)) {
             return false;
         }
         if (!getChildNodes().equals(other.getChildNodes())) {
@@ -186,8 +174,7 @@ public class AugmentEffectiveStatementImpl
     public int compareTo(final AugmentEffectiveStatementImpl o) {
         checkNotNull(o);
         Iterator<QName> thisIt = this.targetPath.getPathFromRoot().iterator();
-        Iterator<QName> otherIt = o.getTargetPath().getPathFromRoot()
-                .iterator();
+        Iterator<QName> otherIt = o.getTargetPath().getPathFromRoot().iterator();
         while (thisIt.hasNext()) {
             if (otherIt.hasNext()) {
                 int comp = thisIt.next().compareTo(otherIt.next());

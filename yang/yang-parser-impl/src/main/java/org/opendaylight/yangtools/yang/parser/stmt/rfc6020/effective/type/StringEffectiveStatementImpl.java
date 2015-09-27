@@ -132,18 +132,10 @@ public class StringEffectiveStatementImpl extends EffectiveStatementBase<String,
             return false;
         }
         StringEffectiveStatementImpl other = (StringEffectiveStatementImpl) obj;
-        if (lengthConstraints == null) {
-            if (other.lengthConstraints != null) {
-                return false;
-            }
-        } else if (!lengthConstraints.equals(other.lengthConstraints)) {
+        if (!Objects.equals(lengthConstraints, other.lengthConstraints)) {
             return false;
         }
-        if (patternConstraints == null) {
-            if (other.patternConstraints != null) {
-                return false;
-            }
-        } else if (!patternConstraints.equals(other.patternConstraints)) {
+        if (!Objects.equals(patternConstraints, other.patternConstraints)) {
             return false;
         }
         return true;

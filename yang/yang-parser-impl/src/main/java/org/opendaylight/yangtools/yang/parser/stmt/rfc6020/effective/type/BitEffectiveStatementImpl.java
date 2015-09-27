@@ -12,19 +12,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DescriptionEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PositionEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ReferenceEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.StatusEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public class BitEffectiveStatementImpl extends EffectiveStatementBase<QName, BitStatement> implements
         BitsTypeDefinition.Bit {
@@ -35,9 +35,9 @@ public class BitEffectiveStatementImpl extends EffectiveStatementBase<QName, Bit
     private String description;
     private String reference;
     private Status status;
-    private List<UnknownSchemaNode> unknownSchemaNodes;
+    private final List<UnknownSchemaNode> unknownSchemaNodes;
 
-    public BitEffectiveStatementImpl(StmtContext<QName, BitStatement, ?> ctx) {
+    public BitEffectiveStatementImpl(final StmtContext<QName, BitStatement, ?> ctx) {
         super(ctx);
 
         List<UnknownSchemaNode> unknownSchemaNodesInit = new ArrayList<>();
@@ -130,21 +130,7 @@ public class BitEffectiveStatementImpl extends EffectiveStatementBase<QName, Bit
             return false;
         }
         BitsTypeDefinition.Bit other = (BitsTypeDefinition.Bit) obj;
-        if (qName == null) {
-            if (other.getQName() != null) {
-                return false;
-            }
-        } else if (!qName.equals(other.getQName())) {
-            return false;
-        }
-        if (schemaPath == null) {
-            if (other.getPath() != null) {
-                return false;
-            }
-        } else if (!schemaPath.equals(other.getPath())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(qName, other.getQName()) && Objects.equals(schemaPath, other.getPath());
     }
 
     @Override

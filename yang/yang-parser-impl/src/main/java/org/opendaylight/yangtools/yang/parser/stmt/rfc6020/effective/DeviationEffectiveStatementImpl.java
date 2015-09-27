@@ -23,12 +23,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 public class DeviationEffectiveStatementImpl extends EffectiveStatementBase<SchemaNodeIdentifier, DeviationStatement>
         implements Deviation, Immutable {
 
-    private SchemaPath targetPath;
+    private final SchemaPath targetPath;
     private Deviate deviate;
     private String reference;
-    private ImmutableList<UnknownSchemaNode> unknownSchemaNodes;
+    private final ImmutableList<UnknownSchemaNode> unknownSchemaNodes;
 
-    public DeviationEffectiveStatementImpl(StmtContext<SchemaNodeIdentifier, DeviationStatement, ?> ctx) {
+    public DeviationEffectiveStatementImpl(final StmtContext<SchemaNodeIdentifier, DeviationStatement, ?> ctx) {
         super(ctx);
 
         List<UnknownSchemaNode> unknownSchemaNodesInit = new LinkedList<>();
@@ -82,7 +82,7 @@ public class DeviationEffectiveStatementImpl extends EffectiveStatementBase<Sche
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -93,25 +93,13 @@ public class DeviationEffectiveStatementImpl extends EffectiveStatementBase<Sche
             return false;
         }
         DeviationEffectiveStatementImpl other = (DeviationEffectiveStatementImpl) obj;
-        if (targetPath == null) {
-            if (other.targetPath != null) {
-                return false;
-            }
-        } else if (!targetPath.equals(other.targetPath)) {
+        if (!Objects.equals(targetPath, other.targetPath)) {
             return false;
         }
-        if (deviate == null) {
-            if (other.deviate != null) {
-                return false;
-            }
-        } else if (!deviate.equals(other.deviate)) {
+        if (!Objects.equals(deviate, other.deviate)) {
             return false;
         }
-        if (reference == null) {
-            if (other.reference != null) {
-                return false;
-            }
-        } else if (!reference.equals(other.reference)) {
+        if (!Objects.equals(reference, other.reference)) {
             return false;
         }
         return true;

@@ -14,16 +14,16 @@ import java.util.List;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
 abstract class UnsignedIntegerEffectiveImplBase extends
         EffectiveStatementBase<String, TypeStatement> implements UnsignedIntegerTypeDefinition {
@@ -31,11 +31,11 @@ abstract class UnsignedIntegerEffectiveImplBase extends
     private static final String REFERENCE_INT = "https://tools.ietf.org/html/rfc6020#section-9.2";
 
     protected static final Number MIN_RANGE = 0;
-    protected QName qName;
-    private SchemaPath path;
-    private String units = "";
+    private final QName qName;
+    private final SchemaPath path;
+    private final String units = "";
     private final String description;
-    private List<RangeConstraint> rangeStatements;
+    private final List<RangeConstraint> rangeStatements;
 
     protected UnsignedIntegerEffectiveImplBase(final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
             final String localName, final Number maxRange, final String description) {
@@ -127,39 +127,19 @@ abstract class UnsignedIntegerEffectiveImplBase extends
             return false;
         }
         UnsignedIntegerEffectiveImplBase other = (UnsignedIntegerEffectiveImplBase) obj;
-        if (description == null) {
-            if (other.description != null) {
-                return false;
-            }
-        } else if (!description.equals(other.description)) {
+        if (!Objects.equals(description, other.description)) {
             return false;
         }
-        if (qName == null) {
-            if (other.qName != null) {
-                return false;
-            }
-        } else if (!qName.equals(other.qName)) {
+        if (!Objects.equals(qName, other.qName)) {
             return false;
         }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
+        if (!Objects.equals(path, other.path)) {
             return false;
         }
-        if (rangeStatements == null) {
-            if (other.rangeStatements != null) {
-                return false;
-            }
-        } else if (!rangeStatements.equals(other.rangeStatements)) {
+        if (!Objects.equals(rangeStatements, other.rangeStatements)) {
             return false;
         }
-        if (units == null) {
-            if (other.units != null) {
-                return false;
-            }
-        } else if (!units.equals(other.units)) {
+        if (!Objects.equals(units, other.units)) {
             return false;
         }
         return true;

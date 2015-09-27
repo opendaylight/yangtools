@@ -10,13 +10,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class ErrorAppTagEffectiveStatementImpl extends
-        EffectiveStatementBase<String, ErrorAppTagStatement> {
-
-    public ErrorAppTagEffectiveStatementImpl(
-            StmtContext<String, ErrorAppTagStatement, ?> ctx) {
+public class ErrorAppTagEffectiveStatementImpl extends EffectiveStatementBase<String, ErrorAppTagStatement> {
+    public ErrorAppTagEffectiveStatementImpl(final StmtContext<String, ErrorAppTagStatement, ?> ctx) {
         super(ctx);
-
     }
-
 }

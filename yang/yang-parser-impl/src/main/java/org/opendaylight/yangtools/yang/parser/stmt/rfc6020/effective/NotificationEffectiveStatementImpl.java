@@ -17,11 +17,11 @@ import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
@@ -30,11 +30,11 @@ public class NotificationEffectiveStatementImpl
         implements NotificationDefinition {
     private final QName qname;
     private final SchemaPath path;
-    ImmutableSet<AugmentationSchema> augmentations;
-    ImmutableList<UnknownSchemaNode> unknownNodes;
+    private Set<AugmentationSchema> augmentations;
+    private List<UnknownSchemaNode> unknownNodes;
 
     public NotificationEffectiveStatementImpl(
-            StmtContext<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> ctx) {
+            final StmtContext<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> ctx) {
         super(ctx);
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
@@ -104,29 +104,13 @@ public class NotificationEffectiveStatementImpl
             return false;
         }
         final NotificationEffectiveStatementImpl other = (NotificationEffectiveStatementImpl) obj;
-        if (qname == null) {
-            if (other.qname != null) {
-                return false;
-            }
-        } else if (!qname.equals(other.qname)) {
-            return false;
-        }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(qname, other.qname) && Objects.equals(path, other.path);
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(
-                NotificationEffectiveStatementImpl.class.getSimpleName());
-        sb.append("[qname=").append(qname).append(", path=").append(path)
-                .append("]");
+        StringBuilder sb = new StringBuilder(NotificationEffectiveStatementImpl.class.getSimpleName());
+        sb.append("[qname=").append(qname).append(", path=").append(path).append("]");
         return sb.toString();
     }
 }

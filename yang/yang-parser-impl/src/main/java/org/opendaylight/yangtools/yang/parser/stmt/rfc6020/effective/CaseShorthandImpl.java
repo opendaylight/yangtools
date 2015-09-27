@@ -42,17 +42,18 @@ public class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
 
     private final boolean augmenting;
     private final boolean addedByUses;
-    ConstraintDefinition constraints;
+    private final ConstraintDefinition constraints;
     private ChoiceCaseNode original;
 
     ImmutableList<UnknownSchemaNode> unknownNodes;
 
-    public CaseShorthandImpl(DataSchemaNode caseShorthandNode) {
+    public CaseShorthandImpl(final DataSchemaNode caseShorthandNode) {
         this.caseShorthandNode = caseShorthandNode;
         this.qName = caseShorthandNode.getQName();
 
         SchemaPath caseShorthandNodePath = caseShorthandNode.getPath();
         Iterable<QName> pathFromRoot = caseShorthandNodePath.getPathFromRoot();
+        // FIXME: cacheShorthandNodePath.getParent() should be enough
         this.path = SchemaPath
                 .create(Iterables.limit(pathFromRoot,
                         Iterables.size(pathFromRoot) - 1),
@@ -134,7 +135,7 @@ public class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
     }
 
     @Override
-    public DataSchemaNode getDataChildByName(QName name) {
+    public DataSchemaNode getDataChildByName(final QName name) {
         if (qName.equals(name)) {
             return caseShorthandNode;
         } else {
@@ -143,7 +144,7 @@ public class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
     }
 
     @Override
-    public DataSchemaNode getDataChildByName(String name) {
+    public DataSchemaNode getDataChildByName(final String name) {
         if (qName.getLocalName().equals(name)) {
             return caseShorthandNode;
         } else {
@@ -187,32 +188,16 @@ public class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
             return false;
         }
         CaseShorthandImpl other = (CaseShorthandImpl) obj;
-        if (qName == null) {
-            if (other.qName != null) {
-                return false;
-            }
-        } else if (!qName.equals(other.qName)) {
-            return false;
-        }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(qName, other.qName) && Objects.equals(path, other.path);
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(
-                CaseShorthandImpl.class.getSimpleName());
+        StringBuilder sb = new StringBuilder(CaseShorthandImpl.class.getSimpleName());
         sb.append("[");
         sb.append("qname=");
         sb.append(qName);
         sb.append("]");
         return sb.toString();
     }
-
 }

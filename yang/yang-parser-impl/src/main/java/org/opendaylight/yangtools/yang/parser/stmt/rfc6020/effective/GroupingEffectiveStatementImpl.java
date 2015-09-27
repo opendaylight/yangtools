@@ -31,7 +31,7 @@ public class GroupingEffectiveStatementImpl extends
     private List<UnknownSchemaNode> unknownNodes;
 
     public GroupingEffectiveStatementImpl(
-            StmtContext<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> ctx) {
+            final StmtContext<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> ctx) {
         super(ctx);
 
         qname = ctx.getStatementArgument();
@@ -42,11 +42,11 @@ public class GroupingEffectiveStatementImpl extends
     }
 
     private void initCopyType(
-            StmtContext<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> ctx) {
+            final StmtContext<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> ctx) {
 
         List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
 
-        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
+        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
             addedByUses = true;
         }
     }
@@ -62,7 +62,6 @@ public class GroupingEffectiveStatementImpl extends
                 unknownNodes.add(unknownNode);
             }
         }
-
     }
 
     @Override
@@ -106,21 +105,7 @@ public class GroupingEffectiveStatementImpl extends
             return false;
         }
         final GroupingEffectiveStatementImpl other = (GroupingEffectiveStatementImpl) obj;
-        if (qname == null) {
-            if (other.qname != null) {
-                return false;
-            }
-        } else if (!qname.equals(other.qname)) {
-            return false;
-        }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(qname, other.qname) && Objects.equals(path, other.path);
     }
 
     @Override

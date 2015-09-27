@@ -8,9 +8,6 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 import java.util.Collections;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -19,27 +16,26 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
-public class BooleanEffectiveStatementImpl
-        extends EffectiveStatementBase<String, TypeStatement> implements
-        BooleanTypeDefinition {
+public class BooleanEffectiveStatementImpl extends EffectiveStatementBase<String, TypeStatement>
+        implements BooleanTypeDefinition {
 
     public static final String LOCAL_NAME = TypeUtils.BOOLEAN;
-    private static final QName QNAME = QName.create(
-            YangConstants.RFC6020_YANG_MODULE, LOCAL_NAME);
+    private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, LOCAL_NAME);
     private static final SchemaPath PATH = SchemaPath.create(true, QNAME);
     private static final String DESCRIPTION = "The boolean built-in type represents a boolean value.";
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.5";
     private static final String UNITS = "";
 
     public BooleanEffectiveStatementImpl(
-            StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
+            final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
         super(ctx);
-
     }
 
     @Override

@@ -21,10 +21,10 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
@@ -37,17 +37,19 @@ public class ContainerEffectiveStatementImpl extends
     private final SchemaPath path;
 
     private boolean presence;
+
+    // FIXME: should be private
     boolean augmenting;
     private boolean addedByUses;
     private boolean configuration = true;
     private ContainerSchemaNode original;
-    private ConstraintDefinition constraints;
+    private final ConstraintDefinition constraints;
 
     private ImmutableSet<AugmentationSchema> augmentations;
     private ImmutableList<UnknownSchemaNode> unknownNodes;
 
     public ContainerEffectiveStatementImpl(
-            StmtContext<QName, ContainerStatement, EffectiveStatement<QName, ContainerStatement>> ctx) {
+            final StmtContext<QName, ContainerStatement, EffectiveStatement<QName, ContainerStatement>> ctx) {
         super(ctx);
 
         qname = ctx.getStatementArgument();
@@ -59,17 +61,17 @@ public class ContainerEffectiveStatementImpl extends
     }
 
     private void initCopyType(
-            StmtContext<QName, ContainerStatement, EffectiveStatement<QName, ContainerStatement>> ctx) {
+            final StmtContext<QName, ContainerStatement, EffectiveStatement<QName, ContainerStatement>> ctx) {
 
         List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
 
-        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
+        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
             augmenting = true;
         }
-        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
+        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
             addedByUses = true;
         }
-        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
+        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
             addedByUses = augmenting = true;
         }
 
@@ -97,8 +99,7 @@ public class ContainerEffectiveStatementImpl extends
             if (effectiveSubstatement instanceof PresenceEffectiveStatementImpl) {
                 presence = true;
             }
-            if (!configurationInit
-                    && effectiveSubstatement instanceof ConfigEffectiveStatementImpl) {
+            if (!configurationInit && effectiveSubstatement instanceof ConfigEffectiveStatementImpl) {
                 ConfigEffectiveStatementImpl configStmt = (ConfigEffectiveStatementImpl) effectiveSubstatement;
                 this.configuration = configStmt.argument();
                 configurationInit = true;
@@ -180,21 +181,7 @@ public class ContainerEffectiveStatementImpl extends
             return false;
         }
         ContainerEffectiveStatementImpl other = (ContainerEffectiveStatementImpl) obj;
-        if (qname == null) {
-            if (other.qname != null) {
-                return false;
-            }
-        } else if (!qname.equals(other.qname)) {
-            return false;
-        }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(qname, other.qname) && Objects.equals(path, other.path);
     }
 
     @Override

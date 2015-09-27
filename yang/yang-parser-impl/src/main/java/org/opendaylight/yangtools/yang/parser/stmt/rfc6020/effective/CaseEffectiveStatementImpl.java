@@ -21,30 +21,28 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-public class CaseEffectiveStatementImpl extends
-        AbstractEffectiveDocumentedDataNodeContainer<QName, CaseStatement>
+public class CaseEffectiveStatementImpl extends AbstractEffectiveDocumentedDataNodeContainer<QName, CaseStatement>
         implements ChoiceCaseNode, DerivableSchemaNode {
     private final QName qname;
     private final SchemaPath path;
+    private final ConstraintDefinition constraints;
 
-    boolean augmenting;
-    boolean addedByUses;
-    ChoiceCaseNode original;
-    ConstraintDefinition constraints;
-
-    ImmutableSet<AugmentationSchema> augmentations;
-    ImmutableList<UnknownSchemaNode> unknownNodes;
+    private boolean augmenting;
+    private boolean addedByUses;
+    private ChoiceCaseNode original;
+    private ImmutableSet<AugmentationSchema> augmentations;
+    private ImmutableList<UnknownSchemaNode> unknownNodes;
 
     public CaseEffectiveStatementImpl(
-            StmtContext<QName, CaseStatement, EffectiveStatement<QName, CaseStatement>> ctx) {
+            final StmtContext<QName, CaseStatement, EffectiveStatement<QName, CaseStatement>> ctx) {
         super(ctx);
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
@@ -55,7 +53,7 @@ public class CaseEffectiveStatementImpl extends
     }
 
     private void initCopyType(
-            StmtContext<QName, CaseStatement, EffectiveStatement<QName, CaseStatement>> ctx) {
+            final StmtContext<QName, CaseStatement, EffectiveStatement<QName, CaseStatement>> ctx) {
 
         List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
 
@@ -161,32 +159,16 @@ public class CaseEffectiveStatementImpl extends
             return false;
         }
         CaseEffectiveStatementImpl other = (CaseEffectiveStatementImpl) obj;
-        if (qname == null) {
-            if (other.qname != null) {
-                return false;
-            }
-        } else if (!qname.equals(other.qname)) {
-            return false;
-        }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(qname, other.qname) && Objects.equals(path, other.path);
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(
-                CaseEffectiveStatementImpl.class.getSimpleName());
+        StringBuilder sb = new StringBuilder(CaseEffectiveStatementImpl.class.getSimpleName());
         sb.append("[");
         sb.append("qname=");
         sb.append(qname);
         sb.append("]");
         return sb.toString();
     }
-
 }

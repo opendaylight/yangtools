@@ -7,14 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.StringRestrictions;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
-public class StringRestrictionsEffectiveStatementImpl extends
-        EffectiveStatementBase<String, TypeStatement.StringRestrictions> {
-
-    public StringRestrictionsEffectiveStatementImpl(StmtContext<String, TypeStatement.StringRestrictions, ?> ctx) {
+public class StringRestrictionsEffectiveStatementImpl extends EffectiveStatementBase<String, StringRestrictions> {
+    public StringRestrictionsEffectiveStatementImpl(final StmtContext<String, StringRestrictions, ?> ctx) {
         super(ctx);
     }
 }

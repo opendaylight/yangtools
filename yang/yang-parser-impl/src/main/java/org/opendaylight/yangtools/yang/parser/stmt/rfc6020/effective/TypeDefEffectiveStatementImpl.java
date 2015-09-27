@@ -7,16 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Decimal64SpecificationEffectiveStatementImpl;
-import java.util.ArrayList;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LengthEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.PatternEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.RangeEffectiveStatementImpl;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -25,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
@@ -33,13 +27,17 @@ import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType.Builder;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Decimal64SpecificationEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LengthEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.PatternEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.RangeEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.TypeDefinitionEffectiveBuilder;
 
-public class TypeDefEffectiveStatementImpl extends
-        EffectiveStatementBase<QName, TypedefStatement> implements
-        TypeDefinition<TypeDefinition<?>>, TypeDefinitionEffectiveBuilder {
+public class TypeDefEffectiveStatementImpl extends EffectiveStatementBase<QName, TypedefStatement>
+        implements TypeDefinition<TypeDefinition<?>>, TypeDefinitionEffectiveBuilder {
 
     private final QName qName;
     private final SchemaPath path;
@@ -61,8 +59,7 @@ public class TypeDefEffectiveStatementImpl extends
 
     private ExtendedType extendedType = null;
 
-    public TypeDefEffectiveStatementImpl(
-            StmtContext<QName, TypedefStatement, ?> ctx) {
+    public TypeDefEffectiveStatementImpl(final StmtContext<QName, TypedefStatement, ?> ctx) {
         super(ctx);
 
         qName = ctx.getStatementArgument();
@@ -109,8 +106,7 @@ public class TypeDefEffectiveStatementImpl extends
         }
     }
 
-    private TypeDefinition<?> parseBaseTypeFromCtx(
-            final StmtContext<QName, TypedefStatement, ?> ctx) {
+    private TypeDefinition<?> parseBaseTypeFromCtx(final StmtContext<QName, TypedefStatement, ?> ctx) {
 
         TypeDefinition<?> baseType;
 
@@ -135,58 +131,44 @@ public class TypeDefEffectiveStatementImpl extends
             }
         } else {
             StmtContext<?, TypedefStatement, EffectiveStatement<QName, TypedefStatement>> baseTypeCtx = ctx
-                    .getParentContext().getFromNamespace(TypeNamespace.class,
-                            baseTypeQName);
-            baseType = (TypeDefEffectiveStatementImpl) baseTypeCtx
-                    .buildEffective();
+                    .getParentContext().getFromNamespace(TypeNamespace.class, baseTypeQName);
+            baseType = (TypeDefEffectiveStatementImpl) baseTypeCtx.buildEffective();
         }
 
         return baseType;
     }
 
-    protected Integer initFractionDigits(
-            EffectiveStatementBase<?, ?> typeEffectiveStmt) {
+    protected Integer initFractionDigits(final EffectiveStatementBase<?, ?> typeEffectiveStmt) {
         final FractionDigitsEffectiveStatementImpl fractionDigitsEffStmt = typeEffectiveStmt
                 .firstEffective(FractionDigitsEffectiveStatementImpl.class);
-        return fractionDigitsEffStmt != null ? fractionDigitsEffStmt.argument()
-                : null;
+        return fractionDigitsEffStmt != null ? fractionDigitsEffStmt.argument() : null;
     }
 
-    protected List<RangeConstraint> initRanges(
-            EffectiveStatementBase<?, ?> typeEffectiveStmt) {
+    protected List<RangeConstraint> initRanges(final EffectiveStatementBase<?, ?> typeEffectiveStmt) {
         final RangeEffectiveStatementImpl rangeConstraints = typeEffectiveStmt
                 .firstEffective(RangeEffectiveStatementImpl.class);
-        return rangeConstraints != null ? rangeConstraints.argument()
-                : Collections.<RangeConstraint> emptyList();
+        return rangeConstraints != null ? rangeConstraints.argument(): Collections.<RangeConstraint> emptyList();
     }
 
-    protected List<LengthConstraint> initLengths(
-            EffectiveStatementBase<?, ?> typeEffectiveStmt) {
+    protected List<LengthConstraint> initLengths(final EffectiveStatementBase<?, ?> typeEffectiveStmt) {
         final LengthEffectiveStatementImpl lengthConstraints = typeEffectiveStmt
                 .firstEffective(LengthEffectiveStatementImpl.class);
-        return lengthConstraints != null ? lengthConstraints.argument()
-                : Collections.<LengthConstraint> emptyList();
+        return lengthConstraints != null ? lengthConstraints.argument(): Collections.<LengthConstraint> emptyList();
     }
 
-    protected List<PatternConstraint> initPatterns(
-            EffectiveStatementBase<?, ?> typeEffectiveStmt) {
+    protected List<PatternConstraint> initPatterns(final EffectiveStatementBase<?, ?> typeEffectiveStmt) {
         final List<PatternConstraint> patternConstraints = new ArrayList<>();
 
-        for (final EffectiveStatement<?, ?> effectiveStatement : typeEffectiveStmt
-                .effectiveSubstatements()) {
+        for (final EffectiveStatement<?, ?> effectiveStatement : typeEffectiveStmt.effectiveSubstatements()) {
             if (effectiveStatement instanceof PatternEffectiveStatementImpl) {
-                final PatternConstraint pattern = ((PatternEffectiveStatementImpl) effectiveStatement)
-                        .argument();
-
+                final PatternConstraint pattern = ((PatternEffectiveStatementImpl) effectiveStatement).argument();
                 if (pattern != null) {
                     patternConstraints.add(pattern);
                 }
             }
         }
 
-        return !patternConstraints.isEmpty() ? ImmutableList
-                .copyOf(patternConstraints) : Collections
-                .<PatternConstraint> emptyList();
+        return ImmutableList.copyOf(patternConstraints);
     }
 
     @Override

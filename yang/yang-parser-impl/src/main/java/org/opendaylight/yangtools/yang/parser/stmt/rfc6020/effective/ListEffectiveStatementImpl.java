@@ -23,11 +23,11 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
@@ -37,18 +37,19 @@ public class ListEffectiveStatementImpl extends AbstractEffectiveDocumentedDataN
     private final QName qname;
     private final SchemaPath path;
 
+    // FIXME: should be private
     boolean augmenting;
     private boolean addedByUses;
-    ListSchemaNode original;
-    boolean configuration = true;
-    ConstraintDefinition constraints;
-    boolean userOrdered;
+    private ListSchemaNode original;
+    private boolean configuration = true;
+    private final ConstraintDefinition constraints;
+    private boolean userOrdered;
 
-    ImmutableList<QName> keyDefinition;
-    ImmutableSet<AugmentationSchema> augmentations;
-    ImmutableList<UnknownSchemaNode> unknownNodes;
+    private ImmutableList<QName> keyDefinition;
+    private ImmutableSet<AugmentationSchema> augmentations;
+    private ImmutableList<UnknownSchemaNode> unknownNodes;
 
-    public ListEffectiveStatementImpl(StmtContext<QName, ListStatement, EffectiveStatement<QName, ListStatement>> ctx) {
+    public ListEffectiveStatementImpl(final StmtContext<QName, ListStatement, EffectiveStatement<QName, ListStatement>> ctx) {
         super(ctx);
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
@@ -61,27 +62,25 @@ public class ListEffectiveStatementImpl extends AbstractEffectiveDocumentedDataN
         initKeyDefinition(ctx);
     }
 
-    private void initCopyType(
-            StmtContext<QName, ListStatement, EffectiveStatement<QName, ListStatement>> ctx) {
+    private void initCopyType(final StmtContext<QName, ListStatement, EffectiveStatement<QName, ListStatement>> ctx) {
 
         List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
 
-        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
+        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
             augmenting = true;
         }
-        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
+        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
             addedByUses = true;
         }
-        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
+        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
             addedByUses = augmenting = true;
         }
-
         if (ctx.getOriginalCtx() != null) {
             original = (ListSchemaNode) ctx.getOriginalCtx().buildEffective();
         }
     }
 
-    private void initKeyDefinition(StmtContext<QName, ListStatement, EffectiveStatement<QName, ListStatement>> ctx) {
+    private void initKeyDefinition(final StmtContext<QName, ListStatement, EffectiveStatement<QName, ListStatement>> ctx) {
         List<QName> keyDefinitionInit = new LinkedList<>();
         KeyEffectiveStatementImpl keyEffectiveSubstatement = firstEffective(KeyEffectiveStatementImpl.class);
 
@@ -220,21 +219,7 @@ public class ListEffectiveStatementImpl extends AbstractEffectiveDocumentedDataN
             return false;
         }
         final ListEffectiveStatementImpl other = (ListEffectiveStatementImpl) obj;
-        if (qname == null) {
-            if (other.qname != null) {
-                return false;
-            }
-        } else if (!qname.equals(other.qname)) {
-            return false;
-        }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(qname, other.qname) && Objects.equals(path, other.path);
     }
 
     @Override

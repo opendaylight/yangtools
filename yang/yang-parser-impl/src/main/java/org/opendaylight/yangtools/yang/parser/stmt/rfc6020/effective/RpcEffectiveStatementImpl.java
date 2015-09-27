@@ -18,12 +18,12 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
@@ -34,17 +34,16 @@ public class RpcEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
     private ContainerSchemaNode input;
     private ContainerSchemaNode output;
 
-    ImmutableSet<TypeDefinition<?>> typeDefinitions;
-    ImmutableSet<GroupingDefinition> groupings;
-    ImmutableList<UnknownSchemaNode> unknownNodes;
+    private Set<TypeDefinition<?>> typeDefinitions;
+    private Set<GroupingDefinition> groupings;
+    private List<UnknownSchemaNode> unknownNodes;
 
-    public RpcEffectiveStatementImpl(StmtContext<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> ctx) {
+    public RpcEffectiveStatementImpl(final StmtContext<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> ctx) {
         super(ctx);
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
 
         initSubstatements();
-
     }
 
     private void initSubstatements() {
@@ -144,21 +143,7 @@ public class RpcEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
             return false;
         }
         final RpcEffectiveStatementImpl other = (RpcEffectiveStatementImpl) obj;
-        if (qname == null) {
-            if (other.qname != null) {
-                return false;
-            }
-        } else if (!qname.equals(other.qname)) {
-            return false;
-        }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(qname, other.qname) && Objects.equals(path, other.path);
     }
 
     @Override
