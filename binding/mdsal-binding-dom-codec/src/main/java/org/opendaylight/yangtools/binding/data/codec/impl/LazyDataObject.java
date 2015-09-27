@@ -107,7 +107,7 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
         int result = 1;
         for (final Method m : context.getHashCodeAndEqualsMethods()) {
             final Object value = getBindingData(m);
-            result = prime * result + ((value == null) ? 0 : value.hashCode());
+            result = prime * result + Objects.hashCode(value);
         }
         if (Augmentable.class.isAssignableFrom(context.getBindingClass())) {
             result = prime * result + (getAugmentationsImpl().hashCode());
