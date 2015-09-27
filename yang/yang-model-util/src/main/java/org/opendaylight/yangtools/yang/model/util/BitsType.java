@@ -166,21 +166,7 @@ public final class BitsType implements BitsTypeDefinition {
             return false;
         }
         BitsType other = (BitsType) obj;
-        if (bits == null) {
-            if (other.bits != null) {
-                return false;
-            }
-        } else if (!bits.equals(other.bits)) {
-            return false;
-        }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(bits, other.bits) && Objects.equals(path, other.path);
     }
 
     @Override

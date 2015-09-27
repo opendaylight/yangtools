@@ -117,14 +117,7 @@ public final class Leafref implements LeafrefTypeDefinition {
             return false;
         }
         Leafref other = (Leafref) obj;
-        if (xpath == null) {
-            if (other.xpath != null) {
-                return false;
-            }
-        } else if (!xpath.equals(other.xpath)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(xpath, other.xpath);
     }
 
     @Override

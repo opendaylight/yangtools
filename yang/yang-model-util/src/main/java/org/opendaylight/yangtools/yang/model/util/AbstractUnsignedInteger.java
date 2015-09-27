@@ -131,39 +131,19 @@ abstract class AbstractUnsignedInteger implements UnsignedIntegerTypeDefinition 
             return false;
         }
         AbstractUnsignedInteger other = (AbstractUnsignedInteger) obj;
-        if (description == null) {
-            if (other.description != null) {
-                return false;
-            }
-        } else if (!description.equals(other.description)) {
+        if (!Objects.equals(description, other.description)) {
             return false;
         }
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
+        if (!Objects.equals(name, other.name)) {
             return false;
         }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
+        if (!Objects.equals(path, other.path)) {
             return false;
         }
-        if (rangeStatements == null) {
-            if (other.rangeStatements != null) {
-                return false;
-            }
-        } else if (!rangeStatements.equals(other.rangeStatements)) {
+        if (!Objects.equals(rangeStatements, other.rangeStatements)) {
             return false;
         }
-        if (units == null) {
-            if (other.units != null) {
-                return false;
-            }
-        } else if (!units.equals(other.units)) {
+        if (!Objects.equals(units, other.units)) {
             return false;
         }
         return true;

@@ -104,21 +104,7 @@ public final class BitImpl implements BitsTypeDefinition.Bit, Immutable {
             return false;
         }
         Bit other = (Bit) obj;
-        if (qname == null) {
-            if (other.getQName() != null) {
-                return false;
-            }
-        } else if (!qname.equals(other.getQName())) {
-            return false;
-        }
-        if (schemaPath == null) {
-            if (other.getPath() != null) {
-                return false;
-            }
-        } else if (!schemaPath.equals(other.getPath())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(qname, other.getQName()) && Objects.equals(schemaPath, other.getPath());
     }
 
     @Override

@@ -184,21 +184,7 @@ public final class StringType implements StringTypeDefinition, Immutable {
             return false;
         }
         StringType other = (StringType) obj;
-        if (lengthStatements == null) {
-            if (other.lengthStatements != null) {
-                return false;
-            }
-        } else if (!lengthStatements.equals(other.lengthStatements)) {
-            return false;
-        }
-        if (patterns == null) {
-            if (other.patterns != null) {
-                return false;
-            }
-        } else if (!patterns.equals(other.patterns)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(lengthStatements, other.lengthStatements) && Objects.equals(patterns, other.patterns);
     }
 
     @Override

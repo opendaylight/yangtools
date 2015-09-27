@@ -103,25 +103,13 @@ final class LengthConstraintImpl implements LengthConstraint, Immutable {
             return false;
         }
         final LengthConstraintImpl other = (LengthConstraintImpl) obj;
-        if (description == null) {
-            if (other.description != null) {
-                return false;
-            }
-        } else if (!description.equals(other.description)) {
+        if (!Objects.equals(description, other.description)) {
             return false;
         }
-        if (errorAppTag == null) {
-            if (other.errorAppTag != null) {
-                return false;
-            }
-        } else if (!errorAppTag.equals(other.errorAppTag)) {
+        if (!Objects.equals(errorAppTag, other.errorAppTag)) {
             return false;
         }
-        if (errorMessage == null) {
-            if (other.errorMessage != null) {
-                return false;
-            }
-        } else if (!errorMessage.equals(other.errorMessage)) {
+        if (!Objects.equals(errorMessage, other.errorMessage)) {
             return false;
         }
         if (max != other.max) {
@@ -130,11 +118,7 @@ final class LengthConstraintImpl implements LengthConstraint, Immutable {
         if (min != other.min) {
             return false;
         }
-        if (reference == null) {
-            if (other.reference != null) {
-                return false;
-            }
-        } else if (!reference.equals(other.reference)) {
+        if (!Objects.equals(reference, other.reference)) {
             return false;
         }
         return true;

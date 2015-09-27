@@ -179,25 +179,13 @@ public final class EnumerationType implements EnumTypeDefinition {
             return false;
         }
         EnumerationType other = (EnumerationType) obj;
-        if (defaultEnum == null) {
-            if (other.defaultEnum != null) {
-                return false;
-            }
-        } else if (!defaultEnum.equals(other.defaultEnum)) {
+        if (!Objects.equals(defaultEnum, other.defaultEnum)) {
             return false;
         }
-        if (enums == null) {
-            if (other.enums != null) {
-                return false;
-            }
-        } else if (!enums.equals(other.enums)) {
+        if (!Objects.equals(enums, other.enums)) {
             return false;
         }
-        if (path == null) {
-            if (other.path != null) {
-                return false;
-            }
-        } else if (!path.equals(other.path)) {
+        if (!Objects.equals(path, other.path)) {
             return false;
         }
         return true;

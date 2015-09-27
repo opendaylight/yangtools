@@ -102,25 +102,13 @@ public final class MustDefinitionImpl implements MustDefinition {
             return false;
         }
         final MustDefinitionImpl other = (MustDefinitionImpl) obj;
-        if (mustStr == null) {
-            if (other.mustStr != null) {
-                return false;
-            }
-        } else if (!mustStr.equals(other.mustStr)) {
+        if (!Objects.equals(mustStr, other.mustStr)) {
             return false;
         }
-        if (description == null) {
-            if (other.description != null) {
-                return false;
-            }
-        } else if (!description.equals(other.description)) {
+        if (!Objects.equals(description, other.description)) {
             return false;
         }
-        if (reference == null) {
-            if (other.reference != null) {
-                return false;
-            }
-        } else if (!reference.equals(other.reference)) {
+        if (!Objects.equals(reference, other.reference)) {
             return false;
         }
         return true;
