@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -43,22 +43,13 @@ public class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
     private final boolean augmenting;
     private final boolean addedByUses;
     private final ConstraintDefinition constraints;
+    private final List<UnknownSchemaNode> unknownNodes;
     private ChoiceCaseNode original;
-
-    ImmutableList<UnknownSchemaNode> unknownNodes;
 
     public CaseShorthandImpl(final DataSchemaNode caseShorthandNode) {
         this.caseShorthandNode = caseShorthandNode;
         this.qName = caseShorthandNode.getQName();
-
-        SchemaPath caseShorthandNodePath = caseShorthandNode.getPath();
-        Iterable<QName> pathFromRoot = caseShorthandNodePath.getPathFromRoot();
-        // FIXME: cacheShorthandNodePath.getParent() should be enough
-        this.path = SchemaPath
-                .create(Iterables.limit(pathFromRoot,
-                        Iterables.size(pathFromRoot) - 1),
-                        caseShorthandNodePath.isAbsolute());
-
+        this.path = Preconditions.checkNotNull(caseShorthandNode.getPath().getParent());
         this.description = caseShorthandNode.getDescription();
         this.reference = caseShorthandNode.getReference();
         this.status = caseShorthandNode.getStatus();
