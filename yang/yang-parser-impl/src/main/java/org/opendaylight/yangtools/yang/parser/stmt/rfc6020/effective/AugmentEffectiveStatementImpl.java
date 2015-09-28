@@ -47,11 +47,7 @@ public class AugmentEffectiveStatementImpl
             final StmtContext<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> ctx) {
         super(ctx);
 
-        SchemaNodeIdentifier schemaNodeIdentifier = ctx.getStatementArgument();
-        this.targetPath = SchemaPath.create(
-                schemaNodeIdentifier.getPathFromRoot(),
-                schemaNodeIdentifier.isAbsolute());
-
+        this.targetPath = ctx.getStatementArgument().asSchemaPath();
         QNameModule rootModuleQName = Utils.getRootModuleQName(ctx);
         this.namespace = rootModuleQName.getNamespace();
         this.revision = rootModuleQName.getRevision();

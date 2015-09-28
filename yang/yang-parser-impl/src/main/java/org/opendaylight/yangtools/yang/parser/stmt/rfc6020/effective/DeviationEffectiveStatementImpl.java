@@ -33,8 +33,7 @@ public class DeviationEffectiveStatementImpl extends EffectiveStatementBase<Sche
 
         List<UnknownSchemaNode> unknownSchemaNodesInit = new LinkedList<>();
 
-        targetPath = SchemaPath.create(ctx.getStatementArgument().getPathFromRoot(), ctx.getStatementArgument()
-                .isAbsolute());
+        targetPath = ctx.getStatementArgument().asSchemaPath();
 
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof DeviateEffectiveStatementImpl) {
