@@ -32,8 +32,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public class AugmentEffectiveStatementImpl
-        extends
-        AbstractEffectiveDocumentedDataNodeContainer<SchemaNodeIdentifier, AugmentStatement>
+        extends AbstractEffectiveDocumentedDataNodeContainer<SchemaNodeIdentifier, AugmentStatement>
         implements AugmentationSchema, NamespaceRevisionAware, Comparable<AugmentEffectiveStatementImpl> {
     private final SchemaPath targetPath;
     private final URI namespace;
@@ -47,11 +46,7 @@ public class AugmentEffectiveStatementImpl
             final StmtContext<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> ctx) {
         super(ctx);
 
-        SchemaNodeIdentifier schemaNodeIdentifier = ctx.getStatementArgument();
-        this.targetPath = SchemaPath.create(
-                schemaNodeIdentifier.getPathFromRoot(),
-                schemaNodeIdentifier.isAbsolute());
-
+        this.targetPath = ctx.getStatementArgument().asSchemaPath();
         QNameModule rootModuleQName = Utils.getRootModuleQName(ctx);
         this.namespace = rootModuleQName.getNamespace();
         this.revision = rootModuleQName.getRevision();
@@ -161,8 +156,7 @@ public class AugmentEffectiveStatementImpl
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(
-                AugmentEffectiveStatementImpl.class.getSimpleName());
+        StringBuilder sb = new StringBuilder(AugmentEffectiveStatementImpl.class.getSimpleName());
         sb.append("[");
         sb.append("targetPath=").append(targetPath);
         sb.append(", when=").append(whenCondition);

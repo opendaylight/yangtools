@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 import com.google.common.base.CharMatcher;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
@@ -406,9 +407,8 @@ public final class Utils {
 
     private static void addQNamesFromSchemaNodeIdentifierToList(final List<QName> qNamesFromRoot,
             final SchemaNodeIdentifier augmentTargetPath) {
-        Iterator<QName> augmentTargetPathIterator = augmentTargetPath.getPathFromRoot().iterator();
-        while (augmentTargetPathIterator.hasNext()) {
-            qNamesFromRoot.add(augmentTargetPathIterator.next());
+        for (QName qname : augmentTargetPath.getPathFromRoot()) {
+            qNamesFromRoot.add(qname);
         }
     }
 
@@ -417,9 +417,8 @@ public final class Utils {
         // Yang constants should be lowercase so we have throw if value does not
         // suit this
         String deviateUpper = deviate.toUpperCase();
-        if (Objects.equals(deviate, deviateUpper)) {
-            throw new IllegalArgumentException(String.format("String %s is not valid deviate argument", deviate));
-        }
+        Preconditions.checkArgument(!Objects.equals(deviate, deviateUpper),
+            "String %s is not valid deviate argument", deviate);
 
         // but Java enum is uppercase so we cannot use lowercase here
         try {
@@ -447,10 +446,6 @@ public final class Utils {
         }
 
         return status;
-    }
-
-    public static SchemaPath SchemaNodeIdentifierToSchemaPath(final SchemaNodeIdentifier identifier) {
-        return SchemaPath.create(identifier.getPathFromRoot(), identifier.isAbsolute());
     }
 
     public static Date getLatestRevision(final RootStatementContext<?, ?, ?> root) {

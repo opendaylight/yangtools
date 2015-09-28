@@ -73,7 +73,7 @@ public class UsesEffectiveStatementImpl extends EffectiveStatementBase<QName, Us
             if (effectiveStatement instanceof RefineEffectiveStatementImpl) {
                 RefineEffectiveStatementImpl refineStmt = (RefineEffectiveStatementImpl) effectiveStatement;
                 SchemaNodeIdentifier identifier = refineStmt.argument();
-                refinesInit.put(Utils.SchemaNodeIdentifierToSchemaPath(identifier), refineStmt.getRefineTargetNode());
+                refinesInit.put(identifier.asSchemaPath(), refineStmt.getRefineTargetNode());
             }
         }
 

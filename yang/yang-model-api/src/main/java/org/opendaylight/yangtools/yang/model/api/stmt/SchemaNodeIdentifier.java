@@ -12,19 +12,18 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.UnmodifiableIterator;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 /**
- * Represents unique path to the every schema node inside the schema node identifier
- * namespace.
- *
+ * Represents unique path to the every schema node inside the schema node identifier namespace.
  */
 public abstract class SchemaNodeIdentifier implements Immutable {
 
@@ -69,7 +68,8 @@ public abstract class SchemaNodeIdentifier implements Immutable {
     @SuppressWarnings("rawtypes")
     private static final AtomicReferenceFieldUpdater<SchemaNodeIdentifier, ImmutableList> LEGACYPATH_UPDATER =
             AtomicReferenceFieldUpdater.newUpdater(SchemaNodeIdentifier.class, ImmutableList.class, "legacyPath");
-
+    private static final AtomicReferenceFieldUpdater<SchemaNodeIdentifier, SchemaPath> SCHEMAPATH_UPDATER =
+            AtomicReferenceFieldUpdater.newUpdater(SchemaNodeIdentifier.class, SchemaPath.class, "schemaPath");
     /**
      * Shared instance of the conceptual root schema node.
      */
@@ -101,6 +101,11 @@ public abstract class SchemaNodeIdentifier implements Immutable {
      */
     private volatile ImmutableList<QName> legacyPath;
 
+    /**
+     * Cached SchemaPath.
+     */
+    private volatile SchemaPath schemaPath;
+
     protected SchemaNodeIdentifier(final SchemaNodeIdentifier parent, final QName qname) {
         this.parent = parent;
         this.qname = qname;
@@ -121,19 +126,6 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         }
 
         return ret;
-    }
-
-    /**
-     * Returns the complete path to schema node.
-     *
-     * @return list of <code>QName</code> instances which represents complete
-     *         path to schema node
-     *
-     * @deprecated Use {@link #getPathFromRoot()} instead.
-     */
-    @Deprecated
-    public List<QName> getPath() {
-        return getLegacyPath();
     }
 
     /**
@@ -248,7 +240,7 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         return new Iterable<QName>() {
             @Override
             public Iterator<QName> iterator() {
-                return new Iterator<QName>() {
+                return new UnmodifiableIterator<QName>() {
                     private SchemaNodeIdentifier current = SchemaNodeIdentifier.this;
 
                     @Override
@@ -265,11 +257,6 @@ public abstract class SchemaNodeIdentifier implements Immutable {
                         } else {
                             throw new NoSuchElementException("No more elements available");
                         }
-                    }
-
-                    @Override
-                    public void remove() {
-                        throw new UnsupportedOperationException("Component removal not supported");
                     }
                 };
             }
@@ -292,6 +279,31 @@ public abstract class SchemaNodeIdentifier implements Immutable {
      */
     public final QName getLastComponent() {
         return qname;
+    }
+
+    private SchemaPath createSchemaPath() {
+        final SchemaPath newPath;
+        if (parent == null) {
+            newPath = isAbsolute() ? SchemaPath.ROOT : SchemaPath.SAME;
+        } else {
+            newPath = parent.asSchemaPath().createChild(qname);
+        }
+
+        return SCHEMAPATH_UPDATER.compareAndSet(this, null, newPath) ? newPath : schemaPath;
+    }
+
+    /**
+     * Create the {@link SchemaPath} equivalent of this identifier.
+     *
+     * @return SchemaPath equivalent.
+     */
+    public final SchemaPath asSchemaPath() {
+        final SchemaPath ret = schemaPath;
+        if (ret != null) {
+            return ret;
+        }
+
+        return createSchemaPath();
     }
 
     /**
