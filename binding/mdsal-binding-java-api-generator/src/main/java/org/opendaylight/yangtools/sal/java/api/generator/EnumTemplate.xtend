@@ -42,7 +42,7 @@ class EnumTemplate extends BaseTemplate {
     }
 
     def writeEnumItem(String name, int value, String description) '''
-        «asJavadoc(formatToParagraph(description))»
+        «asJavadoc(description)»
         «name»(«value»)
     '''
 
