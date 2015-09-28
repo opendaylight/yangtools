@@ -12,7 +12,6 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -171,9 +170,8 @@ public final class StmtContextUtils {
             final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, ?> keyStmtCtx,
             final QNameModule newQNameModule) {
 
-        List<String> keyTokens = KEY_SPLITTER.splitToList(keyStmtCtx.rawStatementArgument());
         Set<SchemaNodeIdentifier> newKeys = new HashSet<>();
-        for (String keyToken : keyTokens) {
+        for (String keyToken : KEY_SPLITTER.split(keyStmtCtx.rawStatementArgument())) {
             QName keyQName = QName.create(newQNameModule, keyToken);
             SchemaNodeIdentifier keyIdentifier = SchemaNodeIdentifier.create(false, keyQName);
             newKeys.add(keyIdentifier);
