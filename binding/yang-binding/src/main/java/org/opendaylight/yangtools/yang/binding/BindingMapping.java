@@ -11,6 +11,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Interner;
+import com.google.common.collect.Interners;
 import java.text.SimpleDateFormat;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -61,6 +63,8 @@ public final class BindingMapping {
         }
     };
 
+    private static final Interner<String> PACKAGE_INTERNER = Interners.newWeakInterner();
+
     private BindingMapping() {
         throw new UnsupportedOperationException("Utility class should not be instantiated");
     }
@@ -104,7 +108,6 @@ public final class BindingMapping {
         packageNameBuilder.append(".rev");
         packageNameBuilder.append(PACKAGE_DATE_FORMAT.get().format(module.getRevision()));
         return normalizePackageName(packageNameBuilder.toString());
-
     }
 
     public static String normalizePackageName(final String packageName) {
@@ -129,8 +132,7 @@ public final class BindingMapping {
         }
 
         // Prevent duplication of input string
-        final String result = builder.toString();
-        return packageName.equals(result) ? packageName : result;
+        return PACKAGE_INTERNER.intern(builder.toString());
     }
 
     public static String getMethodName(final QName name) {
