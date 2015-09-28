@@ -376,7 +376,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                 for (Map.Entry<QName, StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>>> extension : extensions
                         .entrySet()) {
                     qNameToStmtDefMap
-                            .put(new QName(YangConstants.RFC6020_YIN_NAMESPACE,
+                            .put(QName.create(YangConstants.RFC6020_YIN_MODULE,
                                     extension.getKey().getLocalName()),
                                     (StatementDefinition) ((StatementContextBase<?, ?, ?>) extension
                                             .getValue()).definition()

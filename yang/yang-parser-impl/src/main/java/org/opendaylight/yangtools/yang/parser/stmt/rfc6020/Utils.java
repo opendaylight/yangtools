@@ -160,10 +160,10 @@ public final class Utils {
                 String prefix = namesParts[0];
                 String localName = namesParts[1];
                 if (prefixes != null && prefixes.get(prefix) != null
-                        && stmtDef.get(new QName(YangConstants.RFC6020_YIN_NAMESPACE, localName)) != null) {
+                        && stmtDef.get(QName.create(YangConstants.RFC6020_YIN_MODULE, localName)) != null) {
                     return true;
                 } else {
-                    if (stmtDef.get(new QName(YangConstants.RFC6020_YIN_NAMESPACE, localName)) != null) {
+                    if (stmtDef.get(QName.create(YangConstants.RFC6020_YIN_MODULE, localName)) != null) {
                         return true;
                     }
                 }

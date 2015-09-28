@@ -9,54 +9,53 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.annotation.concurrent.Immutable;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParserBaseListener;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
-
-import javax.annotation.concurrent.Immutable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Immutable
 public class YangStatementParserListenerImpl extends YangStatementParserBaseListener {
 
     private StatementWriter writer;
-    private String sourceName;
+    private final String sourceName;
     private QNameToStatementDefinition stmtDef;
     private PrefixToModule prefixes;
-    private List<String> toBeSkipped = new ArrayList<>();
+    private final List<String> toBeSkipped = new ArrayList<>();
     private boolean isType = false;
     private static final Logger LOG = LoggerFactory.getLogger(YangStatementParserListenerImpl.class);
 
-    public YangStatementParserListenerImpl(String sourceName) {
+    public YangStatementParserListenerImpl(final String sourceName) {
         this.sourceName = sourceName;
     }
 
-    public void setAttributes(StatementWriter writer, QNameToStatementDefinition stmtDef) {
+    public void setAttributes(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
         this.writer = writer;
         this.stmtDef = stmtDef;
     }
 
-    public void setAttributes(StatementWriter writer, QNameToStatementDefinition stmtDef, PrefixToModule prefixes) {
+    public void setAttributes(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes) {
         this.writer = writer;
         this.stmtDef = stmtDef;
         this.prefixes = prefixes;
     }
 
     @Override
-    public void enterStatement(YangStatementParser.StatementContext ctx) {
+    public void enterStatement(final YangStatementParser.StatementContext ctx) {
         final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, ctx.getText(), ctx
                 .getStart().getLine(), ctx.getStart().getCharPositionInLine());
         boolean action = true;
@@ -65,7 +64,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
             ParseTree child = ctx.getChild(i);
             if (child instanceof YangStatementParser.KeywordContext) {
                 try {
-                    identifier = new QName(YangConstants.RFC6020_YIN_NAMESPACE,
+                    identifier = QName.create(YangConstants.RFC6020_YIN_MODULE,
                             ((YangStatementParser.KeywordContext) child).children.get(0).getText());
                     if (stmtDef != null && Utils.isValidStatementDefinition(prefixes, stmtDef, identifier) && toBeSkipped.isEmpty()) {
                         if (identifier.equals(Rfc6020Mapping.TYPE.getStatementName())) {
@@ -90,9 +89,9 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
                     final String argument = Utils.stringFromStringContext((YangStatementParser.ArgumentContext) child);
                     if (isType) {
                             if (TypeUtils.isYangTypeBodyStmtString(argument)) {
-                                writer.startStatement(new QName(YangConstants.RFC6020_YIN_NAMESPACE, argument), ref);
+                                writer.startStatement(QName.create(YangConstants.RFC6020_YIN_MODULE, argument), ref);
                             } else {
-                                writer.startStatement(new QName(YangConstants.RFC6020_YIN_NAMESPACE, Rfc6020Mapping
+                                writer.startStatement(QName.create(YangConstants.RFC6020_YIN_MODULE, Rfc6020Mapping
                                         .TYPE.getStatementName().getLocalName()), ref);
                             }
                         writer.argumentValue(argument, ref);
@@ -111,7 +110,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
     }
 
     @Override
-    public void exitStatement(YangStatementParser.StatementContext ctx) {
+    public void exitStatement(final YangStatementParser.StatementContext ctx) {
         final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, ctx.getText(), ctx.getStart().getLine(), ctx
                 .getStart().getCharPositionInLine());
         for (int i = 0; i < ctx.getChildCount(); i++) {
@@ -119,7 +118,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
             if (child instanceof YangStatementParser.KeywordContext) {
                 try {
                     String statementName = ((YangStatementParser.KeywordContext) child).children.get(0).getText();
-                    QName identifier = new QName(YangConstants.RFC6020_YIN_NAMESPACE, statementName);
+                    QName identifier = QName.create(YangConstants.RFC6020_YIN_MODULE, statementName);
                     if (stmtDef != null && Utils.isValidStatementDefinition(prefixes, stmtDef, identifier) && toBeSkipped.isEmpty()) {
                         writer.endStatement(ref);
                     }
