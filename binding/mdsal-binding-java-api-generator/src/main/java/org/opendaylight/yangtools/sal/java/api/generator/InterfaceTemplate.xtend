@@ -159,7 +159,7 @@ class InterfaceTemplate extends BaseTemplate {
         «IF !consts.empty»
             «FOR c : consts»
                 «IF c.name != TypeConstants.PATTERN_CONSTANT_NAME»
-                    public static final «c.type.importedName» «c.name» = «c.value»;
+                    «emitConstant(c)»
                 «ENDIF»
             «ENDFOR»
         «ENDIF»

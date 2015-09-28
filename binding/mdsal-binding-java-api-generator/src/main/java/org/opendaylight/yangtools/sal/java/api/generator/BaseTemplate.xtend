@@ -24,6 +24,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature
 import org.opendaylight.yangtools.sal.binding.model.api.Restrictions
 import org.opendaylight.yangtools.sal.binding.model.api.Type
+import org.opendaylight.yangtools.sal.binding.model.api.Constant
+import org.opendaylight.yangtools.yang.common.QName
 
 abstract class BaseTemplate {
     protected val GeneratedType type;
@@ -386,4 +388,13 @@ abstract class BaseTemplate {
         return null
     }
 
+    def protected emitConstant(Constant c) '''
+        «IF c.value instanceof QName»
+            «val qname = c.value as QName»
+            public static final «c.type.importedName» «c.name» = «QName.name».cachedReference(
+                «QName.name».create("«qname.namespace.toString»", "«qname.formattedRevision»", "«qname.localName»"));
+        «ELSE»
+            public static final «c.type.importedName» «c.name» = «c.value»;
+        «ENDIF»
+    '''
 }

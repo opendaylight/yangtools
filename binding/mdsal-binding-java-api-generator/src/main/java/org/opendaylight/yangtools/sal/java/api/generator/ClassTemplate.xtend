@@ -438,7 +438,7 @@ class ClassTemplate extends BaseTemplate {
                         «generateStaticInicializationBlock»
                     «ENDIF»
                 «ELSE»
-                    public static final «c.type.importedName» «c.name» = «c.value»;
+                    «emitConstant(c)»
                 «ENDIF»
             «ENDFOR»
         «ENDIF»
