@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 
 /**
  *
@@ -63,6 +64,8 @@ public interface NodeParserDispatcher<E> {
                 return factory.getChoiceNodeParser().parse(childNodes, (ChoiceSchemaNode) schema);
             } else if (schema instanceof AugmentationSchema) {
                 return factory.getAugmentationNodeParser().parse(childNodes, (AugmentationSchema) schema);
+            } else if (schema instanceof YangModeledAnyXmlSchemaNode) {
+                return factory.getYangModeledAnyXmlNodeParser().parse(childNodes,(YangModeledAnyXmlSchemaNode)schema);
             } else if (schema instanceof AnyXmlSchemaNode) {
                 return factory.getAnyXmlNodeParser().parse(childNodes,(AnyXmlSchemaNode)schema);
             }
