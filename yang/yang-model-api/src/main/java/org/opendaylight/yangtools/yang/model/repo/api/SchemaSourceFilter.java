@@ -24,17 +24,18 @@ public interface SchemaSourceFilter {
      * A {@link SchemaSourceFilter} which accepts any schema source it is presented with.
      */
     SchemaSourceFilter ALWAYS_ACCEPT = new SchemaSourceFilter() {
-        private final Iterable<Class<? extends SchemaSourceRepresentation>> Representations =
+        private final Iterable<Class<? extends SchemaSourceRepresentation>> representations =
                 Collections.<Class<? extends SchemaSourceRepresentation>>singletonList(SchemaSourceRepresentation.class);
+        private final ListenableFuture<Boolean> applyFuture = Futures.immediateFuture(Boolean.TRUE);
 
         @Override
         public Iterable<Class<? extends SchemaSourceRepresentation>> supportedRepresentations() {
-            return Representations;
+            return representations;
         }
 
         @Override
         public ListenableFuture<Boolean> apply(final SchemaSourceRepresentation schemaSource) {
-            return Futures.immediateFuture(Boolean.TRUE);
+            return applyFuture;
         }
     };
 
