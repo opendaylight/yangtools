@@ -1,0 +1,13 @@
+module duplicate-identity-test {
+    namespace "urn:opendaylight.org/duplicate-identity-test";
+    prefix "didt";
+
+    identity first-identity {
+        description "this identity is not unique";
+    }
+
+    identity first-identity {
+        description "this identity is not unique";
+    }
+
+}

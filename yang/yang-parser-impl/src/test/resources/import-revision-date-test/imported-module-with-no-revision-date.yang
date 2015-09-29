@@ -1,0 +1,4 @@
+module imported-module-with-no-revision-date {
+    namespace "urn:opendaylight.org/imported-module-with-no-revision-date";
+    prefix "imported-no-date";
+}
