@@ -20,7 +20,10 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
-public class LeafRefUtils {
+public final class LeafRefUtils {
+    private LeafRefUtils() {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * @param leafRefPath
