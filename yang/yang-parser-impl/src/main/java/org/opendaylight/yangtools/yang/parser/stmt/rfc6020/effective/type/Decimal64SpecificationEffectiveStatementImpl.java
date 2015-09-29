@@ -38,8 +38,7 @@ public class Decimal64SpecificationEffectiveStatementImpl extends
 
     private static final String UNITS = "";
     private static final BigDecimal DEFAULT_VALUE = null;
-    private static final QName QNAME = QName.create(
-            YangConstants.RFC6020_YANG_MODULE, TypeUtils.DECIMAL64);
+    private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, TypeUtils.DECIMAL64);
 
     private static final String DESCRIPTION = "The decimal64 type represents a subset of the real numbers, which can "
             + "be represented by decimal numerals. The value space of decimal64 is the set of numbers that can "
@@ -47,10 +46,8 @@ public class Decimal64SpecificationEffectiveStatementImpl extends
             + "'i x 10^-n' where i is an integer64 and n is an integer between 1 and 18, inclusively.";
 
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.3";
-    private static final BigDecimal MIN_VALUE = new BigDecimal(
-            "-922337203685477580.8");
-    private static final BigDecimal MAX_VALUE = new BigDecimal(
-            "922337203685477580.7");
+    private static final BigDecimal MIN_VALUE = new BigDecimal("-922337203685477580.8");
+    private static final BigDecimal MAX_VALUE = new BigDecimal("922337203685477580.7");
     private static final List<RangeConstraint> DEFAULT_RANGE_STATEMENTS;
     static {
         final String rangeDescription = "Integer values between " + MIN_VALUE
@@ -103,20 +100,17 @@ public class Decimal64SpecificationEffectiveStatementImpl extends
             String maxValueString = rangeConstraint.getMax().toString();
             String minValueString = rangeConstraint.getMin().toString();
 
-            if ((!maxValueString.equals("max") && new BigDecimal(maxValueString)
-                    .compareTo(MAX_VALUE) > 0)
-                    || (!minValueString.equals("min") && new BigDecimal(
-                            minValueString).compareTo(MIN_VALUE) < 0)) {
+            if ((!"max".equals(maxValueString) && MAX_VALUE.compareTo(new BigDecimal(maxValueString)) < 0)
+                    || (!"min".equals(minValueString) && MIN_VALUE.compareTo(new BigDecimal(minValueString)) > 0)) {
                 return false;
             }
         }
         return true;
     }
 
-    protected List<RangeConstraint> initRanges() {
+    private List<RangeConstraint> initRanges() {
         final RangeEffectiveStatementImpl rangeConstraints = firstEffective(RangeEffectiveStatementImpl.class);
-        return rangeConstraints != null ? rangeConstraints.argument()
-                : Collections.<RangeConstraint> emptyList();
+        return rangeConstraints != null ? rangeConstraints.argument() : Collections.<RangeConstraint> emptyList();
     }
 
     public boolean isExtended() {
@@ -135,7 +129,7 @@ public class Decimal64SpecificationEffectiveStatementImpl extends
 
     @Override
     public DecimalTypeDefinition getBaseType() {
-        if(isExtended) {
+        if (isExtended) {
             if (decimal64Instance == null) {
                 decimal64Instance = Decimal64.create(path, fractionDigits);
             }
@@ -211,10 +205,8 @@ public class Decimal64SpecificationEffectiveStatementImpl extends
 
     @Override
     public String toString() {
-        return Decimal64SpecificationEffectiveStatementImpl.class
-                .getSimpleName()
-                + "[qName=" + QNAME
-                + ", fractionDigits=" + fractionDigits + "]";
+        return Decimal64SpecificationEffectiveStatementImpl.class.getSimpleName()
+                + "[qName=" + QNAME + ", fractionDigits=" + fractionDigits + "]";
     }
 
     @Override
