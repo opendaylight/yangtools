@@ -11,10 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -34,6 +30,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedPr
 import org.opendaylight.yangtools.sal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.yangtools.sal.java.api.generator.TOGenerator;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class ClassCodeGeneratorTest {
 
@@ -52,7 +50,7 @@ public class ClassCodeGeneratorTest {
         final SchemaContext context = RetestUtils.parseYangSources(testModels);
 
         assertNotNull(context);
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         assertTrue(genTypes != null);

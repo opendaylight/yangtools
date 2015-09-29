@@ -50,7 +50,7 @@ public class ClassCodeGeneratorTest {
         final SchemaContext context = parser.parseFiles(testModels);
 
         assertNotNull(context);
-        final BindingGenerator bindingGen = new BindingGeneratorImpl();
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         assertTrue(genTypes != null);

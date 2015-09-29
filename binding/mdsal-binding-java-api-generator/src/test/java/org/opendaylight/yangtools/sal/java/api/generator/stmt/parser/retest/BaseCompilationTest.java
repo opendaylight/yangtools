@@ -8,8 +8,10 @@
 package org.opendaylight.yangtools.sal.java.api.generator.stmt.parser.retest;
 
 import static org.junit.Assert.assertTrue;
-import static org.opendaylight.yangtools.sal.java.api.generator.stmt.parser.retest.CompilationTestUtils.*;
-
+import static org.opendaylight.yangtools.sal.java.api.generator.stmt.parser.retest.CompilationTestUtils.COMPILER_OUTPUT_DIR;
+import static org.opendaylight.yangtools.sal.java.api.generator.stmt.parser.retest.CompilationTestUtils.GENERATOR_OUTPUT_DIR;
+import static org.opendaylight.yangtools.sal.java.api.generator.stmt.parser.retest.CompilationTestUtils.TEST_DIR;
+import static org.opendaylight.yangtools.sal.java.api.generator.stmt.parser.retest.CompilationTestUtils.deleteTestDir;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.opendaylight.yangtools.sal.binding.generator.api.BindingGenerator;
@@ -30,7 +32,7 @@ public abstract class BaseCompilationTest {
 
     @Before
     public void init() {
-        bindingGenerator = new BindingGeneratorImpl();
+        bindingGenerator = new BindingGeneratorImpl(true);
     }
 
 }
