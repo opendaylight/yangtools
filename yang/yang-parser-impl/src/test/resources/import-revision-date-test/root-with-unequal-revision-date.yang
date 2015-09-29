@@ -1,0 +1,10 @@
+module root-with-unequal-revision-date {
+    namespace "urn:opendaylight.org/root-with-unequal-revision-date";
+    prefix "root-unequal-date";
+
+    import imported-module-with-unequal-revision-date {
+        prefix "imported-unequal-date";
+        revision-date 2012-10-25;
+    }
+
+}

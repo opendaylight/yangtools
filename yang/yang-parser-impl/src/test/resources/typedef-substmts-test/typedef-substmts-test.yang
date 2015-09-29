@@ -1,0 +1,11 @@
+module typedef-substmts-test {
+    namespace "urn:opendaylight.org/typedef-substmts-test";
+    prefix "tdst";
+
+    typedef time-of-the-day {
+        type string;
+        units 24-hour-clock;
+        default 1am;
+    }
+
+}
