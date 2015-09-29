@@ -8,6 +8,7 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -36,8 +37,7 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<QName,
     private ExtensionDefinition extension;
     private String description;
     private String reference;
-    private final Status status = Status.CURRENT;
-    private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
+    private final List<UnknownSchemaNode> unknownNodes;
     private QName nodeType;
     private final String nodeParameter;
 
@@ -62,6 +62,7 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<QName,
 
         // TODO init other fields (see Bug1412Test)
 
+        final List<UnknownSchemaNode> nodes = new ArrayList<>();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof DescriptionEffectiveStatementImpl) {
                 description = ((DescriptionEffectiveStatementImpl) effectiveStatement).argument();
@@ -70,10 +71,11 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<QName,
                 reference = ((ReferenceEffectiveStatementImpl) effectiveStatement).argument();
             }
             if (effectiveStatement instanceof UnknownEffectiveStatementImpl) {
-                unknownNodes.add((UnknownEffectiveStatementImpl) effectiveStatement);
+                nodes.add((UnknownEffectiveStatementImpl) effectiveStatement);
             }
         }
 
+        unknownNodes = ImmutableList.copyOf(nodes);
         initCopyType(ctx);
     }
 
@@ -143,7 +145,7 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<QName,
 
     @Override
     public Status getStatus() {
-        return status;
+        return Status.CURRENT;
     }
 
     @Override

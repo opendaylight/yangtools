@@ -32,7 +32,6 @@ abstract class IntegerEffectiveImplBase extends
 
     private final QName qName;
     private final SchemaPath path;
-    private final String units = "";
     private final String description;
     private final List<RangeConstraint> rangeStatements;
 
@@ -64,7 +63,7 @@ abstract class IntegerEffectiveImplBase extends
 
     @Override
     public String getUnits() {
-        return units;
+        return "";
     }
 
     @Override
@@ -110,7 +109,7 @@ abstract class IntegerEffectiveImplBase extends
         result = prime * result + Objects.hashCode(qName);
         result = prime * result + Objects.hashCode(path);
         result = prime * result + Objects.hashCode(rangeStatements);
-        result = prime * result + Objects.hashCode(units);
+        result = prime * result + Objects.hashCode(getUnits());
         return result;
     }
 
@@ -138,7 +137,7 @@ abstract class IntegerEffectiveImplBase extends
         if (!Objects.equals(rangeStatements, other.rangeStatements)) {
             return false;
         }
-        if (!Objects.equals(units, other.units)) {
+        if (!Objects.equals(getUnits(), other.getUnits())) {
             return false;
         }
         return true;
@@ -157,7 +156,7 @@ abstract class IntegerEffectiveImplBase extends
         builder.append(", reference=");
         builder.append(REFERENCE_INT);
         builder.append(", units=");
-        builder.append(units);
+        builder.append(getUnits());
         builder.append(", rangeStatements=");
         builder.append(rangeStatements);
         builder.append("]");

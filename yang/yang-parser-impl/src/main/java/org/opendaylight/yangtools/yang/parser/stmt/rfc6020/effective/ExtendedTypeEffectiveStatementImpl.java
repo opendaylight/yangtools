@@ -49,13 +49,7 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
     private final SchemaPath path;
 
     private final TypeDefinition<?> baseType;
-
-    private final String defaultValue = null;
-    private final String units = null;
-
-    private final String description = null;
     private final String reference = null;
-
     private final Status status = null;
 
     private final List<RangeConstraint> ranges;
@@ -238,12 +232,12 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
 
     @Override
     public String getUnits() {
-        return units;
+        return null;
     }
 
     @Override
     public Object getDefaultValue() {
-        return defaultValue;
+        return null;
     }
 
     @Override
@@ -263,7 +257,7 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
 
     @Override
     public String getDescription() {
-        return description;
+        return null;
     }
 
     @Override
@@ -308,9 +302,9 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
         if (baseType instanceof TypeDefEffectiveStatementImpl) {
             TypeDefEffectiveStatementImpl typeDefBaseType = (TypeDefEffectiveStatementImpl) baseType;
             extendedTypeBuilder = ExtendedType.builder(qName, typeDefBaseType.buildType(),
-                    Optional.fromNullable(description), Optional.fromNullable(reference), path);
+                    Optional.fromNullable(getDescription()), Optional.fromNullable(reference), path);
         } else {
-            extendedTypeBuilder = ExtendedType.builder(qName, baseType, Optional.fromNullable(description),
+            extendedTypeBuilder = ExtendedType.builder(qName, baseType, Optional.fromNullable(getDescription()),
                     Optional.fromNullable(reference), path);
         }
 
