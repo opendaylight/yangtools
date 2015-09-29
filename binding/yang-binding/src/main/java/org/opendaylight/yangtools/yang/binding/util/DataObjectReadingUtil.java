@@ -268,7 +268,7 @@ public class DataObjectReadingUtil {
         }
 
         @SuppressWarnings("unchecked")
-        private Map<InstanceIdentifier, DataContainer> readUsingIdentifiableItem(final Iterable<Identifiable> dataList,
+        private static Map<InstanceIdentifier, DataContainer> readUsingIdentifiableItem(final Iterable<Identifiable> dataList,
                 final IdentifiableItem childArgument, final InstanceIdentifier parentPath) {
             final Identifier<?> key = childArgument.getKey();
             for (Identifiable item : dataList) {

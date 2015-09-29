@@ -7,7 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.binding.util;
 
+import static org.junit.Assert.assertTrue;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.UnmodifiableIterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -15,12 +20,6 @@ import org.mockito.MockitoAnnotations;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.test.mock.Nodes;
-
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import static org.junit.Assert.assertTrue;
 
 public class DataObjectReadingUtilTest {
     @Mock private InstanceIdentifier<? extends DataObject> pathNull;
@@ -34,35 +33,39 @@ public class DataObjectReadingUtilTest {
         MockitoAnnotations.initMocks(this);
 
         path = InstanceIdentifier.builder(Nodes.class).build();
-        ImmutableMap map = ImmutableMap.<InstanceIdentifier<? extends DataObject>,
-                DataObject>builder().put(path, mockedDataObject).build();
+        ImmutableMap<InstanceIdentifier<? extends DataObject>, DataObject> map =
+                ImmutableMap.<InstanceIdentifier<? extends DataObject>, DataObject>builder()
+                .put(path, mockedDataObject).build();
 
-        Set entries = map.entrySet();
-        Iterator it = entries.iterator();
+        ImmutableSet<Entry<InstanceIdentifier<? extends DataObject>, DataObject>> entries = map.entrySet();
+        UnmodifiableIterator<Entry<InstanceIdentifier<? extends DataObject>, DataObject>> it = entries.iterator();
         while(it.hasNext()) {
-            entry = (Map.Entry)it.next();
+            entry = it.next();
         }
     }
 
+    @SuppressWarnings("unchecked")
     @Test(expected = IllegalArgumentException.class)
     public void testReadDataParentNull() {
-        DataObjectReadingUtil.readData(entryNull.getValue(), (InstanceIdentifier) entryNull.getKey(), pathNull);
+        DataObjectReadingUtil.readData(entryNull.getValue(), (InstanceIdentifier<DataObject>) entryNull.getKey(), pathNull);
     }
 
+    @SuppressWarnings("unchecked")
     @Test(expected = IllegalArgumentException.class)
     public void testReadDataParentPathNull() {
-        DataObjectReadingUtil.readData(entry.getValue(), (InstanceIdentifier) entryNull.getKey(), pathNull);
+        DataObjectReadingUtil.readData(entry.getValue(), (InstanceIdentifier<DataObject>) entryNull.getKey(), pathNull);
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testReadDataWithThreeParams() {
         assertTrue("Check if contains key",
                 DataObjectReadingUtil.readData(entry.getValue(),
-                        (InstanceIdentifier) entry.getKey(), path).containsKey(entry.getKey()));
+                        (InstanceIdentifier<DataObject>) entry.getKey(), path).containsKey(entry.getKey()));
 
         assertTrue("Check if contains value",
                 DataObjectReadingUtil.readData(entry.getValue(),
-                        (InstanceIdentifier) entry.getKey(), path).containsValue(entry.getValue()));
+                        (InstanceIdentifier<DataObject>) entry.getKey(), path).containsValue(entry.getValue()));
     }
 
     @Test(expected = NullPointerException.class)
