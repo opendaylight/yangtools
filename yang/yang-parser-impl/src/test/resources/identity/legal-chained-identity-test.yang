@@ -1,0 +1,20 @@
+module legal-chained-identity-test {
+    namespace "urn:opendaylight.org/legal-chained-identity-test";
+    prefix lcidt;
+
+    identity first-identity {
+        base second-identity;
+    }
+
+    identity second-identity {
+        base third-identity;
+    }
+
+    identity third-identity {
+        base fourth-identity;
+    }
+
+    identity fourth-identity {
+        description "the highest identity";
+    }
+}

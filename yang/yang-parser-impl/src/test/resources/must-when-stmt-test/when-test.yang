@@ -1,0 +1,13 @@
+module when-test {
+    namespace "urn:opendaylight.org/when-test";
+    prefix "wt";
+
+    container test-container {
+        when "conditional-leaf = 'autumn-leaf'";
+        leaf conditional-leaf {
+            type string;
+        }
+
+    }
+
+}

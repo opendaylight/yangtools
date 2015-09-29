@@ -1,0 +1,9 @@
+module imported-module-with-revision-date {
+    namespace "urn:opendaylight.org/imported-module-with-revision-date";
+    prefix "imported-with-date";
+
+    revision "2012-04-14" {
+        description "Initial revision";
+    }
+
+}
