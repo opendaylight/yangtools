@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_5dcef45b",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/StatementTest1.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-09-29T17:47:40Z",
+      "side": 1,
+      "message": "throw new ExceptionInInitializerError(e);",
+      "revId": "e09d346539b60ba6cef18ac0d74ae9b8a6c6bf35",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
