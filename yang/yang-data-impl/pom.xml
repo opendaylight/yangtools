@@ -121,6 +121,10 @@
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
+<<<<<<< 9db27da95b4dba4afc14af55e5ba6bba7d0b6d83
+=======
+            <version>4.5.1-1</version>
+>>>>>>> Upgrade upstream versions
         </dependency>
     </dependencies>
 </project>

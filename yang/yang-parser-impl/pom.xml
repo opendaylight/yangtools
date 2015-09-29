@@ -75,7 +75,18 @@
             <plugin>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>
+<<<<<<< 9db27da95b4dba4afc14af55e5ba6bba7d0b6d83
                 <version>4.5.1</version>
+=======
+                <version>4.5.1-1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
+                    </execution>
+                </executions>
+>>>>>>> Upgrade upstream versions
                 <configuration>
                     <sourceDirectory>src/main/antlr</sourceDirectory>
                     <outputDirectory>target/generated-sources/parser/org/opendaylight/yangtools/antlrv4/code/gen</outputDirectory>
