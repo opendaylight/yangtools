@@ -21,6 +21,7 @@
 
     <groupId>org.opendaylight.yangtools.thirdparty</groupId>
     <artifactId>third-party-parent</artifactId>
+    <version>0.8.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
