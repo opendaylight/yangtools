@@ -54,7 +54,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
     private static final Logger LOG = LoggerFactory.getLogger(FilesystemSchemaSourceCache.class);
 
     // Init storage adapters
-    private static final Map<Class<? extends SchemaSourceRepresentation>, StorageAdapter<? extends SchemaSourceRepresentation>> storageAdapters =
+    private static final Map<Class<? extends SchemaSourceRepresentation>, StorageAdapter<? extends SchemaSourceRepresentation>> STORAGE_ADAPTERS =
             Collections.<Class<? extends SchemaSourceRepresentation>, StorageAdapter<? extends SchemaSourceRepresentation>> singletonMap(
                     YangTextSchemaSource.class, new YangTextSchemaStorageAdapter());
 
@@ -81,14 +81,14 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
     }
 
     private static void checkSupportedRepresentation(final Class<? extends SchemaSourceRepresentation> representation) {
-        for (final Class<? extends SchemaSourceRepresentation> supportedRepresentation : storageAdapters.keySet()) {
+        for (final Class<? extends SchemaSourceRepresentation> supportedRepresentation : STORAGE_ADAPTERS.keySet()) {
             if(supportedRepresentation.isAssignableFrom(representation)) {
                 return;
             }
         }
 
        throw new IllegalArgumentException(String.format(
-                "This cache does not support representation: %s, supported representations are: %s", representation, storageAdapters.keySet()));
+                "This cache does not support representation: %s, supported representations are: %s", representation, STORAGE_ADAPTERS.keySet()));
     }
 
     private static final Pattern CACHED_FILE_PATTERN =
@@ -119,7 +119,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
         final File file = sourceIdToFile(sourceIdentifier, storageDirectory);
         if(file.exists() && file.canRead()) {
             LOG.trace("Source {} found in cache as {}", sourceIdentifier, file);
-            final SchemaSourceRepresentation restored = storageAdapters.get(representation).restore(sourceIdentifier, file);
+            final SchemaSourceRepresentation restored = STORAGE_ADAPTERS.get(representation).restore(sourceIdentifier, file);
             return Futures.immediateCheckedFuture(representation.cast(restored));
         }
 
@@ -209,7 +209,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
     }
 
     private void storeSource(final File file, final T schemaRepresentation) {
-        storageAdapters.get(representation).store(file, schemaRepresentation);
+        STORAGE_ADAPTERS.get(representation).store(file, schemaRepresentation);
     }
 
     private static abstract class StorageAdapter<T extends SchemaSourceRepresentation> {
