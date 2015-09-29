@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.opendaylight.yangtools.yang.data.api.schema.YangModeledAnyXmlNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -26,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 
 /**
  * Factory for different normalized node parsers.
@@ -44,6 +46,7 @@ public interface ToNormalizedNodeParserFactory<E> {
     ToNormalizedNodeParser<E, MapNode, ListSchemaNode> getMapNodeParser();
     ToNormalizedNodeParser<E, UnkeyedListNode, ListSchemaNode> getUnkeyedListNodeParser();
     ToNormalizedNodeParser<E, UnkeyedListEntryNode, ListSchemaNode> getUnkeyedListEntryNodeParser();
+    ToNormalizedNodeParser<E, YangModeledAnyXmlNode, YangModeledAnyXmlSchemaNode> getYangModeledAnyXmlNodeParser();
     ToNormalizedNodeParser<E, AnyXmlNode, AnyXmlSchemaNode> getAnyXmlNodeParser();
     ToNormalizedNodeParser<E, OrderedMapNode, ListSchemaNode> getOrderedListNodeParser();
 }
