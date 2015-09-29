@@ -7,25 +7,27 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AnyXmlEffectiveStatementImpl;
-
-import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AnyXmlEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.YangModeledAnyXmlEffectiveStatementImpl;
 
 public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implements AnyxmlStatement {
 
@@ -55,8 +57,26 @@ public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implem
         }
 
         @Override
-        public EffectiveStatement<QName,AnyxmlStatement> createEffective(StmtContext<QName,AnyxmlStatement,EffectiveStatement<QName,AnyxmlStatement>> ctx) {
-           return new AnyXmlEffectiveStatementImpl(ctx);
+        public EffectiveStatement<QName, AnyxmlStatement> createEffective(
+                StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx) {
+            StmtContext<String, UnknownStatementImpl, ?> anyXmlSchemaLocation = null;
+            Collection<StmtContext<String, UnknownStatementImpl, ?>> unknownSubstatements = StmtContextUtils
+                    .findAllDeclaredSubstatement(ctx, UnknownStatementImpl.class);
+            for (StmtContext<String, UnknownStatementImpl, ?> unknownSubstatement : unknownSubstatements) {
+                if (unknownSubstatement.getPublicDefinition().getArgumentName().getLocalName()
+                        .equals("anyxml-schema-location")) {
+                    anyXmlSchemaLocation = unknownSubstatement;
+                    break;
+                }
+            }
+
+            if (anyXmlSchemaLocation != null) {
+                String contentSchemaPathString = anyXmlSchemaLocation.getStatementArgument();
+                SchemaNodeIdentifier contentSchemaPath = Utils.nodeIdentifierFromPath(ctx, contentSchemaPathString);
+                return new YangModeledAnyXmlEffectiveStatementImpl(ctx, contentSchemaPath);
+            } else {
+                return new AnyXmlEffectiveStatementImpl(ctx);
+            }
         }
 
     }

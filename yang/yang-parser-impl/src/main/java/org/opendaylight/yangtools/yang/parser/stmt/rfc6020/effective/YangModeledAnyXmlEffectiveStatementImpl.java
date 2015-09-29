@@ -7,29 +7,29 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import com.google.common.base.Optional;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class AnyXmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<AnyxmlStatement> implements
-        AnyXmlSchemaNode, DerivableSchemaNode {
+public final class YangModeledAnyXmlEffectiveStatementImpl extends AnyXmlEffectiveStatementImpl implements
+        YangModeledAnyXmlSchemaNode {
 
-    private final AnyXmlSchemaNode original;
+    private final DataSchemaNode schemaOfAnyXmlData;
 
-    public AnyXmlEffectiveStatementImpl(
-            final StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx) {
+    public YangModeledAnyXmlEffectiveStatementImpl(
+            final StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx, SchemaNodeIdentifier contentSchemaPath) {
         super(ctx);
-        this.original = ctx.getOriginalCtx() == null ? null : (AnyXmlSchemaNode) ctx.getOriginalCtx().buildEffective();
+        schemaOfAnyXmlData = ctx;
     }
 
     @Override
-    public Optional<AnyXmlSchemaNode> getOriginal() {
-        return Optional.fromNullable(original);
+    public DataSchemaNode getSchemaOfAnyXmlData() {
+        return schemaOfAnyXmlData;
     }
 
     @Override
@@ -53,17 +53,7 @@ public class AnyXmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNod
             return false;
         }
 
-        AnyXmlEffectiveStatementImpl other = (AnyXmlEffectiveStatementImpl) obj;
+        YangModeledAnyXmlEffectiveStatementImpl other = (YangModeledAnyXmlEffectiveStatementImpl) obj;
         return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder(AnyXmlEffectiveStatementImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append("qname=").append(getQName());
-        sb.append(", path=").append(getPath());
-        sb.append("]");
-        return sb.toString();
     }
 }
