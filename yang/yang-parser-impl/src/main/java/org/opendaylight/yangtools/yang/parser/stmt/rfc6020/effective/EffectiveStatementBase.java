@@ -29,16 +29,14 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>> implements EffectiveStatement<A, D> {
-    private final StmtContext<A, D, ?> stmtCtx;
+
     private final ImmutableList<? extends EffectiveStatement<?, ?>> substatements;
     private final StatementSource statementSource;
     private final StatementDefinition statementDefinition;
     private final A argument;
-    private D declaredInstance;
+    private final D declaredInstance;
 
     public EffectiveStatementBase(final StmtContext<A, D, ?> ctx) {
-
-        this.stmtCtx = ctx;
         this.statementDefinition = ctx.getPublicDefinition();
         this.argument = ctx.getStatementArgument();
         this.statementSource = ctx.getStatementSource();
@@ -63,6 +61,7 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
 
         this.substatements = FluentIterable.from(substatementsInit).filter(StmtContextUtils.IS_SUPPORTED_TO_BUILD_EFFECTIVE)
                 .transform(StmtContextUtils.buildEffective()).toList();
+        declaredInstance = ctx.buildDeclared();
     }
 
     @Override
@@ -82,29 +81,22 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
 
     @Override
     public D getDeclared() {
-        if (declaredInstance == null) {
-            declaredInstance = stmtCtx.buildDeclared();
-        }
         return declaredInstance;
     }
 
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> V get(final Class<N> namespace, final K identifier) {
-        return stmtCtx.getFromNamespace(namespace, identifier);
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(final Class<N> namespace) {
-        return stmtCtx.getAllFromNamespace(namespace);
+        throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     @Override
     public Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
         return substatements;
-    }
-
-    public StmtContext<A, D, ?> getStatementContext() {
-        return stmtCtx;
     }
 
     protected final <S extends EffectiveStatement<?, ?>> S firstEffective(final Class<S> type) {

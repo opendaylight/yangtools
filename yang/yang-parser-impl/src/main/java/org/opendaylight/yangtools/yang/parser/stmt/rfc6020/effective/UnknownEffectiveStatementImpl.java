@@ -24,14 +24,14 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<QName, UnknownStatement<QName>> implements
+public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<String, UnknownStatement<String>> implements
         UnknownSchemaNode {
 
     private boolean augmenting;
     private boolean addedByUses;
     private UnknownSchemaNode original;
 
-    private final QName qName;
+    private QName maybeQNameArgument;
     private final SchemaPath path;
     private ExtensionDefinition extension;
     private String description;
@@ -41,7 +41,7 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<QName,
     private QName nodeType;
     private final String nodeParameter;
 
-    public UnknownEffectiveStatementImpl(final StmtContext<QName, UnknownStatement<QName>, ?> ctx) {
+    public UnknownEffectiveStatementImpl(final StmtContext<String, UnknownStatement<String>, ?> ctx) {
         super(ctx);
 
         final StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> extensionInit = ctx
@@ -54,31 +54,7 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<QName,
             extension = (ExtensionEffectiveStatementImpl) extensionInit.buildEffective();
             nodeType = extension.getQName();
         }
-
-        qName = ctx.getStatementArgument();
-        path = Utils.getSchemaPath(ctx);
-
-        nodeParameter = (ctx.rawStatementArgument() == null) ? "" : ctx.rawStatementArgument();
-
-        // TODO init other fields (see Bug1412Test)
-
-        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof DescriptionEffectiveStatementImpl) {
-                description = ((DescriptionEffectiveStatementImpl) effectiveStatement).argument();
-            }
-            if (effectiveStatement instanceof ReferenceEffectiveStatementImpl) {
-                reference = ((ReferenceEffectiveStatementImpl) effectiveStatement).argument();
-            }
-            if (effectiveStatement instanceof UnknownEffectiveStatementImpl) {
-                unknownNodes.add((UnknownEffectiveStatementImpl) effectiveStatement);
-            }
-        }
-
-        initCopyType(ctx);
-    }
-
-    private void initCopyType(final StmtContext<QName, UnknownStatement<QName>, ?> ctx) {
-
+        
         List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
 
         if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
@@ -94,7 +70,35 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<QName,
         if (ctx.getOriginalCtx() != null) {
             original = (UnknownSchemaNode) ctx.getOriginalCtx().buildEffective();
         }
+        
+        // FIXME: Remove following section after fixing 4380
+        if(original != null) {
+            maybeQNameArgument = original.getQName();
+        } else {
+            try {
+                maybeQNameArgument = Utils.qNameFromArgument(ctx, argument());
+            } catch (IllegalArgumentException e) {
+                maybeQNameArgument = nodeType;
+            }
+        }
+        path = Utils.getSchemaPath(ctx.getParentContext()).createChild(maybeQNameArgument);
+        nodeParameter = (ctx.rawStatementArgument() == null) ? "" : ctx.rawStatementArgument();
+
+        // TODO init other fields (see Bug1412Test)
+
+        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
+            if (effectiveStatement instanceof DescriptionEffectiveStatementImpl) {
+                description = ((DescriptionEffectiveStatementImpl) effectiveStatement).argument();
+            }
+            if (effectiveStatement instanceof ReferenceEffectiveStatementImpl) {
+                reference = ((ReferenceEffectiveStatementImpl) effectiveStatement).argument();
+            }
+            if (effectiveStatement instanceof UnknownEffectiveStatementImpl) {
+                unknownNodes.add((UnknownEffectiveStatementImpl) effectiveStatement);
+            }
+        }
     }
+
 
     @Override
     public QName getNodeType() {
@@ -118,7 +122,7 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<QName,
 
     @Override
     public QName getQName() {
-        return qName;
+        return maybeQNameArgument;
     }
 
     @Override
@@ -150,7 +154,7 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<QName,
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Objects.hashCode(qName);
+        result = prime * result + Objects.hashCode(maybeQNameArgument);
         result = prime * result + Objects.hashCode(path);
         result = prime * result + Objects.hashCode(nodeType);
         result = prime * result + Objects.hashCode(nodeParameter);
@@ -169,7 +173,7 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<QName,
             return false;
         }
         UnknownEffectiveStatementImpl other = (UnknownEffectiveStatementImpl) obj;
-        if (!Objects.equals(qName, other.qName)) {
+        if (!Objects.equals(maybeQNameArgument, other.maybeQNameArgument)) {
             return false;
         }
         if (!Objects.equals(path, other.path)) {
