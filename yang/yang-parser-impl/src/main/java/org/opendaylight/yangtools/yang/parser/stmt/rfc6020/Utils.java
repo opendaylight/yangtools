@@ -297,51 +297,13 @@ public final class Utils {
 
     @Nullable
     public static StatementContextBase<?, ?, ?> findNode(final StatementContextBase<?, ?, ?> rootStmtCtx,
-            final Iterable<QName> path) {
-
-        StatementContextBase<?, ?, ?> parent = rootStmtCtx;
-
-        Iterator<QName> pathIter = path.iterator();
-        while (pathIter.hasNext()) {
-            QName nextPathQName = pathIter.next();
-            StatementContextBase<?, ?, ?> foundSubstatement = getSubstatementByQName(parent, nextPathQName);
-
-            if (foundSubstatement == null) {
-                return null;
-            }
-            if (!pathIter.hasNext()) {
-                return foundSubstatement;
-            }
-
-            parent = foundSubstatement;
-        }
-
-        return null;
-    }
-
-    public static StatementContextBase<?, ?, ?> getSubstatementByQName(final StatementContextBase<?, ?, ?> parent,
-            final QName nextPathQName) {
-
-        Collection<StatementContextBase<?, ?, ?>> declaredSubstatement = parent.declaredSubstatements();
-        Collection<StatementContextBase<?, ?, ?>> effectiveSubstatement = parent.effectiveSubstatements();
-
-        Collection<StatementContextBase<?, ?, ?>> allSubstatements = new LinkedList<>();
-        allSubstatements.addAll(declaredSubstatement);
-        allSubstatements.addAll(effectiveSubstatement);
-
-        for (StatementContextBase<?, ?, ?> substatement : allSubstatements) {
-            if (nextPathQName.equals(substatement.getStatementArgument())) {
-                return substatement;
-            }
-        }
-
-        return null;
-    }
-
-    @Nullable
-    public static StatementContextBase<?, ?, ?> findNode(final StatementContextBase<?, ?, ?> rootStmtCtx,
             final SchemaNodeIdentifier node) {
-        return findNode(rootStmtCtx, node.getPathFromRoot());
+        StatementContextBase<?, ?, ?> current = rootStmtCtx;
+        Iterator<QName> arguments = node.getPathFromRoot().iterator();
+        while(current != null && arguments.hasNext()) {
+            current = (StatementContextBase<?, ?, ?>) current.getFromNamespace(ChildSchemaNodes.class, arguments.next());
+        }
+        return current;
     }
 
     public static SchemaPath getSchemaPath(final StmtContext<?, ?, ?> ctx) {

@@ -146,7 +146,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
         } else {
             copy.setOriginalCtx(this);
         }
-
+        definition().onStatementAdded(copy);
         return copy;
     }
 

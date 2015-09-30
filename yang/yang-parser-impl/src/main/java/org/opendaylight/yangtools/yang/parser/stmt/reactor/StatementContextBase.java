@@ -328,6 +328,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
                 if (potential == null) {
                     potential = new SubstatementContext(StatementContextBase.this, this);
                     substatements.put(createIdentifier(), potential);
+                    getDefinition().onStatementAdded(potential);
                 }
                 potential.resetLists();
                 switch (this.getStamementSource().getStatementSource()) {

@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -47,6 +48,12 @@ public class LeafListStatementImpl extends AbstractDeclaredStatement<QName>
 
         public Definition() {
             super(Rfc6020Mapping.LEAF_LIST);
+        }
+
+        @Override
+        public void onStatementAdded(
+                Mutable<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> stmt) {
+            stmt.getParentContext().addToNs(ChildSchemaNodes.class, stmt.getStatementArgument(), stmt);
         }
 
         @Override

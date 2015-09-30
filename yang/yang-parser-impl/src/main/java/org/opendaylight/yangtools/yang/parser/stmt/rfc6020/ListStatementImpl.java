@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -55,6 +56,11 @@ public class ListStatementImpl extends AbstractDeclaredStatement<QName>
         public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value)
                 throws SourceException {
             return Utils.qNameFromArgument(ctx, value);
+        }
+
+        @Override
+        public void onStatementAdded(Mutable<QName, ListStatement, EffectiveStatement<QName, ListStatement>> stmt) {
+            stmt.getParentContext().addToNs(ChildSchemaNodes.class, stmt.getStatementArgument(), stmt);
         }
 
         @Override

@@ -104,6 +104,11 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
         return new StorageSpecific<>(identifier, StorageNodeType.SOURCE_LOCAL_SPECIAL);
     }
 
+    public static <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> statementLocal(
+           Class<N> identifier) {
+       return new StorageSpecific<>(identifier, StorageNodeType.STATEMENT_LOCAL);
+   }
+
     /**
      *
      * Creates tree-scoped namespace behaviour for supplied namespace type.
