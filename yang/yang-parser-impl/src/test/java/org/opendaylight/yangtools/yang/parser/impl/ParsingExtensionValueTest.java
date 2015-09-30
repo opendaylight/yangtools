@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 /**
  * Test for testing of extensions and their arguments.
  *
- * @author Lukas Sedlak <lsedlak@cisco.com>
+ * @author Lukas Sedlak &lt;lsedlak@cisco.com&gt;
  */
 public class ParsingExtensionValueTest {
 
