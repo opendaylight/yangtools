@@ -149,6 +149,7 @@ class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Effective
             copy.setOriginalCtx(this);
         }
 
+        definition().onStatementAdded(copy);
         return copy;
     }
 

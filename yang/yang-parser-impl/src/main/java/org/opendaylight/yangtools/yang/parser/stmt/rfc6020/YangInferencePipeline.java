@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.global;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.sourceLocal;
+import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.statementLocal;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.treeScoped;
 import static org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 
@@ -85,6 +86,7 @@ public final class YangInferencePipeline {
             .addSupport(new YinElementStatementImpl.Definition())
             .addSupport(new ArgumentStatementImpl.Definition())
             .addSupport(new ExtensionStatementImpl.Definition())
+            .addSupport(global(ChildSchemaNodes.class))
             .addSupport(global(ExtensionNamespace.class))
             .addSupport(new TypedefStatementImpl.Definition())
             .addSupport(treeScoped(TypeNamespace.class))

@@ -44,6 +44,7 @@ public class StatementDefinitionContext<A,D extends DeclaredStatement<A>,E exten
     }
 
     public boolean onStatementAdded(Mutable<A,D,E> stmt) {
+        support.onStatementAdded(stmt);
         return false;
     }
 

@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 public class OutputStatementImpl extends AbstractDeclaredStatement<QName>
         implements OutputStatement {
@@ -41,6 +42,11 @@ public class OutputStatementImpl extends AbstractDeclaredStatement<QName>
         @Override
         public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
             return Utils.qNameFromArgument(ctx, "output");
+        }
+
+        @Override
+        public void onStatementAdded(Mutable<QName, OutputStatement, EffectiveStatement<QName, OutputStatement>> stmt) {
+            stmt.getParentContext().addToNs(ChildSchemaNodes.class, stmt.getStatementArgument(), stmt);
         }
 
         @Override

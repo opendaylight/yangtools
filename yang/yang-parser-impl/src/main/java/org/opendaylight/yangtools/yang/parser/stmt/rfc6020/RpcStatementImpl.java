@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 public class RpcStatementImpl extends AbstractDeclaredStatement<QName>
         implements RpcStatement {
@@ -45,6 +46,11 @@ public class RpcStatementImpl extends AbstractDeclaredStatement<QName>
         @Override
         public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
             return Utils.qNameFromArgument(ctx, value);
+        }
+
+        @Override
+        public void onStatementAdded(Mutable<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> stmt) {
+            stmt.getParentContext().addToNs(ChildSchemaNodes.class, stmt.getStatementArgument(), stmt);
         }
 
         @Override
