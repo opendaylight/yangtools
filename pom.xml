@@ -46,10 +46,57 @@
           <module>benchmarks</module>
         </modules>
       </profile>
+
+      <!-- Turn off doclint on aggregated API javadoc build -->
+      <profile>
+        <id>jdk8</id>
+        <activation>
+          <jdk>[1.8,)</jdk>
+        </activation>
+        <properties>
+          <javadoc.args>-Xdoclint:none</javadoc.args>
+        </properties>
+      </profile>
+
+      <profile>
+        <!--
+            This profile is to ensure we only build javadocs reports
+            when we plan to deploy Maven site for our project.
+        -->
+        <id>maven-site</id>
+        <activation>
+          <file>
+            <exists>${user.dir}/deploy-site.xml</exists>
+          </file>
+        </activation>
+
+        <build>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-javadoc-plugin</artifactId>
+              <inherited>false</inherited>
+              <executions>
+                <execution>
+                  <id>aggregate</id>
+                  <goals>
+                    <goal>aggregate</goal>
+                  </goals>
+                  <phase>package</phase>
+                  <configuration>
+                    <!-- ignore javadoc warnings caused by JDK8 -->
+                    <additionalparam>${javadoc.args}</additionalparam>
+                  </configuration>
+              </execution>
+              </executions>
+            </plugin>
+          </plugins>
+        </build>
+      </profile>
     </profiles>
 
     <build>
-        <pluginManagement>        
+        <pluginManagement>
             <plugins>
                 <plugin>
                  <groupId>org.apache.maven.plugins</groupId>
@@ -78,7 +125,23 @@
                    </execution>
                  </executions>
                </plugin>
-            </plugins>            
+            </plugins>
         </pluginManagement>
     </build>
+
+  <!--
+      Maven Site Configuration
+
+      The following configuration is necessary for maven-site-plugin to
+      correctly identify the correct deployment path for OpenDaylight Maven
+      sites.
+  -->
+  <url>${odl.site.url}/${project.groupId}/${stream}/</url>
+
+  <distributionManagement>
+    <site>
+      <id>opendaylight-site</id>
+      <url>${nexus.site.url}/</url>
+    </site>
+  </distributionManagement>
 </project>
