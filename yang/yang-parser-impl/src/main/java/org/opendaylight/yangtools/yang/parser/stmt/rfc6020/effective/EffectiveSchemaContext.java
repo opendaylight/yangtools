@@ -15,7 +15,6 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import java.net.URI;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,8 +34,8 @@ public class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
     private final SetMultimap<String, Module> nameToModules;
     private final Set<Module> modules;
 
-    private final ImmutableList<DeclaredStatement<?>> rootDeclaredStatements;
-    private final ImmutableList<EffectiveStatement<?, ?>> rootEffectiveStatements;
+    private final List<DeclaredStatement<?>> rootDeclaredStatements;
+    private final List<EffectiveStatement<?, ?>> rootEffectiveStatements;
 
     public EffectiveSchemaContext(final List<DeclaredStatement<?>> rootDeclaredStatements,
             final List<EffectiveStatement<?, ?>> rootEffectiveStatements) {
@@ -72,7 +71,7 @@ public class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
     }
 
     public EffectiveSchemaContext(final Set<Module> modules) {
-        
+
          /*
          * Instead of doing this on each invocation of getModules(), pre-compute
          * it once and keep it around -- better than the set we got in.
@@ -108,11 +107,11 @@ public class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
        return new EffectiveSchemaContext(modules);
     }
 
-    public ImmutableList<DeclaredStatement<?>> getRootDeclaredStatements() {
+    public List<DeclaredStatement<?>> getRootDeclaredStatements() {
         return rootDeclaredStatements;
     }
 
-    public ImmutableList<EffectiveStatement<?, ?>> getRootEffectiveStatements() {
+    public List<EffectiveStatement<?, ?>> getRootEffectiveStatements() {
         return rootEffectiveStatements;
     }
 

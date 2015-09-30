@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import javax.annotation.Nonnull;
-
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -17,12 +16,11 @@ import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PathEffectiveStatementImpl;
 
 public class PathStatementImpl extends AbstractDeclaredStatement<RevisionAwareXPath> implements PathStatement {
 
-    protected PathStatementImpl(StmtContext<RevisionAwareXPath, PathStatement, ?> context) {
+    protected PathStatementImpl(final StmtContext<RevisionAwareXPath, PathStatement, ?> context) {
         super(context);
     }
 
@@ -35,18 +33,18 @@ public class PathStatementImpl extends AbstractDeclaredStatement<RevisionAwareXP
         }
 
         @Override
-        public RevisionAwareXPath parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public RevisionAwareXPath parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return new RevisionAwareXPathImpl(value, Utils.isXPathAbsolute(ctx, value));
         }
 
         @Override
-        public PathStatement createDeclared(StmtContext<RevisionAwareXPath, PathStatement, ?> ctx) {
+        public PathStatement createDeclared(final StmtContext<RevisionAwareXPath, PathStatement, ?> ctx) {
             return new PathStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<RevisionAwareXPath, PathStatement> createEffective(
-                StmtContext<RevisionAwareXPath, PathStatement, EffectiveStatement<RevisionAwareXPath, PathStatement>> ctx) {
+                final StmtContext<RevisionAwareXPath, PathStatement, EffectiveStatement<RevisionAwareXPath, PathStatement>> ctx) {
             return new PathEffectiveStatementImpl(ctx);
         }
     }
@@ -56,5 +54,4 @@ public class PathStatementImpl extends AbstractDeclaredStatement<RevisionAwareXP
     public String getValue() {
         return rawArgument();
     }
-
 }

@@ -8,45 +8,42 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
-
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.BitsSpecification;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BitsSpecificationEffectiveStatementImpl;
 
-public class BitsSpecificationImpl extends AbstractDeclaredStatement<String> implements TypeStatement.BitsSpecification {
+public class BitsSpecificationImpl extends AbstractDeclaredStatement<String> implements BitsSpecification {
 
-    protected BitsSpecificationImpl(StmtContext<String, TypeStatement.BitsSpecification, ?> context) {
+    protected BitsSpecificationImpl(final StmtContext<String, BitsSpecification, ?> context) {
         super(context);
     }
 
     public static class Definition
-            extends
-            AbstractStatementSupport<String, TypeStatement.BitsSpecification, EffectiveStatement<String, TypeStatement.BitsSpecification>> {
+            extends AbstractStatementSupport<String, BitsSpecification, EffectiveStatement<String, BitsSpecification>> {
 
         public Definition() {
             super(Rfc6020Mapping.TYPE);
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 
         @Override
-        public TypeStatement.BitsSpecification createDeclared(
-                StmtContext<String, TypeStatement.BitsSpecification, ?> ctx) {
+        public BitsSpecification createDeclared(
+                final StmtContext<String, BitsSpecification, ?> ctx) {
             return new BitsSpecificationImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<String, TypeStatement.BitsSpecification> createEffective(
-                StmtContext<String, TypeStatement.BitsSpecification, EffectiveStatement<String, TypeStatement.BitsSpecification>> ctx) {
+        public EffectiveStatement<String, BitsSpecification> createEffective(
+                final StmtContext<String, BitsSpecification, EffectiveStatement<String, BitsSpecification>> ctx) {
             return new BitsSpecificationEffectiveStatementImpl(ctx);
         }
     }

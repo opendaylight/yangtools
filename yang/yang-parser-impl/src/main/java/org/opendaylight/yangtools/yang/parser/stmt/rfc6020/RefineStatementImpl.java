@@ -8,8 +8,7 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RefineEffectiveStatementImpl;
-
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -19,13 +18,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import javax.annotation.Nullable;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RefineEffectiveStatementImpl;
 
 public class RefineStatementImpl extends AbstractDeclaredStatement<SchemaNodeIdentifier> implements RefineStatement {
 
-    protected RefineStatementImpl(
-            StmtContext<SchemaNodeIdentifier, RefineStatement, ?> context) {
+    protected RefineStatementImpl(final StmtContext<SchemaNodeIdentifier, RefineStatement, ?> context) {
         super(context);
     }
 
@@ -37,17 +34,17 @@ public class RefineStatementImpl extends AbstractDeclaredStatement<SchemaNodeIde
         }
 
         @Override
-        public SchemaNodeIdentifier parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public SchemaNodeIdentifier parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return SchemaNodeIdentifier.create(Utils.parseXPath(ctx, value), Utils.isXPathAbsolute(ctx, value));
         }
 
         @Override
-        public RefineStatement createDeclared(StmtContext<SchemaNodeIdentifier, RefineStatement, ?> ctx) {
+        public RefineStatement createDeclared(final StmtContext<SchemaNodeIdentifier, RefineStatement, ?> ctx) {
             return new RefineStatementImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<SchemaNodeIdentifier, RefineStatement> createEffective(StmtContext<SchemaNodeIdentifier, RefineStatement, EffectiveStatement<SchemaNodeIdentifier, RefineStatement>> ctx) {
+        public EffectiveStatement<SchemaNodeIdentifier, RefineStatement> createEffective(final StmtContext<SchemaNodeIdentifier, RefineStatement, EffectiveStatement<SchemaNodeIdentifier, RefineStatement>> ctx) {
             return new RefineEffectiveStatementImpl(ctx);
         }
     }

@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.MustEffectiveStatementImpl;
-
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -21,36 +21,34 @@ import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.MustEffectiveStatementImpl;
 
 public class MustStatementImpl extends AbstractDeclaredStatement<RevisionAwareXPath> implements
         MustStatement {
 
-    protected MustStatementImpl(
-            StmtContext<RevisionAwareXPath, MustStatement, ?> context) {
+    protected MustStatementImpl(final StmtContext<RevisionAwareXPath, MustStatement, ?> context) {
         super(context);
     }
 
-    public static class Definition extends AbstractStatementSupport<RevisionAwareXPath,MustStatement,EffectiveStatement<RevisionAwareXPath,MustStatement>> {
+    public static class Definition extends AbstractStatementSupport<RevisionAwareXPath, MustStatement, EffectiveStatement<RevisionAwareXPath, MustStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.MUST);
         }
 
-        @Override public RevisionAwareXPath parseArgumentValue(
-                StmtContext<?, ?, ?> ctx, String value) {
+        @Override
+        public RevisionAwareXPath parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return new RevisionAwareXPathImpl(value, Utils.isXPathAbsolute(ctx, value));
         }
 
-        @Override public MustStatement createDeclared(
-                StmtContext<RevisionAwareXPath, MustStatement, ?> ctx) {
+        @Override
+        public MustStatement createDeclared(final StmtContext<RevisionAwareXPath, MustStatement, ?> ctx) {
             return new MustStatementImpl(ctx);
         }
 
-        @Override public EffectiveStatement<RevisionAwareXPath, MustStatement> createEffective(
-                StmtContext<RevisionAwareXPath, MustStatement, EffectiveStatement<RevisionAwareXPath, MustStatement>> ctx) {
+        @Override
+        public EffectiveStatement<RevisionAwareXPath, MustStatement> createEffective(
+                final StmtContext<RevisionAwareXPath, MustStatement, EffectiveStatement<RevisionAwareXPath, MustStatement>> ctx) {
             return new MustEffectiveStatementImpl(ctx);
         }
     }

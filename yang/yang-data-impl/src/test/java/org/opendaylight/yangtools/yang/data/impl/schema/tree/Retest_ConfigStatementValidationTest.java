@@ -64,7 +64,7 @@ public class Retest_ConfigStatementValidationTest {
 
     private SchemaContext schemaContext;
 
-    private ContainerNode createFooTestContainerNode() {
+    private static ContainerNode createFooTestContainerNode() {
         return ImmutableContainerNodeBuilder
                 .create()
                 .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TestModel.TEST_QNAME))
@@ -73,7 +73,7 @@ public class Retest_ConfigStatementValidationTest {
                                 .withChild(FOO_NODE).build()).build();
     }
 
-    private ContainerNode createBarTestContainerNode() {
+    private static ContainerNode createBarTestContainerNode() {
         return ImmutableContainerNodeBuilder
                 .create()
                 .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TestModel.TEST_QNAME))
