@@ -49,7 +49,7 @@
     </profiles>
 
     <build>
-        <pluginManagement>        
+        <pluginManagement>
             <plugins>
                 <plugin>
                  <groupId>org.apache.maven.plugins</groupId>
@@ -78,7 +78,23 @@
                    </execution>
                  </executions>
                </plugin>
-            </plugins>            
+            </plugins>
         </pluginManagement>
     </build>
+
+  <!--
+      Maven Site Configuration
+
+      The following configuration is necessary for maven-site-plugin to
+      correctly identify the correct deployment path for OpenDaylight Maven
+      sites.
+  -->
+  <url>${odl.site.url}/${project.groupId}/${stream}/</url>
+
+  <distributionManagement>
+    <site>
+      <id>opendaylight-site</id>
+      <url>${nexus.site.url}/</url>
+    </site>
+  </distributionManagement>
 </project>
