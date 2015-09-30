@@ -24,18 +24,16 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ReferenceEf
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.StatusEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ValueEffectiveStatementImpl;
 
-public class EnumEffectiveStatementImpl extends EffectiveStatementBase<QName, EnumStatement> implements EnumPair {
-    private final QName qName;
+public class EnumEffectiveStatementImpl extends EffectiveStatementBase<String, EnumStatement> implements EnumPair {
     private final SchemaPath path;
     private String description;
     private String reference;
     private Status status;
     private Integer value;
 
-    public EnumEffectiveStatementImpl(final StmtContext<QName, EnumStatement, ?> ctx) {
+    public EnumEffectiveStatementImpl(final StmtContext<String, EnumStatement, ?> ctx) {
         super(ctx);
 
-        qName = ctx.getStatementArgument();
         path = Utils.getSchemaPath(ctx);
 
         for (final EffectiveStatement<?,?> effectiveStatement : effectiveSubstatements()) {
@@ -56,7 +54,7 @@ public class EnumEffectiveStatementImpl extends EffectiveStatementBase<QName, En
 
     @Override
     public String getName() {
-        return qName.getLocalName();
+        return argument();
     }
 
     @Override
@@ -66,7 +64,7 @@ public class EnumEffectiveStatementImpl extends EffectiveStatementBase<QName, En
 
     @Override
     public QName getQName() {
-        return qName;
+        return getPath().getLastComponent();
     }
 
     @Override
