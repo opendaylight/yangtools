@@ -156,7 +156,7 @@ public class ControllerStmtParserTest {
 
         QNameModule qNameModule = QNameModule
                 .create(new URI(
-                        "urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:impl"),
+                        "urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom"),
                         SimpleDateFormatUtil.getRevisionFormat().parse(
                                 "2013-10-28"));
         QName qName = QName.create(qNameModule, "schema-service");

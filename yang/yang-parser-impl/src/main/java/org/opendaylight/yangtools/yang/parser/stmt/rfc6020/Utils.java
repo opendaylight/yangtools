@@ -371,6 +371,7 @@ public final class Utils {
                 }
                 qNamesFromRoot.add(qname);
             } else if (nextStmtArgument instanceof String) {
+                // FIXME: This may yield illegal argument exceptions
                 StatementContextBase<?, ?, ?> originalCtx = ctx
                         .getOriginalCtx();
                 final QName qName = (originalCtx != null) ? qNameFromArgument(
