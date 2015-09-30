@@ -127,47 +127,56 @@ public final class Utils {
     }
 
     public static QName trimPrefix(final QName identifier) {
-        String prefixedLocalName = identifier.getLocalName();
-        String[] namesParts = prefixedLocalName.split(":");
-
-        if (namesParts.length == 2) {
-            String localName = namesParts[1];
-            return QName.create(identifier.getModule(), localName);
+        final String prefixedLocalName = identifier.getLocalName();
+        final int firstOffset = prefixedLocalName.indexOf(':');
+        if (firstOffset == -1) {
+            return identifier;
+        }
+        if (prefixedLocalName.indexOf(':', firstOffset + 1) != -1) {
+            // FIXME: we have two colons, this warrants and IllegalArgumentException, I would think
+            return identifier;
         }
 
-        return identifier;
+        return QName.create(identifier, prefixedLocalName.substring(firstOffset + 1));
     }
 
     public static String getPrefixFromArgument(final String prefixedLocalName) {
-        String[] namesParts = prefixedLocalName.split(":");
-        if (namesParts.length == 2) {
-            return namesParts[0];
+        final int firstOffset = prefixedLocalName.indexOf(':');
+        if (firstOffset == -1) {
+            return null;
         }
-        return null;
+        if (prefixedLocalName.indexOf(':', firstOffset + 1) != -1) {
+            // FIXME: we have two colons, this warrants and IllegalArgumentException, I would think
+            return null;
+        }
+
+        return prefixedLocalName.substring(0, firstOffset);
     }
 
-    public static boolean isValidStatementDefinition(final PrefixToModule prefixes, final QNameToStatementDefinition stmtDef,
-            final QName identifier) {
+    public static boolean isValidStatementDefinition(final PrefixToModule prefixes,
+            final QNameToStatementDefinition stmtDef, final QName identifier) {
         if (stmtDef.get(identifier) != null) {
             return true;
-        } else {
-            String prefixedLocalName = identifier.getLocalName();
-            String[] namesParts = prefixedLocalName.split(":");
-
-            if (namesParts.length == 2) {
-                String prefix = namesParts[0];
-                String localName = namesParts[1];
-                if (prefixes != null && prefixes.get(prefix) != null
-                        && stmtDef.get(QName.create(YangConstants.RFC6020_YIN_MODULE, localName)) != null) {
-                    return true;
-                } else {
-                    if (stmtDef.get(QName.create(YangConstants.RFC6020_YIN_MODULE, localName)) != null) {
-                        return true;
-                    }
-                }
-            }
         }
-        return false;
+
+        final String prefixedLocalName = identifier.getLocalName();
+        final int firstOffset = prefixedLocalName.indexOf(':');
+        if (firstOffset == -1) {
+            return false;
+        }
+        if (prefixedLocalName.indexOf(':', firstOffset + 1) != -1) {
+            // FIXME: we have two colons, this warrants and IllegalArgumentException, I would think
+            return false;
+        }
+
+        final String localName = prefixedLocalName.substring(firstOffset + 1);
+        if (prefixes != null) {
+            final QNameModule module = prefixes.get(prefixedLocalName.substring(0, firstOffset));
+            return module != null && stmtDef.get(QName.create(module, localName)) != null;
+        }
+
+        // FIXME: why are we looking up with this specific module? We are ignoring the prefix, which is probably wrong
+        return stmtDef.get(QName.create(YangConstants.RFC6020_YIN_MODULE, localName)) != null;
     }
 
     static SchemaNodeIdentifier nodeIdentifierFromPath(final StmtContext<?, ?, ?> ctx, final String path) {
@@ -321,23 +330,17 @@ public final class Utils {
     }
 
     public static Status parseStatus(final String value) {
-
-        Status status = null;
         switch (value) {
         case "current":
-            status = Status.CURRENT;
-            break;
+            return Status.CURRENT;
         case "deprecated":
-            status = Status.DEPRECATED;
-            break;
+            return Status.DEPRECATED;
         case "obsolete":
-            status = Status.OBSOLETE;
-            break;
+            return Status.OBSOLETE;
         default:
             LOG.warn("Invalid 'status' statement: " + value);
+            return null;
         }
-
-        return status;
     }
 
     public static Date getLatestRevision(final RootStatementContext<?, ?, ?> root) {
