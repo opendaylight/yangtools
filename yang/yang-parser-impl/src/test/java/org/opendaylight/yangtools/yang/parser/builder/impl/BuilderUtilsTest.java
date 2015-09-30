@@ -50,7 +50,7 @@ import com.google.common.base.Optional;
  *
  * @see org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils
  *
- * @author Lukas Sedlak <lsedlak@cisco.com>
+ * @author Lukas Sedlak &lt;lsedlak@cisco.com&gt;
  */
 public class BuilderUtilsTest {
 
