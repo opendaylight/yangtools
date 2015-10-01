@@ -11,7 +11,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 import java.util.Collection;
 import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.util.BinaryType;
@@ -24,7 +23,7 @@ public final class BinaryEffectiveStatementImpl extends AbstractBuiltInTypeEffec
 
     }
 
-    public static EffectiveStatement<String, TypeStatement> getInstance() {
+    public static BinaryEffectiveStatementImpl getInstance() {
         return INSTANCE;
     }
 

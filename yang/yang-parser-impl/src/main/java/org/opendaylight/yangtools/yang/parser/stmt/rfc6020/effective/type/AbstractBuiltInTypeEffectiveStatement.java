@@ -23,7 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 
-abstract class AbstractBuiltInTypeEffectiveStatement<T extends TypeDefinition<T>>
+// FIXME: decide on visibility
+public abstract class AbstractBuiltInTypeEffectiveStatement<T extends TypeDefinition<T>>
         extends ForwardingObject implements EffectiveStatement<String, TypeStatement>, TypeDefinition<T> {
 
     @Override
