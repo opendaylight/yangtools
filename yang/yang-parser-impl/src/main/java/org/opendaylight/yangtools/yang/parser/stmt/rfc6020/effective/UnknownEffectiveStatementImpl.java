@@ -14,7 +14,6 @@ import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
@@ -24,21 +23,15 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<String, UnknownStatement<String>> implements
-        UnknownSchemaNode {
+public class UnknownEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<String, UnknownStatement<String>>
+        implements UnknownSchemaNode {
 
-    private boolean augmenting;
-    private boolean addedByUses;
-    private UnknownSchemaNode original;
-
-    private QName maybeQNameArgument;
+    private final boolean addedByUses;
+    private final QName maybeQNameArgument;
     private final SchemaPath path;
-    private ExtensionDefinition extension;
-    private String description;
-    private String reference;
-    private final Status status = Status.CURRENT;
+    private final ExtensionDefinition extension;
     private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
-    private QName nodeType;
+    private final QName nodeType;
     private final String nodeParameter;
 
     public UnknownEffectiveStatementImpl(final StmtContext<String, UnknownStatement<String>, ?> ctx) {
@@ -54,51 +47,40 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<String
             extension = (ExtensionEffectiveStatementImpl) extensionInit.buildEffective();
             nodeType = extension.getQName();
         }
-        
+
+        // initCopyType
         List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
-
-        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
-            augmenting = true;
-        }
-        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
-            addedByUses = true;
-        }
-        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
-            addedByUses = augmenting = true;
-        }
-
-        if (ctx.getOriginalCtx() != null) {
-            original = (UnknownSchemaNode) ctx.getOriginalCtx().buildEffective();
-        }
-        
-        // FIXME: Remove following section after fixing 4380
-        if(original != null) {
-            maybeQNameArgument = original.getQName();
+        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)
+                || copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
+            this.addedByUses = true;
         } else {
+            this.addedByUses = false;
+        }
+
+        // FIXME: Remove following section after fixing 4380
+        final UnknownSchemaNode original = ctx.getOriginalCtx() == null ? null : (UnknownSchemaNode) ctx
+                .getOriginalCtx().buildEffective();
+        if (original != null) {
+            this.maybeQNameArgument = original.getQName();
+        } else {
+            QName maybeQNameArgumentInit = null;
             try {
-                maybeQNameArgument = Utils.qNameFromArgument(ctx, argument());
+                maybeQNameArgumentInit = Utils.qNameFromArgument(ctx, argument());
             } catch (IllegalArgumentException e) {
-                maybeQNameArgument = nodeType;
+                maybeQNameArgumentInit = nodeType;
             }
+            this.maybeQNameArgument = maybeQNameArgumentInit;
         }
         path = Utils.getSchemaPath(ctx.getParentContext()).createChild(maybeQNameArgument);
         nodeParameter = (ctx.rawStatementArgument() == null) ? "" : ctx.rawStatementArgument();
 
         // TODO init other fields (see Bug1412Test)
-
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof DescriptionEffectiveStatementImpl) {
-                description = ((DescriptionEffectiveStatementImpl) effectiveStatement).argument();
-            }
-            if (effectiveStatement instanceof ReferenceEffectiveStatementImpl) {
-                reference = ((ReferenceEffectiveStatementImpl) effectiveStatement).argument();
-            }
             if (effectiveStatement instanceof UnknownEffectiveStatementImpl) {
                 unknownNodes.add((UnknownEffectiveStatementImpl) effectiveStatement);
             }
         }
     }
-
 
     @Override
     public QName getNodeType() {
@@ -133,21 +115,6 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<String
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public String getReference() {
-        return reference;
-    }
-
-    @Override
-    public Status getStatus() {
-        return status;
     }
 
     @Override

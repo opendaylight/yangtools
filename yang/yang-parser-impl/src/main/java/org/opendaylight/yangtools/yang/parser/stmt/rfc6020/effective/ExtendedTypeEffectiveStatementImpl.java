@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -40,24 +39,16 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.RangeE
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.TypeDefinitionEffectiveBuilder;
 import org.opendaylight.yangtools.yang.parser.util.TypeConstraints;
 
-public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<String, TypeStatement> implements
+public class ExtendedTypeEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<String, TypeStatement> implements
         TypeDefinition<TypeDefinition<?>>, TypeDefinitionEffectiveBuilder {
 
     private static final Splitter COLON_SPLITTER = Splitter.on(':').trimResults();
 
     private final QName qName;
     private final SchemaPath path;
-
     private final TypeDefinition<?> baseType;
-
-    private final String defaultValue = null;
-    private final String units = null;
-
-    private final String description = null;
-    private final String reference = null;
-
-    private final Status status = null;
-
+    private final String defaultValue;
+    private final String units;
     private final List<RangeConstraint> ranges;
     private final List<LengthConstraint> lengths;
     private final List<PatternConstraint> patterns;
@@ -80,6 +71,11 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
         } else {
             path = Utils.getSchemaPath(ctx.getFromNamespace(TypeNamespace.class, qName));
         }
+
+        UnitsEffectiveStatementImpl unitsStmt = firstEffective(UnitsEffectiveStatementImpl.class);
+        this.units = (unitsStmt == null) ? null : unitsStmt.argument();
+        DefaultEffectiveStatementImpl defaultStmt = firstEffective(DefaultEffectiveStatementImpl.class);
+        this.defaultValue = (defaultStmt == null) ? null : defaultStmt.argument();
 
         ranges = initRanges();
         lengths = initLengths();
@@ -182,38 +178,26 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
             typeConstraints.addPatterns(((TypeDefEffectiveStatementImpl) baseType).getPatternConstraints());
             typeConstraints.addFractionDigits(((TypeDefEffectiveStatementImpl) baseType).getFractionDigits());
         }
-//        else if (baseType instanceof DecimalTypeDefinition) {
-//            final DecimalTypeDefinition decimalType = (DecimalTypeDefinition) TypeUtils
-//                    .getYangBaseTypeFromString(baseTypeName);
-//            typeConstraints.addRanges(decimalType.getRangeConstraints());
-//            typeConstraints.addFractionDigits(decimalType.getFractionDigits());
-//        }
-//        else if (baseType instanceof ExtendedTypeEffectiveStatementImpl) {
-//            typeConstraints.addRanges(((ExtendedTypeEffectiveStatementImpl) baseType).getRangeConstraints());
-//            typeConstraints.addLengths(((ExtendedTypeEffectiveStatementImpl) baseType).getLengthConstraints());
-//            typeConstraints.addPatterns(((ExtendedTypeEffectiveStatementImpl) baseType).getPatternConstraints());
-//            typeConstraints.addFractionDigits(((ExtendedTypeEffectiveStatementImpl) baseType).getFractionDigits());
-//        }
 
         return typeConstraints;
     }
 
-    protected Integer initFractionDigits() {
+    protected final Integer initFractionDigits() {
         final FractionDigitsEffectiveStatementImpl fractionDigitsEffStmt = firstEffective(FractionDigitsEffectiveStatementImpl.class);
         return fractionDigitsEffStmt != null ? fractionDigitsEffStmt.argument() : null;
     }
 
-    protected List<RangeConstraint> initRanges() {
+    protected final List<RangeConstraint> initRanges() {
         final RangeEffectiveStatementImpl rangeConstraints = firstEffective(RangeEffectiveStatementImpl.class);
         return rangeConstraints != null ? rangeConstraints.argument() : Collections.<RangeConstraint> emptyList();
     }
 
-    protected List<LengthConstraint> initLengths() {
+    protected final List<LengthConstraint> initLengths() {
         final LengthEffectiveStatementImpl lengthConstraints = firstEffective(LengthEffectiveStatementImpl.class);
         return lengthConstraints != null ? lengthConstraints.argument() : Collections.<LengthConstraint> emptyList();
     }
 
-    protected List<PatternConstraint> initPatterns() {
+    protected final List<PatternConstraint> initPatterns() {
         final List<PatternConstraint> patternConstraints = new ArrayList<>();
 
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
@@ -260,21 +244,6 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
         return Collections.emptyList();
     }
 
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public String getReference() {
-        return reference;
-    }
-
-    @Override
-    public Status getStatus() {
-        return status;
-    }
-
     public List<RangeConstraint> getRangeConstraints() {
         return ranges;
     }
@@ -307,10 +276,10 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
         if (baseType instanceof TypeDefEffectiveStatementImpl) {
             TypeDefEffectiveStatementImpl typeDefBaseType = (TypeDefEffectiveStatementImpl) baseType;
             extendedTypeBuilder = ExtendedType.builder(qName, typeDefBaseType.buildType(),
-                    Optional.fromNullable(description), Optional.fromNullable(reference), path);
+                    Optional.fromNullable(getDescription()), Optional.fromNullable(getReference()), path);
         } else {
-            extendedTypeBuilder = ExtendedType.builder(qName, baseType, Optional.fromNullable(description),
-                    Optional.fromNullable(reference), path);
+            extendedTypeBuilder = ExtendedType.builder(qName, baseType, Optional.fromNullable(getDescription()),
+                    Optional.fromNullable(getReference()), path);
         }
 
         extendedTypeBuilder.fractionDigits(fractionDigits);

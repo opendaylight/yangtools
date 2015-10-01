@@ -12,9 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class BaseEffectiveStatementImpl extends EffectiveStatementBase<QName, BaseStatement> {
-
     public BaseEffectiveStatementImpl(final StmtContext<QName, BaseStatement, ?> ctx) {
         super(ctx);
     }
-
 }

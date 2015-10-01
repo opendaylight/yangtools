@@ -13,6 +13,5 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 public class MaxElementsEffectiveStatementImpl extends EffectiveStatementBase<String, MaxElementsStatement> {
     public MaxElementsEffectiveStatementImpl(final StmtContext<String, MaxElementsStatement, ?> ctx) {
         super(ctx);
-
     }
 }

@@ -25,13 +25,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-public class NotificationEffectiveStatementImpl
-        extends AbstractEffectiveDocumentedDataNodeContainer<QName, NotificationStatement>
-        implements NotificationDefinition {
+public class NotificationEffectiveStatementImpl extends
+        AbstractEffectiveDocumentedDataNodeContainer<QName, NotificationStatement> implements NotificationDefinition {
     private final QName qname;
     private final SchemaPath path;
-    private Set<AugmentationSchema> augmentations;
-    private List<UnknownSchemaNode> unknownNodes;
+    private final Set<AugmentationSchema> augmentations;
+    private final List<UnknownSchemaNode> unknownNodes;
 
     public NotificationEffectiveStatementImpl(
             final StmtContext<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> ctx) {
@@ -39,15 +38,10 @@ public class NotificationEffectiveStatementImpl
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
 
-        initSubstatementCollections();
-    }
-
-    private void initSubstatementCollections() {
+        // initSubstatementCollections
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
         Set<AugmentationSchema> augmentationsInit = new HashSet<>();
-
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
@@ -58,7 +52,6 @@ public class NotificationEffectiveStatementImpl
                 augmentationsInit.add(augmentationSchema);
             }
         }
-
         this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
     }

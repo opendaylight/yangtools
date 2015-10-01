@@ -109,8 +109,8 @@ public class Decimal64SpecificationEffectiveStatementImpl extends
     }
 
     private List<RangeConstraint> initRanges() {
-        final RangeEffectiveStatementImpl rangeConstraints = firstEffective(RangeEffectiveStatementImpl.class);
-        return rangeConstraints != null ? rangeConstraints.argument() : Collections.<RangeConstraint> emptyList();
+        final RangeEffectiveStatementImpl rangeConstraintsStmt = firstEffective(RangeEffectiveStatementImpl.class);
+        return rangeConstraintsStmt != null ? rangeConstraintsStmt.argument() : Collections.<RangeConstraint> emptyList();
     }
 
     public boolean isExtended() {

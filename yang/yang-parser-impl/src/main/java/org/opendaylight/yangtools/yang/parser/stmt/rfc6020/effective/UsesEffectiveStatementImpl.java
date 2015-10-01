@@ -34,33 +34,34 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public class UsesEffectiveStatementImpl extends EffectiveStatementBase<QName, UsesStatement> implements UsesNode {
-    private SchemaPath groupingPath;
-    private boolean addedByUses;
-    private ImmutableMap<SchemaPath, SchemaNode> refines;
-    private ImmutableSet<AugmentationSchema> augmentations;
-    private ImmutableList<UnknownSchemaNode> unknownNodes;
+    private final SchemaPath groupingPath;
+    private final boolean addedByUses;
+    private final ImmutableMap<SchemaPath, SchemaNode> refines;
+    private final ImmutableSet<AugmentationSchema> augmentations;
+    private final ImmutableList<UnknownSchemaNode> unknownNodes;
 
-    public UsesEffectiveStatementImpl(final StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
+    public UsesEffectiveStatementImpl(
+            final StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
         super(ctx);
 
-        initGroupingPath(ctx);
-        initCopyType(ctx);
-        initSubstatementCollections();
-    }
-
-    private void initGroupingPath(final StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
+        // initGroupingPath
         StmtContext<?, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> grpCtx = ctx.getFromNamespace(
                 GroupingNamespace.class, ctx.getStatementArgument());
         this.groupingPath = Utils.getSchemaPath(grpCtx);
-    }
 
-    private void initSubstatementCollections() {
+        // initCopyType
+        List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
+        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
+            addedByUses = true;
+        } else {
+            addedByUses = false;
+        }
+
+        // initSubstatementCollections
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
         Set<AugmentationSchema> augmentationsInit = new HashSet<>();
         Map<SchemaPath, SchemaNode> refinesInit = new HashMap<>();
-
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
@@ -76,19 +77,9 @@ public class UsesEffectiveStatementImpl extends EffectiveStatementBase<QName, Us
                 refinesInit.put(identifier.asSchemaPath(), refineStmt.getRefineTargetNode());
             }
         }
-
         this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
         this.refines = ImmutableMap.copyOf(refinesInit);
-    }
-
-    private void initCopyType(
-            final StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
-
-        List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
-        if(copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
-            addedByUses = true;
-        }
     }
 
     @Override
@@ -109,10 +100,6 @@ public class UsesEffectiveStatementImpl extends EffectiveStatementBase<QName, Us
     @Override
     public boolean isAddedByUses() {
         return addedByUses;
-    }
-
-    void setAddedByUses(final boolean addedByUses) {
-        this.addedByUses = addedByUses;
     }
 
     @Override
