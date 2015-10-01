@@ -11,7 +11,9 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.sourceLocal;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.treeScoped;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import java.util.Map;
+import java.util.Set;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
@@ -37,6 +39,20 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StmtOrderingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.Builder;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.AbstractBuiltInTypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BinaryEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BooleanEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EmptyEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Int16EffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Int32EffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Int64EffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Int8EffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.StringEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UInt16EffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UInt32EffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UInt64EffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UInt8EffectiveStatementImpl;
 
 public final class YangInferencePipeline {
 
@@ -152,24 +168,49 @@ public final class YangInferencePipeline {
             .put(ModelProcessingPhase.EFFECTIVE_MODEL, FULL_DECL_BUNDLE)
             .build();
 
-    public static final CrossSourceStatementReactor RFC6020_REACTOR = CrossSourceStatementReactor
-            .builder()
-            .setBundle(ModelProcessingPhase.INIT, INIT_BUNDLE)
-            .setBundle(ModelProcessingPhase.SOURCE_LINKAGE, LINKAGE_BUNDLE)
-            .setBundle(ModelProcessingPhase.STATEMENT_DEFINITION,
-                    STMT_DEF_BUNDLE)
-            .setBundle(ModelProcessingPhase.FULL_DECLARATION, FULL_DECL_BUNDLE)
-            .setBundle(ModelProcessingPhase.EFFECTIVE_MODEL, FULL_DECL_BUNDLE)
-            .setValidationBundle(
-                    ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS,
-                    YangValidationBundles.SUPPORTED_REFINE_SUBSTATEMENTS)
-            .setValidationBundle(ValidationBundleType.SUPPORTED_AUGMENT_TARGETS,
-                    YangValidationBundles.SUPPORTED_AUGMENT_TARGETS)
-            .setValidationBundle(ValidationBundleType.SUPPORTED_CASE_SHORTHANDS,
-                    YangValidationBundles.SUPPORTED_CASE_SHORTHANDS)
-            .setValidationBundle(ValidationBundleType.SUPPORTED_DATA_NODES,
-                    YangValidationBundles.SUPPORTED_DATA_NODES)
-             .build();
+    private static final Set<AbstractBuiltInTypeEffectiveStatement<?>> BUILTIN_TYPES;
+    static {
+        final ImmutableSet.Builder<AbstractBuiltInTypeEffectiveStatement<?>> b = ImmutableSet.builder();
+        b.add(Int8EffectiveStatementImpl.getInstance());
+        b.add(Int16EffectiveStatementImpl.getInstance());
+        b.add(Int32EffectiveStatementImpl.getInstance());
+        b.add(Int64EffectiveStatementImpl.getInstance());
+        b.add(UInt8EffectiveStatementImpl.getInstance());
+        b.add(UInt16EffectiveStatementImpl.getInstance());
+        b.add(UInt32EffectiveStatementImpl.getInstance());
+        b.add(UInt64EffectiveStatementImpl.getInstance());
+        b.add(StringEffectiveStatementImpl.getInstance());
+        b.add(BooleanEffectiveStatementImpl.getInstance());
+        b.add(EmptyEffectiveStatementImpl.getInstance());
+        b.add(BinaryEffectiveStatementImpl.getInstance());
+
+        BUILTIN_TYPES = b.build();
+    }
+
+    public static final CrossSourceStatementReactor RFC6020_REACTOR;
+    static {
+        Builder b = CrossSourceStatementReactor.builder();
+        b.setBundle(ModelProcessingPhase.INIT, INIT_BUNDLE);
+        b.setBundle(ModelProcessingPhase.SOURCE_LINKAGE, LINKAGE_BUNDLE);
+        b.setBundle(ModelProcessingPhase.STATEMENT_DEFINITION, STMT_DEF_BUNDLE);
+        b.setBundle(ModelProcessingPhase.FULL_DECLARATION, FULL_DECL_BUNDLE);
+        b.setBundle(ModelProcessingPhase.EFFECTIVE_MODEL, FULL_DECL_BUNDLE);
+        b.setValidationBundle(ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS,
+            YangValidationBundles.SUPPORTED_REFINE_SUBSTATEMENTS);
+        b.setValidationBundle(ValidationBundleType.SUPPORTED_AUGMENT_TARGETS,
+            YangValidationBundles.SUPPORTED_AUGMENT_TARGETS);
+        b.setValidationBundle(ValidationBundleType.SUPPORTED_CASE_SHORTHANDS,
+            YangValidationBundles.SUPPORTED_CASE_SHORTHANDS);
+        b.setValidationBundle(ValidationBundleType.SUPPORTED_DATA_NODES,
+            YangValidationBundles.SUPPORTED_DATA_NODES);
+
+        for (AbstractBuiltInTypeEffectiveStatement<?> s : BUILTIN_TYPES) {
+            b.addStatementToNamespace(TypeNamespace.class, s.getQName(), s);
+        }
+
+        RFC6020_REACTOR = b.build();
+    }
+
 
     private YangInferencePipeline() {
         throw new UnsupportedOperationException("Utility class");
