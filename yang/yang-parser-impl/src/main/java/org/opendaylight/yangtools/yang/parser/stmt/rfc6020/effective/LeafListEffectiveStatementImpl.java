@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -24,8 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.TypeEffectiveStatementImpl;
 
 public class LeafListEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, LeafListStatement> implements
         LeafListSchemaNode, DerivableSchemaNode {
@@ -52,7 +51,7 @@ public class LeafListEffectiveStatementImpl extends AbstractEffectiveDocumentedN
 
         // :TODO init TypeDefinition
 
-        initSubstatementCollections();
+        initSubstatementCollections(ctx);
         initCopyType(ctx);
     }
 
@@ -75,19 +74,20 @@ public class LeafListEffectiveStatementImpl extends AbstractEffectiveDocumentedN
             original = (LeafListSchemaNode) ctx.getOriginalCtx().buildEffective();
         }
     }
-    private void initSubstatementCollections() {
-        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-
+    private void initSubstatementCollections(
+            final StmtContext<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> ctx) {
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
 
         boolean configurationInit = false;
         boolean userOrderedInit = false;
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
+        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 unknownNodesInit.add((UnknownSchemaNode) effectiveStatement);
             }
-            if (effectiveStatement instanceof TypeDefinition) {
-                type = TypeUtils.getTypeFromEffectiveStatement(effectiveStatement);
+            if (effectiveStatement instanceof TypeEffectiveStatementImpl) {
+                // FIXME: instantiates the type needlessly if it is not overridden
+                type = ((TypeEffectiveStatementImpl) effectiveStatement).newTypeDefinitionBuilder()
+                        .setPath(Utils.getSchemaPath(ctx)).addEffectiveStatements(effectiveSubstatements()).build();
             }
             if (!configurationInit && effectiveStatement instanceof ConfigEffectiveStatementImpl) {
                 ConfigEffectiveStatementImpl configStmt = (ConfigEffectiveStatementImpl) effectiveStatement;

@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
@@ -34,26 +34,20 @@ public class RpcEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
     private ContainerSchemaNode input;
     private ContainerSchemaNode output;
 
-    private Set<TypeDefinition<?>> typeDefinitions;
-    private Set<GroupingDefinition> groupings;
-    private List<UnknownSchemaNode> unknownNodes;
+    private final Set<TypeDefinition<?>> typeDefinitions;
+    private final Set<GroupingDefinition> groupings;
+    private final List<UnknownSchemaNode> unknownNodes;
 
     public RpcEffectiveStatementImpl(final StmtContext<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> ctx) {
         super(ctx);
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
 
-        initSubstatements();
-    }
-
-    private void initSubstatements() {
-        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
         Set<GroupingDefinition> groupingsInit = new HashSet<>();
         Set<TypeDefinition<?>> typeDefinitionsInit = new HashSet<>();
 
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
+        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
                 unknownNodesInit.add(unknownNode);
@@ -62,8 +56,8 @@ public class RpcEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
                 GroupingDefinition groupingDefinition = (GroupingDefinition) effectiveStatement;
                 groupingsInit.add(groupingDefinition);
             }
-            if (effectiveStatement instanceof TypeDefinition) {
-                TypeDefinition<?> typeDefinition = (TypeDefinition<?>) effectiveStatement;
+            if (effectiveStatement instanceof TypedefEffectiveStatement) {
+                TypeDefinition<?> typeDefinition = ((TypedefEffectiveStatement) effectiveStatement).getTypeDefinition();
                 typeDefinitionsInit.add(typeDefinition);
             }
             if (this.input == null && effectiveStatement instanceof InputEffectiveStatementImpl) {
@@ -94,17 +88,9 @@ public class RpcEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
         return input;
     }
 
-    void setInput(final ContainerSchemaNode input) {
-        this.input = input;
-    }
-
     @Override
     public ContainerSchemaNode getOutput() {
         return output;
-    }
-
-    void setOutput(final ContainerSchemaNode output) {
-        this.output = output;
     }
 
     @Override
