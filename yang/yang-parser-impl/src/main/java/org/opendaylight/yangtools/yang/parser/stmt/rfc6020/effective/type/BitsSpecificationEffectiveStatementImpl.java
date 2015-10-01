@@ -18,7 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.BitsSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.BitsType;
@@ -26,8 +27,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
-public class BitsSpecificationEffectiveStatementImpl extends
-        EffectiveStatementBase<String, TypeStatement.BitsSpecification> implements BitsTypeDefinition, TypeDefinitionEffectiveBuilder {
+public class BitsSpecificationEffectiveStatementImpl extends EffectiveStatementBase<String, BitsSpecification>
+implements BitsTypeDefinition, TypeDefinitionEffectiveBuilder, TypeEffectiveStatement<BitsSpecification> {
 
     private static final QName QNAME = BaseTypes.BITS_QNAME;
     private static final String DESCRIPTION = "The bits built-in type represents a bit set. "
@@ -39,7 +40,7 @@ public class BitsSpecificationEffectiveStatementImpl extends
     private final SchemaPath path;
     private final List<Bit> bits;
 
-    public BitsSpecificationEffectiveStatementImpl(final StmtContext<String, TypeStatement.BitsSpecification, EffectiveStatement<String, TypeStatement.BitsSpecification>> ctx) {
+    public BitsSpecificationEffectiveStatementImpl(final StmtContext<String, BitsSpecification, EffectiveStatement<String, BitsSpecification>> ctx) {
         super(ctx);
 
         List<Bit> bitsInit = new ArrayList<>();
