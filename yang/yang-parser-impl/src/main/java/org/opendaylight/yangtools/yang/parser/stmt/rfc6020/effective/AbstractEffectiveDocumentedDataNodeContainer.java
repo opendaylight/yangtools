@@ -7,18 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
-
-import java.util.LinkedHashSet;
-import java.util.LinkedHashMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -26,6 +21,9 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends DeclaredStatement<A>>
         extends AbstractEffectiveDocumentedNode<A, D> implements
@@ -70,9 +68,9 @@ public abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends 
             }
             if (effectiveStatement instanceof TypeDefEffectiveStatementImpl) {
                 TypeDefEffectiveStatementImpl typeDef = (TypeDefEffectiveStatementImpl) effectiveStatement;
-                ExtendedType extendedType = typeDef.buildType();
-                if (!mutableTypeDefinitions.contains(extendedType)) {
-                    mutableTypeDefinitions.add(extendedType);
+                TypeDefinition<?> type = typeDef.getTypeDefinition();
+                if (!mutableTypeDefinitions.contains(type)) {
+                    mutableTypeDefinitions.add(type);
                 } else {
                     throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
                 }
