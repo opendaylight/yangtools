@@ -9,36 +9,33 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.global;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.sourceLocal;
-import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.statementLocal;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.treeScoped;
-import static org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
-
-import org.opendaylight.yangtools.yang.parser.spi.source.StmtOrderingNamespace;
-
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
-import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedIdentitiesNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
-import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName;
-import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
-import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
-import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
-import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
+import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
+import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedIdentitiesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
+import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName;
+import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
+import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.source.StmtOrderingNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 
 public final class YangInferencePipeline {
