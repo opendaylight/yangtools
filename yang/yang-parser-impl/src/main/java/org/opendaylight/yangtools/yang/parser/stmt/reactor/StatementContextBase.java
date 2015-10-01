@@ -486,7 +486,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         NamespaceBehaviour<K, V, N> behaviour = getBehaviourRegistry().getNamespaceBehaviour(type);
         if (behaviour instanceof NamespaceBehaviourWithListeners) {
             NamespaceBehaviourWithListeners<K, V, N> casted = (NamespaceBehaviourWithListeners<K, V, N>) behaviour;
-            casted.addValueListener(key, new ValueAddedListener(this) {
+            casted.addValueListener(new ValueAddedListener<K>(this, key) {
                 @Override
                 void onValueAdded(Object key, Object value) {
                     try {

@@ -151,7 +151,7 @@ public interface ModelActionBuilder {
 
     @Nonnull <T extends Mutable<?,?,?>> Prerequisite<T> mutatesEffectiveCtx(T stmt);
 
-    @Nonnull  <K,E extends EffectiveStatement<?,?>,N extends StatementNamespace<K, ?, ? extends E>> Prerequisite<Mutable<?,?,E>> mutatesEffectiveCtx(StmtContext<?,?,?> context,Class<N> namespace, K key);
+    @Nonnull  <K,E extends EffectiveStatement<?,?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>> Prerequisite<Mutable<?,?,E>> mutatesEffectiveCtx(StmtContext<?,?,?> context,Class<N> namespace, K key);
 
     void apply(InferenceAction action) throws InferenceException;
 

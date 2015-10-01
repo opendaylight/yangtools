@@ -298,14 +298,9 @@ public final class Utils {
     }
 
     @Nullable
-    public static StatementContextBase<?, ?, ?> findNode(final StatementContextBase<?, ?, ?> rootStmtCtx,
+    public static StatementContextBase<?, ?, ?> findNode(final StmtContext<?, ?, ?> rootStmtCtx,
             final SchemaNodeIdentifier node) {
-        StatementContextBase<?, ?, ?> current = rootStmtCtx;
-        Iterator<QName> arguments = node.getPathFromRoot().iterator();
-        while(current != null && arguments.hasNext()) {
-            current = (StatementContextBase<?, ?, ?>) current.getFromNamespace(ChildSchemaNodes.class, arguments.next());
-        }
-        return current;
+        return (StatementContextBase<?, ?, ?>) rootStmtCtx.getFromNamespace(SchemaNodeIdentifierBuildNamespace.class, node);
     }
 
     public static SchemaPath getSchemaPath(final StmtContext<?, ?, ?> ctx) {
