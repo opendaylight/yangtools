@@ -8,28 +8,30 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
+import java.util.Collection;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
+import org.opendaylight.yangtools.yang.model.util.Int8;
 
-public class Int8EffectiveStatementImpl extends IntegerEffectiveImplBase {
+public final class Int8EffectiveStatementImpl extends AbstractIntegerBuiltInTypeEffectiveStatement {
+    private static final Int8EffectiveStatementImpl INSTANCE = new Int8EffectiveStatementImpl();
 
-    public static final String LOCAL_NAME = TypeUtils.INT8;
+    private Int8EffectiveStatementImpl() {
 
-    private static final Number MIN_RANGE = Byte.MIN_VALUE;
-    private static final Number MAX_RANGE = Byte.MAX_VALUE;
+    }
 
-    private static final String DESCRIPTION = LOCAL_NAME + " represents integer values between " + MIN_RANGE + " and "
-            + MAX_RANGE + ", inclusively.";
-
-    public Int8EffectiveStatementImpl(final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
-
-        super(ctx, LOCAL_NAME, MIN_RANGE, MAX_RANGE, DESCRIPTION);
+    public static Int8EffectiveStatementImpl getInstance() {
+        return INSTANCE;
     }
 
     @Override
-    public String toString() {
-        return "type " + getQName();
+    public Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+        // FIXME: implement this
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public TypeDefinition<?> getTypeDefinition() {
+        return Int8.getInstance();
     }
 }
