@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 /**
  * Holder object for holding YANG type constraints.
  */
+// FIXME: split this into separate classes
 public final class TypeConstraints {
     private final String moduleName;
     private final int line;
