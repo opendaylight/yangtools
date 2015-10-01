@@ -96,8 +96,7 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
         QName qName;
 
         if (isExtended) {
-            final Splitter colonSplitter = Splitter.on(":").trimResults();
-            final List<String> nameTokens = colonSplitter.splitToList(ctx.getStatementArgument());
+            final List<String> nameTokens = COLON_SPLITTER.splitToList(ctx.getStatementArgument());
 
             switch (nameTokens.size()) {
             case 1:
