@@ -7,9 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import javax.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
-public interface EnumStatement extends DeclaredStatement<String>, DocumentationGroup.WithStatus, TypeStatement {
-    @Nullable ValueStatement getValue();
+public interface TypeEffectiveStatement<T extends TypeStatement> extends EffectiveStatement<String, T> {
+
 }
