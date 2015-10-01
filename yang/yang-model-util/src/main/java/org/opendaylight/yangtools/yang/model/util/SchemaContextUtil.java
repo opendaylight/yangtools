@@ -18,6 +18,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -738,6 +739,8 @@ public final class SchemaContextUtil {
         }
     }
 
+    private static final Pattern STRIP_PATTERN = Pattern.compile("\\[.*\\]");
+
     /**
      * Removes conditions from xPath pointed to target node.
      *
@@ -747,7 +750,7 @@ public final class SchemaContextUtil {
      *
      */
     private static String stripConditionsFromXPathString(final RevisionAwareXPath pathStatement) {
-        return pathStatement.toString().replaceAll("\\[.*\\]", "");
+        return STRIP_PATTERN.matcher(pathStatement.toString()).replaceAll("");
     }
 
     /**
