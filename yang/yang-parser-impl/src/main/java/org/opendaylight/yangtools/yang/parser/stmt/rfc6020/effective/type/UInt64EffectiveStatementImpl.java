@@ -8,28 +8,30 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
-import java.math.BigInteger;
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
+import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.Uint16;
 
-public class UInt64EffectiveStatementImpl extends UnsignedIntegerEffectiveImplBase {
+public final class UInt64EffectiveStatementImpl extends AbstractUnsignedIntegerBuiltInEffectiveStatement {
+    private static final UInt64EffectiveStatementImpl INSTANCE = new UInt64EffectiveStatementImpl();
 
-    public static final String LOCAL_NAME = TypeUtils.UINT64;
+    private UInt64EffectiveStatementImpl() {
 
-    private static final Number MAX_RANGE = new BigInteger("18446744073709551615");
+    }
 
-    private static final String DESCRIPTION = LOCAL_NAME + " represents integer values between " + MIN_RANGE + " and "
-            + MAX_RANGE + ", inclusively.";
-
-    public UInt64EffectiveStatementImpl(final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
-
-        super(ctx, LOCAL_NAME, MAX_RANGE, DESCRIPTION);
+    public static UInt64EffectiveStatementImpl getInstance() {
+        return INSTANCE;
     }
 
     @Override
-    public String toString() {
-        return "type " + getQName();
+    public Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+        // FIXME: implement this
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public UnsignedIntegerTypeDefinition getTypeDefinition() {
+        return Uint16.getInstance();
     }
 }

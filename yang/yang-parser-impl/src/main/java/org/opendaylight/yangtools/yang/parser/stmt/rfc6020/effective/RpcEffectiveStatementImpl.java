@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class RpcEffectiveStatementImpl extends AbstractEffectiveSchemaNode<RpcStatement> implements RpcDefinition {
@@ -41,8 +42,8 @@ public class RpcEffectiveStatementImpl extends AbstractEffectiveSchemaNode<RpcSt
                 GroupingDefinition groupingDefinition = (GroupingDefinition) effectiveStatement;
                 groupingsInit.add(groupingDefinition);
             }
-            if (effectiveStatement instanceof TypeDefinition) {
-                TypeDefinition<?> typeDefinition = (TypeDefinition<?>) effectiveStatement;
+            if (effectiveStatement instanceof TypedefEffectiveStatement) {
+                TypeDefinition<?> typeDefinition = ((TypedefEffectiveStatement) effectiveStatement).getTypeDefinition();
                 typeDefinitionsInit.add(typeDefinition);
             }
         }

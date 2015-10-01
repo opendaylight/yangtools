@@ -8,90 +8,48 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
-import java.util.Collections;
-import java.util.List;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.YangConstants;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import com.google.common.base.Preconditions;
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.BaseTypes;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
+import org.opendaylight.yangtools.yang.model.util.BooleanType;
 
-public class BooleanEffectiveStatementImpl extends EffectiveStatementBase<String, TypeStatement>
-        implements BooleanTypeDefinition {
+public final class BooleanEffectiveStatementImpl extends AbstractBuiltInEffectiveStatement<BooleanTypeDefinition> {
+    private static final BooleanEffectiveStatementImpl INSTANCE = new BooleanEffectiveStatementImpl();
 
-    public static final String LOCAL_NAME = TypeUtils.BOOLEAN;
-    private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, LOCAL_NAME);
-    private static final SchemaPath PATH = SchemaPath.create(true, QNAME);
-    private static final String DESCRIPTION = "The boolean built-in type represents a boolean value.";
-    private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.5";
-    private static final String UNITS = "";
+    private BooleanEffectiveStatementImpl() {
 
-    public BooleanEffectiveStatementImpl(
-            final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
-        super(ctx);
+    }
+
+    public static BooleanEffectiveStatementImpl getInstance() {
+        return INSTANCE;
     }
 
     @Override
-    public BooleanTypeDefinition getBaseType() {
-        return null;
+    public Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+        // FIXME: implement this
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getUnits() {
-        return UNITS;
+    public BooleanTypeDefinition getTypeDefinition() {
+        return BooleanType.getInstance();
     }
 
     @Override
-    public Object getDefaultValue() {
-        return false;
-    }
+    public TypeDefinitionBuilder<BooleanTypeDefinition> newTypeDefinitionBuilder() {
+        return new AbstractTypeDefinitionBuilder<BooleanTypeDefinition>() {
+            @Override
+            public BooleanTypeDefinition build() {
+                final String value = getDefaultValue();
 
-    @Override
-    public QName getQName() {
-        return QNAME;
-    }
+                Preconditions.checkArgument(value == null || "true".equals(value) || "false".equals(value),
+                    "Boolean type allows default value to be either \"true\" or \"false\", not \"\"%s\"", value);
 
-    @Override
-    public SchemaPath getPath() {
-        return PATH;
-    }
-
-    @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public String getDescription() {
-        return DESCRIPTION;
-    }
-
-    @Override
-    public String getReference() {
-        return REFERENCE;
-    }
-
-    @Override
-    public Status getStatus() {
-        return Status.CURRENT;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(getClass().getSimpleName());
-        builder.append(" [name=");
-        builder.append(BaseTypes.BOOLEAN_QNAME);
-        builder.append(", path=");
-        builder.append(PATH);
-        builder.append("]");
-        return builder.toString();
+                // FIXME: this is wrong, create a proper instance
+                return BooleanType.getInstance();
+            }
+        };
     }
 }
