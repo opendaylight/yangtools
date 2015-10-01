@@ -14,6 +14,7 @@ import java.net.URI;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
@@ -26,8 +27,16 @@ public final class BaseTypes {
     private BaseTypes() {
     }
 
-    public static final URI BASE_TYPES_NAMESPACE = URI.create("urn:ietf:params:xml:ns:yang:1");
-    public static final QNameModule BASE_TYPES_MODULE = QNameModule.cachedReference(QNameModule.create(BASE_TYPES_NAMESPACE, null));
+    /**
+     * @deprecated Use {@link YangConstants#RFC6020_YANG_NAMESPACE} instead. To be removed in Boron release.
+     */
+    @Deprecated
+    public static final URI BASE_TYPES_NAMESPACE = YangConstants.RFC6020_YANG_NAMESPACE;
+    /**
+     * @deprecated Use {@link YangConstants#RFC6020_YANG_MODULE} instead. To be removed in Boron release.
+     */
+    @Deprecated
+    public static final QNameModule BASE_TYPES_MODULE = YangConstants.RFC6020_YANG_MODULE;
 
     public static final QName BINARY_QNAME = constructQName("binary");
     public static final QName BITS_QNAME = constructQName("bits");
@@ -49,7 +58,7 @@ public final class BaseTypes {
     public static final QName UINT64_QNAME = constructQName("uint64");
     public static final QName UNION_QNAME = constructQName("union");
 
-    private static final Set<String> BUILD_IN_TYPES = ImmutableSet.<String> builder()
+    private static final Set<String> BUILT_IN_TYPES = ImmutableSet.<String>builder()
             .add(BINARY_QNAME.getLocalName())
             .add(BITS_QNAME.getLocalName())
             .add(BOOLEAN_QNAME.getLocalName())
@@ -80,7 +89,7 @@ public final class BaseTypes {
      * @return built-in base yang type QName.
      */
     public static QName constructQName(final String typeName) {
-        return QName.cachedReference(QName.create(BASE_TYPES_MODULE, typeName));
+        return QName.cachedReference(QName.create(YangConstants.RFC6020_YANG_MODULE, typeName));
     }
 
     /**
@@ -93,7 +102,7 @@ public final class BaseTypes {
      * @return true if type is built-in YANG Types.
      */
     public static boolean isYangBuildInType(final String type) {
-        return BUILD_IN_TYPES.contains(type);
+        return BUILT_IN_TYPES.contains(type);
     }
 
     /**
