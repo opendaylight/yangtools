@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.spi;
 
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace.TreeScoped;
 
 /**
  * Derived types namespace
@@ -21,7 +21,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
  * This means that any descendant node may use that typedef, and it MUST NOT
  * define a typedef with the same name.
  *
+ * This namespace includes all type definitions implied by the language in which
+ * the current statement resides (e.g. RFC6020 for YANG).
  */
-public interface TypeNamespace extends StatementNamespace.TreeScoped<QName, TypedefStatement, EffectiveStatement<QName,TypedefStatement>> {
+public interface TypeNamespace extends TreeScoped<QName, TypedefStatement, TypedefEffectiveStatement> {
 
 }

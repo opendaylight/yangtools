@@ -8,6 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
@@ -16,7 +19,13 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+<<<<<<< 93536e5826054d58a93107da1ab43c19ece2e427
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
+=======
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.TypeEffectiveStatementImpl;
+>>>>>>> Share instances of built-in types
 
 public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafListStatement> implements
         LeafListSchemaNode, DerivableSchemaNode {
