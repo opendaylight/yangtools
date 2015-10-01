@@ -7,124 +7,103 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
-import org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType;
-
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
-import java.util.Collections;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.InstanceIdentifierSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RequireInstanceEffectiveStatementImpl;
 
-public class InstanceIdentifierSpecificationEffectiveStatementImpl extends
-        EffectiveStatementBase<String, TypeStatement.InstanceIdentifierSpecification> implements TypeDefinitionEffectiveBuilder, InstanceIdentifierTypeDefinition {
+public final class InstanceIdentifierSpecificationEffectiveStatementImpl extends
+        EffectiveStatementBase<String, InstanceIdentifierSpecification>
+        implements TypeDefinitionEffectiveBuilder, InstanceIdentifierTypeDefinition,
+        TypeEffectiveStatement<InstanceIdentifierSpecification> {
 
-    private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "instance-identifier");
-    private static final SchemaPath PATH = SchemaPath.create(true, QNAME);
-    private static final String DESCRIPTION = "The instance-identifier built-in type is used to "
-            + "uniquely identify a particular instance node in the data tree.";
-    private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.13";
-
-    private static final String UNITS = "";
-    private final Boolean requireInstance;
+    private final InstanceIdentifierType type;
 
     public InstanceIdentifierSpecificationEffectiveStatementImpl(
-            StmtContext<String, TypeStatement.InstanceIdentifierSpecification, EffectiveStatement<String, TypeStatement.InstanceIdentifierSpecification>> ctx) {
+            final StmtContext<String, InstanceIdentifierSpecification, EffectiveStatement<String, InstanceIdentifierSpecification>> ctx) {
         super(ctx);
 
         RequireInstanceEffectiveStatementImpl requireInstanceStmtCtx = firstEffective(RequireInstanceEffectiveStatementImpl.class);
-        requireInstance = (requireInstanceStmtCtx != null) ? requireInstanceStmtCtx.argument() : false;
+        boolean requireInstance = (requireInstanceStmtCtx != null) ? requireInstanceStmtCtx.argument() : false;
+
+        type = InstanceIdentifierType.create(requireInstance);
     }
 
+    @Deprecated
     @Override
     public RevisionAwareXPath getPathStatement() {
-        return null;
+        return type.getPathStatement();
     }
 
     @Override
     public boolean requireInstance() {
-        return requireInstance;
+        return type.requireInstance();
     }
 
     @Override
     public InstanceIdentifierTypeDefinition getBaseType() {
-        return null;
+        return type.getBaseType();
     }
 
     @Override
     public String getUnits() {
-        return UNITS;
+        return type.getUnits();
     }
 
     @Override
     public Object getDefaultValue() {
-        return null;
+        return type.getDefaultValue();
     }
 
     @Override
     public QName getQName() {
-        return QNAME;
+        return type.getQName();
     }
 
     @Override
     public SchemaPath getPath() {
-        return PATH;
+        return type.getPath();
     }
 
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return Collections.emptyList();
+        return type.getUnknownSchemaNodes();
     }
 
     @Override
     public String getDescription() {
-        return DESCRIPTION;
+        return type.getDescription();
     }
 
     @Override
     public String getReference() {
-        return REFERENCE;
+        return type.getReference();
     }
 
     @Override
     public Status getStatus() {
-        return Status.CURRENT;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + requireInstance.hashCode();
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        InstanceIdentifierSpecificationEffectiveStatementImpl other = (InstanceIdentifierSpecificationEffectiveStatementImpl) obj;
-        return requireInstance.equals(other.requireInstance);
+        return type.getStatus();
     }
 
     @Override
     public TypeDefinition<?> buildType() {
-        return InstanceIdentifierType.create(requireInstance);
+        return type;
+    }
+
+    @Override
+    public TypeEffectiveStatement<InstanceIdentifierSpecification> derive(
+            final EffectiveStatement<?, InstanceIdentifierSpecification> stmt, final SchemaPath path) {
+        return new DerivedInstanceIdentifierEffectiveStatement(stmt, path, this);
     }
 }

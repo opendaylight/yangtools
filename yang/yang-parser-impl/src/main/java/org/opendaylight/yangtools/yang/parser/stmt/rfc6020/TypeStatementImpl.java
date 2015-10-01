@@ -15,9 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ExtendedTypeEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BinaryEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BooleanEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EmptyEffectiveStatementImpl;
@@ -38,8 +37,7 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
         super(context);
     }
 
-    public static class Definition
-            extends
+    public static class Definition extends
             AbstractStatementSupport<String, TypeStatement, EffectiveStatement<String, TypeStatement>> {
 
         public Definition() {
@@ -47,14 +45,12 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
-        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value)
-                throws SourceException {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 
         @Override
-        public TypeStatement createDeclared(
-                final StmtContext<String, TypeStatement, ?> ctx) {
+        public TypeStatement createDeclared(final StmtContext<String, TypeStatement, ?> ctx) {
             return new TypeStatementImpl(ctx);
         }
 
@@ -62,10 +58,13 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
         public EffectiveStatement<String, TypeStatement> createEffective(
                 final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
 
-            // :FIXME improve the test of isExtended - e.g. unknown statements,
-            // etc..
-            Collection<StatementContextBase<?, ?, ?>> declaredSubstatements = ctx
-                    .declaredSubstatements();
+            // Bind this statement
+            final EffectiveStatement<String, TypeStatement> myEffective = new EffectiveStatementBase<String, TypeStatement>(ctx) {
+
+            };
+
+            // FIXME: improve the test of isExtended - e.g. unknown statements, etc..
+            Collection<StatementContextBase<?, ?, ?>> declaredSubstatements = ctx.declaredSubstatements();
             boolean isExtended = !declaredSubstatements.isEmpty();
             if (isExtended) {
                 return new ExtendedTypeEffectiveStatementImpl(ctx, true);
@@ -73,31 +72,31 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
 
             switch (ctx.getStatementArgument()) {
             case TypeUtils.INT8:
-                return new Int8EffectiveStatementImpl(ctx);
+                return Int8EffectiveStatementImpl.getInstance();
             case TypeUtils.INT16:
-                return new Int16EffectiveStatementImpl(ctx);
+                return Int16EffectiveStatementImpl.getInstance();
             case TypeUtils.INT32:
-                return new Int32EffectiveStatementImpl(ctx);
+                return Int32EffectiveStatementImpl.getInstance();
             case TypeUtils.INT64:
-                return new Int64EffectiveStatementImpl(ctx);
+                return Int64EffectiveStatementImpl.getInstance();
             case TypeUtils.UINT8:
-                return new UInt8EffectiveStatementImpl(ctx);
+                return UInt8EffectiveStatementImpl.getInstance();
             case TypeUtils.UINT16:
-                return new UInt16EffectiveStatementImpl(ctx);
+                return UInt16EffectiveStatementImpl.getInstance();
             case TypeUtils.UINT32:
-                return new UInt32EffectiveStatementImpl(ctx);
+                return UInt32EffectiveStatementImpl.getInstance();
             case TypeUtils.UINT64:
-                return new UInt64EffectiveStatementImpl(ctx);
+                return UInt64EffectiveStatementImpl.getInstance();
             case TypeUtils.STRING:
-                return new StringEffectiveStatementImpl(ctx);
+                return StringEffectiveStatementImpl.getInstance();
             case TypeUtils.BOOLEAN:
-                return new BooleanEffectiveStatementImpl(ctx);
+                return BooleanEffectiveStatementImpl.getInstance();
             case TypeUtils.EMPTY:
-                return new EmptyEffectiveStatementImpl(ctx);
+                return EmptyEffectiveStatementImpl.getInstance();
             case TypeUtils.BINARY:
-                return new BinaryEffectiveStatementImpl(ctx);
+                return BinaryEffectiveStatementImpl.getInstance();
             default:
-                // :FIXME try to resolve original typedef context here and
+                // FIXME: try to resolve original typedef context here and
                 // return buildEffective of original typedef context
                 return new ExtendedTypeEffectiveStatementImpl(ctx, false);
             }
