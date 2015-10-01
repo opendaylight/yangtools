@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -100,6 +101,10 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
         return sourceContext;
     }
 
+    @Override
+    public StorageNodeType getStorageNodeType() {
+        return StorageNodeType.ROOT_STATEMENT_LOCAL;
+    }
     /**
      * @return this as its own root
      */

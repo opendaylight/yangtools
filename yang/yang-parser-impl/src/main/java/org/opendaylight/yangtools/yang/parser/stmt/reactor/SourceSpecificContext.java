@@ -255,11 +255,11 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     PhaseCompletionProgress tryToCompletePhase(final ModelProcessingPhase phase) throws SourceException {
         Collection<ModifierImpl> currentPhaseModifiers = modifiers.get(phase);
 
-        boolean hasProgressed = hasProgress(currentPhaseModifiers);
+        boolean hasProgressed = tryToProgress(currentPhaseModifiers);
 
         boolean phaseCompleted = root.tryToCompletePhase(phase);
 
-        hasProgressed = (hasProgress(currentPhaseModifiers) | hasProgressed);
+        hasProgressed = (tryToProgress(currentPhaseModifiers) | hasProgressed);
 
         if (phaseCompleted && (currentPhaseModifiers.isEmpty())) {
             finishedPhase = phase;
@@ -273,12 +273,12 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
 
-    private static boolean hasProgress(final Collection<ModifierImpl> currentPhaseModifiers) {
+    private static boolean tryToProgress(final Collection<ModifierImpl> currentPhaseModifiers) {
 
         Iterator<ModifierImpl> modifier = currentPhaseModifiers.iterator();
         boolean hasProgressed = false;
         while (modifier.hasNext()) {
-            if (modifier.next().isApplied()) {
+            if (modifier.next().tryApply()) {
                 modifier.remove();
                 hasProgressed = true;
             }
