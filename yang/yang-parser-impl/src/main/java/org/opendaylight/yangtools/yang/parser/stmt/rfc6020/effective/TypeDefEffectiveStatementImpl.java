@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
@@ -37,7 +38,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.RangeE
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.TypeDefinitionEffectiveBuilder;
 
 public class TypeDefEffectiveStatementImpl extends EffectiveStatementBase<QName, TypedefStatement>
-        implements TypeDefinition<TypeDefinition<?>>, TypeDefinitionEffectiveBuilder {
+        implements TypeDefinition<TypeDefinition<?>>, TypeDefinitionEffectiveBuilder, TypedefEffectiveStatement {
 
     private final QName qName;
     private final SchemaPath path;
@@ -130,7 +131,7 @@ public class TypeDefEffectiveStatementImpl extends EffectiveStatementBase<QName,
                 }
             }
         } else {
-            StmtContext<?, TypedefStatement, EffectiveStatement<QName, TypedefStatement>> baseTypeCtx = ctx
+            StmtContext<?, TypedefStatement, TypedefEffectiveStatement> baseTypeCtx = ctx
                     .getParentContext().getFromNamespace(TypeNamespace.class, baseTypeQName);
             baseType = (TypeDefEffectiveStatementImpl) baseTypeCtx.buildEffective();
         }
@@ -263,5 +264,11 @@ public class TypeDefEffectiveStatementImpl extends EffectiveStatementBase<QName,
         extendedType = extendedTypeBuilder.build();
 
         return extendedType;
+    }
+
+    @Override
+    public EffectiveStatement<String, TypeStatement> getEffectiveTypeStatement() {
+        // FIXME: implement this
+        throw new UnsupportedOperationException();
     }
 }
