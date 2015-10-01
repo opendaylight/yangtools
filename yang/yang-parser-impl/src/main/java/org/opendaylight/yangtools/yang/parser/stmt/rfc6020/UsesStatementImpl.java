@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
@@ -67,13 +68,13 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
                 return;
             }
 
-            ModelActionBuilder usesAction = usesNode.newInferenceAction(FULL_DECLARATION);
+            ModelActionBuilder usesAction = usesNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
             final QName groupingName = usesNode.getStatementArgument();
 
             final Prerequisite<StmtContext<?, ?, ?>> sourceGroupingPre = usesAction.requiresCtx(usesNode,
-                    GroupingNamespace.class, groupingName, FULL_DECLARATION);
-            final Prerequisite<? extends StmtContext.Mutable<?, ?, ?>> targetNodePre = usesAction.mutatesCtx(
-                    usesNode.getParentContext(), FULL_DECLARATION);
+                    GroupingNamespace.class, groupingName, ModelProcessingPhase.EFFECTIVE_MODEL);
+            final Prerequisite<? extends StmtContext.Mutable<?, ?, ?>> targetNodePre = usesAction.mutatesEffectiveCtx(
+                    usesNode.getParentContext());
 
             usesAction.apply(new InferenceAction() {
 
