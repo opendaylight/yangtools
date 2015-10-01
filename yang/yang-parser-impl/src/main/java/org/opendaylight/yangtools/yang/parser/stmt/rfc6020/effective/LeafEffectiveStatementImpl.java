@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -24,8 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.TypeEffectiveStatementImpl;
 
 public class LeafEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, LeafStatement> implements
         LeafSchemaNode, DerivableSchemaNode {
@@ -75,19 +74,21 @@ public class LeafEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<
 
     private void initSubstatementCollections(
             final StmtContext<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
-        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
 
         boolean configurationInit = false;
         boolean defaultInit = false;
         boolean unitsInit = false;
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
+
+
+        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 unknownNodesInit.add((UnknownSchemaNode) effectiveStatement);
             }
-            if (effectiveStatement instanceof TypeDefinition) {
-                type = TypeUtils.getTypeFromEffectiveStatement(effectiveStatement);
+            if (effectiveStatement instanceof TypeEffectiveStatementImpl) {
+                // FIXME: instantiates the type needlessly if it is not overridden
+                type = ((TypeEffectiveStatementImpl) effectiveStatement).newTypeDefinitionBuilder()
+                        .setPath(Utils.getSchemaPath(ctx)).addEffectiveStatements(effectiveSubstatements()).build();
             }
             if (!configurationInit && effectiveStatement instanceof ConfigEffectiveStatementImpl) {
                 ConfigEffectiveStatementImpl configStmt = (ConfigEffectiveStatementImpl) effectiveStatement;

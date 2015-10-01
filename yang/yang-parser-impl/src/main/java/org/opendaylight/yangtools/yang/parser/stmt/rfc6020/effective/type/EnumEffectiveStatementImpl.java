@@ -7,14 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
-import java.util.Collections;
-import java.util.List;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
+import org.opendaylight.yangtools.yang.model.api.type.EnumPairBuilder;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
@@ -24,71 +19,36 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ReferenceEf
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.StatusEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ValueEffectiveStatementImpl;
 
-public class EnumEffectiveStatementImpl extends EffectiveStatementBase<String, EnumStatement> implements EnumPair {
-    private final SchemaPath path;
-    private String description;
-    private String reference;
-    private Status status;
-    private Integer value;
+public final class EnumEffectiveStatementImpl extends EffectiveStatementBase<String, EnumStatement>
+    implements EffectiveStatement<String, EnumStatement> {
+    private final EnumPair enumPair;
 
     public EnumEffectiveStatementImpl(final StmtContext<String, EnumStatement, ?> ctx) {
         super(ctx);
 
-        path = Utils.getSchemaPath(ctx);
+        final EnumPairBuilder b = new EnumPairBuilder();
+        b.setPath(Utils.getSchemaPath(ctx));
+        b.setName(ctx.getStatementArgument());
 
         for (final EffectiveStatement<?,?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof DescriptionEffectiveStatementImpl) {
-                description = ((DescriptionEffectiveStatementImpl) effectiveStatement).argument();
+                b.setDescription(((DescriptionEffectiveStatementImpl) effectiveStatement).argument());
             }
             if (effectiveStatement instanceof ReferenceEffectiveStatementImpl) {
-                reference = ((ReferenceEffectiveStatementImpl) effectiveStatement).argument();
+                b.setReference(((ReferenceEffectiveStatementImpl) effectiveStatement).argument());
             }
             if (effectiveStatement instanceof StatusEffectiveStatementImpl) {
-                status = ((StatusEffectiveStatementImpl) effectiveStatement).argument();
+                b.setStatus(((StatusEffectiveStatementImpl) effectiveStatement).argument());
             }
             if (effectiveStatement instanceof ValueEffectiveStatementImpl) {
-                value = ((ValueEffectiveStatementImpl) effectiveStatement).argument();
+                b.setValue(((ValueEffectiveStatementImpl) effectiveStatement).argument());
             }
         }
+
+        enumPair = b.build();
     }
 
-    @Override
-    public String getName() {
-        return argument();
-    }
-
-    @Override
-    public Integer getValue() {
-        return value;
-    }
-
-    @Override
-    public QName getQName() {
-        return getPath().getLastComponent();
-    }
-
-    @Override
-    public SchemaPath getPath() {
-        return path;
-    }
-
-    @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public String getDescription() {
-        return description;
-    }
-
-    @Override
-    public String getReference() {
-        return reference;
-    }
-
-    @Override
-    public Status getStatus() {
-        return status;
+    EnumPair asEnumPair() {
+        return enumPair;
     }
 }
