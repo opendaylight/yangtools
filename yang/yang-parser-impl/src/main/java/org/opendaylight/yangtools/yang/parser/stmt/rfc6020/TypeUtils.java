@@ -17,14 +17,11 @@ import com.google.common.collect.Iterables;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.util.BinaryType;
@@ -41,7 +38,6 @@ import org.opendaylight.yangtools.yang.model.util.Uint64;
 import org.opendaylight.yangtools.yang.model.util.Uint8;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LengthConstraintEffectiveImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.RangeConstraintEffectiveImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.TypeDefinitionEffectiveBuilder;
 import org.opendaylight.yangtools.yang.parser.util.UnknownBoundaryNumber;
 
 /**
@@ -69,10 +65,6 @@ public final class TypeUtils {
     public static final String UINT64 = "uint64";
     public static final String UNION = "union";
 
-    private static final Set<String> BUILT_IN_TYPES = ImmutableSet.of(
-        BINARY, BITS, BOOLEAN, DECIMAL64, EMPTY, ENUMERATION, IDENTITY_REF, INSTANCE_IDENTIFIER,
-        INT8, INT16, INT32, INT64, LEAF_REF, STRING, UINT8, UINT16, UINT32, UINT64, UNION);
-
     public static final Set<String> TYPE_BODY_STMTS = ImmutableSet.of(
         DECIMAL64, ENUMERATION, LEAF_REF, IDENTITY_REF, INSTANCE_IDENTIFIER, BITS, UNION);
 
@@ -93,13 +85,6 @@ public final class TypeUtils {
         b.put(UINT64, Uint64.getInstance());
         PRIMITIVE_TYPES_MAP = b.build();
     }
-
-    private static final Comparator<TypeDefinition<?>> TYPE_SORT_COMPARATOR = new Comparator<TypeDefinition<?>>() {
-        @Override
-        public int compare(final TypeDefinition<?> o1, final TypeDefinition<?> o2) {
-            return Boolean.compare(isBuiltInType(o2), isBuiltInType(o1));
-        }
-    };
 
     private TypeUtils() {
     }
@@ -240,37 +225,7 @@ public final class TypeUtils {
         return rangeConstraints;
     }
 
-    public static boolean isBuiltInType(final TypeDefinition<?> o1) {
-        return BUILT_IN_TYPES.contains(o1.getQName().getLocalName());
-    }
-
-    public static boolean isYangBuiltInTypeString(final String typeName) {
-        return BUILT_IN_TYPES.contains(typeName);
-    }
-
-    public static boolean isYangPrimitiveTypeString(final String typeName) {
-        return PRIMITIVE_TYPES_MAP.containsKey(typeName);
-    }
-
     public static boolean isYangTypeBodyStmtString(final String typeName) {
         return TYPE_BODY_STMTS.contains(typeName);
-    }
-
-    public static TypeDefinition<?> getYangPrimitiveTypeFromString(final String typeName) {
-        return PRIMITIVE_TYPES_MAP.get(typeName);
-    }
-
-    public static TypeDefinition<?> getTypeFromEffectiveStatement(final EffectiveStatement<?, ?> effectiveStatement) {
-        if (effectiveStatement instanceof TypeDefinitionEffectiveBuilder) {
-            TypeDefinitionEffectiveBuilder typeDefEffectiveBuilder = (TypeDefinitionEffectiveBuilder) effectiveStatement;
-            return typeDefEffectiveBuilder.buildType();
-        } else {
-            final String typeName = ((TypeDefinition<?>) effectiveStatement).getQName().getLocalName();
-            return PRIMITIVE_TYPES_MAP.get(typeName);
-        }
-    }
-
-    public static void sortTypes(final List<TypeDefinition<?>> typesInit) {
-        Collections.sort(typesInit, TYPE_SORT_COMPARATOR);
     }
 }

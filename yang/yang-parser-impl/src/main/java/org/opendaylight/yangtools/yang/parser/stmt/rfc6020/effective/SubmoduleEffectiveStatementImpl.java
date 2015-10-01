@@ -44,7 +44,6 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.ModuleImportImpl;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -223,9 +222,9 @@ public class SubmoduleEffectiveStatementImpl extends AbstractEffectiveDocumented
             }
             if (effectiveStatement instanceof TypeDefEffectiveStatementImpl) {
                 TypeDefEffectiveStatementImpl typeDef = (TypeDefEffectiveStatementImpl) effectiveStatement;
-                ExtendedType extendedType = typeDef.buildType();
-                if (!mutableTypeDefinitions.contains(extendedType)) {
-                    mutableTypeDefinitions.add(extendedType);
+                TypeDefinition<?> type = typeDef.getTypeDefinition();
+                if (!mutableTypeDefinitions.contains(type)) {
+                    mutableTypeDefinitions.add(type);
                 } else {
                     throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
                 }
