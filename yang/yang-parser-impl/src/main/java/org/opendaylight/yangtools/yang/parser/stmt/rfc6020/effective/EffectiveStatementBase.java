@@ -7,16 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.NoSuchElementException;
+
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -100,23 +103,15 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
     }
 
     protected final <S extends EffectiveStatement<?, ?>> S firstEffective(final Class<S> type) {
-        S result = null;
-        try {
-            result = type.cast(Iterables.find(substatements, Predicates.instanceOf(type)));
-        } catch (NoSuchElementException e) {
-            result = null;
-        }
-        return result;
+        Optional<? extends EffectiveStatement<?, ?>> possible = Iterables.tryFind(substatements,
+                Predicates.instanceOf(type));
+        return possible.isPresent() ? type.cast(possible.get()) : null;
     }
 
     protected final <S extends SchemaNode> S firstSchemaNode(final Class<S> type) {
-        S result = null;
-        try {
-            result = type.cast(Iterables.find(substatements, Predicates.instanceOf(type)));
-        } catch (NoSuchElementException e) {
-            result = null;
-        }
-        return result;
+        Optional<? extends EffectiveStatement<?, ?>> possible = Iterables.tryFind(substatements,
+                Predicates.instanceOf(type));
+        return possible.isPresent() ? type.cast(possible.get()) : null;
     }
 
     @SuppressWarnings("unchecked")
@@ -132,23 +127,14 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
     }
 
     protected final <T> T firstSubstatementOfType(final Class<T> type) {
-        T result = null;
-        try {
-            result = type.cast(Iterables.find(substatements, Predicates.instanceOf(type)));
-        } catch (NoSuchElementException e) {
-            result = null;
-        }
-        return result;
+        Optional<? extends EffectiveStatement<?, ?>> possible = Iterables.tryFind(substatements,
+                Predicates.instanceOf(type));
+        return possible.isPresent() ? type.cast(possible.get()) : null;
     }
 
     protected final <R> R firstSubstatementOfType(final Class<?> type, final Class<R> returnType) {
-        R result = null;
-        try {
-            result = returnType.cast(Iterables.find(substatements,
-                    Predicates.and(Predicates.instanceOf(type), Predicates.instanceOf(returnType))));
-        } catch (NoSuchElementException e) {
-            result = null;
-        }
-        return result;
+        Optional<? extends EffectiveStatement<?, ?>> possible = Iterables.tryFind(substatements,
+                Predicates.and(Predicates.instanceOf(type), Predicates.instanceOf(returnType)));
+        return possible.isPresent() ? returnType.cast(possible.get()) : null;
     }
 }
