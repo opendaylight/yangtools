@@ -8,15 +8,17 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -67,85 +69,44 @@ public final class TypeUtils {
     public static final String UINT64 = "uint64";
     public static final String UNION = "union";
 
-    private static final Set<String> BUILT_IN_TYPES = new HashSet<>();
-    public static final Set<String> TYPE_BODY_STMTS = new HashSet<>();
-    public static final Map<String, TypeDefinition<?>> PRIMITIVE_TYPES_MAP = new HashMap<>();
+    private static final Set<String> BUILT_IN_TYPES = ImmutableSet.of(
+        BINARY, BITS, BOOLEAN, DECIMAL64, EMPTY, ENUMERATION, IDENTITY_REF, INSTANCE_IDENTIFIER,
+        INT8, INT16, INT32, INT64, LEAF_REF, STRING, UINT8, UINT16, UINT32, UINT64, UNION);
+
+    public static final Set<String> TYPE_BODY_STMTS = ImmutableSet.of(
+        DECIMAL64, ENUMERATION, LEAF_REF, IDENTITY_REF, INSTANCE_IDENTIFIER, BITS, UNION);
+
+    public static final Map<String, TypeDefinition<?>> PRIMITIVE_TYPES_MAP;
+    static {
+        Builder<String, TypeDefinition<?>> b = ImmutableMap.<String, TypeDefinition<?>>builder();
+        b.put(BINARY, BinaryType.getInstance());
+        b.put(BOOLEAN, BooleanType.getInstance());
+        b.put(EMPTY, EmptyType.getInstance());
+        b.put(INT8, Int8.getInstance());
+        b.put(INT16, Int16.getInstance());
+        b.put(INT32, Int32.getInstance());
+        b.put(INT64, Int64.getInstance());
+        b.put(STRING, StringType.getInstance());
+        b.put(UINT8, Uint8.getInstance());
+        b.put(UINT16, Uint16.getInstance());
+        b.put(UINT32, Uint32.getInstance());
+        b.put(UINT64, Uint64.getInstance());
+        PRIMITIVE_TYPES_MAP = b.build();
+    }
 
     private static final Comparator<TypeDefinition<?>> TYPE_SORT_COMPARATOR = new Comparator<TypeDefinition<?>>() {
         @Override
-        public int compare(TypeDefinition<?> o1, TypeDefinition<?> o2) {
-            if (isBuiltInType(o1) && !isBuiltInType(o2)) {
-                return -1;
+        public int compare(final TypeDefinition<?> o1, final TypeDefinition<?> o2) {
+            final boolean b1 = isBuiltInType(o1);
+            final boolean b2 = isBuiltInType(o2);
+
+            if (b1 == b2) {
+                return 0;
+            } else {
+                return b1 ? -1 : 1;
             }
-            if (!isBuiltInType(o1) && isBuiltInType(o2)) {
-                return 1;
-            }
-            return 0;
         }
     };
-    static {
-
-//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,BINARY));
-//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,BITS));
-//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,BOOLEAN));
-//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,DECIMAL64));
-//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,EMPTY));
-//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,ENUMERATION));
-//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,IDENTITY_REF));
-//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,INSTANCE_IDENTIFIER));
-//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,INT8));
-//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,INT16));
-//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,INT32));
-//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,INT64));
-//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,LEAF_REF));
-//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,STRING));
-//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,UINT8));
-//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,UINT16));
-//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,UINT32));
-//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,UINT64));
-//        BUILT_IN_TYPES.add(QName.create(YangConstants.RFC6020_YANG_MODULE,UNION));
-
-        BUILT_IN_TYPES.add(BINARY);
-        BUILT_IN_TYPES.add(BITS);
-        BUILT_IN_TYPES.add(BOOLEAN);
-        BUILT_IN_TYPES.add(DECIMAL64);
-        BUILT_IN_TYPES.add(EMPTY);
-        BUILT_IN_TYPES.add(ENUMERATION);
-        BUILT_IN_TYPES.add(IDENTITY_REF);
-        BUILT_IN_TYPES.add(INSTANCE_IDENTIFIER);
-        BUILT_IN_TYPES.add(INT8);
-        BUILT_IN_TYPES.add(INT16);
-        BUILT_IN_TYPES.add(INT32);
-        BUILT_IN_TYPES.add(INT64);
-        BUILT_IN_TYPES.add(LEAF_REF);
-        BUILT_IN_TYPES.add(STRING);
-        BUILT_IN_TYPES.add(UINT8);
-        BUILT_IN_TYPES.add(UINT16);
-        BUILT_IN_TYPES.add(UINT32);
-        BUILT_IN_TYPES.add(UINT64);
-        BUILT_IN_TYPES.add(UNION);
-
-        TYPE_BODY_STMTS.add(DECIMAL64);
-        TYPE_BODY_STMTS.add(ENUMERATION);
-        TYPE_BODY_STMTS.add(LEAF_REF);
-        TYPE_BODY_STMTS.add(IDENTITY_REF);
-        TYPE_BODY_STMTS.add(INSTANCE_IDENTIFIER);
-        TYPE_BODY_STMTS.add(BITS);
-        TYPE_BODY_STMTS.add(UNION);
-
-        PRIMITIVE_TYPES_MAP.put(BINARY, BinaryType.getInstance());
-        PRIMITIVE_TYPES_MAP.put(BOOLEAN, BooleanType.getInstance());
-        PRIMITIVE_TYPES_MAP.put(EMPTY, EmptyType.getInstance());
-        PRIMITIVE_TYPES_MAP.put(INT8, Int8.getInstance());
-        PRIMITIVE_TYPES_MAP.put(INT16, Int16.getInstance());
-        PRIMITIVE_TYPES_MAP.put(INT32, Int32.getInstance());
-        PRIMITIVE_TYPES_MAP.put(INT64, Int64.getInstance());
-        PRIMITIVE_TYPES_MAP.put(STRING, StringType.getInstance());
-        PRIMITIVE_TYPES_MAP.put(UINT8, Uint8.getInstance());
-        PRIMITIVE_TYPES_MAP.put(UINT16, Uint16.getInstance());
-        PRIMITIVE_TYPES_MAP.put(UINT32, Uint32.getInstance());
-        PRIMITIVE_TYPES_MAP.put(UINT64, Uint64.getInstance());
-    }
 
     private TypeUtils() {
     }
@@ -153,7 +114,7 @@ public final class TypeUtils {
     private static final Splitter PIPE_SPLITTER = Splitter.on('|').trimResults();
     private static final Splitter TWO_DOTS_SPLITTER = Splitter.on("..").trimResults();
 
-    private static BigDecimal yangConstraintToBigDecimal(Number number) {
+    private static BigDecimal yangConstraintToBigDecimal(final Number number) {
         if (number instanceof UnknownBoundaryNumber) {
             if (number.toString().equals("min")) {
                 return RangeStatementImpl.YANG_MIN_NUM;
@@ -165,7 +126,7 @@ public final class TypeUtils {
         }
     }
 
-    public static int compareNumbers(Number n1, Number n2) {
+    public static int compareNumbers(final Number n1, final Number n2) {
 
         final BigDecimal num1 = yangConstraintToBigDecimal(n1);
         final BigDecimal num2 = yangConstraintToBigDecimal(n2);
@@ -211,7 +172,7 @@ public final class TypeUtils {
         return "min".equals(value) || "max".equals(value);
     }
 
-    public static List<RangeConstraint> parseRangeListFromString(String rangeArgument) {
+    public static List<RangeConstraint> parseRangeListFromString(final String rangeArgument) {
 
         Optional<String> description = Optional.absent();
         Optional<String> reference = Optional.absent();
@@ -250,7 +211,7 @@ public final class TypeUtils {
         return rangeConstraints;
     }
 
-    public static List<LengthConstraint> parseLengthListFromString(String rangeArgument) {
+    public static List<LengthConstraint> parseLengthListFromString(final String rangeArgument) {
 
         Optional<String> description = Optional.absent();
         Optional<String> reference = Optional.absent();
@@ -266,15 +227,10 @@ public final class TypeUtils {
                 max = parseIntegerConstraintValue(boundaries.next());
 
                 // if min larger than max then error
-                if (compareNumbers(min, max) == 1) {
-                    throw new IllegalArgumentException(
-                            String.format(
-                                    "Length constraint %s has descending order of boundaries; should be ascending",
-                                    singleRange));
-                }
-                if (boundaries.hasNext()) {
-                    throw new IllegalArgumentException("Wrong number of boundaries in length constraint " + singleRange);
-                }
+                Preconditions.checkArgument(compareNumbers(min, max) != 1,
+                        "Length constraint %s has descending order of boundaries; should be ascending", singleRange);
+                Preconditions.checkArgument(!boundaries.hasNext(), "Wrong number of boundaries in length constraint %s",
+                        singleRange);
             } else {
                 max = min;
             }
@@ -291,30 +247,27 @@ public final class TypeUtils {
         return rangeConstraints;
     }
 
-    public static boolean isBuiltInType(TypeDefinition<?> o1) {
+    public static boolean isBuiltInType(final TypeDefinition<?> o1) {
         return BUILT_IN_TYPES.contains(o1.getQName().getLocalName());
     }
 
-    public static boolean isYangBuiltInTypeString(String typeName) {
+    public static boolean isYangBuiltInTypeString(final String typeName) {
         return BUILT_IN_TYPES.contains(typeName);
     }
 
-    public static boolean isYangPrimitiveTypeString(String typeName) {
+    public static boolean isYangPrimitiveTypeString(final String typeName) {
         return PRIMITIVE_TYPES_MAP.containsKey(typeName);
     }
 
-    public static boolean isYangTypeBodyStmtString(String typeName) {
+    public static boolean isYangTypeBodyStmtString(final String typeName) {
         return TYPE_BODY_STMTS.contains(typeName);
     }
 
-    public static TypeDefinition<?> getYangPrimitiveTypeFromString(String typeName) {
-        if (PRIMITIVE_TYPES_MAP.containsKey(typeName)) {
-            return PRIMITIVE_TYPES_MAP.get(typeName);
-        }
-        return null;
+    public static TypeDefinition<?> getYangPrimitiveTypeFromString(final String typeName) {
+        return PRIMITIVE_TYPES_MAP.get(typeName);
     }
 
-    public static TypeDefinition<?> getTypeFromEffectiveStatement(EffectiveStatement<?, ?> effectiveStatement) {
+    public static TypeDefinition<?> getTypeFromEffectiveStatement(final EffectiveStatement<?, ?> effectiveStatement) {
         if (effectiveStatement instanceof TypeDefinitionEffectiveBuilder) {
             TypeDefinitionEffectiveBuilder typeDefEffectiveBuilder = (TypeDefinitionEffectiveBuilder) effectiveStatement;
             return typeDefEffectiveBuilder.buildType();
@@ -324,8 +277,7 @@ public final class TypeUtils {
         }
     }
 
-    public static void sortTypes(List<TypeDefinition<?>> typesInit) {
+    public static void sortTypes(final List<TypeDefinition<?>> typesInit) {
         Collections.sort(typesInit, TYPE_SORT_COMPARATOR);
     }
-
 }
