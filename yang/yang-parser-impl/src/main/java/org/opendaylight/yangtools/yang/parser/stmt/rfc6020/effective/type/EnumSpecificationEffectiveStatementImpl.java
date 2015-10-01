@@ -8,174 +8,102 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.EnumSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.EnumerationType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
-public class EnumSpecificationEffectiveStatementImpl extends
-        EffectiveStatementBase<String, TypeStatement.EnumSpecification> implements EnumTypeDefinition, TypeDefinitionEffectiveBuilder {
+public final class EnumSpecificationEffectiveStatementImpl extends EffectiveStatementBase<String, EnumSpecification>
+        implements EnumTypeDefinition, TypeDefinitionEffectiveBuilder,
+        DefinitionAwareTypeEffectiveStatement<EnumSpecification, EnumTypeDefinition> {
+    private final EnumerationType type;
 
-    private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "enumeration");
-
-    private static final String DESCRIPTION = "The enumeration built-in type represents values from a set of assigned names.";
-    private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.6";
-    private static final String UNITS = "";
-
-    private final SchemaPath path;
-    private final EnumPair defaultEnum;
-    private final List<EnumPair> enums;
-    private EnumerationType enumerationTypeInstance = null;
-
-    public EnumSpecificationEffectiveStatementImpl(final StmtContext<String, TypeStatement.EnumSpecification, EffectiveStatement<String, TypeStatement.EnumSpecification>> ctx) {
+    public EnumSpecificationEffectiveStatementImpl(final StmtContext<String, EnumSpecification, EffectiveStatement<String, EnumSpecification>> ctx) {
         super(ctx);
 
-        List<EnumPair> enumsInit = new ArrayList<>();
-
-        path = Utils.getSchemaPath(ctx.getParentContext()).createChild(QNAME);
-
+        final List<EnumPair> enums = new ArrayList<>();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof EnumPair) {
-                enumsInit.add((EnumPair) effectiveStatement);
+                enums.add((EnumPair) effectiveStatement);
             }
         }
 
-        // FIXME: get from parentContext
-        defaultEnum = null;
-        enums = ImmutableList.copyOf(enumsInit);
+        // We do not need to look the default statement up, as we are executing in the context of the definition itself,
+        // the default type will be wrapped by the defining typedef statement.
+        type = EnumerationType.create(Utils.getSchemaPath(ctx.getParentContext()).createChild(BaseTypes.ENUMERATION_QNAME),
+            enums, Optional.<EnumPair>absent());
     }
 
     @Override
     public List<EnumPair> getValues() {
-        return enums;
+        return type.getValues();
     }
 
     @Override
     public EnumTypeDefinition getBaseType() {
-        return null;
+        return type.getBaseType();
     }
 
     @Override
     public String getUnits() {
-        return UNITS;
+        return type.getUnits();
     }
 
     @Override
     public Object getDefaultValue() {
-        return defaultEnum;
+        return type.getDefaultValue();
     }
 
     @Override
     public QName getQName() {
-        return QNAME;
+        return type.getQName();
     }
 
     @Override
     public SchemaPath getPath() {
-        return path;
+        return type.getPath();
     }
 
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return Collections.emptyList();
+        return type.getUnknownSchemaNodes();
     }
 
     @Override
     public String getDescription() {
-        return DESCRIPTION;
+        return type.getDescription();
     }
 
     @Override
     public String getReference() {
-        return REFERENCE;
+        return type.getReference();
     }
 
     @Override
     public Status getStatus() {
-        return Status.CURRENT;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(defaultEnum);
-        result = prime * result + Objects.hashCode(enums);
-        result = prime * result + QNAME.hashCode();
-        result = prime * result + Objects.hashCode(path);
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EnumSpecificationEffectiveStatementImpl other = (EnumSpecificationEffectiveStatementImpl) obj;
-        if (!Objects.equals(defaultEnum, other.defaultEnum)) {
-            return false;
-        }
-        if (!Objects.equals(enums, other.enums)) {
-            return false;
-        }
-        if (!Objects.equals(path, other.path)) {
-            return false;
-        }
-        return true;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(EnumSpecificationEffectiveStatementImpl.class.getSimpleName());
-        builder.append(" [name=");
-        builder.append(QNAME);
-        builder.append(", path=");
-        builder.append(path);
-        builder.append(", description=");
-        builder.append(DESCRIPTION);
-        builder.append(", reference=");
-        builder.append(REFERENCE);
-        builder.append(", defaultEnum=");
-        builder.append(defaultEnum);
-        builder.append(", enums=");
-        builder.append(enums);
-        builder.append(", units=");
-        builder.append(UNITS);
-        builder.append("]");
-        return builder.toString();
+        return type.getStatus();
     }
 
     @Override
     public TypeDefinition<?> buildType() {
+        return type;
+    }
 
-        if (enumerationTypeInstance !=null) {
-            return enumerationTypeInstance;
-        }
-
-        // FIXME: set defaultValue as parameter
-        enumerationTypeInstance = EnumerationType.create(path, enums, Optional.<EnumPair>absent());
-
-        return enumerationTypeInstance;
+    @Override
+    public TypeEffectiveStatement<EnumSpecification> derive(final EffectiveStatement<?, EnumSpecification> stmt,
+            final SchemaPath path) {
+        return new DerivedEffectiveStatement<EnumSpecification, EnumTypeDefinition>(stmt, path, this);
     }
 }

@@ -7,124 +7,114 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
-
-import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.BaseEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
-import java.util.Collections;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.IdentityRefSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.BaseTypes;
+import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
+import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.BaseEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
-public class IdentityRefSpecificationEffectiveStatementImpl extends
-        EffectiveStatementBase<String, TypeStatement.IdentityRefSpecification> implements IdentityrefTypeDefinition,
-        TypeDefinitionEffectiveBuilder {
-
-    private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, TypeUtils.IDENTITY_REF);
-
-    private static final String DESCRIPTION = "The identityref type is used to reference an existing identity.";
-    private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.10";
-
-    private static final String UNITS = "";
-
-    private final SchemaPath path;
-
-    private final IdentitySchemaNode identity;
-    private IdentityrefType identityRefTypeInstance = null;
+public final class IdentityRefSpecificationEffectiveStatementImpl extends
+        EffectiveStatementBase<String, IdentityRefSpecification> implements IdentityrefTypeDefinition,
+        TypeDefinitionEffectiveBuilder,
+        DefinitionAwareTypeEffectiveStatement<IdentityRefSpecification, IdentityrefTypeDefinition> {
+    private final IdentityrefType type;
 
     public IdentityRefSpecificationEffectiveStatementImpl(
-            StmtContext<String, TypeStatement.IdentityRefSpecification, EffectiveStatement<String, TypeStatement.IdentityRefSpecification>> ctx) {
+            final StmtContext<String, IdentityRefSpecification, EffectiveStatement<String, IdentityRefSpecification>> ctx) {
         super(ctx);
 
-        path = Utils.getSchemaPath(ctx.getParentContext()).createChild(QNAME);
-
+        final SchemaPath path = Utils.getSchemaPath(ctx.getParentContext()).createChild(BaseTypes.IDENTITYREF_QNAME);
+        final IdentitySchemaNode identity;
         final BaseEffectiveStatementImpl base = firstEffective(BaseEffectiveStatementImpl.class);
         if (base != null) {
             QName identityQName = base.argument();
-            StmtContext<?, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> identityCtx = ctx.getFromNamespace(IdentityNamespace.class, identityQName);
+            StmtContext<?, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> identityCtx =
+                    ctx.getFromNamespace(IdentityNamespace.class, identityQName);
             identity = (IdentitySchemaNode) identityCtx.buildEffective();
         } else {
             identity = null;
         }
+
+        type = IdentityrefType.create(path, identity);
     }
 
     @Override
     public IdentitySchemaNode getIdentity() {
-        return identity;
+        return type.getIdentity();
     }
 
     @Override
     public IdentityrefTypeDefinition getBaseType() {
-        return null;
+        return type.getBaseType();
     }
 
     @Override
     public String getUnits() {
-        return UNITS;
+        return type.getUnits();
     }
 
     @Override
     public Object getDefaultValue() {
-        return identity;
+        return type.getDefaultValue();
     }
 
     @Override
     public QName getQName() {
-        return QNAME;
+        return type.getQName();
     }
 
     @Override
     public SchemaPath getPath() {
-        return path;
+        return type.getPath();
     }
 
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return Collections.emptyList();
+        return type.getUnknownSchemaNodes();
     }
 
     @Override
     public String getDescription() {
-        return DESCRIPTION;
+        return type.getDescription();
     }
 
     @Override
     public String getReference() {
-        return REFERENCE;
+        return type.getReference();
     }
 
     @Override
     public Status getStatus() {
-        return Status.CURRENT;
+        return type.getStatus();
     }
 
     @Override
     public String toString() {
-        return "identityref " + identity.getQName().getLocalName();
+        return type.toString();
     }
 
     @Override
     public TypeDefinition<?> buildType() {
+        return type;
+    }
 
-        if (identityRefTypeInstance != null) {
-            return identityRefTypeInstance;
-        }
-
-        identityRefTypeInstance = IdentityrefType.create(path, identity);
-
-        return identityRefTypeInstance;
+    @Override
+    public TypeEffectiveStatement<IdentityRefSpecification> derive(final EffectiveStatement<?, IdentityRefSpecification> stmt,
+            final SchemaPath path) {
+        return new DerivedIdentityrefEffectiveStatement(stmt, path, this);
     }
 }

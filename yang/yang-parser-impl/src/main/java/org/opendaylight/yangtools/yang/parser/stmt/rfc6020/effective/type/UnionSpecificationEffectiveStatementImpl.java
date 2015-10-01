@@ -7,18 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
-import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.UnionSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -26,19 +24,13 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
 public class UnionSpecificationEffectiveStatementImpl extends
-        EffectiveStatementBase<String, TypeStatement.UnionSpecification> implements UnionTypeDefinition,
-        TypeDefinitionEffectiveBuilder {
+        EffectiveStatementBase<String, UnionSpecification> implements UnionTypeDefinition,
+        TypeDefinitionEffectiveBuilder, DefinitionAwareTypeEffectiveStatement<UnionSpecification, UnionTypeDefinition> {
 
-    private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "union");
-    private static final SchemaPath PATH = SchemaPath.create(true, QNAME);
-    private static final String DESCRIPTION = "The union built-in type represents a value that corresponds to one of its member types.";
-    private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.12";
-
-    private final List<TypeDefinition<?>> types;
-    private UnionType unionTypeInstance = null;
+    private final UnionType type;
 
     public UnionSpecificationEffectiveStatementImpl(
-            StmtContext<String, TypeStatement.UnionSpecification, EffectiveStatement<String, TypeStatement.UnionSpecification>> ctx) {
+            final StmtContext<String, UnionSpecification, EffectiveStatement<String, UnionSpecification>> ctx) {
         super(ctx);
 
         List<TypeDefinition<?>> typesInit = new ArrayList<>();
@@ -50,104 +42,72 @@ public class UnionSpecificationEffectiveStatementImpl extends
         }
 
         TypeUtils.sortTypes(typesInit);
-
-        types = ImmutableList.copyOf(typesInit);
+        type = UnionType.create(typesInit);
     }
 
     @Override
     public List<TypeDefinition<?>> getTypes() {
-        return types;
+        return type.getTypes();
     }
 
     @Override
     public UnionTypeDefinition getBaseType() {
-        return null;
+        return type.getBaseType();
     }
 
     @Override
     public String getUnits() {
-        return null;
+        return type.getUnits();
     }
 
     @Override
     public Object getDefaultValue() {
-        return null;
+        return type.getDefaultValue();
     }
 
     @Override
     public QName getQName() {
-        return QNAME;
+        return type.getQName();
     }
 
     @Override
     public SchemaPath getPath() {
-        return PATH;
+        return type.getPath();
     }
 
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return Collections.emptyList();
+        return type.getUnknownSchemaNodes();
     }
 
     @Override
     public String getDescription() {
-        return DESCRIPTION;
+        return type.getDescription();
     }
 
     @Override
     public String getReference() {
-        return REFERENCE;
+        return type.getReference();
     }
 
     @Override
     public Status getStatus() {
-        return Status.CURRENT;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + types.hashCode();
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        UnionSpecificationEffectiveStatementImpl other = (UnionSpecificationEffectiveStatementImpl) obj;
-        return types.equals(other.types);
+        return type.getStatus();
     }
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("type ");
-        builder.append(QNAME);
-        builder.append(" (types=[");
-        for (TypeDefinition<?> td : types) {
-            builder.append(", ").append(td.getQName().getLocalName());
-        }
-        builder.append(']');
-        return builder.toString();
+        return type.toString();
     }
 
-    public TypeDefinition<?> buildType() {
+    @Override
+    public UnionTypeDefinition buildType() {
+        return type;
+    }
 
-        if (unionTypeInstance != null) {
-            return unionTypeInstance;
-        }
-
-        unionTypeInstance = UnionType.create(types);
-
-        return unionTypeInstance;
+    @Override
+    public TypeEffectiveStatement<UnionSpecification> derive(final EffectiveStatement<?, UnionSpecification> stmt,
+            final SchemaPath path) {
+        return new DerivedEffectiveStatement<UnionSpecification, UnionTypeDefinition>(stmt, path, this);
     }
 }
