@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
@@ -73,7 +75,7 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
         this.isExtended = isExtended;
         qName = initQName(ctx, isExtended);
 
-        final StmtContext<?, TypedefStatement, EffectiveStatement<QName, TypedefStatement>> typeStmt =
+        final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> typeStmt =
                 ctx.getFromNamespace(TypeNamespace.class, qName);
         if (typeStmt == null) {
             path = Utils.getSchemaPath(ctx);
@@ -125,13 +127,11 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
         if (TypeUtils.isYangPrimitiveTypeString(baseTypeQName.getLocalName())) {
             baseType = TypeUtils.getYangPrimitiveTypeFromString(baseTypeQName.getLocalName());
         } else {
-            StmtContext<?, TypedefStatement, EffectiveStatement<QName, TypedefStatement>> baseTypeCtx = ctx
+            StmtContext<?, TypedefStatement, TypedefEffectiveStatement> baseTypeCtx = ctx
                     .getParentContext().getFromNamespace(TypeNamespace.class, baseTypeQName);
 
-            if (baseTypeCtx == null) {
-                throw new IllegalStateException(String.format("Type '%s' was not found in %s.", baseTypeQName,
-                        ctx.getStatementSourceReference()));
-            }
+            Preconditions.checkState(baseTypeCtx != null, "Type '%s' was not found in %s.", baseTypeQName,
+                        ctx.getStatementSourceReference());
 
             baseType = (TypeDefEffectiveStatementImpl) baseTypeCtx.buildEffective();
         }
