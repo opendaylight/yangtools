@@ -42,5 +42,4 @@ public final class Int16 extends AbstractSignedInteger implements Immutable {
     public String toString() {
         return "type " + BaseTypes.INT16_QNAME;
     }
-
 }
