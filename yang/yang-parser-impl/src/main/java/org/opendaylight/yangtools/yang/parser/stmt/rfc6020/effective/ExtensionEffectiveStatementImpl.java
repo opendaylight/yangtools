@@ -24,27 +24,31 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, ExtensionStatement>
         implements ExtensionDefinition {
     private final QName qname;
-    private String argument;
+    private final String argument;
     private final SchemaPath schemaPath;
 
-    private ImmutableList<UnknownSchemaNode> unknownNodes;
-    private boolean yin;
+    private final ImmutableList<UnknownSchemaNode> unknownNodes;
+    private final boolean yin;
 
     public ExtensionEffectiveStatementImpl(
             final StmtContext<QName, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> ctx) {
         super(ctx);
-
         this.qname = ctx.getStatementArgument();
         this.schemaPath = Utils.getSchemaPath(ctx);
 
-        initSubstatementCollections();
-        initFields();
-    }
+        // initSubstatementCollections
+        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
+        List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
+        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
+            if (effectiveStatement instanceof UnknownSchemaNode) {
+                UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
+                unknownNodesInit.add(unknownNode);
+            }
+        }
+        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
 
-    private void initFields() {
-
+        // initFields
         ArgumentEffectiveStatementImpl argumentSubstatement = firstEffective(ArgumentEffectiveStatementImpl.class);
-
         if (argumentSubstatement != null) {
             this.argument = argumentSubstatement.argument().getLocalName();
 
@@ -55,22 +59,10 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
             } else {
                 this.yin = false;
             }
+        } else {
+            this.argument = null;
+            this.yin = false;
         }
-    }
-
-    private void initSubstatementCollections() {
-        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-
-        List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
-
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
-            if (effectiveStatement instanceof UnknownSchemaNode) {
-                UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
-                unknownNodesInit.add(unknownNode);
-            }
-        }
-
-        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
     }
 
     @Override

@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public class EffectiveStmtUtils {
+final public class EffectiveStmtUtils {
 
     private EffectiveStmtUtils() {
         throw new UnsupportedOperationException("Utility class");
