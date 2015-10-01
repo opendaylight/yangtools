@@ -20,15 +20,16 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.EnumSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.EnumerationType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
-public class EnumSpecificationEffectiveStatementImpl extends
-        EffectiveStatementBase<String, TypeStatement.EnumSpecification> implements EnumTypeDefinition, TypeDefinitionEffectiveBuilder {
+public class EnumSpecificationEffectiveStatementImpl extends EffectiveStatementBase<String, EnumSpecification>
+        implements EnumTypeDefinition, TypeDefinitionEffectiveBuilder, TypeEffectiveStatement<EnumSpecification> {
 
     private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "enumeration");
 
@@ -41,7 +42,7 @@ public class EnumSpecificationEffectiveStatementImpl extends
     private final List<EnumPair> enums;
     private EnumerationType enumerationTypeInstance = null;
 
-    public EnumSpecificationEffectiveStatementImpl(final StmtContext<String, TypeStatement.EnumSpecification, EffectiveStatement<String, TypeStatement.EnumSpecification>> ctx) {
+    public EnumSpecificationEffectiveStatementImpl(final StmtContext<String, EnumSpecification, EffectiveStatement<String, EnumSpecification>> ctx) {
         super(ctx);
 
         List<EnumPair> enumsInit = new ArrayList<>();
