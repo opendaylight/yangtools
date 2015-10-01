@@ -15,9 +15,7 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import java.net.URI;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -59,12 +57,10 @@ public class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
                 new TreeMap<URI, Collection<Module>>(), MODULE_SET_SUPPLIER);
         final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(
                 new TreeMap<String, Collection<Module>>(), MODULE_SET_SUPPLIER);
-        final Map<ModuleIdentifier, String> isMap = new LinkedHashMap<>();
 
         for (Module m : modulesInit) {
             nameMap.put(m.getName(), m);
             nsMap.put(m.getNamespace(), m);
-            isMap.put(m, m.getSource());
         }
 
         namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
@@ -72,7 +68,7 @@ public class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
     }
 
     public EffectiveSchemaContext(final Set<Module> modules) {
-        
+
          /*
          * Instead of doing this on each invocation of getModules(), pre-compute
          * it once and keep it around -- better than the set we got in.
