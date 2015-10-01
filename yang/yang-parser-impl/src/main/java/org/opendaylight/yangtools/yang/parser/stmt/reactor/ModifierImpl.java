@@ -139,10 +139,11 @@ class ModifierImpl implements ModelActionBuilder {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private <K, C extends StmtContext.Mutable<?, ?, ?> , N extends StatementNamespace<K, ?, ? >> AbstractPrerequisite<C> mutatesCtxImpl(
+    private <K, C extends StmtContext.Mutable<?, ?, ?> , N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>> AbstractPrerequisite<C> mutatesCtxImpl(
                 final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key, final ModelProcessingPhase phase) {
             try {
                 PhaseModificationInNamespace<C> mod = new PhaseModificationInNamespace<C>(phase);
+                addReq(mod);
                 addMutation(mod);
                 contextImpl(context).onNamespaceItemAddedAction((Class) namespace,key,mod);
                 return mod;
@@ -151,9 +152,9 @@ class ModifierImpl implements ModelActionBuilder {
             }
         }
 
-    private static StatementContextBase<?,?,?> contextImpl(final StmtContext<?,?,?> context) {
-        Preconditions.checkArgument(context instanceof StatementContextBase,"Supplied context was not provided by this reactor.");
-        return StatementContextBase.class.cast(context);
+    private static StatementContextBase<?,?,?> contextImpl(final Object value) {
+        Preconditions.checkArgument(value instanceof StatementContextBase,"Supplied context was not provided by this reactor.");
+        return StatementContextBase.class.cast(value);
     }
 
     @Override
@@ -230,7 +231,7 @@ class ModifierImpl implements ModelActionBuilder {
 
 
    @Override
-    public <K, E extends EffectiveStatement<?, ?>, N extends StatementNamespace<K, ?, ? extends E>> AbstractPrerequisite<Mutable<?, ?, E>> mutatesEffectiveCtx(
+    public <K, E extends EffectiveStatement<?, ?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>> AbstractPrerequisite<Mutable<?, ?, E>> mutatesEffectiveCtx(
             final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {
         return mutatesCtxImpl(context, namespace, key, EFFECTIVE_MODEL);
     }
@@ -353,8 +354,9 @@ class ModifierImpl implements ModelActionBuilder {
         @Override
         public void namespaceItemAdded(final StatementContextBase<?, ?, ?> context, final Class<?> namespace, final Object key,
                 final Object value) throws SourceException {
-            context.addMutation(modPhase,this);
-            resolvePrereq((C) context);
+            StatementContextBase<?, ?, ?> targetCtx = contextImpl(value);
+            targetCtx.addMutation(modPhase,this);
+            resolvePrereq((C) targetCtx);
         }
 
         @Override

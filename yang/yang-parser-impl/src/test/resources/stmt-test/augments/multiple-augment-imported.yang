@@ -3,10 +3,6 @@ module multiple-augment-imported {
     namespace "multiple-augment-imported";
     prefix imp;
 
-    augment /root-container/container-from-grp1/sub-container-from-grp1/container-in-uses-augment/sub-container-from-augment2/sub-container-from-augment3 {
-        container sub-container-from-augment4 {
-        }
-    }
 
     container root-container {
         uses grp1 {
@@ -26,11 +22,6 @@ module multiple-augment-imported {
                     }
                 }
             }
-        }
-    }
-
-    augment /root-container/added-container-1 {
-        container added-container-2 {
         }
     }
 

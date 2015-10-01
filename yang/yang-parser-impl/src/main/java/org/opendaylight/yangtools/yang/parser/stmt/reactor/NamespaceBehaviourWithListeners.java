@@ -10,9 +10,14 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import com.google.common.base.Optional;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+
+import org.omg.CORBA.CTX_RESTRICT_SCOPE;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -21,18 +26,20 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 
 final class NamespaceBehaviourWithListeners<K,V, N extends IdentifierNamespace<K, V>> extends NamespaceBehaviour<K, V, N> {
 
-    abstract static class ValueAddedListener {
+    abstract static class ValueAddedListener<K> {
         private final NamespaceStorageNode ctxNode;
+        private K key;
 
-        public ValueAddedListener(final NamespaceStorageNode contextNode) {
+        public ValueAddedListener(final NamespaceStorageNode contextNode, K key) {
             this.ctxNode = contextNode;
+            this.key = key;
         }
 
         abstract void onValueAdded(Object key, Object value);
     }
 
     private final NamespaceBehaviour<K, V, N> delegate;
-    private final Multimap<K, ValueAddedListener> listeners = HashMultimap.create();
+    private final List<ValueAddedListener<K>> listeners = new ArrayList<>(20);
 
     protected NamespaceBehaviourWithListeners(final NamespaceBehaviour<K, V, N> delegate) {
         super(delegate.getIdentifier());
@@ -43,40 +50,26 @@ final class NamespaceBehaviourWithListeners<K,V, N extends IdentifierNamespace<K
     public void addTo(final NamespaceStorageNode storage, final K key, final V value) {
         delegate.addTo(storage, key, value);
 
-        Iterator<ValueAddedListener> keyListeners = listeners.get(key).iterator();
+        Iterator<ValueAddedListener<K>> keyListeners = listeners.iterator();
+        List<ValueAddedListener<K>> toNotify = new ArrayList<>();
         while (keyListeners.hasNext()) {
-            ValueAddedListener listener = keyListeners.next();
-            if (listener.ctxNode == storage || hasIdentiticalValue(listener.ctxNode,key,value)) {
+            ValueAddedListener<K> listener = keyListeners.next();
+            if (pointsToSameValue(listener,value)) {
                 keyListeners.remove();
-                listener.onValueAdded(key, value);
+                toNotify.add(listener);
             }
         }
-
-        if (key instanceof ModuleIdentifier && !listeners.isEmpty()) {
-            Collection<ValueAddedListener> defaultImportListeners = getDefaultImportListeners((ModuleIdentifier) key);
-            Iterator<ValueAddedListener> defaultImportsIterator = defaultImportListeners.iterator();
-            while (defaultImportsIterator.hasNext()) {
-                ValueAddedListener listener = defaultImportsIterator.next();
-                if(listener.ctxNode == storage || hasIdentiticalValue(listener.ctxNode,key,value)) {
-                    defaultImportsIterator.remove();
-                    listener.onValueAdded(key, value);
-                }
-            }
+        for(ValueAddedListener<K> listener : toNotify) {
+            listener.onValueAdded(key, value);
         }
     }
 
-    private Collection<ValueAddedListener> getDefaultImportListeners(final ModuleIdentifier key) {
-        ModuleIdentifier defaultImportKey = new ModuleIdentifierImpl(key.getName(),
-            Optional.fromNullable(key.getNamespace()), Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_IMP));
-        return listeners.get((K)defaultImportKey);
+    private boolean pointsToSameValue(ValueAddedListener<K> listener, V value) {
+        return value == getFrom(listener.ctxNode, listener.key);
     }
 
-    private boolean hasIdentiticalValue(final NamespaceStorageNode ctxNode, final K key, final V value) {
-        return getFrom(ctxNode, key) == value;
-    }
-
-    void addValueListener(final K key, final ValueAddedListener listener) {
-        listeners.put(key, listener);
+    void addValueListener(final ValueAddedListener<K> listener) {
+        listeners.add(listener);
     }
 
     @Override
