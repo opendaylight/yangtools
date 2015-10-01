@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
@@ -96,8 +97,7 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
         QName qName;
 
         if (isExtended) {
-            final Splitter colonSplitter = Splitter.on(":").trimResults();
-            final List<String> nameTokens = colonSplitter.splitToList(ctx.getStatementArgument());
+            final List<String> nameTokens = COLON_SPLITTER.splitToList(ctx.getStatementArgument());
 
             switch (nameTokens.size()) {
             case 1:
@@ -119,25 +119,18 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
 
     private static TypeDefinition<?> parseBaseTypeFromCtx(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
-
-        TypeDefinition<?> baseType;
-
         final QName baseTypeQName = Utils.qNameFromArgument(ctx, ctx.getStatementArgument());
         if (TypeUtils.isYangPrimitiveTypeString(baseTypeQName.getLocalName())) {
-            baseType = TypeUtils.getYangPrimitiveTypeFromString(baseTypeQName.getLocalName());
-        } else {
-            StmtContext<?, TypedefStatement, EffectiveStatement<QName, TypedefStatement>> baseTypeCtx = ctx
-                    .getParentContext().getFromNamespace(TypeNamespace.class, baseTypeQName);
-
-            if (baseTypeCtx == null) {
-                throw new IllegalStateException(String.format("Type '%s' was not found in %s.", baseTypeQName,
-                        ctx.getStatementSourceReference()));
-            }
-
-            baseType = (TypeDefEffectiveStatementImpl) baseTypeCtx.buildEffective();
+            return TypeUtils.getYangPrimitiveTypeFromString(baseTypeQName.getLocalName());
         }
 
-        return baseType;
+        StmtContext<?, TypedefStatement, EffectiveStatement<QName, TypedefStatement>> baseTypeCtx = ctx
+                .getParentContext().getFromNamespace(TypeNamespace.class, baseTypeQName);
+
+        Preconditions.checkArgument(baseTypeCtx != null, "Type '%s' was not found in %s.", baseTypeQName,
+                ctx.getStatementSourceReference());
+
+        return (TypeDefEffectiveStatementImpl) baseTypeCtx.buildEffective();
     }
 
     private void validateTypeConstraints(
@@ -227,8 +220,7 @@ public class ExtendedTypeEffectiveStatementImpl extends EffectiveStatementBase<S
             }
         }
 
-        return !patternConstraints.isEmpty() ? ImmutableList.copyOf(patternConstraints) : Collections
-                .<PatternConstraint> emptyList();
+        return ImmutableList.copyOf(patternConstraints);
     }
 
     @Override
