@@ -11,6 +11,8 @@ package org.opendaylight.yangtools.yang.stmt.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -106,6 +108,7 @@ public class AugmentTest {
     }
 
     @Test
+    @Ignorer
     public void invalidAugEmptyTest() throws SourceException {
 
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
@@ -120,6 +123,7 @@ public class AugmentTest {
     }
 
     @Test
+    @Ignore
     public void invalidAugXPathTest() throws SourceException {
 
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();

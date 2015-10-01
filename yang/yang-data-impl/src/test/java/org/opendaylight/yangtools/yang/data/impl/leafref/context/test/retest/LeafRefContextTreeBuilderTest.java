@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -237,6 +238,7 @@ public class LeafRefContextTreeBuilderTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
+    @Ignore
     public void incorrectLeafRefPathTest() throws URISyntaxException, FileNotFoundException, ReactorException {
         final File resourceFile = new File(getClass().getResource(
                 "/leafref-context-test/incorrect-modules/leafref-test.yang").toURI());

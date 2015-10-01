@@ -112,8 +112,7 @@ public final class Utils {
         try {
             xPath.compile(path);
         } catch (XPathExpressionException e) {
-            throw new IllegalArgumentException(String.format("Argument %s is not valid XPath string at %s", path, ctx
-                    .getStatementSourceReference().toString()), e);
+            LOG.warn("Argument {} is not valid XPath string at {}", path, ctx.getStatementSourceReference().toString());
         }
     }
 
