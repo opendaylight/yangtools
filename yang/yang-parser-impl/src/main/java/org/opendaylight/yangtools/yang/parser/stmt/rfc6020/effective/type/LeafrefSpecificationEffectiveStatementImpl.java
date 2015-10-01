@@ -7,63 +7,56 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.LeafrefSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.Leafref;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PathEffectiveStatementImpl;
 
-public class LeafrefSpecificationEffectiveStatementImpl extends
-        EffectiveStatementBase<String, TypeStatement.LeafrefSpecification> implements LeafrefTypeDefinition, TypeDefinitionEffectiveBuilder {
+public final class LeafrefSpecificationEffectiveStatementImpl extends EffectiveStatementBase<String, LeafrefSpecification>
+        implements LeafrefTypeDefinition, TypeDefinitionEffectiveBuilder,
+        DefinitionAwareTypeEffectiveStatement<LeafrefSpecification, LeafrefTypeDefinition> {
 
-    public static final String LOCAL_NAME = "leafref";
-    private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, LOCAL_NAME);
-    private static final SchemaPath PATH = SchemaPath.create(true, QNAME);
-    private static final String DESCRIPTION = "The leafref type is used to reference a particular leaf instance in the data tree.";
-    private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.9";
-    private static final String UNITS = "";
+    private final Leafref type;
 
-    private final SchemaPath path;
-    private RevisionAwareXPath xpath;
-    private Leafref leafrefInstance = null;
-
-    public LeafrefSpecificationEffectiveStatementImpl(final StmtContext<String, TypeStatement.LeafrefSpecification, EffectiveStatement<String, TypeStatement.LeafrefSpecification>> ctx) {
+    public LeafrefSpecificationEffectiveStatementImpl(final StmtContext<String, LeafrefSpecification, EffectiveStatement<String, LeafrefSpecification>> ctx) {
         super(ctx);
 
-        path = Utils.getSchemaPath(ctx.getParentContext()).createChild(QNAME);
-
+        final SchemaPath path = Utils.getSchemaPath(ctx.getParentContext()).createChild(BaseTypes.LEAFREF_QNAME);
+        RevisionAwareXPath xpath = null;
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof PathEffectiveStatementImpl) {
                 xpath = ((PathEffectiveStatementImpl) effectiveStatement).argument();
             }
         }
+
+        type = Leafref.create(path, xpath);
     }
 
     @Override
     public RevisionAwareXPath getPathStatement() {
-        return xpath;
+        return type.getPathStatement();
     }
 
     @Override
     public LeafrefTypeDefinition getBaseType() {
-        return null;
+        return type.getBaseType();
     }
 
     @Override
     public String getUnits() {
-        return UNITS;
+        return type.getUnits();
     }
 
     @Override
@@ -73,76 +66,52 @@ public class LeafrefSpecificationEffectiveStatementImpl extends
 
     @Override
     public QName getQName() {
-        return QNAME;
+        return type.getQName();
     }
 
     @Override
     public SchemaPath getPath() {
-        return path;
+        return type.getPath();
     }
 
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return Collections.emptyList();
+        return type.getUnknownSchemaNodes();
     }
 
     @Override
     public String getDescription() {
-        return DESCRIPTION;
+        return type.getDescription();
     }
 
     @Override
     public String getReference() {
-        return REFERENCE;
+        return type.getReference();
     }
 
     @Override
     public Status getStatus() {
-        return Status.CURRENT;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(xpath);
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        LeafrefSpecificationEffectiveStatementImpl other = (LeafrefSpecificationEffectiveStatementImpl) obj;
-        return Objects.equals(xpath, other.xpath);
+        return type.getStatus();
     }
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("type ");
-        builder.append(QNAME);
-        builder.append(" [xpath=");
-        builder.append(xpath);
-        builder.append("]");
-        return builder.toString();
+        return type.toString();
     }
 
     @Override
     public Leafref buildType() {
+        return type;
+    }
 
-        if (leafrefInstance != null) {
-            return leafrefInstance;
-        }
-        leafrefInstance = Leafref.create(path, xpath);
+    @Override
+    public TypeEffectiveStatement<LeafrefSpecification> derive(final EffectiveStatement<?, LeafrefSpecification> stmt,
+            final SchemaPath path) {
+        return new DerivedEffectiveStatement<LeafrefSpecification, LeafrefTypeDefinition>(stmt, path, this);
+    }
 
-        return leafrefInstance;
+    @Override
+    public LeafrefTypeDefinition getTypeSpecificDefinition() {
+        return this;
     }
 }
