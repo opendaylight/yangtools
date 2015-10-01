@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import java.util.Collection;
@@ -32,23 +31,20 @@ public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<
     private final StatementDefinition definition;
     private final StatementSource source;
 
-    protected AbstractDeclaredStatement(StmtContext<A,?,?> context) {
+    protected AbstractDeclaredStatement(final StmtContext<A,?,?> context) {
         rawArgument = context.rawStatementArgument();
         argument = context.getStatementArgument();
         source = context.getStatementSource();
         definition = context.getPublicDefinition();
         /*
-         *  Collections.transform could not be used here, since it is lazily
-         *  transformed and retains pointer to original collection, which may
-         *  contains references to mutable context.
-         *
-         *  FluentIterable.tranform().toList() - actually performs transformation
-         *  and creates immutable list from transformed results.
+         * Perform an explicit copy, because Collections2.transform() is lazily transformed and retains pointer to
+         * original collection, which may contains references to mutable context.
          */
-        substatements = FluentIterable.from(context.declaredSubstatements()).transform(StmtContextUtils.buildDeclared()).toList();
+        substatements = ImmutableList.copyOf(Collections2.transform(context.declaredSubstatements(),
+            StmtContextUtils.buildDeclared()));
     }
 
-    protected final <S extends DeclaredStatement<?>> S firstDeclared(Class<S> type) {
+    protected final <S extends DeclaredStatement<?>> S firstDeclared(final Class<S> type) {
         return type.cast(Iterables.find(substatements, Predicates.instanceOf(type)));
     }
 
@@ -78,7 +74,7 @@ public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<
     }
 
     @SuppressWarnings("unchecked")
-    protected final <S extends DeclaredStatement<?>> Collection<? extends S> allDeclared(Class<S> type) {
-        return Collection.class.cast(Collections2.filter(substatements,Predicates.instanceOf(type)));
+    protected final <S extends DeclaredStatement<?>> Collection<? extends S> allDeclared(final Class<S> type) {
+        return Collection.class.cast(Collections2.filter(substatements, Predicates.instanceOf(type)));
     }
 }

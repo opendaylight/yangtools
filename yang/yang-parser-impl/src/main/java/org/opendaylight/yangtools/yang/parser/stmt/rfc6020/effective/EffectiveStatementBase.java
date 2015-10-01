@@ -10,16 +10,11 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.NoSuchElementException;
-
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -50,7 +45,7 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
         Collection<StatementContextBase<?, ?, ?>> substatementsInit = new LinkedList<>();
 
         for(StatementContextBase<?, ?, ?> declaredSubstatement : declaredSubstatements) {
-            if(declaredSubstatement.getPublicDefinition() == Rfc6020Mapping.USES) {
+            if (declaredSubstatement.getPublicDefinition() == Rfc6020Mapping.USES) {
                 substatementsInit.add(declaredSubstatement);
                 substatementsInit.addAll(declaredSubstatement.getEffectOfStatement());
                 ((StatementContextBase<?, ?, ?>)ctx).removeStatementsFromEffectiveSubstatements(declaredSubstatement
@@ -62,8 +57,9 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
 
         substatementsInit.addAll(effectiveSubstatements);
 
-        this.substatements = FluentIterable.from(substatementsInit).filter(StmtContextUtils.IS_SUPPORTED_TO_BUILD_EFFECTIVE)
-                .transform(StmtContextUtils.buildEffective()).toList();
+        this.substatements = ImmutableList.copyOf(Collections2.transform(
+            Collections2.filter(substatementsInit, StmtContextUtils.IS_SUPPORTED_TO_BUILD_EFFECTIVE),
+                StmtContextUtils.buildEffective()));
         declaredInstance = ctx.buildDeclared();
     }
 
@@ -116,14 +112,7 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
 
     @SuppressWarnings("unchecked")
     protected final <T> Collection<T> allSubstatementsOfType(final Class<T> type) {
-        Collection<T> result = null;
-
-        try {
-            result = Collection.class.cast(Collections2.filter(substatements, Predicates.instanceOf(type)));
-        } catch (NoSuchElementException e) {
-            result = Collections.emptyList();
-        }
-        return result;
+        return Collection.class.cast(Collections2.filter(substatements, Predicates.instanceOf(type)));
     }
 
     protected final <T> T firstSubstatementOfType(final Class<T> type) {
