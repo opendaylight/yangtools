@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import java.util.LinkedList;
-
-import java.util.List;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.HashMultimap;
@@ -20,6 +17,8 @@ import java.util.Collections;
 import java.util.EventListener;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Identifiable;
@@ -486,7 +485,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         NamespaceBehaviour<K, V, N> behaviour = getBehaviourRegistry().getNamespaceBehaviour(type);
         if (behaviour instanceof NamespaceBehaviourWithListeners) {
             NamespaceBehaviourWithListeners<K, V, N> casted = (NamespaceBehaviourWithListeners<K, V, N>) behaviour;
-            casted.addValueListener(key, new ValueAddedListener(this) {
+            casted.addValueListener(new ValueAddedListener<K>(this, key) {
                 @Override
                 void onValueAdded(Object key, Object value) {
                     try {
