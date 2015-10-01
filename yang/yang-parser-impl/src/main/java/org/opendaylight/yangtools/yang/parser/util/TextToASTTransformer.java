@@ -8,20 +8,22 @@
 
 package org.opendaylight.yangtools.yang.parser.util;
 
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Charsets;
 import com.google.common.util.concurrent.CheckedFuture;
 import com.google.common.util.concurrent.Futures;
 import java.io.IOException;
 import java.io.InputStream;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.YangContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.model.repo.util.SchemaSourceTransformer;
+import org.opendaylight.yangtools.yang.parser.impl.YangModelBasicValidationListener;
+import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,15 +33,17 @@ import org.slf4j.LoggerFactory;
  */
 @Beta
 public final class TextToASTTransformer extends SchemaSourceTransformer<YangTextSchemaSource, ASTSchemaSource> {
-
     public static final class TextToASTTransformation implements Transformation<YangTextSchemaSource, ASTSchemaSource> {
         @Override
         public CheckedFuture<ASTSchemaSource, SchemaSourceException> apply(final YangTextSchemaSource input) throws IOException, YangSyntaxErrorException {
             try (InputStream is = input.openStream()) {
-                final ParserRuleContext ctx = new YangStatementSourceImpl(is).getYangAST();
+                final YangContext ctx = YangParserImpl.parseYangSource(is);
                 LOG.debug("Model {} parsed successfully", input);
 
-                //:TODO missing validation (YangModelBasicValidationListener should be re-implemented to new parser)
+                final ParseTreeWalker walker = new ParseTreeWalker();
+                final YangModelBasicValidationListener validator = new YangModelBasicValidationListener();
+                walker.walk(validator, ctx);
+                LOG.debug("Model {} validated successfully", input);
 
                 // Backwards compatibility
                 final String text = input.asCharSource(Charsets.UTF_8).read();
@@ -60,3 +64,4 @@ public final class TextToASTTransformer extends SchemaSourceTransformer<YangText
         return new TextToASTTransformer(provider, consumer);
     }
 }
+

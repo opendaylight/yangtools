@@ -70,8 +70,7 @@ public class YangToSourcesPluginTestIT {
         } catch (VerificationException e) {
             assertVerificationException(
                     e,
-                    "org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException: Imported module " +
-                    "[ModuleIdentifierImpl{name='unknownDep', namespace=null, revision=Wed Feb 27 00:00:00 ");
+                    "org.opendaylight.yangtools.yang.parser.util.YangValidationException: Not existing module imported:unknownDep:2013-02-27 by:private:2013-02-27");
             return;
         }
 
@@ -198,3 +197,4 @@ public class YangToSourcesPluginTestIT {
     }
 
 }
+
