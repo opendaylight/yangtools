@@ -13,27 +13,18 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
-import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
@@ -41,6 +32,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// FIXME: Move this to the AugmentStatementDefinition#ApplyAction
 public final class AugmentUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(AugmentUtils.class);
@@ -63,12 +55,12 @@ public final class AugmentUtils {
 
     public static void copyFromSourceToTarget(final StatementContextBase<?, ?, ?> sourceCtx,
             final StatementContextBase<?, ?, ?> targetCtx) throws SourceException {
-
         copyDeclaredStmts(sourceCtx, targetCtx);
         copyEffectiveStmts(sourceCtx, targetCtx);
     }
 
-    public static void copyDeclaredStmts(final StatementContextBase<?, ?, ?> sourceCtx,
+    // FIXME: Declared statements should not be copied.
+    private static void copyDeclaredStmts(final StatementContextBase<?, ?, ?> sourceCtx,
             final StatementContextBase<?, ?, ?> targetCtx) throws SourceException {
 
         Collection<? extends StatementContextBase<?, ?, ?>> declaredSubStatements = sourceCtx.declaredSubstatements();
@@ -92,7 +84,7 @@ public final class AugmentUtils {
         }
     }
 
-    public static void copyEffectiveStmts(final StatementContextBase<?, ?, ?> sourceCtx,
+    private static void copyEffectiveStmts(final StatementContextBase<?, ?, ?> sourceCtx,
             final StatementContextBase<?, ?, ?> targetCtx) throws SourceException {
 
         Collection<? extends StatementContextBase<?, ?, ?>> effectiveSubstatements = sourceCtx.effectiveSubstatements();
@@ -155,28 +147,7 @@ public final class AugmentUtils {
         }
     }
 
-    public static QNameModule getNewQNameModule(final StatementContextBase<?, ?, ?> targetCtx,
-            final StatementContextBase<?, ?, ?> sourceCtx) {
-        Object targetStmtArgument = targetCtx.getStatementArgument();
-
-        final StatementContextBase<?, ?, ?> root = sourceCtx.getRoot();
-        final QNameModule sourceQNameModule = root.getFromNamespace(ModuleCtxToModuleQName.class, root);
-
-        if (targetStmtArgument instanceof QName) {
-            QName targetQName = (QName) targetStmtArgument;
-            QNameModule targetQNameModule = targetQName.getModule();
-
-            if (targetQNameModule.equals(sourceQNameModule)) {
-                return null;
-            } else {
-                return targetQNameModule;
-            }
-        } else {
-            return null;
-        }
-    }
-
-    public static boolean needToCopyByAugment(final StmtContext<?, ?, ?> stmtContext) {
+    private static boolean needToCopyByAugment(final StmtContext<?, ?, ?> stmtContext) {
 
         Set<StatementDefinition> noCopyDefSet = new HashSet<>();
         noCopyDefSet.add(Rfc6020Mapping.USES);
@@ -195,110 +166,7 @@ public final class AugmentUtils {
         return reusedDefSet.contains(def);
     }
 
-    public static StatementContextBase<?, ?, ?> getAugmentTargetCtx(
-            final Mutable<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> augmentNode) {
-
-        final SchemaNodeIdentifier augmentTargetNode = augmentNode.getStatementArgument();
-        if (augmentTargetNode == null) {
-            throw new IllegalArgumentException(
-                    "Augment argument null, something bad happened in some of previous parsing phases");
-        }
-
-        List<StatementContextBase<?, ?, ?>> rootStatementCtxList = new LinkedList<>();
-        if (augmentTargetNode.isAbsolute()) {
-
-            QNameModule module = augmentTargetNode.getPathFromRoot().iterator().next().getModule();
-
-            StatementContextBase<?, ?, ?> rootStatementCtx = (StatementContextBase<?, ?, ?>) augmentNode
-                    .getFromNamespace(NamespaceToModule.class, module);
-            rootStatementCtxList.add(rootStatementCtx);
-
-            final Map<?, ?> subModules = rootStatementCtx.getAllFromNamespace(IncludedModuleContext.class);
-            if (subModules != null) {
-                rootStatementCtxList.addAll((Collection<? extends StatementContextBase<?, ?, ?>>) subModules.values());
-            }
-
-        } else {
-            StatementContextBase<?, ?, ?> parent = (StatementContextBase<?, ?, ?>) augmentNode.getParentContext();
-            if (StmtContextUtils.producesDeclared(parent, UsesStatement.class)) {
-                rootStatementCtxList.add(parent.getParentContext());
-            } else {
-                // error
-            }
-        }
-
-        StatementContextBase<?, ?, ?> augmentTargetCtx = null;
-        for (final StatementContextBase<?, ?, ?> rootStatementCtx : rootStatementCtxList) {
-            augmentTargetCtx = findCtxOfNodeInRoot(rootStatementCtx, augmentTargetNode);
-            if (augmentTargetCtx != null) {
-                break;
-            }
-        }
-
-        return augmentTargetCtx;
-    }
-
-    @Nullable
-    public static StatementContextBase<?, ?, ?> findCtxOfNodeInSubstatements(final StatementContextBase<?, ?, ?> rootStmtCtx,
-            final Iterable<QName> path) {
-
-        StatementContextBase<?, ?, ?> parent = rootStmtCtx;
-
-        Iterator<QName> pathIter = path.iterator();
-        while (pathIter.hasNext()) {
-            QName nextPathQName = pathIter.next();
-            StatementContextBase<?, ?, ?> foundSubstatement = getSubstatementByQName(parent, nextPathQName);
-
-            if (foundSubstatement == null) {
-                return null;
-            }
-            if (!pathIter.hasNext()) {
-                return foundSubstatement;
-            }
-
-            parent = foundSubstatement;
-        }
-
-        return null;
-    }
-
-    public static StatementContextBase<?, ?, ?> getSubstatementByQName(final StatementContextBase<?, ?, ?> parent,
-            final QName nextPathQName) {
-
-        Collection<StatementContextBase<?, ?, ?>> declaredSubstatement = parent.declaredSubstatements();
-        Collection<StatementContextBase<?, ?, ?>> effectiveSubstatement = parent.effectiveSubstatements();
-
-        Collection<StatementContextBase<?, ?, ?>> allSubstatements = new LinkedList<>();
-        allSubstatements.addAll(declaredSubstatement);
-        allSubstatements.addAll(effectiveSubstatement);
-
-        for (StatementContextBase<?, ?, ?> substatement : allSubstatements) {
-            Object substatementArgument = substatement.getStatementArgument();
-            QName substatementQName;
-            if (substatementArgument instanceof QName) {
-                substatementQName = (QName) substatementArgument;
-
-                if (nextPathQName.getLocalName().equals(
-                        substatementQName.getLocalName())) {
-                    if (isSupportedAugmentTarget(substatement)) {
-                        return substatement;
-                    } else if (Utils.isUnknownNode(substatement)) {
-                        // augment into unknown node
-                        String message = "Module '"
-                                + substatement.getRoot().getStatementArgument()
-                                + "': augment into unknown node '"
-                                + substatementArgument + "'.";
-                        LOG.warn(message);
-                        return substatement;
-                    }
-                }
-            }
-        }
-
-        return null;
-    }
-
-    public static boolean isSupportedAugmentTarget(final StatementContextBase<?, ?, ?> substatementCtx) {
+    static boolean isSupportedAugmentTarget(final StatementContextBase<?, ?, ?> substatementCtx) {
 
         /*
          * :TODO Substatement must be allowed augment target type e.g. Container, etc... and must be not for example
@@ -315,9 +183,4 @@ public final class AugmentUtils {
                 || allowedAugmentTargets.contains(substatementCtx.getPublicDefinition());
     }
 
-    @Nullable
-    public static StatementContextBase<?, ?, ?> findCtxOfNodeInRoot(final StatementContextBase<?, ?, ?> rootStmtCtx,
-            final SchemaNodeIdentifier node) {
-        return findCtxOfNodeInSubstatements(rootStmtCtx, node.getPathFromRoot());
-    }
 }
