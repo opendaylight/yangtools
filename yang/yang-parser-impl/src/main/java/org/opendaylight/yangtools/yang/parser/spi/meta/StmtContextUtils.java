@@ -11,7 +11,7 @@ import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -170,7 +170,7 @@ public final class StmtContextUtils {
             final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, ?> keyStmtCtx,
             final QNameModule newQNameModule) {
 
-        Set<SchemaNodeIdentifier> newKeys = new HashSet<>();
+        Set<SchemaNodeIdentifier> newKeys = new LinkedHashSet<>();
         for (String keyToken : KEY_SPLITTER.split(keyStmtCtx.rawStatementArgument())) {
             QName keyQName = QName.create(newQNameModule, keyToken);
             SchemaNodeIdentifier keyIdentifier = SchemaNodeIdentifier.create(false, keyQName);
