@@ -7,11 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.KeyEffectiveStatementImpl;
+import com.google.common.base.Splitter;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -21,8 +20,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import com.google.common.base.Splitter;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.KeyEffectiveStatementImpl;
 
 public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<SchemaNodeIdentifier>> implements
         KeyStatement {
@@ -51,7 +51,7 @@ public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<Schem
                 throw new IllegalArgumentException();
             }
 
-            Set<SchemaNodeIdentifier> keyNodes = new HashSet<>();
+            Set<SchemaNodeIdentifier> keyNodes = new LinkedHashSet<>();
 
             for (String keyToken : keyTokens) {
 
