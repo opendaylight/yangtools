@@ -1,0 +1,14 @@
+module bug4079-test {
+
+    yang-version "1";
+    namespace "urn:opendaylight.org/bug4079-test";
+    prefix "b4079t";
+
+    container test-container {
+        leaf test-leaf {
+            type string {
+                pattern "(\p{IsBasicLatin}|\p{IsLatin-1Supplement})*";
+            }
+        }
+    }
+}
