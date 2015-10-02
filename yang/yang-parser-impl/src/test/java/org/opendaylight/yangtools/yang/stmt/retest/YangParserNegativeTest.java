@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedEx
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
+import com.google.common.base.Throwables;
 
 public class YangParserNegativeTest {
 
@@ -36,10 +37,10 @@ public class YangParserNegativeTest {
                 fail("SomeModifiersUnresolvedException should be thrown");
             }
         } catch (SomeModifiersUnresolvedException e) {
-            final Throwable suppressed2levelsDown = e.getSuppressed()[0].getSuppressed()[0];
-            assertTrue(suppressed2levelsDown instanceof InferenceException);
-            assertTrue(suppressed2levelsDown.getMessage().startsWith("Imported module"));
-            assertTrue(suppressed2levelsDown.getMessage().endsWith("was not found."));
+            Throwable rootCause = Throwables.getRootCause(e);
+            assertTrue(rootCause instanceof InferenceException);
+            assertTrue(rootCause.getMessage().startsWith("Imported module"));
+            assertTrue(rootCause.getMessage().endsWith("was not found."));
         }
     }
 
@@ -73,11 +74,11 @@ public class YangParserNegativeTest {
                 }
             }
         } catch (SomeModifiersUnresolvedException e) {
-            final Throwable suppressed2levelsDown = e.getSuppressed()[0].getSuppressed()[0];
-            assertTrue(suppressed2levelsDown instanceof InferenceException);
+            final Throwable rootCause = Throwables.getRootCause(e);
+            assertTrue(rootCause instanceof InferenceException);
             assertEquals(
                     "Augment target not found: Absolute{path=[(urn:simple.container.demo?revision=1970-01-01)unknown]}",
-                    suppressed2levelsDown.getMessage());
+                    rootCause.getMessage());
         }
     }
 
