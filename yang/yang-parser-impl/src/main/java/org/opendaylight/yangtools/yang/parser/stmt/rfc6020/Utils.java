@@ -122,6 +122,7 @@ public final class Utils {
 
     static RevisionAwareXPath parseXPath(final StmtContext<?, ?, ?> ctx, final String path) {
         final XPath xPath = XPATH_FACTORY.get().newXPath();
+        xPath.setNamespaceContext(StmtNamespaceContext.create(ctx));
 
         final String trimmed = trimSingleLastSlashFromXPath(path);
         try {
