@@ -92,20 +92,17 @@ public final class StmtContextUtils {
         return null;
     }
 
+    @SafeVarargs
     public static StmtContext<?, ?, ?> findFirstDeclaredSubstatement(final StmtContext<?, ?, ?> stmtContext,
             int startIndex, final Class<? extends DeclaredStatement<?>>... types) {
         if (startIndex >= types.length) {
             return null;
         }
 
-        Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements = stmtContext.declaredSubstatements();
-        for (StmtContext<?, ?, ?> subStmtContext : declaredSubstatements) {
+        for (StmtContext<?, ?, ?> subStmtContext : stmtContext.declaredSubstatements()) {
             if (producesDeclared(subStmtContext,types[startIndex])) {
-                if (startIndex + 1 == types.length) {
-                    return subStmtContext;
-                } else {
-                    return findFirstDeclaredSubstatement(subStmtContext, ++startIndex, types);
-                }
+                return startIndex + 1 == types.length ? subStmtContext
+                        : findFirstDeclaredSubstatement(subStmtContext, ++startIndex, types);
             }
         }
         return null;
@@ -118,7 +115,7 @@ public final class StmtContextUtils {
                 return subStmtContext;
             }
             if (sublevel > 1) {
-                StmtContext<?, ?, ?> result = findFirstDeclaredSubstatementOnSublevel(
+                final StmtContext<?, ?, ?> result = findFirstDeclaredSubstatementOnSublevel(
                     subStmtContext, declaredType, --sublevel);
                 if (result != null) {
                     return result;
@@ -136,7 +133,7 @@ public final class StmtContextUtils {
                 return subStmtContext;
             }
 
-            StmtContext<?, ?, ?> result = findDeepFirstDeclaredSubstatement(subStmtContext, declaredType);
+            final StmtContext<?, ?, ?> result = findDeepFirstDeclaredSubstatement(subStmtContext, declaredType);
             if (result != null) {
                 return result;
             }
@@ -152,7 +149,7 @@ public final class StmtContextUtils {
 
     public static boolean isInExtensionBody(final StmtContext<?,?,?> stmtCtx) {
         StmtContext<?,?,?> current = stmtCtx;
-        while(!current.getParentContext().isRootContext()) {
+        while (!current.getParentContext().isRootContext()) {
             current = current.getParentContext();
             if (producesDeclared(current, UnknownStatementImpl.class)) {
                 return true;
@@ -172,9 +169,8 @@ public final class StmtContextUtils {
 
         Set<SchemaNodeIdentifier> newKeys = new LinkedHashSet<>();
         for (String keyToken : KEY_SPLITTER.split(keyStmtCtx.rawStatementArgument())) {
-            QName keyQName = QName.create(newQNameModule, keyToken);
-            SchemaNodeIdentifier keyIdentifier = SchemaNodeIdentifier.create(false, keyQName);
-            newKeys.add(keyIdentifier);
+            final QName keyQName = QName.create(newQNameModule, keyToken);
+            newKeys.add(SchemaNodeIdentifier.create(false, keyQName));
         }
 
         return newKeys;
