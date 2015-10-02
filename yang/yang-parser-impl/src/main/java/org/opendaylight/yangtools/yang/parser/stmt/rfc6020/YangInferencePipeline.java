@@ -73,6 +73,7 @@ public final class YangInferencePipeline {
             .addSupport(sourceLocal(IncludedModuleContext.class))
             .addSupport(sourceLocal(IncludedSubmoduleNameToIdentifier.class))
             .addSupport(sourceLocal(ImpPrefixToModuleIdentifier.class))
+            .addSupport(sourceLocal(URIStringToImpPrefix.class))
             .addSupport(sourceLocal(BelongsToModuleContext.class))
             .addSupport(sourceLocal(QNameToStatementDefinition.class))
             .addSupport(sourceLocal(BelongsToPrefixToModuleName.class)).build();
