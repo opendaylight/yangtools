@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+
 /**
  * Extended Type represents YANG type derived from other type.
  *
@@ -27,7 +28,9 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
  * may define additional constraints, modify description or reference
  * of parent type or provide new type capture for specific use-cases.
  *
+ * @deprecated Use of this class is deprecated, use {@link DerivedType} instead.
  */
+@Deprecated
 public class ExtendedType implements TypeDefinition<TypeDefinition<?>> {
 
     private final QName typeName;
