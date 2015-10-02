@@ -41,8 +41,11 @@ import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNa
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceSpecificContext.PhaseCompletionProgress;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBehaviour.Registry {
+    private static final Logger LOG = LoggerFactory.getLogger(BuildGlobalContext.class);
 
     private static final List<ModelProcessingPhase> PHASE_EXECUTION_ORDER = ImmutableList.<ModelProcessingPhase>builder()
             .add(ModelProcessingPhase.SOURCE_LINKAGE)
@@ -198,6 +201,28 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
             final List<SourceSpecificContext> sourcesToProgress) {
         for(SourceSpecificContext failedSource : sourcesToProgress) {
             SourceException sourceEx = failedSource.failModifiers(currentPhase);
+
+            // Print full stack traces if debug is enabled.
+            Throwable[] suppressed = sourceEx.getSuppressed();
+            if(LOG.isDebugEnabled()) {
+                LOG.error("Failed to parse yang from source {}", failedSource, sourceEx);
+                for(int i = 0; i < suppressed.length; i++) {
+                    LOG.error("Supressed exception " + (i + 1), suppressed[i]);
+                }
+            } else {
+                String msg = "Failed to parse yang from source " + failedSource;
+                if(suppressed.length == 1) {
+                    msg += ": " + suppressed[0].getMessage();
+                } else {
+                    msg += ". Cause(s):";
+                    for(int i = 0; i < suppressed.length; i++) {
+                        msg += String.format("\n\t%d) %s", (i + 1), suppressed[i].getMessage());
+                    }
+                }
+
+                LOG.error(msg);
+            }
+
             buildFailure.addSuppressed(sourceEx);
         }
         return buildFailure;
