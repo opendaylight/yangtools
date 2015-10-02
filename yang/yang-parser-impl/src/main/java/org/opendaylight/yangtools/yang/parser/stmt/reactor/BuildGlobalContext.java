@@ -43,8 +43,11 @@ import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNa
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceSpecificContext.PhaseCompletionProgress;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBehaviour.Registry {
+    private static final Logger LOG = LoggerFactory.getLogger(BuildGlobalContext.class);
 
     private static final List<ModelProcessingPhase> PHASE_EXECUTION_ORDER = ImmutableList.<ModelProcessingPhase>builder()
             .add(ModelProcessingPhase.SOURCE_LINKAGE)
@@ -125,7 +128,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> createNamespaceContext(
-            NamespaceBehaviour<K, V, N> potentialRaw) {
+            final NamespaceBehaviour<K, V, N> potentialRaw) {
         if (potentialRaw instanceof DerivedNamespaceBehaviour) {
             VirtualNamespaceContext derivedContext =
                     new VirtualNamespaceContext((DerivedNamespaceBehaviour) potentialRaw);
@@ -211,8 +214,28 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     private SomeModifiersUnresolvedException addSourceExceptions(final SomeModifiersUnresolvedException buildFailure,
             final List<SourceSpecificContext> sourcesToProgress) {
-        for(SourceSpecificContext failedSource : sourcesToProgress) {
-            SourceException sourceEx = failedSource.failModifiers(currentPhase);
+        for (SourceSpecificContext failedSource : sourcesToProgress) {
+            final SourceException sourceEx = failedSource.failModifiers(currentPhase);
+
+            // Workaround for broken logging implementations which ignore suppressed exceptions
+            LOG.error("Failed to parse YANG from source {}", failedSource, sourceEx);
+            final Throwable[] suppressed = sourceEx.getSuppressed();
+            if (suppressed.length > 0) {
+                LOG.error("{} additional errors reported:", suppressed.length);
+
+                int i = 1;
+                for (Throwable t : suppressed) {
+                    // FIXME: this should be configured in the appender, really
+                    if (LOG.isDebugEnabled()) {
+                        LOG.error("Error {}: {}", i, t.getMessage(), t);
+                    } else {
+                        LOG.error("Error {}: {}", i, t.getMessage());
+                    }
+
+                    i++;
+                }
+            }
+
             buildFailure.addSuppressed(sourceEx);
         }
         return buildFailure;
