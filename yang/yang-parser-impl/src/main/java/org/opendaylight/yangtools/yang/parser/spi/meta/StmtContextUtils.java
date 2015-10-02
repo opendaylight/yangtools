@@ -22,9 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 
 public final class StmtContextUtils {
-
-    public static final char LIST_KEY_SEPARATOR = ' ';
-    private static final Splitter KEY_SPLITTER = Splitter.on(LIST_KEY_SEPARATOR).omitEmptyStrings().trimResults();
+    public static final Splitter LIST_KEY_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
 
     private static final Function<StmtContext<?, ?,?>, DeclaredStatement<?>> BUILD_DECLARED =
             new Function<StmtContext<?,?,?>, DeclaredStatement<?>>() {
@@ -168,7 +166,7 @@ public final class StmtContextUtils {
             final QNameModule newQNameModule) {
 
         Set<SchemaNodeIdentifier> newKeys = new LinkedHashSet<>();
-        for (String keyToken : KEY_SPLITTER.split(keyStmtCtx.rawStatementArgument())) {
+        for (String keyToken : LIST_KEY_SPLITTER.split(keyStmtCtx.rawStatementArgument())) {
             final QName keyQName = QName.create(newQNameModule, keyToken);
             newKeys.add(SchemaNodeIdentifier.create(false, keyQName));
         }
