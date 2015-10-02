@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -25,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
 
 public class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
@@ -35,6 +37,7 @@ public class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
 
     private final ImmutableList<DeclaredStatement<?>> rootDeclaredStatements;
     private final ImmutableList<EffectiveStatement<?, ?>> rootEffectiveStatements;
+    private final Set<ModuleIdentifier> moduleIdentifiers;
 
     public EffectiveSchemaContext(final List<DeclaredStatement<?>> rootDeclaredStatements,
             final List<EffectiveStatement<?, ?>> rootEffectiveStatements) {
@@ -57,14 +60,16 @@ public class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
                 new TreeMap<URI, Collection<Module>>(), MODULE_SET_SUPPLIER);
         final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(
                 new TreeMap<String, Collection<Module>>(), MODULE_SET_SUPPLIER);
-
+        Set<ModuleIdentifier> modIdBuilder = new HashSet<>();
         for (Module m : modulesInit) {
             nameMap.put(m.getName(), m);
             nsMap.put(m.getNamespace(), m);
+            modIdBuilder.add(new ModuleIdentifierImpl(m.getName(), Optional.of(m.getNamespace()), Optional.of(m.getRevision())));
         }
 
         namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
         nameToModules = ImmutableSetMultimap.copyOf(nameMap);
+        moduleIdentifiers = ImmutableSet.copyOf(modIdBuilder);
     }
 
     public EffectiveSchemaContext(final Set<Module> modules) {
@@ -88,16 +93,19 @@ public class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
         final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(
                 new TreeMap<String, Collection<Module>>(), MODULE_SET_SUPPLIER);
 
+        Set<ModuleIdentifier> modIdBuilder = new HashSet<>();
         for (Module m : modules) {
             nameMap.put(m.getName(), m);
             nsMap.put(m.getNamespace(), m);
+            modIdBuilder.add(new ModuleIdentifierImpl(m.getName(), Optional.of(m.getNamespace()), Optional.of(m.getRevision())));
         }
 
         namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
         nameToModules = ImmutableSetMultimap.copyOf(nameMap);
+        moduleIdentifiers = ImmutableSet.copyOf(modIdBuilder);
 
-        rootDeclaredStatements = null;
-        rootEffectiveStatements = null;
+        rootDeclaredStatements = ImmutableList.of();
+        rootEffectiveStatements = ImmutableList.of();
     }
 
     public static SchemaContext resolveSchemaContext(final Set<Module> modules) {
@@ -130,6 +138,11 @@ public class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
     @Override
     protected SetMultimap<String, Module> getNameToModules() {
         return nameToModules;
+    }
+
+    @Override
+    public Set<ModuleIdentifier> getAllModuleIdentifiers() {
+        return moduleIdentifiers;
     }
 
     @Override

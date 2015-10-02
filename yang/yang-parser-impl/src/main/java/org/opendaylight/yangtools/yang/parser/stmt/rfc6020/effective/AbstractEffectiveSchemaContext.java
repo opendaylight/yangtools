@@ -259,12 +259,6 @@ public abstract class AbstractEffectiveSchemaContext implements SchemaContext {
         return Collections.emptySet();
     }
 
-    // FIXME: should work for submodules too
-    @Override
-    public Set<ModuleIdentifier> getAllModuleIdentifiers() {
-        return getIdentifiersToSources().keySet();
-    }
-
     @Override
     public Optional<String> getModuleSource(
             final ModuleIdentifier moduleIdentifier) {
