@@ -46,12 +46,12 @@ module test2 {
                 }
             }
         }
-    }
 
-    container container-a {
-        container container-b {
-            leaf leaf-d {
-                type string;
+        container container-a {
+            container container-b {
+                leaf leaf-d {
+                    type string;
+                }
             }
         }
     }

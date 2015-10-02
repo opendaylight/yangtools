@@ -125,7 +125,7 @@ final class NormalizedNodeNavigator extends DefaultNavigator implements NamedAcc
 
     @Override
     public boolean isElement(final Object object) {
-        return object instanceof NormalizedNode;
+        return object instanceof NormalizedNodeContext;
     }
 
     @Override
@@ -145,7 +145,7 @@ final class NormalizedNodeNavigator extends DefaultNavigator implements NamedAcc
 
     @Override
     public boolean isText(final Object object) {
-        return false;
+        return object instanceof String;
     }
 
     @Override
@@ -197,7 +197,7 @@ final class NormalizedNodeNavigator extends DefaultNavigator implements NamedAcc
 
     @Override
     public String getTextStringValue(final Object text) {
-        throw new UnsupportedOperationException();
+        return text.toString();
     }
 
     @Override

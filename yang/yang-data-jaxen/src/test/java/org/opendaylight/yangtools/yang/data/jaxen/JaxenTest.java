@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.data.jaxen;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
 import com.google.common.base.Converter;
 import com.google.common.base.Optional;
 import com.google.common.base.VerifyException;
@@ -68,7 +69,8 @@ public class JaxenTest {
         xpathSchemaContext = new JaxenSchemaContextFactory().createContext(schemaContext);
         assertNotNull(xpathSchemaContext);
 
-        xpathExpression = xpathSchemaContext.compileExpression(createSchemaPath(), createPrefixes(), createXPath());
+        xpathExpression = xpathSchemaContext.compileExpression(createSchemaPath(), createPrefixes(), createXPath
+                (false));
         assertNotNull(xpathExpression);
 
         xpathDocument = xpathSchemaContext.createDocument(createNormalizedNodes());
@@ -78,7 +80,7 @@ public class JaxenTest {
         assertEquals("root", rootNodeName);
 
         Optional<? extends XPathResult<?>> resultExpressionEvaluate = xpathExpression
-                .evaluate(xpathDocument, createYangInstanceIdentifier());
+                .evaluate(xpathDocument, createYangInstanceIdentifier(false));
         assertNotNull(resultExpressionEvaluate);
         assertTrue(resultExpressionEvaluate.isPresent());
         XPathResult<?> xPathResult = resultExpressionEvaluate.get();
@@ -87,7 +89,6 @@ public class JaxenTest {
         assertEquals("three", value);
 
         convertNctx = new ConverterNamespaceContext(createPrefixes());
-
         navigator = new NormalizedNodeNavigator(convertNctx, (JaxenDocument) xpathDocument);
         assertNotNull(navigator);
     }
@@ -115,48 +116,24 @@ public class JaxenTest {
 
     @Test
     public void testJaxenXpath() throws XPathExpressionException {
-        assertNotNull(xpathExpression.evaluate(xpathDocument, createYangInstanceIdentifier()));
+        assertNotNull(xpathExpression.evaluate(xpathDocument, createYangInstanceIdentifier(false)));
     }
 
+    @Test
     public void testXpathWithPredicates() throws XPathExpressionException {
-        final Map<QName, Object> keys1 = new HashMap<>();
-        keys1.put(leafAQName, "bar");
-
-        final YangInstanceIdentifier.NodeIdentifierWithPredicates mapEntryPath1 = new YangInstanceIdentifier
-                .NodeIdentifierWithPredicates(listAQName , keys1);
-
-        final Map<QName, Object> keys2 = new HashMap<>();
-        keys2.put(leafBQName, "two");
-
-        final YangInstanceIdentifier.NodeIdentifierWithPredicates mapEntryPath2 = new YangInstanceIdentifier
-                .NodeIdentifierWithPredicates(listBQName , keys2);
-
-        YangInstanceIdentifier yangInstanceIdentifier = YangInstanceIdentifier.of(listAQName).node(mapEntryPath1)
-                .node(listBQName).node(mapEntryPath2).node(leafBQName);
-
-        String xPath = "/list-a[leaf-a='bar']/list-b[leaf-b='two']/leaf-b";
-
         XPathExpression xpathExpressionWithPredicates = xpathSchemaContext.compileExpression(createSchemaPath(),
-                createPrefixes(), xPath);
+                createPrefixes(), createXPath(true));
 
         Optional<? extends XPathResult<?>> resultExpressionEvaluate = xpathExpressionWithPredicates
-                .evaluate(xpathDocument, yangInstanceIdentifier);
-        assertNotNull(resultExpressionEvaluate);
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testUnsupportedOperationException() {
-        assertNotNull(navigator.getCommentStringValue("Test"));
+                .evaluate(xpathDocument, createYangInstanceIdentifier(true));
+        assertTrue(resultExpressionEvaluate.isPresent());
+        XPathResult<?> xPathResult = resultExpressionEvaluate.get();
+        Object value = ((XPathNodesetResult) xPathResult).getValue().iterator().next().getValue();
+        assertEquals("two", value);
     }
 
     @Test(expected = VerifyException.class)
     public void testIsMethodsInNodeNavigator() {
-        assertNotNull(navigator.isAttribute("test"));
-        assertNotNull(navigator.isComment("test"));
-        assertNotNull(navigator.isElement("test"));
-        assertNotNull(navigator.isNamespace("test"));
-        assertNotNull(navigator.isText("test"));
-        assertNotNull(navigator.isProcessingInstruction("test"));
         assertNotNull(navigator.isDocument("test"));
     }
 
@@ -175,13 +152,36 @@ public class JaxenTest {
 
     /**
      * @return container-a -> container-b -> leaf-d
+     *         list-a -> list-b -> leaf-b
      */
-    private YangInstanceIdentifier createYangInstanceIdentifier() {
-        return YangInstanceIdentifier.of(containerAQName).node(containerBQName).node(leafDQName);
+    private YangInstanceIdentifier createYangInstanceIdentifier(Boolean withPredicates) {
+        YangInstanceIdentifier testYangInstanceIdentifier = YangInstanceIdentifier.of(containerAQName).node
+                (containerBQName).node(leafDQName);
+        if (withPredicates) {
+            final Map<QName, Object> keys1 = new HashMap<>();
+            keys1.put(leafAQName, "bar");
+
+            final YangInstanceIdentifier.NodeIdentifierWithPredicates mapEntryPath1 = new YangInstanceIdentifier
+                    .NodeIdentifierWithPredicates(listAQName , keys1);
+
+            final Map<QName, Object> keys2 = new HashMap<>();
+            keys2.put(leafBQName, "two");
+
+            final YangInstanceIdentifier.NodeIdentifierWithPredicates mapEntryPath2 = new YangInstanceIdentifier
+                    .NodeIdentifierWithPredicates(listBQName , keys2);
+
+            testYangInstanceIdentifier = YangInstanceIdentifier.of(listAQName).node(mapEntryPath1)
+                    .node(listBQName).node(mapEntryPath2).node(leafBQName);
+        }
+        return testYangInstanceIdentifier;
     }
 
-    private static String createXPath() {
-        return "/container-a/container-b/leaf-d";
+    private static String createXPath(boolean withPredicates) {
+        String xPath = "/container-a/container-b/leaf-d";
+        if (withPredicates) {
+            xPath = "/list-a[leaf-a='bar']/list-b[leaf-b='two']/leaf-b";
+        }
+        return xPath;
     }
 
     private Converter<String, QNameModule> createPrefixes() {
@@ -192,10 +192,9 @@ public class JaxenTest {
     }
 
     /**
-     * rootQName -> listAQName -> leafAQName
-     * @return
+     * @return rootQName -> listAQName -> leafAQName
      */
-    private SchemaPath createSchemaPath() {
+    private  SchemaPath createSchemaPath() {
         return SchemaPath.create(true, rootQName, listAQName, leafAQName);
     }
 
