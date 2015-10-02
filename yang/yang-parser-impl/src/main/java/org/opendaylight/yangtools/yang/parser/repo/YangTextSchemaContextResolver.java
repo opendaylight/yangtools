@@ -203,7 +203,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
                     sc = Optional.of(f.checkedGet());
                     break;
                 } catch (SchemaResolutionException e) {
-                    LOG.debug("Failed to fully assemble schema context for {}", sources, e);
+                    LOG.info("Failed to fully assemble schema context for {}", sources, e);
                     sources = e.getResolvedSources();
                 }
             }

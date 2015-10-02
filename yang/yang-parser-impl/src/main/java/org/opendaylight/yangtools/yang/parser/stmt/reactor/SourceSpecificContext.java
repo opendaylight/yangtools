@@ -14,6 +14,7 @@ import com.google.common.collect.Multimap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import javax.annotation.Nonnull;
@@ -301,17 +302,28 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     SourceException failModifiers(final ModelProcessingPhase identifier) {
-        InferenceException sourceEx = new InferenceException("Fail to infer source relationships", root.getStatementSourceReference());
-
-
+        final List<SourceException> exceptions = new ArrayList<>();
         for (ModifierImpl mod : modifiers.get(identifier)) {
             try {
                 mod.failModifier();
             } catch (SourceException e) {
-                sourceEx.addSuppressed(e);
+                exceptions.add(e);
             }
         }
-        return sourceEx;
+
+        final String message = String.format("Yang model processing phase %s failed", identifier);
+        if (exceptions.isEmpty()) {
+            return new InferenceException(message, root.getStatementSourceReference());
+        }
+
+        final InferenceException e = new InferenceException(message, root.getStatementSourceReference(),
+            exceptions.get(0));
+        final Iterator<SourceException> it = exceptions.listIterator(1);
+        while (it.hasNext()) {
+            e.addSuppressed(it.next());
+        }
+
+        return e;
     }
 
     void loadStatements() throws SourceException {
