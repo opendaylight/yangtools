@@ -114,6 +114,8 @@ public final class Utils {
             xPath = XPATH_FACTORY.newXPath();
         }
 
+        xPath.setNamespaceContext(StmtNamespaceContext.create(ctx));
+
         try {
             xPath.compile(path);
         } catch (XPathExpressionException e) {

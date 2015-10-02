@@ -15,13 +15,13 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
@@ -34,12 +34,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ImportEffectiveStatementImpl;
 
 public class ImportStatementDefinition
-        extends
-        AbstractStatementSupport<String, ImportStatement, EffectiveStatement<String, ImportStatement>> {
+        extends AbstractStatementSupport<String, ImportStatement, EffectiveStatement<String, ImportStatement>> {
 
     public ImportStatementDefinition() {
         super(Rfc6020Mapping.IMPORT);
@@ -64,44 +62,38 @@ public class ImportStatementDefinition
 
     @Override
     public void onLinkageDeclared(
-            final Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt)
-            throws SourceException {
+            final Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt) {
         final ModuleIdentifier impIdentifier = getImportedModuleIdentifier(stmt);
-        ModelActionBuilder importAction = stmt
-                .newInferenceAction(SOURCE_LINKAGE);
-        final Prerequisite<StmtContext<?, ?, ?>> imported;
-        final Prerequisite<Mutable<?, ?, ?>> linkageTarget;
-        imported = importAction.requiresCtx(stmt, ModuleNamespace.class,
-                impIdentifier, SOURCE_LINKAGE);
-        linkageTarget = importAction.mutatesCtx(stmt.getRoot(), SOURCE_LINKAGE);
+        final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_LINKAGE);
+        final Prerequisite<StmtContext<?, ?, ?>> imported = importAction.requiresCtx(stmt, ModuleNamespace.class,
+            impIdentifier, SOURCE_LINKAGE);
+        final Prerequisite<Mutable<?, ?, ?>> linkageTarget = importAction.mutatesCtx(stmt.getRoot(), SOURCE_LINKAGE);
 
         importAction.apply(new InferenceAction() {
-
             @Override
             public void apply() throws InferenceException {
                 StmtContext<?, ?, ?> importedModule = null;
                 ModuleIdentifier importedModuleIdentifier = null;
                 if (impIdentifier.getRevision() == SimpleDateFormatUtil.DEFAULT_DATE_IMP) {
                     Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> recentModuleEntry = findRecentModule(
-                            impIdentifier,
-                            stmt.getAllFromNamespace(ModuleNamespace.class));
+                            impIdentifier, stmt.getAllFromNamespace(ModuleNamespace.class));
                     if (recentModuleEntry != null) {
                         importedModuleIdentifier = recentModuleEntry.getKey();
                         importedModule = recentModuleEntry.getValue();
                     }
                 }
 
-                if(importedModule == null || importedModuleIdentifier == null) {
+                if (importedModule == null || importedModuleIdentifier == null) {
                     importedModule = imported.get();
                     importedModuleIdentifier = impIdentifier;
                 }
 
-                linkageTarget.get().addToNs(ImportedModuleContext.class,
-                        importedModuleIdentifier, importedModule);
-                String impPrefix = firstAttributeOf(stmt.declaredSubstatements(),
-                        PrefixStatement.class);
-                stmt.addToNs(ImpPrefixToModuleIdentifier.class, impPrefix,
-                        importedModuleIdentifier);
+                linkageTarget.get().addToNs(ImportedModuleContext.class, importedModuleIdentifier, importedModule);
+                String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
+                stmt.addToNs(ImpPrefixToModuleIdentifier.class, impPrefix, importedModuleIdentifier);
+
+                final URI modNs = firstAttributeOf(importedModule, NamespaceStatement.class);
+                stmt.addToNs(URIStringToImpPrefix.class, modNs.toString(), impPrefix);
             }
 
             private Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> findRecentModule(
@@ -111,17 +103,9 @@ public class ImportStatementDefinition
                 ModuleIdentifier recentModuleIdentifier = impIdentifier;
                 Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> recentModuleEntry = null;
 
-                Set<Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>>> moduleEntrySet = allModules
-                        .entrySet();
-                for (Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> moduleEntry : moduleEntrySet) {
-                    if (moduleEntry.getKey().getName()
-                            .equals(impIdentifier.getName())
-                            && moduleEntry
-                                    .getKey()
-                                    .getRevision()
-                                    .compareTo(
-                                            recentModuleIdentifier
-                                                    .getRevision()) > 0) {
+                for (Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> moduleEntry : allModules.entrySet()) {
+                    if (moduleEntry.getKey().getName().equals(impIdentifier.getName())
+                            && moduleEntry.getKey().getRevision().compareTo(recentModuleIdentifier.getRevision()) > 0) {
                         recentModuleIdentifier = moduleEntry.getKey();
                         recentModuleEntry = moduleEntry;
                     }
@@ -131,29 +115,22 @@ public class ImportStatementDefinition
             }
 
             @Override
-            public void prerequisiteFailed(
-                    final Collection<? extends Prerequisite<?>> failed)
-                    throws InferenceException {
+            public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed)  {
                 if (failed.contains(imported)) {
-                    throw new InferenceException(String.format(
-                            "Imported module [%s] was not found.",
-                            impIdentifier), stmt.getStatementSourceReference());
+                    throw new InferenceException(String.format("Imported module [%s] was not found.", impIdentifier),
+                        stmt.getStatementSourceReference());
                 }
             }
         });
     }
 
-    private static ModuleIdentifier getImportedModuleIdentifier(
-            final Mutable<String, ImportStatement, ?> stmt) throws SourceException {
-
-        String moduleName = stmt.getStatementArgument();
-        Date revision = firstAttributeOf(stmt.declaredSubstatements(),
-                RevisionDateStatement.class);
+    private static ModuleIdentifier getImportedModuleIdentifier(final Mutable<String, ImportStatement, ?> stmt) {
+        Date revision = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
         if (revision == null) {
             revision = SimpleDateFormatUtil.DEFAULT_DATE_IMP;
         }
 
-        return new ModuleIdentifierImpl(moduleName, Optional.<URI> absent(),
+        return new ModuleIdentifierImpl(stmt.getStatementArgument(), Optional.<URI> absent(),
                 Optional.<Date> of(revision));
     }
 
