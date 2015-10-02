@@ -13,6 +13,7 @@ import static com.google.common.base.Preconditions.checkState;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -22,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -148,6 +150,119 @@ public final class ParserListenerUtils {
     private static final Splitter DOT_DOT_SPLITTER = Splitter.on("..").trimResults();
     private static final CharMatcher DOUBLE_QUOTE_MATCHER = CharMatcher.is('"');
     private static final CharMatcher SINGLE_QUOTE_MATCHER = CharMatcher.is('\'');
+    private static final Pattern UNICODE_SCRIPT_PATTERN = Pattern.compile("\\\\p\\{(Is.+?)\\}");
+    private static final Set<String> JAVA_UNICODE_SCRIPTS = ImmutableSet.<String>builder()
+            .add("IsArabic")
+            .add("IsArmenian")
+            .add("IsAvestan")
+            .add("IsBalinese")
+            .add("IsBamum")
+            .add("IsBatak")
+            .add("IsBengali")
+            .add("IsBopomofo")
+            .add("IsBrahmi")
+            .add("IsBraille")
+            .add("IsBuginese")
+            .add("IsBuhid")
+            .add("IsCanadian_Aboriginal")
+            .add("IsCarian")
+            .add("IsCham")
+            .add("IsCherokee")
+            .add("IsCommon")
+            .add("IsCoptic")
+            .add("IsCuneiform")
+            .add("IsCypriot")
+            .add("IsCyrillic")
+            .add("IsDeseret")
+            .add("IsDevanagari")
+            .add("IsEgyptian_Hieroglyphs")
+            .add("IsEthiopic")
+            .add("IsGeorgian")
+            .add("(IsGlagolitic")
+            .add("IsGothic")
+            .add("IsGreek")
+            .add("IsGujarati")
+            .add("IsGurmukhi")
+            .add("IsHan")
+            .add("IsHangul")
+            .add("IsHanunoo")
+            .add("IsHebrew")
+            .add("IsHiragana")
+            .add("IsImperial_Aramaic")
+            .add("IsInherited")
+            .add("IsInscriptional_Pahlavi")
+            .add("IsInscriptional_Parthian")
+            .add("IsJavanese")
+            .add("IsKaithi")
+            .add("IsKannada")
+            .add("IsKatakana")
+            .add("IsKayah_Li")
+            .add("IsKharoshthi")
+            .add("IsKhmer")
+            .add("IsLao")
+            .add("IsLatin")
+            .add("IsLepcha")
+            .add("IsLimbu")
+            .add("IsLinear_B")
+            .add("IsLisu")
+            .add("IsLycian")
+            .add("IsLydian")
+            .add("IsMalayalam")
+            .add("IsMandaic")
+            .add("IsMeetei_Mayek")
+            .add("IsMongolian")
+            .add("IsMyanmar")
+            .add("IsNew_Tai_Lue")
+            .add("IsNko")
+            .add("IsOgham")
+            .add("IsOl_Chiki")
+            .add("IsOld_Italic")
+            .add("IsOld_Persian")
+            .add("IsOld_South_Arabian")
+            .add("IsOld_Turkic")
+            .add("IsOriya")
+            .add("IsOsmanya")
+            .add("IsPhags_Pa")
+            .add("IsPhoenician")
+            .add("IsRejang")
+            .add("IsRunic")
+            .add("IsSamaritan")
+            .add("IsSaurashtra")
+            .add("IsShavian")
+            .add("IsSinhala")
+            .add("IsSundanese")
+            .add("IsSyloti_Nagri")
+            .add("IsSyriac")
+            .add("IsTagalog")
+            .add("IsTagbanwa")
+            .add("IsTai_Le")
+            .add("IsTai_Tham")
+            .add("IsTai_Viet")
+            .add("IsTamil")
+            .add("IsTelugu")
+            .add("IsThaana")
+            .add("IsThai")
+            .add("IsTibetan")
+            .add("IsTifinagh")
+            .add("IsUgaritic")
+            .add("IsUnknown")
+            .add("IsVai")
+            .add("IsYi").build();
+
+    private static final Set<String> JAVA_UNICODE_BINARY_PROPERTIES = ImmutableSet.<String>builder()
+            .add("IsAlphabetic")
+            .add("IsIdeographic")
+            .add("IsLetter")
+            .add("IsLowercase")
+            .add("IsUppercase")
+            .add("IsTitlecase")
+            .add("IsPunctuation")
+            .add("IsControl")
+            .add("IsWhite_Space")
+            .add("IsDigit")
+            .add("IsHex_Digit")
+            .add("IsNoncharacter_Code_Point")
+            .add("IsAssigned").build();
 
     private ParserListenerUtils() {
     }
@@ -762,11 +877,26 @@ public final class ParserListenerUtils {
             }
         }
         final String rawPattern = parsePatternString(ctx);
-        final String pattern = wrapPattern(rawPattern);
+        final String fixedRawPattern = fixUnicodeScriptPattern(rawPattern);
+        final String pattern = wrapPattern(fixedRawPattern);
         if (isValidPattern(pattern, ctx, moduleName)) {
             return BaseConstraints.newPatternConstraint(pattern, description, reference);
         }
         return null;
+    }
+
+    private static String fixUnicodeScriptPattern(String rawPattern) {
+        StringBuilder result = new StringBuilder(rawPattern);
+        Matcher matcher = UNICODE_SCRIPT_PATTERN.matcher(result);
+        while (matcher.find()) {
+            String capturedGroup = matcher.group(1);
+            if (!JAVA_UNICODE_SCRIPTS.contains(capturedGroup) && !JAVA_UNICODE_BINARY_PROPERTIES.contains
+                    (capturedGroup)) {
+                int idx = matcher.start(1);
+                result = result.replace(idx, idx+2, "In");
+            }
+        }
+        return result.toString();
     }
 
     private static String wrapPattern(String rawPattern) {
