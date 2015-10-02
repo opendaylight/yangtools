@@ -132,6 +132,11 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
         return statementContext;
     }
 
+    @Override
+    public String toString() {
+        return sourceName;
+    }
+
 //    public InputStream getSourceStream() {
 //        return sourceStream;
 //    }
