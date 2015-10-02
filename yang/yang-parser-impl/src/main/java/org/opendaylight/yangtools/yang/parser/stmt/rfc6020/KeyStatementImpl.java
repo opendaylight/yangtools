@@ -7,11 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
@@ -20,7 +19,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.KeyEffectiveStatementImpl;
 
 public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<SchemaNodeIdentifier>> implements
@@ -39,23 +37,19 @@ public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<Schem
         }
 
         @Override
-        public Collection<SchemaNodeIdentifier> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value)
-                throws SourceException {
-
-            final List<String> keyTokens = StmtContextUtils.LIST_KEY_SPLITTER.splitToList(value);
-
-            // to detect if key contains duplicates
-            if ((new HashSet<>(keyTokens)).size() < keyTokens.size()) {
-                throw new IllegalArgumentException();
+        public Collection<SchemaNodeIdentifier> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+            final Builder<SchemaNodeIdentifier> builder = ImmutableSet.<SchemaNodeIdentifier>builder();
+            int tokens = 0;
+            for (String keyToken : StmtContextUtils.LIST_KEY_SPLITTER.split(value)) {
+                builder.add(SchemaNodeIdentifier.create(false, Utils.qNameFromArgument(ctx, keyToken)));
+                tokens++;
             }
 
-            // FIXME: would an ImmutableSetBuilder be better?
-            Set<SchemaNodeIdentifier> keyNodes = new LinkedHashSet<>();
-            for (String keyToken : keyTokens) {
-                keyNodes.add(SchemaNodeIdentifier.create(false, Utils.qNameFromArgument(ctx, keyToken)));
-            }
+            // Throws NPE on nulls, retains first inserted value, cannot be modified
+            final Collection<SchemaNodeIdentifier> ret = builder.build();
 
-            return keyNodes;
+            Preconditions.checkArgument(ret.size() == tokens, "Key argument '%s' contains duplicates", value);
+            return ret;
         }
 
         @Override
