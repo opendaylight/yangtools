@@ -63,6 +63,10 @@ class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Effective
         } else {
             this.argument = original.argument;
         }
+
+        copyDeclaredStmts(original, newQNameModule, typeOfCopy);
+
+        copyEffectiveStmts(original, newQNameModule, typeOfCopy);
     }
 
     private void copyDeclaredStmts(SubstatementContext<A, D, E> original,
@@ -146,9 +150,6 @@ class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Effective
         }
 
         definition().onStatementAdded(copy);
-
-        copy.copyDeclaredStmts(this, newQNameModule, typeOfCopy);
-        copy.copyEffectiveStmts(this, newQNameModule, typeOfCopy);
         return copy;
     }
 

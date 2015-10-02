@@ -7,78 +7,76 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import java.util.ArrayList;
+import com.google.common.base.Optional;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 
-abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespace<K, V>>
-        extends NamespaceBehaviour<K, V, N> {
+final class NamespaceBehaviourWithListeners<K,V, N extends IdentifierNamespace<K, V>> extends NamespaceBehaviour<K, V, N> {
 
-    abstract static class ValueAddedListener<K> {
+    abstract static class ValueAddedListener {
         private final NamespaceStorageNode ctxNode;
-        private K key;
 
-        public ValueAddedListener(final NamespaceStorageNode contextNode, K key) {
+        public ValueAddedListener(final NamespaceStorageNode contextNode) {
             this.ctxNode = contextNode;
-            this.key = key;
-        }
-
-        public NamespaceStorageNode getCtxNode() {
-            return ctxNode;
-        }
-
-        public K getKey() {
-            return key;
         }
 
         abstract void onValueAdded(Object key, Object value);
     }
 
     private final NamespaceBehaviour<K, V, N> delegate;
-    private final List<VirtualNamespaceContext<?, V, ?>> derivedNamespaces = new ArrayList<>();
-
+    private final Multimap<K, ValueAddedListener> listeners = HashMultimap.create();
 
     protected NamespaceBehaviourWithListeners(final NamespaceBehaviour<K, V, N> delegate) {
         super(delegate.getIdentifier());
         this.delegate = delegate;
     }
 
-    protected abstract void addListener(K key, ValueAddedListener<K> listener);
-
-    protected abstract Iterator<ValueAddedListener<K>> getMutableListeners(K key);
-
-    protected abstract boolean isRequestedValue(ValueAddedListener<K> listener, NamespaceStorageNode storage, V value);
-
     @Override
     public void addTo(final NamespaceStorageNode storage, final K key, final V value) {
         delegate.addTo(storage, key, value);
 
-        Iterator<ValueAddedListener<K>> keyListeners = getMutableListeners(key);
-        List<ValueAddedListener<K>> toNotify = new ArrayList<>();
+        Iterator<ValueAddedListener> keyListeners = listeners.get(key).iterator();
         while (keyListeners.hasNext()) {
-            ValueAddedListener<K> listener = keyListeners.next();
-            if (isRequestedValue(listener, storage, value)) {
+            ValueAddedListener listener = keyListeners.next();
+            if (listener.ctxNode == storage || hasIdentiticalValue(listener.ctxNode,key,value)) {
                 keyListeners.remove();
-                toNotify.add(listener);
+                listener.onValueAdded(key, value);
             }
         }
-        for(ValueAddedListener<K> listener : toNotify) {
-            listener.onValueAdded(key, value);
-        }
-        for (VirtualNamespaceContext<?, V, ?> derived : derivedNamespaces) {
-            derived.addTo(storage, null, value);
+
+        if (key instanceof ModuleIdentifier && !listeners.isEmpty()) {
+            Collection<ValueAddedListener> defaultImportListeners = getDefaultImportListeners((ModuleIdentifier) key);
+            Iterator<ValueAddedListener> defaultImportsIterator = defaultImportListeners.iterator();
+            while (defaultImportsIterator.hasNext()) {
+                ValueAddedListener listener = defaultImportsIterator.next();
+                if(listener.ctxNode == storage || hasIdentiticalValue(listener.ctxNode,key,value)) {
+                    defaultImportsIterator.remove();
+                    listener.onValueAdded(key, value);
+                }
+            }
         }
     }
 
-    final void addValueListener(final ValueAddedListener<K> listener) {
-        addListener(listener.key, listener);
+    private Collection<ValueAddedListener> getDefaultImportListeners(final ModuleIdentifier key) {
+        ModuleIdentifier defaultImportKey = new ModuleIdentifierImpl(key.getName(),
+            Optional.fromNullable(key.getNamespace()), Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_IMP));
+        return listeners.get((K)defaultImportKey);
     }
 
-    final void addDerivedNamespace(VirtualNamespaceContext<?, V, ?> namespace) {
-        derivedNamespaces.add(namespace);
+    private boolean hasIdentiticalValue(final NamespaceStorageNode ctxNode, final K key, final V value) {
+        return getFrom(ctxNode, key) == value;
+    }
+
+    void addValueListener(final K key, final ValueAddedListener listener) {
+        listeners.put(key, listener);
     }
 
     @Override

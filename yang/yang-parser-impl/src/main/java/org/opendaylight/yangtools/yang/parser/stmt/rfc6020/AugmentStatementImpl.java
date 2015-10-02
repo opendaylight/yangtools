@@ -22,10 +22,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AugmentEffectiveStatementImpl;
@@ -80,21 +78,32 @@ public class AugmentStatementImpl extends
             }
 
             final ModelActionBuilder augmentAction = augmentNode
-                    .newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
+                    .newInferenceAction(ModelProcessingPhase.FULL_DECLARATION);
             final ModelActionBuilder.Prerequisite<StmtContext<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>>> sourceCtxPrereq = augmentAction
-                    .requiresCtx(augmentNode, ModelProcessingPhase.EFFECTIVE_MODEL);
-            final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target = augmentAction.mutatesEffectiveCtx(getSearchRoot(augmentNode), SchemaNodeIdentifierBuildNamespace.class, augmentNode.getStatementArgument());
+                    .requiresCtx(augmentNode,
+                            ModelProcessingPhase.FULL_DECLARATION);
+
             augmentAction.apply(new ModelActionBuilder.InferenceAction() {
 
                 @Override
                 public void apply() throws InferenceException {
-                    final StatementContextBase<?, ?, ?> augmentTargetCtx = (StatementContextBase<?, ?, ?>) target.get();
+                    final StatementContextBase<?, ?, ?> augmentTargetCtx = AugmentUtils
+                            .getAugmentTargetCtx(augmentNode);
+
+                    if (augmentTargetCtx == null) {
+                        throw new InferenceException(
+                                "Augment target not found: "
+                                        + augmentNode.getStatementArgument(),
+                                augmentNode.getStatementSourceReference());
+                    }
 
                     if (!AugmentUtils.isSupportedAugmentTarget(augmentTargetCtx) || StmtContextUtils.isInExtensionBody(augmentTargetCtx)) {
                         augmentNode.setIsSupportedToBuildEffective(false);
                         return;
                     }
+
                     final StatementContextBase<?, ?, ?> augmentSourceCtx = (StatementContextBase<?, ?, ?>) augmentNode;
+
                     try {
                         AugmentUtils.copyFromSourceToTarget(augmentSourceCtx,
                                 augmentTargetCtx);
@@ -131,15 +140,6 @@ public class AugmentStatementImpl extends
                             .getStatementSourceReference());
                 }
             });
-        }
-
-        private Mutable<?, ?, ?> getSearchRoot(Mutable<?, ?, ?> augmentContext) {
-            Mutable<?, ?, ?> parent = augmentContext.getParentContext();
-            // Augment is in uses - we need to augment instantiated nodes in parent.
-            if(Rfc6020Mapping.USES.equals(parent.getPublicDefinition())) {
-                return parent.getParentContext();
-            }
-            return parent;
         }
     }
 
