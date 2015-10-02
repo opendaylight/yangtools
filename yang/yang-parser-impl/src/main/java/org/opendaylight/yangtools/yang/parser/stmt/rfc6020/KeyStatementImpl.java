@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import com.google.common.base.Splitter;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -27,7 +26,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.KeyEffectiv
 public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<SchemaNodeIdentifier>> implements
         KeyStatement {
 
-    protected KeyStatementImpl(StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, ?> context) {
+    protected KeyStatementImpl(final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, ?> context) {
         super(context);
     }
 
@@ -40,37 +39,33 @@ public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<Schem
         }
 
         @Override
-        public Collection<SchemaNodeIdentifier> parseArgumentValue(StmtContext<?, ?, ?> ctx, String value)
+        public Collection<SchemaNodeIdentifier> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value)
                 throws SourceException {
 
-            Splitter keySplitter = Splitter.on(StmtContextUtils.LIST_KEY_SEPARATOR).omitEmptyStrings().trimResults();
-            List<String> keyTokens = keySplitter.splitToList(value);
+            final List<String> keyTokens = StmtContextUtils.LIST_KEY_SPLITTER.splitToList(value);
 
             // to detect if key contains duplicates
             if ((new HashSet<>(keyTokens)).size() < keyTokens.size()) {
                 throw new IllegalArgumentException();
             }
 
+            // FIXME: would an ImmutableSetBuilder be better?
             Set<SchemaNodeIdentifier> keyNodes = new LinkedHashSet<>();
-
             for (String keyToken : keyTokens) {
-
-                SchemaNodeIdentifier keyNode = SchemaNodeIdentifier
-                        .create(false, Utils.qNameFromArgument(ctx, keyToken));
-                keyNodes.add(keyNode);
+                keyNodes.add(SchemaNodeIdentifier.create(false, Utils.qNameFromArgument(ctx, keyToken)));
             }
 
             return keyNodes;
         }
 
         @Override
-        public KeyStatement createDeclared(StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, ?> ctx) {
+        public KeyStatement createDeclared(final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, ?> ctx) {
             return new KeyStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement> createEffective(
-                StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement>> ctx) {
+                final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement>> ctx) {
             return new KeyEffectiveStatementImpl(ctx);
         }
     }
