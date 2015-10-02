@@ -11,6 +11,7 @@ import java.util.HashSet;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Maps;
 import java.io.Closeable;
 import java.io.File;
@@ -185,8 +186,9 @@ class YangToSourcesProcessor {
             // MojoExecutionException is thrown since execution cannot continue
         } catch (Exception e) {
             LOG.error("{} Unable to parse {} files from {}", LOG_PREFIX, Util.YANG_SUFFIX, yangFilesRootDir, e);
+            Throwable rootCause = Throwables.getRootCause(e);
             throw new MojoExecutionException(LOG_PREFIX + " Unable to parse " + Util.YANG_SUFFIX + " files from " +
-                    yangFilesRootDir, e);
+                    yangFilesRootDir, rootCause);
         }
     }
 
