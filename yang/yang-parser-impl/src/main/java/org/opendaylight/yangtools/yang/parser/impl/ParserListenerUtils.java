@@ -12,6 +12,7 @@ import static com.google.common.base.Preconditions.checkState;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -20,6 +21,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -140,12 +142,224 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class ParserListenerUtils {
+    private static final int UNICODE_SCRIPT_FIX_COUNTER = 30;
     private static final Logger LOG = LoggerFactory.getLogger(ParserListenerUtils.class);
     private static final Splitter KEYDEF_SPLITTER = Splitter.on(' ').omitEmptyStrings();
     private static final Splitter PIPE_SPLITTER = Splitter.on('|').trimResults();
     private static final Splitter DOT_DOT_SPLITTER = Splitter.on("..").trimResults();
     private static final CharMatcher DOUBLE_QUOTE_MATCHER = CharMatcher.is('"');
     private static final CharMatcher SINGLE_QUOTE_MATCHER = CharMatcher.is('\'');
+    private static final Pattern BETWEEN_CURLY_BRACES_PATTERN = Pattern.compile("\\{(.+?)\\}");
+    private static final Set<String> JAVA_UNICODE_BLOCKS = ImmutableSet.<String>builder()
+            .add("AegeanNumbers")
+            .add("AlchemicalSymbols")
+            .add("AlphabeticPresentationForms")
+            .add("AncientGreekMusicalNotation")
+            .add("AncientGreekNumbers")
+            .add("AncientSymbols")
+            .add("Arabic")
+            .add("ArabicPresentationForms-A")
+            .add("ArabicPresentationForms-B")
+            .add("ArabicSupplement")
+            .add("Armenian")
+            .add("Arrows")
+            .add("Avestan")
+            .add("Balinese")
+            .add("Bamum")
+            .add("BamumSupplement")
+            .add("BasicLatin")
+            .add("Batak")
+            .add("Bengali")
+            .add("BlockElements")
+            .add("Bopomofo")
+            .add("BopomofoExtended")
+            .add("BoxDrawing")
+            .add("Brahmi")
+            .add("BraillePatterns")
+            .add("Buginese")
+            .add("Buhid")
+            .add("ByzantineMusicalSymbols")
+            .add("Carian")
+            .add("Cham")
+            .add("Cherokee")
+            .add("CJKCompatibility")
+            .add("CJKCompatibilityForms")
+            .add("CJKCompatibilityIdeographs")
+            .add("CJKCompatibilityIdeographsSupplement")
+            .add("CJKRadicalsSupplement")
+            .add("CJKStrokes")
+            .add("CJKSymbolsandPunctuation")
+            .add("CJKUnifiedIdeographs")
+            .add("CJKUnifiedIdeographsExtensionA")
+            .add("CJKUnifiedIdeographsExtensionB")
+            .add("CJKUnifiedIdeographsExtensionC")
+            .add("CJKUnifiedIdeographsExtensionD")
+            .add("CombiningDiacriticalMarks")
+            .add("CombiningDiacriticalMarksSupplement")
+            .add("CombiningHalfMarks")
+            .add("CombiningDiacriticalMarksforSymbols")
+            .add("CommonIndicNumberForms")
+            .add("ControlPictures")
+            .add("Coptic")
+            .add("CountingRodNumerals")
+            .add("Cuneiform")
+            .add("CuneiformNumbersandPunctuation")
+            .add("CurrencySymbols")
+            .add("CypriotSyllabary")
+            .add("Cyrillic")
+            .add("CyrillicExtended-A")
+            .add("CyrillicExtended-B")
+            .add("CyrillicSupplementary")
+            .add("Deseret")
+            .add("Devanagari")
+            .add("DevanagariExtended")
+            .add("Dingbats")
+            .add("DominoTiles")
+            .add("EgyptianHieroglyphs")
+            .add("Emoticons")
+            .add("EnclosedAlphanumericSupplement")
+            .add("EnclosedAlphanumerics")
+            .add("EnclosedCJKLettersandMonths")
+            .add("EnclosedIdeographicSupplement")
+            .add("Ethiopic")
+            .add("EthiopicExtended")
+            .add("EthiopicExtended-A")
+            .add("EthiopicSupplement")
+            .add("GeneralPunctuation")
+            .add("GeometricShapes")
+            .add("Georgian")
+            .add("GeorgianSupplement")
+            .add("Glagolitic")
+            .add("Gothic")
+            .add("GreekandCoptic")
+            .add("GreekExtended")
+            .add("Gujarati")
+            .add("Gurmukhi")
+            .add("HalfwidthandFullwidthForms")
+            .add("HangulCompatibilityJamo")
+            .add("HangulJamo")
+            .add("HangulJamoExtended-A")
+            .add("HangulJamoExtended-B")
+            .add("HangulSyllables")
+            .add("Hanunoo")
+            .add("Hebrew")
+            .add("HighPrivateUseSurrogates")
+            .add("HighSurrogates")
+            .add("Hiragana")
+            .add("IdeographicDescriptionCharacters")
+            .add("ImperialAramaic")
+            .add("InscriptionalPahlavi")
+            .add("InscriptionalParthian")
+            .add("IPAExtensions")
+            .add("Javanese")
+            .add("Kaithi")
+            .add("KanaSupplement")
+            .add("Kanbun")
+            .add("Kangxi Radicals")
+            .add("Kannada")
+            .add("Katakana")
+            .add("KatakanaPhoneticExtensions")
+            .add("KayahLi")
+            .add("Kharoshthi")
+            .add("Khmer")
+            .add("KhmerSymbols")
+            .add("Lao")
+            .add("Latin-1Supplement")
+            .add("LatinExtended-A")
+            .add("LatinExtendedAdditional")
+            .add("LatinExtended-B")
+            .add("LatinExtended-C")
+            .add("LatinExtended-D")
+            .add("Lepcha")
+            .add("LetterlikeSymbols")
+            .add("Limbu")
+            .add("LinearBIdeograms")
+            .add("LinearBSyllabary")
+            .add("Lisu")
+            .add("LowSurrogates")
+            .add("Lycian")
+            .add("Lydian")
+            .add("MahjongTiles")
+            .add("Malayalam")
+            .add("Mandaic")
+            .add("MathematicalAlphanumericSymbols")
+            .add("MathematicalOperators")
+            .add("MeeteiMayek")
+            .add("MiscellaneousMathematicalSymbols-A")
+            .add("MiscellaneousMathematicalSymbols-B")
+            .add("MiscellaneousSymbols")
+            .add("MiscellaneousSymbolsandArrows")
+            .add("MiscellaneousSymbolsAndPictographs")
+            .add("MiscellaneousTechnical")
+            .add("ModifierToneLetters")
+            .add("Mongolian")
+            .add("MusicalSymbols")
+            .add("Myanmar")
+            .add("MyanmarExtended-A")
+            .add("NewTaiLue")
+            .add("NKo")
+            .add("NumberForms")
+            .add("Ogham")
+            .add("OlChiki")
+            .add("OldItalic")
+            .add("OldPersian")
+            .add("OldSouthArabian")
+            .add("OldTurkic")
+            .add("OpticalCharacterRecognition")
+            .add("Oriya")
+            .add("Osmanya")
+            .add("Phags-pa")
+            .add("PhaistosDisc")
+            .add("Phoenician")
+            .add("PhoneticExtensions")
+            .add("PhoneticExtensionsSupplement")
+            .add("PlayingCards")
+            .add("PrivateUseArea")
+            .add("Rejang")
+            .add("RumiNumeralSymbols")
+            .add("Runic")
+            .add("Samaritan")
+            .add("Saurashtra")
+            .add("Shavian")
+            .add("Sinhala")
+            .add("SmallFormVariants")
+            .add("SpacingModifierLetters")
+            .add("Specials")
+            .add("Sundanese")
+            .add("SuperscriptsandSubscripts")
+            .add("SupplementalArrows-A")
+            .add("SupplementalArrows-B")
+            .add("SupplementalMathematicalOperators")
+            .add("SupplementalPunctuation")
+            .add("SupplementaryPrivateUseArea-A")
+            .add("SupplementaryPrivateUseArea-B")
+            .add("SylotiNagri")
+            .add("Syriac")
+            .add("Tagalog")
+            .add("Tagbanwa")
+            .add("Tags")
+            .add("TaiLe")
+            .add("TaiTham")
+            .add("TaiViet")
+            .add("TaiXuanJingSymbols")
+            .add("Tamil")
+            .add("Telugu")
+            .add("Thaana")
+            .add("Thai")
+            .add("Tibetan")
+            .add("Tifinagh")
+            .add("TransportAndMapSymbols")
+            .add("Ugaritic")
+            .add("UnifiedCanadianAboriginalSyllabics")
+            .add("UnifiedCanadianAboriginalSyllabicsExtended")
+            .add("Vai")
+            .add("VariationSelectors")
+            .add("VariationSelectorsSupplement")
+            .add("VedicExtensions")
+            .add("VerticalForms")
+            .add("YiRadicals")
+            .add("YiSyllables")
+            .add("YijingHexagramSymbols").build();
 
     private ParserListenerUtils() {
     }
@@ -760,11 +974,44 @@ public final class ParserListenerUtils {
             }
         }
         final String rawPattern = parsePatternString(ctx);
-        final String pattern = wrapPattern(rawPattern);
+        final String fixedRawPattern = fixUnicodeScriptPattern(rawPattern);
+        final String pattern = wrapPattern(fixedRawPattern);
         if (isValidPattern(pattern, ctx, moduleName)) {
             return BaseConstraints.newPatternConstraint(pattern, description, reference);
         }
         return null;
+    }
+
+    private static String fixUnicodeScriptPattern(String rawPattern) {
+        for (int i = 0; i < UNICODE_SCRIPT_FIX_COUNTER; i++) {
+            try {
+                Pattern.compile(rawPattern);
+                return rawPattern;
+            } catch(PatternSyntaxException ex) {
+                LOG.debug("Invalid regex pattern syntax in: {}", rawPattern, ex);
+                if (ex.getMessage().contains("Unknown character script name")) {
+                    rawPattern = fixUnknownScripts(ex.getMessage(), rawPattern);
+                } else {
+                    return rawPattern;
+                }
+            }
+        }
+
+        LOG.warn("Regex pattern could not be fixed: {}", rawPattern);
+        return rawPattern;
+    }
+
+    private static String fixUnknownScripts(String exMessage, String rawPattern) {
+        StringBuilder result = new StringBuilder(rawPattern);
+        Matcher matcher = BETWEEN_CURLY_BRACES_PATTERN.matcher(exMessage);
+        if (matcher.find()) {
+            String capturedGroup = matcher.group(1);
+            if (JAVA_UNICODE_BLOCKS.contains(capturedGroup)) {
+                int idx = rawPattern.indexOf("Is" + capturedGroup);
+                result = result.replace(idx, idx + 2, "In");
+            }
+        }
+        return result.toString();
     }
 
     private static String wrapPattern(String rawPattern) {
