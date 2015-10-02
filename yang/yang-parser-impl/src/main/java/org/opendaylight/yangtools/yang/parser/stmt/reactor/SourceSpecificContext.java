@@ -301,8 +301,9 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     SourceException failModifiers(final ModelProcessingPhase identifier) {
-        InferenceException sourceEx = new InferenceException("Fail to infer source relationships", root.getStatementSourceReference());
-
+        InferenceException sourceEx = new InferenceException(
+                String.format("Yang model processing phase %s failed", identifier),
+                root.getStatementSourceReference());
 
         for (ModifierImpl mod : modifiers.get(identifier)) {
             try {
@@ -311,6 +312,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                 sourceEx.addSuppressed(e);
             }
         }
+
         return sourceEx;
     }
 

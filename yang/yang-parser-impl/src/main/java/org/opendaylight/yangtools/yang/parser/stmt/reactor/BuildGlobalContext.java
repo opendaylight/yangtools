@@ -43,8 +43,11 @@ import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNa
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.SourceSpecificContext.PhaseCompletionProgress;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBehaviour.Registry {
+    private static final Logger LOG = LoggerFactory.getLogger(BuildGlobalContext.class);
 
     private static final List<ModelProcessingPhase> PHASE_EXECUTION_ORDER = ImmutableList.<ModelProcessingPhase>builder()
             .add(ModelProcessingPhase.SOURCE_LINKAGE)
@@ -125,7 +128,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> createNamespaceContext(
-            NamespaceBehaviour<K, V, N> potentialRaw) {
+            final NamespaceBehaviour<K, V, N> potentialRaw) {
         if (potentialRaw instanceof DerivedNamespaceBehaviour) {
             VirtualNamespaceContext derivedContext =
                     new VirtualNamespaceContext<>(potentialRaw);
@@ -211,8 +214,38 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     private SomeModifiersUnresolvedException addSourceExceptions(final SomeModifiersUnresolvedException buildFailure,
             final List<SourceSpecificContext> sourcesToProgress) {
-        for(SourceSpecificContext failedSource : sourcesToProgress) {
-            SourceException sourceEx = failedSource.failModifiers(currentPhase);
+        for (SourceSpecificContext failedSource : sourcesToProgress) {
+            final SourceException sourceEx = failedSource.failModifiers(currentPhase);
+
+            // Print full stack traces if debug is enabled.
+            final Throwable[] suppressed = sourceEx.getSuppressed();
+            if (LOG.isDebugEnabled()) {
+                LOG.error("Failed to parse yang from source {}", failedSource, sourceEx);
+
+                int i = 1;
+                for (Throwable t : suppressed) {
+                    LOG.error("Supressed exception {}", i, t);
+                    i++;
+                }
+            } else {
+                final StringBuilder sb = new StringBuilder("Failed to parse yang from source ");
+                sb.append(failedSource);
+
+                if (suppressed.length != 1) {
+                    sb.append(". Causes:");
+
+                    int i = 1;
+                    for (Throwable t : suppressed) {
+                        sb.append("\n\t").append(i).append(' ').append(t.getMessage());
+                        i++;
+                    }
+                } else {
+                    sb.append(": ").append(suppressed[0].getMessage());
+                }
+
+                LOG.error("{}", sb);
+            }
+
             buildFailure.addSuppressed(sourceEx);
         }
         return buildFailure;
