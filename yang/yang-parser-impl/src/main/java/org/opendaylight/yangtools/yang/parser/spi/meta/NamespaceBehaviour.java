@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, V>> implements Identifiable<Class<N>> {
 
     public enum StorageNodeType {
-        GLOBAL, SOURCE_LOCAL_SPECIAL, STATEMENT_LOCAL,
+        GLOBAL, SOURCE_LOCAL_SPECIAL, STATEMENT_LOCAL, ROOT_STATEMENT_LOCAL
     }
 
     public interface Registry {
@@ -184,10 +184,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
 
         @Override
         public V getFrom(final NamespaceStorageNode storage, final K key) {
-            NamespaceStorageNode current = storage;
-            while (current.getStorageNodeType() != storageType) {
-                current = current.getParentNamespaceStorage();
-            }
+            NamespaceStorageNode current = findClosestTowardsRoot(storage, storageType);
             return getFromLocalStorage(current, key);
         }
 
@@ -203,10 +200,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
 
         @Override
         public void addTo(NamespaceBehaviour.NamespaceStorageNode storage, K key, V value) {
-            NamespaceStorageNode current = storage;
-            while (current.getStorageNodeType() != storageType) {
-                current = current.getParentNamespaceStorage();
-            }
+            NamespaceStorageNode current = findClosestTowardsRoot(storage, storageType);
             addToStorage(current, key, value);
         }
 
@@ -249,5 +243,13 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
             addToStorage(storage, key, value);
         }
 
+    }
+
+    protected static NamespaceStorageNode findClosestTowardsRoot(NamespaceStorageNode storage, StorageNodeType type) {
+        NamespaceStorageNode current = storage;
+        while(current != null && current.getStorageNodeType() != type) {
+            current = current.getParentNamespaceStorage();
+        }
+        return current;
     }
 }

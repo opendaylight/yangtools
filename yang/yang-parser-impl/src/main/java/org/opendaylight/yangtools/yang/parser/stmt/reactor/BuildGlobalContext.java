@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
+import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
@@ -105,20 +107,33 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         if (potential == null) {
             NamespaceBehaviour<K, V, N> potentialRaw = supports.get(currentPhase).getNamespaceBehaviour(type);
             if(potentialRaw != null) {
-                potential = new NamespaceBehaviourWithListeners<>(potentialRaw);
+                potential = createNamespaceContext(potentialRaw);
                 supportedNamespaces.put(type, potential);
+            } else {
+                throw new NamespaceNotAvailableException(
+                        "Namespace " + type + " is not available in phase " + currentPhase);
             }
         }
-        if (potential != null) {
-            Preconditions.checkState(type.equals(potential.getIdentifier()));
 
+        Verify.verify(type.equals(potential.getIdentifier()));
             /*
-             * Safe cast, previous checkState checks equivalence of key from
-             * which type argument are derived
-             */
-            return (NamespaceBehaviourWithListeners<K, V, N>) potential;
+         * Safe cast, previous checkState checks equivalence of key from which type argument are
+         * derived
+         */
+        return (NamespaceBehaviourWithListeners<K, V, N>) potential;
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> createNamespaceContext(
+            NamespaceBehaviour<K, V, N> potentialRaw) {
+        if (potentialRaw instanceof DerivedNamespaceBehaviour) {
+            VirtualNamespaceContext derivedContext =
+                    new VirtualNamespaceContext<>(potentialRaw);
+            getNamespaceBehaviour(((DerivedNamespaceBehaviour) potentialRaw).getDerivedFrom())
+                    .addDerivedNamespace(derivedContext);
+            return derivedContext;
         }
-        throw new NamespaceNotAvailableException("Namespace " + type + " is not available in phase " + currentPhase);
+        return new SimpleNamespaceContext<>(potentialRaw);
     }
 
     public StatementDefinitionContext<?, ?, ?> getStatementDefinition(final QName name) {
