@@ -25,8 +25,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
-import javax.annotation.concurrent.GuardedBy;
 import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -74,12 +74,23 @@ public final class Utils {
     private static final Splitter SPACE_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
     private static final Pattern PATH_ABS = Pattern.compile("/[^/].*");
 
-    // XPathFactory is documented as non-threadsafe
-    @GuardedBy("Utils.class")
-    private static final XPathFactory XPATH_FACTORY = XPathFactory.newInstance();
+    private static final ThreadLocal<XPathFactory> XPATH_FACTORY = new ThreadLocal<XPathFactory>() {
+        @Override
+        protected XPathFactory initialValue() {
+            return XPathFactory.newInstance();
+        }
+    };
 
     private Utils() {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Cleanup any resources attached to the current thread. Threads interacting with this class can cause thread-local
+     * caches to them. Invoke this method if you want to detach those resources.
+     */
+    public static void detachFromCurrentThread() {
+        XPATH_FACTORY.remove();
     }
 
     public static Collection<SchemaNodeIdentifier.Relative> transformKeysStringToKeyNodes(final StmtContext<?, ?, ?> ctx,
@@ -109,10 +120,7 @@ public final class Utils {
     }
 
     public static void validateXPath(final StmtContext<?, ?, ?> ctx, final String path) {
-        final XPath xPath;
-        synchronized (Utils.class) {
-            xPath = XPATH_FACTORY.newXPath();
-        }
+        final XPath xPath = XPATH_FACTORY.get().newXPath();
 
         try {
             xPath.compile(path);
@@ -126,8 +134,9 @@ public final class Utils {
     }
 
     public static boolean isXPathAbsolute(final StmtContext<?, ?, ?> ctx, final String path) {
-
-        validateXPath(ctx, trimSingleLastSlashFromXPath(path));
+        // FIXME: this is probably an overkill, as this is called for all XPath objects. If we need this validation,
+        //        we should wrap the resulting XPath into RevisionAwareXPath.
+        compileXPath(ctx, trimSingleLastSlashFromXPath(path));
 
         return PATH_ABS.matcher(path).matches();
     }
@@ -180,7 +189,7 @@ public final class Utils {
 
         String trimmedPath = trimSingleLastSlashFromXPath(path);
 
-        validateXPath(ctx, trimmedPath);
+        compileXPath(ctx, trimmedPath);
 
         List<String> nodeNames = splitPathToNodeNames(trimmedPath);
         List<QName> qNames = new ArrayList<>(nodeNames.size());
