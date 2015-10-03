@@ -7,8 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeviationEffectiveStatementImpl;
-
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
@@ -16,13 +15,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeviationEffectiveStatementImpl;
 
 public class DeviationStatementImpl extends AbstractDeclaredStatement<SchemaNodeIdentifier> implements DeviationStatement {
 
-    protected DeviationStatementImpl(
-            StmtContext<SchemaNodeIdentifier, DeviationStatement, ?> context) {
+    protected DeviationStatementImpl(final StmtContext<SchemaNodeIdentifier, DeviationStatement, ?> context) {
         super(context);
     }
 
@@ -32,18 +29,19 @@ public class DeviationStatementImpl extends AbstractDeclaredStatement<SchemaNode
             super(Rfc6020Mapping.DEVIATION);
         }
 
-        @Override public SchemaNodeIdentifier parseArgumentValue(
-                StmtContext<?, ?, ?> ctx, String value) throws SourceException {
-            return SchemaNodeIdentifier.create(Utils.parseXPath(ctx, value), Utils.isXPathAbsolute(ctx, value));
+        @Override
+        public SchemaNodeIdentifier parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+            return Utils.nodeIdentifierFromPath(ctx, value);
         }
 
-        @Override public DeviationStatement createDeclared(
-                StmtContext<SchemaNodeIdentifier, DeviationStatement, ?> ctx) {
+        @Override
+        public DeviationStatement createDeclared(final StmtContext<SchemaNodeIdentifier, DeviationStatement, ?> ctx) {
             return new DeviationStatementImpl(ctx);
         }
 
-        @Override public EffectiveStatement<SchemaNodeIdentifier, DeviationStatement> createEffective(
-                StmtContext<SchemaNodeIdentifier, DeviationStatement, EffectiveStatement<SchemaNodeIdentifier, DeviationStatement>> ctx) {
+        @Override
+        public EffectiveStatement<SchemaNodeIdentifier, DeviationStatement> createEffective(
+                final StmtContext<SchemaNodeIdentifier, DeviationStatement, EffectiveStatement<SchemaNodeIdentifier, DeviationStatement>> ctx) {
             return new DeviationEffectiveStatementImpl(ctx);
         }
     }
