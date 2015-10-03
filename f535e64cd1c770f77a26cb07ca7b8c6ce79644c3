@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_eaffe6ff",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/repo/YangTextSchemaContextResolver.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 206,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2015-10-03T19:23:25Z",
+      "side": 1,
+      "message": "I don\u0027t think we need to log this as info since we\u0027re logging the parse errors elsewhere. It is a large, ugly looking trace with mostly redundant noise.",
+      "revId": "f535e64cd1c770f77a26cb07ca7b8c6ce79644c3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_8f09a433",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceSpecificContext.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 324,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2015-10-03T19:23:25Z",
+      "side": 1,
+      "message": "This is what I did originally, i.e. add the first SourceException as the cause and the rest as suppressed.",
+      "revId": "f535e64cd1c770f77a26cb07ca7b8c6ce79644c3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
