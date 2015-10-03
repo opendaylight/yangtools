@@ -115,11 +115,7 @@ public final class Utils {
         return keyNodes;
     }
 
-    public static List<String> splitPathToNodeNames(final String path) {
-        return SLASH_SPLITTER.splitToList(path);
-    }
-
-    public static void validateXPath(final StmtContext<?, ?, ?> ctx, final String path) {
+    private static XPathExpression compileXPath(final StmtContext<?, ?, ?> ctx, final String path) {
         final XPath xPath = XPATH_FACTORY.get().newXPath();
 
         try {
@@ -186,25 +182,20 @@ public final class Utils {
         return false;
     }
 
-    public static Iterable<QName> parseXPath(final StmtContext<?, ?, ?> ctx, final String path) {
-
-        String trimmedPath = trimSingleLastSlashFromXPath(path);
-
-        compileXPath(ctx, trimmedPath);
-
-        List<String> nodeNames = splitPathToNodeNames(trimmedPath);
-        List<QName> qNames = new ArrayList<>(nodeNames.size());
-
-        for (String nodeName : nodeNames) {
+    static SchemaNodeIdentifier nodeIdentifierFromPath(final StmtContext<?, ?, ?> ctx, final String path) {
+        // FIXME: is the path trimming really necessary??
+        final List<QName> qNames = new ArrayList<>();
+        for (String nodeName : SLASH_SPLITTER.split(trimSingleLastSlashFromXPath(path))) {
             try {
                 final QName qName = Utils.qNameFromArgument(ctx, nodeName);
                 qNames.add(qName);
             } catch (Exception e) {
-                throw new IllegalArgumentException(e);
+                throw new IllegalArgumentException(
+                    String.format("Failed to parse node '%s' in path '%s'", nodeName, path), e);
             }
         }
 
-        return qNames;
+        return SchemaNodeIdentifier.create(qNames, PATH_ABS.matcher(path).matches());
     }
 
     public static String stringFromStringContext(final YangStatementParser.ArgumentContext context) {
