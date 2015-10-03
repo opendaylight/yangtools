@@ -7,11 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.parser.spi.source.StmtOrderingNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import com.google.common.base.Preconditions;
 import java.util.Collection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -24,24 +22,24 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StmtOrderingNamespace;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AugmentEffectiveStatementImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class AugmentStatementImpl extends
-        AbstractDeclaredStatement<SchemaNodeIdentifier> implements
-        AugmentStatement {
+public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeIdentifier> implements AugmentStatement {
+    private static final Logger LOG = LoggerFactory.getLogger(AugmentStatementImpl.class);
+    private static final Pattern PATH_REL_PATTERN1 = Pattern.compile("\\.\\.?\\s*/(.+)");
+    private static final Pattern PATH_REL_PATTERN2 = Pattern.compile("//.*");
 
-    private static final Logger LOG = LoggerFactory
-            .getLogger(AugmentStatementImpl.class);
-
-    protected AugmentStatementImpl(
-            StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> context) {
+    protected AugmentStatementImpl(final StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> context) {
         super(context);
     }
 
-    public static class Definition
-            extends
+    public static class Definition extends
             AbstractStatementSupport<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> {
 
         public Definition() {
@@ -49,22 +47,23 @@ public class AugmentStatementImpl extends
         }
 
         @Override
-        public SchemaNodeIdentifier parseArgumentValue(
-                StmtContext<?, ?, ?> ctx, String value) throws SourceException {
-            return SchemaNodeIdentifier.create(
-                    AugmentUtils.parseAugmentPath(ctx, value),
-                    Utils.isXPathAbsolute(ctx, value));
+        public SchemaNodeIdentifier parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+            Preconditions.checkArgument(!PATH_REL_PATTERN1.matcher(value).matches()
+                && !PATH_REL_PATTERN2.matcher(value).matches(),
+                "An argument for augment can be only absolute path; or descendant if used in uses");
+
+            return Utils.nodeIdentifierFromPath(ctx, value);
         }
 
         @Override
         public AugmentStatement createDeclared(
-                StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> ctx) {
+                final StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> ctx) {
             return new AugmentStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<SchemaNodeIdentifier, AugmentStatement> createEffective(
-                StmtContext<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> ctx) {
+                final StmtContext<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> ctx) {
             return new AugmentEffectiveStatementImpl(ctx);
         }
 
