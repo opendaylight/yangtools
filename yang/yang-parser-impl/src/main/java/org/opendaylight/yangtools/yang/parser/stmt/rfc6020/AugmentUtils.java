@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -46,19 +45,9 @@ import org.slf4j.LoggerFactory;
 public final class AugmentUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(AugmentUtils.class);
-    private static final Pattern PATH_REL_PATTERN1 = Pattern.compile("\\.\\.?\\s*/(.+)");
-    private static final Pattern PATH_REL_PATTERN2 = Pattern.compile("//.*");
 
     private AugmentUtils() {
         throw new UnsupportedOperationException();
-    }
-
-    public static Iterable<QName> parseAugmentPath(final StmtContext<?, ?, ?> ctx, final String path) {
-        Preconditions.checkArgument(!PATH_REL_PATTERN1.matcher(path).matches()
-            && !PATH_REL_PATTERN2.matcher(path).matches(),
-            "An argument for augment can be only absolute path; or descendant if used in uses");
-
-        return Utils.parseXPath(ctx, path);
     }
 
     public static void copyFromSourceToTarget(final StatementContextBase<?, ?, ?> sourceCtx,
