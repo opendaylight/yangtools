@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.meta.ModelStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
@@ -108,11 +109,7 @@ public class AugmentProcessTest {
                 MULTIPLE_AUGMENT_SUBMODULE);
 
         EffectiveSchemaContext result = null;
-        try {
-            result = reactor.buildEffective();
-        } catch (Exception e) {
-            log(e, "");
-        }
+        result = reactor.buildEffective();
         assertNotNull(result);
     }
 
@@ -123,15 +120,11 @@ public class AugmentProcessTest {
         addSources(reactor, MULTIPLE_AUGMENT);
 
         EffectiveSchemaContext result = null;
-        try {
-            result = reactor.buildEffective();
-        } catch (Exception e) {
-            log(e, "");
-        }
+        result = reactor.buildEffective();
         assertNotNull(result);
     }
 
-    @Test
+    @Test(expected=SomeModifiersUnresolvedException.class)
     public void multipleAugmentIncorrectPathTest() throws SourceException,
             ReactorException {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
@@ -139,40 +132,22 @@ public class AugmentProcessTest {
         addSources(reactor, MULTIPLE_AUGMENT_INCORRECT);
 
         EffectiveSchemaContext result = null;
-        try {
-            result = reactor.buildEffective();
-        } catch (Exception e) {
-            log(e, "");
-        }
-
+        result = reactor.buildEffective();
         assertNull(result);
     }
 
-    @Test
+    @Test(expected=SomeModifiersUnresolvedException.class)
     public void multipleAugmentIncorrectPathAndGrpTest()
             throws SourceException, ReactorException {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
         addSources(reactor, MULTIPLE_AUGMENT_INCORRECT2);
-
         EffectiveSchemaContext result = null;
-        try {
-            result = reactor.buildEffective();
-        } catch (Exception e) {
-            log(e, "");
-        }
-
+        result = reactor.buildEffective();
         assertNull(result);
     }
 
-    private void log(final Throwable e, final String indent) {
-        System.out.println(indent + e.getMessage());
 
-        Throwable[] suppressed = e.getSuppressed();
-        for (Throwable throwable : suppressed) {
-            log(throwable, indent + "        ");
-        }
-    }
 
     @Test
     public void readAndParseYangFileTest() throws SourceException,
