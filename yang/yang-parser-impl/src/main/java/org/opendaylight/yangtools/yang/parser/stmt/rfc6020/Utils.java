@@ -26,7 +26,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
 import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -37,6 +36,7 @@ import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
+import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
@@ -49,6 +49,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
@@ -115,27 +116,22 @@ public final class Utils {
         return keyNodes;
     }
 
-    private static XPathExpression compileXPath(final StmtContext<?, ?, ?> ctx, final String path) {
-        final XPath xPath = XPATH_FACTORY.get().newXPath();
-
-        try {
-            return xPath.compile(path);
-        } catch (XPathExpressionException e) {
-            LOG.warn("Argument {} is not valid XPath string at {}", path, ctx.getStatementSourceReference(), e);
-            return null;
-        }
-    }
-
     private static String trimSingleLastSlashFromXPath(final String path) {
         return path.replaceAll("/$", "");
     }
 
-    public static boolean isXPathAbsolute(final StmtContext<?, ?, ?> ctx, final String path) {
-        // FIXME: this is probably an overkill, as this is called for all XPath objects. If we need this validation,
-        //        we should wrap the resulting XPath into RevisionAwareXPath.
-        compileXPath(ctx, trimSingleLastSlashFromXPath(path));
+    static RevisionAwareXPath parseXPath(final StmtContext<?, ?, ?> ctx, final String path) {
+        final XPath xPath = XPATH_FACTORY.get().newXPath();
 
-        return PATH_ABS.matcher(path).matches();
+        final String trimmed = trimSingleLastSlashFromXPath(path);
+        try {
+            // TODO: we could capture the result and expose its 'evaluate' method
+            xPath.compile(trimmed);
+        } catch (XPathExpressionException e) {
+            LOG.warn("Argument \"{}\" is not valid XPath string at \"{}\"", path, ctx.getStatementSourceReference(), e);
+        }
+
+        return new RevisionAwareXPathImpl(path, PATH_ABS.matcher(path).matches());
     }
 
     public static QName trimPrefix(final QName identifier) {
