@@ -9,7 +9,6 @@
 package org.opendaylight.yangtools.yang.parser.impl;
 
 import static com.google.common.base.Preconditions.checkState;
-
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
@@ -105,7 +104,7 @@ import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinit
 import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.BinaryType;
-import org.opendaylight.yangtools.yang.model.util.BitImpl;
+import org.opendaylight.yangtools.yang.model.util.BitBuilder;
 import org.opendaylight.yangtools.yang.model.util.BitsType;
 import org.opendaylight.yangtools.yang.model.util.Decimal64;
 import org.opendaylight.yangtools.yang.model.util.EnumerationType;
@@ -769,7 +768,7 @@ public final class ParserListenerUtils {
         return null;
     }
 
-    private static String wrapPattern(String rawPattern) {
+    private static String wrapPattern(final String rawPattern) {
         final StringBuilder wrapPatternBuilder = new StringBuilder(rawPattern.length() + 2);
         wrapPatternBuilder.append('^');
         wrapPatternBuilder.append(rawPattern);
@@ -908,25 +907,21 @@ public final class ParserListenerUtils {
     private static BitsTypeDefinition.Bit parseBit(final Bit_stmtContext ctx, final long highestPosition,
             final SchemaPath actualPath, final String moduleName) {
         String name = stringFromNode(ctx);
+        final BitBuilder builder = new BitBuilder();
+        builder.setPath(createBaseTypePath(actualPath, name));
+
         Long position = null;
-
-        String description = null;
-        String reference = null;
-        Status status = Status.CURRENT;
-
-        SchemaPath schemaPath = createBaseTypePath(actualPath, name);
-
         for (int i = 0; i < ctx.getChildCount(); i++) {
             ParseTree child = ctx.getChild(i);
             if (child instanceof Position_stmtContext) {
                 String positionStr = stringFromNode(child);
                 position = Long.valueOf(positionStr);
             } else if (child instanceof Description_stmtContext) {
-                description = stringFromNode(child);
+                builder.setDescription(stringFromNode(child));
             } else if (child instanceof Reference_stmtContext) {
-                reference = stringFromNode(child);
+                builder.setReference(stringFromNode(child));
             } else if (child instanceof Status_stmtContext) {
-                status = parseStatus((Status_stmtContext) child);
+                builder.setStatus(parseStatus((Status_stmtContext) child));
             }
         }
 
@@ -939,8 +934,7 @@ public final class ParserListenerUtils {
         }
 
         final List<UnknownSchemaNode> unknownNodes = Collections.emptyList();
-        return new BitImpl(position, schemaPath.getPathTowardsRoot().iterator().next(), schemaPath,
-                description, reference, status, unknownNodes);
+        return builder.setPosition(position).setUnknownSchemaNodes(unknownNodes).build();
     }
 
     /**
@@ -1083,8 +1077,8 @@ public final class ParserListenerUtils {
      * @param actualPath
      *            actual path in model
      */
-    public static void parseUnknownTypeWithBody(Type_body_stmtsContext typeBody, TypeAwareBuilder parent,
-            QName prefixedQName, ModuleBuilder moduleBuilder, QName moduleQName, SchemaPath actualPath) {
+    public static void parseUnknownTypeWithBody(final Type_body_stmtsContext typeBody, final TypeAwareBuilder parent,
+            final QName prefixedQName, final ModuleBuilder moduleBuilder, final QName moduleQName, final SchemaPath actualPath) {
         final int line = typeBody.getStart().getLine();
 
         List<RangeConstraint> rangeStatements = getRangeConstraints(typeBody, moduleBuilder.getName());
