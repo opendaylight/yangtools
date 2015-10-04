@@ -7,32 +7,27 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.common.QName;
-
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.OutputEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.OutputEffectiveStatementImpl;
 
-public class OutputStatementImpl extends AbstractDeclaredStatement<QName>
-        implements OutputStatement {
+public class OutputStatementImpl extends AbstractDeclaredStatement<QName> implements OutputStatement {
 
-    protected OutputStatementImpl(
-            StmtContext<QName, OutputStatement, ?> context) {
+    protected OutputStatementImpl(final StmtContext<QName, OutputStatement, ?> context) {
         super(context);
     }
 
-    public static class Definition
-            extends
+    public static class Definition extends
             AbstractStatementSupport<QName, OutputStatement, EffectiveStatement<QName, OutputStatement>> {
 
         public Definition() {
@@ -40,27 +35,25 @@ public class OutputStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return Utils.qNameFromArgument(ctx, "output");
         }
 
         @Override
-        public void onStatementAdded(Mutable<QName, OutputStatement, EffectiveStatement<QName, OutputStatement>> stmt) {
+        public void onStatementAdded(final Mutable<QName, OutputStatement, EffectiveStatement<QName, OutputStatement>> stmt) {
             stmt.getParentContext().addToNs(ChildSchemaNodes.class, stmt.getStatementArgument(), stmt);
         }
 
         @Override
-        public OutputStatement createDeclared(
-                StmtContext<QName, OutputStatement, ?> ctx) {
+        public OutputStatement createDeclared(final StmtContext<QName, OutputStatement, ?> ctx) {
             return new OutputStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<QName, OutputStatement> createEffective(
-                StmtContext<QName, OutputStatement, EffectiveStatement<QName, OutputStatement>> ctx) {
+                final StmtContext<QName, OutputStatement, EffectiveStatement<QName, OutputStatement>> ctx) {
             return new OutputEffectiveStatementImpl(ctx);
         }
-
     }
 
     @Override
