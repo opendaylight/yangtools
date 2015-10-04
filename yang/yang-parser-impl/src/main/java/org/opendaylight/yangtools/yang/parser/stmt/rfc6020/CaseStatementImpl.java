@@ -8,10 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -26,13 +24,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.CaseEffectiveStatementImpl;
 
 public class CaseStatementImpl extends AbstractDeclaredStatement<QName> implements CaseStatement {
 
     protected CaseStatementImpl(
-            StmtContext<QName, CaseStatement, ?> context) {
+            final StmtContext<QName, CaseStatement, ?> context) {
         super(context);
     }
 
@@ -42,22 +39,22 @@ public class CaseStatementImpl extends AbstractDeclaredStatement<QName> implemen
             super(Rfc6020Mapping.CASE);
         }
 
-        @Override public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        @Override public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return Utils.qNameFromArgument(ctx, value);
         }
 
         @Override
-        public void onStatementAdded(Mutable<QName, CaseStatement, EffectiveStatement<QName, CaseStatement>> stmt) {
+        public void onStatementAdded(final Mutable<QName, CaseStatement, EffectiveStatement<QName, CaseStatement>> stmt) {
             stmt.getParentContext().addToNs(ChildSchemaNodes.class, stmt.getStatementArgument(), stmt);
         }
 
         @Override public CaseStatement createDeclared(
-                StmtContext<QName, CaseStatement, ?> ctx) {
+                final StmtContext<QName, CaseStatement, ?> ctx) {
             return new CaseStatementImpl(ctx);
         }
 
         @Override public EffectiveStatement<QName, CaseStatement> createEffective(
-                StmtContext<QName, CaseStatement, EffectiveStatement<QName, CaseStatement>> ctx) {
+                final StmtContext<QName, CaseStatement, EffectiveStatement<QName, CaseStatement>> ctx) {
             return new CaseEffectiveStatementImpl(ctx);
         }
     }
