@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
-import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DescriptionEffectiveStatementImpl;
@@ -25,8 +25,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PositionEff
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ReferenceEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.StatusEffectiveStatementImpl;
 
-public class BitEffectiveStatementImpl extends DeclaredEffectiveStatementBase<QName, BitStatement> implements
-        BitsTypeDefinition.Bit {
+public class BitEffectiveStatementImpl extends DeclaredEffectiveStatementBase<QName, BitStatement> implements Bit {
 
     private final QName qName;
     private final SchemaPath schemaPath;
@@ -128,7 +127,7 @@ public class BitEffectiveStatementImpl extends DeclaredEffectiveStatementBase<QN
         if (getClass() != obj.getClass()) {
             return false;
         }
-        BitsTypeDefinition.Bit other = (BitsTypeDefinition.Bit) obj;
+        Bit other = (Bit) obj;
         return Objects.equals(qName, other.getQName()) && Objects.equals(schemaPath, other.getPath());
     }
 
