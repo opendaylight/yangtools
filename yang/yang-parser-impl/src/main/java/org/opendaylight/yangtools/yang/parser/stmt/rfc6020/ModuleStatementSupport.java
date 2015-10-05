@@ -9,8 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
-
 import com.google.common.base.Optional;
 import java.net.URI;
 import java.util.Date;
@@ -29,6 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
@@ -39,8 +38,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ModuleEffec
 
 public class ModuleStatementSupport extends
         AbstractStatementSupport<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> {
-
-    private QNameModule qNameModule;
 
     public ModuleStatementSupport() {
         super(Rfc6020Mapping.MODULE);
@@ -78,7 +75,7 @@ public class ModuleStatementSupport extends
             revisionDate = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);
         }
 
-        qNameModule = QNameModule.cachedReference(QNameModule.create(moduleNs.get(), revisionDate.orNull()));
+        QNameModule qNameModule = QNameModule.cachedReference(QNameModule.create(moduleNs.get(), revisionDate.orNull()));
         ModuleIdentifier moduleIdentifier = new ModuleIdentifierImpl(stmt.getStatementArgument(),
                 Optional.<URI> absent(), revisionDate);
 
@@ -100,11 +97,4 @@ public class ModuleStatementSupport extends
         stmt.addToNs(ImpPrefixToModuleIdentifier.class, modulePrefix, moduleIdentifier);
     }
 
-    @Override
-    public void onFullDefinitionDeclared(
-            final Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt)
-            throws SourceException {
-
-        stmt.addContext(NamespaceToModule.class, qNameModule, stmt);
-    }
 }
