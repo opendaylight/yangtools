@@ -34,7 +34,8 @@ final class InMemoryDataTreeModificationCursor extends AbstractCursor<InMemoryDa
         final Optional<ModificationApplyOperation> potential = op.getApplyOperation().getChild(child);
         if (potential.isPresent()) {
             final ModificationApplyOperation operation = potential.get();
-            final ModifiedNode modification = op.getModification().modifyChild(child, operation.getChildPolicy());
+            final ModifiedNode modification = op.getModification().modifyChild(child, operation.getChildPolicy(),
+                getParent().getVersion());
 
             return OperationWithModification.from(operation, modification);
         }
@@ -101,7 +102,7 @@ final class InMemoryDataTreeModificationCursor extends AbstractCursor<InMemoryDa
     public void merge(final PathArgument child, final NormalizedNode<?, ?> data) {
         ensureNotClosed();
         InMemoryDataTreeModification.checkIdentifierReferencesData(child, data);
-        resolveChildModification(child).merge(data);
+        resolveChildModification(child).merge(data, getParent().getVersion());
     }
 
     @Override

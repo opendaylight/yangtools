@@ -76,7 +76,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     public void merge(final YangInstanceIdentifier path, final NormalizedNode<?, ?> data) {
         checkSealed();
         checkIdentifierReferencesData(path, data);
-        resolveModificationFor(path).merge(data);
+        resolveModificationFor(path).merge(data, version);
     }
 
     @Override
@@ -160,7 +160,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             operation = potential.get();
             ++i;
 
-            modification = modification.modifyChild(pathArg, operation.getChildPolicy());
+            modification = modification.modifyChild(pathArg, operation.getChildPolicy(), version);
         }
 
         return OperationWithModification.from(operation, modification);
