@@ -40,7 +40,7 @@ final class OperationWithModification {
         applyOperation.verifyStructure(value, false);
     }
 
-    private void recursiveMerge(final NormalizedNode<?,?> data) {
+    private void recursiveMerge(final NormalizedNode<?,?> data, final Version version) {
         if (data instanceof NormalizedNodeContainer) {
             @SuppressWarnings({ "rawtypes", "unchecked" })
             final NormalizedNodeContainer<?,?, NormalizedNode<PathArgument, ?>> dataContainer =
@@ -69,20 +69,20 @@ final class OperationWithModification {
                         }
                     } else {
                         // Not present, issue a write
-                        forChild(childId).write(c);
+                        forChild(childId, version).write(c);
                     }
                 }
             }
             for (final NormalizedNode<PathArgument, ?> child : dataContainer.getValue()) {
                 final PathArgument childId = child.getIdentifier();
-                forChild(childId).recursiveMerge(child);
+                forChild(childId, version).recursiveMerge(child, version);
             }
         }
 
         modification.merge(data);
     }
 
-    void merge(final NormalizedNode<?, ?> data) {
+    void merge(final NormalizedNode<?, ?> data, final Version version) {
         /*
          * A merge operation will end up overwriting parts of the tree, retaining others. We want to
          * make sure we do not validate the complete resulting structure, but rather just what was
@@ -93,7 +93,7 @@ final class OperationWithModification {
          * FIXME: Should be this moved to recursive merge and run for each node?
          */
         applyOperation.verifyStructure(data, false);
-        recursiveMerge(data);
+        recursiveMerge(data, version);
     }
 
     void delete() {
@@ -151,12 +151,13 @@ final class OperationWithModification {
         return new OperationWithModification(operation, modification);
     }
 
-    private OperationWithModification forChild(final PathArgument childId) {
+    private OperationWithModification forChild(final PathArgument childId, final Version version) {
         final Optional<ModificationApplyOperation> maybeChildOp = applyOperation.getChild(childId);
-        Preconditions.checkArgument(maybeChildOp.isPresent(), "Attempted to apply operation to non-existent child %s", childId);
+        Preconditions.checkArgument(maybeChildOp.isPresent(),
+            "Attempted to apply operation to non-existent child %s", childId);
 
         final ModificationApplyOperation childOp = maybeChildOp.get();
-        final ModifiedNode childMod = modification.modifyChild(childId, childOp.getChildPolicy());
+        final ModifiedNode childMod = modification.modifyChild(childId, childOp.getChildPolicy(), version);
 
         return from(childOp, childMod);
     }

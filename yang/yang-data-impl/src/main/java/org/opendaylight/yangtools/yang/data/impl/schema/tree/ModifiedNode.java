@@ -16,9 +16,12 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 
 /**
  * Node Modification Node and Tree
@@ -56,6 +59,9 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     private Optional<TreeNode> snapshotCache;
     private NormalizedNode<?, ?> value;
     private ModificationType modType;
+
+    // Alternative history introduced in WRITE nodes. Instantiated when we touch any child underneath such a node.
+    private TreeNode writtenOriginal;
 
     private ModifiedNode(final PathArgument identifier, final Optional<TreeNode> original, final ChildTrackingPolicy childPolicy) {
         this.identifier = identifier;
@@ -100,6 +106,54 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         return Optional.<ModifiedNode> fromNullable(children.get(child));
     }
 
+    private Optional<TreeNode> metadataFromSnapshot(@Nonnull final PathArgument child) {
+        return original.isPresent() ? original.get().getChild(child) : Optional.<TreeNode>absent();
+    }
+
+    private Optional<TreeNode> metadataFromData(@Nonnull final PathArgument child, final Version modVersion) {
+        if (writtenOriginal == null) {
+            // Lazy instantiation, as we do not want do this for all writes. We are using the modification's version
+            // here, as that version is what the SchemaAwareApplyOperation will see when dealing with the resulting
+            // modifications.
+            writtenOriginal = TreeNodeFactory.createTreeNode(value, modVersion);
+        }
+
+        return writtenOriginal.getChild(child);
+    }
+
+    /**
+     * Determine the base tree node we are going to apply the operation to. This is not entirely trivial because
+     * both DELETE and WRITE operations unconditionally detach their descendants from the original snapshot, so we need
+     * to take the current node's operation into account.
+     *
+     * @param child Child we are looking to modify
+     * @param modVersion Version allocated by the calling {@link InMemoryDataTreeModification}
+     * @return Before-image tree node as observed by that child.
+     */
+    private Optional<TreeNode> findOriginalMetadata(@Nonnull final PathArgument child, final Version modVersion) {
+        switch (operation) {
+        case DELETE:
+            // DELETE implies non-presence
+            return Optional.absent();
+        case NONE:
+        case TOUCH:
+            return metadataFromSnapshot(child);
+        case MERGE:
+            // MERGE is half-way between TOUCH and WRITE. If the child exists in data, it behaves as a WRITE, otherwise
+            // it behaves as a TOUCH
+            if (NormalizedNodes.findNode(value, child).isPresent()) {
+                return metadataFromData(child, modVersion);
+            } else {
+                return metadataFromSnapshot(child);
+            }
+        case WRITE:
+            // WRITE implies presence based on written data
+            return metadataFromData(child, modVersion);
+        }
+
+        throw new IllegalStateException("Unhandled node operation " + operation);
+    }
+
     /**
      *
      * Returns child modification if child was modified, creates {@link ModifiedNode}
@@ -110,10 +164,12 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      *
      * @param child child identifier, may not be null
      * @param childPolicy child tracking policy for the node we are looking for
+     * @param modVersion Version allocated by the calling {@link InMemoryDataTreeModification}
      * @return {@link ModifiedNode} for specified child, with {@link #getOriginal()}
      *         containing child metadata if child was present in original data.
      */
-    ModifiedNode modifyChild(@Nonnull final PathArgument child, @Nonnull final ChildTrackingPolicy childPolicy) {
+    ModifiedNode modifyChild(@Nonnull final PathArgument child, @Nonnull final ChildTrackingPolicy childPolicy,
+            @Nonnull final Version modVersion) {
         clearSnapshot();
         if (operation == LogicalOperation.NONE) {
             updateOperationType(LogicalOperation.TOUCH);
@@ -123,13 +179,8 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             return potential;
         }
 
-        final Optional<TreeNode> currentMetadata;
-        if (original.isPresent()) {
-            final TreeNode orig = original.get();
-            currentMetadata = orig.getChild(child);
-        } else {
-            currentMetadata = Optional.absent();
-        }
+        final Optional<TreeNode> currentMetadata = findOriginalMetadata(child, modVersion);
+
 
         final ModifiedNode newlyCreated = new ModifiedNode(child, currentMetadata, childPolicy);
         children.put(child, newlyCreated);
@@ -227,6 +278,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      */
     void seal(final ModificationApplyOperation schema) {
         clearSnapshot();
+        writtenOriginal = null;
 
         // A TOUCH node without any children is a no-op
         switch (operation) {
@@ -259,6 +311,9 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     private void updateOperationType(final LogicalOperation type) {
         operation = type;
         modType = null;
+
+        // Make sure we do not reuse previously-instantiated data-derived metadata
+        writtenOriginal = null;
         clearSnapshot();
     }
 
