@@ -34,11 +34,15 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespa
             return key;
         }
 
+        void trigger(Object value) {
+            onValueAdded(key, value);
+        }
+
         abstract void onValueAdded(Object key, Object value);
     }
 
-    private final NamespaceBehaviour<K, V, N> delegate;
-    private final List<VirtualNamespaceContext<?, V, ?>> derivedNamespaces = new ArrayList<>();
+    protected final NamespaceBehaviour<K, V, N> delegate;
+    private final List<VirtualNamespaceContext<?, V, ?, K>> derivedNamespaces = new ArrayList<>();
 
 
     protected NamespaceBehaviourWithListeners(final NamespaceBehaviour<K, V, N> delegate) {
@@ -48,15 +52,13 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespa
 
     protected abstract void addListener(K key, ValueAddedListener<K> listener);
 
-    protected abstract Iterator<ValueAddedListener<K>> getMutableListeners(K key);
-
     protected abstract boolean isRequestedValue(ValueAddedListener<K> listener, NamespaceStorageNode storage, V value);
 
     @Override
-    public void addTo(final NamespaceStorageNode storage, final K key, final V value) {
-        delegate.addTo(storage, key, value);
+    public abstract void addTo(final NamespaceStorageNode storage, final K key, final V value);
 
-        Iterator<ValueAddedListener<K>> keyListeners = getMutableListeners(key);
+    protected void notifyListeners(final NamespaceStorageNode storage, Iterator<ValueAddedListener<K>> keyListeners,
+            final V value) {
         List<ValueAddedListener<K>> toNotify = new ArrayList<>();
         while (keyListeners.hasNext()) {
             ValueAddedListener<K> listener = keyListeners.next();
@@ -66,10 +68,13 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespa
             }
         }
         for(ValueAddedListener<K> listener : toNotify) {
-            listener.onValueAdded(key, value);
+            listener.trigger(value);
         }
-        for (VirtualNamespaceContext<?, V, ?> derived : derivedNamespaces) {
-            derived.addTo(storage, null, value);
+    }
+
+    protected void notifyDerivedNamespaces(final NamespaceStorageNode storage, final K key, final V value) {
+        for (VirtualNamespaceContext<?, V, ?, K> derived : derivedNamespaces) {
+            derived.addedToSourceNamespace(storage, key, value);
         }
     }
 
@@ -77,7 +82,7 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespa
         addListener(listener.key, listener);
     }
 
-    final void addDerivedNamespace(VirtualNamespaceContext<?, V, ?> namespace) {
+    final void addDerivedNamespace(VirtualNamespaceContext<?, V, ?, K> namespace) {
         derivedNamespaces.add(namespace);
     }
 

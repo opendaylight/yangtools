@@ -33,8 +33,14 @@ final class SimpleNamespaceContext<K, V, N extends IdentifierNamespace<K, V>>
         listeners.add(listener);
     }
 
-    @Override
-    protected Iterator<NamespaceBehaviourWithListeners.ValueAddedListener<K>> getMutableListeners(K key) {
+    private Iterator<NamespaceBehaviourWithListeners.ValueAddedListener<K>> getMutableListeners(K key) {
         return listeners.iterator();
+    }
+
+    @Override
+    public void addTo(final NamespaceStorageNode storage, final K key, final V value) {
+        delegate.addTo(storage, key, value);
+        notifyListeners(storage, getMutableListeners(key), value);
+        notifyDerivedNamespaces(storage, key, value);
     }
 }

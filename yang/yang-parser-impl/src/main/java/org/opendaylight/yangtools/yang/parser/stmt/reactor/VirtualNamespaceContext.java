@@ -7,19 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 
-final class VirtualNamespaceContext<K, V, N extends IdentifierNamespace<K, V>>
+final class VirtualNamespaceContext<K, V, N extends IdentifierNamespace<K, V>, DK>
         extends NamespaceBehaviourWithListeners<K, V, N> {
 
-    private final List<NamespaceBehaviourWithListeners.ValueAddedListener<K>> listeners = new ArrayList<>(20);
+    private final Multimap<DK, NamespaceBehaviourWithListeners.ValueAddedListener<K>> listeners = HashMultimap.create();
+    private final DerivedNamespaceBehaviour<K, V, DK, N, ?> derivedDelegate;
 
-    public VirtualNamespaceContext(NamespaceBehaviour<K, V, N> delegate) {
+    public VirtualNamespaceContext(DerivedNamespaceBehaviour<K, V, DK, N, ?> delegate) {
         super(delegate);
+        this.derivedDelegate = delegate;
     }
 
     protected boolean isRequestedValue(NamespaceBehaviourWithListeners.ValueAddedListener<K> listener, NamespaceStorageNode storage, V value) {
@@ -28,11 +30,18 @@ final class VirtualNamespaceContext<K, V, N extends IdentifierNamespace<K, V>>
 
     @Override
     protected void addListener(K key, NamespaceBehaviourWithListeners.ValueAddedListener<K> listener) {
-        listeners.add(listener);
+        listeners.put(derivedDelegate.getSignificantKey(key), listener);
+    }
+
+
+    void addedToSourceNamespace(NamespaceBehaviour.NamespaceStorageNode storage, DK key, V value) {
+        notifyListeners(storage, listeners.get(key).iterator(), value);
     }
 
     @Override
-    protected Iterator<NamespaceBehaviourWithListeners.ValueAddedListener<K>> getMutableListeners(K key) {
-        return listeners.iterator();
+    public void addTo(final NamespaceStorageNode storage, final K key, final V value) {
+        delegate.addTo(storage, key, value);
+        notifyListeners(storage, listeners.get(derivedDelegate.getSignificantKey(key)).iterator(), value);
+        notifyDerivedNamespaces(storage, key, value);
     }
 }

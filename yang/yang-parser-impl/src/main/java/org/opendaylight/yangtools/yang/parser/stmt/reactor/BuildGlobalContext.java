@@ -128,7 +128,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
             NamespaceBehaviour<K, V, N> potentialRaw) {
         if (potentialRaw instanceof DerivedNamespaceBehaviour) {
             VirtualNamespaceContext derivedContext =
-                    new VirtualNamespaceContext<>(potentialRaw);
+                    new VirtualNamespaceContext((DerivedNamespaceBehaviour) potentialRaw);
             getNamespaceBehaviour(((DerivedNamespaceBehaviour) potentialRaw).getDerivedFrom())
                     .addDerivedNamespace(derivedContext);
             return derivedContext;

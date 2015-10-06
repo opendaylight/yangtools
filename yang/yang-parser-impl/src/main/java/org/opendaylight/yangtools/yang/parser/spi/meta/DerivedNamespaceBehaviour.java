@@ -11,17 +11,17 @@ import com.google.common.base.Preconditions;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
-public abstract class DerivedNamespaceBehaviour<K, V, N extends IdentifierNamespace<K, V>, T extends IdentifierNamespace<?, ?>>
+public abstract class DerivedNamespaceBehaviour<K, V, DK, N extends IdentifierNamespace<K, V>, DN extends IdentifierNamespace<DK, ?>>
         extends NamespaceBehaviour<K, V, N> {
 
-    private Class<T> derivedFrom;
+    private Class<DN> derivedFrom;
 
-    protected DerivedNamespaceBehaviour(Class<N> identifier, Class<T> derivedFrom) {
+    protected DerivedNamespaceBehaviour(Class<N> identifier, Class<DN> derivedFrom) {
         super(identifier);
         this.derivedFrom = Preconditions.checkNotNull(derivedFrom);
     }
 
-    public Class<T> getDerivedFrom() {
+    public Class<DN> getDerivedFrom() {
         return derivedFrom;
     }
 
@@ -37,4 +37,6 @@ public abstract class DerivedNamespaceBehaviour<K, V, N extends IdentifierNamesp
     public void addTo(NamespaceStorageNode storage, K key, V value) {
         // Intentional noop
     }
+
+    public abstract DK getSignificantKey(K key);
 }

@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 class SchemaNodeIdentifierBuildNamespace extends
-        DerivedNamespaceBehaviour<SchemaNodeIdentifier, StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>, SchemaNodeIdentifierBuildNamespace, ChildSchemaNodes<?, ?>>
+        DerivedNamespaceBehaviour<SchemaNodeIdentifier, StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>, QName, SchemaNodeIdentifierBuildNamespace, ChildSchemaNodes<?, ?>>
         implements IdentifierNamespace<SchemaNodeIdentifier, StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>> {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -54,6 +54,11 @@ class SchemaNodeIdentifierBuildNamespace extends
             current = (StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>) current.getFromNamespace(ChildSchemaNodes.class, iterator.next());
         }
         return current;
+    }
+
+    @Override
+    public QName getSignificantKey(SchemaNodeIdentifier key) {
+        return key.getLastComponent();
     }
 
 }
