@@ -101,7 +101,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        Util.checkClasspath(project, repoSystem, localRepository, remoteRepos, getLog());
+        Util.checkClasspath(project, repoSystem, localRepository, remoteRepos);
 
         if (yangToSourcesProcessor == null) {
             List<CodeGeneratorArg> codeGeneratorArgs = processCodeGenerators(codeGenerators);
@@ -110,7 +110,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
             File yangFilesRootFile = processYangFilesRootDir(yangFilesRootDir, project.getBasedir());
             File[] excludedFiles = processExcludeFiles(excludeFiles, yangFilesRootFile);
 
-            yangToSourcesProcessor = new YangToSourcesProcessor(buildContext, getLog(), yangFilesRootFile,
+            yangToSourcesProcessor = new YangToSourcesProcessor(buildContext, yangFilesRootFile,
                     excludedFiles, codeGeneratorArgs, project, inspectDependencies);
         }
         yangToSourcesProcessor.execute();

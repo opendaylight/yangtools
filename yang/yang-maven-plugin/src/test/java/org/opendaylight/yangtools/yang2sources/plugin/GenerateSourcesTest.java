@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -27,7 +26,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.maven.model.Plugin;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,10 +55,10 @@ public class GenerateSourcesTest {
         yang = new File(getClass().getResource("/yang/mock.yang").toURI()).getParent();
         outDir = new File("/outputDir");
         YangProvider mock = mock(YangProvider.class);
-        doNothing().when(mock).addYangsToMetaInf(any(Log.class), any(MavenProject.class), any(File.class),
+        doNothing().when(mock).addYangsToMetaInf(any(MavenProject.class), any(File.class),
                 any(File[].class));
 
-        YangToSourcesProcessor processor = new YangToSourcesProcessor(mock(Log.class), new File(yang), new File[] {},
+        YangToSourcesProcessor processor = new YangToSourcesProcessor(new File(yang), new File[] {},
                 Lists.newArrayList(new CodeGeneratorArg(GeneratorMock.class.getName(), "outputDir")), project, false,
                 mock);
         mojo = new YangToSourcesMojo(processor);
