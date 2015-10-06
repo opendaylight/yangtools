@@ -14,6 +14,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.yangtools.test.union.rev150121.LowestLevel1;
 import org.opendaylight.yangtools.binding.data.codec.gen.impl.StreamWriterGenerator;
 import org.opendaylight.yangtools.binding.data.codec.impl.BindingNormalizedNodeCodecRegistry;
 import org.opendaylight.yangtools.binding.data.codec.impl.IncorrectNestingException;
@@ -33,7 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 public class ExceptionReportingTest {
 
 
-    private static final BindingNormalizedNodeCodecRegistry EMPTY_SCHEMA_CODEC = codec();
+    private static final BindingNormalizedNodeCodecRegistry CODEC_WITHOUT_TOP = codec(LowestLevel1.class);
     private static final BindingNormalizedNodeCodecRegistry ONLY_TOP_CODEC = codec(Top.class);
     private static final BindingNormalizedNodeCodecRegistry FULL_CODEC = codec(TreeComplexUsesAugment.class);
 
@@ -50,17 +51,17 @@ public class ExceptionReportingTest {
 
     @Test(expected=MissingSchemaException.class)
     public void testDOMTop() {
-        EMPTY_SCHEMA_CODEC.fromYangInstanceIdentifier(BI_TOP_PATH);
+        CODEC_WITHOUT_TOP.fromYangInstanceIdentifier(BI_TOP_PATH);
     }
 
     @Test(expected=MissingSchemaException.class)
     public void testDOMAugment() {
-        EMPTY_SCHEMA_CODEC.fromYangInstanceIdentifier(BI_TREE_LEAF_ONLY);
+        CODEC_WITHOUT_TOP.fromYangInstanceIdentifier(BI_TREE_LEAF_ONLY);
     }
 
     @Test(expected=MissingSchemaForClassException.class)
     public void testBindingTop() {
-        EMPTY_SCHEMA_CODEC.toYangInstanceIdentifier(BA_TOP_LEVEL_LIST);
+        CODEC_WITHOUT_TOP.toYangInstanceIdentifier(BA_TOP_LEVEL_LIST);
     }
 
     @Test(expected=MissingSchemaForClassException.class)
