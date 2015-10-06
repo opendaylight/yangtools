@@ -34,11 +34,12 @@ import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class Util {
 
@@ -50,6 +51,7 @@ final class Util {
 
     static final String YANG_SUFFIX = "yang";
 
+    private static final Logger LOG = LoggerFactory.getLogger(Util.class);
     private static final int CACHE_SIZE = 10;
     // Cache for listed directories and found yang files. Typically yang files
     // are utilized twice. First: code is generated during generate-sources
@@ -77,11 +79,11 @@ final class Util {
         return yangFiles;
     }
 
-    static Collection<File> listFiles(File root, File[] excludedFiles, Log log) throws FileNotFoundException {
+    static Collection<File> listFiles(File root, File[] excludedFiles) throws FileNotFoundException {
         if (!root.exists()) {
-            if (log != null) {
-                log.warn(Util.message("YANG source directory %s not found. No code will be generated.", YangToSourcesProcessor.LOG_PREFIX, root.toString()));
-            }
+            LOG.warn("{} YANG source directory {} not found. No code will be generated.", YangToSourcesProcessor
+                    .LOG_PREFIX, root.toString());
+
             return Collections.emptyList();
         }
         Collection<File> result = new ArrayList<>();
@@ -95,10 +97,8 @@ final class Util {
                 }
             }
             if (excluded) {
-                if (log != null) {
-                    log.info(Util.message("%s file excluded %s", YangToSourcesProcessor.LOG_PREFIX,
-                            Util.YANG_SUFFIX.toUpperCase(), f));
-                }
+                LOG.info("{} {} file excluded {}", YangToSourcesProcessor.LOG_PREFIX, Util.YANG_SUFFIX.toUpperCase(),
+                        f);
             } else {
                 result.add(f);
             }
@@ -128,11 +128,6 @@ final class Util {
         return clazz;
     }
 
-    static String message(String message, String logPrefix, Object... args) {
-        String innerMessage = String.format(message, args);
-        return String.format("%s %s", logPrefix, innerMessage);
-    }
-
     static List<File> getClassPath(MavenProject project) {
         List<File> dependencies = Lists.newArrayList();
         for (Artifact element : project.getArtifacts()) {
@@ -156,24 +151,22 @@ final class Util {
      *            local repository
      * @param remoteRepos
      *            remote repositories
-     * @param log
-     *            logger
      */
     static void checkClasspath(MavenProject project, RepositorySystem repoSystem, ArtifactRepository localRepo,
-            List<ArtifactRepository> remoteRepos, Log log) {
+            List<ArtifactRepository> remoteRepos) {
         Plugin plugin = project.getPlugin(YangToSourcesMojo.PLUGIN_NAME);
         if (plugin == null) {
-            log.warn(message("%s not found, dependencies version check skipped", YangToSourcesProcessor.LOG_PREFIX,
-                    YangToSourcesMojo.PLUGIN_NAME));
+            LOG.warn("{} {} not found, dependencies version check skipped", YangToSourcesProcessor.LOG_PREFIX,
+                    YangToSourcesMojo.PLUGIN_NAME);
         } else {
             Map<Artifact, Collection<Artifact>> pluginDependencies = new HashMap<>();
-            getPluginTransitiveDependencies(plugin, pluginDependencies, repoSystem, localRepo, remoteRepos, log);
+            getPluginTransitiveDependencies(plugin, pluginDependencies, repoSystem, localRepo, remoteRepos);
 
             Set<Artifact> projectDependencies = project.getDependencyArtifacts();
             for (Map.Entry<Artifact, Collection<Artifact>> entry : pluginDependencies.entrySet()) {
-                checkArtifact(entry.getKey(), projectDependencies, log);
+                checkArtifact(entry.getKey(), projectDependencies);
                 for (Artifact dependency : entry.getValue()) {
-                    checkArtifact(dependency, projectDependencies, log);
+                    checkArtifact(dependency, projectDependencies);
                 }
             }
         }
@@ -192,12 +185,9 @@ final class Util {
      *            local repository
      * @param remoteRepos
      *            list of remote repositories
-     * @param log
-     *            logger
      */
     private static void getPluginTransitiveDependencies(Plugin plugin, Map<Artifact, Collection<Artifact>> map,
-            RepositorySystem repoSystem, ArtifactRepository localRepository, List<ArtifactRepository> remoteRepos,
-            Log log) {
+            RepositorySystem repoSystem, ArtifactRepository localRepository, List<ArtifactRepository> remoteRepos) {
 
         List<Dependency> pluginDependencies = plugin.getDependencies();
         for (Dependency dep : pluginDependencies) {
@@ -224,18 +214,15 @@ final class Util {
      *            artifact to check
      * @param dependencies
      *            collection of dependencies
-     * @param log
-     *            logger
      */
-    private static void checkArtifact(Artifact artifact, Collection<Artifact> dependencies, Log log) {
+    private static void checkArtifact(Artifact artifact, Collection<Artifact> dependencies) {
         for (org.apache.maven.artifact.Artifact d : dependencies) {
             if (artifact.getGroupId().equals(d.getGroupId()) && artifact.getArtifactId().equals(d.getArtifactId())) {
                 if (!(artifact.getVersion().equals(d.getVersion()))) {
-                    log.warn(message("Dependency resolution conflict:", YangToSourcesProcessor.LOG_PREFIX));
-                    log.warn(message("'%s' dependency [%s] has different version than one "
-                            + "declared in current project [%s]. It is recommended to fix this problem "
-                            + "because it may cause compilation errors.", YangToSourcesProcessor.LOG_PREFIX,
-                            YangToSourcesMojo.PLUGIN_NAME, artifact, d));
+                    LOG.warn("{} Dependency resolution conflict:", YangToSourcesProcessor.LOG_PREFIX);
+                    LOG.warn("{} '{}' dependency [{}] has different version than one declared in current project [{}]" +
+                                    ". It is recommended to fix this problem because it may cause compilation errors.",
+                            YangToSourcesProcessor.LOG_PREFIX, YangToSourcesMojo.PLUGIN_NAME, artifact, d);
                 }
             }
         }
@@ -272,14 +259,14 @@ final class Util {
         }
     }
 
-    static YangsInZipsResult findYangFilesInDependenciesAsStream(Log log, MavenProject project)
+    static YangsInZipsResult findYangFilesInDependenciesAsStream(MavenProject project)
             throws MojoFailureException {
         List<YangSourceFromDependency> yangsFromDependencies = new ArrayList<>();
         List<Closeable> zips = new ArrayList<>();
         try {
             List<File> filesOnCp = Util.getClassPath(project);
-            log.info(Util.message("Searching for yang files in following dependencies: %s",
-                    YangToSourcesProcessor.LOG_PREFIX, filesOnCp));
+            LOG.info("{} Searching for yang files in following dependencies: {}", YangToSourcesProcessor.LOG_PREFIX,
+                    filesOnCp);
 
             for (File file : filesOnCp) {
                 List<String> foundFilesForReporting = new ArrayList<>();
@@ -316,8 +303,8 @@ final class Util {
                     }
                 }
                 if (foundFilesForReporting.size() > 0) {
-                    log.info(Util.message("Found %d yang files in %s: %s", YangToSourcesProcessor.LOG_PREFIX,
-                            foundFilesForReporting.size(), file, foundFilesForReporting));
+                    LOG.info("{} Found {} yang files in {}: {}", YangToSourcesProcessor.LOG_PREFIX,
+                            foundFilesForReporting.size(), file, foundFilesForReporting);
                 }
 
             }
@@ -334,18 +321,17 @@ final class Util {
      *
      * FIXME: Rename to what class is actually doing.
      *
-     * @param log
      * @param project
      * @return
      * @throws MojoFailureException
      */
-    static Collection<File> findYangFilesInDependencies(Log log, MavenProject project) throws MojoFailureException {
+    static Collection<File> findYangFilesInDependencies(MavenProject project) throws MojoFailureException {
         final List<File> yangsFilesFromDependencies = new ArrayList<>();
 
         try {
             List<File> filesOnCp = Util.getClassPath(project);
-            log.info(Util.message("Searching for yang files in following dependencies: %s",
-                    YangToSourcesProcessor.LOG_PREFIX, filesOnCp));
+            LOG.info("{} Searching for yang files in following dependencies: {}", YangToSourcesProcessor.LOG_PREFIX,
+                    filesOnCp);
 
             for (File file : filesOnCp) {
                 // is it jar file or directory?
@@ -372,8 +358,8 @@ final class Util {
 
                             if (entryName.startsWith(YangToSourcesProcessor.META_INF_YANG_STRING_JAR)
                                     && !entry.isDirectory() && entryName.endsWith(".yang")) {
-                                log.debug(Util.message("Found a YANG file in %s: %s", YangToSourcesProcessor.LOG_PREFIX,
-                                        file, entryName));
+                                LOG.debug("{} Found a YANG file in {}: {}", YangToSourcesProcessor.LOG_PREFIX, file,
+                                        entryName);
                                 yangsFilesFromDependencies.add(file);
                                 break;
                             }
