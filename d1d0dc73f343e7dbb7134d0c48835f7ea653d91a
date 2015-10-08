@@ -101,6 +101,23 @@
       "revId": "d1d0dc73f343e7dbb7134d0c48835f7ea653d91a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d7dde143",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/CaseShorthandImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-08T22:20:25Z",
+      "side": 1,
+      "message": "these classes should really be final, right?",
+      "revId": "d1d0dc73f343e7dbb7134d0c48835f7ea653d91a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
