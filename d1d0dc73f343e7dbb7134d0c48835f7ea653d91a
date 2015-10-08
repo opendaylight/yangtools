@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_f75d7dea",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/AbstractEffectiveContainerSchemaNode.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-08T22:19:49Z",
+      "side": 1,
+      "message": "does this need to be public?",
+      "revId": "d1d0dc73f343e7dbb7134d0c48835f7ea653d91a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_f7149df6",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/AbstractEffectiveDataSchemaNode.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 18,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-08T22:19:49Z",
+      "side": 1,
+      "message": "Abstract prefix on non-abstract class? should be package-private, too.",
+      "revId": "d1d0dc73f343e7dbb7134d0c48835f7ea653d91a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_b7f625d6",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/AbstractEffectiveModule.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-08T22:19:49Z",
+      "side": 1,
+      "message": "Use java.util.Set and others instead of concrete implementation",
+      "revId": "d1d0dc73f343e7dbb7134d0c48835f7ea653d91a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_373215a8",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/AbstractEffectiveSchemaNode.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-08T22:19:49Z",
+      "side": 1,
+      "message": "use an ImmutableList.builder() instead",
+      "revId": "d1d0dc73f343e7dbb7134d0c48835f7ea653d91a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_d7264168",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/AbstractEffectiveSimpleDataNodeContainer.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-08T22:19:49Z",
+      "side": 1,
+      "message": "this.augmenting \u003d copyTypesFromOrigin.contains()",
+      "revId": "d1d0dc73f343e7dbb7134d0c48835f7ea653d91a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_17d4b91e",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/AugmentEffectiveStatementImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 63,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-08T22:19:49Z",
+      "side": 1,
+      "message": "ImmutableList.builder()",
+      "revId": "d1d0dc73f343e7dbb7134d0c48835f7ea653d91a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
