@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import com.google.common.base.Preconditions;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.net.URI;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -57,19 +56,19 @@ abstract class JSONStreamWriterContext {
      */
     final void writeChildJsonIdentifier(final SchemaContext schema, final JsonWriter writer, final QName qname) throws IOException {
 
-        StringWriter strWriter = new StringWriter();
+        final StringBuilder sb = new StringBuilder();
         // Prepend module name if namespaces do not match
         final URI ns = qname.getNamespace();
         if (!ns.equals(getNamespace())) {
             final Module module = schema.findModuleByNamespaceAndRevision(ns, null);
             Preconditions.checkArgument(module != null, "Could not find module for namespace {}", ns);
 
-            strWriter.append(module.getName());
-            strWriter.append(':');
+            sb.append(module.getName());
+            sb.append(':');
         }
-        strWriter.append(qname.getLocalName());
+        sb.append(qname.getLocalName());
 
-        writer.name(strWriter.toString());
+        writer.name(sb.toString());
     }
 
     /**
