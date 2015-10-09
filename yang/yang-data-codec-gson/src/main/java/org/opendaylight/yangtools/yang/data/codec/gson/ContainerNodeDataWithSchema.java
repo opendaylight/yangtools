@@ -8,8 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import java.io.IOException;
-
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 class ContainerNodeDataWithSchema extends CompositeNodeDataWithSchema {
@@ -19,7 +18,8 @@ class ContainerNodeDataWithSchema extends CompositeNodeDataWithSchema {
     }
 
     @Override
-    public void write(final NormalizedNodeStreamWriter writer) throws IOException {
+    public void write(final SchemaAwareNormalizedNodeStreamWriter writer) throws IOException {
+        writer.nextDataSchemaNode(getSchema());
         writer.startContainerNode(provideNodeIdentifier(), childSizeHint());
         super.write(writer);
         writer.endNode();

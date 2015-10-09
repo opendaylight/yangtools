@@ -27,7 +27,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.DataSchemaNodeAwareAdaptor;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -45,14 +47,14 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 @Beta
 public final class JsonParserStream implements Closeable, Flushable {
     private final Deque<URI> namespaces = new ArrayDeque<>();
-    private final NormalizedNodeStreamWriter writer;
+    private final SchemaAwareNormalizedNodeStreamWriter writer;
     private final JSONCodecFactory codecs;
     private final SchemaContext schema;
     private final DataSchemaNode parentNode;
 
     private JsonParserStream(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext, final DataSchemaNode parentNode) {
         this.schema = Preconditions.checkNotNull(schemaContext);
-        this.writer = Preconditions.checkNotNull(writer);
+        this.writer = DataSchemaNodeAwareAdaptor.forWriter(writer);
         this.codecs = JSONCodecFactory.create(schemaContext);
         this.parentNode = parentNode;
     }
