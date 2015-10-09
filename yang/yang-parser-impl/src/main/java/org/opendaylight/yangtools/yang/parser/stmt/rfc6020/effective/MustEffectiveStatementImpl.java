@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
@@ -18,36 +17,26 @@ public class MustEffectiveStatementImpl extends EffectiveStatementBase<RevisionA
         MustDefinition {
 
     private final RevisionAwareXPath xPath;
-    private String description;
-    private String errorAppTag;
-    private String errorMessage;
-    private String reference;
+    private final String description;
+    private final String errorAppTag;
+    private final String errorMessage;
+    private final String reference;
 
     public MustEffectiveStatementImpl(final StmtContext<RevisionAwareXPath, MustStatement, ?> ctx) {
         super(ctx);
+        this.xPath = ctx.getStatementArgument();
 
-        initFields();
+        DescriptionEffectiveStatementImpl descriptionStmt = firstEffective(DescriptionEffectiveStatementImpl.class);
+        this.description = (descriptionStmt == null) ? null : descriptionStmt.argument();
 
-        xPath = ctx.getStatementArgument();
-    }
+        ErrorAppTagEffectiveStatementImpl errorAppTagStmt = firstEffective(ErrorAppTagEffectiveStatementImpl.class);
+        this.errorAppTag = (errorAppTagStmt == null) ? null : errorAppTagStmt.argument();
 
-    private void initFields() {
+        ErrorMessageEffectiveStatementImpl errorMessageStmt = firstEffective(ErrorMessageEffectiveStatementImpl.class);
+        this.errorMessage = (errorMessageStmt == null) ? null : errorMessageStmt.argument();
 
-        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-
-            if (effectiveStatement instanceof DescriptionEffectiveStatementImpl) {
-                description = ((DescriptionEffectiveStatementImpl) effectiveStatement).argument();
-            }
-            if (effectiveStatement instanceof ErrorAppTagEffectiveStatementImpl) {
-                errorAppTag = ((ErrorAppTagEffectiveStatementImpl) effectiveStatement).argument();
-            }
-            if (effectiveStatement instanceof ErrorMessageEffectiveStatementImpl) {
-                errorMessage = ((ErrorMessageEffectiveStatementImpl) effectiveStatement).argument();
-            }
-            if (effectiveStatement instanceof ReferenceEffectiveStatementImpl) {
-                reference = ((ReferenceEffectiveStatementImpl) effectiveStatement).argument();
-            }
-        }
+        ReferenceEffectiveStatementImpl referenceStmt = firstEffective(ReferenceEffectiveStatementImpl.class);
+        this.reference = (referenceStmt == null) ? null : referenceStmt.argument();
     }
 
     @Override
@@ -103,7 +92,7 @@ public class MustEffectiveStatementImpl extends EffectiveStatementBase<RevisionA
         if (!Objects.equals(description, other.description)) {
             return false;
         }
-        if (!Objects.equals(reference,other.reference)) {
+        if (!Objects.equals(reference, other.reference)) {
             return false;
         }
         return true;

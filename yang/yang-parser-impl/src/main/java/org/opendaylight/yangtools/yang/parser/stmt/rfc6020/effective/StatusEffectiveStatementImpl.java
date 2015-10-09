@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class StatusEffectiveStatementImpl extends EffectiveStatementBase<Status, StatusStatement> {
+public final class StatusEffectiveStatementImpl extends EffectiveStatementBase<Status, StatusStatement> {
     public StatusEffectiveStatementImpl(final StmtContext<Status, StatusStatement, ?> ctx) {
         super(ctx);
     }

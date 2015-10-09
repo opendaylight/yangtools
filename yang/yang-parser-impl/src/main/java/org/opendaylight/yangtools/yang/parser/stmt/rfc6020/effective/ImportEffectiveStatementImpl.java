@@ -11,7 +11,6 @@ import java.util.Date;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
@@ -19,22 +18,22 @@ public class ImportEffectiveStatementImpl extends EffectiveStatementBase<String,
         ModuleImport {
 
     private final String moduleName;
-    private Date revision;
-    private String prefix;
+    private final Date revision;
+    private final String prefix;
 
     public ImportEffectiveStatementImpl(final StmtContext<String, ImportStatement, ?> ctx) {
         super(ctx);
 
         moduleName = ctx.getStatementArgument();
-        revision = SimpleDateFormatUtil.DEFAULT_DATE_IMP;
 
-        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof RevisionDateEffectiveStatementImpl) {
-                revision = ((RevisionDateEffectiveStatementImpl) effectiveStatement).argument();
-            }
-            if (effectiveStatement instanceof PrefixEffectiveStatementImpl) {
-                prefix = ((PrefixEffectiveStatementImpl) effectiveStatement).argument();
-            }
+        RevisionDateEffectiveStatementImpl revisionDateStmt = firstEffective(RevisionDateEffectiveStatementImpl.class);
+        this.revision = (revisionDateStmt == null) ? SimpleDateFormatUtil.DEFAULT_DATE_IMP : revisionDateStmt.argument();
+
+        PrefixEffectiveStatementImpl prefixStmt = firstEffective(PrefixEffectiveStatementImpl.class);
+        if (prefixStmt != null ) {
+            this.prefix = prefixStmt.argument();
+        } else {
+            throw new IllegalStateException("Prefix is mandatory substatement of import statement");
         }
     }
 

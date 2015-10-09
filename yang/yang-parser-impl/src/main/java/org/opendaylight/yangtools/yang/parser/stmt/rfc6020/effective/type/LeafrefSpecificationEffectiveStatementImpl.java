@@ -30,7 +30,6 @@ public class LeafrefSpecificationEffectiveStatementImpl extends
 
     public static final String LOCAL_NAME = "leafref";
     private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, LOCAL_NAME);
-    private static final SchemaPath PATH = SchemaPath.create(true, QNAME);
     private static final String DESCRIPTION = "The leafref type is used to reference a particular leaf instance in the data tree.";
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.9";
     private static final String UNITS = "";

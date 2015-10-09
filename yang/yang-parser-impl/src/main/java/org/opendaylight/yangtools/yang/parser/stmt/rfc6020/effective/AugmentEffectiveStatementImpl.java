@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -8,13 +8,13 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -28,66 +28,44 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-public class AugmentEffectiveStatementImpl
-        extends AbstractEffectiveDocumentedDataNodeContainer<SchemaNodeIdentifier, AugmentStatement>
-        implements AugmentationSchema, NamespaceRevisionAware, Comparable<AugmentEffectiveStatementImpl> {
+public final class AugmentEffectiveStatementImpl extends
+        AbstractEffectiveDocumentedDataNodeContainer<SchemaNodeIdentifier, AugmentStatement> implements
+        AugmentationSchema, NamespaceRevisionAware, Comparable<AugmentEffectiveStatementImpl> {
     private final SchemaPath targetPath;
     private final URI namespace;
     private final Date revision;
     private final int order;
-    private ImmutableList<UnknownSchemaNode> unknownNodes;
-    private RevisionAwareXPath whenCondition;
-    private AugmentationSchema copyOf;
+    private final List<UnknownSchemaNode> unknownNodes;
+    private final RevisionAwareXPath whenCondition;
+    private final AugmentationSchema copyOf;
 
     public AugmentEffectiveStatementImpl(
             final StmtContext<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> ctx) {
         super(ctx);
 
         this.targetPath = ctx.getStatementArgument().asSchemaPath();
+
         QNameModule rootModuleQName = Utils.getRootModuleQName(ctx);
         this.namespace = rootModuleQName.getNamespace();
         this.revision = rootModuleQName.getRevision();
 
         this.order = ctx.getOrder();
+        this.copyOf = ctx.getOriginalCtx() == null ? null : (AugmentationSchema) ctx.getOriginalCtx().buildEffective();
 
-        initCopyOf(ctx);
-        initSubstatementCollections();
-    }
+        WhenEffectiveStatementImpl whenStmt = firstEffective(WhenEffectiveStatementImpl.class);
+        this.whenCondition = (whenStmt == null) ? null : whenStmt.argument();
 
-    private void initCopyOf(
-            final StmtContext<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> ctx) {
-        StatementContextBase<?, ?, ?> originalCtx = ctx.getOriginalCtx();
-        if (originalCtx != null) {
-            this.copyOf = (AugmentationSchema) originalCtx.buildEffective();
-        }
-    }
-
-    private void initSubstatementCollections() {
+        // initSubstatementCollections
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-
-        List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
-
-        boolean initWhen = false;
+        ImmutableList.Builder<UnknownSchemaNode> listBuilder = new ImmutableList.Builder<>();
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
-                UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
-                unknownNodesInit.add(unknownNode);
-            }
-            if(!initWhen && effectiveStatement instanceof WhenEffectiveStatementImpl) {
-                WhenEffectiveStatementImpl whenStmt = (WhenEffectiveStatementImpl) effectiveStatement;
-                whenCondition = whenStmt.argument();
-                initWhen = true;
+                listBuilder.add((UnknownSchemaNode) effectiveStatement);
             }
         }
-
-        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
-    }
-
-    public void setCopyOf(final AugmentationSchema build) {
-        this.copyOf = build;
+        this.unknownNodes = listBuilder.build();
     }
 
     @Override

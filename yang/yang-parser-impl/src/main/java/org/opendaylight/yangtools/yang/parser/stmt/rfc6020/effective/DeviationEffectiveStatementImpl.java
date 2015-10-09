@@ -22,31 +22,27 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class DeviationEffectiveStatementImpl extends EffectiveStatementBase<SchemaNodeIdentifier, DeviationStatement>
         implements Deviation, Immutable {
-
     private final SchemaPath targetPath;
-    private Deviate deviate;
-    private String reference;
-    private final ImmutableList<UnknownSchemaNode> unknownSchemaNodes;
+    private final Deviate deviate;
+    private final String reference;
+    private final List<UnknownSchemaNode> unknownSchemaNodes;
 
     public DeviationEffectiveStatementImpl(final StmtContext<SchemaNodeIdentifier, DeviationStatement, ?> ctx) {
         super(ctx);
+        this.targetPath = ctx.getStatementArgument().asSchemaPath();
+
+        DeviateEffectiveStatementImpl deviateStmt = firstEffective(DeviateEffectiveStatementImpl.class);
+        this.deviate = (deviateStmt == null) ? null : deviateStmt.argument();
+
+        ReferenceEffectiveStatementImpl referenceStmt = firstEffective(ReferenceEffectiveStatementImpl.class);
+        this.reference = (referenceStmt == null) ? null : referenceStmt.argument();
 
         List<UnknownSchemaNode> unknownSchemaNodesInit = new LinkedList<>();
-
-        targetPath = ctx.getStatementArgument().asSchemaPath();
-
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof DeviateEffectiveStatementImpl) {
-                deviate = ((DeviateEffectiveStatementImpl) effectiveStatement).argument();
-            }
-            if (effectiveStatement instanceof ReferenceEffectiveStatementImpl) {
-                reference = ((ReferenceEffectiveStatementImpl) effectiveStatement).argument();
-            }
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 unknownSchemaNodesInit.add((UnknownSchemaNode) effectiveStatement);
             }
         }
-
         unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodesInit);
     }
 

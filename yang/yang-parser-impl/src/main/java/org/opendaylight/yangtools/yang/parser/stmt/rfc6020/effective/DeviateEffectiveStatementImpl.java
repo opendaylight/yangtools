@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class DeviateEffectiveStatementImpl extends EffectiveStatementBase<Deviation.Deviate, DeviateStatement> {
+public final class DeviateEffectiveStatementImpl extends EffectiveStatementBase<Deviation.Deviate, DeviateStatement> {
     public DeviateEffectiveStatementImpl(final StmtContext<Deviation.Deviate, DeviateStatement, ?> ctx) {
         super(ctx);
     }
