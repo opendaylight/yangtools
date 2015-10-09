@@ -12,7 +12,7 @@ import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 /**
@@ -40,7 +40,7 @@ abstract class AbstractNodeDataWithSchema {
      * @param writer Target writer
      * @throws IOException reported when thrown by the writer.
      */
-    public abstract void write(final NormalizedNodeStreamWriter writer) throws IOException;
+    public abstract void write(final SchemaAwareNormalizedNodeStreamWriter writer) throws IOException;
 
     protected final NodeIdentifier provideNodeIdentifier() {
         return NodeIdentifier.create(schema.getQName());

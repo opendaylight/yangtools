@@ -8,17 +8,15 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.base.Preconditions;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -51,9 +49,10 @@ class ListEntryNodeDataWithSchema extends CompositeNodeDataWithSchema {
     }
 
     @Override
-    public void write(final NormalizedNodeStreamWriter writer) throws IOException {
+    public void write(final SchemaAwareNormalizedNodeStreamWriter writer) throws IOException {
         final Collection<QName> keyDef = ((ListSchemaNode) getSchema()).getKeyDefinition();
         if (keyDef.isEmpty()) {
+            writer.nextDataSchemaNode(getSchema());
             writer.startUnkeyedListItem(provideNodeIdentifier(), childSizeHint());
             super.write(writer);
             writer.endNode();
@@ -68,6 +67,7 @@ class ListEntryNodeDataWithSchema extends CompositeNodeDataWithSchema {
             predicates.put(qname, qNameToKeys.get(qname).getValue());
         }
 
+        writer.nextDataSchemaNode(getSchema());
         writer.startMapEntryNode(
             new NodeIdentifierWithPredicates(getSchema().getQName(), predicates),
             childSizeHint());
