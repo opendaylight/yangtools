@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
@@ -25,6 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
@@ -40,6 +42,9 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMa
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
+import org.opendaylight.yangtools.yang.data.util.LeafInterner;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
 /**
  *
@@ -54,10 +59,11 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUn
  *
  *
  */
-public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
+public class ImmutableNormalizedNodeStreamWriter implements SchemaAwareNormalizedNodeStreamWriter {
 
     @SuppressWarnings("rawtypes")
     private final Deque<NormalizedNodeContainerBuilder> builders = new ArrayDeque<>();
+    private DataSchemaNode nextSchema;
 
     @SuppressWarnings("rawtypes")
     protected ImmutableNormalizedNodeStreamWriter(final NormalizedNodeContainerBuilder topLevelBuilder) {
@@ -84,7 +90,6 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     /**
-     *
      * Creates a {@link NormalizedNodeStreamWriter} which creates one instance of top
      * level {@link NormalizedNode} (type of NormalizedNode) is determined by first
      * start event.
@@ -106,7 +111,6 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         return new ImmutableNormalizedNodeStreamWriter(result);
     }
 
-
     @SuppressWarnings("rawtypes")
     private NormalizedNodeContainerBuilder getCurrent() {
         return builders.peek();
@@ -115,6 +119,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     @SuppressWarnings("rawtypes")
     private void enter(final NormalizedNodeContainerBuilder next) {
         builders.push(next);
+        nextSchema = null;
     }
 
     @SuppressWarnings("unchecked")
@@ -131,19 +136,31 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         Preconditions.checkState(current != null, "Reached top level node, which could not be closed in this writer.");
         final NormalizedNode<PathArgument, ?> product = finishedBuilder.build();
         current.addChild(product);
+        nextSchema = null;
     }
 
     @Override
     public void leafNode(final NodeIdentifier name, final Object value) {
         checkDataNodeContainer();
-        writeChild(ImmutableNodes.leafNode(name, value));
+
+        final LeafNode<Object> sample = ImmutableNodes.leafNode(name, value);
+        final LeafNode<Object> node;
+        if (nextSchema instanceof LeafSchemaNode) {
+            node = LeafInterner.forSchema((LeafSchemaNode)nextSchema).intern(sample);
+        } else {
+            node = sample;
+        }
+
+        writeChild(node);
+        nextSchema = null;
     }
 
     @Override
     public void startLeafSet(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
         final ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = UNKNOWN_SIZE == childSizeHint ?
-                ImmutableLeafSetNodeBuilder.create() : ImmutableLeafSetNodeBuilder.create(childSizeHint);
+                InterningLeafSetNodeBuilder.create(nextSchema) :
+                    InterningLeafSetNodeBuilder.create(nextSchema, childSizeHint);
         builder.withNodeIdentifier(name);
         enter(builder);
     }
@@ -154,11 +171,13 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         @SuppressWarnings("unchecked")
         final ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = ((ImmutableLeafSetNodeBuilder<Object>) getCurrent());
         builder.withChildValue(value);
+        nextSchema = null;
     }
 
     @Override
     public void anyxmlNode(final NodeIdentifier name, final Object value) {
         checkDataNodeContainer();
+        nextSchema = null;
     }
 
     @Override
@@ -292,5 +311,10 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     @Override
     public void close() {
         // no-op
+    }
+
+    @Override
+    public void nextDataSchemaNode(final DataSchemaNode schema) {
+        nextSchema = Preconditions.checkNotNull(schema);
     }
 }
