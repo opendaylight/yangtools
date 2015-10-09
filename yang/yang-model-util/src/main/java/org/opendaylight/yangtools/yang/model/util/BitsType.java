@@ -25,29 +25,34 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
  */
 public final class BitsType implements BitsTypeDefinition {
     private static final QName NAME = BaseTypes.BITS_QNAME;
-    private static final String DESCRIPTION = "The bits built-in type represents a bit set. "
+    private static final String DEFAULT_DESCRIPTION = "The bits built-in type represents a bit set. "
             + "That is, a bits value is a set of flags identified by small integer position "
             + "numbers starting at 0.  Each bit number has an assigned name.";
 
-    private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.7";
-    private static final String UNITS = "";
+    private static final String DEFAULT_REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.7";
+    private static final String DEFAULT_UNITS = "";
     private final SchemaPath path;
     private final List<Bit> bits;
+    private final String description;
+    private final String reference;
+    private final Status status;
 
-    /**
-     * Constructor with explicit definition of bits assigned to BitsType.
-     *
-     * @param path
-     * @param bits
-     */
-    private BitsType(final SchemaPath path, final List<Bit> bits) {
-        super();
-        this.bits = ImmutableList.copyOf(bits);
+    BitsType(final SchemaPath path, final Status status, final String description, final String reference,
+            final List<UnknownSchemaNode> unknownSchemaNodes, final List<Bit> bits) {
         this.path = Preconditions.checkNotNull(path, "path must not be null");
+        this.bits = ImmutableList.copyOf(bits);
+
+        this.description = description;
+        this.reference = reference;
+        this.status = Preconditions.checkNotNull(status);
     }
 
+    /**
+     * @deprecated Use {@link BitsTypeBuilder} instead. This method will be removed in Boron release cycle.
+     */
+    @Deprecated
     public static BitsType create(final SchemaPath path, final List<Bit> bits) {
-        return new BitsType(path,bits);
+        return new BitsType(path, Status.CURRENT, DEFAULT_DESCRIPTION, DEFAULT_REFERENCE, null, bits);
     }
 
     /*
@@ -68,7 +73,7 @@ public final class BitsType implements BitsTypeDefinition {
      */
     @Override
     public String getUnits() {
-        return UNITS;
+        return DEFAULT_UNITS;
     }
 
     /*
@@ -90,7 +95,7 @@ public final class BitsType implements BitsTypeDefinition {
      */
     @Override
     public QName getQName() {
-        return NAME;
+        return getPath().getLastComponent();
     }
 
     /*
@@ -111,7 +116,7 @@ public final class BitsType implements BitsTypeDefinition {
      */
     @Override
     public String getDescription() {
-        return DESCRIPTION;
+        return description;
     }
 
     /*
@@ -121,7 +126,7 @@ public final class BitsType implements BitsTypeDefinition {
      */
     @Override
     public String getReference() {
-        return REFERENCE;
+        return reference;
     }
 
     /*
@@ -131,7 +136,7 @@ public final class BitsType implements BitsTypeDefinition {
      */
     @Override
     public Status getStatus() {
-        return Status.CURRENT;
+        return status;
     }
 
     @Override
@@ -173,17 +178,17 @@ public final class BitsType implements BitsTypeDefinition {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("BitsType [name=");
-        builder.append(NAME);
+        builder.append(getQName());
         builder.append(", path=");
         builder.append(path);
         builder.append(", description=");
-        builder.append(DESCRIPTION);
+        builder.append(description);
         builder.append(", reference=");
-        builder.append(REFERENCE);
+        builder.append(reference);
         builder.append(", bits=");
         builder.append(bits);
         builder.append(", units=");
-        builder.append(UNITS);
+        builder.append(getUnits());
         builder.append("]");
         return builder.toString();
     }
