@@ -26,9 +26,8 @@ public class GroupingEffectiveStatementImpl extends
         AbstractEffectiveDocumentedDataNodeContainer<QName, GroupingStatement> implements GroupingDefinition {
     private final QName qname;
     private final SchemaPath path;
-
-    private boolean addedByUses;
-    private List<UnknownSchemaNode> unknownNodes;
+    private final boolean addedByUses;
+    private final List<UnknownSchemaNode> unknownNodes;
 
     public GroupingEffectiveStatementImpl(
             final StmtContext<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> ctx) {
@@ -37,25 +36,17 @@ public class GroupingEffectiveStatementImpl extends
         qname = ctx.getStatementArgument();
         path = Utils.getSchemaPath(ctx);
 
-        initCopyType(ctx);
-        initSubstatementCollections();
-    }
-
-    private void initCopyType(
-            final StmtContext<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> ctx) {
-
+        // initCopyType
         List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
-
         if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
             addedByUses = true;
+        } else {
+            addedByUses = false;
         }
-    }
 
-    private void initSubstatementCollections() {
+        // initSubstatementCollections
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-
         unknownNodes = new LinkedList<>();
-
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;

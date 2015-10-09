@@ -35,16 +35,13 @@ public class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
     private final DataSchemaNode caseShorthandNode;
     private final QName qName;
     private final SchemaPath path;
-
     private final String description;
     private final String reference;
     private final Status status;
-
     private final boolean augmenting;
     private final boolean addedByUses;
     private final ConstraintDefinition constraints;
     private final List<UnknownSchemaNode> unknownNodes;
-    private ChoiceCaseNode original;
 
     public CaseShorthandImpl(final DataSchemaNode caseShorthandNode) {
         this.caseShorthandNode = caseShorthandNode;
@@ -155,7 +152,7 @@ public class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
 
     @Override
     public Optional<? extends SchemaNode> getOriginal() {
-        return Optional.fromNullable(original);
+        return Optional.absent();
     }
 
     @Override

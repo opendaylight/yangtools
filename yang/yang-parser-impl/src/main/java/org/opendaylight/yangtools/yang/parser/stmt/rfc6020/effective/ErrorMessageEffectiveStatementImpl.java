@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class ErrorMessageEffectiveStatementImpl extends EffectiveStatementBase<String, ErrorMessageStatement> {
+public final class ErrorMessageEffectiveStatementImpl extends EffectiveStatementBase<String, ErrorMessageStatement> {
     public ErrorMessageEffectiveStatementImpl(final StmtContext<String, ErrorMessageStatement, ?> ctx) {
         super(ctx);
     }

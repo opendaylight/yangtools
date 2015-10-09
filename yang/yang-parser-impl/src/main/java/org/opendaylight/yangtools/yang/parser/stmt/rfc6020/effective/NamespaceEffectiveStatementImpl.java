@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -11,7 +11,7 @@ import java.net.URI;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class NamespaceEffectiveStatementImpl extends EffectiveStatementBase<URI, NamespaceStatement>  {
+public final class NamespaceEffectiveStatementImpl extends EffectiveStatementBase<URI, NamespaceStatement>  {
     public NamespaceEffectiveStatementImpl(final StmtContext<URI, NamespaceStatement, ?> ctx) {
         super(ctx);
     }

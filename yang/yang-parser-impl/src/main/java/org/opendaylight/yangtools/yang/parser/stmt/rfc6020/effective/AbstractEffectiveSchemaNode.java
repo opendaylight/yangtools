@@ -9,46 +9,36 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-public final class RefineEffectiveStatementImpl extends
-        AbstractEffectiveDocumentedNode<SchemaNodeIdentifier, RefineStatement> implements SchemaNode {
+abstract class AbstractEffectiveSchemaNode<D extends DeclaredStatement<QName>> extends
+        AbstractEffectiveDocumentedNode<QName, D> implements SchemaNode {
 
     private final QName qname;
     private final SchemaPath path;
     private final List<UnknownSchemaNode> unknownNodes;
-    private final SchemaNode refineTargetNode;
 
-    public RefineEffectiveStatementImpl(final StmtContext<SchemaNodeIdentifier, RefineStatement, ?> ctx) {
+    AbstractEffectiveSchemaNode(StmtContext<QName, D, ?> ctx) {
         super(ctx);
-        qname = ctx.getStatementArgument().getLastComponent();
-        path = Utils.getSchemaPath(ctx);
-        refineTargetNode = (SchemaNode) ctx.getEffectOfStatement().iterator().next().buildEffective();
+        this.qname = ctx.getStatementArgument();
+        this.path = Utils.getSchemaPath(ctx);
 
-        // initSubstatementCollectionsAndFields
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-        List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
-        for (EffectiveStatement<?, ?> effectiveSubstatement : effectiveSubstatements) {
-            if (effectiveSubstatement instanceof UnknownSchemaNode) {
-                UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveSubstatement;
-                unknownNodesInit.add(unknownNode);
+        ImmutableList.Builder<UnknownSchemaNode> listBuilder = new ImmutableList.Builder<>();
+        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
+            if (effectiveStatement instanceof UnknownSchemaNode) {
+                listBuilder.add((UnknownSchemaNode) effectiveStatement);
             }
         }
-        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
-    }
-
-    public SchemaNode getRefineTargetNode() {
-        return refineTargetNode;
+        this.unknownNodes = listBuilder.build();
     }
 
     @Override

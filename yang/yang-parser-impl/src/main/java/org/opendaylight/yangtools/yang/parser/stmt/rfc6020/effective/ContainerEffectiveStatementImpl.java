@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -8,126 +8,24 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-public class ContainerEffectiveStatementImpl extends
-        AbstractEffectiveDocumentedDataNodeContainer<QName, ContainerStatement>
-        implements ContainerSchemaNode, DerivableSchemaNode {
+public final class ContainerEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<ContainerStatement>
+        implements
+        DerivableSchemaNode {
 
-    private final QName qname;
-    private final SchemaPath path;
-
-    private boolean presence;
-
-    // FIXME: should be private
-    boolean augmenting;
-    private boolean addedByUses;
-    private boolean configuration = true;
-    private ContainerSchemaNode original;
-    private final ConstraintDefinition constraints;
-
-    private ImmutableSet<AugmentationSchema> augmentations;
-    private ImmutableList<UnknownSchemaNode> unknownNodes;
+    private final ContainerSchemaNode original;
 
     public ContainerEffectiveStatementImpl(
             final StmtContext<QName, ContainerStatement, EffectiveStatement<QName, ContainerStatement>> ctx) {
         super(ctx);
-
-        qname = ctx.getStatementArgument();
-        path = Utils.getSchemaPath(ctx);
-        this.constraints = new EffectiveConstraintDefinitionImpl(this);
-
-        initCopyType(ctx);
-        initSubstatementCollectionsAndFields();
-    }
-
-    private void initCopyType(
-            final StmtContext<QName, ContainerStatement, EffectiveStatement<QName, ContainerStatement>> ctx) {
-
-        List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
-
-        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
-            augmenting = true;
-        }
-        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
-            addedByUses = true;
-        }
-        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
-            addedByUses = augmenting = true;
-        }
-
-        if (ctx.getOriginalCtx() != null) {
-            original = (ContainerSchemaNode) ctx.getOriginalCtx().buildEffective();
-        }
-    }
-
-    private void initSubstatementCollectionsAndFields() {
-        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-
-        List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
-        Set<AugmentationSchema> augmentationsInit = new HashSet<>();
-
-        boolean configurationInit = false;
-        for (EffectiveStatement<?, ?> effectiveSubstatement : effectiveSubstatements) {
-            if (effectiveSubstatement instanceof UnknownSchemaNode) {
-                UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveSubstatement;
-                unknownNodesInit.add(unknownNode);
-            }
-            if (effectiveSubstatement instanceof AugmentationSchema) {
-                AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveSubstatement;
-                augmentationsInit.add(augmentationSchema);
-            }
-            if (effectiveSubstatement instanceof PresenceEffectiveStatementImpl) {
-                presence = true;
-            }
-            if (!configurationInit && effectiveSubstatement instanceof ConfigEffectiveStatementImpl) {
-                ConfigEffectiveStatementImpl configStmt = (ConfigEffectiveStatementImpl) effectiveSubstatement;
-                this.configuration = configStmt.argument();
-                configurationInit = true;
-            }
-        }
-
-        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
-        this.augmentations = ImmutableSet.copyOf(augmentationsInit);
-    }
-
-    @Override
-    public QName getQName() {
-        return qname;
-    }
-
-    @Override
-    public SchemaPath getPath() {
-        return path;
-    }
-
-    @Override
-    public boolean isAugmenting() {
-        return augmenting;
-    }
-
-    @Override
-    public boolean isAddedByUses() {
-        return addedByUses;
+        this.original = ctx.getOriginalCtx() == null ? null : (ContainerSchemaNode) ctx.getOriginalCtx().buildEffective();
     }
 
     @Override
@@ -136,36 +34,11 @@ public class ContainerEffectiveStatementImpl extends
     }
 
     @Override
-    public boolean isConfiguration() {
-        return configuration;
-    }
-
-    @Override
-    public ConstraintDefinition getConstraints() {
-        return constraints;
-    }
-
-    @Override
-    public Set<AugmentationSchema> getAvailableAugmentations() {
-        return augmentations;
-    }
-
-    @Override
-    public boolean isPresenceContainer() {
-        return presence;
-    }
-
-    @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownNodes;
-    }
-
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Objects.hashCode(qname);
-        result = prime * result + Objects.hashCode(path);
+        result = prime * result + Objects.hashCode(getQName());
+        result = prime * result + Objects.hashCode(getPath());
         return result;
     }
 
@@ -181,11 +54,11 @@ public class ContainerEffectiveStatementImpl extends
             return false;
         }
         ContainerEffectiveStatementImpl other = (ContainerEffectiveStatementImpl) obj;
-        return Objects.equals(qname, other.qname) && Objects.equals(path, other.path);
+        return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
     }
 
     @Override
     public String toString() {
-        return "container " + qname.getLocalName();
+        return "container " + getQName().getLocalName();
     }
 }

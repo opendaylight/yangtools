@@ -12,13 +12,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public class EffectiveStmtUtils {
+public final class EffectiveStmtUtils {
 
     private EffectiveStmtUtils() {
         throw new UnsupportedOperationException("Utility class");
     }
 
-    public static final SourceException createNameCollisionSourceException(final StmtContext<?, ?, ?> ctx,
+    public static SourceException createNameCollisionSourceException(final StmtContext<?, ?, ?> ctx,
             final EffectiveStatement<?, ?> effectiveStatement) {
         return new SourceException("Error in module '"
                 + ctx.getRoot().getStatementArgument()

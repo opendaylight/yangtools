@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -7,13 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredStatement<A>>
+abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredStatement<A>>
         extends EffectiveStatementBase<A, D> implements DocumentedNode {
 
     private final String description;

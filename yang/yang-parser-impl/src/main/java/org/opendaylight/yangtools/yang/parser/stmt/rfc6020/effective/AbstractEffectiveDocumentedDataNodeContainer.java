@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -7,18 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
-
-import java.util.LinkedHashSet;
-import java.util.LinkedHashMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -26,16 +21,20 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends DeclaredStatement<A>>
+abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends DeclaredStatement<A>>
         extends AbstractEffectiveDocumentedNode<A, D> implements
         DataNodeContainer {
 
-    private final ImmutableMap<QName, DataSchemaNode> childNodes;
-    private final ImmutableSet<GroupingDefinition> groupings;
-    private final ImmutableSet<UsesNode> uses;
-    private final ImmutableSet<TypeDefinition<?>> typeDefinitions;
-    private final ImmutableSet<DataSchemaNode> publicChildNodes;
+    private final Map<QName, DataSchemaNode> childNodes;
+    private final Set<GroupingDefinition> groupings;
+    private final Set<UsesNode> uses;
+    private final Set<TypeDefinition<?>> typeDefinitions;
+    private final Set<DataSchemaNode> publicChildNodes;
 
     protected AbstractEffectiveDocumentedDataNodeContainer(
             final StmtContext<A, D, ?> ctx) {

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -26,9 +27,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
-abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>> implements EffectiveStatement<A, D> {
+public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> implements EffectiveStatement<A, D> {
 
-    private final ImmutableList<? extends EffectiveStatement<?, ?>> substatements;
+    private final List<? extends EffectiveStatement<?, ?>> substatements;
     private final StatementSource statementSource;
     private final StatementDefinition statementDefinition;
     private final A argument;
@@ -45,7 +46,7 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
         Collection<StatementContextBase<?, ?, ?>> substatementsInit = new LinkedList<>();
 
         for(StatementContextBase<?, ?, ?> declaredSubstatement : declaredSubstatements) {
-            if (declaredSubstatement.getPublicDefinition() == Rfc6020Mapping.USES) {
+            if (declaredSubstatement.getPublicDefinition().equals(Rfc6020Mapping.USES)) {
                 substatementsInit.add(declaredSubstatement);
                 substatementsInit.addAll(declaredSubstatement.getEffectOfStatement());
                 ((StatementContextBase<?, ?, ?>)ctx).removeStatementsFromEffectiveSubstatements(declaredSubstatement
@@ -125,5 +126,11 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
         Optional<? extends EffectiveStatement<?, ?>> possible = Iterables.tryFind(substatements,
                 Predicates.and(Predicates.instanceOf(type), Predicates.instanceOf(returnType)));
         return possible.isPresent() ? returnType.cast(possible.get()) : null;
+    }
+
+    protected final EffectiveStatement<?, ?> firstEffectiveSubstatementOfType(final Class<?> type) {
+        Optional<? extends EffectiveStatement<?, ?>> possible = Iterables.tryFind(substatements,
+                Predicates.instanceOf(type));
+        return possible.isPresent() ? possible.get() : null;
     }
 }

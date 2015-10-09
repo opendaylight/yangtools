@@ -7,57 +7,36 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-public class RpcEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, RpcStatement> implements RpcDefinition {
-    private final QName qname;
-    private final SchemaPath path;
-
-    private ContainerSchemaNode input;
-    private ContainerSchemaNode output;
-
-    private Set<TypeDefinition<?>> typeDefinitions;
-    private Set<GroupingDefinition> groupings;
-    private List<UnknownSchemaNode> unknownNodes;
+public class RpcEffectiveStatementImpl extends AbstractEffectiveSchemaNode<RpcStatement> implements RpcDefinition {
+    private final ContainerSchemaNode input;
+    private final ContainerSchemaNode output;
+    private final Set<TypeDefinition<?>> typeDefinitions;
+    private final Set<GroupingDefinition> groupings;
 
     public RpcEffectiveStatementImpl(final StmtContext<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> ctx) {
         super(ctx);
-        this.qname = ctx.getStatementArgument();
-        this.path = Utils.getSchemaPath(ctx);
+        this.input = firstEffective(InputEffectiveStatementImpl.class);
+        this.output = firstEffective(OutputEffectiveStatementImpl.class);
 
-        initSubstatements();
-    }
-
-    private void initSubstatements() {
+        // initSubstatements
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-
-        List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
         Set<GroupingDefinition> groupingsInit = new HashSet<>();
         Set<TypeDefinition<?>> typeDefinitionsInit = new HashSet<>();
-
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
-            if (effectiveStatement instanceof UnknownSchemaNode) {
-                UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
-                unknownNodesInit.add(unknownNode);
-            }
             if (effectiveStatement instanceof GroupingDefinition) {
                 GroupingDefinition groupingDefinition = (GroupingDefinition) effectiveStatement;
                 groupingsInit.add(groupingDefinition);
@@ -66,27 +45,9 @@ public class RpcEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
                 TypeDefinition<?> typeDefinition = (TypeDefinition<?>) effectiveStatement;
                 typeDefinitionsInit.add(typeDefinition);
             }
-            if (this.input == null && effectiveStatement instanceof InputEffectiveStatementImpl) {
-                this.input = (InputEffectiveStatementImpl) effectiveStatement;
-            }
-            if (this.output == null && effectiveStatement instanceof OutputEffectiveStatementImpl) {
-                this.output = (OutputEffectiveStatementImpl) effectiveStatement;
-            }
         }
-
-        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.groupings = ImmutableSet.copyOf(groupingsInit);
         this.typeDefinitions = ImmutableSet.copyOf(typeDefinitionsInit);
-    }
-
-    @Override
-    public QName getQName() {
-        return qname;
-    }
-
-    @Override
-    public SchemaPath getPath() {
-        return path;
     }
 
     @Override
@@ -94,17 +55,9 @@ public class RpcEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
         return input;
     }
 
-    void setInput(final ContainerSchemaNode input) {
-        this.input = input;
-    }
-
     @Override
     public ContainerSchemaNode getOutput() {
         return output;
-    }
-
-    void setOutput(final ContainerSchemaNode output) {
-        this.output = output;
     }
 
     @Override
@@ -118,16 +71,11 @@ public class RpcEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
     }
 
     @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownNodes;
-    }
-
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Objects.hashCode(qname);
-        result = prime * result + Objects.hashCode(path);
+        result = prime * result + Objects.hashCode(getQName());
+        result = prime * result + Objects.hashCode(getPath());
         return result;
     }
 
@@ -143,7 +91,7 @@ public class RpcEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
             return false;
         }
         final RpcEffectiveStatementImpl other = (RpcEffectiveStatementImpl) obj;
-        return Objects.equals(qname, other.qname) && Objects.equals(path, other.path);
+        return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
     }
 
     @Override
@@ -151,9 +99,9 @@ public class RpcEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
         StringBuilder sb = new StringBuilder(RpcEffectiveStatementImpl.class.getSimpleName());
         sb.append("[");
         sb.append("qname=");
-        sb.append(qname);
+        sb.append(getQName());
         sb.append(", path=");
-        sb.append(path);
+        sb.append(getPath());
         sb.append(", input=");
         sb.append(input);
         sb.append(", output=");

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -10,9 +10,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class MaxElementsEffectiveStatementImpl extends EffectiveStatementBase<String, MaxElementsStatement> {
+public final class MaxElementsEffectiveStatementImpl extends EffectiveStatementBase<String, MaxElementsStatement> {
     public MaxElementsEffectiveStatementImpl(final StmtContext<String, MaxElementsStatement, ?> ctx) {
         super(ctx);
-
     }
 }

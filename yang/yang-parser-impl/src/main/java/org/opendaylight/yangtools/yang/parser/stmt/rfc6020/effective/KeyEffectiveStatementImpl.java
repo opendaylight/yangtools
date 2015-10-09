@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -12,7 +12,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class KeyEffectiveStatementImpl extends EffectiveStatementBase<Collection<SchemaNodeIdentifier>, KeyStatement> {
+public final class KeyEffectiveStatementImpl extends EffectiveStatementBase<Collection<SchemaNodeIdentifier>,
+        KeyStatement> {
     public KeyEffectiveStatementImpl(final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, ?> ctx) {
         super(ctx);
     }

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -11,7 +11,7 @@ import java.util.Date;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class RevisionDateEffectiveStatementImpl extends EffectiveStatementBase<Date, RevisionDateStatement> {
+public final class RevisionDateEffectiveStatementImpl extends EffectiveStatementBase<Date, RevisionDateStatement> {
     public RevisionDateEffectiveStatementImpl(final StmtContext<Date, RevisionDateStatement, ?> ctx) {
         super(ctx);
     }

@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class FractionDigitsEffectiveStatementImpl extends EffectiveStatementBase<Integer, FractionDigitsStatement> {
+public final class FractionDigitsEffectiveStatementImpl extends EffectiveStatementBase<Integer, FractionDigitsStatement> {
     public FractionDigitsEffectiveStatementImpl(final StmtContext<Integer, FractionDigitsStatement, ?> ctx) {
         super(ctx);
     }

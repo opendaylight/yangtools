@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -13,33 +13,50 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
+import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-public class NotificationEffectiveStatementImpl extends
-        AbstractEffectiveDocumentedDataNodeContainer<QName, NotificationStatement> implements NotificationDefinition {
+abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatement<QName>> extends
+        AbstractEffectiveDocumentedDataNodeContainer<QName, D> implements DataNodeContainer, AugmentationTarget,
+        DataSchemaNode {
+
     private final QName qname;
     private final SchemaPath path;
+
+    // :FIXME should be private and final
+    boolean augmenting;
+    private final boolean addedByUses;
+    private final boolean configuration;
+    private final ConstraintDefinition constraints;
+
     private final Set<AugmentationSchema> augmentations;
     private final List<UnknownSchemaNode> unknownNodes;
 
-    public NotificationEffectiveStatementImpl(
-            final StmtContext<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> ctx) {
+    public AbstractEffectiveSimpleDataNodeContainer(StmtContext<QName, D, ?> ctx) {
         super(ctx);
+
         this.qname = ctx.getStatementArgument();
         this.path = Utils.getSchemaPath(ctx);
+        this.constraints = new EffectiveConstraintDefinitionImpl(this);
 
-        // initSubstatementCollections
+        ConfigEffectiveStatementImpl configStmt = firstEffective(ConfigEffectiveStatementImpl.class);
+        this.configuration = (configStmt == null) ? true : configStmt.argument();
+
+        // initSubstatementCollectionsAndFields
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
+
         List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
         Set<AugmentationSchema> augmentationsInit = new HashSet<>();
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
@@ -54,6 +71,15 @@ public class NotificationEffectiveStatementImpl extends
         }
         this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
+
+        // initCopyType
+        List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
+        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
+            this.addedByUses = this.augmenting = true;
+        } else {
+            this.augmenting = copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION);
+            this.addedByUses = copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES);
+        }
     }
 
     @Override
@@ -67,6 +93,26 @@ public class NotificationEffectiveStatementImpl extends
     }
 
     @Override
+    public boolean isAugmenting() {
+        return augmenting;
+    }
+
+    @Override
+    public boolean isAddedByUses() {
+        return addedByUses;
+    }
+
+    @Override
+    public boolean isConfiguration() {
+        return configuration;
+    }
+
+    @Override
+    public ConstraintDefinition getConstraints() {
+        return constraints;
+    }
+
+    @Override
     public Set<AugmentationSchema> getAvailableAugmentations() {
         return augmentations;
     }
@@ -76,34 +122,4 @@ public class NotificationEffectiveStatementImpl extends
         return unknownNodes;
     }
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(qname);
-        result = prime * result + Objects.hashCode(path);
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final NotificationEffectiveStatementImpl other = (NotificationEffectiveStatementImpl) obj;
-        return Objects.equals(qname, other.qname) && Objects.equals(path, other.path);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder(NotificationEffectiveStatementImpl.class.getSimpleName());
-        sb.append("[qname=").append(qname).append(", path=").append(path).append("]");
-        return sb.toString();
-    }
 }

@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 
-public class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
+public final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
     private final RevisionAwareXPath whenCondition;
     private final Set<MustDefinition> mustConstraints;
     private final Boolean mandatory;
