@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import javax.annotation.Nullable;
+
 /**
  *
  * YANG statement <code>typedef</code> contains also substatements
@@ -35,16 +37,16 @@ public interface TypeDefinition<T extends TypeDefinition<?>> extends SchemaNode 
      *         type of instance of the <code>TypeDefinition</code> type or null,
      *         if this is yang built-in type
      */
-    T getBaseType();
+    @Nullable T getBaseType();
 
     /**
      * Returns the unit which represents the value of the argument of the
      * <code>units</code> substatement of the YANG <code>typedef</code>
      * statement.
      *
-     * @return string with units in which is type measured
+     * @return string with units in which is type measured, or null if no units are defined.
      */
-    String getUnits();
+    @Nullable String getUnits();
 
     /**
      * Returns the default value which represents the value of the argument of
@@ -52,7 +54,7 @@ public interface TypeDefinition<T extends TypeDefinition<?>> extends SchemaNode 
      * statement.
      *
      * @return instance of <code>Object</code> type which contains default value
-     *         for <code>typedef</code>
+     *         for <code>typedef</code>, or null if no default value is defined.
      */
-    Object getDefaultValue();
+    @Nullable Object getDefaultValue();
 }
