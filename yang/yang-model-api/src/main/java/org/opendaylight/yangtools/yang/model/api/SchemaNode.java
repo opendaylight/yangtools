@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.List;
-
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -21,7 +21,7 @@ public interface SchemaNode extends DocumentedNode {
      *
      * @return QName with the name of the schema node
      */
-    QName getQName();
+    @Nonnull QName getQName();
 
     /**
      * Returns the schema path of the instance of the type
@@ -29,7 +29,7 @@ public interface SchemaNode extends DocumentedNode {
      *
      * @return schema path of the schema node
      */
-    SchemaPath getPath();
+    @Nonnull SchemaPath getPath();
 
     /**
      *
@@ -38,6 +38,5 @@ public interface SchemaNode extends DocumentedNode {
      *
      * @return list of unknown schema nodes defined under this schema node.
      */
-    List<UnknownSchemaNode> getUnknownSchemaNodes();
-
+    @Nonnull List<UnknownSchemaNode> getUnknownSchemaNodes();
 }
