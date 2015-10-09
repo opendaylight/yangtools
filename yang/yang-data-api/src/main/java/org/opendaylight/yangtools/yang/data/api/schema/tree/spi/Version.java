@@ -22,6 +22,7 @@ public final class Version {
      *
      * @return a new version.
      */
+    @SuppressWarnings("static-method")
     public Version next() {
         return new Version();
     }
