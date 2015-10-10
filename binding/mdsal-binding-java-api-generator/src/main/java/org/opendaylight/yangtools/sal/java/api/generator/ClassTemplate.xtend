@@ -16,6 +16,7 @@ import java.util.ArrayList
 import java.util.Arrays
 import java.util.Collections
 import java.util.List
+import java.util.Objects
 import java.util.regex.Pattern
 import org.opendaylight.yangtools.binding.generator.util.TypeConstants
 import org.opendaylight.yangtools.sal.binding.model.api.ConcreteType
@@ -487,9 +488,9 @@ class ClassTemplate extends BaseTemplate {
                 int result = 1;
                 «FOR property : genTO.hashCodeIdentifiers»
                     «IF property.returnType.name.contains("[")»
-                    result = prime * result + ((«property.fieldName» == null) ? 0 : «Arrays.importedName».hashCode(«property.fieldName»));
+                    result = prime * result + «Arrays.importedName».hashCode(«property.fieldName»);
                     «ELSE»
-                    result = prime * result + ((«property.fieldName» == null) ? 0 : «property.fieldName».hashCode());
+                    result = prime * result + «Objects.importedName».hashCode(«property.fieldName»);
                     «ENDIF»
                 «ENDFOR»
                 return result;
@@ -518,14 +519,10 @@ class ClassTemplate extends BaseTemplate {
                 «type.name» other = («type.name») obj;
                 «FOR property : genTO.equalsIdentifiers»
                     «val fieldName = property.fieldName»
-                    if («fieldName» == null) {
-                        if (other.«fieldName» != null) {
-                            return false;
-                        }
                     «IF property.returnType.name.contains("[")»
-                    } else if(!«Arrays.importedName».equals(«fieldName», other.«fieldName»)) {
+                    if (!«Arrays.importedName».equals(«fieldName», other.«fieldName»)) {
                     «ELSE»
-                    } else if(!«fieldName».equals(other.«fieldName»)) {
+                    if (!«Objects.importedName».equals(«fieldName», other.«fieldName»)) {
                     «ENDIF»
                         return false;
                     }

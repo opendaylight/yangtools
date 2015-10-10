@@ -17,6 +17,7 @@ import java.util.HashSet
 import java.util.LinkedHashSet
 import java.util.List
 import java.util.Map
+import java.util.Objects
 import java.util.Set
 import org.opendaylight.yangtools.binding.generator.util.ReferencedTypeImpl
 import org.opendaylight.yangtools.binding.generator.util.Types
@@ -637,13 +638,13 @@ class BuilderTemplate extends BaseTemplate {
                 int result = 1;
                 «FOR property : properties»
                     «IF property.returnType.name.contains("[")»
-                    result = prime * result + ((«property.fieldName» == null) ? 0 : «Arrays.importedName».hashCode(«property.fieldName»));
+                    result = prime * result + «Arrays.importedName».hashCode(«property.fieldName»);
                     «ELSE»
-                    result = prime * result + ((«property.fieldName» == null) ? 0 : «property.fieldName».hashCode());
+                    result = prime * result + «Objects.importedName».hashCode(«property.fieldName»);
                     «ENDIF»
                 «ENDFOR»
                 «IF augmentField != null»
-                    result = prime * result + ((«augmentField.name» == null) ? 0 : «augmentField.name».hashCode());
+                    result = prime * result + «Objects.importedName».hashCode(«augmentField.name»);
                 «ENDIF»
 
                 hash = result;
@@ -674,14 +675,10 @@ class BuilderTemplate extends BaseTemplate {
                 «type.importedName» other = («type.importedName»)obj;
                 «FOR property : properties»
                     «val fieldName = property.fieldName»
-                    if («fieldName» == null) {
-                        if (other.«property.getterMethodName»() != null) {
-                            return false;
-                        }
                     «IF property.returnType.name.contains("[")»
-                    } else if(!«Arrays.importedName».equals(«fieldName», other.«property.getterMethodName»())) {
+                    if (!«Arrays.importedName».equals(«fieldName», other.«property.getterMethodName»())) {
                     «ELSE»
-                    } else if(!«fieldName».equals(other.«property.getterMethodName»())) {
+                    if (!«Objects.importedName».equals(«fieldName», other.«property.getterMethodName»())) {
                     «ENDIF»
                         return false;
                     }
@@ -691,11 +688,7 @@ class BuilderTemplate extends BaseTemplate {
                         // Simple case: we are comparing against self
                         «type.name»«IMPL» otherImpl = («type.name»«IMPL») obj;
                         «val fieldName = augmentField.name»
-                        if («fieldName» == null) {
-                            if (otherImpl.«fieldName» != null) {
-                                return false;
-                            }
-                        } else if(!«fieldName».equals(otherImpl.«fieldName»)) {
+                        if (!«Objects.importedName».equals(«fieldName», otherImpl.«fieldName»)) {
                             return false;
                         }
                     } else {
