@@ -28,8 +28,7 @@ final class NotificationCodecContext<D extends DataObject & Notification> extend
     }
 
     @Override
-    protected Object deserializeObject(NormalizedNode<?, ?> normalizedNode) {
+    protected Object deserializeObject(final NormalizedNode<?, ?> normalizedNode) {
         return deserialize(normalizedNode);
     }
-
 }

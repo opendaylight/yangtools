@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
-final class ContainerNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<D,ContainerSchemaNode> {
+final class ContainerNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<D, ContainerSchemaNode> {
 
     ContainerNodeCodecContext(final DataContainerCodecPrototype<ContainerSchemaNode> prototype) {
         super(prototype);
@@ -26,8 +26,7 @@ final class ContainerNodeCodecContext<D extends DataObject> extends DataObjectCo
     }
 
     @Override
-    protected Object deserializeObject(NormalizedNode<?, ?> normalizedNode) {
+    protected Object deserializeObject(final NormalizedNode<?, ?> normalizedNode) {
         return deserialize(normalizedNode);
     }
-
 }

@@ -253,5 +253,4 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
             throw e;
         }
     }
-
 }

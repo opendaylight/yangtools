@@ -103,14 +103,12 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
         byCaseChildClass = ImmutableMap.copyOf(byCaseChildClassBuilder);
     }
 
-
     @SuppressWarnings("unchecked")
     @Override
     public <DV extends DataObject> DataContainerCodecContext<DV, ?> streamChild(final Class<DV> childClass) {
         final DataContainerCodecPrototype<?> child = byClass.get(childClass);
         return (DataContainerCodecContext<DV, ?>) childNonNull(child, childClass, "Supplied class %s is not valid case", childClass).get();
     }
-
 
     @SuppressWarnings("unchecked")
     @Override
@@ -178,10 +176,8 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
     }
 
     @Override
-    public YangInstanceIdentifier.PathArgument serializePathArgument(
-            final PathArgument arg) {
+    public YangInstanceIdentifier.PathArgument serializePathArgument(final PathArgument arg) {
         // FIXME: check for null, since binding container is null.
         return getDomPathArgument();
     }
-
 }

@@ -34,7 +34,7 @@ class ListNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<
     }
 
     @Override
-    protected Object deserializeObject(NormalizedNode<?, ?> node) {
+    protected Object deserializeObject(final NormalizedNode<?, ?> node) {
         if (node instanceof MapNode) {
             return fromMap((MapNode) node);
         } else if (node instanceof MapEntryNode) {
@@ -72,5 +72,4 @@ class ListNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<
         }
         return ret;
     }
-
 }

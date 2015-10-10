@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import java.util.List;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -22,7 +23,7 @@ final class CaseNodeCodecContext<D extends DataObject> extends DataObjectCodecCo
 
     @Override
     protected void addYangPathArgument(final PathArgument arg,
-            final List<org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument> builder) {
+            final List<YangInstanceIdentifier.PathArgument> builder) {
         // NOOP
     }
 
@@ -33,20 +34,19 @@ final class CaseNodeCodecContext<D extends DataObject> extends DataObjectCodecCo
     }
 
     @Override
-    protected Object deserializeObject(NormalizedNode<?, ?> normalizedNode) {
+    protected Object deserializeObject(final NormalizedNode<?, ?> normalizedNode) {
         return deserialize(normalizedNode);
     }
 
     @Override
-    public org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument serializePathArgument(
-            PathArgument arg) {
+    public YangInstanceIdentifier.PathArgument serializePathArgument(
+            final PathArgument arg) {
         Preconditions.checkArgument(arg == null);
         return null;
     }
 
     @Override
-    public PathArgument deserializePathArgument(
-            org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument arg) {
+    public PathArgument deserializePathArgument(final YangInstanceIdentifier.PathArgument arg) {
         Preconditions.checkArgument(arg == null);
         return null;
     }

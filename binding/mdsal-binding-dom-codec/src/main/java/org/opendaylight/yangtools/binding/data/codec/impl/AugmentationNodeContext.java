@@ -27,8 +27,7 @@ final class AugmentationNodeContext<D extends DataObject & Augmentation<?>> exte
     }
 
     @Override
-    protected Object deserializeObject(NormalizedNode<?, ?> normalizedNode) {
+    protected Object deserializeObject(final NormalizedNode<?, ?> normalizedNode) {
         return deserialize(normalizedNode);
     }
-
 }
