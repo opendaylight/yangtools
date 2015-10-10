@@ -45,9 +45,10 @@ public final class Decimal64 implements DecimalTypeDefinition {
         b.add(createRangeConstraint("-92233720368.54775808", "92233720368.54775807"));
         b.add(createRangeConstraint("-9223372036.854775808", "9223372036.854775807"));
         b.add(createRangeConstraint("-922337203.6854775808", "922337203.6854775807"));
-        b.add(createRangeConstraint("-9223372.036854775808", "92233720.36854775807"));
-        b.add(createRangeConstraint("-922337.2036854775808", "9223372.036854775807"));
-        b.add(createRangeConstraint("-92233.72036854775808", "922337.2036854775807"));
+        b.add(createRangeConstraint("-92233720.36854775808", "92233720.36854775807"));
+        b.add(createRangeConstraint("-9223372.036854775808", "9223372.036854775807"));
+        b.add(createRangeConstraint("-922337.2036854775808", "922337.2036854775807"));
+        b.add(createRangeConstraint("-92233.72036854775808", "92233.72036854775807"));
         b.add(createRangeConstraint("-9223.372036854775808", "9223.372036854775807"));
         b.add(createRangeConstraint("-922.3372036854775808", "922.3372036854775807"));
         b.add(createRangeConstraint("-92.23372036854775808", "92.23372036854775807"));
