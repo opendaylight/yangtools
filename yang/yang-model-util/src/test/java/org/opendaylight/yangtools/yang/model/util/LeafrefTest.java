@@ -35,7 +35,7 @@ public class LeafrefTest {
         assertNotNull("Object 'leafref' shouldn't be null.", leafref);
         assertNull("Base type of 'leafref' should be null.", leafref.getBaseType());
         assertTrue("Units of 'leafref' should be empty.", leafref.getUnits().isEmpty());
-        assertEquals("Default value of 'leafref' is 'leafref' itself.", leafref, leafref.getDefaultValue());
+        assertNull("Leafref does not have a default value", leafref.getDefaultValue());
         assertEquals("QName of 'leafref' is value '(urn:ietf:params:xml:ns:yang:1)leafref'.",
                 BaseTypes.constructQName("leafref"), leafref.getQName());
         assertEquals("SchemaPath of 'leafref' is '/Cont1/List1'.", schemaPath, leafref.getPath());

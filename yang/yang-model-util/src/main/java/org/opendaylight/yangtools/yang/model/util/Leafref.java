@@ -59,7 +59,7 @@ public final class Leafref implements LeafrefTypeDefinition {
 
     @Override
     public Object getDefaultValue() {
-        return this;
+        return null;
     }
 
     @Override
