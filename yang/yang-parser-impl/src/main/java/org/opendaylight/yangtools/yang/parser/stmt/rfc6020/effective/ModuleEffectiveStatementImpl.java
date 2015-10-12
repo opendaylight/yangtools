@@ -199,8 +199,11 @@ public class ModuleEffectiveStatementImpl extends AbstractEffectiveDocumentedNod
             if (effectiveStatement instanceof FeatureDefinition) {
                 featuresInit.add((FeatureDefinition) effectiveStatement);
             }
-            if (effectiveStatement instanceof ExtensionDefinition) {
-                extensionNodesInit.add((ExtensionDefinition) effectiveStatement);
+            if (effectiveStatement instanceof ExtensionEffectiveStatementImpl) {
+                ExtensionEffectiveStatementImpl extensionDefinition = (ExtensionEffectiveStatementImpl) effectiveStatement;
+                extensionDefinition.initUnknownSchemaNodes();
+                extensionNodesInit
+                        .add(extensionDefinition);
             }
             if (effectiveStatement instanceof DataSchemaNode) {
                 DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;

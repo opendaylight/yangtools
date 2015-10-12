@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -33,8 +34,13 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
     private final StatementDefinition statementDefinition;
     private final A argument;
     private final D declaredInstance;
+    private final List<StatementContextBase<?, ?, ?>> unknownSubstatementsToBuild;
 
     public EffectiveStatementBase(final StmtContext<A, D, ?> ctx) {
+        this(ctx, true);
+    }
+
+    EffectiveStatementBase(final StmtContext<A, D, ?> ctx, boolean buildUnknownSubstatements) {
         this.statementDefinition = ctx.getPublicDefinition();
         this.argument = ctx.getStatementArgument();
         this.statementSource = ctx.getStatementSource();
@@ -44,23 +50,37 @@ abstract public class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
 
         Collection<StatementContextBase<?, ?, ?>> substatementsInit = new LinkedList<>();
 
-        for(StatementContextBase<?, ?, ?> declaredSubstatement : declaredSubstatements) {
+        for (StatementContextBase<?, ?, ?> declaredSubstatement : declaredSubstatements) {
             if (declaredSubstatement.getPublicDefinition() == Rfc6020Mapping.USES) {
                 substatementsInit.add(declaredSubstatement);
                 substatementsInit.addAll(declaredSubstatement.getEffectOfStatement());
-                ((StatementContextBase<?, ?, ?>)ctx).removeStatementsFromEffectiveSubstatements(declaredSubstatement
+                ((StatementContextBase<?, ?, ?>) ctx).removeStatementsFromEffectiveSubstatements(declaredSubstatement
                         .getEffectOfStatement());
             } else {
                 substatementsInit.add(declaredSubstatement);
             }
         }
-
         substatementsInit.addAll(effectiveSubstatements);
 
-        this.substatements = ImmutableList.copyOf(Collections2.transform(
-            Collections2.filter(substatementsInit, StmtContextUtils.IS_SUPPORTED_TO_BUILD_EFFECTIVE),
+        Collection<StatementContextBase<?, ?, ?>> substatementsToBuild = Collections2.filter(substatementsInit,
+                StmtContextUtils.IS_SUPPORTED_TO_BUILD_EFFECTIVE);
+        if (!buildUnknownSubstatements) {
+            this.unknownSubstatementsToBuild = ImmutableList.copyOf(Collections2.filter(substatementsToBuild,
+                    StmtContextUtils.IS_UNKNOWN_STATEMENT_CONTEXT));
+            substatementsToBuild = Collections2.filter(substatementsToBuild,
+                    Predicates.not(StmtContextUtils.IS_UNKNOWN_STATEMENT_CONTEXT));
+        } else {
+            this.unknownSubstatementsToBuild = ImmutableList.of();
+        }
+
+        this.substatements = ImmutableList.copyOf(Collections2.transform(substatementsToBuild,
                 StmtContextUtils.buildEffective()));
-        declaredInstance = ctx.buildDeclared();
+        this.declaredInstance = ctx.buildDeclared();
+    }
+
+    Collection<EffectiveStatement<?, ?>> getUnknownSubstatements() {
+        return Collections2.transform(unknownSubstatementsToBuild,
+                StmtContextUtils.buildEffective());
     }
 
     @Override

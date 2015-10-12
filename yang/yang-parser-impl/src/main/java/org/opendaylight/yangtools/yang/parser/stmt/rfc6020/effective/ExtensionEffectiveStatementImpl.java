@@ -32,12 +32,11 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
 
     public ExtensionEffectiveStatementImpl(
             final StmtContext<QName, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> ctx) {
-        super(ctx);
+        super(ctx, false);
 
         this.qname = ctx.getStatementArgument();
         this.schemaPath = Utils.getSchemaPath(ctx);
 
-        initSubstatementCollections();
         initFields();
     }
 
@@ -58,18 +57,18 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
         }
     }
 
-    private void initSubstatementCollections() {
-        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-
-        List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
-
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
-            if (effectiveStatement instanceof UnknownSchemaNode) {
-                UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
-                unknownNodesInit.add(unknownNode);
-            }
+    void initUnknownSchemaNodes() {
+        if (unknownNodes != null) {
+            return;
         }
 
+        Collection<EffectiveStatement<?, ?>> buildedUnknownNodes = getUnknownSubstatements();
+        List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
+        for (EffectiveStatement<?, ?> unknownNode : buildedUnknownNodes) {
+            if (unknownNode instanceof UnknownSchemaNode) {
+                unknownNodesInit.add((UnknownSchemaNode) unknownNode);
+            }
+        }
         this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
     }
 

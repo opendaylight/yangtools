@@ -7,11 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredStatement<A>>
         extends EffectiveStatementBase<A, D> implements DocumentedNode {
@@ -21,7 +20,11 @@ public abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredState
     private final Status status;
 
     AbstractEffectiveDocumentedNode(final StmtContext<A, D, ?> ctx) {
-        super(ctx);
+        this(ctx, true);
+    }
+
+    AbstractEffectiveDocumentedNode(final StmtContext<A, D, ?> ctx, boolean buildUnknownSubstatements) {
+        super(ctx, buildUnknownSubstatements);
 
         DescriptionEffectiveStatementImpl descStmt = firstEffective(DescriptionEffectiveStatementImpl.class);
         if (descStmt != null) {

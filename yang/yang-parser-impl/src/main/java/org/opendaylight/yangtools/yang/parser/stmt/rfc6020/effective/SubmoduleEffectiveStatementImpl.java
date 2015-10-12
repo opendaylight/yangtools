@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -199,9 +200,11 @@ public class SubmoduleEffectiveStatementImpl extends AbstractEffectiveDocumented
             if (effectiveStatement instanceof FeatureDefinition) {
                 featuresInit.add((FeatureDefinition) effectiveStatement);
             }
-            if (effectiveStatement instanceof ExtensionDefinition) {
+            if (effectiveStatement instanceof ExtensionEffectiveStatementImpl) {
+                ExtensionEffectiveStatementImpl extensionDefinition = (ExtensionEffectiveStatementImpl) effectiveStatement;
+                extensionDefinition.initUnknownSchemaNodes();
                 extensionNodesInit
-                        .add((ExtensionDefinition) effectiveStatement);
+                        .add(extensionDefinition);
             }
             if (effectiveStatement instanceof DataSchemaNode) {
                 DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;

@@ -45,7 +45,7 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<String
         super(ctx);
 
         final StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> extensionInit = ctx
-                .getAllFromNamespace(ExtensionNamespace.class).get(ctx.getPublicDefinition().getStatementName());
+                .getFromNamespace(ExtensionNamespace.class, ctx.getPublicDefinition().getStatementName());
 
         if (extensionInit == null) {
             extension = null;
@@ -54,7 +54,7 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<String
             extension = (ExtensionEffectiveStatementImpl) extensionInit.buildEffective();
             nodeType = extension.getQName();
         }
-        
+
         List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
 
         if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION)) {
@@ -70,7 +70,7 @@ public class UnknownEffectiveStatementImpl extends EffectiveStatementBase<String
         if (ctx.getOriginalCtx() != null) {
             original = (UnknownSchemaNode) ctx.getOriginalCtx().buildEffective();
         }
-        
+
         // FIXME: Remove following section after fixing 4380
         if(original != null) {
             maybeQNameArgument = original.getQName();
