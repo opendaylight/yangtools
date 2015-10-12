@@ -123,6 +123,12 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
+
+            <dependency>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-runtime</artifactId>
+                <version>4.5.1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -289,6 +295,19 @@
                                          <ignore/>
                                      </action>
                                  </pluginExecution>
+                                 <pluginExecution>
+                                     <pluginExecutionFilter>
+                                         <groupId>org.antlr</groupId>
+                                         <artifactId>antlr4-maven-plugin</artifactId>
+                                         <versionRange>[4.0,)</versionRange>
+                                         <goals>
+                                             <goal>antlr4</goal>
+                                         </goals>
+                                     </pluginExecutionFilter>
+                                     <action>
+                                         <execute />
+                                     </action>
+                                 </pluginExecution>
                             </pluginExecutions>
                         </lifecycleMappingMetadata>
                     </configuration>
@@ -414,6 +433,19 @@
                             <id>generate-depends-file</id>
                             <goals>
                                 <goal>generate-depends-file</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.antlr</groupId>
+                    <artifactId>antlr4-maven-plugin</artifactId>
+                    <version>4.5.1</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>antlr4</goal>
                             </goals>
                         </execution>
                     </executions>
