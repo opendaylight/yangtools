@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.base.Function;
-import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
@@ -37,14 +36,6 @@ public final class StmtContextUtils {
         @Override
         public EffectiveStatement<?, ?> apply(final StmtContext<?, ?, ?> input) {
             return input.buildEffective();
-        }
-    };
-
-    public static final Predicate<StmtContext<?, ?,?>> IS_SUPPORTED_TO_BUILD_EFFECTIVE =
-            new Predicate<StmtContext<?,?,?>>() {
-        @Override
-        public boolean apply(final StmtContext<?, ?, ?> input) {
-            return input.isSupportedToBuildEffective();
         }
     };
 
