@@ -38,19 +38,14 @@ module ietf-interfaces {
      Relating to IETF Documents
      (http://trustee.ietf.org/license-info).
 
-     This version of this YANG module is part of RFC XXXX; see
+     This version of this YANG module is part of RFC 7223; see
      the RFC itself for full legal notices.";
 
-  // RFC Ed.: replace XXXX with actual RFC number and remove this
-  // note.
-
-  // RFC Ed.: update the date below with the date of RFC publication
-  // and remove this note.
-  revision 2012-11-15 {
+  revision 2014-05-08 {
     description
       "Initial revision.";
     reference
-      "RFC XXXX: A YANG Data Model for Interface Management";
+      "RFC 7223: A YANG Data Model for Interface Management";
   }
 
   /* Typedefs */
