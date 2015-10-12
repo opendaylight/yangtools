@@ -27,25 +27,14 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
     private final String argument;
     private final SchemaPath schemaPath;
 
-    private final List<UnknownSchemaNode> unknownNodes;
+    private List<UnknownSchemaNode> unknownNodes;
     private final boolean yin;
 
     public ExtensionEffectiveStatementImpl(
             final StmtContext<QName, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> ctx) {
-        super(ctx);
+        super(ctx, false);
         this.qname = ctx.getStatementArgument();
         this.schemaPath = Utils.getSchemaPath(ctx);
-
-        // initSubstatementCollections
-        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-        List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
-            if (effectiveStatement instanceof UnknownSchemaNode) {
-                UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
-                unknownNodesInit.add(unknownNode);
-            }
-        }
-        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
 
         // initFields
         ArgumentEffectiveStatementImpl argumentSubstatement = firstEffective(ArgumentEffectiveStatementImpl.class);
@@ -63,6 +52,21 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
             this.argument = null;
             this.yin = false;
         }
+    }
+
+    void initUnknownSchemaNodes() {
+        if (unknownNodes != null) {
+            return;
+        }
+
+        Collection<EffectiveStatement<?, ?>> buildedUnknownNodes = getOmittedUnknownSubstatements();
+        List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
+        for (EffectiveStatement<?, ?> unknownNode : buildedUnknownNodes) {
+            if (unknownNode instanceof UnknownSchemaNode) {
+                unknownNodesInit.add((UnknownSchemaNode) unknownNode);
+            }
+        }
+        this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
     }
 
     @Override
