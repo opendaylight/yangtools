@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
+
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
@@ -338,7 +339,7 @@ public final class Utils {
                        || StmtContextUtils.producesDeclared(nextStmtCtx, RefineStatement.class))
                     && nextStmtArgument instanceof SchemaNodeIdentifier) {
                 addQNamesFromSchemaNodeIdentifierToList(qNamesFromRoot, (SchemaNodeIdentifier) nextStmtArgument);
-            } else if (isUnknownNode(nextStmtCtx)) {
+            } else if (StmtContextUtils.isUnknownStatement(nextStmtCtx)) {
                 qNamesFromRoot.add(nextStmtCtx.getPublicDefinition().getStatementName());
             } else {
                 return SchemaPath.SAME;
@@ -347,11 +348,6 @@ public final class Utils {
 
         final SchemaPath schemaPath = SchemaPath.create(qNamesFromRoot, true);
         return schemaPath;
-    }
-
-    public static boolean isUnknownNode(final StmtContext<?, ?, ?> stmtCtx) {
-        return stmtCtx.getPublicDefinition().getDeclaredRepresentationClass()
-                .isAssignableFrom(UnknownStatementImpl.class);
     }
 
     private static boolean isSupportedAsShorthandCase(final StmtContext<?, ?, ?> statementCtx) {
