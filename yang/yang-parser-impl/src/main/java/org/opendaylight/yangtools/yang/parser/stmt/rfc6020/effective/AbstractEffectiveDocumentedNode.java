@@ -12,15 +12,31 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredStatement<A>>
-        extends EffectiveStatementBase<A, D> implements DocumentedNode {
+abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredStatement<A>> extends EffectiveStatementBase<A, D>
+        implements DocumentedNode {
 
     private final String description;
     private final String reference;
     private final Status status;
 
     AbstractEffectiveDocumentedNode(final StmtContext<A, D, ?> ctx) {
-        super(ctx);
+        this(ctx, true);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param ctx
+     *            context of statement.
+     * @param buildUnknownSubstatements
+     *            if it is false, the unknown substatements are omitted from
+     *            build of effective substatements till the call of either
+     *            effectiveSubstatements or getOmittedUnknownSubstatements
+     *            method of EffectiveStatementBase class. The main purpose of
+     *            this is to allow the build of recursive extension definitions.
+     */
+    AbstractEffectiveDocumentedNode(final StmtContext<A, D, ?> ctx, boolean buildUnknownSubstatements) {
+        super(ctx, buildUnknownSubstatements);
 
         DescriptionEffectiveStatementImpl descStmt = firstEffective(DescriptionEffectiveStatementImpl.class);
         if (descStmt != null) {

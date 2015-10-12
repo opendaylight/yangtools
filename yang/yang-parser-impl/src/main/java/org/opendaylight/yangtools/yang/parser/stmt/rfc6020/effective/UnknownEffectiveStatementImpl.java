@@ -40,7 +40,7 @@ public final class UnknownEffectiveStatementImpl extends AbstractEffectiveDocume
         super(ctx);
 
         final StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> extensionInit = ctx
-                .getAllFromNamespace(ExtensionNamespace.class).get(ctx.getPublicDefinition().getStatementName());
+                .getFromNamespace(ExtensionNamespace.class, ctx.getPublicDefinition().getStatementName());
 
         if (extensionInit == null) {
             extension = null;
