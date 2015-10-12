@@ -23,10 +23,6 @@
     <artifactId>third-party-parent</artifactId>
     <packaging>pom</packaging>
 
-    <modules>
-        <module>antlr4-runtime-osgi</module>
-    </modules>
-
     <build>
         <plugins>
             <plugin>
