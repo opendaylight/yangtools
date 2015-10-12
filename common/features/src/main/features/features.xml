@@ -35,7 +35,7 @@
 
     <feature name='odl-yangtools-yang-parser' version='${project.version}' description='OpenDaylight :: Yangtools :: YANG Parser'>
         <feature version='${project.version}'>odl-yangtools-common</feature>
-        <bundle>mvn:org.opendaylight.yangtools.thirdparty/antlr4-runtime-osgi-nohead/{{VERSION}}</bundle>
+        <bundle>mvn:org.antlr/antlr4-runtime/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-model-api/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-model-util/{{VERSION}}</bundle>
         <bundle>mvn:org.opendaylight.yangtools/yang-parser-api/{{VERSION}}</bundle>
