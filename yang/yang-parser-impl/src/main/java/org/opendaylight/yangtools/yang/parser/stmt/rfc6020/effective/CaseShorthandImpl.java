@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -42,6 +42,7 @@ public class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
     private final boolean addedByUses;
     private final ConstraintDefinition constraints;
     private final List<UnknownSchemaNode> unknownNodes;
+    private final ChoiceCaseNode original;
 
     public CaseShorthandImpl(final DataSchemaNode caseShorthandNode) {
         this.caseShorthandNode = caseShorthandNode;
@@ -55,6 +56,8 @@ public class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
         this.addedByUses = caseShorthandNode.isAddedByUses();
         this.constraints = caseShorthandNode.getConstraints();
         this.unknownNodes = ImmutableList.copyOf(caseShorthandNode.getUnknownSchemaNodes());
+
+        this.original = getOriginalIfPresent(caseShorthandNode);
     }
 
     @Override
@@ -152,7 +155,7 @@ public class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
 
     @Override
     public Optional<? extends SchemaNode> getOriginal() {
-        return Optional.absent();
+        return Optional.fromNullable(original);
     }
 
     @Override
@@ -187,5 +190,15 @@ public class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
         sb.append(qName);
         sb.append("]");
         return sb.toString();
+    }
+
+    private static ChoiceCaseNode getOriginalIfPresent(final SchemaNode caseShorthandNode) {
+        if (caseShorthandNode instanceof DerivableSchemaNode) {
+            final Optional<? extends SchemaNode> original = ((DerivableSchemaNode) caseShorthandNode).getOriginal();
+            if (original.isPresent()) {
+                return new CaseShorthandImpl((DataSchemaNode) original.get());
+            }
+        }
+        return null;
     }
 }
