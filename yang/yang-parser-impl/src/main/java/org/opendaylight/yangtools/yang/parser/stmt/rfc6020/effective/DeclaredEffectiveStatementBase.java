@@ -19,9 +19,25 @@ public abstract class DeclaredEffectiveStatementBase<A, D extends DeclaredStatem
     private final D declaredInstance;
 
     public DeclaredEffectiveStatementBase(final StmtContext<A, D, ?> ctx) {
-        super(ctx);
+        this(ctx, true);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param ctx
+     *            context of statement.
+     * @param buildUnknownSubstatements
+     *            if it is false, the unknown substatements are omitted from
+     *            build of effective substatements till the call of either
+     *            effectiveSubstatements or getOmittedUnknownSubstatements
+     *            method of EffectiveStatementBase class. The main purpose of
+     *            this is to allow the build of recursive extension definitions.
+     */
+    protected DeclaredEffectiveStatementBase(final StmtContext<A, D, ?> ctx, boolean buildUnknownSubstatements) {
+        super(ctx, buildUnknownSubstatements);
         declaredInstance = Verify.verifyNotNull(ctx.buildDeclared(), "Statement %s failed to build declared statement",
-            ctx);
+                ctx);
     }
 
     @Override
