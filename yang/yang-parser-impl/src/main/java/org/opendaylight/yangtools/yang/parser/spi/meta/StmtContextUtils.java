@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public final class StmtContextUtils {
     public static final Splitter LIST_KEY_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
@@ -45,6 +46,14 @@ public final class StmtContextUtils {
         @Override
         public boolean apply(final StmtContext<?, ?, ?> input) {
             return input.isSupportedToBuildEffective();
+        }
+    };
+
+    public static final Predicate<StmtContext<?, ?,?>> IS_UNKNOWN_STATEMENT_CONTEXT =
+            new Predicate<StmtContext<?,?,?>>() {
+        @Override
+        public boolean apply(final StmtContext<?, ?, ?> input) {
+            return Utils.isUnknownNode(input);
         }
     };
 

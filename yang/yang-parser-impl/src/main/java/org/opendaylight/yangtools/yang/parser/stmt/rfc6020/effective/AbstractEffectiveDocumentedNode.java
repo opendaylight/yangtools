@@ -20,7 +20,11 @@ abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredStatement<A>
     private final Status status;
 
     AbstractEffectiveDocumentedNode(final StmtContext<A, D, ?> ctx) {
-        super(ctx);
+        this(ctx, true);
+    }
+
+    AbstractEffectiveDocumentedNode(final StmtContext<A, D, ?> ctx, boolean buildUnknownSubstatements) {
+        super(ctx, buildUnknownSubstatements);
 
         DescriptionEffectiveStatementImpl descStmt = firstEffective(DescriptionEffectiveStatementImpl.class);
         if (descStmt != null) {
