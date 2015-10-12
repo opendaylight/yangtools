@@ -1,0 +1,35 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+    yang-version 1;
+
+    extension a {
+        foo:b {
+            c;
+        }
+    }
+
+    extension b {
+        foo:c {
+            a;
+        }
+    }
+
+    extension c {
+        foo:a {
+            b;
+        }
+    }
+
+    extension r {
+        foo:r {
+            r2;
+        }
+    }
+
+    extension r2 {
+        foo:r2 {
+            r;
+        }
+    }
+}
