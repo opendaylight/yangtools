@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
+
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
@@ -17,10 +18,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -75,6 +78,14 @@ public final class Utils {
     private static final Splitter SPACE_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
     private static final Pattern PATH_ABS = Pattern.compile("/[^/].*");
 
+    private static final Map<Character, String> QNAME_ILLEGAL_CHARACTERS_MAP = new HashMap<>();
+    static {
+        QNAME_ILLEGAL_CHARACTERS_MAP.put('(', "LeftParenthesis");
+        QNAME_ILLEGAL_CHARACTERS_MAP.put(')', "RightParenthesis");
+        QNAME_ILLEGAL_CHARACTERS_MAP.put('&', "Ampersand");
+        QNAME_ILLEGAL_CHARACTERS_MAP.put('?', "QuestionMark");
+    }
+
     private static final ThreadLocal<XPathFactory> XPATH_FACTORY = new ThreadLocal<XPathFactory>() {
         @Override
         protected XPathFactory initialValue() {
@@ -87,15 +98,16 @@ public final class Utils {
     }
 
     /**
-     * Cleanup any resources attached to the current thread. Threads interacting with this class can cause thread-local
-     * caches to them. Invoke this method if you want to detach those resources.
+     * Cleanup any resources attached to the current thread. Threads interacting
+     * with this class can cause thread-local caches to them. Invoke this method
+     * if you want to detach those resources.
      */
     public static void detachFromCurrentThread() {
         XPATH_FACTORY.remove();
     }
 
-    public static Collection<SchemaNodeIdentifier.Relative> transformKeysStringToKeyNodes(final StmtContext<?, ?, ?> ctx,
-            final String value) {
+    public static Collection<SchemaNodeIdentifier.Relative> transformKeysStringToKeyNodes(
+            final StmtContext<?, ?, ?> ctx, final String value) {
         List<String> keyTokens = SPACE_SPLITTER.splitToList(value);
 
         // to detect if key contains duplicates
@@ -126,7 +138,8 @@ public final class Utils {
 
         final String trimmed = trimSingleLastSlashFromXPath(path);
         try {
-            // TODO: we could capture the result and expose its 'evaluate' method
+            // TODO: we could capture the result and expose its 'evaluate'
+            // method
             xPath.compile(trimmed);
         } catch (XPathExpressionException e) {
             LOG.warn("Argument \"{}\" is not valid XPath string at \"{}\"", path, ctx.getStatementSourceReference(), e);
@@ -155,8 +168,8 @@ public final class Utils {
         return null;
     }
 
-    public static boolean isValidStatementDefinition(final PrefixToModule prefixes, final QNameToStatementDefinition stmtDef,
-            final QName identifier) {
+    public static boolean isValidStatementDefinition(final PrefixToModule prefixes,
+            final QNameToStatementDefinition stmtDef, final QName identifier) {
         if (stmtDef.get(identifier) != null) {
             return true;
         } else {
@@ -187,8 +200,8 @@ public final class Utils {
                 final QName qName = Utils.qNameFromArgument(ctx, nodeName);
                 qNames.add(qName);
             } catch (Exception e) {
-                throw new IllegalArgumentException(
-                    String.format("Failed to parse node '%s' in path '%s'", nodeName, path), e);
+                throw new IllegalArgumentException(String.format("Failed to parse node '%s' in path '%s'", nodeName,
+                        path), e);
             }
         }
 
@@ -237,10 +250,11 @@ public final class Utils {
             prefix = namesParts[0];
             localName = namesParts[1];
             qNameModule = getModuleQNameByPrefix(ctx, prefix);
-            // in case of unknown statement argument, we're not going to parse it
+            // in case of unknown statement argument, we're not going to parse
+            // it
             if (qNameModule == null
                     && ctx.getPublicDefinition().getDeclaredRepresentationClass()
-                    .isAssignableFrom(UnknownStatementImpl.class)) {
+                            .isAssignableFrom(UnknownStatementImpl.class)) {
                 localName = value;
                 qNameModule = getRootModuleQName(ctx);
             }
@@ -285,8 +299,7 @@ public final class Utils {
         if (StmtContextUtils.producesDeclared(rootCtx, ModuleStatement.class)) {
             qNameModule = rootCtx.getFromNamespace(ModuleCtxToModuleQName.class, rootCtx);
         } else if (StmtContextUtils.producesDeclared(rootCtx, SubmoduleStatement.class)) {
-            String belongsToModuleName = firstAttributeOf(rootCtx.substatements(),
-                    BelongsToStatement.class);
+            String belongsToModuleName = firstAttributeOf(rootCtx.substatements(), BelongsToStatement.class);
             qNameModule = rootCtx.getFromNamespace(ModuleNameToModuleQName.class, belongsToModuleName);
         }
 
@@ -297,7 +310,8 @@ public final class Utils {
     @Nullable
     public static StatementContextBase<?, ?, ?> findNode(final StmtContext<?, ?, ?> rootStmtCtx,
             final SchemaNodeIdentifier node) {
-        return (StatementContextBase<?, ?, ?>) rootStmtCtx.getFromNamespace(SchemaNodeIdentifierBuildNamespace.class, node);
+        return (StatementContextBase<?, ?, ?>) rootStmtCtx.getFromNamespace(SchemaNodeIdentifierBuildNamespace.class,
+                node);
     }
 
     public static SchemaPath getSchemaPath(final StmtContext<?, ?, ?> ctx) {
@@ -328,14 +342,12 @@ public final class Utils {
                 qNamesFromRoot.add(qname);
             } else if (nextStmtArgument instanceof String) {
                 // FIXME: This may yield illegal argument exceptions
-                StatementContextBase<?, ?, ?> originalCtx = ctx
-                        .getOriginalCtx();
-                final QName qName = (originalCtx != null) ? qNameFromArgument(
-                        originalCtx, (String) nextStmtArgument)
+                StatementContextBase<?, ?, ?> originalCtx = ctx.getOriginalCtx();
+                final QName qName = (originalCtx != null) ? qNameFromArgument(originalCtx, (String) nextStmtArgument)
                         : qNameFromArgument(ctx, (String) nextStmtArgument);
                 qNamesFromRoot.add(qName);
-            } else if ((StmtContextUtils.producesDeclared(nextStmtCtx, AugmentStatement.class)
-                       || StmtContextUtils.producesDeclared(nextStmtCtx, RefineStatement.class))
+            } else if ((StmtContextUtils.producesDeclared(nextStmtCtx, AugmentStatement.class) || StmtContextUtils
+                    .producesDeclared(nextStmtCtx, RefineStatement.class))
                     && nextStmtArgument instanceof SchemaNodeIdentifier) {
                 addQNamesFromSchemaNodeIdentifierToList(qNamesFromRoot, (SchemaNodeIdentifier) nextStmtArgument);
             } else if (isUnknownNode(nextStmtCtx)) {
@@ -374,8 +386,8 @@ public final class Utils {
         // Yang constants should be lowercase so we have throw if value does not
         // suit this
         String deviateUpper = deviate.toUpperCase();
-        Preconditions.checkArgument(!Objects.equals(deviate, deviateUpper),
-            "String %s is not valid deviate argument", deviate);
+        Preconditions.checkArgument(!Objects.equals(deviate, deviateUpper), "String %s is not valid deviate argument",
+                deviate);
 
         // but Java enum is uppercase so we cannot use lowercase here
         try {
@@ -412,12 +424,12 @@ public final class Utils {
     public static Date getLatestRevision(final Iterable<? extends StmtContext<?, ?, ?>> subStmts) {
         Date revision = null;
         for (StmtContext<?, ?, ?> subStmt : subStmts) {
-            if (subStmt.getPublicDefinition().getDeclaredRepresentationClass().isAssignableFrom(RevisionStatement
-                    .class)) {
+            if (subStmt.getPublicDefinition().getDeclaredRepresentationClass()
+                    .isAssignableFrom(RevisionStatement.class)) {
                 if (revision == null && subStmt.getStatementArgument() != null) {
                     revision = (Date) subStmt.getStatementArgument();
-                } else if (subStmt.getStatementArgument() != null && ((Date) subStmt.getStatementArgument()).compareTo
-                        (revision) > 0) {
+                } else if (subStmt.getStatementArgument() != null
+                        && ((Date) subStmt.getStatementArgument()).compareTo(revision) > 0) {
                     revision = (Date) subStmt.getStatementArgument();
                 }
             }
@@ -427,7 +439,24 @@ public final class Utils {
 
     public static boolean isModuleIdentifierWithoutSpecifiedRevision(final Object o) {
         return (o instanceof ModuleIdentifier)
-                && (((ModuleIdentifier) o).getRevision() == SimpleDateFormatUtil.DEFAULT_DATE_IMP ||
-                        ((ModuleIdentifier) o).getRevision() == SimpleDateFormatUtil.DEFAULT_BELONGS_TO_DATE);
+                && (((ModuleIdentifier) o).getRevision() == SimpleDateFormatUtil.DEFAULT_DATE_IMP || ((ModuleIdentifier) o)
+                        .getRevision() == SimpleDateFormatUtil.DEFAULT_BELONGS_TO_DATE);
+    }
+
+    public static String replaceIllegalCharsForQName(String string) {
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i < string.length(); i++) {
+            result.append(getReplacement(string.charAt(i)));
+        }
+        return result.toString();
+    }
+
+    private static String getReplacement(Character charToReplace) {
+        String replacement = QNAME_ILLEGAL_CHARACTERS_MAP.get(charToReplace);
+
+        if (replacement == null) {
+            replacement = charToReplace.toString();
+        }
+        return replacement;
     }
 }
