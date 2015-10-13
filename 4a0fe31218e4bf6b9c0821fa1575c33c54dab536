@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_6750d55e",
+        "filename": "yang/yang-parser-impl/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-13T08:18:35Z",
+      "side": 1,
+      "message": "move this declaration into dependencymanagement section of the parent pom",
+      "revId": "4a0fe31218e4bf6b9c0821fa1575c33c54dab536",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
