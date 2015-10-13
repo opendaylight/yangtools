@@ -353,7 +353,24 @@ public final class Utils {
 
     public static boolean isModuleIdentifierWithoutSpecifiedRevision(final Object o) {
         return (o instanceof ModuleIdentifier)
-                && (((ModuleIdentifier) o).getRevision() == SimpleDateFormatUtil.DEFAULT_DATE_IMP ||
-                        ((ModuleIdentifier) o).getRevision() == SimpleDateFormatUtil.DEFAULT_BELONGS_TO_DATE);
+                && (((ModuleIdentifier) o).getRevision() == SimpleDateFormatUtil.DEFAULT_DATE_IMP || ((ModuleIdentifier) o)
+                        .getRevision() == SimpleDateFormatUtil.DEFAULT_BELONGS_TO_DATE);
+    }
+
+    /**
+     * Replaces illegal characters of QName by the name of the character (e.g.
+     * '?' is replaced by "QuestionMark" etc.).
+     *
+     * @param string
+     *            input String
+     * @return result String
+     */
+    public static String replaceIllegalCharsForQName(String string) {
+        string = CharMatcher.is('(').replaceFrom(string, "LeftParenthesis");
+        string = CharMatcher.is(')').replaceFrom(string, "RightParenthesis");
+        string = CharMatcher.is('&').replaceFrom(string, "Ampersand");
+        string = CharMatcher.is('?').replaceFrom(string, "QuestionMark");
+
+        return string;
     }
 }
