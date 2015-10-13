@@ -200,8 +200,8 @@ public class ImmutableNormalizedNodeStreamWriter implements SchemaAwareNormalize
 
     @Override
     public void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) {
-        Preconditions.checkArgument(getCurrent() instanceof ImmutableUnkeyedListNodeBuilder);
-
+        Preconditions.checkArgument((getCurrent() instanceof NormalizedNodeResultBuilder)
+                || getCurrent() instanceof ImmutableUnkeyedListNodeBuilder);
         final DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> builder = UNKNOWN_SIZE == childSizeHint ?
                 ImmutableUnkeyedListEntryNodeBuilder.create() : ImmutableUnkeyedListEntryNodeBuilder.create(childSizeHint);
         enter(builder.withNodeIdentifier(name));
