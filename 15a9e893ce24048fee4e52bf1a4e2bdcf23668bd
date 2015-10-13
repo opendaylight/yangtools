@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1a76adc5_986f8cc5",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/meta/StmtContextUtils.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-13T20:25:59Z",
+      "side": 1,
+      "message": "it would probably make sense to co-locate this predicate and the method it uses.",
+      "revId": "15a9e893ce24048fee4e52bf1a4e2bdcf23668bd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1a76adc5_b87288ab",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/AbstractEffectiveDocumentedNode.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-13T20:25:59Z",
+      "side": 1,
+      "message": "looks like we are affecting the lifecycle ... a few comments about the effects of \u0027buildUnknownSubstatements\u0027 would be nice",
+      "revId": "15a9e893ce24048fee4e52bf1a4e2bdcf23668bd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
