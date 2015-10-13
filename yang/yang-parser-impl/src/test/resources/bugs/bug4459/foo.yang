@@ -1,0 +1,27 @@
+module foo {
+    namespace foo;
+    prefix foo;
+    yang-version 1;
+
+    extension e {
+        argument a {
+            foo:e2 a {
+                type enumeration {
+                    enum "?";
+                    enum "*";
+                }
+            }
+        }
+    }
+
+    extension e2 {
+        argument name;
+    }
+
+    leaf my-leaf {
+        type enumeration {
+            enum "?-&-(-)-?-?-&";
+            enum "*";
+        }
+    }
+}
