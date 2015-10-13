@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
+
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
@@ -61,6 +62,10 @@ public final class Utils {
     private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
     private static final CharMatcher DOUBLE_QUOTE_MATCHER = CharMatcher.is('"');
     private static final CharMatcher SINGLE_QUOTE_MATCHER = CharMatcher.is('\'');
+    private static final CharMatcher LEFT_PARENTHESIS_MATCHER = CharMatcher.is('(');
+    private static final CharMatcher RIGHT_PARENTHESIS_MATCHER = CharMatcher.is(')');
+    private static final CharMatcher AMPERSAND_MATCHER = CharMatcher.is('&');
+    private static final CharMatcher QUESTION_MARK_MATCHER = CharMatcher.is('?');
     private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings().trimResults();
     private static final Splitter SPACE_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
     private static final Pattern PATH_ABS = Pattern.compile("/[^/].*");
@@ -353,7 +358,24 @@ public final class Utils {
 
     public static boolean isModuleIdentifierWithoutSpecifiedRevision(final Object o) {
         return (o instanceof ModuleIdentifier)
-                && (((ModuleIdentifier) o).getRevision() == SimpleDateFormatUtil.DEFAULT_DATE_IMP ||
-                        ((ModuleIdentifier) o).getRevision() == SimpleDateFormatUtil.DEFAULT_BELONGS_TO_DATE);
+                && (((ModuleIdentifier) o).getRevision() == SimpleDateFormatUtil.DEFAULT_DATE_IMP || ((ModuleIdentifier) o)
+                        .getRevision() == SimpleDateFormatUtil.DEFAULT_BELONGS_TO_DATE);
+    }
+
+    /**
+     * Replaces illegal characters of QName by the name of the character (e.g.
+     * '?' is replaced by "QuestionMark" etc.).
+     *
+     * @param string
+     *            input String
+     * @return result String
+     */
+    public static String replaceIllegalCharsForQName(String string) {
+        string = LEFT_PARENTHESIS_MATCHER.replaceFrom(string, "LeftParenthesis");
+        string = RIGHT_PARENTHESIS_MATCHER.replaceFrom(string, "RightParenthesis");
+        string = AMPERSAND_MATCHER.replaceFrom(string, "Ampersand");
+        string = QUESTION_MARK_MATCHER.replaceFrom(string, "QuestionMark");
+
+        return string;
     }
 }
