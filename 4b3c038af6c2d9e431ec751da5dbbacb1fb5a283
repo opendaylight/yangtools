@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fad0f9df_db7bff27",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 354,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-15T19:44:56Z",
+      "side": 1,
+      "message": "So this ends up being a proxy method -- it should be at least deprecated, if not immediately removed.",
+      "revId": "4b3c038af6c2d9e431ec751da5dbbacb1fb5a283",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
