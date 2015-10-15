@@ -20,7 +20,8 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.Decimal64Specification;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.util.Decimal64;
@@ -33,8 +34,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSt
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.FractionDigitsEffectiveStatementImpl;
 
 public class Decimal64SpecificationEffectiveStatementImpl extends
-        EffectiveStatementBase<String, TypeStatement.Decimal64Specification>
-        implements DecimalTypeDefinition, TypeDefinitionEffectiveBuilder {
+        EffectiveStatementBase<String, Decimal64Specification>
+        implements DecimalTypeDefinition, TypeEffectiveStatement<Decimal64Specification> {
 
     private static final String UNITS = "";
     private static final BigDecimal DEFAULT_VALUE = null;
@@ -69,7 +70,7 @@ public class Decimal64SpecificationEffectiveStatementImpl extends
     private Decimal64 decimal64Instance = null;
 
     public Decimal64SpecificationEffectiveStatementImpl(
-            final StmtContext<String, TypeStatement.Decimal64Specification, EffectiveStatement<String, TypeStatement.Decimal64Specification>> ctx) {
+            final StmtContext<String, Decimal64Specification, EffectiveStatement<String, Decimal64Specification>> ctx) {
         super(ctx);
 
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
@@ -210,7 +211,7 @@ public class Decimal64SpecificationEffectiveStatementImpl extends
     }
 
     @Override
-    public TypeDefinition<?> buildType() {
+    public TypeDefinition<?> getTypeDefinition() {
 
         if (decimal64Instance == null) {
             decimal64Instance = Decimal64.create(path, fractionDigits);

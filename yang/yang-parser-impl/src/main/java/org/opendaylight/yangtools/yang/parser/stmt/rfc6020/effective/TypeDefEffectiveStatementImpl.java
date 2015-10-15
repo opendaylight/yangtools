@@ -16,7 +16,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeDefinitionAware;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
@@ -32,10 +34,9 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Decima
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LengthEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.PatternEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.RangeEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.TypeDefinitionEffectiveBuilder;
 
 public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchemaNode<TypedefStatement> implements
-        TypeDefinition<TypeDefinition<?>>, TypeDefinitionEffectiveBuilder {
+        TypeDefinition<TypeDefinition<?>>, TypedefEffectiveStatement {
     private final TypeDefinition<?> baseType;
     private final String defaultValue;
     private final String units;
@@ -91,7 +92,7 @@ public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchema
                 }
             }
         } else {
-            StmtContext<?, TypedefStatement, EffectiveStatement<QName, TypedefStatement>> baseTypeCtx = ctx
+            StmtContext<?, TypedefStatement, TypedefEffectiveStatement> baseTypeCtx = ctx
                     .getParentContext().getFromNamespace(TypeNamespace.class, baseTypeQName);
             baseTypeInit = (TypeDefEffectiveStatementImpl) baseTypeCtx.buildEffective();
         }
@@ -169,16 +170,15 @@ public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchema
     }
 
     @Override
-    public ExtendedType buildType() {
-
+    public TypeDefinition<?> getTypeDefinition() {
         if (extendedType != null) {
             return extendedType;
         }
 
         Builder extendedTypeBuilder;
-        if (baseType instanceof TypeDefinitionEffectiveBuilder) {
-            TypeDefinitionEffectiveBuilder typeDefBaseType = (TypeDefinitionEffectiveBuilder) baseType;
-            extendedTypeBuilder = ExtendedType.builder(getQName(), typeDefBaseType.buildType(),
+        if (baseType instanceof TypeDefinitionAware) {
+            TypeDefinitionAware typeDefBaseType = (TypeDefinitionAware) baseType;
+            extendedTypeBuilder = ExtendedType.builder(getQName(), typeDefBaseType.getTypeDefinition(),
                     Optional.fromNullable(getDescription()), Optional.fromNullable(getReference()), getPath());
         } else {
             extendedTypeBuilder = ExtendedType.builder(getQName(), baseType, Optional.fromNullable(getDescription()),

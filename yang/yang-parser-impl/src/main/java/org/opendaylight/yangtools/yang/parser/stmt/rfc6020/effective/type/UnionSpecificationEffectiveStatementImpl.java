@@ -18,7 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.UnionSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -26,8 +27,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
 public class UnionSpecificationEffectiveStatementImpl extends
-        EffectiveStatementBase<String, TypeStatement.UnionSpecification> implements UnionTypeDefinition,
-        TypeDefinitionEffectiveBuilder {
+        EffectiveStatementBase<String, UnionSpecification> implements UnionTypeDefinition,
+        TypeEffectiveStatement<UnionSpecification> {
 
     private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "union");
     private static final SchemaPath PATH = SchemaPath.create(true, QNAME);
@@ -38,7 +39,7 @@ public class UnionSpecificationEffectiveStatementImpl extends
     private UnionType unionTypeInstance = null;
 
     public UnionSpecificationEffectiveStatementImpl(
-            StmtContext<String, TypeStatement.UnionSpecification, EffectiveStatement<String, TypeStatement.UnionSpecification>> ctx) {
+            final StmtContext<String, UnionSpecification, EffectiveStatement<String, UnionSpecification>> ctx) {
         super(ctx);
 
         List<TypeDefinition<?>> typesInit = new ArrayList<>();
@@ -140,7 +141,8 @@ public class UnionSpecificationEffectiveStatementImpl extends
         return builder.toString();
     }
 
-    public TypeDefinition<?> buildType() {
+    @Override
+    public TypeDefinition<?> getTypeDefinition() {
 
         if (unionTypeInstance != null) {
             return unionTypeInstance;

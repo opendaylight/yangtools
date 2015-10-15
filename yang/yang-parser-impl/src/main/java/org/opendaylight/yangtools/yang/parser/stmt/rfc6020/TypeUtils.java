@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeDefinitionAware;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.util.BinaryType;
@@ -41,7 +42,6 @@ import org.opendaylight.yangtools.yang.model.util.Uint64;
 import org.opendaylight.yangtools.yang.model.util.Uint8;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LengthConstraintEffectiveImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.RangeConstraintEffectiveImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.TypeDefinitionEffectiveBuilder;
 import org.opendaylight.yangtools.yang.parser.util.UnknownBoundaryNumber;
 
 /**
@@ -261,9 +261,9 @@ public final class TypeUtils {
     }
 
     public static TypeDefinition<?> getTypeFromEffectiveStatement(final EffectiveStatement<?, ?> effectiveStatement) {
-        if (effectiveStatement instanceof TypeDefinitionEffectiveBuilder) {
-            TypeDefinitionEffectiveBuilder typeDefEffectiveBuilder = (TypeDefinitionEffectiveBuilder) effectiveStatement;
-            return typeDefEffectiveBuilder.buildType();
+        if (effectiveStatement instanceof TypeDefinitionAware) {
+            TypeDefinitionAware typeDefEffectiveBuilder = (TypeDefinitionAware) effectiveStatement;
+            return typeDefEffectiveBuilder.getTypeDefinition();
         } else {
             final String typeName = ((TypeDefinition<?>) effectiveStatement).getQName().getLocalName();
             return PRIMITIVE_TYPES_MAP.get(typeName);

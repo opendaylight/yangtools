@@ -15,9 +15,11 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.LeafrefSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.Leafref;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -25,8 +27,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PathEffectiveStatementImpl;
 
-public class LeafrefSpecificationEffectiveStatementImpl extends
-        EffectiveStatementBase<String, TypeStatement.LeafrefSpecification> implements LeafrefTypeDefinition, TypeDefinitionEffectiveBuilder {
+public class LeafrefSpecificationEffectiveStatementImpl extends EffectiveStatementBase<String, LeafrefSpecification>
+        implements LeafrefTypeDefinition, TypeEffectiveStatement<LeafrefSpecification> {
 
     public static final String LOCAL_NAME = "leafref";
     private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, LOCAL_NAME);
@@ -38,7 +40,7 @@ public class LeafrefSpecificationEffectiveStatementImpl extends
     private RevisionAwareXPath xpath;
     private Leafref leafrefInstance = null;
 
-    public LeafrefSpecificationEffectiveStatementImpl(final StmtContext<String, TypeStatement.LeafrefSpecification, EffectiveStatement<String, TypeStatement.LeafrefSpecification>> ctx) {
+    public LeafrefSpecificationEffectiveStatementImpl(final StmtContext<String, LeafrefSpecification, EffectiveStatement<String, LeafrefSpecification>> ctx) {
         super(ctx);
 
         path = Utils.getSchemaPath(ctx.getParentContext()).createChild(QNAME);
@@ -135,8 +137,7 @@ public class LeafrefSpecificationEffectiveStatementImpl extends
     }
 
     @Override
-    public Leafref buildType() {
-
+    public TypeDefinition<?> getTypeDefinition() {
         if (leafrefInstance != null) {
             return leafrefInstance;
         }
