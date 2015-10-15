@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fad0f9df_5bbaafe2",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-15T19:41:04Z",
+      "side": 1,
+      "message": "ImmutableMap.of()",
+      "revId": "d4c5617acc5dcc675f1db79e80175487927a9cd5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_7bbf73d1",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-15T19:41:04Z",
+      "side": 1,
+      "message": "why is the comment being reformatted?",
+      "revId": "d4c5617acc5dcc675f1db79e80175487927a9cd5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_1bb427f1",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 203,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-15T19:41:04Z",
+      "side": 1,
+      "message": "this makes it slightly less readable",
+      "revId": "d4c5617acc5dcc675f1db79e80175487927a9cd5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_3bb9ebe9",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 349,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-15T19:41:04Z",
+      "side": 1,
+      "message": "again, less readable",
+      "revId": "d4c5617acc5dcc675f1db79e80175487927a9cd5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_9bc7b764",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 446,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-15T19:41:04Z",
+      "side": 1,
+      "message": "missing javadoc",
+      "revId": "d4c5617acc5dcc675f1db79e80175487927a9cd5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_1babc78a",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 449,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-15T19:41:04Z",
+      "side": 1,
+      "message": "this looks like it could be realized via CharMatcher.replaceFrom()",
+      "revId": "d4c5617acc5dcc675f1db79e80175487927a9cd5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
