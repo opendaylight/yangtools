@@ -7,11 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
-import org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType;
-
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 import java.util.Collections;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -19,14 +14,20 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.InstanceIdentifierSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RequireInstanceEffectiveStatementImpl;
 
 public class InstanceIdentifierSpecificationEffectiveStatementImpl extends
-        EffectiveStatementBase<String, TypeStatement.InstanceIdentifierSpecification> implements TypeDefinitionEffectiveBuilder, InstanceIdentifierTypeDefinition {
+        EffectiveStatementBase<String, InstanceIdentifierSpecification> implements InstanceIdentifierTypeDefinition,
+        TypeEffectiveStatement<InstanceIdentifierSpecification> {
 
     private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "instance-identifier");
     private static final SchemaPath PATH = SchemaPath.create(true, QNAME);
@@ -38,7 +39,7 @@ public class InstanceIdentifierSpecificationEffectiveStatementImpl extends
     private final Boolean requireInstance;
 
     public InstanceIdentifierSpecificationEffectiveStatementImpl(
-            StmtContext<String, TypeStatement.InstanceIdentifierSpecification, EffectiveStatement<String, TypeStatement.InstanceIdentifierSpecification>> ctx) {
+            final StmtContext<String, InstanceIdentifierSpecification, EffectiveStatement<String, InstanceIdentifierSpecification>> ctx) {
         super(ctx);
 
         RequireInstanceEffectiveStatementImpl requireInstanceStmtCtx = firstEffective(RequireInstanceEffectiveStatementImpl.class);
@@ -124,7 +125,7 @@ public class InstanceIdentifierSpecificationEffectiveStatementImpl extends
     }
 
     @Override
-    public TypeDefinition<?> buildType() {
+    public TypeDefinition<?> getTypeDefinition() {
         return InstanceIdentifierType.create(requireInstance);
     }
 }

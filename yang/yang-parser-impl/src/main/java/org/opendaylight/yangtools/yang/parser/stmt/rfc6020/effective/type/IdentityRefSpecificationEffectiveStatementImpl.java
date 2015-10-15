@@ -7,14 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
-
-import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.BaseEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 import java.util.Collections;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -22,16 +14,24 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.IdentityRefSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
+import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.BaseEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
 public class IdentityRefSpecificationEffectiveStatementImpl extends
-        EffectiveStatementBase<String, TypeStatement.IdentityRefSpecification> implements IdentityrefTypeDefinition,
-        TypeDefinitionEffectiveBuilder {
+        EffectiveStatementBase<String, IdentityRefSpecification> implements IdentityrefTypeDefinition,
+        TypeEffectiveStatement<IdentityRefSpecification> {
 
     private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, TypeUtils.IDENTITY_REF);
 
@@ -46,7 +46,7 @@ public class IdentityRefSpecificationEffectiveStatementImpl extends
     private IdentityrefType identityRefTypeInstance = null;
 
     public IdentityRefSpecificationEffectiveStatementImpl(
-            StmtContext<String, TypeStatement.IdentityRefSpecification, EffectiveStatement<String, TypeStatement.IdentityRefSpecification>> ctx) {
+            final StmtContext<String, IdentityRefSpecification, EffectiveStatement<String, IdentityRefSpecification>> ctx) {
         super(ctx);
 
         path = Utils.getSchemaPath(ctx.getParentContext()).createChild(QNAME);
@@ -117,7 +117,7 @@ public class IdentityRefSpecificationEffectiveStatementImpl extends
     }
 
     @Override
-    public TypeDefinition<?> buildType() {
+    public TypeDefinition<?> getTypeDefinition() {
 
         if (identityRefTypeInstance != null) {
             return identityRefTypeInstance;

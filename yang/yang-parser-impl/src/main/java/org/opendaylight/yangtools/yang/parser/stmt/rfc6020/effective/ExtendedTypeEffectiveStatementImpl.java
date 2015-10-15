@@ -18,7 +18,9 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
@@ -36,12 +38,11 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LengthEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.PatternEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.RangeEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.TypeDefinitionEffectiveBuilder;
 import org.opendaylight.yangtools.yang.parser.util.TypeConstraints;
 
 public final class ExtendedTypeEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<String, TypeStatement>
 implements
-        TypeDefinition<TypeDefinition<?>>, TypeDefinitionEffectiveBuilder {
+        TypeDefinition<TypeDefinition<?>>, TypeEffectiveStatement<TypeStatement> {
 
     private static final Splitter COLON_SPLITTER = Splitter.on(':').trimResults();
 
@@ -65,7 +66,7 @@ implements
         this.isExtended = isExtended;
         qName = initQName(ctx, isExtended);
 
-        final StmtContext<?, TypedefStatement, EffectiveStatement<QName, TypedefStatement>> typeStmt =
+        final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> typeStmt =
                 ctx.getFromNamespace(TypeNamespace.class, qName);
         if (typeStmt == null) {
             path = Utils.getSchemaPath(ctx);
@@ -122,7 +123,7 @@ implements
         if (TypeUtils.isYangPrimitiveTypeString(baseTypeQName.getLocalName())) {
             baseType = TypeUtils.getYangPrimitiveTypeFromString(baseTypeQName.getLocalName());
         } else {
-            StmtContext<?, TypedefStatement, EffectiveStatement<QName, TypedefStatement>> baseTypeCtx = ctx
+            StmtContext<?, TypedefStatement, TypedefEffectiveStatement> baseTypeCtx = ctx
                     .getParentContext().getFromNamespace(TypeNamespace.class, baseTypeQName);
 
             if (baseTypeCtx == null) {
@@ -262,21 +263,20 @@ implements
     }
 
     @Override
-    public ExtendedType buildType() {
-
+    public TypeDefinition<?> getTypeDefinition() {
         if (extendedType != null) {
             return extendedType;
         }
 
         if (!isExtended && baseType instanceof TypeDefEffectiveStatementImpl) {
             TypeDefEffectiveStatementImpl originalTypeDef = (TypeDefEffectiveStatementImpl) baseType;
-            return originalTypeDef.buildType();
+            return originalTypeDef.getTypeDefinition();
         }
 
         Builder extendedTypeBuilder;
         if (baseType instanceof TypeDefEffectiveStatementImpl) {
             TypeDefEffectiveStatementImpl typeDefBaseType = (TypeDefEffectiveStatementImpl) baseType;
-            extendedTypeBuilder = ExtendedType.builder(qName, typeDefBaseType.buildType(),
+            extendedTypeBuilder = ExtendedType.builder(qName, typeDefBaseType.getTypeDefinition(),
                     Optional.fromNullable(getDescription()), Optional.fromNullable(getReference()), path);
         } else {
             extendedTypeBuilder = ExtendedType.builder(qName, baseType, Optional.fromNullable(getDescription()),
