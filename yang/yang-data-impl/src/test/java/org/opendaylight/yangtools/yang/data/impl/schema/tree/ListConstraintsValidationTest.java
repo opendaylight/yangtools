@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
@@ -48,7 +47,6 @@ public class ListConstraintsValidationTest {
 
     private static final String CONSTRAINTS_VALIDATION_TEST_YANG = "/list-constraints-validation-test-model.yang";
     private SchemaContext schemaContext;
-    private RootModificationApplyOperation rootOper;
 
     private InMemoryDataTree inMemoryDataTree;
 
@@ -79,12 +77,10 @@ public class ListConstraintsValidationTest {
     public void prepare() throws IOException, YangSyntaxErrorException {
         schemaContext = createTestContext();
         assertNotNull("Schema context must not be null.", schemaContext);
-        rootOper = RootModificationApplyOperation.from(SchemaAwareApplyOperation.from(schemaContext, TreeType.OPERATIONAL));
         inMemoryDataTree =  (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create();
         inMemoryDataTree.setSchemaContext(schemaContext);
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
-        final DataTreeModification modificationTree = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
+        final DataTreeModification modificationTree = initialDataTreeSnapshot.newModification();
 
         modificationTree.write(MASTER_CONTAINER_PATH, ImmutableNodes.containerNode(MASTER_CONTAINER_QNAME));
         modificationTree.ready();

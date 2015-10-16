@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificat
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -49,14 +48,12 @@ public class ConcurrentTreeModificationTest {
             .build();
 
     private SchemaContext schemaContext;
-    private RootModificationApplyOperation rootOper;
     private InMemoryDataTree inMemoryDataTree;
 
     @Before
     public void prepare() {
         schemaContext = TestModel.createTestContext();
         assertNotNull("Schema context must not be null.", schemaContext);
-        rootOper = RootModificationApplyOperation.from(SchemaAwareApplyOperation.from(schemaContext,TreeType.OPERATIONAL));
         inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create();
         inMemoryDataTree.setSchemaContext(schemaContext);
     }
@@ -90,10 +87,8 @@ public class ConcurrentTreeModificationTest {
     public void writeWrite1stLevelEmptyTreeTest() throws DataValidationFailedException {
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
-        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
+        final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
+        final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
 
         modificationTree1.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         modificationTree2.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
@@ -121,10 +116,8 @@ public class ConcurrentTreeModificationTest {
     public void writeMerge1stLevelEmptyTreeTest() throws DataValidationFailedException {
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
-        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
+        final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
+        final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
 
         modificationTree1.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         modificationTree2.merge(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
@@ -148,10 +141,8 @@ public class ConcurrentTreeModificationTest {
     public void writeWriteFooBar1stLevelEmptyTreeTest() throws DataValidationFailedException {
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
-        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
+        final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
+        final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
 
         modificationTree1.write(TestModel.TEST_PATH, createFooTestContainerNode());
         modificationTree2.write(TestModel.TEST_PATH, createBarTestContainerNode());
@@ -180,10 +171,8 @@ public class ConcurrentTreeModificationTest {
     public void writeMergeFooBar1stLevelEmptyTreeTest() throws DataValidationFailedException {
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
-        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
+        final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
+        final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
 
         modificationTree1.write(TestModel.TEST_PATH, createFooTestContainerNode());
         modificationTree2.merge(TestModel.TEST_PATH, createBarTestContainerNode());
@@ -207,10 +196,8 @@ public class ConcurrentTreeModificationTest {
     public void mergeWriteFooBar1stLevelEmptyTreeTest() throws DataValidationFailedException {
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
-        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
+        final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
+        final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
 
         modificationTree1.merge(TestModel.TEST_PATH, createFooTestContainerNode());
         modificationTree2.write(TestModel.TEST_PATH, createBarTestContainerNode());
@@ -239,10 +226,8 @@ public class ConcurrentTreeModificationTest {
     public void mergeMergeFooBar1stLevelEmptyTreeTest() throws DataValidationFailedException {
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
-        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
+        final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
+        final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
 
         modificationTree1.merge(TestModel.TEST_PATH, createFooTestContainerNode());
         modificationTree2.merge(TestModel.TEST_PATH, createBarTestContainerNode());
@@ -270,10 +255,8 @@ public class ConcurrentTreeModificationTest {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
-        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
+        final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
+        final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
 
         modificationTree1.write(TestModel.TEST_PATH, createFooTestContainerNode());
         modificationTree2.write(TestModel.TEST_PATH, createBarTestContainerNode());
@@ -306,10 +289,8 @@ public class ConcurrentTreeModificationTest {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
-        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
+        final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
+        final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
 
         modificationTree1.write(TestModel.TEST_PATH, createFooTestContainerNode());
         modificationTree2.merge(TestModel.TEST_PATH, createBarTestContainerNode());
@@ -337,10 +318,8 @@ public class ConcurrentTreeModificationTest {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
-        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
+        final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
+        final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
 
         modificationTree1.merge(TestModel.TEST_PATH, createFooTestContainerNode());
         modificationTree2.write(TestModel.TEST_PATH, createBarTestContainerNode());
@@ -374,10 +353,8 @@ public class ConcurrentTreeModificationTest {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
-        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
+        final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
+        final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
 
         modificationTree1.merge(TestModel.TEST_PATH, createFooTestContainerNode());
         modificationTree2.merge(TestModel.TEST_PATH, createBarTestContainerNode());
@@ -405,10 +382,8 @@ public class ConcurrentTreeModificationTest {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
-        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
+        final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
+        final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
 
         modificationTree1.delete(TestModel.TEST_PATH);
         modificationTree2.write(TestModel.TEST_PATH, createBarTestContainerNode());
@@ -441,10 +416,8 @@ public class ConcurrentTreeModificationTest {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
-        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
+        final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
+        final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
 
         modificationTree1.delete(TestModel.TEST_PATH);
         modificationTree2.merge(TestModel.TEST_PATH, createBarTestContainerNode());
@@ -472,10 +445,8 @@ public class ConcurrentTreeModificationTest {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
-        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
+        final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
+        final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
 
         modificationTree1.write(OUTER_LIST_1_PATH, FOO_NODE);
         modificationTree2.write(OUTER_LIST_2_PATH, BAR_NODE);
@@ -504,10 +475,8 @@ public class ConcurrentTreeModificationTest {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
-        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
+        final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
+        final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
 
         modificationTree1.write(OUTER_LIST_1_PATH, FOO_NODE);
         modificationTree2.merge(OUTER_LIST_2_PATH, BAR_NODE);
@@ -536,10 +505,8 @@ public class ConcurrentTreeModificationTest {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
-        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
+        final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
+        final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
 
         modificationTree1.merge(OUTER_LIST_1_PATH, FOO_NODE);
         modificationTree2.write(OUTER_LIST_2_PATH, BAR_NODE);
@@ -568,10 +535,8 @@ public class ConcurrentTreeModificationTest {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
-        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
+        final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
+        final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
 
         modificationTree1.merge(OUTER_LIST_1_PATH, FOO_NODE);
         modificationTree2.merge(OUTER_LIST_2_PATH, BAR_NODE);
@@ -600,10 +565,8 @@ public class ConcurrentTreeModificationTest {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
-        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
+        final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
+        final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
 
         modificationTree1.delete(TestModel.TEST_PATH);
         modificationTree2.merge(OUTER_LIST_2_PATH, BAR_NODE);
@@ -636,10 +599,8 @@ public class ConcurrentTreeModificationTest {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
-        final DataTreeModification modificationTree1 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
-        final DataTreeModification modificationTree2 = new InMemoryDataTreeModification(initialDataTreeSnapshot,
-                rootOper);
+        final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
+        final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
 
         modificationTree1.delete(TestModel.TEST_PATH);
         modificationTree2.merge(OUTER_LIST_2_PATH, BAR_NODE);
