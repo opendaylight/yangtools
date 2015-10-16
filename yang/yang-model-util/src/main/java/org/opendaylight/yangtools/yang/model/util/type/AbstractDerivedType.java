@@ -9,36 +9,29 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.List;
-import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
-abstract class AbstractDerivedType<T extends TypeDefinition<T>> implements Immutable, TypeDefinition<T> {
-    private final SchemaPath path;
+abstract class AbstractDerivedType<T extends TypeDefinition<T>> extends AbstractTypeDefinition<T> {
     private final T baseType;
     private final Object defaultValue;
     private final String description;
     private final String reference;
     private final Status status;
     private final String units;
-    private final List<UnknownSchemaNode> unknownSchemNodes;
 
     AbstractDerivedType(final T baseType, final SchemaPath path, final Object defaultValue, final String description,
             final String reference, final Status status, final String units, final Collection<UnknownSchemaNode> unknownSchemNodes) {
+        super(path, unknownSchemNodes);
         this.baseType = Preconditions.checkNotNull(baseType);
-        this.path = Preconditions.checkNotNull(path);
         this.status = Preconditions.checkNotNull(status);
         this.defaultValue = defaultValue;
         this.description = description;
         this.reference = reference;
         this.units = units;
-        this.unknownSchemNodes = ImmutableList.copyOf(unknownSchemNodes);
     }
 
     @Override
@@ -49,21 +42,6 @@ abstract class AbstractDerivedType<T extends TypeDefinition<T>> implements Immut
     @Override
     public final Object getDefaultValue() {
         return defaultValue != null ? defaultValue : baseType.getDefaultValue();
-    }
-
-    @Override
-    public final QName getQName() {
-        return path.getLastComponent();
-    }
-
-    @Override
-    public final SchemaPath getPath() {
-        return path;
-    }
-
-    @Override
-    public final List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownSchemNodes;
     }
 
     @Override
@@ -88,8 +66,13 @@ abstract class AbstractDerivedType<T extends TypeDefinition<T>> implements Immut
 
     @Override
     public final String toString() {
-        return MoreObjects.toStringHelper(this).omitNullValues().add("baseType", baseType).add("default", defaultValue)
-                .add("description", description).add("path", path).add("reference", reference).add("status", status)
+        return MoreObjects.toStringHelper(this).omitNullValues()
+                .add("baseType", baseType)
+                .add("default", defaultValue)
+                .add("description", description)
+                .add("path", getPath())
+                .add("reference", reference)
+                .add("status", status)
                 .add("units", units).toString();
     }
 }

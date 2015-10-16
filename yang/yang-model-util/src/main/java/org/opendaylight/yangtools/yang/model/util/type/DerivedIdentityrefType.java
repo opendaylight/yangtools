@@ -25,4 +25,14 @@ final class DerivedIdentityrefType extends AbstractDerivedType<IdentityrefTypeDe
     public IdentitySchemaNode getIdentity() {
         return getBaseType().getIdentity();
     }
+
+    @Override
+    public int hashCode() {
+        return TypeDefinitions.hashCode(this);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return TypeDefinitions.equals(this, obj);
+    }
 }

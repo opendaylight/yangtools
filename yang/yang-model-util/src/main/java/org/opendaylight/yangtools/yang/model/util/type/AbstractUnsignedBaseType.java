@@ -15,4 +15,19 @@ abstract class AbstractUnsignedBaseType extends AbstractRangedBaseType<UnsignedI
     AbstractUnsignedBaseType(final QName qname, final Number minValue, final Number maxValue) {
         super(qname, minValue, maxValue);
     }
+
+    @Override
+    public final int hashCode() {
+        return TypeDefinitions.hashCode(this);
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        return TypeDefinitions.equals(this, obj);
+    }
+
+    @Override
+    public final String toString() {
+        return TypeDefinitions.toString(this);
+    }
 }

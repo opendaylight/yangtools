@@ -29,4 +29,19 @@ final class RestrictedUnsignedType extends AbstractRestrictedType<UnsignedIntege
     public List<RangeConstraint> getRangeConstraints() {
         return rangeConstraints;
     }
+
+    @Override
+    public int hashCode() {
+        return TypeDefinitions.hashCode(this);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return TypeDefinitions.equals(this, obj);
+    }
+
+    @Override
+    public String toString() {
+        return TypeDefinitions.toString(this);
+    }
 }
