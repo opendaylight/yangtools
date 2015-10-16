@@ -26,4 +26,19 @@ final class BaseBitsType extends AbstractBaseType<BitsTypeDefinition> implements
     public List<Bit> getBits() {
         return bits;
     }
+
+    @Override
+    public int hashCode() {
+        return TypeDefinitions.hashCode(this);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return TypeDefinitions.equals(this, obj);
+    }
+
+    @Override
+    public String toString() {
+        return TypeDefinitions.toString(this);
+    }
 }

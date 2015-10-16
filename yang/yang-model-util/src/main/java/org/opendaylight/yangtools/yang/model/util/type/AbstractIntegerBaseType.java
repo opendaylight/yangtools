@@ -14,4 +14,19 @@ abstract class AbstractIntegerBaseType extends AbstractRangedBaseType<IntegerTyp
     AbstractIntegerBaseType(final QName qname, final Number minValue, final Number maxValue) {
         super(qname, minValue, maxValue);
     }
+
+    @Override
+    public final int hashCode() {
+        return TypeDefinitions.hashCode(this);
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        return TypeDefinitions.equals(this, obj);
+    }
+
+    @Override
+    public final String toString() {
+        return TypeDefinitions.toString(this);
+    }
 }
