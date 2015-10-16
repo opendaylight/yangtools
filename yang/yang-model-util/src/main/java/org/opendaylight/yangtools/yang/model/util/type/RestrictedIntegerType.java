@@ -18,4 +18,19 @@ final class RestrictedIntegerType extends AbstractRangeRestrictedType<IntegerTyp
         final Collection<UnknownSchemaNode> unknownSchemaNodes, final Collection<RangeConstraint> rangeConstraints) {
         super(baseType, path, unknownSchemaNodes, rangeConstraints);
     }
+
+    @Override
+    public final int hashCode() {
+        return TypeDefinitions.hashCode(this);
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        return TypeDefinitions.equals(this, obj);
+    }
+
+    @Override
+    public String toString() {
+        return TypeDefinitions.toString(this);
+    }
 }

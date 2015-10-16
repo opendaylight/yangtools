@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
@@ -62,7 +61,17 @@ final class BaseDecimalType extends AbstractRangedBaseType<DecimalTypeDefinition
     }
 
     @Override
-    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return super.addToStringAttributes(toStringHelper).add("fractionDigits", fractionDigits);
+    public int hashCode() {
+        return TypeDefinitions.hashCode(this);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return TypeDefinitions.equals(this, obj);
+    }
+
+    @Override
+    public String toString() {
+        return TypeDefinitions.toString(this);
     }
 }

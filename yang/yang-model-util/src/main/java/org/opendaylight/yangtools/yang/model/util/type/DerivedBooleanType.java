@@ -19,4 +19,14 @@ final class DerivedBooleanType extends AbstractDerivedType<BooleanTypeDefinition
         final Collection<UnknownSchemaNode> unknownSchemNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemNodes);
     }
+
+    @Override
+    public int hashCode() {
+        return TypeDefinitions.hashCode(this);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return TypeDefinitions.equals(this, obj);
+    }
 }

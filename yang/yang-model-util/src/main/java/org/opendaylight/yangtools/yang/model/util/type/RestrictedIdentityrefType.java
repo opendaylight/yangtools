@@ -23,4 +23,19 @@ final class RestrictedIdentityrefType extends AbstractRestrictedType<Identityref
     public IdentitySchemaNode getIdentity() {
         return getBaseType().getIdentity();
     }
+
+    @Override
+    public int hashCode() {
+        return TypeDefinitions.hashCode(this);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return TypeDefinitions.equals(this, obj);
+    }
+
+    @Override
+    public String toString() {
+        return TypeDefinitions.toString(this);
+    }
 }

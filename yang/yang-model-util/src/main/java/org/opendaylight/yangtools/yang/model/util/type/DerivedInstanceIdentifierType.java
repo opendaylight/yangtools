@@ -34,4 +34,14 @@ final class DerivedInstanceIdentifierType extends AbstractDerivedType<InstanceId
     public boolean requireInstance() {
         return requireInstance;
     }
+
+    @Override
+    public int hashCode() {
+        return TypeDefinitions.hashCode(this);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return TypeDefinitions.equals(this, obj);
+    }
 }

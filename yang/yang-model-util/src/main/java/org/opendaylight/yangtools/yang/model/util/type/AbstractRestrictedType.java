@@ -8,25 +8,18 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.List;
-import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
-abstract class AbstractRestrictedType<T extends TypeDefinition<T>> implements Immutable, TypeDefinition<T> {
-    private final List<UnknownSchemaNode> unknownSchemaNodes;
+abstract class AbstractRestrictedType<T extends TypeDefinition<T>> extends AbstractTypeDefinition<T> {
     private final T baseType;
-    private final SchemaPath path;
 
     AbstractRestrictedType(final T baseType, final SchemaPath path, final Collection<UnknownSchemaNode> unknownSchemaNodes) {
+        super(path, unknownSchemaNodes);
         this.baseType = Preconditions.checkNotNull(baseType);
-        this.path = Preconditions.checkNotNull(path);
-        this.unknownSchemaNodes = ImmutableList.copyOf(unknownSchemaNodes);
     }
 
     @Override
@@ -42,21 +35,6 @@ abstract class AbstractRestrictedType<T extends TypeDefinition<T>> implements Im
     @Override
     public final Object getDefaultValue() {
         return baseType.getDefaultValue();
-    }
-
-    @Override
-    public final QName getQName() {
-        return path.getLastComponent();
-    }
-
-    @Override
-    public final SchemaPath getPath() {
-        return path;
-    }
-
-    @Override
-    public final List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownSchemaNodes;
     }
 
     @Override
