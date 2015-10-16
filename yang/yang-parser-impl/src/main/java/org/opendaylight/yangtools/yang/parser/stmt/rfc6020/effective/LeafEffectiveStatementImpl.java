@@ -36,7 +36,7 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
         this.unitsStr = (unitsStmt == null) ? null : unitsStmt.argument();
 
         EffectiveStatement<?,?> typeEffectiveSubstatement = firstEffectiveSubstatementOfType(TypeDefinition.class);
-        this.type = TypeUtils.getTypeFromEffectiveStatement(typeEffectiveSubstatement);
+        this.type = (typeEffectiveSubstatement == null) ? null :  TypeUtils.getTypeFromEffectiveStatement(typeEffectiveSubstatement);
     }
 
     @Override
