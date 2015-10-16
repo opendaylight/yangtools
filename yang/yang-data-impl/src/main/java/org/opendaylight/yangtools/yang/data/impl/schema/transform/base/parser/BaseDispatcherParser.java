@@ -136,13 +136,13 @@ public abstract class BaseDispatcherParser<E, P extends YangInstanceIdentifier.P
         //parse keys first
         if (schema instanceof ListSchemaNode) {
             for (QName qname : ((ListSchemaNode) schema).getKeyDefinition()) {
-                if(mappedChildElements.get(qname.withoutRevision()).isEmpty()) {
+                final QName noRev = qname.withoutRevision();
+                if (mappedChildElements.get(noRev).isEmpty()) {
                     continue;
                 }
 
                 DataSchemaNode childSchema = getSchemaForChild(schema, qname);
-                List<E> childrenForQName = mappedChildElements.removeAll(qname.withoutRevision());
-
+                List<E> childrenForQName = mappedChildElements.removeAll(noRev);
 
                 DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> optionalChildNode = getDispatcher()
                         .dispatchChildElement(childSchema, childrenForQName);
