@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafStatement> implements
@@ -36,6 +37,10 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
         this.unitsStr = (unitsStmt == null) ? null : unitsStmt.argument();
 
         EffectiveStatement<?,?> typeEffectiveSubstatement = firstEffectiveSubstatementOfType(TypeDefinition.class);
+        if (typeEffectiveSubstatement == null) {
+            throw new SourceException("Leaf node does not have a type statement", ctx.getStatementSourceReference());
+        }
+
         this.type = TypeUtils.getTypeFromEffectiveStatement(typeEffectiveSubstatement);
     }
 
