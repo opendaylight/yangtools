@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.util.EnumerationType;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
@@ -497,5 +498,13 @@ public class EffectiveStatementTypeTest {
         assertEquals("string", stringEff.getPath().getLastComponent().getLocalName());
         assertEquals(1, stringEff.getLengthConstraints().size());
         assertNotNull(stringEff.getPatternConstraints());
+    }
+
+    @Test
+    public void testMissing() {
+        currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
+                .getDataChildByName("leaf-missing");
+        assertNotNull(currentLeaf.getType());
+        assertEquals(currentLeaf.getType(), TypeUtils.getYangPrimitiveTypeFromString(TypeUtils.STRING));
     }
 }

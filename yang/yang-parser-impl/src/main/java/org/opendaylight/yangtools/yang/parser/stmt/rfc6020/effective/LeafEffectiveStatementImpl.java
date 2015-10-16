@@ -17,6 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafStatement> implements
         LeafSchemaNode, DerivableSchemaNode {
@@ -24,6 +26,8 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
     private final TypeDefinition<?> type;
     private final String defaultStr;
     private final String unitsStr;
+
+    private static final Logger LOG = LoggerFactory.getLogger(LeafEffectiveStatementImpl.class);
 
     public LeafEffectiveStatementImpl(final StmtContext<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
         super(ctx);
@@ -36,7 +40,12 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
         this.unitsStr = (unitsStmt == null) ? null : unitsStmt.argument();
 
         EffectiveStatement<?,?> typeEffectiveSubstatement = firstEffectiveSubstatementOfType(TypeDefinition.class);
-        this.type = TypeUtils.getTypeFromEffectiveStatement(typeEffectiveSubstatement);
+        if (typeEffectiveSubstatement == null) {
+            LOG.warn("Yang Leaf must contain a \"type\" declaration.  Defaulting to STRING. \n" + ctx.getArgumentsFromRoot().toString() );
+            this.type = TypeUtils.getYangPrimitiveTypeFromString(TypeUtils.STRING);
+        } else {
+            this.type = TypeUtils.getTypeFromEffectiveStatement(typeEffectiveSubstatement);
+        }
     }
 
     @Override
