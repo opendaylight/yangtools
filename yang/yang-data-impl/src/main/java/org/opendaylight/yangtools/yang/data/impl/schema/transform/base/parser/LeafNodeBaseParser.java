@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
+import org.opendaylight.yangtools.yang.data.util.LeafInterner;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
 /**
@@ -38,7 +39,7 @@ public abstract class LeafNodeBaseParser<E> implements ExtensibleParser<NodeIden
 
     @SuppressWarnings("unchecked")
     @Override
-    public final LeafNode<?> parse(Iterable<E> elements, LeafSchemaNode schema) {
+    public final LeafNode<?> parse(final Iterable<E> elements, final LeafSchemaNode schema) {
         final int size = Iterables.size(elements);
         Preconditions.checkArgument(size == 1, "Elements mapped to leaf node illegal count: %s", size);
 
@@ -51,7 +52,7 @@ public abstract class LeafNodeBaseParser<E> implements ExtensibleParser<NodeIden
         leafBuilder.withAttributes(getAttributes(e));
 
         final BuildingStrategy rawBuildingStrat = buildingStrategy;
-        return (LeafNode<?>) rawBuildingStrat.build(leafBuilder.withValue(value));
+        return LeafInterner.forSchema(schema).intern((LeafNode<?>)rawBuildingStrat.build(leafBuilder.withValue(value)));
     }
 
     /**
