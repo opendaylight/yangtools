@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
@@ -35,10 +34,5 @@ abstract class AbstractRangedBaseType<T extends TypeDefinition<T>> extends Abstr
 
     public final List<RangeConstraint> getRangeConstraints() {
         return rangeConstraints;
-    }
-
-    @Override
-    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return super.addToStringAttributes(toStringHelper).add("range", rangeConstraints);
     }
 }

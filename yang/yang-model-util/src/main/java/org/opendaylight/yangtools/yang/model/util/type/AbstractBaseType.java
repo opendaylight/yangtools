@@ -7,29 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.base.MoreObjects;
-import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
-abstract class AbstractBaseType<T extends TypeDefinition<T>> implements Immutable, TypeDefinition<T> {
-    private final List<UnknownSchemaNode> unknownSchemaNodes;
-    private final SchemaPath path;
-
+abstract class AbstractBaseType<T extends TypeDefinition<T>> extends AbstractTypeDefinition<T> {
     AbstractBaseType(final QName qname) {
         this(SchemaPath.create(true, qname), ImmutableList.<UnknownSchemaNode>of());
     }
 
     AbstractBaseType(final SchemaPath path, final List<UnknownSchemaNode> unknownSchemaNodes) {
-        this.path = Preconditions.checkNotNull(path);
-        this.unknownSchemaNodes = Preconditions.checkNotNull(unknownSchemaNodes);
+        super(path, unknownSchemaNodes);
     }
 
     @Override
@@ -48,16 +40,6 @@ abstract class AbstractBaseType<T extends TypeDefinition<T>> implements Immutabl
     }
 
     @Override
-    public final QName getQName() {
-        return path.getLastComponent();
-    }
-
-    @Override
-    public final SchemaPath getPath() {
-        return path;
-    }
-
-    @Override
     public final String getDescription() {
         return null;
     }
@@ -70,19 +52,5 @@ abstract class AbstractBaseType<T extends TypeDefinition<T>> implements Immutabl
     @Override
     public final Status getStatus() {
         return Status.CURRENT;
-    }
-
-    @Override
-    public final List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownSchemaNodes;
-    }
-
-    @Override
-    public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this).omitNullValues()).toString();
-    }
-
-    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("path", path);
     }
 }

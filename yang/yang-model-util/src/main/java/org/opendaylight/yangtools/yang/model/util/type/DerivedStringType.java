@@ -31,4 +31,14 @@ final class DerivedStringType extends AbstractDerivedType<StringTypeDefinition> 
     public List<LengthConstraint> getLengthConstraints() {
         return getBaseType().getLengthConstraints();
     }
+
+    @Override
+    public int hashCode() {
+        return TypeDefinitions.hashCode(this);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return TypeDefinitions.equals(this, obj);
+    }
 }

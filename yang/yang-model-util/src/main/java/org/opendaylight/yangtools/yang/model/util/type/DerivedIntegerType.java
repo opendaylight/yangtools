@@ -25,4 +25,14 @@ final class DerivedIntegerType extends AbstractDerivedType<IntegerTypeDefinition
     public List<RangeConstraint> getRangeConstraints() {
         return getBaseType().getRangeConstraints();
     }
+
+    @Override
+    public int hashCode() {
+        return TypeDefinitions.hashCode(this);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return TypeDefinitions.equals(this, obj);
+    }
 }
