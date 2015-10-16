@@ -92,6 +92,10 @@ module types {
         type empty;
     }
 
+    leaf leaf-missing {
+    
+    }
+
     leaf leaf-bits {
         type bits {
             bit one {
