@@ -13,8 +13,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
-import com.google.common.collect.ImmutableList;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
@@ -120,7 +118,7 @@ public class EffectiveStatementTypeTest {
         assertFalse(bitsEff.equals("test"));
         assertTrue(bitsEff.equals(bitsEffSecond));
         assertEquals(3, bitsEff.getBits().size());
-        assertEquals(3, ((ImmutableList) bitsEff.getDefaultValue()).size());
+        assertEquals(3, ((List<?>) bitsEff.getDefaultValue()).size());
 
         assertNotNull(bitEff.getPath());
         assertNotNull(bitEff.getUnknownSchemaNodes());

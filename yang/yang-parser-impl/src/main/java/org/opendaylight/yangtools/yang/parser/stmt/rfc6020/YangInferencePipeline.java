@@ -84,7 +84,7 @@ public final class YangInferencePipeline {
             .addSupport(new YinElementStatementImpl.Definition())
             .addSupport(new ArgumentStatementImpl.Definition())
             .addSupport(new ExtensionStatementImpl.Definition())
-            .addSupport(new ChildSchemaNodes())
+            .addSupport(new ChildSchemaNodes<>())
             .addSupport(new SchemaNodeIdentifierBuildNamespace())
             .addSupport(global(ExtensionNamespace.class))
             .addSupport(new TypedefStatementImpl.Definition())
