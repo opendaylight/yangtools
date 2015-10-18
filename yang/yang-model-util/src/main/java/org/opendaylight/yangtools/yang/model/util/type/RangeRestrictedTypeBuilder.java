@@ -7,26 +7,126 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import com.google.common.base.Function;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 import java.util.Collection;
 import java.util.List;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
+import org.opendaylight.yangtools.yang.model.util.UnresolvedNumber;
 
 public abstract class RangeRestrictedTypeBuilder<T extends TypeDefinition<T>> extends AbstractRestrictedTypeBuilder<T> {
-    private Collection<RangeConstraint> rangeAlternatives;
+    private List<RangeConstraint> rangeAlternatives;
 
     RangeRestrictedTypeBuilder(final T baseType, final SchemaPath path) {
         super(Preconditions.checkNotNull(baseType), path);
     }
 
-    public void setRangeAlternatives(@Nonnull final Collection<RangeConstraint> rangeAlternatives) {
+    public final void setRangeAlternatives(@Nonnull final Collection<RangeConstraint> rangeAlternatives) {
         Preconditions.checkState(this.rangeAlternatives == null, "Range alternatives already defined as %s",
                 this.rangeAlternatives);
-        this.rangeAlternatives = Preconditions.checkNotNull(rangeAlternatives);
+        this.rangeAlternatives = ImmutableList.copyOf(rangeAlternatives);
         touch();
+    }
+
+    private static List<RangeConstraint> ensureResolvedRanges(final List<RangeConstraint> unresolved,
+            final List<RangeConstraint> baseRangeConstraints) {
+        // First check if we need to resolve anything at all
+        for (RangeConstraint c : unresolved) {
+            if (c.getMax() instanceof UnresolvedNumber || c.getMin() instanceof UnresolvedNumber) {
+                return resolveRanges(unresolved, baseRangeConstraints);
+            }
+        }
+
+        // No need, just return the same list
+        return unresolved;
+    }
+
+    private static List<RangeConstraint> resolveRanges(final List<RangeConstraint> unresolved,
+            final List<RangeConstraint> baseRangeConstraints) {
+        final Builder<RangeConstraint> builder = ImmutableList.builder();
+
+        for (RangeConstraint c : unresolved) {
+            final Number max = c.getMax();
+            final Number min = c.getMin();
+
+            if (max instanceof UnresolvedNumber || min instanceof UnresolvedNumber) {
+                final Number rMax = max instanceof UnresolvedNumber ?
+                        ((UnresolvedNumber)max).resolve(baseRangeConstraints) : max;
+                final Number rMin = min instanceof UnresolvedNumber ?
+                        ((UnresolvedNumber)min).resolve(baseRangeConstraints) : min;
+
+                builder.add(BaseConstraints.newRangeConstraint(rMin, rMax, Optional.fromNullable(c.getDescription()),
+                    Optional.fromNullable(c.getReference())));
+            } else {
+                builder.add(c);
+            }
+
+        }
+
+        return builder.build();
+    }
+
+    private static List<RangeConstraint> ensureTypedRanges(final List<RangeConstraint> ranges,
+            final Class<? extends Number> clazz) {
+        for (RangeConstraint c : ranges) {
+            if (!clazz.isInstance(c.getMin()) || !clazz.isInstance(c.getMax())) {
+                return typedRanges(ranges, clazz);
+            }
+        }
+
+        return ranges;
+    }
+
+    private static List<RangeConstraint> typedRanges(final List<RangeConstraint> ranges, final Class<? extends Number> clazz) {
+        final Function<Number, Number> function = NumberUtil.converterTo(clazz);
+        Preconditions.checkArgument(function != null, "Unsupported range class %s", clazz);
+
+        final Builder<RangeConstraint> builder = ImmutableList.builder();
+
+        for (RangeConstraint c : ranges) {
+            if (!clazz.isInstance(c.getMin()) || !clazz.isInstance(c.getMax())) {
+                final Number min, max;
+
+                try {
+                    min = function.apply(c.getMin());
+                    max = function.apply(c.getMax());
+                } catch (NumberFormatException e) {
+                    throw new IllegalArgumentException(String.format("Constraint %s does not fit into range of %s",
+                        c, clazz.getSimpleName()), e);
+                }
+                builder.add(BaseConstraints.newRangeConstraint(min, max, Optional.fromNullable(c.getDescription()),
+                    Optional.fromNullable(c.getReference())));
+            } else {
+                builder.add(c);
+            }
+        }
+
+        return builder.build();
+    }
+
+    private static boolean rangeCovered(final List<RangeConstraint> where,
+            final RangeConstraint what) {
+        // We have ensured the types match, and we are sure each of those types implements comparable
+        @SuppressWarnings("unchecked")
+        final Comparable<Object> min = (Comparable<Object>) what.getMin();
+        @SuppressWarnings("unchecked")
+        final Comparable<Object> max = (Comparable<Object>) what.getMax();
+
+        for (RangeConstraint c : where) {
+            if (min.compareTo(c.getMin()) >= 0 && max.compareTo(c.getMax()) <= 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     final List<RangeConstraint> calculateRangeConstraints(final List<RangeConstraint> baseRangeConstraints) {
@@ -34,7 +134,21 @@ public abstract class RangeRestrictedTypeBuilder<T extends TypeDefinition<T>> ex
             return baseRangeConstraints;
         }
 
-        // FIXME: calculate ranges
-        throw new UnsupportedOperationException();
+        // Run through alternatives and resolve them against the base type
+        Verify.verify(!baseRangeConstraints.isEmpty(), "Base type %s does not define constraints", getBaseType());
+        final List<RangeConstraint> resolvedRanges = ensureResolvedRanges(rangeAlternatives, baseRangeConstraints);
+
+        // Next up, ensure the of boundaries match base constraints
+        final Class<? extends Number> clazz = baseRangeConstraints.get(0).getMin().getClass();
+        final List<RangeConstraint> typedRanges = ensureTypedRanges(resolvedRanges, clazz);
+
+        // Now verify if new ranges are strict subset of base ranges
+        for (RangeConstraint c : typedRanges) {
+            Preconditions.checkArgument(rangeCovered(baseRangeConstraints, c),
+                "Range constraint %s is not a subset of parent constraints %s", c, baseRangeConstraints);
+        }
+
+        // FIXME: merge adjacent ranges and sort them
+        return typedRanges;
     }
 }
