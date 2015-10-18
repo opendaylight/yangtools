@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -22,7 +21,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EnumEf
 
 public class EnumStatementImpl extends AbstractDeclaredStatement<String> implements EnumStatement {
 
-    protected EnumStatementImpl(StmtContext<String, EnumStatement, ?> context) {
+    protected EnumStatementImpl(final StmtContext<String, EnumStatement, ?> context) {
         super(context);
     }
 
@@ -34,22 +33,21 @@ public class EnumStatementImpl extends AbstractDeclaredStatement<String> impleme
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             // FIXME: Checks for real value
             return value;
         }
 
         @Override
-        public EnumStatement createDeclared(StmtContext<String, EnumStatement, ?> ctx) {
+        public EnumStatement createDeclared(final StmtContext<String, EnumStatement, ?> ctx) {
             return new EnumStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<String, EnumStatement> createEffective(
-                StmtContext<String, EnumStatement, EffectiveStatement<String, EnumStatement>> ctx) {
+                final StmtContext<String, EnumStatement, EffectiveStatement<String, EnumStatement>> ctx) {
             return new EnumEffectiveStatementImpl(ctx);
         }
-
     }
 
     @Override
@@ -76,5 +74,4 @@ public class EnumStatementImpl extends AbstractDeclaredStatement<String> impleme
     public ValueStatement getValue() {
         return firstDeclared(ValueStatement.class);
     }
-
 }
