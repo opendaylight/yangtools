@@ -9,10 +9,12 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import java.io.Serializable;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 
-public class PatternConstraintEffectiveImpl implements PatternConstraint {
+public class PatternConstraintEffectiveImpl implements PatternConstraint, Serializable {
+    private static final long serialVersionUID = 1L;
 
     private final String regEx;
     private final String description;

@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class YinElementStatementImpl extends AbstractDeclaredStatement<Boolean>
         implements YinElementStatement {
+    private static final long serialVersionUID = 1L;
 
     protected YinElementStatementImpl(
             StmtContext<Boolean, YinElementStatement, ?> context) {

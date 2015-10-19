@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import javax.annotation.Nonnull;
 
 public class DeviateStatementImpl extends AbstractDeclaredStatement<Deviation.Deviate> implements DeviateStatement {
+    private static final long serialVersionUID = 1L;
 
     protected DeviateStatementImpl(
             StmtContext<Deviation.Deviate, DeviateStatement, ?> context) {

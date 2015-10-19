@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends DeclaredStatement<A>>
         extends AbstractEffectiveDocumentedNode<A, D> implements
         DataNodeContainer {
+    private static final long serialVersionUID = 1L;
 
     private final Map<QName, DataSchemaNode> childNodes;
     private final Set<GroupingDefinition> groupings;

@@ -14,6 +14,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
 public class RangeEffectiveStatementImpl extends EffectiveStatementBase<List<RangeConstraint>, RangeStatement> {
+    private static final long serialVersionUID = 1L;
+
     public RangeEffectiveStatementImpl(final StmtContext<List<RangeConstraint>, RangeStatement, ?> ctx) {
         super(ctx);
     }

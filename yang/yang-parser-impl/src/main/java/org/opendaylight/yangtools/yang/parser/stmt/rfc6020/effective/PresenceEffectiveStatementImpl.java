@@ -11,6 +11,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class PresenceEffectiveStatementImpl extends EffectiveStatementBase<String, PresenceStatement> {
+    private static final long serialVersionUID = 1L;
+
     public PresenceEffectiveStatementImpl(final StmtContext<String, PresenceStatement, ?> ctx) {
         super(ctx);
     }

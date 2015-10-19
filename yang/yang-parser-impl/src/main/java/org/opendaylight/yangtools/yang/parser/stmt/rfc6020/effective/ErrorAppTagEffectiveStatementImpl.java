@@ -11,6 +11,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class ErrorAppTagEffectiveStatementImpl extends EffectiveStatementBase<String, ErrorAppTagStatement> {
+    private static final long serialVersionUID = 1L;
+
     public ErrorAppTagEffectiveStatementImpl(final StmtContext<String, ErrorAppTagStatement, ?> ctx) {
         super(ctx);
     }

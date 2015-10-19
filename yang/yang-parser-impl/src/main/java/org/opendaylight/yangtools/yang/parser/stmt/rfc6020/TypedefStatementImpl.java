@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.TypeDefEffectiveStatementImpl;
 
 public class TypedefStatementImpl extends AbstractDeclaredStatement<QName> implements TypedefStatement {
+    private static final long serialVersionUID = 1L;
 
     protected TypedefStatementImpl(StmtContext<QName, TypedefStatement, ?> context) {
         super(context);

@@ -12,6 +12,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class RequireInstanceEffectiveStatementImpl extends EffectiveStatementBase<Boolean,
         RequireInstanceStatement> {
+    private static final long serialVersionUID = 1L;
+
     public RequireInstanceEffectiveStatementImpl(final StmtContext<Boolean, RequireInstanceStatement, ?> ctx) {
         super(ctx);
     }

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.Preconditions;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -24,7 +25,9 @@ import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
  *
  * @see LeafrefTypeDefinition
  */
-public final class Leafref implements LeafrefTypeDefinition {
+public final class Leafref implements LeafrefTypeDefinition, Serializable {
+    private static final long serialVersionUID = 1L;
+
     private static final QName NAME = BaseTypes.constructQName("leafref");
     private static final SchemaPath PATH = SchemaPath.create(true, NAME);
     private static final String DESCRIPTION = "The leafref type is used to reference a particular leaf instance in the data tree.";

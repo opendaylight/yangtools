@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UInt8E
 
 public class TypeStatementImpl extends AbstractDeclaredStatement<String>
         implements TypeStatement {
+    private static final long serialVersionUID = 1L;
 
     protected TypeStatementImpl(final StmtContext<String, TypeStatement, ?> context) {
         super(context);

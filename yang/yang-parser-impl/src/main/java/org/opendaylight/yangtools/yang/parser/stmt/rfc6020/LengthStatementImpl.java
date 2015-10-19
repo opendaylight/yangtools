@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LengthEffectiveStatementImpl;
 
 public class LengthStatementImpl extends AbstractDeclaredStatement<List<LengthConstraint>> implements LengthStatement {
+    private static final long serialVersionUID = 1L;
 
     protected LengthStatementImpl(StmtContext<List<LengthConstraint>, LengthStatement, ?> context) {
         super(context);

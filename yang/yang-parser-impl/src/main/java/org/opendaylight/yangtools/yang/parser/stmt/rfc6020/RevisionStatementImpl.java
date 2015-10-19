@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 
 public class RevisionStatementImpl extends AbstractDeclaredStatement<Date>
         implements RevisionStatement {
+    private static final long serialVersionUID = 1L;
 
     protected RevisionStatementImpl(
             StmtContext<Date, RevisionStatement, ?> context) {

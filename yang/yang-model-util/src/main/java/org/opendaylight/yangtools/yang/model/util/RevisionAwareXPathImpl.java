@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import java.io.Serializable;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 
@@ -16,7 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
  *
  * @see RevisionAwareXPath
  */
-public class RevisionAwareXPathImpl implements RevisionAwareXPath {
+public class RevisionAwareXPathImpl implements RevisionAwareXPath, Serializable {
+    private static final long serialVersionUID = 1L;
 
     private final String xpath;
     private final boolean absolute;

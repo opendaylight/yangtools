@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class ImportStatementImpl extends AbstractDeclaredStatement<String> implements ImportStatement {
+    private static final long serialVersionUID = 1L;
 
     ImportStatementImpl(StmtContext<String, ImportStatement,?> context) {
         super(context);

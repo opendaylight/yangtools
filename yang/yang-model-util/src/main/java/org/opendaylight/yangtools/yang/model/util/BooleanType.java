@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
@@ -21,7 +22,9 @@ import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
  *
  * @see BooleanTypeDefinition
  */
-public final class BooleanType implements BooleanTypeDefinition {
+public final class BooleanType implements BooleanTypeDefinition, Serializable {
+    private static final long serialVersionUID = 1L;
+
     private static final BooleanType INSTANCE = new BooleanType();
     private static final SchemaPath PATH = SchemaPath.create(true, BaseTypes.BOOLEAN_QNAME);
     private static final String DESCRIPTION = "The boolean built-in type represents a boolean value.";

@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Instan
 public class InstanceIdentifierSpecificationImpl extends
         AbstractDeclaredStatement<String> implements
         TypeStatement.InstanceIdentifierSpecification {
+    private static final long serialVersionUID = 1L;
 
     protected InstanceIdentifierSpecificationImpl(
             StmtContext<String, TypeStatement.InstanceIdentifierSpecification, ?> ctx) {

@@ -12,6 +12,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class StatusEffectiveStatementImpl extends EffectiveStatementBase<Status, StatusStatement> {
+    private static final long serialVersionUID = 1L;
+
     public StatusEffectiveStatementImpl(final StmtContext<Status, StatusStatement, ?> ctx) {
         super(ctx);
     }

@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class PresenceStatementImpl extends AbstractDeclaredStatement<String>
         implements PresenceStatement {
+    private static final long serialVersionUID = 1L;
 
     protected PresenceStatementImpl(
             StmtContext<String, PresenceStatement, ?> context) {

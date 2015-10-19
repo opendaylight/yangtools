@@ -11,6 +11,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class BelongsEffectiveToStatementImpl extends EffectiveStatementBase<String, BelongsToStatement> {
+    private static final long serialVersionUID = 1L;
+
     public BelongsEffectiveToStatementImpl(final StmtContext<String, BelongsToStatement, ?> ctx) {
         super(ctx);
     }

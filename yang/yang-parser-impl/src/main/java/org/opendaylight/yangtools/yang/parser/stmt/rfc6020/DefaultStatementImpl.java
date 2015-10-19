@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 
 public class DefaultStatementImpl extends AbstractDeclaredStatement<String> implements
         DefaultStatement {
+    private static final long serialVersionUID = 1L;
 
     protected DefaultStatementImpl(
             StmtContext<String, DefaultStatement, ?> context) {

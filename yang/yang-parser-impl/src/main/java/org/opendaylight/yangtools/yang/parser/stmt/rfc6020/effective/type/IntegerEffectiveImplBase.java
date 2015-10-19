@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSt
 
 abstract class IntegerEffectiveImplBase extends
         EffectiveStatementBase<String,TypeStatement> implements IntegerTypeDefinition {
+    private static final long serialVersionUID = 1L;
 
     private static final String REFERENCE_INT = "https://tools.ietf.org/html/rfc6020#section-9.2";
 

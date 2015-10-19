@@ -33,6 +33,7 @@ import java.util.Collection;
 
 public class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
         implements ChoiceStatement {
+    private static final long serialVersionUID = 1L;
 
     protected ChoiceStatementImpl(StmtContext<QName, ChoiceStatement, ?> context) {
         super(context);

@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class PositionStatementImpl extends AbstractDeclaredStatement<Long>
         implements PositionStatement {
+    private static final long serialVersionUID = 1L;
 
     protected PositionStatementImpl(
             StmtContext<Long, PositionStatement, ?> context) {

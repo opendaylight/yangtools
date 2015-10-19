@@ -22,6 +22,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class DeviationEffectiveStatementImpl extends EffectiveStatementBase<SchemaNodeIdentifier, DeviationStatement>
         implements Deviation, Immutable {
+    private static final long serialVersionUID = 1L;
+
     private final SchemaPath targetPath;
     private final Deviate deviate;
     private final String reference;

@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 public final class ContainerEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<ContainerStatement>
         implements
         DerivableSchemaNode {
+    private static final long serialVersionUID = 1L;
 
     private final ContainerSchemaNode original;
 

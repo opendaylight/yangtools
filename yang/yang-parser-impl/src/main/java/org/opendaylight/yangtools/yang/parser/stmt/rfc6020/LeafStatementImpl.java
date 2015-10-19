@@ -34,6 +34,7 @@ import javax.annotation.Nullable;
 import java.util.Collection;
 
 public class LeafStatementImpl extends AbstractDeclaredStatement<QName> implements LeafStatement {
+    private static final long serialVersionUID = 1L;
 
     protected LeafStatementImpl(StmtContext<QName, LeafStatement, ?> context) {
         super(context);

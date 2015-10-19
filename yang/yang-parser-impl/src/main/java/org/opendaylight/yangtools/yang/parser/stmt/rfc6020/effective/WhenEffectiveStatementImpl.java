@@ -12,6 +12,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class WhenEffectiveStatementImpl extends EffectiveStatementBase<RevisionAwareXPath, WhenStatement> {
+    private static final long serialVersionUID = 1L;
+
     public WhenEffectiveStatementImpl(final StmtContext<RevisionAwareXPath, WhenStatement, ?> ctx) {
         super(ctx);
     }

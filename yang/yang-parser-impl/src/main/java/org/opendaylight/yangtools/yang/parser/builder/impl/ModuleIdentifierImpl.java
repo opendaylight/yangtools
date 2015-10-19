@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.builder.impl;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.base.Optional;
+import java.io.Serializable;
 import java.net.URI;
 import java.util.Date;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -20,7 +21,9 @@ import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
  * Name is only non-null attribute.
  * Equality check on namespace and revision is only triggered if they are non-null
  */
-public class ModuleIdentifierImpl implements ModuleIdentifier {
+public class ModuleIdentifierImpl implements ModuleIdentifier, Serializable {
+    private static final long serialVersionUID = 1L;
+
     private final QNameModule qnameModule;
     private final String name;
 

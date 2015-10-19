@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class PrefixStatementImpl extends AbstractDeclaredStatement<String> implements PrefixStatement {
+    private static final long serialVersionUID = 1L;
 
     public static class Definition extends AbstractStatementSupport<String,PrefixStatement,EffectiveStatement<String,PrefixStatement>> {
 

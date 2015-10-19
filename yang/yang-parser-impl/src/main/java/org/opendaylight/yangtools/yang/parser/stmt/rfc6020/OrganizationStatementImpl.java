@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class OrganizationStatementImpl extends
         AbstractDeclaredStatement<String> implements OrganizationStatement {
+    private static final long serialVersionUID = 1L;
 
     protected OrganizationStatementImpl(
             StmtContext<String, OrganizationStatement, ?> context) {

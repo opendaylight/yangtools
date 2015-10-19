@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ValueEffectiveStatementImpl;
 
 public class ValueStatementImpl extends AbstractDeclaredStatement<Integer> implements ValueStatement {
+    private static final long serialVersionUID = 1L;
 
     protected ValueStatementImpl(StmtContext<Integer, ValueStatement, ?> context) {
         super(context);

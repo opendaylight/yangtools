@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -31,7 +32,8 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
  * @deprecated Use of this class is deprecated, use {@link DerivedType} instead.
  */
 @Deprecated
-public class ExtendedType implements TypeDefinition<TypeDefinition<?>> {
+public class ExtendedType implements TypeDefinition<TypeDefinition<?>>, Serializable {
+    private static final long serialVersionUID = 1L;
 
     private final QName typeName;
     private final TypeDefinition<?> baseType;

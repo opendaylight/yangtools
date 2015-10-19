@@ -23,6 +23,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, ExtensionStatement>
         implements ExtensionDefinition {
+    private static final long serialVersionUID = 1L;
+
     private final QName qname;
     private final String argument;
     private final SchemaPath schemaPath;

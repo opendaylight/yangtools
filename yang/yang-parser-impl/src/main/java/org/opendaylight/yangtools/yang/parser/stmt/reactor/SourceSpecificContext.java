@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -131,31 +132,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     StatementDefinition getNewStatementDefinition(final QName qName) {
-        return new StatementDefinition() {
-            @Nonnull
-            @Override
-            public QName getStatementName() {
-                return qName;
-            }
-
-            @Nullable
-            @Override
-            public QName getArgumentName() {
-                return qName;
-            }
-
-            @Nonnull
-            @Override
-            public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
-                return UnknownStatementImpl.class;
-            }
-
-            @Nonnull
-            @Override
-            public Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
-                return UnknownEffectiveStatementImpl.class;
-            }
-        };
+        return new Definition(qName);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -385,5 +362,39 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             }
         }
         return qNameToStmtDefMap;
+    }
+
+    private static class Definition implements StatementDefinition, Serializable {
+        private static final long serialVersionUID = 1L;
+
+        private final QName qName;
+
+        public Definition(QName qName) {
+            this.qName = qName;
+        }
+
+        @Nonnull
+        @Override
+        public QName getStatementName() {
+            return qName;
+        }
+
+        @Nullable
+        @Override
+        public QName getArgumentName() {
+            return qName;
+        }
+
+        @Nonnull
+        @Override
+        public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
+            return UnknownStatementImpl.class;
+        }
+
+        @Nonnull
+        @Override
+        public Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
+            return UnknownEffectiveStatementImpl.class;
+        }
     }
 }

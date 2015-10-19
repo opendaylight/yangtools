@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import javax.annotation.Nonnull;
 
 public class ContactStatementImpl extends AbstractDeclaredStatement<String> implements ContactStatement{
+    private static final long serialVersionUID = 1L;
 
     protected ContactStatementImpl(StmtContext<String, ContactStatement,?> context) {
         super(context);

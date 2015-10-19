@@ -29,6 +29,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PathEffecti
 
 public class LeafrefSpecificationEffectiveStatementImpl extends EffectiveStatementBase<String, LeafrefSpecification>
         implements LeafrefTypeDefinition, TypeEffectiveStatement<LeafrefSpecification> {
+    private static final long serialVersionUID = 1L;
+
 
     public static final String LOCAL_NAME = "leafref";
     private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, LOCAL_NAME);

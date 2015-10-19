@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class ExtensionStatementImpl extends AbstractDeclaredStatement<QName> implements ExtensionStatement {
+    private static final long serialVersionUID = 1L;
 
     protected ExtensionStatementImpl(StmtContext<QName, ExtensionStatement,?> context) {
         super(context);

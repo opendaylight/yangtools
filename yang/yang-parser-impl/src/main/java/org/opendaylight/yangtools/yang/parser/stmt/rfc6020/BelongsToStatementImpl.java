@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.BelongsEffe
 
 public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
         implements BelongsToStatement {
+    private static final long serialVersionUID = 1L;
 
     protected BelongsToStatementImpl(
             final StmtContext<String, BelongsToStatement, ?> context) {

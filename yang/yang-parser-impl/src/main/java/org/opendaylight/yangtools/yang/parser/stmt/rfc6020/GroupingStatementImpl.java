@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 import org.opendaylight.yangtools.yang.common.QName;
@@ -27,7 +28,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.GroupingEffectiveStatementImpl;
 
 public class GroupingStatementImpl extends AbstractDeclaredStatement<QName>
-        implements GroupingStatement {
+        implements GroupingStatement, Serializable {
+    private static final long serialVersionUID = 1L;
 
     protected GroupingStatementImpl(
             StmtContext<QName, GroupingStatement, ?> context) {

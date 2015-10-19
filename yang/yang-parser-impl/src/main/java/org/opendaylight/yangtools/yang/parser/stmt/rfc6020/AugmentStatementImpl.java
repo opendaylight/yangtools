@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import com.google.common.base.Preconditions;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
@@ -32,7 +33,10 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AugmentEffe
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeIdentifier> implements AugmentStatement {
+public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeIdentifier> implements
+        AugmentStatement, Serializable {
+    private static final long serialVersionUID = 1L;
+
     private static final Logger LOG = LoggerFactory.getLogger(AugmentStatementImpl.class);
     private static final Pattern PATH_REL_PATTERN1 = Pattern.compile("\\.\\.?\\s*/(.+)");
     private static final Pattern PATH_REL_PATTERN2 = Pattern.compile("//.*");

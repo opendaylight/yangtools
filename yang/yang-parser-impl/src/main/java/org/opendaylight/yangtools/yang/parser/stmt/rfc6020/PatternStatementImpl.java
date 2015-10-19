@@ -27,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConstraint> implements PatternStatement {
+    private static final long serialVersionUID = 1L;
+
     private static final Logger LOG = LoggerFactory.getLogger(PatternStatementImpl.class);
     private static final Optional<String> OPTIONAL_EMPTY = Optional.of("");
 

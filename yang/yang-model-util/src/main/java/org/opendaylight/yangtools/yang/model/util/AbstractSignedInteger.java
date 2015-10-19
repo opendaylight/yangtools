@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.Optional;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -34,7 +35,9 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
  * </ul>
  *
  */
-abstract class AbstractSignedInteger implements IntegerTypeDefinition {
+abstract class AbstractSignedInteger implements IntegerTypeDefinition, Serializable {
+    private static final long serialVersionUID = 1L;
+
     private final QName name;
     private final SchemaPath path;
     private final String description;

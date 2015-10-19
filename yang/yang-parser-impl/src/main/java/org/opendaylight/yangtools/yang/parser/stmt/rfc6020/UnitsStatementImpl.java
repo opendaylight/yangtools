@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class UnitsStatementImpl extends AbstractDeclaredStatement<String>
         implements UnitsStatement {
+    private static final long serialVersionUID = 1L;
 
     protected UnitsStatementImpl(StmtContext<String, UnitsStatement, ?> context) {
         super(context);

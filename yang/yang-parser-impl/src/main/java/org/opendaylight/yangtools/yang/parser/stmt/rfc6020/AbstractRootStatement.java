@@ -35,6 +35,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public abstract class AbstractRootStatement<T extends DeclaredStatement<String>> extends AbstractDeclaredStatement<String>
         implements LinkageGroup, MetaGroup, RevisionGroup, BodyGroup {
+    private static final long serialVersionUID = 1L;
 
     protected AbstractRootStatement(StmtContext<String, T,?> context) {
         super(context);

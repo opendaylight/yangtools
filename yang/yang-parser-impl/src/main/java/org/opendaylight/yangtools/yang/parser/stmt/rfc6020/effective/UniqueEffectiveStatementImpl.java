@@ -15,6 +15,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class UniqueEffectiveStatementImpl extends
         EffectiveStatementBase<Collection<SchemaNodeIdentifier.Relative>, UniqueStatement> {
+    private static final long serialVersionUID = 1L;
+
     public UniqueEffectiveStatementImpl(StmtContext<Collection<SchemaNodeIdentifier.Relative>, UniqueStatement, ?> ctx) {
         super(ctx);
     }

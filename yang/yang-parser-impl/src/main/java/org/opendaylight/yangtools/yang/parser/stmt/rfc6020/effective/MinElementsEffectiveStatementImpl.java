@@ -11,6 +11,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class MinElementsEffectiveStatementImpl extends EffectiveStatementBase<Integer, MinElementsStatement> {
+    private static final long serialVersionUID = 1L;
+
     public MinElementsEffectiveStatementImpl(final StmtContext<Integer, MinElementsStatement, ?> ctx) {
         super(ctx);
     }

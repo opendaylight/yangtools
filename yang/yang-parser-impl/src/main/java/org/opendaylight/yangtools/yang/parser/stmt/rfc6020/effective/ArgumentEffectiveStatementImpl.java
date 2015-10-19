@@ -12,6 +12,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class ArgumentEffectiveStatementImpl extends EffectiveStatementBase<QName, ArgumentStatement> {
+    private static final long serialVersionUID = 1L;
+
     public ArgumentEffectiveStatementImpl(final StmtContext<QName, ArgumentStatement, ?> ctx) {
         super(ctx);
     }

@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 
 public class MandatoryStatementImpl extends AbstractDeclaredStatement<Boolean> implements
         MandatoryStatement {
+    private static final long serialVersionUID = 1L;
 
     protected MandatoryStatementImpl(
             StmtContext<Boolean, MandatoryStatement, ?> context) {

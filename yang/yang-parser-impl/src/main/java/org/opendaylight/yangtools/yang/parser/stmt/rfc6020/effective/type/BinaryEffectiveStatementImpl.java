@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSt
 
 public class BinaryEffectiveStatementImpl extends EffectiveStatementBase<String, TypeStatement>
         implements BinaryTypeDefinition {
+    private static final long serialVersionUID = 1L;
 
     private static final String DESCRIPTION = "The binary built-in type represents any binary data, i.e., a sequence of octets.";
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.8";

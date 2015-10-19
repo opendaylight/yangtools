@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.KeyEffectiv
 
 public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<SchemaNodeIdentifier>> implements
         KeyStatement {
+    private static final long serialVersionUID = 1L;
 
     protected KeyStatementImpl(final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, ?> context) {
         super(context);

@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class FeatureStatementImpl extends AbstractDeclaredStatement<QName>
         implements FeatureStatement {
+    private static final long serialVersionUID = 1L;
 
     protected FeatureStatementImpl(
             StmtContext<QName, FeatureStatement, ?> context) {

@@ -12,6 +12,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class IfFeatureEffectiveStatementImpl extends EffectiveStatementBase<QName, IfFeatureStatement> {
+    private static final long serialVersionUID = 1L;
+
     public IfFeatureEffectiveStatementImpl(final StmtContext<QName, IfFeatureStatement, ?> ctx) {
         super(ctx);
     }

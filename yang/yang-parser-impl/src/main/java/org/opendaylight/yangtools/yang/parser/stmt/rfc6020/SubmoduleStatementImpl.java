@@ -33,6 +33,7 @@ import com.google.common.base.Optional;
 
 public class SubmoduleStatementImpl extends
         AbstractRootStatement<SubmoduleStatement> implements SubmoduleStatement {
+    private static final long serialVersionUID = 1L;
 
     protected SubmoduleStatementImpl(
             StmtContext<String, SubmoduleStatement, ?> context) {

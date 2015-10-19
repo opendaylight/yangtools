@@ -52,6 +52,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> extends
         AbstractEffectiveDocumentedNode<String, D> implements Module, Immutable {
+    private static final long serialVersionUID = 1L;
 
     private final String name;
     private final String sourcePath;

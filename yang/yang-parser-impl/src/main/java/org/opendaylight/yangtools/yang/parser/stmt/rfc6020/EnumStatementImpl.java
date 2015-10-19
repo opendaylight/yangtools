@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EnumEffectiveStatementImpl;
 
 public class EnumStatementImpl extends AbstractDeclaredStatement<String> implements EnumStatement {
+    private static final long serialVersionUID = 1L;
 
     protected EnumStatementImpl(StmtContext<String, EnumStatement, ?> context) {
         super(context);

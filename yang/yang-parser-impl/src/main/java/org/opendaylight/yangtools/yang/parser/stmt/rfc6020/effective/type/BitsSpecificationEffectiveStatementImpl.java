@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSt
 
 public class BitsSpecificationEffectiveStatementImpl extends
         EffectiveStatementBase<String, BitsSpecification> implements BitsTypeDefinition, TypeEffectiveStatement<BitsSpecification> {
+    private static final long serialVersionUID = 1L;
 
     private static final QName QNAME = BaseTypes.BITS_QNAME;
     private static final String DESCRIPTION = "The bits built-in type represents a bit set. "

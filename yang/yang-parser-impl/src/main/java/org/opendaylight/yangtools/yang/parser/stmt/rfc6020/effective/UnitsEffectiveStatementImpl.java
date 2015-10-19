@@ -11,6 +11,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class UnitsEffectiveStatementImpl extends EffectiveStatementBase<String, UnitsStatement> {
+    private static final long serialVersionUID = 1L;
+
     public UnitsEffectiveStatementImpl(final StmtContext<String, UnitsStatement, ?> ctx) {
         super(ctx);
     }

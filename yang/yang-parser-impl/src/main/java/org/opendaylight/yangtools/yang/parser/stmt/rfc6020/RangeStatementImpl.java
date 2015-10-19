@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.RangeEffectiveStatementImpl;
 
 public class RangeStatementImpl extends AbstractDeclaredStatement<List<RangeConstraint>> implements RangeStatement {
+    private static final long serialVersionUID = 1L;
 
     // these objects are to compare whether range has MAX or MIN value
     // none of these values should appear as Yang number according to spec so they are safe to use

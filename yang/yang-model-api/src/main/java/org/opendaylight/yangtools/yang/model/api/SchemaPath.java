@@ -13,6 +13,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.UnmodifiableIterator;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -25,12 +26,15 @@ import org.opendaylight.yangtools.yang.common.QName;
 /**
  * Represents unique path to the every node inside the module.
  */
-public abstract class SchemaPath implements Immutable {
+public abstract class SchemaPath implements Immutable, Serializable {
+    private static final long serialVersionUID = 1L;
 
     /**
      * An absolute SchemaPath.
      */
-    private static final class AbsoluteSchemaPath extends SchemaPath {
+    private static final class AbsoluteSchemaPath extends SchemaPath implements Serializable {
+        private static final long serialVersionUID = 1L;
+
         private AbsoluteSchemaPath(final SchemaPath parent, final QName qname) {
             super(parent, qname);
         }
@@ -49,7 +53,9 @@ public abstract class SchemaPath implements Immutable {
     /**
      * A relative SchemaPath.
      */
-    private static final class RelativeSchemaPath extends SchemaPath {
+    private static final class RelativeSchemaPath extends SchemaPath implements Serializable {
+        private static final long serialVersionUID = 1L;
+
         private RelativeSchemaPath(final SchemaPath parent, final QName qname) {
             super(parent, qname);
         }

@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ReferenceEffectiveStatementImpl;
 
 public class ReferenceStatementImpl extends AbstractDeclaredStatement<String> implements ReferenceStatement {
+    private static final long serialVersionUID = 1L;
 
     protected ReferenceStatementImpl(final StmtContext<String, ReferenceStatement, ?> context) {
         super(context);

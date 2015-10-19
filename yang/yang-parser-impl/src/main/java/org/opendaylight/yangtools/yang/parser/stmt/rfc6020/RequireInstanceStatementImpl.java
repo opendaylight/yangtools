@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class RequireInstanceStatementImpl extends
         AbstractDeclaredStatement<Boolean> implements RequireInstanceStatement {
+    private static final long serialVersionUID = 1L;
 
     protected RequireInstanceStatementImpl(
             StmtContext<Boolean, RequireInstanceStatement, ?> context) {

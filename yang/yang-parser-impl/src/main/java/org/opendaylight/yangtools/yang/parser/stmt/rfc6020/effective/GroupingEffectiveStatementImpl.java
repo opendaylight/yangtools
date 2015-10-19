@@ -24,6 +24,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public class GroupingEffectiveStatementImpl extends
         AbstractEffectiveDocumentedDataNodeContainer<QName, GroupingStatement> implements GroupingDefinition {
+    private static final long serialVersionUID = 1L;
+
     private final QName qname;
     private final SchemaPath path;
     private final boolean addedByUses;

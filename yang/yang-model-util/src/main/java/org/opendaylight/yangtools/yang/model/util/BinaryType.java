@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.Optional;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -23,7 +24,9 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
  *
  * @see BinaryTypeDefinition
  */
-public final class BinaryType implements BinaryTypeDefinition {
+public final class BinaryType implements BinaryTypeDefinition, Serializable {
+    private static final long serialVersionUID = 1L;
+
     private static final String DESCRIPTION = "The binary built-in type represents any binary data, i.e., a sequence of octets.";
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.8";
     private static final String UNITS = "";

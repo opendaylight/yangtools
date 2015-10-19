@@ -33,6 +33,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 public final class AugmentEffectiveStatementImpl extends
         AbstractEffectiveDocumentedDataNodeContainer<SchemaNodeIdentifier, AugmentStatement> implements
         AugmentationSchema, NamespaceRevisionAware, Comparable<AugmentEffectiveStatementImpl> {
+    private static final long serialVersionUID = 1L;
+
     private final SchemaPath targetPath;
     private final URI namespace;
     private final Date revision;

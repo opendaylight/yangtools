@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import javax.annotation.Nonnull;
 
 public class DescriptionStatementImpl extends AbstractDeclaredStatement<String> implements DescriptionStatement {
+    private static final long serialVersionUID = 1L;
 
     protected DescriptionStatementImpl(
             StmtContext<String, DescriptionStatement, ?> context) {

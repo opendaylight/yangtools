@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class ImportEffectiveStatementImpl extends EffectiveStatementBase<String, ImportStatement> implements
         ModuleImport {
+    private static final long serialVersionUID = 1L;
 
     private final String moduleName;
     private final Date revision;

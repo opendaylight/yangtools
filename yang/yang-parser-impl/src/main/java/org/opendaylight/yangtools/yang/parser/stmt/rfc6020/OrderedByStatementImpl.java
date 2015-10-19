@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class OrderedByStatementImpl extends AbstractDeclaredStatement<String>
         implements OrderedByStatement {
+    private static final long serialVersionUID = 1L;
 
     protected OrderedByStatementImpl(
             StmtContext<String, OrderedByStatement, ?> context) {

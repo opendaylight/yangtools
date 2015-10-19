@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafListStatement> implements
         LeafListSchemaNode, DerivableSchemaNode {
+    private static final long serialVersionUID = 1L;
 
     private final LeafListSchemaNode original;
     private final TypeDefinition<?> type;

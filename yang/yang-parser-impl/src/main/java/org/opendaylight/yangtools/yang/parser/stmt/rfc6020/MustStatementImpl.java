@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.MustEffectiveStatementImpl;
 
 public class MustStatementImpl extends AbstractDeclaredStatement<RevisionAwareXPath> implements MustStatement {
+    private static final long serialVersionUID = 1L;
 
     protected MustStatementImpl(final StmtContext<RevisionAwareXPath, MustStatement, ?> context) {
         super(context);

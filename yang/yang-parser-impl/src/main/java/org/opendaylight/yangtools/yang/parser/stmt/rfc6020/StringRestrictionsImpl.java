@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.String
 
 public class StringRestrictionsImpl extends AbstractDeclaredStatement<String> implements
         TypeStatement.StringRestrictions {
+    private static final long serialVersionUID = 1L;
 
     protected StringRestrictionsImpl(StmtContext<String, TypeStatement.StringRestrictions, ?> context) {
         super(context);

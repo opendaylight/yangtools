@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PathEffectiveStatementImpl;
 
 public class PathStatementImpl extends AbstractDeclaredStatement<RevisionAwareXPath> implements PathStatement {
+    private static final long serialVersionUID = 1L;
 
     protected PathStatementImpl(final StmtContext<RevisionAwareXPath, PathStatement, ?> context) {
         super(context);

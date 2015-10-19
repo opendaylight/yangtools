@@ -11,6 +11,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class ReferenceEffectiveStatementImpl extends EffectiveStatementBase<String, ReferenceStatement>  {
+    private static final long serialVersionUID = 1L;
+
     public ReferenceEffectiveStatementImpl(final StmtContext<String, ReferenceStatement, ?> ctx) {
         super(ctx);
     }

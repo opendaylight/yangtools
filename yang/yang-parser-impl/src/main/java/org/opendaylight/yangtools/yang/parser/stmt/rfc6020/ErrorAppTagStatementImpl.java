@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class ErrorAppTagStatementImpl extends AbstractDeclaredStatement<String>
         implements ErrorAppTagStatement {
+    private static final long serialVersionUID = 1L;
 
     protected ErrorAppTagStatementImpl(
             StmtContext<String, ErrorAppTagStatement, ?> context) {

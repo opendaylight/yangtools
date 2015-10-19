@@ -28,6 +28,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RequireInst
 public class InstanceIdentifierSpecificationEffectiveStatementImpl extends
         EffectiveStatementBase<String, InstanceIdentifierSpecification> implements InstanceIdentifierTypeDefinition,
         TypeEffectiveStatement<InstanceIdentifierSpecification> {
+    private static final long serialVersionUID = 1L;
+
 
     private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "instance-identifier");
     private static final SchemaPath PATH = SchemaPath.create(true, QNAME);

@@ -12,6 +12,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -27,7 +28,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
-public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> implements EffectiveStatement<A, D> {
+public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>>
+        implements EffectiveStatement<A, D>, Serializable {
+    private static final long serialVersionUID = 1L;
 
     private final List<? extends EffectiveStatement<?, ?>> substatements;
     private final StatementSource statementSource;

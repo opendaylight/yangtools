@@ -43,6 +43,7 @@ import org.opendaylight.yangtools.yang.parser.util.TypeConstraints;
 public final class ExtendedTypeEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<String, TypeStatement>
 implements
         TypeDefinition<TypeDefinition<?>>, TypeEffectiveStatement<TypeStatement> {
+    private static final long serialVersionUID = 1L;
 
     private static final Splitter COLON_SPLITTER = Splitter.on(':').trimResults();
 

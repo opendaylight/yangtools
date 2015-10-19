@@ -22,6 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class RpcEffectiveStatementImpl extends AbstractEffectiveSchemaNode<RpcStatement> implements RpcDefinition {
+    private static final long serialVersionUID = 1L;
+
     private final ContainerSchemaNode input;
     private final ContainerSchemaNode output;
     private final Set<TypeDefinition<?>> typeDefinitions;

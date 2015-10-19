@@ -12,6 +12,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
 public class NumericalRestrictionsEffectiveStatementImpl extends EffectiveStatementBase<String, TypeStatement.NumericalRestrictions> {
+    private static final long serialVersionUID = 1L;
 
     public NumericalRestrictionsEffectiveStatementImpl(StmtContext<String, TypeStatement.NumericalRestrictions, ?> ctx) {
         super(ctx);

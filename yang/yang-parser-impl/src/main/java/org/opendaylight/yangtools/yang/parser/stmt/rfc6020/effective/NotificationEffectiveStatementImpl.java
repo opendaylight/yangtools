@@ -27,6 +27,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public class NotificationEffectiveStatementImpl extends
         AbstractEffectiveDocumentedDataNodeContainer<QName, NotificationStatement> implements NotificationDefinition {
+    private static final long serialVersionUID = 1L;
+
     private final QName qname;
     private final SchemaPath path;
     private final Set<AugmentationSchema> augmentations;

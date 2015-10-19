@@ -11,6 +11,7 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import java.io.Serializable;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -22,8 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
  *
  * @param <A> Argument type.
  */
-public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<A> {
-
+public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<A>, Serializable {
+    private static final long serialVersionUID = 1L;
 
     private final A argument;
     private final String rawArgument;

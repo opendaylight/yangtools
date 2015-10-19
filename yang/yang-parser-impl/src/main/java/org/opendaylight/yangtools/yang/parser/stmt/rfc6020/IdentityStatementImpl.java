@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IdentityEff
 
 public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
         implements IdentityStatement {
+    private static final long serialVersionUID = 1L;
 
     protected IdentityStatementImpl(
             final StmtContext<QName, IdentityStatement, ?> context) {

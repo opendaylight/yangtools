@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDataNodeContainer<ListStatement> implements
         ListSchemaNode, DerivableSchemaNode {
+    private static final long serialVersionUID = 1L;
 
     private final boolean userOrdered;
     private final List<QName> keyDefinition;

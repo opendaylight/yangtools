@@ -34,6 +34,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public final class UsesEffectiveStatementImpl extends EffectiveStatementBase<QName, UsesStatement> implements UsesNode {
+    private static final long serialVersionUID = 1L;
+
     private final SchemaPath groupingPath;
     private final boolean addedByUses;
     private final Map<SchemaPath, SchemaNode> refines;

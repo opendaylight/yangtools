@@ -11,6 +11,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class DescriptionEffectiveStatementImpl extends EffectiveStatementBase<String, DescriptionStatement> {
+    private static final long serialVersionUID = 1L;
+
     public DescriptionEffectiveStatementImpl(final StmtContext<String, DescriptionStatement, ?> ctx) {
         super(ctx);
     }

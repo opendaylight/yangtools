@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 public class RpcStatementImpl extends AbstractDeclaredStatement<QName>
         implements RpcStatement {
+    private static final long serialVersionUID = 1L;
 
     protected RpcStatementImpl(StmtContext<QName, RpcStatement, ?> context) {
         super(context);

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
@@ -17,7 +18,9 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 
-public final class EmptyType implements EmptyTypeDefinition, Immutable {
+public final class EmptyType implements EmptyTypeDefinition, Immutable, Serializable {
+    private static final long serialVersionUID = 1L;
+
     private static final EmptyType INSTANCE = new EmptyType();
     private static final QName NAME = BaseTypes.EMPTY_QNAME;
     private static final SchemaPath PATH = SchemaPath.create(Collections.singletonList(NAME), true);

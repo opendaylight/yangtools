@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class ArgumentStatementImpl extends AbstractDeclaredStatement<QName>
         implements ArgumentStatement {
+    private static final long serialVersionUID = 1L;
 
     protected ArgumentStatementImpl(
             StmtContext<QName, ArgumentStatement, ?> context) {

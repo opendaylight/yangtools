@@ -11,6 +11,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class OrderedByEffectiveStatementImpl extends EffectiveStatementBase<String, OrderedByStatement> {
+    private static final long serialVersionUID = 1L;
+
     public OrderedByEffectiveStatementImpl(final StmtContext<String, OrderedByStatement, ?> ctx) {
         super(ctx);
     }

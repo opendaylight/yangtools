@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 public class InputStatementImpl extends AbstractDeclaredStatement<QName>
         implements InputStatement {
+    private static final long serialVersionUID = 1L;
 
     protected InputStatementImpl(StmtContext<QName, InputStatement, ?> context) {
         super(context);

@@ -36,6 +36,7 @@ import java.util.Collection;
 
 public class LeafListStatementImpl extends AbstractDeclaredStatement<QName>
         implements LeafListStatement {
+    private static final long serialVersionUID = 1L;
 
     protected LeafListStatementImpl(
             StmtContext<QName, LeafListStatement, ?> context) {

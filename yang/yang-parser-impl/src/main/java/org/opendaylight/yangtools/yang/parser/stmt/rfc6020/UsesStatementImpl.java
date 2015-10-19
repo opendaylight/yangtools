@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 
 public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implements UsesStatement {
+    private static final long serialVersionUID = 1L;
 
     private static final Logger LOG = LoggerFactory.getLogger(UsesStatementImpl.class);
 

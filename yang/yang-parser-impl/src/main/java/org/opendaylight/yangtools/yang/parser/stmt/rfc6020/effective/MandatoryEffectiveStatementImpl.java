@@ -11,6 +11,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class MandatoryEffectiveStatementImpl extends EffectiveStatementBase<Boolean, MandatoryStatement> {
+    private static final long serialVersionUID = 1L;
+
     public MandatoryEffectiveStatementImpl(final StmtContext<Boolean, MandatoryStatement, ?> ctx) {
         super(ctx);
     }

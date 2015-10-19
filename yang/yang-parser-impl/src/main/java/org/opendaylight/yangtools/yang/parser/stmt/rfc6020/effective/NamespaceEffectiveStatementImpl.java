@@ -12,6 +12,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class NamespaceEffectiveStatementImpl extends EffectiveStatementBase<URI, NamespaceStatement>  {
+    private static final long serialVersionUID = 1L;
+
     public NamespaceEffectiveStatementImpl(final StmtContext<URI, NamespaceStatement, ?> ctx) {
         super(ctx);
     }

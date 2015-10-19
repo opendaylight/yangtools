@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class BaseStatementImpl extends AbstractDeclaredStatement<QName>
         implements BaseStatement {
+    private static final long serialVersionUID = 1L;
 
     protected BaseStatementImpl(StmtContext<QName, BaseStatement, ?> context) {
         super(context);

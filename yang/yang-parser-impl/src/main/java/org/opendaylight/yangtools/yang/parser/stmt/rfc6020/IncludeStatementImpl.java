@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import com.google.common.base.Optional;
 
 public class IncludeStatementImpl extends AbstractDeclaredStatement<String> implements IncludeStatement {
+    private static final long serialVersionUID = 1L;
 
     protected IncludeStatementImpl(StmtContext<String, IncludeStatement, ?> context) {
         super(context);

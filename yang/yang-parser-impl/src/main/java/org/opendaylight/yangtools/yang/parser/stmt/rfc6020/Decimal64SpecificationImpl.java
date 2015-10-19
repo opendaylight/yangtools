@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Decima
 
 public class Decimal64SpecificationImpl extends AbstractDeclaredStatement<String> implements
         TypeStatement.Decimal64Specification {
+    private static final long serialVersionUID = 1L;
 
     protected Decimal64SpecificationImpl(StmtContext<String, TypeStatement.Decimal64Specification, ?> context) {
         super(context);

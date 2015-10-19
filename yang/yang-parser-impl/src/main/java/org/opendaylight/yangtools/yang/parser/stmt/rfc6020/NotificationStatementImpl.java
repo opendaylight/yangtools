@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 public class NotificationStatementImpl extends AbstractDeclaredStatement<QName>
         implements NotificationStatement {
+    private static final long serialVersionUID = 1L;
 
     protected NotificationStatementImpl(
             StmtContext<QName, NotificationStatement, ?> context) {

@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 abstract class AbstractEffectiveContainerSchemaNode<D extends DeclaredStatement<QName>> extends
         AbstractEffectiveSimpleDataNodeContainer<D> implements ContainerSchemaNode {
+    private static final long serialVersionUID = 1L;
 
     private final boolean presence;
 

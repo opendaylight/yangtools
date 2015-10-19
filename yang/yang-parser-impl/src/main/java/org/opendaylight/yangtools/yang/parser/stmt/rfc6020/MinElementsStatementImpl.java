@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class MinElementsStatementImpl extends
         AbstractDeclaredStatement<Integer> implements MinElementsStatement {
+    private static final long serialVersionUID = 1L;
 
     protected MinElementsStatementImpl(
             StmtContext<Integer, MinElementsStatement, ?> context) {

@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implements AnyxmlStatement {
+    private static final long serialVersionUID = 1L;
 
     protected AnyxmlStatementImpl(StmtContext<QName, AnyxmlStatement,?> context) {
         super(context);

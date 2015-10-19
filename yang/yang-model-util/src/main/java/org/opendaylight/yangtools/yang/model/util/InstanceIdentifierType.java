@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -28,7 +29,8 @@ import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefi
  * @see InstanceIdentifierTypeDefinition
  *
  */
-public final class InstanceIdentifierType implements InstanceIdentifierTypeDefinition, Immutable {
+public final class InstanceIdentifierType implements InstanceIdentifierTypeDefinition, Immutable, Serializable {
+    private static final long serialVersionUID = 1L;
 
     private static final QName NAME = BaseTypes.INSTANCE_IDENTIFIER_QNAME;
     private static final SchemaPath PATH = SchemaPath.create(true, NAME);

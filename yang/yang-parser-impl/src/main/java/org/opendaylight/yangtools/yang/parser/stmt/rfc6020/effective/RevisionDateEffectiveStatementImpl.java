@@ -12,6 +12,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class RevisionDateEffectiveStatementImpl extends EffectiveStatementBase<Date, RevisionDateStatement> {
+    private static final long serialVersionUID = 1L;
+
     public RevisionDateEffectiveStatementImpl(final StmtContext<Date, RevisionDateStatement, ?> ctx) {
         super(ctx);
     }

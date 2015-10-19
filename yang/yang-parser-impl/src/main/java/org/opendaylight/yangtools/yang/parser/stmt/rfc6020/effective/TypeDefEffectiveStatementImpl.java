@@ -37,6 +37,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.RangeE
 
 public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchemaNode<TypedefStatement> implements
         TypeDefinition<TypeDefinition<?>>, TypedefEffectiveStatement {
+    private static final long serialVersionUID = 1L;
+
     private final TypeDefinition<?> baseType;
     private final String defaultValue;
     private final String units;

@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class AnyXmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<AnyxmlStatement> implements
         AnyXmlSchemaNode, DerivableSchemaNode {
+    private static final long serialVersionUID = 1L;
 
     private final AnyXmlSchemaNode original;
 

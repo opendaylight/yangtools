@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.StatusEffec
 
 public class BitEffectiveStatementImpl extends EffectiveStatementBase<QName, BitStatement> implements
         BitsTypeDefinition.Bit {
+    private static final long serialVersionUID = 1L;
 
     private final QName qName;
     private final SchemaPath schemaPath;

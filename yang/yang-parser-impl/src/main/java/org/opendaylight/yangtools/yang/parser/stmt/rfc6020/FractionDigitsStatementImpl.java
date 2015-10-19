@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.FractionDig
 import com.google.common.collect.Range;
 
 public class FractionDigitsStatementImpl extends AbstractDeclaredStatement<Integer> implements FractionDigitsStatement {
+    private static final long serialVersionUID = 1L;
 
     private static final Range<Integer> FRAC_DIGITS_ALLOWED = Range.closed(1, 18);
 

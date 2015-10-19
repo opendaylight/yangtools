@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public final class RefineEffectiveStatementImpl extends
         AbstractEffectiveDocumentedNode<SchemaNodeIdentifier, RefineStatement> implements SchemaNode {
+    private static final long serialVersionUID = 1L;
 
     private final QName qname;
     private final SchemaPath path;

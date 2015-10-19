@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class RevisionDateStatementImpl extends
         AbstractDeclaredStatement<Date> implements RevisionDateStatement {
+    private static final long serialVersionUID = 1L;
 
     protected RevisionDateStatementImpl(
             StmtContext<Date, RevisionDateStatement, ?> context) {

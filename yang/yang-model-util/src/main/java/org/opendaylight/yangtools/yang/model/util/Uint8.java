@@ -16,6 +16,8 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * @see AbstractUnsignedInteger
  */
 public final class Uint8 extends AbstractUnsignedInteger implements Immutable {
+    private static final long serialVersionUID = 1L;
+
     public static final int MAX_VALUE = 255;
     private static final String DESCRIPTION = "uint8  represents integer values between 0 and 255, inclusively.";
 

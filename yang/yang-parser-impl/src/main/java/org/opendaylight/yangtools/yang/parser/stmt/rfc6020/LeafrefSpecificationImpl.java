@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Leafre
 
 public class LeafrefSpecificationImpl extends AbstractDeclaredStatement<String>
         implements TypeStatement.LeafrefSpecification {
+    private static final long serialVersionUID = 1L;
 
     protected LeafrefSpecificationImpl(
             StmtContext<String, TypeStatement.LeafrefSpecification, ?> context) {

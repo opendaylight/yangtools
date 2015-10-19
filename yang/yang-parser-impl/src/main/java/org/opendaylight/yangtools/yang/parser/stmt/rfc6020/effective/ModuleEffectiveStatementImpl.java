@@ -16,6 +16,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 
 public final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleStatement> {
+    private static final long serialVersionUID = 1L;
+
     private final QNameModule qNameModule;
 
     public ModuleEffectiveStatementImpl(

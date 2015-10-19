@@ -11,6 +11,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class ValueEffectiveStatementImpl extends EffectiveStatementBase<Integer, ValueStatement> {
+    private static final long serialVersionUID = 1L;
+
     public ValueEffectiveStatementImpl(final StmtContext<Integer, ValueStatement, ?> ctx) {
         super(ctx);
     }

@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class CaseEffectiveStatementImpl extends AbstractEffectiveSimpleDataNodeContainer<CaseStatement> implements
         ChoiceCaseNode, DerivableSchemaNode {
+    private static final long serialVersionUID = 1L;
 
     private final ChoiceCaseNode original;
 

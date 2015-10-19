@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BitEffectiveStatementImpl;
 
 public class BitStatementImpl extends AbstractDeclaredStatement<QName> implements BitStatement {
+    private static final long serialVersionUID = 1L;
 
     protected BitStatementImpl(StmtContext<QName, BitStatement, ?> context) {
         super(context);

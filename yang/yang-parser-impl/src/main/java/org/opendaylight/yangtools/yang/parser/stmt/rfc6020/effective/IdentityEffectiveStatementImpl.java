@@ -22,6 +22,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class IdentityEffectiveStatementImpl extends AbstractEffectiveSchemaNode<IdentityStatement>
         implements IdentitySchemaNode {
+    private static final long serialVersionUID = 1L;
+
     private IdentitySchemaNode baseIdentity;
     private final Set<IdentitySchemaNode> derivedIdentities;
 

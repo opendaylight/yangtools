@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -18,7 +19,9 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
-public final class UnionType implements UnionTypeDefinition {
+public final class UnionType implements UnionTypeDefinition, Serializable {
+    private static final long serialVersionUID = 1L;
+
     private static final SchemaPath PATH = SchemaPath.create(true, BaseTypes.UNION_QNAME);
     private static final String DESCRIPTION = "The union built-in type represents a value that corresponds to one of its member types.";
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.12";

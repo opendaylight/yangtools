@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public final class UnknownEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<String, UnknownStatement<String>>
         implements UnknownSchemaNode {
+    private static final long serialVersionUID = 1L;
 
     private final boolean addedByUses;
     private final QName maybeQNameArgument;

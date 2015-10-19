@@ -13,6 +13,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.UnmodifiableIterator;
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -25,12 +26,15 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 /**
  * Represents unique path to the every schema node inside the schema node identifier namespace.
  */
-public abstract class SchemaNodeIdentifier implements Immutable {
+public abstract class SchemaNodeIdentifier implements Immutable, Serializable {
+    private static final long serialVersionUID = 1L;
 
     /**
      * An absolute schema node identifier.
      */
-    public static final class Absolute extends SchemaNodeIdentifier {
+    public static final class Absolute extends SchemaNodeIdentifier implements Serializable {
+        private static final long serialVersionUID = 1L;
+
         private Absolute(final SchemaNodeIdentifier parent, final QName qname) {
             super(parent, qname);
         }
@@ -49,7 +53,9 @@ public abstract class SchemaNodeIdentifier implements Immutable {
     /**
      * A relative schema node identifier.
      */
-    public static class Relative extends SchemaNodeIdentifier {
+    public static class Relative extends SchemaNodeIdentifier implements Serializable {
+        private static final long serialVersionUID = 1L;
+
         private Relative(final SchemaNodeIdentifier parent, final QName qname) {
             super(parent, qname);
         }

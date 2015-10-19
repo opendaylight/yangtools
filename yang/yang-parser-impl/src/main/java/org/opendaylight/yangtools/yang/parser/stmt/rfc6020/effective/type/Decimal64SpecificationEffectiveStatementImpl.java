@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.FractionDig
 public class Decimal64SpecificationEffectiveStatementImpl extends
         EffectiveStatementBase<String, Decimal64Specification>
         implements DecimalTypeDefinition, TypeEffectiveStatement<Decimal64Specification> {
+    private static final long serialVersionUID = 1L;
 
     private static final String UNITS = "";
     private static final BigDecimal DEFAULT_VALUE = null;

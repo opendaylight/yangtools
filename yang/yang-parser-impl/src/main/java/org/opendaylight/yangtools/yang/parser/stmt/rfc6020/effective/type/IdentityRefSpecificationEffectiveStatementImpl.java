@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSt
 public class IdentityRefSpecificationEffectiveStatementImpl extends
         EffectiveStatementBase<String, IdentityRefSpecification> implements IdentityrefTypeDefinition,
         TypeEffectiveStatement<IdentityRefSpecification> {
+    private static final long serialVersionUID = 1L;
 
     private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, TypeUtils.IDENTITY_REF);
 

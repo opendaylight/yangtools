@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class ErrorMessageStatementImpl extends
         AbstractDeclaredStatement<String> implements ErrorMessageStatement {
+    private static final long serialVersionUID = 1L;
 
     protected ErrorMessageStatementImpl(
             StmtContext<String, ErrorMessageStatement, ?> context) {

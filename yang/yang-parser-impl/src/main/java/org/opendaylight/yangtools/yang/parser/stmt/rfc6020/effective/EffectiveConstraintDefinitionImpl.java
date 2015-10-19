@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.collect.ImmutableSet;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
@@ -15,7 +16,9 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 
-public final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
+public class EffectiveConstraintDefinitionImpl implements ConstraintDefinition, Serializable {
+    private static final long serialVersionUID = 1L;
+
     private final RevisionAwareXPath whenCondition;
     private final Set<MustDefinition> mustConstraints;
     private final Boolean mandatory;

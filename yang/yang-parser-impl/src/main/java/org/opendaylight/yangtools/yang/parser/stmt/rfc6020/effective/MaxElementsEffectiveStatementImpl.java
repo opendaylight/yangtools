@@ -11,6 +11,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class MaxElementsEffectiveStatementImpl extends EffectiveStatementBase<String, MaxElementsStatement> {
+    private static final long serialVersionUID = 1L;
+
     public MaxElementsEffectiveStatementImpl(final StmtContext<String, MaxElementsStatement, ?> ctx) {
         super(ctx);
     }

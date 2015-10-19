@@ -11,6 +11,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class IncludeEffectiveStatementImpl extends EffectiveStatementBase<String, IncludeStatement> {
+    private static final long serialVersionUID = 1L;
+
     public IncludeEffectiveStatementImpl(final StmtContext<String, IncludeStatement, ?> ctx) {
         super(ctx);
     }

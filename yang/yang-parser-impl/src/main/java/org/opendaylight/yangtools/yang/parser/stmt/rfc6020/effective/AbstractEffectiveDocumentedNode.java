@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredStatement<A>>
         extends EffectiveStatementBase<A, D> implements DocumentedNode {
+    private static final long serialVersionUID = 1L;
 
     private final String description;
     private final String reference;

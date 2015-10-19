@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 public class ContainerStatementImpl extends AbstractDeclaredStatement<QName> implements ContainerStatement {
+    private static final long serialVersionUID = 1L;
 
     protected ContainerStatementImpl(StmtContext<QName, ContainerStatement,?> context) {
         super(context);

@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatement<QName>> extends
         AbstractEffectiveDocumentedDataNodeContainer<QName, D> implements DataNodeContainer, AugmentationTarget,
         DataSchemaNode {
+    private static final long serialVersionUID = 1L;
 
     private final QName qname;
     private final SchemaPath path;

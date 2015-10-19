@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class MaxElementsStatementImpl extends AbstractDeclaredStatement<String>
         implements MaxElementsStatement {
+    private static final long serialVersionUID = 1L;
 
     protected MaxElementsStatementImpl(
             StmtContext<String, MaxElementsStatement, ?> context) {

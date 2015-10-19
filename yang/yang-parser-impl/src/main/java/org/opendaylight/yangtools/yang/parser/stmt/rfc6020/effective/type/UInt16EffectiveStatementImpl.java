@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 public class UInt16EffectiveStatementImpl extends UnsignedIntegerEffectiveImplBase {
+    private static final long serialVersionUID = 1L;
 
     public static final String LOCAL_NAME = TypeUtils.UINT16;
 

@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
 public class UnknownStatementImpl extends AbstractDeclaredStatement<String> implements UnknownStatement<String> {
+    private static final long serialVersionUID = 1L;
 
     protected UnknownStatementImpl(final StmtContext<String, ?, ?> context) {
         super(context);

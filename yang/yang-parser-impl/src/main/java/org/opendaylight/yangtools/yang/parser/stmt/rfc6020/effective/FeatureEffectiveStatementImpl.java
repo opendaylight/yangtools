@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class FeatureEffectiveStatementImpl extends AbstractEffectiveSchemaNode<FeatureStatement> implements
         FeatureDefinition {
+    private static final long serialVersionUID = 1L;
 
     public FeatureEffectiveStatementImpl(final StmtContext<QName, FeatureStatement, ?> ctx) {
         super(ctx);

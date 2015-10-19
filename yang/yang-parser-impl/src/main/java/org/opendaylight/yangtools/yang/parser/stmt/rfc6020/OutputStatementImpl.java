@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.OutputEffectiveStatementImpl;
 
 public class OutputStatementImpl extends AbstractDeclaredStatement<QName> implements OutputStatement {
+    private static final long serialVersionUID = 1L;
 
     protected OutputStatementImpl(final StmtContext<QName, OutputStatement, ?> context) {
         super(context);

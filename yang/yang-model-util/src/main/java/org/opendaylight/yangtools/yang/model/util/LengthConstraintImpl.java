@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import java.io.Serializable;
 import java.util.Objects;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
@@ -25,7 +26,8 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
  * out of bounds &lt;<i>min</i>, <i>max</i> &gt;</code>
  * </ul
  */
-final class LengthConstraintImpl implements LengthConstraint, Immutable {
+final class LengthConstraintImpl implements LengthConstraint, Immutable, Serializable {
+    private static final long serialVersionUID = 1L;
 
     private final Number min;
     private final Number max;

@@ -7,11 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 
-public final class ModuleImportImpl implements ModuleImport {
+public final class ModuleImportImpl implements ModuleImport, Serializable {
+    private static final long serialVersionUID = 1L;
+
     private final String moduleName;
     private final Date revision;
     private final String prefix;

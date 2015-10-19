@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class OutputEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<OutputStatement> {
+    private static final long serialVersionUID = 1L;
 
     public OutputEffectiveStatementImpl(
             final StmtContext<QName, OutputStatement, EffectiveStatement<QName, OutputStatement>> ctx) {

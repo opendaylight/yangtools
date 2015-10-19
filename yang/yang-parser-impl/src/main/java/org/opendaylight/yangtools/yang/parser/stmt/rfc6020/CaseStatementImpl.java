@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.CaseEffectiveStatementImpl;
 
 public class CaseStatementImpl extends AbstractDeclaredStatement<QName> implements CaseStatement {
+    private static final long serialVersionUID = 1L;
 
     protected CaseStatementImpl(
             final StmtContext<QName, CaseStatement, ?> context) {

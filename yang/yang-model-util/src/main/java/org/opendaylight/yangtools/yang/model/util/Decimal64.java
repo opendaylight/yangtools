@@ -11,6 +11,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +27,9 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
  *
  * @see DecimalTypeDefinition
  */
-public final class Decimal64 implements DecimalTypeDefinition {
+public final class Decimal64 implements DecimalTypeDefinition, Serializable {
+    private static final long serialVersionUID = 1L;
+
     private static final String DESCRIPTION = "The decimal64 type represents a subset of the real numbers, which can "
             + "be represented by decimal numerals. The value space of decimal64 is the set of numbers that can "
             + "be obtained by multiplying a 64-bit signed integer by a negative power of ten, i.e., expressible as "

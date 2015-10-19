@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EnumSpecificationEffectiveStatementImpl;
 
 public class EnumSpecificationImpl extends AbstractDeclaredStatement<String> implements TypeStatement.EnumSpecification {
+    private static final long serialVersionUID = 1L;
 
     protected EnumSpecificationImpl(StmtContext<String, TypeStatement.EnumSpecification, ?> context) {
         super(context);

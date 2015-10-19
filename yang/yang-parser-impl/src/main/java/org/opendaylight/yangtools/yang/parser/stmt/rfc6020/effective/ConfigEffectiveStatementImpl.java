@@ -11,6 +11,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class ConfigEffectiveStatementImpl extends EffectiveStatementBase<Boolean, ConfigStatement> {
+    private static final long serialVersionUID = 1L;
+
     public ConfigEffectiveStatementImpl(final StmtContext<Boolean, ConfigStatement, ?> ctx) {
         super(ctx);
     }

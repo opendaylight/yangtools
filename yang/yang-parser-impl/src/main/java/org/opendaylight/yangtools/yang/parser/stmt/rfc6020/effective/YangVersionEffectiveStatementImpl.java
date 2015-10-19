@@ -11,6 +11,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class YangVersionEffectiveStatementImpl extends EffectiveStatementBase<String, YangVersionStatement> {
+    private static final long serialVersionUID = 1L;
+
     public YangVersionEffectiveStatementImpl(final StmtContext<String, YangVersionStatement, ?> ctx) {
         super(ctx);
     }

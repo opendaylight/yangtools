@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Identi
 import javax.annotation.Nonnull;
 
 public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<String> implements TypeStatement.IdentityRefSpecification {
+    private static final long serialVersionUID = 1L;
 
     protected IdentityRefSpecificationImpl(
             StmtContext<String, TypeStatement.IdentityRefSpecification, ?> context) {

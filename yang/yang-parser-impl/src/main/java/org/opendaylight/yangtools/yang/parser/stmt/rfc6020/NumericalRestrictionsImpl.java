@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Numeri
 
 public class NumericalRestrictionsImpl extends AbstractDeclaredStatement<String> implements
         TypeStatement.NumericalRestrictions {
+    private static final long serialVersionUID = 1L;
 
     protected NumericalRestrictionsImpl(final StmtContext<String, TypeStatement.NumericalRestrictions, ?> context) {
         super(context);

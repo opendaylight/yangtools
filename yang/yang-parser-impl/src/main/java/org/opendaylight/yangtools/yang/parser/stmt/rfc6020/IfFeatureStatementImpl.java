@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class IfFeatureStatementImpl extends AbstractDeclaredStatement<QName>
         implements IfFeatureStatement {
+    private static final long serialVersionUID = 1L;
 
     protected IfFeatureStatementImpl(
             StmtContext<QName, IfFeatureStatement, ?> context) {

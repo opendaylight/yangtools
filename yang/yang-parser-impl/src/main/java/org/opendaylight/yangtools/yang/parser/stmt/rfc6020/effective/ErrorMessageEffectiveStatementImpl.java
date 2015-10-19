@@ -11,6 +11,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class ErrorMessageEffectiveStatementImpl extends EffectiveStatementBase<String, ErrorMessageStatement> {
+    private static final long serialVersionUID = 1L;
+
     public ErrorMessageEffectiveStatementImpl(final StmtContext<String, ErrorMessageStatement, ?> ctx) {
         super(ctx);
     }

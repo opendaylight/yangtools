@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<ChoiceStatement> implements
         ChoiceSchemaNode, DerivableSchemaNode {
+    private static final long serialVersionUID = 1L;
 
     private final ChoiceSchemaNode original;
     private final String defaultCase;

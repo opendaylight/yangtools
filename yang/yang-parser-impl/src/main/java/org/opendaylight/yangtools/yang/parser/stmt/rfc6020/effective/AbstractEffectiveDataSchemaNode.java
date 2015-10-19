@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 
 abstract class AbstractEffectiveDataSchemaNode<D extends DeclaredStatement<QName>> extends
         AbstractEffectiveSchemaNode<D> implements DataSchemaNode {
+    private static final long serialVersionUID = 1L;
 
     // :FIXME should be private and final
     boolean augmenting;

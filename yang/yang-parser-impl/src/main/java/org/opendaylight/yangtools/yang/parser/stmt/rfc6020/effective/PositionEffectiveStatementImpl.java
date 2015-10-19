@@ -11,6 +11,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class PositionEffectiveStatementImpl extends EffectiveStatementBase<Long, PositionStatement> {
+    private static final long serialVersionUID = 1L;
+
     public PositionEffectiveStatementImpl(final StmtContext<Long, PositionStatement, ?> ctx) {
         super(ctx);
     }

@@ -12,6 +12,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class DeviateEffectiveStatementImpl extends EffectiveStatementBase<Deviation.Deviate, DeviateStatement> {
+    private static final long serialVersionUID = 1L;
+
     public DeviateEffectiveStatementImpl(final StmtContext<Deviation.Deviate, DeviateStatement, ?> ctx) {
         super(ctx);
     }

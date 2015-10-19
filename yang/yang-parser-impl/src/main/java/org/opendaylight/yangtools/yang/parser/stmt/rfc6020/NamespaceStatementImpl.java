@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class NamespaceStatementImpl extends AbstractDeclaredStatement<URI> implements NamespaceStatement {
+    private static final long serialVersionUID = 1L;
 
     public static class Definition extends AbstractStatementSupport<URI,NamespaceStatement,EffectiveStatement<URI,NamespaceStatement>> {
 

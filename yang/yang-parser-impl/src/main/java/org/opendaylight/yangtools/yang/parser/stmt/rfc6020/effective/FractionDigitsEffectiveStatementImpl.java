@@ -11,6 +11,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class FractionDigitsEffectiveStatementImpl extends EffectiveStatementBase<Integer, FractionDigitsStatement> {
+    private static final long serialVersionUID = 1L;
+
     public FractionDigitsEffectiveStatementImpl(final StmtContext<Integer, FractionDigitsStatement, ?> ctx) {
         super(ctx);
     }

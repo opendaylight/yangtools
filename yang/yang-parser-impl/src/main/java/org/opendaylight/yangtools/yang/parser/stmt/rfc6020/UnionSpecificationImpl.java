@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UnionS
 
 public class UnionSpecificationImpl extends AbstractDeclaredStatement<String>
         implements TypeStatement.UnionSpecification {
+    private static final long serialVersionUID = 1L;
 
     protected UnionSpecificationImpl(
             StmtContext<String, TypeStatement.UnionSpecification, ?> context) {

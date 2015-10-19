@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.util;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -25,7 +26,9 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
  *
  * @see EnumTypeDefinition
  */
-public final class EnumerationType implements EnumTypeDefinition {
+public final class EnumerationType implements EnumTypeDefinition, Serializable {
+    private static final long serialVersionUID = 1L;
+
     private static final String DESCRIPTION = "The enumeration built-in type represents values from a set of assigned names.";
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.6";
     private static final String UNITS = "";

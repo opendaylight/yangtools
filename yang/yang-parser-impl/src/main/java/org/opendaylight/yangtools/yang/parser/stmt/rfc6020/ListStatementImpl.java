@@ -39,6 +39,7 @@ import java.util.Collection;
 
 public class ListStatementImpl extends AbstractDeclaredStatement<QName>
         implements ListStatement {
+    private static final long serialVersionUID = 1L;
 
     protected ListStatementImpl(StmtContext<QName, ListStatement, ?> context) {
         super(context);

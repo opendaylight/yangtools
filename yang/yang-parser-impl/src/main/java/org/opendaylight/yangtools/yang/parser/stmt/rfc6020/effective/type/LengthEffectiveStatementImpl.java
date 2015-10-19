@@ -14,6 +14,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
 public class LengthEffectiveStatementImpl extends EffectiveStatementBase<List<LengthConstraint>, LengthStatement> {
+    private static final long serialVersionUID = 1L;
+
     public LengthEffectiveStatementImpl(final StmtContext<List<LengthConstraint>, LengthStatement, ?> ctx) {
         super(ctx);
     }

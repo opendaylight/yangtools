@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class StatusStatementImpl extends AbstractDeclaredStatement<Status>
         implements StatusStatement {
+    private static final long serialVersionUID = 1L;
 
     protected StatusStatementImpl(
             StmtContext<Status, StatusStatement, ?> context) {

@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
+import java.io.Serializable;
 import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
@@ -29,7 +30,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.util.ModuleDependencySort;
 
-public final class EffectiveSchemaContext extends AbstractEffectiveSchemaContext {
+public final class EffectiveSchemaContext extends AbstractEffectiveSchemaContext implements Serializable {
+    private static final long serialVersionUID = 1L;
 
     private final SetMultimap<URI, Module> namespaceToModules;
     private final SetMultimap<String, Module> nameToModules;

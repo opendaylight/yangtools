@@ -25,6 +25,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.StatusEffec
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ValueEffectiveStatementImpl;
 
 public class EnumEffectiveStatementImpl extends EffectiveStatementBase<String, EnumStatement> implements EnumPair {
+    private static final long serialVersionUID = 1L;
+
     private final SchemaPath path;
     private String description;
     private String reference;

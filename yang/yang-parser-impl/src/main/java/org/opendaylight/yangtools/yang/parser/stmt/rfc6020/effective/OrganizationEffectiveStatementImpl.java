@@ -11,6 +11,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class OrganizationEffectiveStatementImpl extends EffectiveStatementBase<String, OrganizationStatement> {
+    private static final long serialVersionUID = 1L;
+
     public OrganizationEffectiveStatementImpl(final StmtContext<String, OrganizationStatement, ?> ctx) {
         super(ctx);
     }

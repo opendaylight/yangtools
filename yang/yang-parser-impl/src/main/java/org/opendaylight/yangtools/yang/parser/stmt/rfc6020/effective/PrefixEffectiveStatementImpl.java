@@ -11,6 +11,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class PrefixEffectiveStatementImpl extends EffectiveStatementBase<String, PrefixStatement>  {
+    private static final long serialVersionUID = 1L;
+
     public PrefixEffectiveStatementImpl(final StmtContext<String, PrefixStatement, ?> ctx) {
         super(ctx);
     }
