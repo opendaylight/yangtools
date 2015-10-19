@@ -1,0 +1,23 @@
+module overflow {
+    namespace "urn:opendaylight:overflow";
+    prefix "foo";
+
+    revision 2015-10-05 {
+        description "Initial revision";
+    }
+
+    //
+    //    foo:container;
+    //    
+    //    extension container;
+
+    typedef foo {
+        type bar;
+    }
+    
+//    uses my-grp;
+
+    typedef bar {
+        type foo;
+    }
+}
