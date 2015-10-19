@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.stmt.retest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -50,11 +51,14 @@ public class YangParserNegativeTest {
         try {
             try (InputStream stream = new FileInputStream(yang)) {
                 TestUtils.loadModule(stream);
-                fail("IllegalArgumentException should be thrown");
+                fail("SomeModifiersUnresolvedException should be thrown.");
             }
-        } catch (IllegalStateException e) {
-            assertTrue(e.getMessage().startsWith(
-                    "Type '(urn:simple.types.data.demo?revision=2013-02-27)int-ext' was not found"));
+        } catch (SomeModifiersUnresolvedException e) {
+            final Throwable suppressed2levelsDown = e.getSuppressed()[0].getSuppressed()[0];
+            assertTrue(suppressed2levelsDown instanceof InferenceException);
+            final String message = suppressed2levelsDown.getMessage();
+            assertTrue(message
+                    .startsWith("Type [(urn:simple.types.data.demo?revision=2013-02-27)int-ext] was not found."));
         }
     }
 

@@ -9,12 +9,20 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.util.Collection;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ExtendedTypeEffectiveStatementImpl;
@@ -101,6 +109,39 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
                 // return buildEffective of original typedef context
                 return new ExtendedTypeEffectiveStatementImpl(ctx, false);
             }
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(
+                final Mutable<String, TypeStatement, EffectiveStatement<String, TypeStatement>> stmt)
+                throws SourceException {
+
+            // if it is yang built-in type, no prerequisite is needed, so simply return
+            if (TypeUtils.isYangBuiltInTypeString(stmt.getStatementArgument())) {
+                return;
+            }
+
+            final QName typeQName = Utils.qNameFromArgument(stmt, stmt.getStatementArgument());
+            final ModelActionBuilder typeAction = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
+            final Prerequisite<StmtContext<?, ?, ?>> typePrereq = typeAction.requiresCtx(stmt, TypeNamespace.class,
+                    typeQName, ModelProcessingPhase.EFFECTIVE_MODEL);
+            typeAction.mutatesEffectiveCtx(stmt.getParentContext());
+
+            typeAction.apply(new InferenceAction() {
+
+                @Override
+                public void apply() {
+                    // NOOP
+                }
+
+                @Override
+                public void prerequisiteFailed(Collection<? extends Prerequisite<?>> failed) {
+                    if (failed.contains(typePrereq)) {
+                        throw new InferenceException(String.format("Type [%s] was not found.", typeQName), stmt
+                                .getStatementSourceReference());
+                    }
+                }
+            });
         }
     }
 
