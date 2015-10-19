@@ -9,7 +9,10 @@ package org.opendaylight.yangtools.yang.parser.util;
 
 /**
  * Marker object representing special 'min' or 'max' values in YANG.
+ *
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.model.util.UnresolvedNumber} instead.
  */
+@Deprecated
 public final class UnknownBoundaryNumber extends Number {
     private static final long serialVersionUID = 1464861684686434869L;
 
