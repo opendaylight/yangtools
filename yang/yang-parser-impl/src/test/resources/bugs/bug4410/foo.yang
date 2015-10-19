@@ -1,0 +1,13 @@
+module foo {
+    namespace "foo";
+    prefix "foo";
+    yang-version 1;
+
+    typedef foo {
+        type bar;
+    }
+
+    typedef bar {
+        type foo;
+    }
+}
