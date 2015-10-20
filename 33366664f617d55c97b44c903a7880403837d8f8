@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fad0f9df_c079bc94",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/CaseShorthandImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-20T17:24:41Z",
+      "side": 1,
+      "message": "if (caseShorthand instanceof ...) {\n    final Optional\u003c...\u003e original \u003d ...\n    if (original.isPresent()) {\n        this.original \u003d ...\n    }\n}\n\nalso, since there are two code paths leading to null, it is probably best moved to a private static method.",
+      "revId": "33366664f617d55c97b44c903a7880403837d8f8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
