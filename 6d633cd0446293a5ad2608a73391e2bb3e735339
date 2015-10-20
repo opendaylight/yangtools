@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fad0f9df_085e1046",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/LeafEffectiveStatementImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-10-20T07:24:19Z",
+      "side": 1,
+      "message": "This behaviour SHOULD be configurable and would require introduction of STRICT and COMPATIBILITY mode.\n\nIf it is present in system by default and just emits WARNING, we can not prevent in compile time for introduction of new models with such flaw.",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 9
+      },
+      "revId": "6d633cd0446293a5ad2608a73391e2bb3e735339",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_285bd455",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/stmt/effective/build/test/EffectiveStatementTypeTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 509,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-10-20T07:24:19Z",
+      "side": 1,
+      "message": "Please introduce separate Test for that.",
+      "range": {
+        "startLine": 503,
+        "startChar": 4,
+        "endLine": 509,
+        "endChar": 5
+      },
+      "revId": "6d633cd0446293a5ad2608a73391e2bb3e735339",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_e87dccb2",
+        "filename": "yang/yang-parser-impl/src/test/resources/type-tests/types.yang",
+        "patchSetId": 3
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-10-20T07:24:19Z",
+      "side": 1,
+      "message": "Please introduce separate test for this, do not modify existing ones.",
+      "range": {
+        "startLine": 95,
+        "startChar": 0,
+        "endLine": 97,
+        "endChar": 5
+      },
+      "revId": "6d633cd0446293a5ad2608a73391e2bb3e735339",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
