@@ -72,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "fad0f9df_a0e9181c",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/stmt/effective/build/test/EffectiveStatementTypeTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 509,
+      "author": {
+        "id": 1569
+      },
+      "writtenOn": "2015-10-20T17:43:41Z",
+      "side": 1,
+      "message": "Can you clarify?  You want a separate .java test file for one case when all the other cases are in one file?",
+      "parentUuid": "fad0f9df_285bd455",
+      "range": {
+        "startLine": 503,
+        "startChar": 4,
+        "endLine": 509,
+        "endChar": 5
+      },
+      "revId": "6d633cd0446293a5ad2608a73391e2bb3e735339",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fad0f9df_e87dccb2",
         "filename": "yang/yang-parser-impl/src/test/resources/type-tests/types.yang",
         "patchSetId": 3
@@ -83,6 +107,30 @@
       "writtenOn": "2015-10-20T07:24:19Z",
       "side": 1,
       "message": "Please introduce separate test for this, do not modify existing ones.",
+      "range": {
+        "startLine": 95,
+        "startChar": 0,
+        "endLine": 97,
+        "endChar": 5
+      },
+      "revId": "6d633cd0446293a5ad2608a73391e2bb3e735339",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_c0ee9c22",
+        "filename": "yang/yang-parser-impl/src/test/resources/type-tests/types.yang",
+        "patchSetId": 3
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 1569
+      },
+      "writtenOn": "2015-10-20T17:43:41Z",
+      "side": 1,
+      "message": "Why is this case any different than leaf-empty ?  Why should it be in a separate test?",
+      "parentUuid": "fad0f9df_e87dccb2",
       "range": {
         "startLine": 95,
         "startChar": 0,
