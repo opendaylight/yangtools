@@ -1,0 +1,16 @@
+{
+    "hop": [
+        {
+            "address": "192.0.2.1",
+            "lrs-bits": "lookup rloc-probe strict"
+        },
+        {
+            "address": "192.0.2.2",
+            "lrs-bits": "lookup rloc-probe"
+        },
+        {
+            "address": "192.0.2.3",
+            "lrs-bits": "lookup rloc-probe strict"
+        }
+    ]
+}

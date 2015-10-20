@@ -105,10 +105,14 @@ public final class JsonParserStream implements Closeable, Flushable {
     }
 
     private void setValue(final AbstractNodeDataWithSchema parent, final String value) {
-        Preconditions.checkArgument(parent instanceof SimpleNodeDataWithSchema, "Node %s is not a simple type", parent.getSchema().getQName());
+        Preconditions.checkArgument(parent instanceof SimpleNodeDataWithSchema, "Node %s is not a simple type", parent
+                .getSchema().getQName());
+        SimpleNodeDataWithSchema parentSimpleNode = (SimpleNodeDataWithSchema) parent;
+        Preconditions.checkArgument(parentSimpleNode.getValue() == null, "Node '%s' has already set its value to '%s'",
+                parentSimpleNode.getSchema().getQName(), parentSimpleNode.getValue());
 
-        final Object translatedValue = translateValueByType(value, parent.getSchema());
-        ((SimpleNodeDataWithSchema) parent).setValue(translatedValue);
+        final Object translatedValue = translateValueByType(value, parentSimpleNode.getSchema());
+        parentSimpleNode.setValue(translatedValue);
     }
 
     public void read(final JsonReader in, AbstractNodeDataWithSchema parent) throws IOException {
