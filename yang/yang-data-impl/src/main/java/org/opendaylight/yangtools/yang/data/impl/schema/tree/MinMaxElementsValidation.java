@@ -113,7 +113,9 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
                     }
                     break;
                 case DELETE:
-                    result--;
+                    if (modChild.getOriginal().isPresent()) {
+                        result--;
+                    }
                     break;
                 case NONE:
                 case TOUCH:
