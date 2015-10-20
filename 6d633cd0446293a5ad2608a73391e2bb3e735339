@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "fad0f9df_005fc40f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/LeafEffectiveStatementImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1569
+      },
+      "writtenOn": "2015-10-20T17:32:48Z",
+      "side": 1,
+      "message": "We agree that we don\u0027t want a runtime Null pointer exception.\nDo we agree that we want a human readable warning message which directs the user to the source of the failure?\nIf we don\u0027t want to default to \"string\" as Robert had stated, then what behavior do we want?  Simply leave it null ?  Is \"empty\" a better default?\nWe need to make a change quickly so that Be downstream developers can mount this device like they could in He/Li ... even if we have to make a temporary change until netconf prevents this from being part of yang-ext mount.",
+      "parentUuid": "fad0f9df_085e1046",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 9
+      },
+      "revId": "6d633cd0446293a5ad2608a73391e2bb3e735339",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fad0f9df_285bd455",
         "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/stmt/effective/build/test/EffectiveStatementTypeTest.java",
         "patchSetId": 3
