@@ -114,14 +114,9 @@ public abstract class RangeRestrictedTypeBuilder<T extends TypeDefinition<T>> ex
 
     private static boolean rangeCovered(final List<RangeConstraint> where,
             final RangeConstraint what) {
-        // We have ensured the types match, and we are sure each of those types implements comparable
-        @SuppressWarnings("unchecked")
-        final Comparable<Object> min = (Comparable<Object>) what.getMin();
-        @SuppressWarnings("unchecked")
-        final Comparable<Object> max = (Comparable<Object>) what.getMax();
-
         for (RangeConstraint c : where) {
-            if (min.compareTo(c.getMin()) >= 0 && max.compareTo(c.getMax()) <= 0) {
+            if (NumberUtil.NUMBER_COMPARATOR.compare(what.getMin(),  c.getMin()) >= 0 &&
+                    NumberUtil.NUMBER_COMPARATOR.compare(what.getMax(), c.getMax()) <= 0) {
                 return true;
             }
         }
