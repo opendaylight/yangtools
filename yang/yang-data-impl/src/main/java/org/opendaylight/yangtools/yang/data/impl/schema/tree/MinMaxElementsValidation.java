@@ -76,6 +76,10 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
         final int childrenAfter = findChildrenAfter(modification);
 
         final int childrenTotal = childrenBefore + childrenAfter + numOfChildrenFromChildMods(modification, current);
+        if (minElements != null && minElements == 0 && childrenTotal < 0) {
+            LOG.error("Invalid number of elements %s", childrenTotal);
+            return;
+        }
         if (minElements != null && minElements > childrenTotal) {
             throw new DataValidationFailedException(path, String.format(
                     "%s does not have enough elements (%s), needs at least %s", modification.getIdentifier(),
