@@ -137,7 +137,7 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     }
 
     @Override
-    public TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
+    protected TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
         /*
          * The user may have issued an empty merge operation. In this case we do not perform
          * a data tree mutation, do not pass GO, and do not collect useless garbage. It
