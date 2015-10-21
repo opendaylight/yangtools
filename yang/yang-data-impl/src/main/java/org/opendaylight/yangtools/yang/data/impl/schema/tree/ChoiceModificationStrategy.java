@@ -77,7 +77,8 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
         return ImmutableChoiceNodeBuilder.create((ChoiceNode) original);
     }
 
-    private void enforceCases(final NormalizedNode<?, ?> normalizedNode) {
+    private void enforceCases(final TreeNode tree) {
+        final NormalizedNode<?, ?> normalizedNode = tree.getData();
         Verify.verify(normalizedNode instanceof ChoiceNode);
         final Collection<DataContainerChild<?, ?>> children = ((ChoiceNode) normalizedNode).getValue();
         if (!children.isEmpty()) {
@@ -94,13 +95,16 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
                         firstChild.getIdentifier(), enforcer, id, other, maybeChild.get());
                 }
             }
+
+            // Make sure all mandatory children are present
+            enforcer.enforceOnTreeNode(tree);
         }
     }
 
     @Override
     protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
         final TreeNode ret = super.applyMerge(modification, currentMeta, version);
-        enforceCases(ret.getData());
+        enforceCases(ret);
         return ret;
     }
 
@@ -108,14 +112,14 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
     protected TreeNode applyWrite(final ModifiedNode modification, final Optional<TreeNode> currentMeta,
             final Version version) {
         final TreeNode ret = super.applyWrite(modification, currentMeta, version);
-        enforceCases(ret.getData());
+        enforceCases(ret);
         return ret;
     }
 
     @Override
     protected TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
         final TreeNode ret = super.applyTouch(modification, currentMeta, version);
-        enforceCases(ret.getData());
+        enforceCases(ret);
         return ret;
     }
 }
