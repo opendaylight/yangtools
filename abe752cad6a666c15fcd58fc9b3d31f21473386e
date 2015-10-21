@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fad0f9df_94ba16e0",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStream.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-21T21:50:47Z",
+      "side": 1,
+      "message": "can we reconstruct the SchemaPath here?",
+      "revId": "abe752cad6a666c15fcd58fc9b3d31f21473386e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
