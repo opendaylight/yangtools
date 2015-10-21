@@ -59,9 +59,9 @@ public abstract class RangeRestrictedTypeBuilder<T extends TypeDefinition<T>> ex
 
             if (max instanceof UnresolvedNumber || min instanceof UnresolvedNumber) {
                 final Number rMax = max instanceof UnresolvedNumber ?
-                        ((UnresolvedNumber)max).resolve(baseRangeConstraints) : max;
+                        ((UnresolvedNumber)max).resolveRange(baseRangeConstraints) : max;
                 final Number rMin = min instanceof UnresolvedNumber ?
-                        ((UnresolvedNumber)min).resolve(baseRangeConstraints) : min;
+                        ((UnresolvedNumber)min).resolveRange(baseRangeConstraints) : min;
 
                 builder.add(BaseConstraints.newRangeConstraint(rMin, rMax, Optional.fromNullable(c.getDescription()),
                     Optional.fromNullable(c.getReference())));
