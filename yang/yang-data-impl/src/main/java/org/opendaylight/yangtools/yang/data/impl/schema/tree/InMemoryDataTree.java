@@ -75,7 +75,8 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
 
         final ModificationApplyOperation rootNode;
         if (rootSchemaNode instanceof ContainerSchemaNode) {
-            rootNode = new PresenceContainerModificationStrategy((ContainerSchemaNode) rootSchemaNode, treeType);
+            // FIXME: real root needs to enfore presence, but that require pre-population
+            rootNode = new ContainerModificationStrategy((ContainerSchemaNode) rootSchemaNode, treeType);
         } else {
             rootNode = SchemaAwareApplyOperation.from(rootSchemaNode, treeType);
         }
