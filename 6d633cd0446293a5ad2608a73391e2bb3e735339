@@ -2,6 +2,23 @@
   "comments": [
     {
       "key": {
+        "uuid": "fad0f9df_54ab4e89",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/LeafEffectiveStatementImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-21T22:07:12Z",
+      "side": 1,
+      "message": "do not use \\n\n\ndo not use string concatenation, but proper format string (see SLF4J for details)\n\ndo not invoke explicit toString() (the appender will call it anyway if the log message is really going to be logged)",
+      "revId": "6d633cd0446293a5ad2608a73391e2bb3e735339",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fad0f9df_085e1046",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/LeafEffectiveStatementImpl.java",
         "patchSetId": 3
@@ -37,6 +54,30 @@
       "side": 1,
       "message": "We agree that we don\u0027t want a runtime Null pointer exception.\nDo we agree that we want a human readable warning message which directs the user to the source of the failure?\nIf we don\u0027t want to default to \"string\" as Robert had stated, then what behavior do we want?  Simply leave it null ?  Is \"empty\" a better default?\nWe need to make a change quickly so that Be downstream developers can mount this device like they could in He/Li ... even if we have to make a temporary change until netconf prevents this from being part of yang-ext mount.",
       "parentUuid": "fad0f9df_085e1046",
+      "range": {
+        "startLine": 43,
+        "startChar": 0,
+        "endLine": 48,
+        "endChar": 9
+      },
+      "revId": "6d633cd0446293a5ad2608a73391e2bb3e735339",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_b4a63ac0",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/LeafEffectiveStatementImpl.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-21T22:07:12Z",
+      "side": 1,
+      "message": "We want to be throwing a SchemaSourceException, which will hold the source location of this statement (available from\nctx). This will provide the user-friendly message (if I remember correctly).\n\nDo we have the corresponding location in NETCONF? (should be the SchemaContext assembly, e.g. not very hard to find)",
+      "parentUuid": "fad0f9df_005fc40f",
       "range": {
         "startLine": 43,
         "startChar": 0,
