@@ -9,10 +9,16 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.base.Optional;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
+import java.util.Collection;
 import java.util.Map;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import java.util.Map.Entry;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
@@ -23,27 +29,38 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 final class ChoiceModificationStrategy extends AbstractNodeContainerModificationStrategy {
-    private final Map<YangInstanceIdentifier.PathArgument, ModificationApplyOperation> childNodes;
+    private final Map<PathArgument, ModificationApplyOperation> childNodes;
+    // FIXME: enforce leaves not coming from two case statements at the same time
+    private final Map<CaseEnforcer, Collection<CaseEnforcer>> exclusions;
+    private final Map<PathArgument, CaseEnforcer> caseEnforcers;
 
     ChoiceModificationStrategy(final ChoiceSchemaNode schemaNode, final TreeType treeType) {
         super(ChoiceNode.class, treeType);
-        final ImmutableMap.Builder<YangInstanceIdentifier.PathArgument, ModificationApplyOperation> child = ImmutableMap.builder();
 
+        final Builder<PathArgument, ModificationApplyOperation> childBuilder = ImmutableMap.builder();
+        final Builder<PathArgument, CaseEnforcer> enforcerBuilder = ImmutableMap.builder();
         for (final ChoiceCaseNode caze : schemaNode.getCases()) {
-            if (SchemaAwareApplyOperation.belongsToTree(treeType,caze)) {
-                for (final DataSchemaNode cazeChild : caze.getChildNodes()) {
-                    if (SchemaAwareApplyOperation.belongsToTree(treeType,cazeChild)) {
-                        final ModificationApplyOperation childNode = SchemaAwareApplyOperation.from(cazeChild, treeType);
-                        child.put(NodeIdentifier.create(cazeChild.getQName()), childNode);
-                    }
+            final CaseEnforcer enforcer = CaseEnforcer.forTree(caze, treeType);
+            if (enforcer != null) {
+                for (final Entry<NodeIdentifier, DataSchemaNode> e : enforcer.getChildEntries()) {
+                    childBuilder.put(e.getKey(), SchemaAwareApplyOperation.from(e.getValue(), treeType));
+                    enforcerBuilder.put(e.getKey(), enforcer);
                 }
             }
         }
-        childNodes = child.build();
+        childNodes = childBuilder.build();
+        caseEnforcers = enforcerBuilder.build();
+
+        final Builder<CaseEnforcer, Collection<CaseEnforcer>> exclusionsBuilder = ImmutableMap.builder();
+        for (CaseEnforcer e : caseEnforcers.values()) {
+            exclusionsBuilder.put(e, ImmutableList.copyOf(
+                Collections2.filter(caseEnforcers.values(), Predicates.not(Predicates.equalTo(e)))));
+        }
+        exclusions = exclusionsBuilder.build();
     }
 
     @Override
-    public Optional<ModificationApplyOperation> getChild(final YangInstanceIdentifier.PathArgument child) {
+    public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
         return Optional.fromNullable(childNodes.get(child));
     }
 
