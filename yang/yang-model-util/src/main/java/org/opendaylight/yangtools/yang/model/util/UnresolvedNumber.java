@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import java.util.List;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
 @Beta
@@ -20,10 +21,13 @@ public abstract class UnresolvedNumber extends Number implements Immutable {
         private static final long serialVersionUID = 1L;
 
         @Override
-        public Number resolve(final List<RangeConstraint> constraints) {
-            final Number ret = constraints.get(constraints.size() - 1).getMax();
-            Preconditions.checkArgument(!(ret instanceof UnresolvedNumber));
-            return ret;
+        public Number resolveLength(final List<LengthConstraint> constraints) {
+            return resolve(constraints.get(constraints.size() - 1).getMax());
+        }
+
+        @Override
+        public Number resolveRange(final List<RangeConstraint> constraints) {
+            return resolve(constraints.get(constraints.size() - 1).getMax());
         }
 
         @Override
@@ -39,10 +43,13 @@ public abstract class UnresolvedNumber extends Number implements Immutable {
         private static final long serialVersionUID = 1L;
 
         @Override
-        public Number resolve(final List<RangeConstraint> constraints) {
-            final Number ret = constraints.get(0).getMin();
-            Preconditions.checkArgument(!(ret instanceof UnresolvedNumber));
-            return ret;
+        public Number resolveLength(final List<LengthConstraint> constraints) {
+            return resolve(constraints.get(0).getMin());
+        }
+
+        @Override
+        public Number resolveRange(final List<RangeConstraint> constraints) {
+            return resolve(constraints.get(0).getMin());
         }
 
         @Override
@@ -83,7 +90,13 @@ public abstract class UnresolvedNumber extends Number implements Immutable {
         throw new UnsupportedOperationException();
     }
 
-    public abstract Number resolve(List<RangeConstraint> constraints);
+    private final static Number resolve(final Number number) {
+        Preconditions.checkArgument(!(number instanceof UnresolvedNumber));
+        return number;
+    }
+
+    public abstract Number resolveLength(List<LengthConstraint> constraints);
+    public abstract Number resolveRange(List<RangeConstraint> constraints);
 
     @Override
     public abstract String toString();

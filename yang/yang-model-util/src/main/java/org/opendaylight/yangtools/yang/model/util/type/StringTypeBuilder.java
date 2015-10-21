@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import java.util.ArrayList;
 import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 
@@ -27,8 +28,27 @@ public final class StringTypeBuilder extends LengthRestrictedTypeBuilder<StringT
     }
 
     @Override
-    public RestrictedStringType buildType() {
+    List<LengthConstraint> getLengthConstraints(final StringTypeDefinition type) {
+        return type.getLengthConstraints();
+    }
+
+     @Override
+    List<LengthConstraint> typeLengthConstraints() {
+        /**
+         * Length constraint imposed on YANG string type by our implementation. {@link String#length()} is an integer,
+         * capping our ability to support strings up to 18446744073709551615 as defined in
+         * http://tools.ietf.org/html/rfc6020#section-9.4.4.
+         *
+         * FIXME: We could bump this number up to allow such models, but that could lead to unexpected run-time errors.
+         *        In order to do that, the parser would need another pass on the effective statements, which would cap
+         *        the constraints to the run-time environment.
+         */
+        return JavaLengthConstraints.INTEGER_SIZE_CONSTRAINTS;
+    }
+
+    @Override
+    StringTypeDefinition buildType(final List<LengthConstraint> lengthConstraints) {
         return new RestrictedStringType(getBaseType(), getPath(), getUnknownSchemaNodes(),
-            calculateLenghtConstraints(getBaseType().getLengthConstraints()), patternConstraints);
+            lengthConstraints, patternConstraints);
     }
 }
