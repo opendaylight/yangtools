@@ -260,16 +260,14 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
             final Optional<TreeNode> current) throws DataValidationFailedException;
 
     /**
-     * Checks if supplied schema node belong to specified Data Tree type.
+     * Checks if supplied schema node belong to specified Data Tree type. All nodes belong to the operational tree,
+     * nodes in configuration tree are marked as such.
      *
      * @param treeType Tree Type
      * @param node Schema node
      * @return
      */
     static boolean belongsToTree(final TreeType treeType, final DataSchemaNode node) {
-        if(treeType == TreeType.CONFIGURATION) {
-            return node.isConfiguration();
-        }
-        return true;
+        return treeType == TreeType.OPERATIONAL || node.isConfiguration();
     }
 }
