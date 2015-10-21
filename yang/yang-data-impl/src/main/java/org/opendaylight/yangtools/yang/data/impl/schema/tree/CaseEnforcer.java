@@ -16,28 +16,31 @@ import java.util.Set;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 final class CaseEnforcer implements Immutable {
     private final Map<NodeIdentifier, DataSchemaNode> children;
+    private final MandatoryLeafEnforcer enforcer;
 
-    private CaseEnforcer(final Map<NodeIdentifier, DataSchemaNode> children) {
+    private CaseEnforcer(final Map<NodeIdentifier, DataSchemaNode> children, final MandatoryLeafEnforcer enforcer) {
         this.children = Preconditions.checkNotNull(children);
+        this.enforcer = Preconditions.checkNotNull(enforcer);
     }
 
-    static CaseEnforcer forTree(final ChoiceCaseNode schema, final TreeType treeType) {
+    static CaseEnforcer forTree(final ChoiceCaseNode schema, final TreeType type) {
         final Builder<NodeIdentifier, DataSchemaNode> builder = ImmutableMap.builder();
-        if (SchemaAwareApplyOperation.belongsToTree(treeType, schema)) {
+        if (SchemaAwareApplyOperation.belongsToTree(type, schema)) {
             for (DataSchemaNode child : schema.getChildNodes()) {
-                if (SchemaAwareApplyOperation.belongsToTree(treeType, child)) {
+                if (SchemaAwareApplyOperation.belongsToTree(type, child)) {
                     builder.put(NodeIdentifier.create(child.getQName()), child);
                 }
             }
         }
 
         final Map<NodeIdentifier, DataSchemaNode> children = builder.build();
-        return children.isEmpty() ? null : new CaseEnforcer(children);
+        return children.isEmpty() ? null : new CaseEnforcer(children, MandatoryLeafEnforcer.forContainer(schema, type));
     }
 
     Set<Entry<NodeIdentifier, DataSchemaNode>> getChildEntries() {
@@ -46,5 +49,9 @@ final class CaseEnforcer implements Immutable {
 
     Set<NodeIdentifier> getChildIdentifiers() {
         return children.keySet();
+    }
+
+    void enforceOnTreeNode(final TreeNode tree) {
+        enforcer.enforceOnTreeNode(tree);
     }
 }
