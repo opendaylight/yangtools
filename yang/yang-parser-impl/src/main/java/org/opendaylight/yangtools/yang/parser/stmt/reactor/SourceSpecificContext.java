@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -54,7 +53,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnionSpecificationImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
 public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBehaviour.Registry, Mutable {
 
@@ -130,32 +128,9 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         return current.substatementBuilder(def, ref);
     }
 
+    // FIXME: This should be populated differently
     StatementDefinition getNewStatementDefinition(final QName qName) {
-        return new StatementDefinition() {
-            @Nonnull
-            @Override
-            public QName getStatementName() {
-                return qName;
-            }
-
-            @Nullable
-            @Override
-            public QName getArgumentName() {
-                return qName;
-            }
-
-            @Nonnull
-            @Override
-            public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
-                return UnknownStatementImpl.class;
-            }
-
-            @Nonnull
-            @Override
-            public Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
-                return UnknownEffectiveStatementImpl.class;
-            }
-        };
+        return new ModelDefinedStatementDefinition(qName);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
