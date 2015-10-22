@@ -40,4 +40,9 @@ public class RetestModel {
     public static SchemaContext createTestContext() throws ReactorException {
         return RetestUtils.parseYangStreams(Arrays.asList(getDatastoreTestInputStream()));
     }
+
+    public static SchemaContext createTestContext(String resourcePath) throws ReactorException {
+        InputStream yangStream = RetestModel.class.getResourceAsStream(resourcePath);
+        return RetestUtils.parseYangStreams(Arrays.asList(yangStream));
+    }
 }
