@@ -11,6 +11,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
+
+import com.google.common.base.VerifyException;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -148,7 +150,7 @@ public class ConfigStatementValidationTest {
         inMemoryDataTree.commit(prepare);
     }
 
-    @Test(expected=SchemaValidationFailedException.class)
+    @Test(expected=VerifyException.class)
     public void testOnDataCaseLeafFail() throws DataValidationFailedException {
         final InMemoryDataTree inMemoryDataTree =
                 (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(TreeType.CONFIGURATION);
