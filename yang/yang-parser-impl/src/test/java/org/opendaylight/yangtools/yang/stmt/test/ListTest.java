@@ -81,7 +81,7 @@ public class ListTest {
 
         LeafListSchemaNode leafList = (LeafListSchemaNode) list.getDataChildByName("list-of-leaves");
         assertNotNull(leafList);
-        assertFalse(leafList.getConstraints().isMandatory());
+        assertTrue(leafList.getConstraints().isMandatory());
         assertTrue(leafList.isUserOrdered());
         assertEquals(2, leafList.getConstraints().getMinElements().intValue());
         assertEquals(20, leafList.getConstraints().getMaxElements().intValue());

@@ -240,6 +240,9 @@ public final class ConstraintsBuilderImpl implements ConstraintsBuilder {
 
         private void setMinElements(final Integer minElements) {
             this.minElements = minElements;
+            if (minElements != null && minElements > 0) {
+                mandatory = true;
+            }
         }
 
         @Override

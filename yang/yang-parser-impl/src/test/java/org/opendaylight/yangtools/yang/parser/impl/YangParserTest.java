@@ -146,7 +146,7 @@ public class YangParserTest {
         ConstraintDefinition constraints = ifEntry.getConstraints();
         assertNull(constraints.getWhenCondition());
         assertEquals(0, constraints.getMustConstraints().size());
-        assertFalse(constraints.isMandatory());
+        assertTrue(constraints.isMandatory());
         assertEquals(1, (int) constraints.getMinElements());
         assertEquals(11, (int) constraints.getMaxElements());
         // test AugmentationTarget args
