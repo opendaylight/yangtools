@@ -24,10 +24,6 @@ public final class EffectiveConstraintDefinitionImpl implements ConstraintDefini
 
     public EffectiveConstraintDefinitionImpl(final EffectiveStatementBase<?, ?> parent) {
 
-        MandatoryEffectiveStatementImpl firstMandatoryStmt = parent
-                .firstEffective(MandatoryEffectiveStatementImpl.class);
-        this.mandatory = (firstMandatoryStmt == null) ? false : firstMandatoryStmt.argument();
-
         WhenEffectiveStatementImpl firstWhenStmt = parent.firstEffective(WhenEffectiveStatementImpl.class);
         this.whenCondition = (firstWhenStmt == null) ? null : firstWhenStmt.argument();
 
@@ -43,6 +39,10 @@ public final class EffectiveConstraintDefinitionImpl implements ConstraintDefini
         } else {
             this.maxElements = Integer.valueOf(maxElementsArg);
         }
+
+        MandatoryEffectiveStatementImpl firstMandatoryStmt = parent
+                .firstEffective(MandatoryEffectiveStatementImpl.class);
+        this.mandatory = (firstMandatoryStmt == null) ? minElements > 0 : firstMandatoryStmt.argument();
 
         Collection<MustDefinition> mustSubstatements = parent.allSubstatementsOfType(MustDefinition.class);
         this.mustConstraints = ImmutableSet.copyOf(mustSubstatements);
