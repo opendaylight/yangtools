@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 
-public class TestModel {
+public final class TestModel {
 
     public static final QName TEST_QNAME = QName.create("urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test", "2014-03-13",
         "test");
@@ -34,6 +34,9 @@ public class TestModel {
     public static final QName TWO_QNAME = QName.create(TEST_QNAME, "two");
     public static final QName THREE_QNAME = QName.create(TEST_QNAME, "three");
 
+    private TestModel() {
+        throw new UnsupportedOperationException();
+    }
 
     public static final InputStream getDatastoreTestInputStream() {
         return TestModel.class.getResourceAsStream(DATASTORE_TEST_YANG);
