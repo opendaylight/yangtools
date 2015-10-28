@@ -1,0 +1,21 @@
+module bar {
+    namespace "bar";
+    prefix bar;
+
+    import foo { prefix foo; revision-date 2015-01-01; }
+
+    revision 2015-02-02 {
+        description "test";
+    }
+
+    extension my-ext {
+        argument name;
+    }
+
+    augment "/foo:target" {
+        bar:my-ext "arg";
+        leaf my-leaf {
+            type string;
+        }
+    }
+}

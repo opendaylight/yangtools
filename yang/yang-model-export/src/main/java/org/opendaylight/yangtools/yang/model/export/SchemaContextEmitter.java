@@ -1090,8 +1090,21 @@ class SchemaContextEmitter {
 
     private void emitUnknownStatementNodes(final List<UnknownSchemaNode> unknownNodes) {
         for (final UnknownSchemaNode unknonwnNode : unknownNodes) {
-            emitUnknownStatementNode(unknonwnNode);
+            if (!isAddedByUsesOrAugmentation(unknonwnNode)) {
+                emitUnknownStatementNode(unknonwnNode);
+            }
         }
+    }
+
+    private boolean isAddedByUsesOrAugmentation(final UnknownSchemaNode unknonwnNode) {
+        boolean isAddedByAugmentation;
+        try {
+            isAddedByAugmentation = unknonwnNode.isAddedByAugmentation();
+        } catch (UnsupportedOperationException e) {
+            isAddedByAugmentation = false;
+        }
+
+        return isAddedByAugmentation || unknonwnNode.isAddedByUses();
     }
 
     private void emitUnknownStatementNode(final UnknownSchemaNode node) {
