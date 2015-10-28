@@ -29,8 +29,8 @@ public interface FromNormalizedNodeSerializer<E, N extends NormalizedNode<?, ?>,
      * process creates only one E element as a result e.g. container node, the
      * result element is expected to be wrapped in a list.
      *
-     * @param schema
-     * @param node
+     * @param schema schema
+     * @param node node
      * @return Serialized N node as a list of E elements
      */
     Iterable<E> serialize(S schema, N node);
