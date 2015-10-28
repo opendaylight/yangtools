@@ -166,4 +166,8 @@ final class UnknownSchemaNodeImpl implements UnknownSchemaNode {
         return true;
     }
 
+    @Override
+    public boolean isAddedByAugmentation() {
+        return false;
+    }
 }
