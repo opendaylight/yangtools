@@ -27,6 +27,7 @@ public final class UnknownEffectiveStatementImpl extends AbstractEffectiveDocume
         implements UnknownSchemaNode {
 
     private final boolean addedByUses;
+    private final boolean addedByAugmentation;
     private final QName maybeQNameArgument;
     private final SchemaPath path;
     private final ExtensionDefinition extension;
@@ -50,11 +51,11 @@ public final class UnknownEffectiveStatementImpl extends AbstractEffectiveDocume
 
         // initCopyType
         List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
-        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)
-                || copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES)) {
-            this.addedByUses = true;
+        if (copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES_AUGMENTATION)) {
+            this.addedByUses = this.addedByAugmentation = true;
         } else {
-            this.addedByUses = false;
+            this.addedByAugmentation = copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_AUGMENTATION);
+            this.addedByUses = copyTypesFromOriginal.contains(TypeOfCopy.ADDED_BY_USES);
         }
 
         // FIXME: Remove following section after fixing 4380
@@ -80,6 +81,11 @@ public final class UnknownEffectiveStatementImpl extends AbstractEffectiveDocume
                 unknownNodes.add((UnknownEffectiveStatementImpl) effectiveStatement);
             }
         }
+    }
+
+    @Override
+    public boolean isAddedByAugmentation() {
+        return addedByAugmentation;
     }
 
     @Override
@@ -165,4 +171,5 @@ public final class UnknownEffectiveStatementImpl extends AbstractEffectiveDocume
         sb.append(nodeParameter);
         return sb.toString();
     }
+
 }
