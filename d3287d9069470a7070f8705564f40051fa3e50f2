@@ -1,0 +1,242 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dad5f5cf_b3617bd5",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YinStatementParserImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-29T22:31:48Z",
+      "side": 1,
+      "message": "setAttributes makes this a Mutable!\nadd javadocs to explain lifecycle, or initialize completely in constructor",
+      "revId": "d3287d9069470a7070f8705564f40051fa3e50f2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_1365e7e0",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YinStatementParserImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-29T22:31:48Z",
+      "side": 1,
+      "message": "static fields should be first",
+      "revId": "d3287d9069470a7070f8705564f40051fa3e50f2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_f36703e9",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YinStatementParserImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-29T22:31:48Z",
+      "side": 1,
+      "message": "can it be null?",
+      "revId": "d3287d9069470a7070f8705564f40051fa3e50f2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_d35e7f12",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YinStatementParserImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-29T22:31:48Z",
+      "side": 1,
+      "message": "this method has to be split, it is simply too large and has a lot of if/else statements",
+      "revId": "d3287d9069470a7070f8705564f40051fa3e50f2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_739b13ca",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YinStatementParserImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 144,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-29T22:31:48Z",
+      "side": 1,
+      "message": "proper logging message!",
+      "revId": "d3287d9069470a7070f8705564f40051fa3e50f2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_93a0f7f5",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YinStatementParserImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 153,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-29T22:31:48Z",
+      "side": 1,
+      "message": "two methods one for yinElement \u003d\u003d true, other for false",
+      "revId": "d3287d9069470a7070f8705564f40051fa3e50f2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_33a58b04",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/YinStatementParserImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 174,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-29T22:31:48Z",
+      "side": 1,
+      "message": "indentation?",
+      "revId": "d3287d9069470a7070f8705564f40051fa3e50f2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_53aa8fd5",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/source/BelongsToPrefixToModuleIdentifier.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-29T22:31:48Z",
+      "side": 1,
+      "message": "a better javadoc is needed",
+      "revId": "d3287d9069470a7070f8705564f40051fa3e50f2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_13ac07ed",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-29T22:31:48Z",
+      "side": 1,
+      "message": "add javadoc pointing to replaacement method or guidance for users",
+      "revId": "d3287d9069470a7070f8705564f40051fa3e50f2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_b3b89b2b",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/Utils.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-29T22:31:48Z",
+      "side": 1,
+      "message": "public method: add javadoc",
+      "revId": "d3287d9069470a7070f8705564f40051fa3e50f2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_d3b51f32",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/YinStatementSourceImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-29T22:31:48Z",
+      "side": 1,
+      "message": "useless check: inputStream is guaranteed to be non-null at his point",
+      "revId": "d3287d9069470a7070f8705564f40051fa3e50f2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_73823354",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/YinStatementSourceImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 53,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-29T22:31:48Z",
+      "side": 1,
+      "message": "is null allowed?",
+      "revId": "d3287d9069470a7070f8705564f40051fa3e50f2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_93879761",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/YinStatementSourceImpl.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 102,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-29T22:31:48Z",
+      "side": 1,
+      "message": "missing proper message",
+      "revId": "d3287d9069470a7070f8705564f40051fa3e50f2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_337cab72",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/stmt/retest/TestUtils.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-10-29T22:31:48Z",
+      "side": 1,
+      "message": "single use",
+      "revId": "d3287d9069470a7070f8705564f40051fa3e50f2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
