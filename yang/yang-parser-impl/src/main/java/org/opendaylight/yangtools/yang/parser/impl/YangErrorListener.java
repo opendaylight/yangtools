@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class YangErrorListener extends BaseErrorListener {
+public final class YangErrorListener extends BaseErrorListener {
     private static final Logger LOG = LoggerFactory.getLogger(YangErrorListener.class);
     private final List<YangSyntaxErrorException> exceptions = new ArrayList<>();
 
