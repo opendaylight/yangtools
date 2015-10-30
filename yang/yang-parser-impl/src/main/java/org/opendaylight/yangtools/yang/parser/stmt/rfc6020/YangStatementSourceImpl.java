@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,9 +14,14 @@ import java.net.URISyntaxException;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementLexer;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.impl.YangErrorListener;
 import org.opendaylight.yangtools.yang.parser.impl.YangStatementParserListenerImpl;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
@@ -25,8 +29,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -50,7 +52,7 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
             walker = new ParseTreeWalker();
             yangStatementModelParser = new YangStatementParserListenerImpl(sourceName);
         } catch (Exception e) {
-            LOG.warn(e.getMessage(), e);
+            logError(e);
         }
     }
 
@@ -60,7 +62,7 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
             walker = new ParseTreeWalker();
             yangStatementModelParser = new YangStatementParserListenerImpl(sourceName);
         } catch (Exception e) {
-            LOG.warn(e.getMessage(), e);
+            logError(e);
         }
     }
 
@@ -71,7 +73,7 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
             walker = new ParseTreeWalker();
             yangStatementModelParser = new YangStatementParserListenerImpl(sourceName);
         } catch (Exception e) {
-            LOG.warn(e.getMessage(), e);
+            logError(e);
         }
     }
 
@@ -111,6 +113,11 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
         final YangStatementLexer lexer = new YangStatementLexer(new ANTLRInputStream(stream));
         final CommonTokenStream tokens = new CommonTokenStream(lexer);
         final YangStatementParser parser = new YangStatementParser(tokens);
+        //disconnect from console error output
+        parser.removeErrorListeners();
+
+        final YangErrorListener errorListener = new YangErrorListener();
+        parser.addErrorListener(errorListener);
 
         if(stream instanceof NamedFileInputStream) {
             sourceName = stream.toString();
@@ -124,8 +131,10 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
 //        if (sourceName == null) {
 //            sourceName = stream.toString();
 //        }
+        final StatementContext result = parser.statement();
+        errorListener.validate();
 
-        return parser.statement();
+        return result;
     }
 
     public YangStatementParser.StatementContext getYangAST() {
@@ -135,4 +144,12 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
 //    public InputStream getSourceStream() {
 //        return sourceStream;
 //    }
+
+    private static void logError(Exception e) {
+        if (e instanceof YangSyntaxErrorException) {
+            LOG.error(((YangSyntaxErrorException) e).getFormattedMessage(), e);
+        } else {
+            LOG.error(e.getMessage(), e);
+        }
+    }
 }
