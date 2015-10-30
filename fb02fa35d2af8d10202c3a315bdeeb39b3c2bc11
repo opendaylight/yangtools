@@ -169,6 +169,29 @@
       "revId": "fb02fa35d2af8d10202c3a315bdeeb39b3c2bc11",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "dad5f5cf_e9ff10a9",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/builder/impl/UnknownSchemaNodeImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-10-30T12:02:39Z",
+      "side": 1,
+      "message": "Return false;",
+      "range": {
+        "startLine": 171,
+        "startChar": 8,
+        "endLine": 171,
+        "endChar": 50
+      },
+      "revId": "fb02fa35d2af8d10202c3a315bdeeb39b3c2bc11",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
