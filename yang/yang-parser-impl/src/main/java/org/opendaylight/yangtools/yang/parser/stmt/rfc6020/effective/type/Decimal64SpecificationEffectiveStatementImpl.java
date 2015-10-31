@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType.Builder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.FractionDigitsEffectiveStatementImpl;
 
@@ -85,13 +84,13 @@ public class Decimal64SpecificationEffectiveStatementImpl extends
         if (!initRanges.isEmpty() && validateRanges(initRanges)) {
             isExtended = true;
             rangeConstraints = ImmutableList.copyOf(initRanges);
-            SchemaPath parentPath = Utils.getSchemaPath(ctx.getParentContext());
+            SchemaPath parentPath = ctx.getParentContext().getSchemaPath().get();
             extendedTypeQName = QName.create(parentPath.getLastComponent().getModule(), QNAME.getLocalName());
             path = parentPath.createChild(extendedTypeQName);
         } else {
             isExtended = false;
             rangeConstraints = DEFAULT_RANGE_STATEMENTS;
-            path = Utils.getSchemaPath(ctx.getParentContext()).createChild(QNAME);
+            path = ctx.getParentContext().getSchemaPath().get().createChild(QNAME);
         }
     }
 

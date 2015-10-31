@@ -72,7 +72,7 @@ public final class UnknownEffectiveStatementImpl extends AbstractEffectiveDocume
             }
             this.maybeQNameArgument = maybeQNameArgumentInit;
         }
-        path = Utils.getSchemaPath(ctx.getParentContext()).createChild(maybeQNameArgument);
+        path = ctx.getParentContext().getSchemaPath().get().createChild(maybeQNameArgument);
         nodeParameter = (ctx.rawStatementArgument() == null) ? "" : ctx.rawStatementArgument();
 
         // TODO init other fields (see Bug1412Test)

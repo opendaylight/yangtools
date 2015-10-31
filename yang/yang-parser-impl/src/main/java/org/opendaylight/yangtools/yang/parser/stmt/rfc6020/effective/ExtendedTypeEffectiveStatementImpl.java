@@ -69,9 +69,9 @@ implements
         final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> typeStmt =
                 ctx.getFromNamespace(TypeNamespace.class, qName);
         if (typeStmt == null) {
-            path = Utils.getSchemaPath(ctx);
+            path = ctx.getSchemaPath().get();
         } else {
-            path = Utils.getSchemaPath(ctx.getFromNamespace(TypeNamespace.class, qName));
+            path = ctx.getFromNamespace(TypeNamespace.class, qName).getSchemaPath().get();
         }
 
         UnitsEffectiveStatementImpl unitsStmt = firstEffective(UnitsEffectiveStatementImpl.class);
