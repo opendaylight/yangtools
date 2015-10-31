@@ -12,6 +12,8 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.Interner;
+import com.google.common.collect.Interners;
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +21,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -67,7 +68,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class Utils {
-
+    private static final Interner<SchemaPath> SCHEMAPATH_INTERNER = Interners.newWeakInterner();
     private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
     private static final CharMatcher DOUBLE_QUOTE_MATCHER = CharMatcher.is('"');
     private static final CharMatcher SINGLE_QUOTE_MATCHER = CharMatcher.is('\'');
@@ -301,21 +302,23 @@ public final class Utils {
     }
 
     public static SchemaPath getSchemaPath(final StmtContext<?, ?, ?> ctx) {
-
         if (ctx == null) {
             return null;
         }
 
-        final Iterator<StmtContext<?, ?, ?>> iteratorFromRoot = ctx.getStmtContextsFromRoot().iterator();
-        // skip root argument
-        if (iteratorFromRoot.hasNext()) {
-            iteratorFromRoot.next();
+        final Collection<StmtContext<?, ?, ?>> statementsFromRoot = ctx.getStmtContextsFromRoot();
+        if (statementsFromRoot.size() < 2) {
+            return SchemaPath.ROOT;
         }
 
-        List<QName> qNamesFromRoot = new LinkedList<>();
+        final Collection<QName> qNamesFromRoot = new ArrayList<>(statementsFromRoot.size() - 1);
+        final Iterator<StmtContext<?, ?, ?>> iteratorFromRoot = ctx.getStmtContextsFromRoot().iterator();
+        // skip root argument
+        iteratorFromRoot.next();
+
         while (iteratorFromRoot.hasNext()) {
-            StmtContext<?, ?, ?> nextStmtCtx = iteratorFromRoot.next();
-            Object nextStmtArgument = nextStmtCtx.getStatementArgument();
+            final StmtContext<?, ?, ?> nextStmtCtx = iteratorFromRoot.next();
+            final Object nextStmtArgument = nextStmtCtx.getStatementArgument();
             if (nextStmtArgument instanceof QName) {
                 QName qname = (QName) nextStmtArgument;
                 if (StmtContextUtils.producesDeclared(nextStmtCtx, UsesStatement.class)) {
@@ -328,16 +331,16 @@ public final class Utils {
                 qNamesFromRoot.add(qname);
             } else if (nextStmtArgument instanceof String) {
                 // FIXME: This may yield illegal argument exceptions
-                StatementContextBase<?, ?, ?> originalCtx = ctx
-                        .getOriginalCtx();
-                final QName qName = (originalCtx != null) ? qNameFromArgument(
-                        originalCtx, (String) nextStmtArgument)
+                final StatementContextBase<?, ?, ?> originalCtx = ctx.getOriginalCtx();
+                final QName qName = (originalCtx != null) ? qNameFromArgument(originalCtx, (String) nextStmtArgument)
                         : qNameFromArgument(ctx, (String) nextStmtArgument);
                 qNamesFromRoot.add(qName);
             } else if ((StmtContextUtils.producesDeclared(nextStmtCtx, AugmentStatement.class)
                        || StmtContextUtils.producesDeclared(nextStmtCtx, RefineStatement.class))
                     && nextStmtArgument instanceof SchemaNodeIdentifier) {
-                addQNamesFromSchemaNodeIdentifierToList(qNamesFromRoot, (SchemaNodeIdentifier) nextStmtArgument);
+                for (QName qname : ((SchemaNodeIdentifier) nextStmtArgument).getPathFromRoot()) {
+                    qNamesFromRoot.add(qname);
+                }
             } else if (isUnknownNode(nextStmtCtx)) {
                 qNamesFromRoot.add(nextStmtCtx.getPublicDefinition().getStatementName());
             } else {
@@ -345,8 +348,14 @@ public final class Utils {
             }
         }
 
-        final SchemaPath schemaPath = SchemaPath.create(qNamesFromRoot, true);
-        return schemaPath;
+        // Gradually construct SchemaPath, interning it at each step. This is needed to prevent SchemaPath instance
+        // explosion from the way we construct these paths (bottom-to-top instead of top-to-bottom)
+        SchemaPath path = SchemaPath.ROOT;
+        for (QName qname : qNamesFromRoot) {
+            path = SCHEMAPATH_INTERNER.intern(path.createChild(qname));
+        }
+
+        return path;
     }
 
     public static boolean isUnknownNode(final StmtContext<?, ?, ?> stmtCtx) {
@@ -360,13 +369,6 @@ public final class Utils {
                 ValidationBundleType.SUPPORTED_CASE_SHORTHANDS);
 
         return supportedCaseShorthands == null || supportedCaseShorthands.contains(statementCtx.getPublicDefinition());
-    }
-
-    private static void addQNamesFromSchemaNodeIdentifierToList(final List<QName> qNamesFromRoot,
-            final SchemaNodeIdentifier augmentTargetPath) {
-        for (QName qname : augmentTargetPath.getPathFromRoot()) {
-            qNamesFromRoot.add(qname);
-        }
     }
 
     public static Deviation.Deviate parseDeviateFromString(final String deviate) {
