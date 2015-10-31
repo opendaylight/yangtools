@@ -18,8 +18,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -37,18 +35,13 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -59,15 +52,12 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModul
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.RootStatementContext;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class Utils {
-
     private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
     private static final CharMatcher DOUBLE_QUOTE_MATCHER = CharMatcher.is('"');
     private static final CharMatcher SINGLE_QUOTE_MATCHER = CharMatcher.is('\'');
@@ -300,73 +290,9 @@ public final class Utils {
         return (StatementContextBase<?, ?, ?>) rootStmtCtx.getFromNamespace(SchemaNodeIdentifierBuildNamespace.class, node);
     }
 
-    public static SchemaPath getSchemaPath(final StmtContext<?, ?, ?> ctx) {
-
-        if (ctx == null) {
-            return null;
-        }
-
-        final Iterator<StmtContext<?, ?, ?>> iteratorFromRoot = ctx.getStmtContextsFromRoot().iterator();
-        // skip root argument
-        if (iteratorFromRoot.hasNext()) {
-            iteratorFromRoot.next();
-        }
-
-        List<QName> qNamesFromRoot = new LinkedList<>();
-        while (iteratorFromRoot.hasNext()) {
-            StmtContext<?, ?, ?> nextStmtCtx = iteratorFromRoot.next();
-            Object nextStmtArgument = nextStmtCtx.getStatementArgument();
-            if (nextStmtArgument instanceof QName) {
-                QName qname = (QName) nextStmtArgument;
-                if (StmtContextUtils.producesDeclared(nextStmtCtx, UsesStatement.class)) {
-                    continue;
-                }
-                if (StmtContextUtils.producesDeclared(nextStmtCtx.getParentContext(), ChoiceStatement.class)
-                        && isSupportedAsShorthandCase(nextStmtCtx)) {
-                    qNamesFromRoot.add(qname);
-                }
-                qNamesFromRoot.add(qname);
-            } else if (nextStmtArgument instanceof String) {
-                // FIXME: This may yield illegal argument exceptions
-                StatementContextBase<?, ?, ?> originalCtx = ctx
-                        .getOriginalCtx();
-                final QName qName = (originalCtx != null) ? qNameFromArgument(
-                        originalCtx, (String) nextStmtArgument)
-                        : qNameFromArgument(ctx, (String) nextStmtArgument);
-                qNamesFromRoot.add(qName);
-            } else if ((StmtContextUtils.producesDeclared(nextStmtCtx, AugmentStatement.class)
-                       || StmtContextUtils.producesDeclared(nextStmtCtx, RefineStatement.class))
-                    && nextStmtArgument instanceof SchemaNodeIdentifier) {
-                addQNamesFromSchemaNodeIdentifierToList(qNamesFromRoot, (SchemaNodeIdentifier) nextStmtArgument);
-            } else if (isUnknownNode(nextStmtCtx)) {
-                qNamesFromRoot.add(nextStmtCtx.getPublicDefinition().getStatementName());
-            } else {
-                return SchemaPath.SAME;
-            }
-        }
-
-        final SchemaPath schemaPath = SchemaPath.create(qNamesFromRoot, true);
-        return schemaPath;
-    }
-
     public static boolean isUnknownNode(final StmtContext<?, ?, ?> stmtCtx) {
         return stmtCtx.getPublicDefinition().getDeclaredRepresentationClass()
                 .isAssignableFrom(UnknownStatementImpl.class);
-    }
-
-    private static boolean isSupportedAsShorthandCase(final StmtContext<?, ?, ?> statementCtx) {
-
-        Collection<?> supportedCaseShorthands = statementCtx.getFromNamespace(ValidationBundlesNamespace.class,
-                ValidationBundleType.SUPPORTED_CASE_SHORTHANDS);
-
-        return supportedCaseShorthands == null || supportedCaseShorthands.contains(statementCtx.getPublicDefinition());
-    }
-
-    private static void addQNamesFromSchemaNodeIdentifierToList(final List<QName> qNamesFromRoot,
-            final SchemaNodeIdentifier augmentTargetPath) {
-        for (QName qname : augmentTargetPath.getPathFromRoot()) {
-            qNamesFromRoot.add(qname);
-        }
     }
 
     public static Deviation.Deviate parseDeviateFromString(final String deviate) {

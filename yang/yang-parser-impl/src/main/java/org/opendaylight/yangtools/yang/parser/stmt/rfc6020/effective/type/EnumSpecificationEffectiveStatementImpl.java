@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.EnumSpecific
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.EnumerationType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
 public class EnumSpecificationEffectiveStatementImpl extends
@@ -47,7 +46,7 @@ public class EnumSpecificationEffectiveStatementImpl extends
 
         List<EnumPair> enumsInit = new ArrayList<>();
 
-        path = Utils.getSchemaPath(ctx.getParentContext()).createChild(QNAME);
+        path = ctx.getParentContext().getSchemaPath().get().createChild(QNAME);
 
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof EnumPair) {

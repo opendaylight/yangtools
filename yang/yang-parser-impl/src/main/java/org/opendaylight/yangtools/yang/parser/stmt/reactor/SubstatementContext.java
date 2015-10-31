@@ -7,54 +7,58 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import java.util.List;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.GroupingUtils;
-import org.opendaylight.yangtools.yang.common.QNameModule;
+import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
-import com.google.common.base.Preconditions;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.GroupingUtils;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-class SubstatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
+final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         extends StatementContextBase<A, D, E> {
 
     private final StatementContextBase<?, ?, ?> parent;
     private final A argument;
+    private volatile SchemaPath schemaPath;
 
-    SubstatementContext(StatementContextBase<?, ?, ?> parent,
-            ContextBuilder<A, D, E> builder) throws SourceException {
+    SubstatementContext(final StatementContextBase<?, ?, ?> parent,
+            final ContextBuilder<A, D, E> builder) throws SourceException {
         super(builder);
-        this.parent = Preconditions.checkNotNull(parent,
-                "Parent must not be null");
-        this.argument = builder.getDefinition().parseArgumentValue(this,
-                builder.getRawArgument());
+        this.parent = Preconditions.checkNotNull(parent, "Parent must not be null");
+        this.argument = builder.getDefinition().parseArgumentValue(this, builder.getRawArgument());
     }
 
     @SuppressWarnings("unchecked")
-    SubstatementContext(SubstatementContext<A, D, E> original,
-            QNameModule newQNameModule,
-            StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
-            throws SourceException {
+    SubstatementContext(final SubstatementContext<A, D, E> original,
+            final QNameModule newQNameModule,
+            final StatementContextBase<?, ?, ?> newParent, final TypeOfCopy typeOfCopy) {
         super(original);
         this.parent = newParent;
 
         if (newQNameModule != null) {
             if (original.argument instanceof QName) {
                 QName originalQName = (QName) original.argument;
-                this.argument = (A) QName.create(newQNameModule,
-                        originalQName.getLocalName());
-            } else if (StmtContextUtils.producesDeclared(original,
-                    KeyStatement.class)) {
-                this.argument = (A) StmtContextUtils
-                        .replaceModuleQNameForKey(
+                this.argument = (A) QName.create(newQNameModule, originalQName.getLocalName());
+            } else if (StmtContextUtils.producesDeclared(original, KeyStatement.class)) {
+                this.argument = (A) StmtContextUtils.replaceModuleQNameForKey(
                                 (StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, ?>) original,
                                 newQNameModule);
             } else {
@@ -65,8 +69,9 @@ class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Effective
         }
     }
 
-    private void copyDeclaredStmts(SubstatementContext<A, D, E> original,
-            QNameModule newQNameModule, TypeOfCopy typeOfCopy)
+
+    private void copyDeclaredStmts(final SubstatementContext<A, D, E> original,
+            final QNameModule newQNameModule, final TypeOfCopy typeOfCopy)
             throws SourceException {
         Collection<? extends StatementContextBase<?, ?, ?>> originalDeclaredSubstatements = original
                 .declaredSubstatements();
@@ -81,8 +86,8 @@ class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Effective
         }
     }
 
-    private void copyEffectiveStmts(SubstatementContext<A, D, E> original,
-            QNameModule newQNameModule, TypeOfCopy typeOfCopy)
+    private void copyEffectiveStmts(final SubstatementContext<A, D, E> original,
+            final QNameModule newQNameModule, final TypeOfCopy typeOfCopy)
             throws SourceException {
         Collection<? extends StatementContextBase<?, ?, ?>> originalEffectiveSubstatements = original
                 .effectiveSubstatements();
@@ -124,17 +129,16 @@ class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Effective
 
     @Override
     public StatementContextBase<?, ?, ?> createCopy(
-            StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
+            final StatementContextBase<?, ?, ?> newParent, final TypeOfCopy typeOfCopy)
             throws SourceException {
         return createCopy(null, newParent, typeOfCopy);
     }
 
     @Override
-    public StatementContextBase<A, D, E> createCopy(QNameModule newQNameModule,
-            StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
+    public StatementContextBase<A, D, E> createCopy(final QNameModule newQNameModule,
+            final StatementContextBase<?, ?, ?> newParent, final TypeOfCopy typeOfCopy)
             throws SourceException {
-        SubstatementContext<A, D, E> copy = new SubstatementContext<>(this,
-                newQNameModule, newParent, typeOfCopy);
+        SubstatementContext<A, D, E> copy = new SubstatementContext<>(this, newQNameModule, newParent, typeOfCopy);
 
         copy.addAllToCopyHistory(this.getCopyHistory());
         copy.addToCopyHistory(typeOfCopy);
@@ -152,19 +156,68 @@ class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Effective
         return copy;
     }
 
-    @Override
-    public List<Object> getArgumentsFromRoot() {
-        List<Object> argumentsFromRoot = parent.getArgumentsFromRoot();
-        argumentsFromRoot.add(argument);
-        return argumentsFromRoot;
+    private boolean isSupportedAsShorthandCase() {
+        final Collection<?> supportedCaseShorthands = getFromNamespace(ValidationBundlesNamespace.class,
+                ValidationBundleType.SUPPORTED_CASE_SHORTHANDS);
+        return supportedCaseShorthands == null || supportedCaseShorthands.contains(getPublicDefinition());
+    }
+
+    private SchemaPath createSchemaPath() {
+        final Optional<SchemaPath> maybeParentPath = parent.getSchemaPath();
+        Verify.verify(maybeParentPath.isPresent(), "Parent %s does not have a SchemaPath", parent);
+        final SchemaPath parentPath = maybeParentPath.get();
+
+        if (argument instanceof QName) {
+            QName qname = (QName) argument;
+            if (StmtContextUtils.producesDeclared(this, UsesStatement.class)) {
+                return maybeParentPath.orNull();
+            }
+
+            final SchemaPath path;
+            if (StmtContextUtils.producesDeclared(getParentContext(), ChoiceStatement.class)
+                    && isSupportedAsShorthandCase()) {
+                path = parentPath.createChild(qname);
+            } else {
+                path = parentPath;
+            }
+            return path.createChild(qname);
+        }
+        if (argument instanceof String) {
+            // FIXME: This may yield illegal argument exceptions
+            final StatementContextBase<?, ?, ?> originalCtx = getOriginalCtx();
+            final QName qname = (originalCtx != null) ? Utils.qNameFromArgument(originalCtx, (String) argument)
+                    : Utils.qNameFromArgument(this, (String) argument);
+            return parentPath.createChild(qname);
+        }
+        if (argument instanceof SchemaNodeIdentifier &&
+                (StmtContextUtils.producesDeclared(this, AugmentStatement.class)
+                   || StmtContextUtils.producesDeclared(this, RefineStatement.class))) {
+
+            return parentPath.createChild(((SchemaNodeIdentifier) argument).getPathFromRoot());
+        }
+        if (Utils.isUnknownNode(this)) {
+            return parentPath.createChild(getPublicDefinition().getStatementName());
+        }
+
+        // FIXME: this does not look right
+        return maybeParentPath.orNull();
     }
 
     @Override
-    public List<StmtContext<?, ?, ?>> getStmtContextsFromRoot() {
-        List<StmtContext<?, ?, ?>> stmtContextsList = parent
-                .getStmtContextsFromRoot();
-        stmtContextsList.add(this);
-        return stmtContextsList;
+    public Optional<SchemaPath> getSchemaPath() {
+        SchemaPath local = schemaPath;
+        if (local == null) {
+            synchronized (this) {
+                local = schemaPath;
+                if (local == null) {
+                    local = createSchemaPath();
+                    schemaPath = local;
+                }
+            }
+
+        }
+
+        return Optional.fromNullable(local);
     }
 
     @Override
