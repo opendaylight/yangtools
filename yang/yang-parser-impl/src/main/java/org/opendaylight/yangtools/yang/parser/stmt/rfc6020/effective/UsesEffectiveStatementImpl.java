@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public final class UsesEffectiveStatementImpl extends EffectiveStatementBase<QName, UsesStatement> implements UsesNode {
     private final SchemaPath groupingPath;
@@ -47,7 +46,7 @@ public final class UsesEffectiveStatementImpl extends EffectiveStatementBase<QNa
         // initGroupingPath
         StmtContext<?, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> grpCtx = ctx.getFromNamespace(
                 GroupingNamespace.class, ctx.getStatementArgument());
-        this.groupingPath = Utils.getSchemaPath(grpCtx);
+        this.groupingPath = grpCtx.getSchemaPath().get();
 
         // initCopyType
         List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();

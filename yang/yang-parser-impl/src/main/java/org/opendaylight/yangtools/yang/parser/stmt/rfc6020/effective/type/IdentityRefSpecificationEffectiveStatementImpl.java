@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.BaseEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
@@ -49,7 +48,7 @@ public class IdentityRefSpecificationEffectiveStatementImpl extends
             final StmtContext<String, IdentityRefSpecification, EffectiveStatement<String, IdentityRefSpecification>> ctx) {
         super(ctx);
 
-        path = Utils.getSchemaPath(ctx.getParentContext()).createChild(QNAME);
+        path = ctx.getParentContext().getSchemaPath().get().createChild(QNAME);
 
         final BaseEffectiveStatementImpl base = firstEffective(BaseEffectiveStatementImpl.class);
         if (base != null) {

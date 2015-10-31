@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.BitsType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
 public class BitsSpecificationEffectiveStatementImpl extends
@@ -46,7 +45,7 @@ public class BitsSpecificationEffectiveStatementImpl extends
 
         List<Bit> bitsInit = new ArrayList<>();
 
-        path = Utils.getSchemaPath(ctx.getParentContext()).createChild(QNAME);
+        path = ctx.getParentContext().getSchemaPath().get().createChild(QNAME);
 
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof Bit) {

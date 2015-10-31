@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 
 abstract class IntegerEffectiveImplBase extends
@@ -42,7 +41,7 @@ abstract class IntegerEffectiveImplBase extends
         super(ctx);
 
         this.qName = QName.create(YangConstants.RFC6020_YANG_MODULE, localName);
-        path = Utils.getSchemaPath(ctx);
+        path = ctx.getSchemaPath().get();
 
         final String rangeDescription = "Integer values between " + minRange + " and " + maxRange + ", inclusively.";
         final RangeConstraint defaultRange = new RangeConstraintEffectiveImpl(minRange, maxRange,
