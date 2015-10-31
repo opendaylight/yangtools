@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public class NotificationEffectiveStatementImpl extends
         AbstractEffectiveDocumentedDataNodeContainer<QName, NotificationStatement> implements NotificationDefinition {
@@ -36,7 +35,7 @@ public class NotificationEffectiveStatementImpl extends
             final StmtContext<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> ctx) {
         super(ctx);
         this.qname = ctx.getStatementArgument();
-        this.path = Utils.getSchemaPath(ctx);
+        this.path = ctx.getSchemaPath().get();
 
         // initSubstatementCollections
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();

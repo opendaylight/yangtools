@@ -7,10 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import com.google.common.base.Optional;
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
@@ -28,13 +28,13 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     private final SourceSpecificContext sourceContext;
     private final A argument;
 
-    RootStatementContext(ContextBuilder<A, D, E> builder, SourceSpecificContext sourceContext) throws SourceException {
+    RootStatementContext(final ContextBuilder<A, D, E> builder, final SourceSpecificContext sourceContext) throws SourceException {
         super(builder);
         this.sourceContext = sourceContext;
         this.argument = builder.getDefinition().parseArgumentValue(this, builder.getRawArgument());
     }
 
-    RootStatementContext(RootStatementContext<A, D, E> original, QNameModule newQNameModule, TypeOfCopy typeOfCopy)
+    RootStatementContext(final RootStatementContext<A, D, E> original, final QNameModule newQNameModule, final TypeOfCopy typeOfCopy)
             throws SourceException {
         super(original);
 
@@ -54,8 +54,8 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
      *            determines whether copy is used by augmentation or uses
      * @throws SourceException
      */
-    private void copyDeclaredStmts(RootStatementContext<A, D, E> original, QNameModule newQNameModule,
-            TypeOfCopy typeOfCopy) throws SourceException {
+    private void copyDeclaredStmts(final RootStatementContext<A, D, E> original, final QNameModule newQNameModule,
+            final TypeOfCopy typeOfCopy) throws SourceException {
         Collection<? extends StmtContext<?, ?, ?>> originalDeclaredSubstatements = original.declaredSubstatements();
         for (StmtContext<?, ?, ?> stmtContext : originalDeclaredSubstatements) {
             this.addEffectiveSubstatement(stmtContext.createCopy(newQNameModule, this, typeOfCopy));
@@ -69,8 +69,8 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
      *            determines whether copy is used by augmentation or uses
      * @throws SourceException
      */
-    private void copyEffectiveStmts(RootStatementContext<A, D, E> original, QNameModule newQNameModule,
-            TypeOfCopy typeOfCopy) throws SourceException {
+    private void copyEffectiveStmts(final RootStatementContext<A, D, E> original, final QNameModule newQNameModule,
+            final TypeOfCopy typeOfCopy) throws SourceException {
         Collection<? extends StmtContext<?, ?, ?>> originalEffectiveSubstatements = original.effectiveSubstatements();
         for (StmtContext<?, ?, ?> stmtContext : originalEffectiveSubstatements) {
             this.addEffectiveSubstatement(stmtContext.createCopy(newQNameModule, this, typeOfCopy));
@@ -128,7 +128,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
      * @throws SourceException instance of SourceException
      */
     @Override
-    public StatementContextBase<?, ?, ?> createCopy(StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy)
+    public StatementContextBase<?, ?, ?> createCopy(final StatementContextBase<?, ?, ?> newParent, final TypeOfCopy typeOfCopy)
             throws SourceException {
         return createCopy(null, newParent, typeOfCopy);
     }
@@ -139,8 +139,8 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
      * @throws SourceException instance of SourceException
      */
     @Override
-    public StatementContextBase<A, D, E> createCopy(QNameModule newQNameModule,
-            StatementContextBase<?, ?, ?> newParent, TypeOfCopy typeOfCopy) throws SourceException {
+    public StatementContextBase<A, D, E> createCopy(final QNameModule newQNameModule,
+            final StatementContextBase<?, ?, ?> newParent, final TypeOfCopy typeOfCopy) throws SourceException {
         RootStatementContext<A, D, E> copy = new RootStatementContext<>(this, newQNameModule, typeOfCopy);
 
         copy.addAllToCopyHistory(this.getCopyHistory());
@@ -155,24 +155,9 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
         return copy;
     }
 
-    /**
-     * @return this' argument as it is the only from root (this)
-     */
     @Override
-    public List<Object> getArgumentsFromRoot() {
-        List<Object> argumentList = new LinkedList<>();
-        argumentList.add(argument);
-        return argumentList;
-    }
-
-    /**
-     * @return this as it is the only\context from root (this)
-     */
-    @Override
-    public List<StmtContext<?, ?, ?>> getStmtContextsFromRoot() {
-        List<StmtContext<?, ?, ?>> stmtContextsList = new LinkedList<>();
-        stmtContextsList.add(this);
-        return stmtContextsList;
+    public Optional<SchemaPath> getSchemaPath() {
+        return Optional.of(SchemaPath.ROOT);
     }
 
     /**
@@ -182,5 +167,4 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     public boolean isRootContext() {
         return true;
     }
-
 }

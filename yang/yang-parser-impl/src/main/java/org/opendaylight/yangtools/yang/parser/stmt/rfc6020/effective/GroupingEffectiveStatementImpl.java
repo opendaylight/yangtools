@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public class GroupingEffectiveStatementImpl extends
         AbstractEffectiveDocumentedDataNodeContainer<QName, GroupingStatement> implements GroupingDefinition {
@@ -34,7 +33,7 @@ public class GroupingEffectiveStatementImpl extends
         super(ctx);
 
         qname = ctx.getStatementArgument();
-        path = Utils.getSchemaPath(ctx);
+        path = ctx.getSchemaPath().get();
 
         // initCopyType
         List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
