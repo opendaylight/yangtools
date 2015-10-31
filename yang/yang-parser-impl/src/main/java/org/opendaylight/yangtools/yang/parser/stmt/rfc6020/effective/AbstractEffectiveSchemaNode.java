@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 abstract class AbstractEffectiveSchemaNode<D extends DeclaredStatement<QName>> extends
         AbstractEffectiveDocumentedNode<QName, D> implements SchemaNode {
@@ -26,10 +25,10 @@ abstract class AbstractEffectiveSchemaNode<D extends DeclaredStatement<QName>> e
     private final SchemaPath path;
     private final List<UnknownSchemaNode> unknownNodes;
 
-    AbstractEffectiveSchemaNode(StmtContext<QName, D, ?> ctx) {
+    AbstractEffectiveSchemaNode(final StmtContext<QName, D, ?> ctx) {
         super(ctx);
         this.qname = ctx.getStatementArgument();
-        this.path = Utils.getSchemaPath(ctx);
+        this.path = ctx.getSchemaPath().get();
 
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
         ImmutableList.Builder<UnknownSchemaNode> listBuilder = new ImmutableList.Builder<>();

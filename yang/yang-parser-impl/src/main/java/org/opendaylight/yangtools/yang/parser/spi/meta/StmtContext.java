@@ -7,20 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import com.google.common.base.Optional;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
-import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public interface StmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
 
@@ -42,10 +44,13 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
     @Nullable
     A getStatementArgument();
 
-    @Nullable
-    List<Object> getArgumentsFromRoot();
-
-    List<StmtContext<?,?,?>> getStmtContextsFromRoot();
+    /**
+     * Return the {@link SchemaPath} of this statement. Not all statements have a SchemaPath, in which case
+     * {@link Optional#absent()} is returned.
+     *
+     * @return Optional SchemaPath
+     */
+    @Nonnull Optional<SchemaPath> getSchemaPath();
 
     @Nonnull
     <K, V, KT extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(

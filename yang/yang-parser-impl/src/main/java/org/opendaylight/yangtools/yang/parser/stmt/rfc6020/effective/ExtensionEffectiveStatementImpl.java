@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, ExtensionStatement>
         implements ExtensionDefinition {
@@ -34,7 +33,7 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
             final StmtContext<QName, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> ctx) {
         super(ctx);
         this.qname = ctx.getStatementArgument();
-        this.schemaPath = Utils.getSchemaPath(ctx);
+        this.schemaPath = ctx.getSchemaPath().get();
 
         // initSubstatementCollections
         Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();

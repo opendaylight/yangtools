@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DescriptionEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ReferenceEffectiveStatementImpl;
@@ -34,7 +33,7 @@ public class EnumEffectiveStatementImpl extends EffectiveStatementBase<String, E
     public EnumEffectiveStatementImpl(final StmtContext<String, EnumStatement, ?> ctx) {
         super(ctx);
 
-        path = Utils.getSchemaPath(ctx);
+        path = ctx.getSchemaPath().get();
 
         for (final EffectiveStatement<?,?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof DescriptionEffectiveStatementImpl) {
