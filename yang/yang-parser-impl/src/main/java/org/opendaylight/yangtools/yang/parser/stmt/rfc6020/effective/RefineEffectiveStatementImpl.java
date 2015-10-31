@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public final class RefineEffectiveStatementImpl extends
         AbstractEffectiveDocumentedNode<SchemaNodeIdentifier, RefineStatement> implements SchemaNode {
@@ -32,7 +31,7 @@ public final class RefineEffectiveStatementImpl extends
     public RefineEffectiveStatementImpl(final StmtContext<SchemaNodeIdentifier, RefineStatement, ?> ctx) {
         super(ctx);
         qname = ctx.getStatementArgument().getLastComponent();
-        path = Utils.getSchemaPath(ctx);
+        path = ctx.getSchemaPath().get();
         refineTargetNode = (SchemaNode) ctx.getEffectOfStatement().iterator().next().buildEffective();
 
         // initSubstatementCollectionsAndFields

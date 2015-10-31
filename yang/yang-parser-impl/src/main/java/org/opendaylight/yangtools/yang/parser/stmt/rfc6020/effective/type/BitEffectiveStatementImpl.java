@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DescriptionEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PositionEffectiveStatementImpl;
@@ -43,7 +42,7 @@ public class BitEffectiveStatementImpl extends EffectiveStatementBase<QName, Bit
         List<UnknownSchemaNode> unknownSchemaNodesInit = new ArrayList<>();
 
         qName = ctx.getStatementArgument();
-        schemaPath = Utils.getSchemaPath(ctx);
+        schemaPath = ctx.getSchemaPath().get();
 
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof DescriptionEffectiveStatementImpl) {

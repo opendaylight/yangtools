@@ -26,7 +26,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatement<QName>> extends
         AbstractEffectiveDocumentedDataNodeContainer<QName, D> implements DataNodeContainer, AugmentationTarget,
@@ -44,11 +43,11 @@ abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatem
     private final Set<AugmentationSchema> augmentations;
     private final List<UnknownSchemaNode> unknownNodes;
 
-    public AbstractEffectiveSimpleDataNodeContainer(StmtContext<QName, D, ?> ctx) {
+    public AbstractEffectiveSimpleDataNodeContainer(final StmtContext<QName, D, ?> ctx) {
         super(ctx);
 
         this.qname = ctx.getStatementArgument();
-        this.path = Utils.getSchemaPath(ctx);
+        this.path = ctx.getSchemaPath().get();
         this.constraints = new EffectiveConstraintDefinitionImpl(this);
 
         ConfigEffectiveStatementImpl configStmt = firstEffective(ConfigEffectiveStatementImpl.class);
