@@ -49,7 +49,7 @@ public abstract class SchemaNodeIdentifier implements Immutable {
     /**
      * A relative schema node identifier.
      */
-    public static class Relative extends SchemaNodeIdentifier {
+    public static final class Relative extends SchemaNodeIdentifier {
         private Relative(final SchemaNodeIdentifier parent, final QName qname) {
             super(parent, qname);
         }
