@@ -8,7 +8,8 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import java.util.ArrayList;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 import java.util.List;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -31,7 +32,7 @@ public final class UnknownEffectiveStatementImpl extends AbstractEffectiveDocume
     private final QName maybeQNameArgument;
     private final SchemaPath path;
     private final ExtensionDefinition extension;
-    private final List<UnknownSchemaNode> unknownNodes = new ArrayList<>();
+    private final List<UnknownSchemaNode> unknownNodes;
     private final QName nodeType;
     private final String nodeParameter;
 
@@ -76,11 +77,13 @@ public final class UnknownEffectiveStatementImpl extends AbstractEffectiveDocume
         nodeParameter = (ctx.rawStatementArgument() == null) ? "" : ctx.rawStatementArgument();
 
         // TODO init other fields (see Bug1412Test)
+        final Builder<UnknownSchemaNode> builder = ImmutableList.builder();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof UnknownEffectiveStatementImpl) {
-                unknownNodes.add((UnknownEffectiveStatementImpl) effectiveStatement);
+                builder.add((UnknownEffectiveStatementImpl) effectiveStatement);
             }
         }
+        unknownNodes = builder.build();
     }
 
     @Override
