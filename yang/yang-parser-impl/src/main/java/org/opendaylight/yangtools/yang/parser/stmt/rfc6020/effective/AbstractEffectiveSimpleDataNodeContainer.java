@@ -48,7 +48,7 @@ abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatem
 
         this.qname = ctx.getStatementArgument();
         this.path = ctx.getSchemaPath().get();
-        this.constraints = new EffectiveConstraintDefinitionImpl(this);
+        this.constraints = EffectiveConstraintDefinitionImpl.forParent(this);
 
         ConfigEffectiveStatementImpl configStmt = firstEffective(ConfigEffectiveStatementImpl.class);
         this.configuration = (configStmt == null) ? true : configStmt.argument();

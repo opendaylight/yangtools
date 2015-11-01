@@ -7,47 +7,62 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
-import java.util.Collection;
-import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 
-public final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
+final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
     private static final Integer UNBOUNDED_INT = Integer.MAX_VALUE;
     private static final String UNBOUNDED_STR = "unbounded";
     private final RevisionAwareXPath whenCondition;
     private final Set<MustDefinition> mustConstraints;
-    private final Boolean mandatory;
     private final Integer minElements;
     private final Integer maxElements;
+    private final boolean mandatory;
 
-    public EffectiveConstraintDefinitionImpl(final EffectiveStatementBase<?, ?> parent) {
+    private EffectiveConstraintDefinitionImpl(final boolean mandatory, final Integer minElements,
+            final Integer maxElements, final RevisionAwareXPath whenCondition,
+            final Set<MustDefinition> mustConstraints) {
+        this.mandatory = mandatory;
+        this.minElements = Preconditions.checkNotNull(minElements);
+        this.maxElements = Preconditions.checkNotNull(maxElements);
+        this.whenCondition = whenCondition;
+        this.mustConstraints = Preconditions.checkNotNull(mustConstraints);
+    }
 
-        WhenEffectiveStatementImpl firstWhenStmt = parent.firstEffective(WhenEffectiveStatementImpl.class);
-        this.whenCondition = (firstWhenStmt == null) ? null : firstWhenStmt.argument();
-
-        MinElementsEffectiveStatementImpl firstMinElementsStmt = parent
+    static ConstraintDefinition forParent(final EffectiveStatementBase<?, ?> parent) {
+        final MinElementsEffectiveStatementImpl firstMinElementsStmt = parent
                 .firstEffective(MinElementsEffectiveStatementImpl.class);
-        this.minElements = (firstMinElementsStmt == null) ? 0 : firstMinElementsStmt.argument();
+        final Integer minElements = (firstMinElementsStmt == null) ? 0 : firstMinElementsStmt.argument();
 
-        MaxElementsEffectiveStatementImpl firstMaxElementsStmt = parent
+        final MaxElementsEffectiveStatementImpl firstMaxElementsStmt = parent
                 .firstEffective(MaxElementsEffectiveStatementImpl.class);
-        String maxElementsArg = (firstMaxElementsStmt == null) ? UNBOUNDED_STR : firstMaxElementsStmt.argument();
+        final String maxElementsArg = (firstMaxElementsStmt == null) ? UNBOUNDED_STR : firstMaxElementsStmt.argument();
+        final Integer maxElements;
         if (UNBOUNDED_STR.equals(maxElementsArg)) {
-            this.maxElements = UNBOUNDED_INT;
+            maxElements = UNBOUNDED_INT;
         } else {
-            this.maxElements = Integer.valueOf(maxElementsArg);
+            maxElements = Integer.valueOf(maxElementsArg);
         }
 
-        MandatoryEffectiveStatementImpl firstMandatoryStmt = parent
+        final MandatoryEffectiveStatementImpl firstMandatoryStmt = parent
                 .firstEffective(MandatoryEffectiveStatementImpl.class);
-        this.mandatory = (firstMandatoryStmt == null) ? minElements > 0 : firstMandatoryStmt.argument();
+        final boolean mandatory = (firstMandatoryStmt == null) ? minElements > 0 : firstMandatoryStmt.argument();
 
-        Collection<MustDefinition> mustSubstatements = parent.allSubstatementsOfType(MustDefinition.class);
-        this.mustConstraints = ImmutableSet.copyOf(mustSubstatements);
+        final Set<MustDefinition> mustSubstatements = ImmutableSet.copyOf(parent.allSubstatementsOfType(
+            MustDefinition.class));
+        final WhenEffectiveStatementImpl firstWhenStmt = parent.firstEffective(WhenEffectiveStatementImpl.class);
+
+        // Check for singleton instances
+        if (minElements == 0 && maxElements == UNBOUNDED_INT && mustSubstatements.isEmpty() && firstWhenStmt == null) {
+            return EmptyConstraintDefinition.create(mandatory);
+        }
+
+        return new EffectiveConstraintDefinitionImpl(mandatory, minElements, maxElements,
+            (firstWhenStmt == null) ? null : firstWhenStmt.argument(), mustSubstatements);
     }
 
     @Override
@@ -77,56 +92,16 @@ public final class EffectiveConstraintDefinitionImpl implements ConstraintDefini
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(whenCondition);
-        result = prime * result + Objects.hashCode(mustConstraints);
-        result = prime * result + Objects.hashCode(minElements);
-        result = prime * result + Objects.hashCode(maxElements);
-        result = prime * result + mandatory.hashCode();
-        return result;
+        return ConstraintDefinitions.hashCode(this);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        EffectiveConstraintDefinitionImpl other = (EffectiveConstraintDefinitionImpl) obj;
-        if (!mandatory.equals(other.mandatory)) {
-            return false;
-        }
-        if (!Objects.equals(whenCondition, other.whenCondition)) {
-            return false;
-        }
-        if (!Objects.equals(mustConstraints, other.mustConstraints)) {
-            return false;
-        }
-        if (!Objects.equals(minElements, other.minElements)) {
-            return false;
-        }
-        if (!Objects.equals(maxElements, other.maxElements)) {
-            return false;
-        }
-        return true;
+        return ConstraintDefinitions.equals(this, obj);
     }
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(EffectiveConstraintDefinitionImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append("whenCondition=").append(whenCondition);
-        sb.append(", mustConstraints=").append(mustConstraints);
-        sb.append(", mandatory=").append(mandatory);
-        sb.append(", minElements=").append(minElements);
-        sb.append(", maxElements=").append(maxElements);
-        sb.append("]");
-        return sb.toString();
+        return ConstraintDefinitions.toString(this);
     }
 }

@@ -24,9 +24,9 @@ abstract class AbstractEffectiveDataSchemaNode<D extends DeclaredStatement<QName
     private final boolean configuration;
     private final ConstraintDefinition constraints;
 
-    public AbstractEffectiveDataSchemaNode(StmtContext<QName, D, ?> ctx) {
+    public AbstractEffectiveDataSchemaNode(final StmtContext<QName, D, ?> ctx) {
         super(ctx);
-        this.constraints = new EffectiveConstraintDefinitionImpl(this);
+        this.constraints = EffectiveConstraintDefinitionImpl.forParent(this);
 
         ConfigEffectiveStatementImpl configStmt = firstEffective(ConfigEffectiveStatementImpl.class);
         this.configuration = (configStmt == null) ? true : configStmt.argument();
