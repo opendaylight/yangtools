@@ -16,6 +16,8 @@ import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 
 public final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
+    private static final Integer UNBOUNDED_INT = Integer.MAX_VALUE;
+    private static final String UNBOUNDED_STR = "unbounded";
     private final RevisionAwareXPath whenCondition;
     private final Set<MustDefinition> mustConstraints;
     private final Boolean mandatory;
@@ -33,9 +35,9 @@ public final class EffectiveConstraintDefinitionImpl implements ConstraintDefini
 
         MaxElementsEffectiveStatementImpl firstMaxElementsStmt = parent
                 .firstEffective(MaxElementsEffectiveStatementImpl.class);
-        String maxElementsArg = (firstMaxElementsStmt == null) ? "unbounded" : firstMaxElementsStmt.argument();
-        if (maxElementsArg.equals("unbounded")) {
-            this.maxElements = Integer.MAX_VALUE;
+        String maxElementsArg = (firstMaxElementsStmt == null) ? UNBOUNDED_STR : firstMaxElementsStmt.argument();
+        if (UNBOUNDED_STR.equals(maxElementsArg)) {
+            this.maxElements = UNBOUNDED_INT;
         } else {
             this.maxElements = Integer.valueOf(maxElementsArg);
         }
