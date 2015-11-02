@@ -40,7 +40,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
     private QNameToStatementDefinition stmtDef;
     private PrefixToModule prefixes;
     private final List<String> toBeSkipped = new ArrayList<>();
-    private boolean isType = false;
+    private final boolean isType = false;
     private static final Logger LOG = LoggerFactory.getLogger(YangStatementParserListenerImpl.class);
 
     public YangStatementParserListenerImpl(final String sourceName) {
@@ -111,9 +111,9 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
                     && toBeSkipped.isEmpty()) {
                 writer.endStatement(ref);
             }
-            if (toBeSkipped.contains(statementName)) {
-                toBeSkipped.remove(statementName);
-            }
+
+            // No-op if the statement is not on the list
+            toBeSkipped.remove(statementName);
         } catch (SourceException e) {
             LOG.warn(e.getMessage(), e);
         }
