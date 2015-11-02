@@ -8,14 +8,13 @@
 package org.opendaylight.yangtools.yang.parser.impl;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Throwables;
 import com.google.common.base.Verify;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.concurrent.Immutable;
-import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.ArgumentContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.KeywordContext;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParserBaseListener;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -34,14 +33,13 @@ import org.slf4j.LoggerFactory;
 
 @Immutable
 public class YangStatementParserListenerImpl extends YangStatementParserBaseListener {
+    private static final Logger LOG = LoggerFactory.getLogger(YangStatementParserListenerImpl.class);
 
-    private StatementWriter writer;
+    private final List<String> toBeSkipped = new ArrayList<>();
     private final String sourceName;
     private QNameToStatementDefinition stmtDef;
     private PrefixToModule prefixes;
-    private final List<String> toBeSkipped = new ArrayList<>();
-    private final boolean isType = false;
-    private static final Logger LOG = LoggerFactory.getLogger(YangStatementParserListenerImpl.class);
+    private StatementWriter writer;
 
     public YangStatementParserListenerImpl(final String sourceName) {
         this.sourceName = sourceName;
@@ -59,50 +57,46 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
     }
 
     @Override
-    public void enterStatement(final YangStatementParser.StatementContext ctx) {
+    public void enterStatement(final StatementContext ctx) {
         final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, ctx
                 .getStart().getLine(), ctx.getStart().getCharPositionInLine());
         final KeywordContext keywordCtx = Verify.verifyNotNull(ctx.getChild(KeywordContext.class, 0));
         final ArgumentContext argumentCtx = ctx.getChild(ArgumentContext.class, 0);
+        final String keywordTxt = keywordCtx.getText();
 
-        String keywordTxt = keywordCtx.getText();
-        try {
-            // FIXME: This is broken for extensions - not all statements are in RFC6020 ns.
-            final QName identifier = QName.create(YangConstants.RFC6020_YIN_MODULE, keywordTxt);
-            if (stmtDef != null && Utils.isValidStatementDefinition(prefixes, stmtDef, identifier)
-                    && toBeSkipped.isEmpty()) {
-                final String argument = argumentCtx != null ? Utils.stringFromStringContext(argumentCtx) : null;
-                // See,s to be fishy specialcase
-                if (identifier.equals(Rfc6020Mapping.TYPE.getStatementName())) {
-                    Preconditions.checkArgument(argument != null);
-                    if (TypeUtils.isYangTypeBodyStmtString(argument)) {
-                        writer.startStatement(QName.create(YangConstants.RFC6020_YIN_MODULE, argument), ref);
-                    } else {
-                        writer.startStatement(QName.create(YangConstants.RFC6020_YIN_MODULE, Rfc6020Mapping
-                                .TYPE.getStatementName().getLocalName()), ref);
-                    }
-                    writer.argumentValue(argument, ref);
+        // FIXME: This is broken for extensions - not all statements are in RFC6020 ns.
+        final QName identifier = QName.create(YangConstants.RFC6020_YIN_MODULE, keywordTxt);
+        if (stmtDef != null && Utils.isValidStatementDefinition(prefixes, stmtDef, identifier)
+                && toBeSkipped.isEmpty()) {
+            final String argument = argumentCtx != null ? Utils.stringFromStringContext(argumentCtx) : null;
+            // FIXME: this looks like a fishy special case
+            if (identifier.equals(Rfc6020Mapping.TYPE.getStatementName())) {
+                Preconditions.checkArgument(argument != null);
+                if (TypeUtils.isYangTypeBodyStmtString(argument)) {
+                    writer.startStatement(QName.create(YangConstants.RFC6020_YIN_MODULE, argument), ref);
                 } else {
-                    writer.startStatement(identifier, ref);
-                    if(argument != null) {
-                        writer.argumentValue(argument, ref);
-                    }
+                    writer.startStatement(QName.create(YangConstants.RFC6020_YIN_MODULE, Rfc6020Mapping
+                        .TYPE.getStatementName().getLocalName()), ref);
                 }
-            } else if (writer.getPhase().equals(ModelProcessingPhase.FULL_DECLARATION)) {
-                    throw new IllegalArgumentException(identifier.getLocalName() + " is not a YANG statement "
-                            + "or use of extension. Source: " + ref);
+                writer.argumentValue(argument, ref);
             } else {
-                toBeSkipped.add(keywordTxt);
+                writer.startStatement(identifier, ref);
+                if(argument != null) {
+                    writer.argumentValue(argument, ref);
+                }
             }
-        } catch (SourceException e) {
-            throw Throwables.propagate(e);
+        } else {
+            Preconditions.checkArgument(writer.getPhase() != ModelProcessingPhase.FULL_DECLARATION,
+                    "%s is not a YANG statement or use of extension. Source: %s", identifier.getLocalName(), ref);
+            toBeSkipped.add(keywordTxt);
         }
     }
 
     @Override
-    public void exitStatement(final YangStatementParser.StatementContext ctx) {
-        final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, ctx.getStart().getLine(), ctx
-                .getStart().getCharPositionInLine());
+    public void exitStatement(final StatementContext ctx) {
+        final StatementSourceReference ref = DeclarationInTextSource.atPosition(
+            sourceName, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+
         try {
             KeywordContext keyword = ctx.getChild(KeywordContext.class, 0);
             String statementName = keyword.getText();
