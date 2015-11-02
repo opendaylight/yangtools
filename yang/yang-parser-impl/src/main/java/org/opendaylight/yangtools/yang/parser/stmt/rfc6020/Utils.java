@@ -107,7 +107,7 @@ public final class Utils {
     }
 
     private static String trimSingleLastSlashFromXPath(final String path) {
-        return path.replaceAll("/$", "");
+        return path.endsWith("/") ? path.substring(0, path.length() - 1) : path;
     }
 
     static RevisionAwareXPath parseXPath(final StmtContext<?, ?, ?> ctx, final String path) {
