@@ -8,8 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -36,9 +35,8 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
         this.schemaPath = ctx.getSchemaPath().get();
 
         // initSubstatementCollections
-        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
-        List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
+        List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
+        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
                 unknownNodesInit.add(unknownNode);

@@ -11,12 +11,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -109,11 +109,12 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
         } else {
             Collection<ModuleIdentifier> includedSubmodules = includedSubmodulesMap.values();
             Set<Module> submodulesInit = new HashSet<>();
-            List<EffectiveStatement<?, ?>> substatementsOfSubmodulesInit = new LinkedList<>();
+            List<EffectiveStatement<?, ?>> substatementsOfSubmodulesInit = new ArrayList<>();
             for (ModuleIdentifier submoduleIdentifier : includedSubmodules) {
                 @SuppressWarnings("unchecked")
-                Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> submoduleCtx = (Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>) ctx
-                        .getFromNamespace(SubmoduleNamespace.class, submoduleIdentifier);
+                Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> submoduleCtx =
+                    (Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>)
+                        ctx.getFromNamespace(SubmoduleNamespace.class, submoduleIdentifier);
                 SubmoduleEffectiveStatementImpl submodule = (SubmoduleEffectiveStatementImpl) submoduleCtx
                         .buildEffective();
                 submodulesInit.add(submodule);
@@ -125,12 +126,11 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
         }
 
         // init substatements collections
-        List<EffectiveStatement<?, ?>> effectiveSubstatements = new LinkedList<>();
-
+        List<EffectiveStatement<?, ?>> effectiveSubstatements = new ArrayList<>();
         effectiveSubstatements.addAll(effectiveSubstatements());
         effectiveSubstatements.addAll(substatementsOfSubmodules);
 
-        List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
+        List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
         Set<AugmentationSchema> augmentationsInit = new HashSet<>();
         Set<ModuleImport> importsInit = new HashSet<>();
         Set<NotificationDefinition> notificationsInit = new HashSet<>();
@@ -138,7 +138,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
         Set<Deviation> deviationsInit = new HashSet<>();
         Set<IdentitySchemaNode> identitiesInit = new HashSet<>();
         Set<FeatureDefinition> featuresInit = new HashSet<>();
-        List<ExtensionDefinition> extensionNodesInit = new LinkedList<>();
+        List<ExtensionDefinition> extensionNodesInit = new ArrayList<>();
 
         Map<QName, DataSchemaNode> mutableChildNodes = new LinkedHashMap<>();
         Set<GroupingDefinition> mutableGroupings = new HashSet<>();

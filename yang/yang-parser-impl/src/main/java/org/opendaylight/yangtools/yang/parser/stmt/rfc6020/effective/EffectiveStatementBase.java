@@ -12,8 +12,8 @@ import com.google.common.base.Predicates;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -40,12 +40,11 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
         this.argument = ctx.getStatementArgument();
         this.statementSource = ctx.getStatementSource();
 
-        Collection<StatementContextBase<?, ?, ?>> declaredSubstatements = ctx.declaredSubstatements();
         Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements = ctx.effectiveSubstatements();
 
-        Collection<StatementContextBase<?, ?, ?>> substatementsInit = new LinkedList<>();
+        Collection<StatementContextBase<?, ?, ?>> substatementsInit = new ArrayList<>();
 
-        for(StatementContextBase<?, ?, ?> declaredSubstatement : declaredSubstatements) {
+        for(StatementContextBase<?, ?, ?> declaredSubstatement : ctx.declaredSubstatements()) {
             if (declaredSubstatement.getPublicDefinition().equals(Rfc6020Mapping.USES)) {
                 substatementsInit.add(declaredSubstatement);
                 substatementsInit.addAll(declaredSubstatement.getEffectOfStatement());
