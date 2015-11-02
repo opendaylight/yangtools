@@ -9,9 +9,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -54,18 +53,15 @@ abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatem
         this.configuration = (configStmt == null) ? true : configStmt.argument();
 
         // initSubstatementCollectionsAndFields
-        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
 
-        List<UnknownSchemaNode> unknownNodesInit = new LinkedList<>();
+        List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
         Set<AugmentationSchema> augmentationsInit = new HashSet<>();
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
+        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
-                UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
-                unknownNodesInit.add(unknownNode);
+                unknownNodesInit.add((UnknownSchemaNode) effectiveStatement);
             }
             if (effectiveStatement instanceof AugmentationSchema) {
-                AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
-                augmentationsInit.add(augmentationSchema);
+                augmentationsInit.add((AugmentationSchema) effectiveStatement);
             }
         }
         this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);

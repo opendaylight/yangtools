@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.collect.ImmutableList;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -37,7 +37,7 @@ public class DeviationEffectiveStatementImpl extends EffectiveStatementBase<Sche
         ReferenceEffectiveStatementImpl referenceStmt = firstEffective(ReferenceEffectiveStatementImpl.class);
         this.reference = (referenceStmt == null) ? null : referenceStmt.argument();
 
-        List<UnknownSchemaNode> unknownSchemaNodesInit = new LinkedList<>();
+        List<UnknownSchemaNode> unknownSchemaNodesInit = new ArrayList<>();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 unknownSchemaNodesInit.add((UnknownSchemaNode) effectiveStatement);
