@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.EventListener;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
@@ -75,30 +74,32 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private final StatementSourceReference statementDeclSource;
     private int order = 0;
 
-    private Map<StatementIdentifier, StatementContextBase<?, ?, ?>> substatements = new LinkedHashMap<>();
+    private final Map<StatementIdentifier, StatementContextBase<?, ?, ?>> substatements = new LinkedHashMap<>();
 
-    private Collection<StatementContextBase<?, ?, ?>> declared = new ArrayList<>();
-    private Collection<StatementContextBase<?, ?, ?>> effective = new ArrayList<>();
-    private Collection<StatementContextBase<?, ?, ?>> effectOfStatement = new ArrayList<>();
+    private final Collection<StatementContextBase<?, ?, ?>> declared = new ArrayList<>();
+    private final Collection<StatementContextBase<?, ?, ?>> effective = new ArrayList<>();
+    private final Collection<StatementContextBase<?, ?, ?>> effectOfStatement = new ArrayList<>();
 
+    @Override
     public Collection<StatementContextBase<?, ?, ?>> getEffectOfStatement() {
         return effectOfStatement;
     }
 
-    public void addAsEffectOfStatement(StatementContextBase<?, ?, ?> ctx) {
+    @Override
+    public void addAsEffectOfStatement(final StatementContextBase<?, ?, ?> ctx) {
         effectOfStatement.add(ctx);
     }
 
     private ModelProcessingPhase completedPhase;
 
-    private Multimap<ModelProcessingPhase, OnPhaseFinished> phaseListeners = HashMultimap.create();
-    private Multimap<ModelProcessingPhase, ContextMutation> phaseMutation = HashMultimap.create();
+    private final Multimap<ModelProcessingPhase, OnPhaseFinished> phaseListeners = HashMultimap.create();
+    private final Multimap<ModelProcessingPhase, ContextMutation> phaseMutation = HashMultimap.create();
 
     private D declaredInstance;
     private E effectiveInstance;
 
     private StatementContextBase<?, ?, ?> originalCtx;
-    private List<TypeOfCopy> copyHistory;
+    private final List<TypeOfCopy> copyHistory = new ArrayList<>(1);
 
     private boolean isSupportedToBuildEffective = true;
 
@@ -108,7 +109,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public void setIsSupportedToBuildEffective(boolean isSupportedToBuildEffective) {
+    public void setIsSupportedToBuildEffective(final boolean isSupportedToBuildEffective) {
         this.isSupportedToBuildEffective = isSupportedToBuildEffective;
     }
 
@@ -118,12 +119,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public void addToCopyHistory(TypeOfCopy typeOfCopy) {
+    public void addToCopyHistory(final TypeOfCopy typeOfCopy) {
         this.copyHistory.add(typeOfCopy);
     }
 
     @Override
-    public void addAllToCopyHistory(List<TypeOfCopy> typeOfCopyList) {
+    public void addAllToCopyHistory(final List<TypeOfCopy> typeOfCopyList) {
         this.copyHistory.addAll(typeOfCopyList);
     }
 
@@ -133,12 +134,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public void setOriginalCtx(StatementContextBase<?, ?, ?> originalCtx) {
+    public void setOriginalCtx(final StatementContextBase<?, ?, ?> originalCtx) {
         this.originalCtx = originalCtx;
     }
 
     @Override
-    public void setOrder(int order) {
+    public void setOrder(final int order) {
         this.order = order;
     }
 
@@ -153,19 +154,19 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public void setCompletedPhase(ModelProcessingPhase completedPhase) {
+    public void setCompletedPhase(final ModelProcessingPhase completedPhase) {
         this.completedPhase = completedPhase;
     }
 
-    StatementContextBase(@Nonnull ContextBuilder<A, D, E> builder) throws SourceException {
+    StatementContextBase(@Nonnull final ContextBuilder<A, D, E> builder) throws SourceException {
         this.definition = builder.getDefinition();
         this.identifier = builder.createIdentifier();
         this.statementDeclSource = builder.getStamementSource();
         this.completedPhase = null;
-        initCopyHistory();
+        this.copyHistory.add(TypeOfCopy.ORIGINAL);
     }
 
-    StatementContextBase(StatementContextBase<A, D, E> original) {
+    StatementContextBase(final StatementContextBase<A, D, E> original) {
         this.definition = Preconditions
                 .checkNotNull(original.definition, "Statement context definition cannot be null");
         this.identifier = Preconditions
@@ -173,11 +174,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.statementDeclSource = Preconditions.checkNotNull(original.statementDeclSource,
                 "Statement context statementDeclSource cannot be null");
         this.completedPhase = null;
-        initCopyHistory();
-    }
-
-    private void initCopyHistory() {
-        this.copyHistory = new LinkedList<>();
         this.copyHistory.add(TypeOfCopy.ORIGINAL);
     }
 
@@ -249,11 +245,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return Collections.unmodifiableCollection(effective);
     }
 
-    public void removeStatementsFromEffectiveSubstatements(Collection<StatementContextBase<?, ?, ?>> substatements) {
+    public void removeStatementsFromEffectiveSubstatements(final Collection<StatementContextBase<?, ?, ?>> substatements) {
         effective.removeAll(substatements);
     }
 
-    public void removeStatementFromEffectiveSubstatements(StatementDefinition refineSubstatementDef) {
+    public void removeStatementFromEffectiveSubstatements(final StatementDefinition refineSubstatementDef) {
         Iterator<StatementContextBase<?, ?, ?>> iterator = effective.iterator();
         while (iterator.hasNext()) {
             StatementContextBase<?, ?, ?> next = iterator.next();
@@ -273,7 +269,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *
      * @param substatement substatement
      */
-    public void addEffectiveSubstatement(StatementContextBase<?, ?, ?> substatement) {
+    public void addEffectiveSubstatement(final StatementContextBase<?, ?, ?> substatement) {
 
         final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
         Preconditions.checkState(inProgressPhase == ModelProcessingPhase.FULL_DECLARATION
@@ -294,7 +290,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *
      * @param substatement substatement
      */
-    public void addDeclaredSubstatement(StatementContextBase<?, ?, ?> substatement) {
+    public void addDeclaredSubstatement(final StatementContextBase<?, ?, ?> substatement) {
 
         final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
         Preconditions.checkState(inProgressPhase != ModelProcessingPhase.EFFECTIVE_MODEL,
@@ -313,8 +309,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @return instance of ContextBuilder
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public ContextBuilder<?, ?, ?> substatementBuilder(StatementDefinitionContext<?, ?, ?> def,
-            StatementSourceReference ref) {
+    public ContextBuilder<?, ?, ?> substatementBuilder(final StatementDefinitionContext<?, ?, ?> def,
+            final StatementSourceReference ref) {
         return new ContextBuilder(def, ref) {
 
             @Override
@@ -399,7 +395,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @throws SourceException
      *             when an error occured in source parsing
      */
-    boolean tryToCompletePhase(ModelProcessingPhase phase) throws SourceException {
+    boolean tryToCompletePhase(final ModelProcessingPhase phase) throws SourceException {
         Iterator<ContextMutation> openMutations = phaseMutation.get(phase).iterator();
         boolean finished = true;
         while (openMutations.hasNext()) {
@@ -432,7 +428,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @throws SourceException
      *             when an error occured in source parsing
      */
-    private void onPhaseCompleted(ModelProcessingPhase phase) throws SourceException {
+    private void onPhaseCompleted(final ModelProcessingPhase phase) throws SourceException {
         completedPhase = phase;
         Iterator<OnPhaseFinished> listener = phaseListeners.get(completedPhase).iterator();
         while (listener.hasNext()) {
@@ -449,7 +445,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @param ref
      * @throws SourceException
      */
-    void endDeclared(StatementSourceReference ref, ModelProcessingPhase phase) throws SourceException {
+    void endDeclared(final StatementSourceReference ref, final ModelProcessingPhase phase) throws SourceException {
         definition().onDeclarationFinished(this, phase);
     }
 
@@ -461,7 +457,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    protected void checkLocalNamespaceAllowed(Class<? extends IdentifierNamespace<?, ?>> type) {
+    protected void checkLocalNamespaceAllowed(final Class<? extends IdentifierNamespace<?, ?>> type) {
         definition().checkNamespaceAllowed(type);
     }
 
@@ -471,11 +467,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @throws SourceException instance of SourceException
      */
     @Override
-    protected <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceElementAdded(Class<N> type, K key, V value) {
+    protected <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceElementAdded(final Class<N> type, final K key, final V value) {
         // definition().onNamespaceElementAdded(this, type, key, value);
     }
 
-    <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceItemAddedAction(final Class<N> type, K key,
+    <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceItemAddedAction(final Class<N> type, final K key,
             final OnNamespaceItemAdded listener) throws SourceException {
         Object potential = getFromNamespace(type, key);
         if (potential != null) {
@@ -487,7 +483,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             NamespaceBehaviourWithListeners<K, V, N> casted = (NamespaceBehaviourWithListeners<K, V, N>) behaviour;
             casted.addValueListener(new ValueAddedListener<K>(this, key) {
                 @Override
-                void onValueAdded(Object key, Object value) {
+                void onValueAdded(final Object key, final Object value) {
                     try {
                         listener.namespaceItemAdded(StatementContextBase.this, type, key, value);
                     } catch (SourceException e) {
@@ -510,7 +506,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @return new {@link ModelActionBuilder} for the phase
      */
     @Override
-    public ModelActionBuilder newInferenceAction(ModelProcessingPhase phase) {
+    public ModelActionBuilder newInferenceAction(final ModelProcessingPhase phase) {
         return getRoot().getSourceContext().newInferenceAction(phase);
     }
 
@@ -519,7 +515,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *
      * @throws SourceException
      */
-    void addPhaseCompletedListener(ModelProcessingPhase phase, OnPhaseFinished listener) throws SourceException {
+    void addPhaseCompletedListener(final ModelProcessingPhase phase, final OnPhaseFinished listener) throws SourceException {
 
         Preconditions.checkNotNull(phase, "Statement context processing phase cannot be null");
         Preconditions.checkNotNull(listener, "Statement context phase listener cannot be null");
@@ -541,7 +537,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @throws IllegalStateException
      *             when the mutation was registered after phase was completed
      */
-    void addMutation(ModelProcessingPhase phase, ContextMutation mutation) {
+    void addMutation(final ModelProcessingPhase phase, final ContextMutation mutation) {
         ModelProcessingPhase finishedPhase = completedPhase;
         while (finishedPhase != null) {
             if (phase.equals(finishedPhase)) {
@@ -563,8 +559,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *            to be added to namespace map
      */
     @Override
-    public <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(Class<N> namespace, KT key,
-            StmtContext<?, ?, ?> stmt) {
+    public <K, KT extends K, N extends StatementNamespace<K, ?, ?>> void addContext(final Class<N> namespace, final KT key,
+            final StmtContext<?, ?, ?> stmt) {
         addContextToNamespace(namespace, (K) key, stmt);
     }
 }
