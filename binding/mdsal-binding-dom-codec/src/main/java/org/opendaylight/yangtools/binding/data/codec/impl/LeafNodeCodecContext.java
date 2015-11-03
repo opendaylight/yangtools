@@ -14,6 +14,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import javax.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.yangtools.concepts.Codec;
@@ -26,7 +27,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IdentityEffectiveStatementImpl;
 
 final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<D> implements NodeContextSupplier {
 
@@ -34,17 +41,60 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
     private final Codec<Object, Object> valueCodec;
     private final Method getter;
     private final DataSchemaNode schema;
+    private final Object defaultObject;
 
     public LeafNodeCodecContext(final DataSchemaNode schema, final Codec<Object, Object> codec, final Method getter) {
         this.yangIdentifier = new YangInstanceIdentifier.NodeIdentifier(schema.getQName());
-        this.valueCodec = codec;
+        this.valueCodec = Preconditions.checkNotNull(codec);
         this.getter = getter;
-        this.schema = schema;
+        this.schema = Preconditions.checkNotNull(schema);
+
+        this.defaultObject = createDefaultObject(schema, valueCodec);
+    }
+
+    private static Object createDefaultObject(final DataSchemaNode schema, final Codec<Object, Object> codec) {
+        if (schema instanceof LeafSchemaNode) {
+            Object defaultValue = ((LeafSchemaNode) schema).getDefault();
+            TypeDefinition<?> type = ((LeafSchemaNode) schema).getType();
+            if (defaultValue != null) {
+                return domValueFromString(codec, type, defaultValue);
+            }
+            else {
+                while (type.getBaseType() != null && type.getDefaultValue() == null) {
+                    type = type.getBaseType();
+                }
+
+                defaultValue = type.getDefaultValue();
+                if (defaultValue != null) {
+                    if (defaultValue instanceof Boolean) {
+                        return codec.deserialize(defaultValue);
+                    }
+
+                    if (defaultValue instanceof IdentitySchemaNode) {
+                        defaultValue = ((IdentityEffectiveStatementImpl) defaultValue).argument();
+                        return codec.deserialize(defaultValue);
+                    }
+
+                    if (defaultValue instanceof List) {
+                        return codec.deserialize(defaultValue);
+                    }
+                    return domValueFromString(codec, type, defaultValue);
+                }
+            }
+        }
+        return null;
+    }
+
+    private static Object domValueFromString(final Codec<Object, Object> codec, final TypeDefinition<?> type,
+    Object defaultValue) {
+        TypeDefinitionAwareCodec typeDefAwareCodec = TypeDefinitionAwareCodec.from(type);
+        Object castedDefaultValue = typeDefAwareCodec.deserialize((String) defaultValue);
+        return codec.deserialize(castedDefaultValue);
     }
 
     @Override
     protected YangInstanceIdentifier.PathArgument getDomPathArgument() {
-        return (yangIdentifier);
+        return yangIdentifier;
     }
 
     protected Codec<Object, Object> getValueCodec() {
@@ -112,7 +162,8 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
     protected Object deserializeObject(final NormalizedNode<?, ?> normalizedNode) {
         if (normalizedNode instanceof LeafNode<?>) {
             return valueCodec.deserialize(normalizedNode.getValue());
-        } else if(normalizedNode instanceof LeafSetNode<?>) {
+        }
+        if (normalizedNode instanceof LeafSetNode<?>) {
             @SuppressWarnings("unchecked")
             final Collection<LeafSetEntryNode<Object>> domValues = ((LeafSetNode<Object>) normalizedNode).getValue();
             final List<Object> result = new ArrayList<>(domValues.size());
@@ -140,4 +191,12 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
         return schema;
     }
 
+    /**
+     * Return the default value object.
+     *
+     * @return The default value object, or null if the default value is not defined.
+     */
+    @Nullable Object defaultObject() {
+        return defaultObject;
+    }
 }

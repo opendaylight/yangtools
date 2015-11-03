@@ -279,8 +279,8 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingRunti
 
         final Map.Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(BI_TOP_LEVEL_LIST_FOO_PATH, foo);
         final List<NestedList> nestedLists = new ArrayList<>();
-        nestedLists.add(new NestedListBuilder().setKey(new NestedListKey("foo")).build());
-        nestedLists.add(new NestedListBuilder().setKey(new NestedListKey("bar")).build());
+        nestedLists.add(new NestedListBuilder().setKey(new NestedListKey("foo")).setType("").build());
+        nestedLists.add(new NestedListBuilder().setKey(new NestedListKey("bar")).setType("").build());
         final TopLevelList topLevelList = new TopLevelListBuilder().setKey(TOP_LEVEL_LIST_FOO_KEY).setNestedList(nestedLists).build();
         assertEquals(topLevelList, entry.getValue());
     }

@@ -1,0 +1,612 @@
+module opendaylight-default-value-test {
+    namespace "urn:opendaylight:params:xml:ns:default:value:test";
+    prefix "def-val-test";
+
+    typedef tiny-signed-integer {
+        type int8 {
+            range "-20..-1";
+        }
+        default "-18";
+    }
+
+    typedef derived-tiny-signed-integer {
+        type tiny-signed-integer;
+    }
+
+    typedef derived-tiny-signed-integer2 {
+        type tiny-signed-integer {
+            range "-16..-11";
+        }
+        default "-15";
+    }
+
+    typedef derived-tiny-signed-integer3 {
+        type derived-tiny-signed-integer;
+    }
+
+    typedef small-signed-integer {
+        type int16 {
+            range "-25000..-9000";
+        }
+        default "-20000";
+    }
+
+    typedef derived-small-signed-integer {
+        type small-signed-integer;
+    }
+
+    typedef derived-small-signed-integer2 {
+        type small-signed-integer {
+            range "-19000..-11000";
+        }
+        default "-15000";
+    }
+
+    typedef derived-small-signed-integer3 {
+        type derived-small-signed-integer;
+    }
+
+    typedef normal-signed-integer {
+        type int32 {
+            range "-250000..-50000";
+        }
+        default "-200000";
+    }
+
+    typedef derived-normal-signed-integer {
+        type normal-signed-integer;
+    }
+
+    typedef derived-normal-signed-integer2 {
+        type normal-signed-integer {
+            range "-140000..-120000";
+        }
+        default "-130000";
+    }
+
+    typedef derived-normal-signed-integer3 {
+        type derived-normal-signed-integer;
+    }
+
+    typedef big-signed-integer {
+        type int64 {
+            range "-3500000000..-2500000000";
+        }
+        default "-3300000000";
+    }
+
+    typedef derived-big-signed-integer {
+        type big-signed-integer;
+    }
+
+    typedef derived-big-signed-integer2 {
+        type big-signed-integer {
+            range "-3100000000..-2600000000";
+        }
+        default "-2800000000";
+    }
+
+    typedef derived-big-signed-integer3 {
+        type derived-big-signed-integer;
+    }
+
+    typedef tiny-unsigned-integer {
+        type uint8 {
+            range "15..220";
+        }
+        default "150";
+    }
+
+    typedef derived-tiny-unsigned-integer {
+        type tiny-unsigned-integer;
+    }
+
+    typedef derived-tiny-unsigned-integer2 {
+        type tiny-unsigned-integer {
+            range "160..190";
+        }
+        default "170";
+    }
+
+    typedef derived-tiny-unsigned-integer3 {
+        type derived-tiny-unsigned-integer;
+    }
+
+    typedef small-unsigned-integer {
+        type uint16 {
+            range "9000..60000";
+        }
+        default "35000";
+    }
+
+    typedef derived-small-unsigned-integer {
+        type small-unsigned-integer;
+    }
+
+    typedef derived-small-unsigned-integer2 {
+        type small-unsigned-integer {
+            range "40000..55000";
+        }
+        default "45000";
+    }
+
+    typedef derived-small-unsigned-integer3 {
+        type derived-small-unsigned-integer;
+    }
+
+    typedef normal-unsigned-integer {
+        type uint32 {
+            range "70000..4200000000";
+        }
+        default "100000";
+    }
+
+    typedef derived-normal-unsigned-integer {
+        type normal-unsigned-integer;
+    }
+
+    typedef derived-normal-unsigned-integer2 {
+        type normal-unsigned-integer {
+            range "150000..3500000000";
+        }
+        default "250000";
+    }
+
+    typedef derived-normal-unsigned-integer3 {
+        type derived-normal-unsigned-integer;
+    }
+
+    typedef big-unsigned-integer {
+        type uint64 {
+            range "4500000000..6500000000";
+        }
+        default "5000000000";
+    }
+
+    typedef derived-big-unsigned-integer {
+        type big-unsigned-integer;
+    }
+
+    typedef derived-big-unsigned-integer2 {
+        type big-unsigned-integer {
+            range "5500000000..6200000000";
+        }
+        default "5800000000";
+    }
+
+    typedef derived-big-unsigned-integer3 {
+        type derived-big-unsigned-integer;
+    }
+
+    typedef my-decimal {
+        type decimal64 {
+            fraction-digits 2;
+            range "5.55 .. 150.55";
+        }
+        default "66.66";
+    }
+
+    typedef my-derived-decimal {
+        type my-decimal;
+    }
+
+    typedef my-derived-decimal2 {
+        type my-decimal {
+            fraction-digits 1;
+            range "77.7 .. 111.1";
+        }
+        default "99.9";
+    }
+
+    typedef my-derived-decimal3 {
+        type my-derived-decimal;
+    }
+
+    typedef my-string {
+        type string {
+            length "1..30";
+            pattern "[a-zA-Z ]+";
+        }
+        default "unspecified string";
+    }
+
+    typedef my-derived-string {
+        type my-string;
+    }
+
+    typedef my-derived-string2 {
+        type my-string {
+            length "5..15";
+            pattern "[a-z]+";
+        }
+        default "unknown";
+    }
+
+    typedef my-derived-string3 {
+        type my-derived-string;
+    }
+
+    typedef my-enumeration {
+        type enumeration {
+            enum first {
+                value 1;
+            }
+            enum second {
+                value 2;
+            }
+            enum third {
+                value 3;
+            }
+        }
+        default "second";
+    }
+
+    typedef my-bits {
+        type bits {
+            bit bit-zero {
+                position 0;
+            }
+            bit bit-one {
+                position 1;
+            }
+            bit bit-two {
+                position 2;
+            }
+        }
+        default "bit-one";
+    }
+
+    identity my-identity {
+        description "identity for testing purposes";
+    }
+
+    typedef my-identityref {
+        type identityref {
+            base my-identity;
+        }
+    }
+
+    container tiny-int-container {
+        presence "presence container";
+
+        leaf tiny-int-leaf {
+            type tiny-signed-integer;
+        }
+
+        leaf tiny-int-leaf2 {
+            type derived-tiny-signed-integer;
+        }
+
+        leaf tiny-int-leaf3 {
+            type derived-tiny-signed-integer2;
+        }
+
+        leaf tiny-int-leaf4 {
+            type derived-tiny-signed-integer3;
+        }
+
+        leaf tiny-int-leaf5 {
+            type int8;
+            default "-120";
+        }
+
+        leaf tiny-int-leaf6 {
+            type int8;
+        }
+    }
+
+    container small-int-container {
+        presence "presence container";
+
+        leaf small-int-leaf {
+            type small-signed-integer;
+        }
+
+        leaf small-int-leaf2 {
+            type derived-small-signed-integer;
+        }
+
+        leaf small-int-leaf3 {
+            type derived-small-signed-integer2;
+        }
+
+        leaf small-int-leaf4 {
+            type derived-small-signed-integer3;
+        }
+
+        leaf small-int-leaf5 {
+            type int16;
+            default "-5000";
+        }
+
+        leaf small-int-leaf6 {
+            type int16;
+        }
+    }
+
+    container normal-int-container {
+        presence "presence container";
+
+        leaf normal-int-leaf {
+            type normal-signed-integer;
+        }
+
+        leaf normal-int-leaf2 {
+            type derived-normal-signed-integer;
+        }
+
+        leaf normal-int-leaf3 {
+            type derived-normal-signed-integer2;
+        }
+
+        leaf normal-int-leaf4 {
+            type derived-normal-signed-integer3;
+        }
+
+        leaf normal-int-leaf5 {
+            type int32;
+            default "-95000";
+        }
+
+        leaf normal-int-leaf6 {
+            type int32;
+        }
+    }
+
+    container big-int-container {
+        presence "presence container";
+
+        leaf big-int-leaf {
+            type big-signed-integer;
+        }
+
+        leaf big-int-leaf2 {
+            type derived-big-signed-integer;
+        }
+
+        leaf big-int-leaf3 {
+            type derived-big-signed-integer2;
+        }
+
+        leaf big-int-leaf4 {
+            type derived-big-signed-integer3;
+        }
+
+        leaf big-int-leaf5 {
+            type int64;
+            default "-2500000000";
+        }
+
+        leaf big-int-leaf6 {
+            type int64;
+        }
+    }
+
+    container tiny-uint-container {
+        presence "presence container";
+
+        leaf tiny-uint-leaf {
+            type tiny-unsigned-integer;
+        }
+
+        leaf tiny-uint-leaf2 {
+            type derived-tiny-unsigned-integer;
+        }
+
+        leaf tiny-uint-leaf3 {
+            type derived-tiny-unsigned-integer2;
+        }
+
+        leaf tiny-uint-leaf4 {
+            type derived-tiny-unsigned-integer3;
+        }
+
+        leaf tiny-uint-leaf5 {
+            type uint8;
+            default "155";
+        }
+
+        leaf tiny-uint-leaf6 {
+            type uint8;
+        }
+    }
+
+    container small-uint-container {
+        presence "presence container";
+
+        leaf small-uint-leaf {
+            type small-unsigned-integer;
+        }
+
+        leaf small-uint-leaf2 {
+            type derived-small-unsigned-integer;
+        }
+
+        leaf small-uint-leaf3 {
+            type derived-small-unsigned-integer2;
+        }
+
+        leaf small-uint-leaf4 {
+            type derived-small-unsigned-integer3;
+        }
+
+        leaf small-uint-leaf5 {
+            type uint16;
+            default "62000";
+        }
+
+        leaf small-uint-leaf6 {
+            type uint16;
+        }
+    }
+
+    container normal-uint-container {
+        presence "presence container";
+
+        leaf normal-uint-leaf {
+            type normal-unsigned-integer;
+        }
+
+        leaf normal-uint-leaf2 {
+            type derived-normal-unsigned-integer;
+        }
+
+        leaf normal-uint-leaf3 {
+            type derived-normal-unsigned-integer2;
+        }
+
+        leaf normal-uint-leaf4 {
+            type derived-normal-unsigned-integer3;
+        }
+
+        leaf normal-uint-leaf5 {
+            type uint32;
+            default "150000";
+        }
+
+        leaf normal-uint-leaf6 {
+            type uint32;
+        }
+    }
+
+    container big-uint-container {
+        presence "presence container";
+
+        leaf big-uint-leaf {
+            type big-unsigned-integer;
+        }
+
+        leaf big-uint-leaf2 {
+            type derived-big-unsigned-integer;
+        }
+
+        leaf big-uint-leaf3 {
+            type derived-big-unsigned-integer2;
+        }
+
+        leaf big-uint-leaf4 {
+            type derived-big-unsigned-integer3;
+        }
+
+        leaf big-uint-leaf5 {
+            type uint64;
+            default "6500000000";
+        }
+
+        leaf big-uint-leaf6 {
+            type uint64;
+        }
+    }
+
+    container decimal-container {
+        presence "presence container";
+
+        leaf decimal-leaf {
+            type my-decimal;
+        }
+
+        leaf decimal-leaf2 {
+            type my-derived-decimal;
+        }
+
+        leaf decimal-leaf3 {
+            type my-derived-decimal2;
+        }
+
+        leaf decimal-leaf4 {
+            type my-derived-decimal3;
+        }
+
+        leaf decimal-leaf5 {
+            type decimal64 {
+                fraction-digits 2;
+            }
+            default "120.55";
+        }
+
+        leaf decimal-leaf6 {
+            type decimal64 {
+                fraction-digits 3;
+            }
+        }
+    }
+
+    container string-container {
+        presence "presence container";
+
+        leaf string-leaf {
+            type my-string;
+        }
+
+        leaf string-leaf2 {
+            type my-derived-string;
+        }
+
+        leaf string-leaf3 {
+            type my-derived-string2;
+        }
+
+        leaf string-leaf4 {
+            type my-derived-string3;
+        }
+
+        leaf string-leaf5 {
+            type string;
+            default "whatever";
+        }
+
+        leaf string-leaf6 {
+            type string;
+        }
+    }
+
+    container boolean-container {
+        presence "presence container";
+
+        leaf boolean-leaf {
+            type boolean;
+            default "true";
+        }
+
+        leaf boolean-leaf2 {
+            type boolean;
+        }
+    }
+
+    container enum-container {
+        presence "presence container";
+
+        leaf enum-leaf {
+            type my-enumeration;
+        }
+    }
+
+    container bits-container {
+        presence "presence container";
+
+        leaf bits-leaf {
+            type my-bits;
+        }
+    }
+
+    container binary-container {
+        presence "presence container";
+
+        leaf binary-leaf {
+            type binary;
+            default "aGVsbG8=";
+        }
+
+        leaf binary-leaf2 {
+            type binary;
+        }
+    }
+
+    container identityref-container {
+        presence "presence container";
+
+        leaf identityref-leaf {
+            type my-identityref;
+        }
+    }
+}
