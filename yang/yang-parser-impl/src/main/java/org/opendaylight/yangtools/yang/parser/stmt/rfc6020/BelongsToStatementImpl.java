@@ -24,7 +24,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.BelongsEffectiveToStatementImpl;
@@ -77,6 +79,9 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
 
                     belongsToCtx.addToNs(BelongsToModuleContext.class, belongsToModuleIdentifier,
                             belongsToModuleCtx);
+                    belongsToCtx.addToNs(BelongsToPrefixToModuleIdentifier.class, StmtContextUtils
+                            .findFirstDeclaredSubstatement(belongsToCtx, PrefixStatement.class).getStatementArgument
+                                    (), belongsToModuleIdentifier);
                 }
 
                 @Override

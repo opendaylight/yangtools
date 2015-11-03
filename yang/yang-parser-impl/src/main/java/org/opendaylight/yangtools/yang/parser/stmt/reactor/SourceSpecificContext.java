@@ -16,12 +16,13 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -37,6 +38,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Namesp
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModuleMap;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
@@ -100,8 +104,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                     final StatementContextBase<?,?,?> extension = (StatementContextBase<?, ?, ?>) currentContext
                             .getAllFromNamespace(ExtensionNamespace.class).get(key);
                     if (extension != null) {
-                        final QName qName = QName.create(((QName) ((SubstatementContext<?, ?, ?>) extension).getStatementArgument())
-                                .getModule().getNamespace(), ((QName) ((SubstatementContext<?, ?, ?>) extension).
+                        final QName qName = QName.create(((QName) extension.getStatementArgument())
+                                .getModule().getNamespace(), ((QName) extension.
                                 getStatementArgument()).getModule().getRevision(), extension.getIdentifier().getArgument());
 
                         def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition
@@ -338,11 +342,18 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         }
     }
 
-
     private PrefixToModule prefixes() {
-        Map<String, QNameModule> prefixes = currentContext.getAllFromNamespace(PrefixToModule.class);
-        for (Map.Entry<String, QNameModule> prefix : prefixes.entrySet()) {
-            prefixToModuleMap.put(prefix.getKey(), prefix.getValue());
+        final Map<String, ModuleIdentifier> allPrefixes = getRoot().getAllFromNamespace(ImpPrefixToModuleIdentifier
+                .class);
+        final Map<String, ModuleIdentifier> belongsToPrefixes = getRoot().getAllFromNamespace
+                (BelongsToPrefixToModuleIdentifier.class);
+        if (belongsToPrefixes != null)
+            allPrefixes.putAll(belongsToPrefixes);
+
+        for (Entry<String, ModuleIdentifier> stringModuleIdentifierEntry : allPrefixes.entrySet()) {
+            final QNameModule namespace = getRoot().getFromNamespace(ModuleIdentifierToModuleQName.class,
+                    stringModuleIdentifierEntry.getValue());
+            prefixToModuleMap.put(stringModuleIdentifierEntry.getKey(), namespace);
         }
         return prefixToModuleMap;
     }
@@ -363,8 +374,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                 for (Map.Entry<QName, StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>>> extension : extensions
                         .entrySet()) {
                     qNameToStmtDefMap
-                            .put(QName.create(YangConstants.RFC6020_YIN_MODULE,
-                                    extension.getKey().getLocalName()),
+                              .put((extension.getKey()),
                                     (StatementDefinition) ((StatementContextBase<?, ?, ?>) extension
                                             .getValue()).definition()
                                             .getFactory());
