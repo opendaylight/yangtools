@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="parent" xmlns="urn:ietf:params:xml:ns:yang:yin:1">
+
+    <namespace uri="urn:opendaylight/parent"/>
+    <prefix value="parent"/>
+
+    <include module="child">
+        <revision-date date="2010-05-18"/>
+    </include>
+
+    <revision date="2010-05-14">
+        <description>
+            <text>Initial module draft.</text>
+        </description>
+        <reference>
+            <text>Random reference text</text>
+        </reference>
+    </revision>
+
+</module>
