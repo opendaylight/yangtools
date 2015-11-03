@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -165,12 +165,20 @@ public final class StmtContextUtils {
             final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, ?> keyStmtCtx,
             final QNameModule newQNameModule) {
 
-        Set<SchemaNodeIdentifier> newKeys = new LinkedHashSet<>();
-        for (String keyToken : LIST_KEY_SPLITTER.split(keyStmtCtx.rawStatementArgument())) {
-            final QName keyQName = QName.create(newQNameModule, keyToken);
-            newKeys.add(SchemaNodeIdentifier.create(false, keyQName));
+        final Builder<SchemaNodeIdentifier> builder = ImmutableSet.builder();
+        boolean replaced = false;
+        for (SchemaNodeIdentifier arg : keyStmtCtx.getStatementArgument()) {
+            final QName qname = arg.getLastComponent();
+            if (!newQNameModule.equals(qname)) {
+                final QName newQname = QName.create(newQNameModule, qname.getLocalName());
+                builder.add(SchemaNodeIdentifier.create(false, newQname));
+                replaced = true;
+            } else {
+                builder.add(arg);
+            }
         }
 
-        return newKeys;
+        // This makes sure we reuse the collection when a grouping is instantiated in the same module
+        return replaced ? builder.build() : keyStmtCtx.getStatementArgument();
     }
 }

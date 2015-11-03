@@ -38,7 +38,7 @@ public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<Schem
 
         @Override
         public Collection<SchemaNodeIdentifier> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-            final Builder<SchemaNodeIdentifier> builder = ImmutableSet.<SchemaNodeIdentifier>builder();
+            final Builder<SchemaNodeIdentifier> builder = ImmutableSet.builder();
             int tokens = 0;
             for (String keyToken : StmtContextUtils.LIST_KEY_SPLITTER.split(value)) {
                 builder.add(SchemaNodeIdentifier.create(false, Utils.qNameFromArgument(ctx, keyToken)));
