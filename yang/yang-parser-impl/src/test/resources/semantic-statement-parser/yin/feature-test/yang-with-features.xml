@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module name="yang-with-features"
+        xmlns="urn:ietf:params:xml:ns:yang:yin:1">
+
+    <yang-version value="1"/>
+    <namespace uri="urn:opendaylight/yang-with-features"/>
+    <prefix value="feats"/>
+
+    <feature name="arbitrary-names">
+        <description>
+            <text>This feature indicates that the device allows user-controlled
+                interfaces to be named arbitrarily.</text>
+        </description>
+    </feature>
+    <feature name="pre-provisioning">
+        <description>
+            <text>This feature indicates that the device supports
+                pre-provisioning of interface configuration, i.e., it is
+                possible to configure an interface whose physical interface
+                hardware is not present on the device.</text>
+        </description>
+    </feature>
+
+</module>
