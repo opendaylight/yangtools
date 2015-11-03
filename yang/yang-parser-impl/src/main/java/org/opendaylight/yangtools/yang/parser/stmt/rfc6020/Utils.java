@@ -244,44 +244,52 @@ public final class Utils {
 
         Preconditions.checkArgument(qNameModule != null, "Error in module '%s': can not resolve QNameModule for '%s'.",
                 ctx.getRoot().rawStatementArgument(), value);
-
-        QNameModule resultQNameModule = qNameModule.getRevision() == null ? QNameModule.create(
-                qNameModule.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV) : qNameModule;
+        final QNameModule resultQNameModule;
+        if (qNameModule.getRevision() == null) {
+            resultQNameModule = QNameModule.cachedReference(
+                QNameModule.create(qNameModule.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV));
+        } else {
+            resultQNameModule = qNameModule;
+        }
 
         return QName.create(resultQNameModule, localName);
     }
 
     public static QNameModule getModuleQNameByPrefix(final StmtContext<?, ?, ?> ctx, final String prefix) {
-        QNameModule qNameModule;
-        ModuleIdentifier impModIdentifier = ctx.getRoot().getFromNamespace(ImpPrefixToModuleIdentifier.class, prefix);
-        qNameModule = ctx.getFromNamespace(ModuleIdentifierToModuleQName.class, impModIdentifier);
+        final ModuleIdentifier modId = ctx.getRoot().getFromNamespace(ImpPrefixToModuleIdentifier.class, prefix);
+        final QNameModule qNameModule = ctx.getFromNamespace(ModuleIdentifierToModuleQName.class, modId);
 
         if (qNameModule == null && StmtContextUtils.producesDeclared(ctx.getRoot(), SubmoduleStatement.class)) {
             String moduleName = ctx.getRoot().getFromNamespace(BelongsToPrefixToModuleName.class, prefix);
-            qNameModule = ctx.getFromNamespace(ModuleNameToModuleQName.class, moduleName);
+            return ctx.getFromNamespace(ModuleNameToModuleQName.class, moduleName);
         }
         return qNameModule;
     }
 
     public static QNameModule getRootModuleQName(final StmtContext<?, ?, ?> ctx) {
-
         if (ctx == null) {
             return null;
         }
 
-        StmtContext<?, ?, ?> rootCtx = ctx.getRoot();
-        QNameModule qNameModule = null;
+        final StmtContext<?, ?, ?> rootCtx = ctx.getRoot();
+        final QNameModule qNameModule;
 
         if (StmtContextUtils.producesDeclared(rootCtx, ModuleStatement.class)) {
             qNameModule = rootCtx.getFromNamespace(ModuleCtxToModuleQName.class, rootCtx);
         } else if (StmtContextUtils.producesDeclared(rootCtx, SubmoduleStatement.class)) {
-            String belongsToModuleName = firstAttributeOf(rootCtx.substatements(),
-                    BelongsToStatement.class);
+            final String belongsToModuleName = firstAttributeOf(rootCtx.substatements(), BelongsToStatement.class);
             qNameModule = rootCtx.getFromNamespace(ModuleNameToModuleQName.class, belongsToModuleName);
+        } else {
+            qNameModule = null;
         }
 
-        return qNameModule.getRevision() == null ? QNameModule.create(qNameModule.getNamespace(),
-                SimpleDateFormatUtil.DEFAULT_DATE_REV) : qNameModule;
+        Preconditions.checkArgument(qNameModule != null, "Failed to look up root QNameModule for %s", ctx);
+        if (qNameModule.getRevision() != null) {
+            return qNameModule;
+        }
+
+        return QNameModule.cachedReference(
+            QNameModule.create(qNameModule.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV));
     }
 
     @Nullable
