@@ -64,12 +64,11 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
         final ArgumentContext argumentCtx = ctx.getChild(ArgumentContext.class, 0);
         final String keywordTxt = keywordCtx.getText();
 
-        // FIXME: This is broken for extensions - not all statements are in RFC6020 ns.
         final QName identifier = QName.create(YangConstants.RFC6020_YIN_MODULE, keywordTxt);
-        if (stmtDef != null && Utils.isValidStatementDefinition(prefixes, stmtDef, identifier)
-                && toBeSkipped.isEmpty()) {
+        final QName validStatementDefinition = Utils.getValidStatementDefinition(prefixes, stmtDef, identifier);
+        if (stmtDef != null && validStatementDefinition != null && toBeSkipped.isEmpty()) {
             final String argument = argumentCtx != null ? Utils.stringFromStringContext(argumentCtx) : null;
-            // FIXME: this looks like a fishy special case
+            // FIXME: Refactor/clean up this special case
             if (identifier.equals(Rfc6020Mapping.TYPE.getStatementName())) {
                 Preconditions.checkArgument(argument != null);
                 if (TypeUtils.isYangTypeBodyStmtString(argument)) {
@@ -80,8 +79,8 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
                 }
                 writer.argumentValue(argument, ref);
             } else {
-                writer.startStatement(identifier, ref);
-                if(argument != null) {
+                writer.startStatement(QName.create(validStatementDefinition.getModule(), keywordTxt), ref);
+                if (argument != null) {
                     writer.argumentValue(argument, ref);
                 }
             }
@@ -101,7 +100,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
             KeywordContext keyword = ctx.getChild(KeywordContext.class, 0);
             String statementName = keyword.getText();
             QName identifier = QName.create(YangConstants.RFC6020_YIN_MODULE, statementName);
-            if (stmtDef != null && Utils.isValidStatementDefinition(prefixes, stmtDef, identifier)
+            if (stmtDef != null && Utils.getValidStatementDefinition(prefixes, stmtDef, identifier) != null
                     && toBeSkipped.isEmpty()) {
                 writer.endStatement(ref);
             }

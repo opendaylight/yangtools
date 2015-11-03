@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
+
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
@@ -31,7 +32,6 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
-import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -53,7 +53,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModul
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.RootStatementContext;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -138,18 +137,22 @@ public final class Utils {
         return identifier;
     }
 
-    public static String getPrefixFromArgument(final String prefixedLocalName) {
-        String[] namesParts = prefixedLocalName.split(":");
-        if (namesParts.length == 2) {
-            return namesParts[0];
-        }
-        return null;
-    }
-
-    public static boolean isValidStatementDefinition(final PrefixToModule prefixes, final QNameToStatementDefinition stmtDef,
-            final QName identifier) {
+    /**
+     *
+     * Based on identifier read from source and collections of relevant prefixes and statement definitions mappings
+     * provided for actual phase, method resolves and returns valid QName for declared statement to be written.
+     * This applies to any declared statement, including unknown statements.
+     *
+     * @param prefixes - collection of all relevant prefix mappings supplied for actual parsing phase
+     * @param stmtDef - collection of all relevant statement definition mappings provided for actual parsing phase
+     * @param identifier - statement to parse from source
+     * @return valid QName for declared statement to be written
+     *
+     */
+    public static QName getValidStatementDefinition(final PrefixToModule prefixes, final QNameToStatementDefinition
+            stmtDef, final QName identifier) {
         if (stmtDef.get(identifier) != null) {
-            return true;
+            return stmtDef.get(identifier).getStatementName();
         } else {
             String prefixedLocalName = identifier.getLocalName();
             String[] namesParts = prefixedLocalName.split(":");
@@ -158,16 +161,12 @@ public final class Utils {
                 String prefix = namesParts[0];
                 String localName = namesParts[1];
                 if (prefixes != null && prefixes.get(prefix) != null
-                        && stmtDef.get(QName.create(YangConstants.RFC6020_YIN_MODULE, localName)) != null) {
-                    return true;
-                } else {
-                    if (stmtDef.get(QName.create(YangConstants.RFC6020_YIN_MODULE, localName)) != null) {
-                        return true;
-                    }
+                        && stmtDef.get(QName.create(prefixes.get(prefix), localName)) != null) {
+                    return QName.create(prefixes.get(prefix), localName);
                 }
             }
         }
-        return false;
+        return null;
     }
 
     static SchemaNodeIdentifier nodeIdentifierFromPath(final StmtContext<?, ?, ?> ctx, final String path) {
@@ -338,10 +337,6 @@ public final class Utils {
         }
 
         return status;
-    }
-
-    public static Date getLatestRevision(final RootStatementContext<?, ?, ?> root) {
-        return getLatestRevision(root.declaredSubstatements());
     }
 
     public static Date getLatestRevision(final Iterable<? extends StmtContext<?, ?, ?>> subStmts) {
