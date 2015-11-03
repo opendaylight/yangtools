@@ -22,9 +22,13 @@ public final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<
             final StmtContext<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> ctx) {
         super(ctx);
 
-        QNameModule qNameModuleInit = ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx);
-        this.qNameModule = qNameModuleInit.getRevision() == null ? QNameModule.create(qNameModuleInit.getNamespace(),
-                SimpleDateFormatUtil.DEFAULT_DATE_REV) : qNameModuleInit;
+        final QNameModule module = ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx);
+        if (module.getRevision() == null) {
+            qNameModule = QNameModule.cachedReference(
+                QNameModule.create(module.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV));
+        } else {
+            qNameModule = module;
+        }
     }
 
     @Override
@@ -47,10 +51,7 @@ public final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof ModuleEffectiveStatementImpl)) {
             return false;
         }
         ModuleEffectiveStatementImpl other = (ModuleEffectiveStatementImpl) obj;

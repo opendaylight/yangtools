@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
-
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
@@ -31,9 +30,9 @@ public final class SubmoduleEffectiveStatementImpl extends AbstractEffectiveModu
                 belongsToModuleName);
         RevisionEffectiveStatementImpl submoduleRevision = firstEffective(RevisionEffectiveStatementImpl.class);
 
-        this.qNameModule = submoduleRevision == null ? QNameModule.create(belongsToModuleQName.getNamespace(),
-                SimpleDateFormatUtil.DEFAULT_DATE_REV) : QNameModule.create(belongsToModuleQName.getNamespace(),
-                submoduleRevision.argument());
+        this.qNameModule = QNameModule.cachedReference(submoduleRevision == null ?
+                QNameModule.create(belongsToModuleQName.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV) :
+                    QNameModule.create(belongsToModuleQName.getNamespace(), submoduleRevision.argument()));
     }
 
     @Override
