@@ -21,7 +21,7 @@ module foo {
     container nodes {
         leaf id {
             type instance-identifier;
-            context-reference "b:identity-class";
+            f:context-reference "b:identity-class";
         }
         leaf-list constraints {
             type string;
