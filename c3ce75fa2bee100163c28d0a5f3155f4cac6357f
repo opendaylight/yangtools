@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "bada0100_4db0aef4",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MinMaxElementsValidation.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-11-04T13:48:32Z",
+      "side": 1,
+      "message": "Write could also be overrwrite - in that case count does not increase, seems to be same case as merge.",
+      "range": {
+        "startLine": 108,
+        "startChar": 20,
+        "endLine": 109,
+        "endChar": 26
+      },
+      "revId": "c3ce75fa2bee100163c28d0a5f3155f4cac6357f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "bada0100_0d92a657",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/Bug4454Test.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-11-04T13:48:32Z",
+      "side": 1,
+      "message": "Could we test this overwrites and writes also with separate modifications?\n\nTo verify if validation is also correct when overwriting preexisting data?",
+      "range": {
+        "startLine": 149,
+        "startChar": 7,
+        "endLine": 151,
+        "endChar": 52
+      },
+      "revId": "c3ce75fa2bee100163c28d0a5f3155f4cac6357f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
