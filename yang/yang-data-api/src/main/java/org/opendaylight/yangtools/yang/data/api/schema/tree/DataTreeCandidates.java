@@ -109,6 +109,8 @@ public final class DataTreeCandidates {
                     modification.delete(child);
                     LOG.debug("Modification {} deleted path {}", modification, child);
                     break;
+                case APPEARED:
+                case DISAPPEARED:
                 case SUBTREE_MODIFIED:
                     LOG.debug("Modification {} modified path {}", modification, child);
                     return new NodeIterator(this, child, node.getChildNodes().iterator());
