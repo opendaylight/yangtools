@@ -61,6 +61,7 @@ public abstract class ListNodeBaseParser<E, N extends NormalizedNode<?, ?>, O ex
 
     /**
      *
+     * @param schema schema
      * @return prepares builder which will contain entries of list according to concrete list type
      */
     protected abstract CollectionNodeBuilder<N, O> provideBuilder(S schema);
