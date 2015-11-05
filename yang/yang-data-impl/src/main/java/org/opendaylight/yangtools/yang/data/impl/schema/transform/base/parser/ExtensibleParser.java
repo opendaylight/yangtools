@@ -19,24 +19,26 @@ import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNo
 /**
  * Extensible parser allows its subclasses to customize the building process of normalized nodes
  *
- * @param <P>
- * @param <E>
- * @param <N>
- * @param <S>
+ * @param <P> P
+ * @param <E> E
+ * @param <N> N
+ * @param <S> S
  */
 public interface ExtensibleParser<P extends YangInstanceIdentifier.PathArgument, E, N extends NormalizedNode<P, ?>, S>
         extends ToNormalizedNodeParser<E, N, S> {
 
     /**
      * Provide building strategy
+     *
+     * @return BuildingStrategy object
      */
     BuildingStrategy<P, N> getBuildingStrategy();
 
     /**
      * Building strategy serves as a set of hooks into the parsing process.
      *
-     * @param <P>
-     * @param <N>
+     * @param <P> P
+     * @param <N> N
      */
     interface BuildingStrategy<P extends YangInstanceIdentifier.PathArgument, N extends NormalizedNode<P, ?>> {
 

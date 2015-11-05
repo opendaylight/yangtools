@@ -23,6 +23,8 @@ public interface NormalizedNodeStreamAttributeWriter extends NormalizedNodeStrea
 
     void startContainerNode(YangInstanceIdentifier.NodeIdentifier name, int childSizeHint, Map<QName, String> attributes) throws IOException;
 
+    void startYangModeledAnyXmlNode(YangInstanceIdentifier.NodeIdentifier name, int childSizeHint, Map<QName, String> attributes) throws IOException;
+
     void startUnkeyedListItem(YangInstanceIdentifier.NodeIdentifier name, int childSizeHint, Map<QName, String> attributes) throws IOException;
 
     void startMapEntryNode(YangInstanceIdentifier.NodeIdentifierWithPredicates identifier, int childSizeHint, Map<QName, String> attributes) throws IOException;
