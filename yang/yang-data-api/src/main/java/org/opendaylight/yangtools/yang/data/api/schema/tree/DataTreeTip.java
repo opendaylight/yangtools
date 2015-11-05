@@ -17,6 +17,10 @@ import com.google.common.annotations.Beta;
 public interface DataTreeTip {
     /**
      * Validate whether a particular modification can be applied to the data tree.
+     * @param modification
+     *                  Data tree modification.
+     * @throws DataValidationFailedException
+     *                  If modification data is not valid.
      */
     void validate(DataTreeModification modification) throws DataValidationFailedException;
 
@@ -24,6 +28,7 @@ public interface DataTreeTip {
      * Prepare a modification for commit.
      *
      * @param modification
+     *                  Data tree modification.
      * @return candidate data tree
      */
     DataTreeCandidate prepare(DataTreeModification modification);

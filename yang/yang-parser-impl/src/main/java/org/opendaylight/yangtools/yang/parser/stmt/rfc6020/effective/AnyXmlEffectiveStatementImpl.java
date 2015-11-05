@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class AnyXmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<AnyxmlStatement> implements
+public class AnyXmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<AnyxmlStatement> implements
         AnyXmlSchemaNode, DerivableSchemaNode {
 
     private final AnyXmlSchemaNode original;
