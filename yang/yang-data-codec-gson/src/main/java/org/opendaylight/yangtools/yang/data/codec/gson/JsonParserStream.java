@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 
 /**
  * This class parses JSON elements from a GSON JsonReader. It disallows multiple elements of the same name unlike the
@@ -151,14 +152,19 @@ public final class JsonParserStream implements Closeable, Flushable {
             }
             while (in.hasNext()) {
                 final String jsonElementName = in.nextName();
-                final NamespaceAndName namespaceAndName = resolveNamespace(jsonElementName, parent.getSchema());
+                DataSchemaNode parentSchema = parent.getSchema();
+                if (parentSchema instanceof YangModeledAnyXmlSchemaNode) {
+                    parentSchema = ((YangModeledAnyXmlSchemaNode) parentSchema).getSchemaOfAnyXmlData();
+                }
+                final NamespaceAndName namespaceAndName = resolveNamespace(jsonElementName, parentSchema);
                 final String localName = namespaceAndName.getName();
                 addNamespace(namespaceAndName.getUri());
                 if (namesakes.contains(jsonElementName)) {
                     throw new JsonSyntaxException("Duplicate name " + jsonElementName + " in JSON input.");
                 }
                 namesakes.add(jsonElementName);
-                final Deque<DataSchemaNode> childDataSchemaNodes = findSchemaNodeByNameAndNamespace(parent.getSchema(),
+
+                final Deque<DataSchemaNode> childDataSchemaNodes = findSchemaNodeByNameAndNamespace(parentSchema,
                         localName, getCurrentNamespace());
                 if (childDataSchemaNodes.isEmpty()) {
                     throw new IllegalStateException("Schema for node with name " + localName + " and namespace "
