@@ -18,5 +18,4 @@ public interface AnyxmlStatement extends DataDefinitionStatement {
 
     @Nullable MandatoryStatement getMandatory();
 
-
 }

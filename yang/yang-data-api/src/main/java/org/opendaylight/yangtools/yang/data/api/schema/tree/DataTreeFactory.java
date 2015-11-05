@@ -25,6 +25,8 @@ public interface DataTreeFactory {
 
     /**
      * Create a new data tree.
+     * @param type
+     *          Tree type.
      *
      * @return A data tree instance.
      */
@@ -32,6 +34,10 @@ public interface DataTreeFactory {
 
     /**
      * Create a new data tree rooted at a particular node.
+     * @param treeType
+     *          Tree type.
+     * @param rootPath
+     *          Root.
      *
      * @return A data tree instance.
      */

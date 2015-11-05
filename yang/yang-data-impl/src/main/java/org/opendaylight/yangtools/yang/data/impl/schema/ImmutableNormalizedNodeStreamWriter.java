@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.opendaylight.yangtools.yang.data.api.schema.YangModeledAnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
@@ -42,9 +43,11 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMa
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableYangModeledAnyXmlNodeBuilder;
 import org.opendaylight.yangtools.yang.data.util.LeafInterner;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 
 /**
  *
@@ -186,6 +189,18 @@ public class ImmutableNormalizedNodeStreamWriter implements SchemaAwareNormalize
 
         final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> builder = UNKNOWN_SIZE == childSizeHint ?
                 ImmutableContainerNodeBuilder.create() : ImmutableContainerNodeBuilder.create(childSizeHint);
+        enter(builder.withNodeIdentifier(name));
+    }
+
+    @Override
+    public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) {
+        checkDataNodeContainer();
+
+        Preconditions.checkArgument(nextSchema instanceof YangModeledAnyXmlSchemaNode,
+                "Schema of this node should be instance of YangModeledAnyXmlSchemaNode");
+        final DataContainerNodeAttrBuilder<NodeIdentifier, YangModeledAnyXmlNode> builder = UNKNOWN_SIZE == childSizeHint ? ImmutableYangModeledAnyXmlNodeBuilder
+                .create((YangModeledAnyXmlSchemaNode) nextSchema) : ImmutableYangModeledAnyXmlNodeBuilder.create(
+                (YangModeledAnyXmlSchemaNode) nextSchema, childSizeHint);
         enter(builder.withNodeIdentifier(name));
     }
 
