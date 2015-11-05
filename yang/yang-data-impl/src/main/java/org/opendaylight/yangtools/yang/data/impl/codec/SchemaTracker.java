@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -228,9 +229,14 @@ public final class SchemaTracker {
 
         boolean isAllowed = schema instanceof ContainerSchemaNode;
         isAllowed |= schema instanceof NotificationDefinition;
+        isAllowed |= schema instanceof YangModeledAnyXmlSchemaNode;
 
-        Preconditions.checkArgument(isAllowed, "Node %s is not a container nor a notification", schema.getPath());
-        schemaStack.push(schema);
+        Preconditions.checkArgument(isAllowed, "Node %s is not a container nor an yang modeled anyXml nor a notification", schema.getPath());
+        if (schema instanceof YangModeledAnyXmlSchemaNode)
+            schemaStack.push(((YangModeledAnyXmlSchemaNode) schema).getSchemaOfAnyXmlData());
+        else {
+            schemaStack.push(schema);
+        }
         return schema;
     }
 

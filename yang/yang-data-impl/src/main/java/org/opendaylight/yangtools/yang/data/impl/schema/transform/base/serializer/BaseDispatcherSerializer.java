@@ -29,8 +29,8 @@ public abstract class BaseDispatcherSerializer<E, N extends DataContainerNode<?>
 
     /**
      *
-     * @param schema
-     * @param augmentationSchema
+     * @param schema schema
+     * @param augmentationSchema augmentationSchema
      * @return Set of real schema objects that represent child nodes of an
      *         augmentation. Augmentation schema child nodes, if further
      *         augmented, do not contain further augmented, that are crucial for
@@ -40,8 +40,8 @@ public abstract class BaseDispatcherSerializer<E, N extends DataContainerNode<?>
 
     /**
      *
-     * @param schema
-     * @param childNode
+     * @param schema schema
+     * @param childNode childNode
      * @return Schema object associated with child node identified as: childNode.
      *         Schema should be retrieved from parent schema: schema.
      */
@@ -50,8 +50,8 @@ public abstract class BaseDispatcherSerializer<E, N extends DataContainerNode<?>
 
     /**
      *
-     * @param schema
-     * @param augmentationNode
+     * @param schema schema
+     * @param augmentationNode augmentationNode
      * @return Schema object associated with augmentation child node identified as: augmentationNode.
      *         Schema should be retrieved from parent schema: schema.
      */

@@ -79,6 +79,7 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
      *
      * @param writer Output {@link XMLStreamWriter}
      * @param context Associated {@link SchemaContext}.
+     * @param path path
      *
      * @return A new {@link NormalizedNodeStreamWriter}
      */
