@@ -101,7 +101,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *            name of node as defined in schema, namespace and revision are
      *            derived from parent node.
      * @param value
-     *            Value of leaf node. v
+     *            Value of leaf node.
      * @throws IllegalArgumentException
      *             If emitted leaf node has invalid value in current context or
      *             was emitted multiple times.
@@ -257,7 +257,13 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *            name of node as defined in schema, namespace and revision are
      *            derived from parent node.
      * @param childSizeHint
+     *            Non-negative count of expected direct child nodes or
+     *            {@link #UNKNOWN_SIZE} if count is unknown. This is only hint
+     *            and should not fail writing of child events, if there are more
+     *            events than count.
      * @throws IllegalArgumentException
+     *             If emitted node is invalid in current context or was emitted
+     *             multiple times.
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.
@@ -277,7 +283,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      * <ul>
      * <li>{@link #leafNode}</li>
      * <li>{@link #startContainerNode(NodeIdentifier, int)}</li>
-     * <li>{@link #startChoiceNode(NodeIdentifier, int)}</li>
+     * <li>{@link startChoiceNode(NodeIdentifier, int)}</li>
      * <li>{@link #startLeafSet(NodeIdentifier, int)}</li>
      * <li>{@link #startMapNode(NodeIdentifier, int)}</li>
      * <li>{@link #startUnkeyedList(NodeIdentifier, int)}</li>
@@ -287,6 +293,11 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *
      * @param identifier
      *            QName to value pairs of keys of map entry node. Values  MUST BE constant over time.
+     * @param childSizeHint
+     *            Non-negative count of expected direct child nodes or
+     *            {@link #UNKNOWN_SIZE} if count is unknown. This is only hint
+     *            and should not fail writing of child events, if there are more
+     *            events than count.
      * @throws IllegalArgumentException
      *             If key contains incorrect value.
      * @throws IllegalStateException
@@ -308,7 +319,14 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      * @param name
      *            name of node as defined in schema, namespace and revision are
      *            derived from parent node.
+     * @param childSizeHint
+     *            Non-negative count of expected direct child nodes or
+     *            {@link #UNKNOWN_SIZE} if count is unknown. This is only hint
+     *            and should not fail writing of child events, if there are more
+     *            events than count.
      * @throws IllegalArgumentException
+     *             If emitted node is invalid in current context or was emitted
+     *             multiple times.
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.
@@ -324,7 +342,13 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *            name of node as defined in schema, namespace and revision are
      *            derived from parent node.
      * @param childSizeHint
+     *            Non-negative count of expected direct child nodes or
+     *            {@link #UNKNOWN_SIZE} if count is unknown. This is only hint
+     *            and should not fail writing of child events, if there are more
+     *            events than count.
      * @throws IllegalArgumentException
+     *             If emitted node is invalid in current context or was emitted
+     *             multiple times.
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.
@@ -362,14 +386,54 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      * Emits anyxml node event.
      *
      * @param name
+     *            name of node as defined in schema, namespace and revision are
+     *            derived from parent node.
      * @param value
+     *             Value of AnyXml node.
      * @throws IllegalArgumentException
+     *             If emitted node is invalid in current context or was emitted
+     *             multiple times.
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
     void anyxmlNode(NodeIdentifier name, Object value) throws IOException;
+
+    /**
+    *
+    * Emits start of new yang modeled anyXml node.
+    *
+    * <p>
+    * End of yang modeled anyXml node event is emitted by invoking {@link #endNode()}.
+    *
+    * <p>
+    * Valid sub-events are:
+    * <ul>
+    * <li>{@link #leafNode}</li>
+    * <li>{@link #startContainerNode(NodeIdentifier, int)}</li>
+    * <li>{@link #startLeafSet(NodeIdentifier, int)}</li>
+    * <li>{@link #startMapNode(NodeIdentifier, int)}</li>
+    * <li>{@link #startUnkeyedList(NodeIdentifier, int)}</li>
+    * </ul>
+    *
+    * @param name
+    *            name of node as defined in schema, namespace and revision are
+    *            derived from parent node.
+    * @param childSizeHint
+    *            Non-negative count of expected direct child nodes or
+    *            {@link #UNKNOWN_SIZE} if count is unknown. This is only hint
+    *            and should not fail writing of child events, if there are more
+    *            events than count.
+    * @throws IllegalArgumentException
+    *             If emitted node is invalid in current context or was emitted
+    *             multiple times.
+    * @throws IllegalStateException
+    *             If node was emitted inside <code>map</code>,
+    *             <code>choice</code> <code>unkeyed list</code> node.
+    * @throws IOException if an underlying IO error occurs
+    */
+    void startYangModeledAnyXmlNode(NodeIdentifier name, int childSizeHint) throws IOException;
 
     /**
      * Emits end event for node.
