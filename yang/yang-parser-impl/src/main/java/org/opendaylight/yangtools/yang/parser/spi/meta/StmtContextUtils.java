@@ -12,6 +12,8 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -88,6 +90,18 @@ public final class StmtContextUtils {
             }
         }
         return null;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <AT,DT extends DeclaredStatement<AT>> Collection<StmtContext<AT, DT, ?>> findAllDeclaredSubstatement(
+            final StmtContext<?, ?, ?> stmtContext, final Class<DT> declaredType) {
+        Builder<StmtContext<AT, DT, ?>> listBuilder = ImmutableList.builder();
+        for (StmtContext<?, ?, ?> subStmtContext : stmtContext.declaredSubstatements()) {
+            if (producesDeclared(subStmtContext,declaredType)) {
+                listBuilder.add((StmtContext<AT, DT, ?>) subStmtContext);
+            }
+        }
+        return listBuilder.build();
     }
 
     @SafeVarargs
