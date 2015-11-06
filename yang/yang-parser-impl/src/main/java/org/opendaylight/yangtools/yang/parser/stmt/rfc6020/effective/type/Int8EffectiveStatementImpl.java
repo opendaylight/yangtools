@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
@@ -25,7 +26,7 @@ public class Int8EffectiveStatementImpl extends IntegerEffectiveImplBase {
 
     public Int8EffectiveStatementImpl(final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
 
-        super(ctx, LOCAL_NAME, MIN_RANGE, MAX_RANGE, DESCRIPTION);
+        super(ctx, BaseTypes.INT8_QNAME, MIN_RANGE, MAX_RANGE, DESCRIPTION);
     }
 
     @Override
