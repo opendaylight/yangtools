@@ -99,9 +99,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                     final StatementContextBase<?,?,?> extension = (StatementContextBase<?, ?, ?>) currentContext
                             .getAllFromNamespace(ExtensionNamespace.class).get(key);
                     if (extension != null) {
-                        final QName qName = QName.create(((QName) ((SubstatementContext<?, ?, ?>) extension).getStatementArgument())
-                                .getModule().getNamespace(), ((QName) ((SubstatementContext<?, ?, ?>) extension).
-                                getStatementArgument()).getModule().getRevision(), extension.getIdentifier().getArgument());
+                        final QName arg = (QName) ((SubstatementContext<?, ?, ?>) extension).getStatementArgument();
+                        final QName qName = QName.create(arg, extension.getIdentifier().getArgument());
 
                         def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition
                                 (getNewStatementDefinition(qName)));

@@ -9,11 +9,11 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -36,11 +36,11 @@ abstract class IntegerEffectiveImplBase extends
     private final List<RangeConstraint> rangeStatements;
 
     protected IntegerEffectiveImplBase(final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
-            final String localName, final Number minRange, final Number maxRange, final String description) {
+            final QName qname, final Number minRange, final Number maxRange, final String description) {
 
         super(ctx);
 
-        this.qName = QName.create(YangConstants.RFC6020_YANG_MODULE, localName);
+        this.qName = Preconditions.checkNotNull(qname);
         path = ctx.getSchemaPath().get();
 
         final String rangeDescription = "Integer values between " + minRange + " and " + maxRange + ", inclusively.";
