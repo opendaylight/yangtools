@@ -35,6 +35,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
@@ -101,7 +102,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                             .getAllFromNamespace(ExtensionNamespace.class).get(key);
                     if (extension != null) {
                         final QName arg = (QName) ((SubstatementContext<?, ?, ?>) extension).getStatementArgument();
-                        final QName qName = QName.create(arg, extension.getIdentifier().getArgument());
+                        final QName qName = current.getFromNamespace(QNameCacheNamespace.class,
+                            QName.create(arg, extension.getIdentifier().getArgument()));
 
                         def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition
                                 (getNewStatementDefinition(qName)));

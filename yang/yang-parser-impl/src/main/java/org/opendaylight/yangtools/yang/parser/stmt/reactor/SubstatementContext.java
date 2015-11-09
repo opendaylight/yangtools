@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
+import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -56,7 +57,9 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         if (newQNameModule != null) {
             if (original.argument instanceof QName) {
                 QName originalQName = (QName) original.argument;
-                this.argument = (A) QName.create(newQNameModule, originalQName.getLocalName());
+                this.argument = (A)
+                        getFromNamespace(QNameCacheNamespace.class,
+                            QName.create(newQNameModule, originalQName.getLocalName()));
             } else if (StmtContextUtils.producesDeclared(original, KeyStatement.class)) {
                 this.argument = (A) StmtContextUtils.replaceModuleQNameForKey(
                                 (StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, ?>) original,

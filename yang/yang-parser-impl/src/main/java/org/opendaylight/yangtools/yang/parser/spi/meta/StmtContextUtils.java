@@ -170,7 +170,8 @@ public final class StmtContextUtils {
         for (SchemaNodeIdentifier arg : keyStmtCtx.getStatementArgument()) {
             final QName qname = arg.getLastComponent();
             if (!newQNameModule.equals(qname)) {
-                final QName newQname = QName.create(newQNameModule, qname.getLocalName());
+                final QName newQname = keyStmtCtx.getFromNamespace(QNameCacheNamespace.class,
+                    QName.create(newQNameModule, qname.getLocalName()));
                 builder.add(SchemaNodeIdentifier.create(false, newQname));
                 replaced = true;
             } else {
