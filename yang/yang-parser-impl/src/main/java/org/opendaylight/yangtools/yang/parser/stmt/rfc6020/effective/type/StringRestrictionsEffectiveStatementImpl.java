@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.StringRestrictions;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 
-public class StringRestrictionsEffectiveStatementImpl extends EffectiveStatementBase<String, StringRestrictions> {
+public class StringRestrictionsEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, StringRestrictions> {
     public StringRestrictionsEffectiveStatementImpl(final StmtContext<String, StringRestrictions, ?> ctx) {
         super(ctx);
     }

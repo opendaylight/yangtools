@@ -20,9 +20,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 
-public class EmptyEffectiveStatementImpl extends EffectiveStatementBase<String, TypeStatement>
+public class EmptyEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, TypeStatement>
         implements EmptyTypeDefinition {
 
     public static final String LOCAL_NAME = TypeUtils.EMPTY;

@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class PathEffectiveStatementImpl extends EffectiveStatementBase<RevisionAwareXPath, PathStatement> {
+public final class PathEffectiveStatementImpl extends DeclaredEffectiveStatementBase<RevisionAwareXPath, PathStatement> {
     public PathEffectiveStatementImpl(final StmtContext<RevisionAwareXPath, PathStatement, ?> ctx) {
         super(ctx);
     }

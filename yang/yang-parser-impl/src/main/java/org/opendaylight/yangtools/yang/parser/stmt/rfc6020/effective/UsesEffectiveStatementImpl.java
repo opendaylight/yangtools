@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 
-public final class UsesEffectiveStatementImpl extends EffectiveStatementBase<QName, UsesStatement> implements UsesNode {
+public final class UsesEffectiveStatementImpl extends DeclaredEffectiveStatementBase<QName, UsesStatement> implements UsesNode {
     private final SchemaPath groupingPath;
     private final boolean addedByUses;
     private final Map<SchemaPath, SchemaNode> refines;

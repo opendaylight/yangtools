@@ -24,10 +24,10 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 
 public class UnionSpecificationEffectiveStatementImpl extends
-        EffectiveStatementBase<String, UnionSpecification> implements UnionTypeDefinition,
+        DeclaredEffectiveStatementBase<String, UnionSpecification> implements UnionTypeDefinition,
         TypeEffectiveStatement<UnionSpecification> {
 
     private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "union");

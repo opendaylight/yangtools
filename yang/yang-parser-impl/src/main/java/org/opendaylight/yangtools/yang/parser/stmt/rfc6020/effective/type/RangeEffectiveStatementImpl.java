@@ -11,9 +11,9 @@ import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 
-public class RangeEffectiveStatementImpl extends EffectiveStatementBase<List<RangeConstraint>, RangeStatement> {
+public class RangeEffectiveStatementImpl extends DeclaredEffectiveStatementBase<List<RangeConstraint>, RangeStatement> {
     public RangeEffectiveStatementImpl(final StmtContext<List<RangeConstraint>, RangeStatement, ?> ctx) {
         super(ctx);
     }

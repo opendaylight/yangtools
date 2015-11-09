@@ -21,8 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
@@ -30,16 +28,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> implements EffectiveStatement<A, D> {
 
     private final List<? extends EffectiveStatement<?, ?>> substatements;
-    private final StatementSource statementSource;
-    private final StatementDefinition statementDefinition;
-    private final A argument;
-    private final D declaredInstance;
 
-    public EffectiveStatementBase(final StmtContext<A, D, ?> ctx) {
-        this.statementDefinition = ctx.getPublicDefinition();
-        this.argument = ctx.getStatementArgument();
-        this.statementSource = ctx.getStatementSource();
-
+    protected EffectiveStatementBase(final StmtContext<A, D, ?> ctx) {
         Collection<StatementContextBase<?, ?, ?>> effectiveSubstatements = ctx.effectiveSubstatements();
 
         Collection<StatementContextBase<?, ?, ?>> substatementsInit = new ArrayList<>();
@@ -60,41 +50,20 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
         this.substatements = ImmutableList.copyOf(Collections2.transform(
             Collections2.filter(substatementsInit, StmtContextUtils.IS_SUPPORTED_TO_BUILD_EFFECTIVE),
                 StmtContextUtils.buildEffective()));
-        declaredInstance = ctx.buildDeclared();
     }
 
     @Override
-    public StatementDefinition statementDefinition() {
-        return statementDefinition;
-    }
-
-    @Override
-    public A argument() {
-        return argument;
-    }
-
-    @Override
-    public StatementSource getStatementSource() {
-        return statementSource;
-    }
-
-    @Override
-    public D getDeclared() {
-        return declaredInstance;
-    }
-
-    @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> V get(final Class<N> namespace, final K identifier) {
+    public final <K, V, N extends IdentifierNamespace<K, V>> V get(final Class<N> namespace, final K identifier) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(final Class<N> namespace) {
+    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(final Class<N> namespace) {
         throw new UnsupportedOperationException("Not implemented yet.");
     }
 
     @Override
-    public Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+    public final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
         return substatements;
     }
 

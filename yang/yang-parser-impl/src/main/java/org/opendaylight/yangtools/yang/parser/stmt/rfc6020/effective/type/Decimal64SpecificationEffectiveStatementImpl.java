@@ -29,11 +29,11 @@ import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType.Builder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.FractionDigitsEffectiveStatementImpl;
 
 public class Decimal64SpecificationEffectiveStatementImpl extends
-        EffectiveStatementBase<String, Decimal64Specification>
+        DeclaredEffectiveStatementBase<String, Decimal64Specification>
         implements DecimalTypeDefinition, TypeEffectiveStatement<Decimal64Specification> {
 
     private static final String UNITS = "";

@@ -24,9 +24,9 @@ import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 
-public class StringEffectiveStatementImpl extends EffectiveStatementBase<String, TypeStatement> implements
+public class StringEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, TypeStatement> implements
         StringTypeDefinition {
 
     public static final String LOCAL_NAME = TypeUtils.STRING;

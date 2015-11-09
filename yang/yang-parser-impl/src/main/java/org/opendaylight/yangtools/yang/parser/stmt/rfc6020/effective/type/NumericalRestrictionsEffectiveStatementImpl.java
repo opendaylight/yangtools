@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.NumericalRestrictions;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 
-public class NumericalRestrictionsEffectiveStatementImpl extends EffectiveStatementBase<String, TypeStatement.NumericalRestrictions> {
+public class NumericalRestrictionsEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, NumericalRestrictions> {
 
-    public NumericalRestrictionsEffectiveStatementImpl(StmtContext<String, TypeStatement.NumericalRestrictions, ?> ctx) {
+    public NumericalRestrictionsEffectiveStatementImpl(final StmtContext<String, NumericalRestrictions, ?> ctx) {
         super(ctx);
     }
 }
