@@ -12,8 +12,11 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.google.common.collect.UnmodifiableIterator;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -121,7 +124,11 @@ public abstract class SchemaPath implements Immutable {
     private ImmutableList<QName> getLegacyPath() {
         ImmutableList<QName> ret = legacyPath;
         if (ret == null) {
-            ret = ImmutableList.copyOf(getPathTowardsRoot()).reverse();
+            final List<QName> tmp = new ArrayList<>();
+            for (QName qname : getPathTowardsRoot()) {
+                tmp.add(qname);
+            }
+            ret = ImmutableList.copyOf(Lists.reverse(tmp));
             LEGACYPATH_UPDATER.lazySet(this, ret);
         }
 
