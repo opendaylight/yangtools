@@ -57,7 +57,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
             + "(.+)\\)(.+)$");
     private static final Pattern QNAME_PATTERN_NO_REVISION = Pattern.compile("^\\((.+)\\)(.+)$");
     private static final Pattern QNAME_PATTERN_NO_NAMESPACE_NO_REVISION = Pattern.compile("^(.+)$");
-    private static final char[] ILLEGAL_CHARACTERS = new char[] { '?', '(', ')', '&' };
+    private static final char[] ILLEGAL_CHARACTERS = new char[] { '?', '(', ')', '&', ':' };
 
     // Mandatory
     private final QNameModule module;
