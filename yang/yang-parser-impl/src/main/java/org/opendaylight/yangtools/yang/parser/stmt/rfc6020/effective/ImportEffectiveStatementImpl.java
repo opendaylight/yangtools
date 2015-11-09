@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class ImportEffectiveStatementImpl extends EffectiveStatementBase<String, ImportStatement> implements
+public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, ImportStatement> implements
         ModuleImport {
 
     private final String moduleName;

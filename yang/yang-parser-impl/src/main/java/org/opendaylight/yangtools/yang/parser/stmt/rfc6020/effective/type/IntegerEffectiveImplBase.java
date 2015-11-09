@@ -22,10 +22,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 
 abstract class IntegerEffectiveImplBase extends
-        EffectiveStatementBase<String,TypeStatement> implements IntegerTypeDefinition {
+        DeclaredEffectiveStatementBase<String,TypeStatement> implements IntegerTypeDefinition {
 
     private static final String REFERENCE_INT = "https://tools.ietf.org/html/rfc6020#section-9.2";
 

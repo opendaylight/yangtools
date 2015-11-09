@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class MustEffectiveStatementImpl extends EffectiveStatementBase<RevisionAwareXPath, MustStatement> implements
+public class MustEffectiveStatementImpl extends DeclaredEffectiveStatementBase<RevisionAwareXPath, MustStatement> implements
         MustDefinition {
 
     private final RevisionAwareXPath xPath;

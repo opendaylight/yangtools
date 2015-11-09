@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class DeviationEffectiveStatementImpl extends EffectiveStatementBase<SchemaNodeIdentifier, DeviationStatement>
+public class DeviationEffectiveStatementImpl extends DeclaredEffectiveStatementBase<SchemaNodeIdentifier, DeviationStatement>
         implements Deviation, Immutable {
     private final SchemaPath targetPath;
     private final Deviate deviate;

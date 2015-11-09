@@ -11,7 +11,7 @@ import java.net.URI;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class NamespaceEffectiveStatementImpl extends EffectiveStatementBase<URI, NamespaceStatement>  {
+public final class NamespaceEffectiveStatementImpl extends DeclaredEffectiveStatementBase<URI, NamespaceStatement>  {
     public NamespaceEffectiveStatementImpl(final StmtContext<URI, NamespaceStatement, ?> ctx) {
         super(ctx);
     }

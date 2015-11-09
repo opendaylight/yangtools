@@ -21,9 +21,9 @@ import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 
-public class BooleanEffectiveStatementImpl extends EffectiveStatementBase<String, TypeStatement>
+public class BooleanEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, TypeStatement>
         implements BooleanTypeDefinition {
 
     public static final String LOCAL_NAME = TypeUtils.BOOLEAN;

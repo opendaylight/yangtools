@@ -11,7 +11,7 @@ import java.util.Date;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class RevisionEffectiveStatementImpl extends EffectiveStatementBase<Date, RevisionStatement> {
+public final class RevisionEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Date, RevisionStatement> {
     private final String reference;
     private final String description;
 

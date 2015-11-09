@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 
-public class PatternEffectiveStatementImpl extends EffectiveStatementBase<PatternConstraint, PatternStatement> {
+public class PatternEffectiveStatementImpl extends DeclaredEffectiveStatementBase<PatternConstraint, PatternStatement> {
     public PatternEffectiveStatementImpl(final StmtContext<PatternConstraint, PatternStatement, ?> ctx) {
         super(ctx);
     }

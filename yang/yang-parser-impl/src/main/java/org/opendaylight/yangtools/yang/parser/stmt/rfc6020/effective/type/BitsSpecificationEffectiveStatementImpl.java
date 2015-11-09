@@ -24,10 +24,11 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.BitsType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 
 public class BitsSpecificationEffectiveStatementImpl extends
-        EffectiveStatementBase<String, BitsSpecification> implements BitsTypeDefinition, TypeEffectiveStatement<BitsSpecification> {
+        DeclaredEffectiveStatementBase<String, BitsSpecification>
+        implements BitsTypeDefinition, TypeEffectiveStatement<BitsSpecification> {
 
     private static final QName QNAME = BaseTypes.BITS_QNAME;
     private static final String DESCRIPTION = "The bits built-in type represents a bit set. "
