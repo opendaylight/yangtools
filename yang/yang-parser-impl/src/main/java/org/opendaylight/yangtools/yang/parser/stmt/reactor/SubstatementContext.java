@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ChildSchemaNodes;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.GroupingUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
@@ -196,7 +197,18 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
                 (StmtContextUtils.producesDeclared(this, AugmentStatement.class)
                    || StmtContextUtils.producesDeclared(this, RefineStatement.class))) {
 
-            return parentPath.createChild(((SchemaNodeIdentifier) argument).getPathFromRoot());
+            StatementContextBase<?, ?, ?> wlk = parentPath();
+
+            for (QName qname : ((SchemaNodeIdentifier) argument).getPathFromRoot()) {
+                @SuppressWarnings("unchecked")
+                final StatementContextBase<?, ?, ?> child =
+                        (StatementContextBase<?, ?, ?>)wlk.getFromNamespace(ChildSchemaNodes.class, qname);
+                Preconditions.checkArgument(child != null, "Failed to find element %s of %s in %s", qname, argument,
+                        wlk.getSchemaPath().get());
+                wlk = child;
+            }
+
+            return wlk.getSchemaPath().get();
         }
         if (Utils.isUnknownNode(this)) {
             return parentPath.createChild(getPublicDefinition().getStatementName());
@@ -204,6 +216,22 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
 
         // FIXME: this does not look right
         return maybeParentPath.orNull();
+    }
+
+    private StatementContextBase<?, ?, ?> parentPath() {
+        StatementContextBase<?, ?, ?> wlk = parent;
+
+        while (true) {
+            final StatementContextBase<?, ?, ?> p = wlk.getParentContext();
+            if (p == null) {
+                return wlk;
+            }
+            if (!p.getSchemaPath().equals(wlk.getSchemaPath())) {
+                return wlk;
+            }
+
+            wlk = p;
+        }
     }
 
     @Override
