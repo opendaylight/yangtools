@@ -7,49 +7,54 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.MandatoryEffectiveStatementImpl;
-
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.MandatoryEffectiveStatementImpl;
 
-public class MandatoryStatementImpl extends AbstractDeclaredStatement<Boolean> implements
-        MandatoryStatement {
+public class MandatoryStatementImpl extends AbstractDeclaredStatement<Boolean> implements MandatoryStatement {
 
-    protected MandatoryStatementImpl(
-            StmtContext<Boolean, MandatoryStatement, ?> context) {
+    protected MandatoryStatementImpl(final StmtContext<Boolean, MandatoryStatement, ?> context) {
         super(context);
     }
 
-    public static class Definition extends AbstractStatementSupport<Boolean,MandatoryStatement,EffectiveStatement<Boolean,MandatoryStatement>> {
+    public static class Definition extends
+        AbstractStatementSupport<Boolean, MandatoryStatement, EffectiveStatement<Boolean, MandatoryStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.MANDATORY);
         }
 
-        @Override public Boolean parseArgumentValue(
-                StmtContext<?, ?, ?> ctx, String value) throws SourceException {
+        @Override
+        public Boolean parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return Boolean.valueOf(value);
         }
 
-        @Override public MandatoryStatement createDeclared(
-                StmtContext<Boolean, MandatoryStatement, ?> ctx) {
-            return new MandatoryStatementImpl(ctx);
+        @Override
+        public MandatoryStatement createDeclared(final StmtContext<Boolean, MandatoryStatement, ?> ctx) {
+            final MandatoryStatement ret = new MandatoryStatementImpl(ctx);
+            if (EmptyMandatoryStatement.FALSE.equals(ret)) {
+                return EmptyMandatoryStatement.FALSE;
+            } else if (EmptyMandatoryStatement.TRUE.equals(ret)) {
+                return EmptyMandatoryStatement.TRUE;
+            } else {
+                return ret;
+            }
         }
 
-        @Override public EffectiveStatement<Boolean, MandatoryStatement> createEffective(
-                StmtContext<Boolean, MandatoryStatement, EffectiveStatement<Boolean, MandatoryStatement>> ctx) {
+        @Override
+        public EffectiveStatement<Boolean, MandatoryStatement> createEffective(
+                final StmtContext<Boolean, MandatoryStatement, EffectiveStatement<Boolean, MandatoryStatement>> ctx) {
             return new MandatoryEffectiveStatementImpl(ctx);
         }
     }
 
-    @Nonnull @Override
-    public Boolean getValue() {
+    @Override
+    @Nonnull public Boolean getValue() {
         return argument();
     }
 }
