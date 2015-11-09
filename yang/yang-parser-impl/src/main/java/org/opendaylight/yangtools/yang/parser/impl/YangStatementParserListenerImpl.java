@@ -18,7 +18,9 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.KeywordCo
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParserBaseListener;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
@@ -73,8 +75,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
         final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, ctx
             .getStart().getLine(), ctx.getStart().getCharPositionInLine());
         final String keywordTxt = Verify.verifyNotNull(ctx.getChild(KeywordContext.class, 0)).getText();
-        final QName identifier = QName.create(YangConstants.RFC6020_YIN_MODULE, keywordTxt);
-        final QName validStatementDefinition = Utils.getValidStatementDefinition(prefixes, stmtDef, identifier);
+        final QName validStatementDefinition = getValidStatementDefinition(prefixes, stmtDef, keywordTxt);
 
         final int childId = counters.peek().getAndIncrement();
         counters.push(new Counter());
@@ -97,8 +98,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
 
         KeywordContext keyword = ctx.getChild(KeywordContext.class, 0);
         String statementName = keyword.getText();
-        QName identifier = QName.create(YangConstants.RFC6020_YIN_MODULE, statementName);
-        if (stmtDef != null && Utils.getValidStatementDefinition(prefixes, stmtDef, identifier) != null
+        if (stmtDef != null && getValidStatementDefinition(prefixes, stmtDef, statementName) != null
                 && toBeSkipped.isEmpty()) {
             writer.endStatement(ref);
         }
@@ -106,5 +106,52 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
         // No-op if the statement is not on the list
         toBeSkipped.remove(statementName);
         counters.pop();
+    }
+
+    /**
+     * Based on identifier read from source and collections of relevant prefixes and statement definitions mappings
+     * provided for actual phase, method resolves and returns valid QName for declared statement to be written.
+     * This applies to any declared statement, including unknown statements.
+     *
+     * @param prefixes collection of all relevant prefix mappings supplied for actual parsing phase
+     * @param stmtDef collection of all relevant statement definition mappings provided for actual parsing phase
+     * @param keywordText statement keyword text to parse from source
+     * @return valid QName for declared statement to be written, or null
+     */
+    private static QName getValidStatementDefinition(final PrefixToModule prefixes,
+            final QNameToStatementDefinition stmtDef, final String keywordText) {
+        final int firstColon = keywordText.indexOf(':');
+        if (firstColon == -1) {
+            final StatementDefinition statementDefinition = stmtDef.get(
+                new QName(YangConstants.RFC6020_YIN_NAMESPACE, keywordText));
+            return statementDefinition != null ? statementDefinition.getStatementName() : null;
+        }
+
+        final int secondColon = keywordText.indexOf(':', firstColon + 1);
+        if (secondColon != -1) {
+            // Malformed string
+            return null;
+        }
+        if (prefixes == null) {
+            // No prefixes to look up from
+            return null;
+        }
+
+        final String prefix = keywordText.substring(0, firstColon);
+        final QNameModule qNameModule = prefixes.get(prefix);
+        if (qNameModule == null) {
+            // Failed to look the namespace
+            return null;
+        }
+
+        final String localName = keywordText.substring(firstColon + 1);
+        final StatementDefinition foundStmtDef;
+        if (prefixes.isPreLinkageMap()) {
+            foundStmtDef = stmtDef.getByNamespaceAndLocalName(qNameModule.getNamespace(), localName);
+        } else {
+            foundStmtDef = stmtDef.get(QName.create(qNameModule, localName));
+        }
+
+        return foundStmtDef != null ? foundStmtDef.getStatementName() : null;
     }
 }
