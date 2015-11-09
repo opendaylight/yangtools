@@ -26,33 +26,33 @@ public class ChildSchemaNodes<D extends DeclaredStatement<QName>,E extends Effec
     implements StatementNamespace<QName, D, E>{
 
     protected ChildSchemaNodes() {
-        super((Class<ChildSchemaNodes<D,E>>) (Class) ChildSchemaNodes.class);
+        super((Class) ChildSchemaNodes.class);
     }
 
     @Override
-    public StmtContext<?, D, E> get(QName key) {
+    public StmtContext<?, D, E> get(final QName key) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public StmtContext<?, D, E> getFrom(NamespaceStorageNode storage, QName key) {
+    public StmtContext<?, D, E> getFrom(final NamespaceStorageNode storage, final QName key) {
         return globalOrStatementSpecific(storage).getFromLocalStorage(getIdentifier(), key);
     }
 
     @Override
-    public Map<QName, StmtContext<?, D, E>> getAllFrom(NamespaceStorageNode storage) {
+    public Map<QName, StmtContext<?, D, E>> getAllFrom(final NamespaceStorageNode storage) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public void addTo(NamespaceBehaviour.NamespaceStorageNode storage, QName key, StmtContext<?, D, E> value) {
+    public void addTo(final NamespaceBehaviour.NamespaceStorageNode storage, final QName key, final StmtContext<?, D, E> value) {
         globalOrStatementSpecific(storage).addToLocalStorage(ChildSchemaNodes.class, key, value);
     }
 
-    private NamespaceStorageNode globalOrStatementSpecific(NamespaceBehaviour.NamespaceStorageNode storage) {
+    private static NamespaceStorageNode globalOrStatementSpecific(final NamespaceBehaviour.NamespaceStorageNode storage) {
         NamespaceStorageNode current = storage;
         while(current.getStorageNodeType() != StorageNodeType.STATEMENT_LOCAL && current.getStorageNodeType() != StorageNodeType.GLOBAL) {
             current = current.getParentNamespaceStorage();

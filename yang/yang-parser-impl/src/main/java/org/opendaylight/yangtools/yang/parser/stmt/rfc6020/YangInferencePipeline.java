@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedIdentitiesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
@@ -69,6 +70,7 @@ public final class YangInferencePipeline {
             .addSupport(global(ModuleQNameToModuleName.class))
             .addSupport(global(PrefixToModule.class))
             .addSupport(global(ModuleIdentifierToModuleQName.class))
+            .addSupport(QNameCacheNamespace.getInstance())
             .addSupport(sourceLocal(ImportedModuleContext.class))
             .addSupport(sourceLocal(IncludedModuleContext.class))
             .addSupport(sourceLocal(IncludedSubmoduleNameToIdentifier.class))
