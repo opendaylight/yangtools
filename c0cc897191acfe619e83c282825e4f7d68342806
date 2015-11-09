@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1acb0d3e_6eeecf24",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/ExtensionEffectiveStatementImpl.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-11-09T12:59:50Z",
+      "side": 1,
+      "message": "this needs very careful explanation as to why this happens from the side -- getUnknownSchemaNodes() has a codepath where it can return null -- which is not what we want",
+      "revId": "c0cc897191acfe619e83c282825e4f7d68342806",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
