@@ -30,7 +30,6 @@ abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatem
         AbstractEffectiveDocumentedDataNodeContainer<QName, D> implements DataNodeContainer, AugmentationTarget,
         DataSchemaNode {
 
-    private final QName qname;
     private final SchemaPath path;
 
     // :FIXME should be private and final
@@ -45,7 +44,6 @@ abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatem
     public AbstractEffectiveSimpleDataNodeContainer(final StmtContext<QName, D, ?> ctx) {
         super(ctx);
 
-        this.qname = ctx.getStatementArgument();
         this.path = ctx.getSchemaPath().get();
         this.constraints = EffectiveConstraintDefinitionImpl.forParent(this);
 
@@ -79,7 +77,7 @@ abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatem
 
     @Override
     public QName getQName() {
-        return qname;
+        return path.getLastComponent();
     }
 
     @Override
