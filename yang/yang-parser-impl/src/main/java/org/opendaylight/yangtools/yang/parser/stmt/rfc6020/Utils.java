@@ -41,7 +41,6 @@ import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
@@ -61,8 +60,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdenti
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
-import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
-import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.RootStatementContext;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
@@ -392,51 +389,6 @@ public final class Utils {
             return namesParts.get(1);
         }
         return identifier;
-    }
-
-    /**
-     *
-     * Based on identifier read from source and collections of relevant prefixes and statement definitions mappings
-     * provided for actual phase, method resolves and returns valid QName for declared statement to be written.
-     * This applies to any declared statement, including unknown statements.
-     *
-     * @param prefixes - collection of all relevant prefix mappings supplied for actual parsing phase
-     * @param stmtDef - collection of all relevant statement definition mappings provided for actual parsing phase
-     * @param identifier - statement to parse from source
-     * @return valid QName for declared statement to be written
-     *
-     */
-    public static QName getValidStatementDefinition(final PrefixToModule prefixes,
-            final QNameToStatementDefinition stmtDef, final QName identifier) {
-        final StatementDefinition def = stmtDef.get(identifier);
-        if (def != null) {
-            return def.getStatementName();
-        }
-        if (prefixes == null) {
-            return null;
-        }
-
-        final String prefixedLocalName = identifier.getLocalName();
-        final String[] namesParts = prefixedLocalName.split(":");
-        if (namesParts.length != 2) {
-            return null;
-        }
-
-        final String prefix = namesParts[0];
-        final String localName = namesParts[1];
-        final QNameModule qNameModule = prefixes.get(prefix);
-        if (qNameModule == null) {
-            return null;
-        }
-
-        if (prefixes.isPreLinkageMap()) {
-            final StatementDefinition foundStmtDef = stmtDef.getByNamespaceAndLocalName(qNameModule.getNamespace(),
-                localName);
-            return foundStmtDef != null ? foundStmtDef.getStatementName() : null;
-        }
-
-        final QName qName = QName.create(qNameModule, localName);
-        return stmtDef.get(qName) != null ? qName : null;
     }
 
     static SchemaNodeIdentifier nodeIdentifierFromPath(final StmtContext<?, ?, ?> ctx, final String path) {
