@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class BelongsEffectiveToStatementImpl extends EffectiveStatementBase<String, BelongsToStatement> {
+public final class BelongsEffectiveToStatementImpl extends DeclaredEffectiveStatementBase<String, BelongsToStatement> {
     public BelongsEffectiveToStatementImpl(final StmtContext<String, BelongsToStatement, ?> ctx) {
         super(ctx);
     }

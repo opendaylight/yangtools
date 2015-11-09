@@ -25,10 +25,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.EnumSpecific
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.EnumerationType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 
 public class EnumSpecificationEffectiveStatementImpl extends
-        EffectiveStatementBase<String, EnumSpecification> implements EnumTypeDefinition, TypeEffectiveStatement<EnumSpecification> {
+        DeclaredEffectiveStatementBase<String, EnumSpecification> implements EnumTypeDefinition,
+        TypeEffectiveStatement<EnumSpecification> {
 
     private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "enumeration");
 

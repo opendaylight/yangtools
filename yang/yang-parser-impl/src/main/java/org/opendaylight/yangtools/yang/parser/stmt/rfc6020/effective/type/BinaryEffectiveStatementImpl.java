@@ -21,9 +21,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 
-public class BinaryEffectiveStatementImpl extends EffectiveStatementBase<String, TypeStatement>
+public class BinaryEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, TypeStatement>
         implements BinaryTypeDefinition {
 
     private static final String DESCRIPTION = "The binary built-in type represents any binary data, i.e., a sequence of octets.";

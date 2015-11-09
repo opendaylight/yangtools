@@ -26,10 +26,10 @@ import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.BaseEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 
 public class IdentityRefSpecificationEffectiveStatementImpl extends
-        EffectiveStatementBase<String, IdentityRefSpecification> implements IdentityrefTypeDefinition,
+        DeclaredEffectiveStatementBase<String, IdentityRefSpecification> implements IdentityrefTypeDefinition,
         TypeEffectiveStatement<IdentityRefSpecification> {
 
     private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, TypeUtils.IDENTITY_REF);

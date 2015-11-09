@@ -23,10 +23,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.LeafrefSpeci
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.Leafref;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PathEffectiveStatementImpl;
 
-public class LeafrefSpecificationEffectiveStatementImpl extends EffectiveStatementBase<String, LeafrefSpecification>
+public class LeafrefSpecificationEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, LeafrefSpecification>
         implements LeafrefTypeDefinition, TypeEffectiveStatement<LeafrefSpecification> {
 
     public static final String LOCAL_NAME = "leafref";

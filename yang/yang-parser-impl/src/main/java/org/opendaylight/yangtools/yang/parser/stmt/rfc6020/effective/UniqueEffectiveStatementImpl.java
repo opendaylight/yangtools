@@ -14,8 +14,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class UniqueEffectiveStatementImpl extends
-        EffectiveStatementBase<Collection<SchemaNodeIdentifier.Relative>, UniqueStatement> {
-    public UniqueEffectiveStatementImpl(StmtContext<Collection<SchemaNodeIdentifier.Relative>, UniqueStatement, ?> ctx) {
+        DeclaredEffectiveStatementBase<Collection<SchemaNodeIdentifier.Relative>, UniqueStatement> {
+    public UniqueEffectiveStatementImpl(final StmtContext<Collection<SchemaNodeIdentifier.Relative>, UniqueStatement, ?> ctx) {
         super(ctx);
     }
 }

@@ -22,11 +22,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.InstanceIden
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RequireInstanceEffectiveStatementImpl;
 
 public class InstanceIdentifierSpecificationEffectiveStatementImpl extends
-        EffectiveStatementBase<String, InstanceIdentifierSpecification> implements InstanceIdentifierTypeDefinition,
+        DeclaredEffectiveStatementBase<String, InstanceIdentifierSpecification> implements InstanceIdentifierTypeDefinition,
         TypeEffectiveStatement<InstanceIdentifierSpecification> {
 
     private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "instance-identifier");

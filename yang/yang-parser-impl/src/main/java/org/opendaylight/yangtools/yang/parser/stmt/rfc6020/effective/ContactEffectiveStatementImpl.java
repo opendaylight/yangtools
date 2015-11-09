@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class ContactEffectiveStatementImpl extends EffectiveStatementBase<String, ContactStatement> {
+public final class ContactEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, ContactStatement> {
     public ContactEffectiveStatementImpl(final StmtContext<String, ContactStatement, ?> ctx) {
         super(ctx);
     }
