@@ -48,8 +48,7 @@ final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
             maxElements = Integer.valueOf(maxElementsArg);
         }
 
-        final MandatoryEffectiveStatementImpl firstMandatoryStmt = parent
-                .firstEffective(MandatoryEffectiveStatementImpl.class);
+        final MandatoryEffectiveStatement firstMandatoryStmt = parent.firstEffective(MandatoryEffectiveStatement.class);
         final boolean mandatory = (firstMandatoryStmt == null) ? minElements > 0 : firstMandatoryStmt.argument();
 
         final Set<MustDefinition> mustSubstatements = ImmutableSet.copyOf(parent.allSubstatementsOfType(
