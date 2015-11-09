@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1acb0d3e_6e87af62",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/TypeStatementImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 133,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-11-09T12:54:06Z",
+      "side": 1,
+      "message": "Remove unused throws declaration",
+      "revId": "380097336d3cbbfbcdbb427050126f1a904079f6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1acb0d3e_0e7ceb71",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/TypeStatementImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-11-09T12:54:06Z",
+      "side": 1,
+      "message": "InferenceException is a RuntimeException, no need to declare it",
+      "revId": "380097336d3cbbfbcdbb427050126f1a904079f6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
