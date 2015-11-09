@@ -64,12 +64,11 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
         final ArgumentContext argumentCtx = ctx.getChild(ArgumentContext.class, 0);
         final String keywordTxt = keywordCtx.getText();
 
-        final QName identifier = QName.create(YangConstants.RFC6020_YIN_MODULE, keywordTxt);
-        final QName validStatementDefinition = Utils.getValidStatementDefinition(prefixes, stmtDef, identifier);
+        final QName validStatementDefinition = Utils.getValidStatementDefinition(prefixes, stmtDef, keywordTxt);
         if (stmtDef != null && validStatementDefinition != null && toBeSkipped.isEmpty()) {
             final String argument = argumentCtx != null ? Utils.stringFromStringContext(argumentCtx) : null;
             // FIXME: Refactor/clean up this special case
-            if (identifier.equals(Rfc6020Mapping.TYPE.getStatementName())) {
+            if (validStatementDefinition.equals(Rfc6020Mapping.TYPE.getStatementName())) {
                 Preconditions.checkArgument(argument != null);
                 if (TypeUtils.isYangTypeBodyStmtString(argument)) {
                     writer.startStatement(QName.create(YangConstants.RFC6020_YIN_MODULE, argument), ref);
@@ -86,7 +85,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
             }
         } else {
             Preconditions.checkArgument(writer.getPhase() != ModelProcessingPhase.FULL_DECLARATION,
-                    "%s is not a YANG statement or use of extension. Source: %s", identifier.getLocalName(), ref);
+                    "%s is not a YANG statement or use of extension. Source: %s", keywordTxt, ref);
             toBeSkipped.add(keywordTxt);
         }
     }
@@ -97,17 +96,16 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
             sourceName, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
 
         try {
-            KeywordContext keyword = ctx.getChild(KeywordContext.class, 0);
-            String statementName = keyword.getText();
-            QName identifier = QName.create(YangConstants.RFC6020_YIN_MODULE, statementName);
-            if (stmtDef != null && Utils.getValidStatementDefinition(prefixes, stmtDef, identifier) != null
+            final KeywordContext keyword = ctx.getChild(KeywordContext.class, 0);
+            final String statementName = keyword.getText();
+            if (stmtDef != null && Utils.getValidStatementDefinition(prefixes, stmtDef, statementName) != null
                     && toBeSkipped.isEmpty()) {
                 writer.endStatement(ref);
             }
 
             // No-op if the statement is not on the list
             toBeSkipped.remove(statementName);
-        } catch (SourceException e) {
+        } catch (final SourceException e) {
             LOG.warn(e.getMessage(), e);
         }
     }
