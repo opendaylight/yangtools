@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -21,18 +20,15 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 abstract class AbstractEffectiveSchemaNode<D extends DeclaredStatement<QName>> extends
         AbstractEffectiveDocumentedNode<QName, D> implements SchemaNode {
 
-    private final QName qname;
     private final SchemaPath path;
     private final List<UnknownSchemaNode> unknownNodes;
 
     AbstractEffectiveSchemaNode(final StmtContext<QName, D, ?> ctx) {
         super(ctx);
-        this.qname = ctx.getStatementArgument();
         this.path = ctx.getSchemaPath().get();
 
-        Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements = effectiveSubstatements();
         ImmutableList.Builder<UnknownSchemaNode> listBuilder = new ImmutableList.Builder<>();
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
+        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 listBuilder.add((UnknownSchemaNode) effectiveStatement);
             }
@@ -42,7 +38,7 @@ abstract class AbstractEffectiveSchemaNode<D extends DeclaredStatement<QName>> e
 
     @Override
     public QName getQName() {
-        return qname;
+        return path.getLastComponent();
     }
 
     @Override
