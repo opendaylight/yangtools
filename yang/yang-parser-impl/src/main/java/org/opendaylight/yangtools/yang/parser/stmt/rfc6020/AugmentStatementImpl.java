@@ -132,7 +132,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
             });
         }
 
-        private Mutable<?, ?, ?> getSearchRoot(Mutable<?, ?, ?> augmentContext) {
+        private static Mutable<?, ?, ?> getSearchRoot(final Mutable<?, ?, ?> augmentContext) {
             Mutable<?, ?, ?> parent = augmentContext.getParentContext();
             // Augment is in uses - we need to augment instantiated nodes in parent.
             if(Rfc6020Mapping.USES.equals(parent.getPublicDefinition())) {
