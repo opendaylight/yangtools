@@ -17,6 +17,7 @@ import com.google.common.util.concurrent.Futures;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
@@ -38,6 +39,12 @@ public class InMemorySchemaSourceCache<T extends SchemaSourceRepresentation> ext
 
     public static <R extends SchemaSourceRepresentation> InMemorySchemaSourceCache<R> createSoftCache(final SchemaSourceRegistry consumer, final Class<R> representation) {
         return new InMemorySchemaSourceCache<>(consumer, representation, CacheBuilder.newBuilder().softValues());
+    }
+
+    public static <R extends SchemaSourceRepresentation> InMemorySchemaSourceCache<R> createSoftCache(
+            final SchemaSourceRegistry consumer, final Class<R> representation, final long lifetime, final TimeUnit units) {
+        return new InMemorySchemaSourceCache<>(consumer, representation, CacheBuilder.newBuilder().softValues()
+                .expireAfterAccess(lifetime, units));
     }
 
     @Override

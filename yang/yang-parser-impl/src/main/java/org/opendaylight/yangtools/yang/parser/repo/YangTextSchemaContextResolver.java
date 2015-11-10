@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -48,6 +49,7 @@ import org.slf4j.LoggerFactory;
 
 public final class YangTextSchemaContextResolver implements AutoCloseable, SchemaSourceProvider<YangTextSchemaSource> {
     private static final Logger LOG = LoggerFactory.getLogger(YangTextSchemaContextResolver.class);
+    private static final long SOURCE_LIFETIME_SECONDS = 60;
 
     private final Collection<SourceIdentifier> requiredSources = new ConcurrentLinkedDeque<>();
     private final Multimap<SourceIdentifier, YangTextSchemaSource> texts = ArrayListMultimap.create();
@@ -67,7 +69,8 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
         final TextToASTTransformer t = TextToASTTransformer.create(repository, registry);
         transReg = registry.registerSchemaSourceListener(t);
 
-        cache = InMemorySchemaSourceCache.createSoftCache(registry, ASTSchemaSource.class);
+        cache = InMemorySchemaSourceCache.createSoftCache(registry, ASTSchemaSource.class, SOURCE_LIFETIME_SECONDS,
+            TimeUnit.SECONDS);
     }
 
     public static YangTextSchemaContextResolver create(final String name) {
