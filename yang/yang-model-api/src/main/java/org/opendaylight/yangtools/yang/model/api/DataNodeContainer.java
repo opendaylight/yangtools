@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Collection;
 import java.util.Set;
-
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -53,7 +52,11 @@ public interface DataNodeContainer {
      *            name of seeked child as String
      * @return child node of this DataNodeContainer if child with given name is
      *         present, null otherwise
+     *
+     * @deprecated This method disregards the namespace and thus leads to unpredictable results
+     *             when multiple children exist with the same localname, but with different namespaces.
      */
+    @Deprecated
     DataSchemaNode getDataChildByName(String name);
 
     /**
