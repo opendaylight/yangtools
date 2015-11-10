@@ -71,7 +71,8 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
         }
         final ModifiedNode modification = (ModifiedNode) nodeMod;
 
-        final int childrenBefore = findChildrenBefore(current);
+        final int childrenBefore = (modification.getOperation() == LogicalOperation.WRITE) ? 0 : findChildrenBefore
+                (current);
 
         final int childrenAfter = findChildrenAfter(modification);
 
@@ -105,7 +106,9 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
         for (final ModifiedNode modChild : modification.getChildren()) {
             switch (modChild.getOperation()) {
                 case WRITE:
-                    result++;
+                    if (!modChild.getOriginal().isPresent()) {
+                        result++;
+                    }
                     break;
                 case MERGE:
                     if (!current.isPresent()) {
@@ -113,7 +116,9 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
                     }
                     break;
                 case DELETE:
-                    result--;
+                    if (modChild.getOriginal().isPresent()) {
+                        result--;
+                    }
                     break;
                 case NONE:
                 case TOUCH:
