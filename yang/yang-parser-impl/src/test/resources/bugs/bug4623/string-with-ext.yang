@@ -1,0 +1,30 @@
+module types {
+    namespace "urn:custom.types.demo";
+    prefix "types";
+
+    import extension-def { prefix "ext"; }
+
+    leaf leaf-unknown-length-pattern {
+        type string {
+            ext:unknown "unknown";
+            length "2..10";
+            pattern "[0-9a-fA-F]";
+        }
+    }
+
+    leaf leaf-length-unknown-pattern {
+        type string {
+            length "2..10";
+            ext:unknown "unknown";
+            pattern "[0-9a-fA-F]";
+        }
+    }
+
+    leaf leaf-length-pattern-unknown {
+        type string {
+            length "2..10";
+            pattern "[0-9a-fA-F]";
+            ext:unknown "unknown";
+        }
+    }
+}

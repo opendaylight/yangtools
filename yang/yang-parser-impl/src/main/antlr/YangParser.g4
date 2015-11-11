@@ -13,7 +13,6 @@ package org.opendaylight.yangtools.antlrv4.code.gen;
 
 options{
     tokenVocab=YangLexer;
-    
 }
 
 
@@ -153,7 +152,7 @@ default_stmt : DEFAULT_KEYWORD string stmtend;
 pattern_stmt : PATTERN_KEYWORD string (SEMICOLON | (LEFT_BRACE  (identifier_stmt |error_message_stmt | error_app_tag_stmt | description_stmt | reference_stmt )* RIGHT_BRACE));
 // string validated in ParserListenerUtils.parseLengthConstraints()
 length_stmt : LENGTH_KEYWORD string (SEMICOLON | (LEFT_BRACE  (identifier_stmt |error_message_stmt | error_app_tag_stmt | description_stmt | reference_stmt )* RIGHT_BRACE));
-string_restrictions : (length_stmt | pattern_stmt )*;
+string_restrictions : (length_stmt | identifier_stmt | pattern_stmt)*;
 // string validated in ParserListenerUtils.parseFractionDigits()
 fraction_digits_stmt : FRACTION_DIGITS_KEYWORD string stmtend;
 decimal64_specification : (numerical_restrictions? (identifier_stmt)* fraction_digits_stmt | fraction_digits_stmt (identifier_stmt)* numerical_restrictions?);
