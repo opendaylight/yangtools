@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -19,21 +19,20 @@ import java.io.InputStream;
 import org.opendaylight.yangtools.concepts.Delegator;
 
 /**
- * YANG text schema source representation. Exposes an RFC6020 text representation
- * as an {@link InputStream}.
+ * YIN text schema source representation. Exposes an RFC6020 XML representation as an {@link InputStream}.
  */
 @Beta
-public abstract class YangTextSchemaSource extends ByteSource implements YangSchemaSourceRepresentation {
+public abstract class YinTextSchemaSource extends ByteSource implements YinSchemaSourceRepresentation {
     private final SourceIdentifier identifier;
 
-    protected YangTextSchemaSource(final SourceIdentifier identifier) {
+    protected YinTextSchemaSource(final SourceIdentifier identifier) {
         this.identifier = Preconditions.checkNotNull(identifier);
     }
 
     public static SourceIdentifier identifierFromFilename(final String name) {
-        checkArgument(name.endsWith(".yang"), "Filename %s does not have a .yang extension", name);
+        checkArgument(name.endsWith(".yin"), "Filename %s does not have a .yin extension", name);
         // FIXME: add revision-awareness
-        return SourceIdentifier.create(name.substring(0, name.length() - 5), Optional.<String>absent());
+        return SourceIdentifier.create(name.substring(0, name.length() - 4), Optional.<String>absent());
     }
 
     /**
@@ -48,8 +47,8 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * {@inheritDoc}
      */
     @Override
-    public Class<? extends YangTextSchemaSource> getType() {
-        return YangTextSchemaSource.class;
+    public Class<? extends YinTextSchemaSource> getType() {
+        return YinTextSchemaSource.class;
     }
 
     @Override
@@ -69,21 +68,21 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
     protected abstract ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper);
 
     /**
-     * Create a new YangTextSchemaSource with a specific source identifier and backed
+     * Create a new YinTextSchemaSource with a specific source identifier and backed
      * by ByteSource, which provides the actual InputStreams.
      *
      * @param identifier SourceIdentifier of the resulting schema source
      * @param delegate Backing ByteSource instance
-     * @return A new YangTextSchemaSource
+     * @return A new YinTextSchemaSource
      */
-    public static YangTextSchemaSource delegateForByteSource(final SourceIdentifier identifier, final ByteSource delegate) {
-        return new DelegatedYangTextSchemaSource(identifier, delegate);
+    public static YinTextSchemaSource delegateForByteSource(final SourceIdentifier identifier, final ByteSource delegate) {
+        return new DelegatedYinTextSchemaSource(identifier, delegate);
     }
 
-    private static final class DelegatedYangTextSchemaSource extends YangTextSchemaSource implements Delegator<ByteSource> {
+    private static final class DelegatedYinTextSchemaSource extends YinTextSchemaSource implements Delegator<ByteSource> {
         private final ByteSource delegate;
 
-        private DelegatedYangTextSchemaSource(final SourceIdentifier identifier, final ByteSource delegate) {
+        private DelegatedYinTextSchemaSource(final SourceIdentifier identifier, final ByteSource delegate) {
             super(identifier);
             this.delegate = Preconditions.checkNotNull(delegate);
         }

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.repo.api;
 
 import com.google.common.annotations.Beta;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.concepts.Immutable;
 
@@ -50,5 +51,5 @@ public interface SchemaSourceRepresentation extends Identifiable<SourceIdentifie
      *
      * @return The type of representation.
      */
-    Class<? extends SchemaSourceRepresentation> getType();
+    @Nonnull Class<? extends SchemaSourceRepresentation> getType();
 }

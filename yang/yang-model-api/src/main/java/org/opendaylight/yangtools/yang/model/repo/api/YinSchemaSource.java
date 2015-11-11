@@ -11,11 +11,14 @@ import com.google.common.annotations.Beta;
 import org.w3c.dom.Document;
 
 /**
- * Yin schema source representation. Exposes an RFC6020 YIN XML representation
- * as an W3C {@link Document}.
+ * YIN schema source representation. Exposes an RFC6020 YIN XML representation as an W3C {@link Document}.
+ *
+ * @deprecated Use {@link YinDomSchemaSource} for compatibility, or a transformation of {@link YinXmlSchemaSource}
+ * to get the source in your preferred format.
  */
 @Beta
-public interface YinSchemaSource extends SchemaSourceRepresentation {
+@Deprecated
+public interface YinSchemaSource extends YinSchemaSourceRepresentation {
     /**
      * {@inheritDoc}
      */
