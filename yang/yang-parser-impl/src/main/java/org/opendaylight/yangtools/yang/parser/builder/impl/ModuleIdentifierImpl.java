@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import java.net.URI;
 import java.util.Date;
@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
  * Name is only non-null attribute.
  * Equality check on namespace and revision is only triggered if they are non-null
  */
-public class ModuleIdentifierImpl implements ModuleIdentifier {
+public final class ModuleIdentifierImpl implements ModuleIdentifier {
     private final QNameModule qnameModule;
     private final String name;
 
@@ -51,11 +51,7 @@ public class ModuleIdentifierImpl implements ModuleIdentifier {
 
     @Override
     public String toString() {
-        return "ModuleIdentifierImpl{" +
-                "name='" + name + '\'' +
-                ", namespace=" + getNamespace() +
-                ", revision=" + getRevision() +
-                '}';
+        return MoreObjects.toStringHelper(this).add("name", name).add("module", qnameModule).toString();
     }
 
     @Override
@@ -63,12 +59,11 @@ public class ModuleIdentifierImpl implements ModuleIdentifier {
         if (this == o) {
             return true;
         }
-        if (o == null || (!(o instanceof ModuleIdentifier))) {
+        if (!(o instanceof ModuleIdentifier)) {
             return false;
         }
 
         ModuleIdentifier that = (ModuleIdentifier) o;
-
         if (!name.equals(that.getName())) {
             return false;
         }
