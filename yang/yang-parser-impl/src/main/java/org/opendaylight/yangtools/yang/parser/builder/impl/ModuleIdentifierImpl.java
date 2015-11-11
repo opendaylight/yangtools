@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.google.common.base.Optional;
 import java.net.URI;
 import java.util.Date;
@@ -54,7 +53,7 @@ public class ModuleIdentifierImpl implements ModuleIdentifier {
         return "ModuleIdentifierImpl{" +
                 "name='" + name + '\'' +
                 ", namespace=" + getNamespace() +
-                ", revision=" + getRevision() +
+                ", revision=" + qnameModule.getFormattedRevision() +
                 '}';
     }
 
@@ -63,7 +62,7 @@ public class ModuleIdentifierImpl implements ModuleIdentifier {
         if (this == o) {
             return true;
         }
-        if (o == null || (!(o instanceof ModuleIdentifier))) {
+        if (!(o instanceof ModuleIdentifier)) {
             return false;
         }
 
