@@ -1,0 +1,9 @@
+module extension-def {
+    namespace "urn:simple.extension.typedefs";
+    prefix "ext";
+
+    extension unknown {
+        argument "ext-arg";
+        description "Extension with single argument definition.";
+    }
+}
