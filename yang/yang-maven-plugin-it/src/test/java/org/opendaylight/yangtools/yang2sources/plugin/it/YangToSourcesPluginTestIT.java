@@ -71,7 +71,7 @@ public class YangToSourcesPluginTestIT {
             assertVerificationException(
                     e,
                     "org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException: Imported module " +
-                    "[ModuleIdentifierImpl{name='unknownDep', namespace=null, revision=Wed Feb 27 00:00:00 ");
+                    "[ModuleIdentifierImpl{name='unknownDep', namespace=null, revision=2013-02-27}");
             return;
         }
 
