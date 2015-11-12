@@ -109,6 +109,11 @@ final class StructuralContainerModificationStrategy extends ModificationApplyOpe
     }
 
     @Override
+    void mergeIntoModifiedNode(ModifiedNode modification, NormalizedNode<?, ?> value, Version version) {
+        delegate.mergeIntoModifiedNode(modification, value, version);
+    }
+
+    @Override
     public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
         return delegate.getChild(child);
     }
