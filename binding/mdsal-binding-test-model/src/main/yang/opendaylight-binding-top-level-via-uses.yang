@@ -1,0 +1,22 @@
+module opendaylight-binding-top-level-via-uses {
+	yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:md:sal:test:top-via-uses";
+    prefix "binding-impl";
+
+    description
+        "Regression Test model for top-level-via uses";
+
+    revision "2015-11-12" {
+        description
+            "Initial revision";
+    }
+
+    grouping container-top {
+        container container-top {
+            presence "only for testing";
+        }
+    }
+
+    uses container-top;
+
+}

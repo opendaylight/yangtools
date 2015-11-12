@@ -14,12 +14,9 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.UncheckedExecutionException;
-import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
-import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.DataRoot;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
@@ -173,8 +170,6 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     }
 
     private DataContainerCodecContext<?,?> createDataTreeChildContext(final Class<?> key) {
-        final Class<Object> parent = ClassLoaderUtils.findFirstGenericArgument(key, ChildOf.class);
-        IncorrectNestingException.check(DataRoot.class.isAssignableFrom(parent), "Class %s is not top level item.", key);
         final QName qname = BindingReflections.findQName(key);
         final DataSchemaNode childSchema = childNonNull(getSchema().getDataChildByName(qname),key,"%s is not top-level item.",key);
         return DataContainerCodecPrototype.from(key, childSchema, factory()).get();
