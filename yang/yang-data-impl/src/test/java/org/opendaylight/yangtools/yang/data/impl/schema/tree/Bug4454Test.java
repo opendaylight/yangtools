@@ -328,7 +328,7 @@ public class Bug4454Test {
                 .node(mapEntryPath2).build();
 
         key.clear();
-        key.put(MIN_MAX_KEY_LEAF_QNAME, "bar");
+        key.put(MIN_MAX_KEY_LEAF_QNAME, "baz");
 
         mapEntryPath2 = new YangInstanceIdentifier.NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME, key);
 
