@@ -131,7 +131,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
         effectiveSubstatements.addAll(substatementsOfSubmodules);
 
         List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
-        Set<AugmentationSchema> augmentationsInit = new HashSet<>();
+        Set<AugmentationSchema> augmentationsInit = new LinkedHashSet<>();
         Set<ModuleImport> importsInit = new HashSet<>();
         Set<NotificationDefinition> notificationsInit = new HashSet<>();
         Set<RpcDefinition> rpcsInit = new HashSet<>();
