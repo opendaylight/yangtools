@@ -72,4 +72,15 @@ abstract class AbstractValueNodeModificationStrategy<T extends DataSchemaNode> e
             final Optional<TreeNode> current) throws IncorrectDataStructureException {
         throw new IncorrectDataStructureException(path, "Subtree modification is not allowed.");
     }
+
+    @Override
+    void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value, final Version version) {
+        // Value nodes do not perform merges, just plain overwrites
+        node.write(value);
+    }
+
+    @Override
+    void recursivelyVerifyStructure(NormalizedNode<?, ?> value) {
+        verifyStructure(value, false);
+    }
 }
