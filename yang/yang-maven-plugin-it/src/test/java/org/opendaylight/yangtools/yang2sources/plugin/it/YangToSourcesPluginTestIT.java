@@ -78,21 +78,6 @@ public class YangToSourcesPluginTestIT {
         fail("Verification exception should have been thrown");
     }
 
-    @Test
-    public void testNamingConflict() throws Exception {
-        Verifier v = setUp("test-parent/NamingConflict/", false);
-        v.verifyErrorFreeLog();
-        String baseDir = v.getBasedir();
-        String fileName = v.getLogFileName();
-        List<String> lines = v.loadFile(baseDir, fileName, false);
-        for (String s : lines) {
-            if (s.contains("conflict")) {
-                System.err.println(s);
-            }
-        }
-        v.verifyTextInLog("[WARNING] Naming conflict for type 'org.opendaylight.yang.gen.v1.urn.yang.test.rev140303.NetworkTopologyRef': file with same name already exists and will not be generated.");
-    }
-
     static void verifyCorrectLog(final Verifier v) throws VerificationException {
         v.verifyErrorFreeLog();
         v.verifyTextInLog("[INFO] yang-to-sources: YANG files parsed from");

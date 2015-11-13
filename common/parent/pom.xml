@@ -304,36 +304,10 @@
                             </goals>
                             <configuration>
                                 <yangFilesRootDir>src/main/yang</yangFilesRootDir>
-                                <codeGenerators>
-                                    <generator>
-                                        <codeGeneratorClass>
-                                            org.opendaylight.yangtools.maven.sal.api.gen.plugin.CodeGeneratorImpl
-                                        </codeGeneratorClass>
-                                        <outputBaseDir>
-                                            target/generated-sources/sal
-                                        </outputBaseDir>
-                                    </generator>
-                                    <generator>
-                                        <codeGeneratorClass>org.opendaylight.yangtools.yang.unified.doc.generator.maven.DocumentationGeneratorImpl</codeGeneratorClass>
-                                        <outputBaseDir>target/site/restconf</outputBaseDir>
-                                    </generator>
-                                    <generator>
-                                        <codeGeneratorClass>org.opendaylight.yangtools.yang.wadl.generator.maven.WadlGenerator</codeGeneratorClass>
-                                        <outputBaseDir>target/site/restconf</outputBaseDir>
-                                    </generator>
-                                </codeGenerators>
                                 <inspectDependencies>true</inspectDependencies>
                             </configuration>
                         </execution>
                     </executions>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.opendaylight.mdsal</groupId>
-                            <artifactId>maven-sal-api-gen-plugin</artifactId>
-                            <version>0.8.0-SNAPSHOT</version>
-                            <type>jar</type>
-                        </dependency>
-                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.ops4j.pax.exam</groupId>
