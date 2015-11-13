@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7aade967_f547e21b",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MinMaxElementsValidation.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-11-13T11:33:29Z",
+      "side": 1,
+      "message": "Not sure if this breaks merge calculations, could you point me to test which triggered this to fail?",
+      "range": {
+        "startLine": 114,
+        "startChar": 25,
+        "endLine": 114,
+        "endChar": 52
+      },
+      "revId": "934b775e634af0c53c77d0507fef4954353f998c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7aade967_b5516ada",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MinMaxElementsValidation.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 134,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-11-13T11:33:29Z",
+      "side": 1,
+      "message": "Rename to checkOriginalPresent",
+      "range": {
+        "startLine": 134,
+        "startChar": 27,
+        "endLine": 134,
+        "endChar": 66
+      },
+      "revId": "934b775e634af0c53c77d0507fef4954353f998c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7aade967_d54ae626",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/Bug4454Test.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-11-13T11:33:29Z",
+      "side": 1,
+      "message": "What is reason of changing this in test?",
+      "range": {
+        "startLine": 331,
+        "startChar": 8,
+        "endLine": 331,
+        "endChar": 47
+      },
+      "revId": "934b775e634af0c53c77d0507fef4954353f998c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
