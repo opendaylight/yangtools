@@ -52,6 +52,8 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      */
     @Nonnull Optional<SchemaPath> getSchemaPath();
 
+    boolean isConfiguration();
+
     @Nonnull
     <K, V, KT extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(
             Class<N> type, KT key) throws NamespaceNotAvailableException;

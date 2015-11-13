@@ -33,6 +33,11 @@ abstract class MandatoryLeafEnforcer implements Immutable {
         protected void enforceOnTreeNode(final TreeNode tree) {
             // Intentional no-op
         }
+
+        @Override
+        protected void enforceOnTreeNode(final NormalizedNode<?, ?> normalizedNode) {
+            // Intentional no-op
+        }
     };
     private static final class Strict extends MandatoryLeafEnforcer {
         private final Collection<YangInstanceIdentifier> mandatoryNodes;
@@ -43,11 +48,15 @@ abstract class MandatoryLeafEnforcer implements Immutable {
 
         @Override
         protected void enforceOnTreeNode(final TreeNode tree) {
-            final NormalizedNode<?, ?> data = tree.getData();
+            enforceOnTreeNode(tree.getData());
+        }
+
+        @Override
+        protected void enforceOnTreeNode(final NormalizedNode<?, ?> data) {
             for (YangInstanceIdentifier id : mandatoryNodes) {
                 final Optional<NormalizedNode<?, ?>> descandant = NormalizedNodes.findNode(data, id);
                 Preconditions.checkArgument(descandant.isPresent(), "Node %s is missing mandatory descendant %s",
-                        tree.getIdentifier(), id);
+                        data.getIdentifier(), id);
             }
         }
     };
@@ -56,6 +65,8 @@ abstract class MandatoryLeafEnforcer implements Immutable {
     private static final MandatoryLeafEnforcer NOOP_ENFORCER = new NoOp();
 
     protected abstract void enforceOnTreeNode(final TreeNode tree);
+
+    protected abstract void enforceOnTreeNode(final NormalizedNode<?, ?> normalizedNode);
 
     private static void findMandatoryNodes(final Builder<YangInstanceIdentifier> builder,
             final YangInstanceIdentifier id, final DataNodeContainer schema, final TreeType type) {

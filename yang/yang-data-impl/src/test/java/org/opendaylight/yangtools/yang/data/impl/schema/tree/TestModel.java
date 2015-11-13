@@ -43,9 +43,14 @@ public final class TestModel {
     }
 
     public static SchemaContext createTestContext() {
+        return createTestContext(DATASTORE_TEST_YANG);
+    }
+
+    public static SchemaContext createTestContext(String resourcePath) {
         YangParserImpl parser = new YangParserImpl();
         try {
-            return parser.parseSources(Collections.singleton(Resources.asByteSource(TestModel.class.getResource(DATASTORE_TEST_YANG))));
+            return parser.parseSources(Collections.singleton(Resources.asByteSource(TestModel.class
+                    .getResource(resourcePath))));
         } catch (IOException | YangSyntaxErrorException e) {
             throw new IllegalStateException("Failed to create context", e);
         }
