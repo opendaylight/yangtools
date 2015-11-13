@@ -394,11 +394,11 @@ public class Bug4454Test {
         assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 0);
     }
 
-    private void testLoop(final InMemoryDataTreeSnapshot snapshot, final String first, final String second) {
+    private static void testLoop(final InMemoryDataTreeSnapshot snapshot, final String first, final String second) {
         Optional<NormalizedNode<?, ?>> minMaxListRead = snapshot.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
         assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 2);
-        UnmodifiableCollection collectionChildren = (UnmodifiableCollection) minMaxListRead.get().getValue();
+        UnmodifiableCollection<?> collectionChildren = (UnmodifiableCollection<?>) minMaxListRead.get().getValue();
 
         for (Object collectionChild : collectionChildren) {
             if(collectionChild.toString().contains(first)){
