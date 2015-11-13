@@ -17,7 +17,10 @@ public interface DataTreeFactory {
      * Create a new data tree.
      *
      * @return A data tree instance.
+     *
+     * @deprecated Use {@link #create(TreeType)} instead.
      */
+    @Deprecated
     DataTree create();
 
     /**

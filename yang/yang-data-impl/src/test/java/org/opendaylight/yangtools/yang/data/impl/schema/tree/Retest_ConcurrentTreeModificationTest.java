@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificat
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -63,7 +64,7 @@ public class Retest_ConcurrentTreeModificationTest {
     public void prepare() throws ReactorException {
         schemaContext = RetestModel.createTestContext();
         assertNotNull("Schema context must not be null.", schemaContext);
-        inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create();
+        inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL);
         inMemoryDataTree.setSchemaContext(schemaContext);
     }
 

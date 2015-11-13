@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModifiedNodeDoesNotExistException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
@@ -23,7 +24,7 @@ public class Retest_ErrorReportingTest {
 
     @Before
     public void setup() throws ReactorException {
-        tree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create();
+        tree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL);
         tree.setSchemaContext(RetestModel.createTestContext());
     }
 

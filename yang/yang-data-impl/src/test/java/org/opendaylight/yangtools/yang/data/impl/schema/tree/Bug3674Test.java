@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 
 /**
@@ -27,7 +28,7 @@ public class Bug3674Test {
 
     @Before
     public void setUp() {
-        tree = InMemoryDataTreeFactory.getInstance().create();
+        tree = InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL);
         tree.setSchemaContext(TestModel.createTestContext());
 
         // Create the top-level container

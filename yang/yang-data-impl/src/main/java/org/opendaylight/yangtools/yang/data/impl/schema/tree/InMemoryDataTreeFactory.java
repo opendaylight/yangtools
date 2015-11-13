@@ -33,6 +33,7 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
         // Never instantiated externally
     }
 
+    @Deprecated
     @Override
     public TipProducingDataTree create() {
         return create(TreeType.OPERATIONAL);

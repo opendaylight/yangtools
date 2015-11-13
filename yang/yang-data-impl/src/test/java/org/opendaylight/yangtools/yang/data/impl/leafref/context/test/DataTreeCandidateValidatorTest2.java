@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.leafref.context.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -29,6 +28,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContext;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefDataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefValidatation;
@@ -180,7 +180,7 @@ public class DataTreeCandidateValidatorTest2 {
 
     private static void initDataTree() {
 
-        inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create();
+        inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL);
         inMemoryDataTree.setSchemaContext(context);
 
         final DataTreeModification initialDataTreeModification = inMemoryDataTree

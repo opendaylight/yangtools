@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModifiedNodeDoesNotExistException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 
 public class ErrorReportingTest {
@@ -22,7 +23,7 @@ public class ErrorReportingTest {
 
     @Before
     public void setup() {
-        tree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create();
+        tree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL);
         tree.setSchemaContext(TestModel.createTestContext());
     }
 

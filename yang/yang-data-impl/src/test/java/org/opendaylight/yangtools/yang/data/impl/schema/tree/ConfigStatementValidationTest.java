@@ -11,7 +11,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -63,7 +62,7 @@ public class ConfigStatementValidationTest {
 
     private SchemaContext schemaContext;
 
-    private ContainerNode createFooTestContainerNode() {
+    private static ContainerNode createFooTestContainerNode() {
         return ImmutableContainerNodeBuilder
                 .create()
                 .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TestModel.TEST_QNAME))
@@ -72,7 +71,7 @@ public class ConfigStatementValidationTest {
                                 .withChild(FOO_NODE).build()).build();
     }
 
-    private ContainerNode createBarTestContainerNode() {
+    private static ContainerNode createBarTestContainerNode() {
         return ImmutableContainerNodeBuilder
                 .create()
                 .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TestModel.TEST_QNAME))

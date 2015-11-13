@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
 import com.google.common.base.Optional;
 import java.io.IOException;
 import java.util.HashMap;
@@ -30,6 +29,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
@@ -108,7 +108,7 @@ public class Bug4454Test {
     public void prepare() throws IOException, YangSyntaxErrorException, ReactorException {
         SchemaContext schemaContext = createTestContext();
         assertNotNull("Schema context must not be null.", schemaContext);
-        inMemoryDataTree =  (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create();
+        inMemoryDataTree =  (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL);
         inMemoryDataTree.setSchemaContext(schemaContext);
         final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
         final DataTreeModification modificationTree = initialDataTreeSnapshot.newModification();
@@ -394,7 +394,7 @@ public class Bug4454Test {
         assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 0);
     }
 
-    private void testLoop(InMemoryDataTreeSnapshot snapshot, String first, String second) {
+    private void testLoop(final InMemoryDataTreeSnapshot snapshot, final String first, final String second) {
         Optional<NormalizedNode<?, ?>> minMaxListRead = snapshot.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
         assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 2);

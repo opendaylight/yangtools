@@ -15,7 +15,6 @@ import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntry;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
-
 import com.google.common.base.Optional;
 import org.junit.Before;
 import org.junit.Test;
@@ -167,7 +166,7 @@ public class ModificationMetadataTreeTest {
         /**
          * Creates empty Snapshot with associated schema context.
          */
-        final DataTree t = InMemoryDataTreeFactory.getInstance().create();
+        final DataTree t = InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL);
         t.setSchemaContext(schemaContext);
 
         /**
