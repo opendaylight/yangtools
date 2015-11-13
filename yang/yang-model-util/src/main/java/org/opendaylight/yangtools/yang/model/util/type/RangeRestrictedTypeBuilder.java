@@ -14,6 +14,7 @@ import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -123,6 +124,26 @@ public abstract class RangeRestrictedTypeBuilder<T extends TypeDefinition<T>> ex
         return false;
     }
 
+    private static List<RangeConstraint> ensureAdjacentMerged(final List<RangeConstraint> ranges) {
+        if (ranges.size() < 2) {
+            return ranges;
+        }
+
+        final Iterator<RangeConstraint> it = ranges.iterator();
+
+        RangeConstraint current = it.next();
+        do {
+            final RangeConstraint next = it.next();
+            if (current.getMax().equals(next.getMin())) {
+                // FIXME: run merge and return
+            }
+
+            current = next;
+        } while (it.hasNext());
+
+        return ranges;
+    }
+
     final List<RangeConstraint> calculateRangeConstraints(final List<RangeConstraint> baseRangeConstraints) {
         if (rangeAlternatives == null || rangeAlternatives.isEmpty()) {
             return baseRangeConstraints;
@@ -142,7 +163,6 @@ public abstract class RangeRestrictedTypeBuilder<T extends TypeDefinition<T>> ex
                 "Range constraint %s is not a subset of parent constraints %s", c, baseRangeConstraints);
         }
 
-        // FIXME: merge adjacent ranges and sort them
-        return typedRanges;
+        return ensureAdjacentMerged(typedRanges);
     }
 }
