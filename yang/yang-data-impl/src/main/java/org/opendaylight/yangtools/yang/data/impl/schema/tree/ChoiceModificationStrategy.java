@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
@@ -77,8 +78,17 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
         return ImmutableChoiceNodeBuilder.create((ChoiceNode) original);
     }
 
+    @Override
+    void verifyStructure(final NormalizedNode<?, ?> writtenValue, final boolean verifyChildren) {
+        enforceCases(writtenValue);
+        super.verifyStructure(writtenValue, verifyChildren);
+    }
+
     private void enforceCases(final TreeNode tree) {
-        final NormalizedNode<?, ?> normalizedNode = tree.getData();
+        enforceCases(tree.getData());
+    }
+
+    private void enforceCases(final NormalizedNode<?, ?> normalizedNode) {
         Verify.verify(normalizedNode instanceof ChoiceNode);
         final Collection<DataContainerChild<?, ?>> children = ((ChoiceNode) normalizedNode).getValue();
         if (!children.isEmpty()) {
@@ -97,7 +107,7 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
             }
 
             // Make sure all mandatory children are present
-            enforcer.enforceOnTreeNode(tree);
+            //enforcer.enforceOnTreeNode(tree);
         }
     }
 
