@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "7aade967_b5ff2aaa",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MinMaxElementsValidation.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 114,
+      "author": {
+        "id": 4782
+      },
+      "writtenOn": "2015-11-13T12:00:06Z",
+      "side": 1,
+      "message": "Bug4454Test -\u003e minMaxListDeleteWriteTest -\u003e line 199 inMemoryDataTree.validate(modificationTree1);\n\nDataValidationFailedException:\nmin-max-list has too many elements (4), can have at most 3",
+      "parentUuid": "7aade967_f547e21b",
+      "range": {
+        "startLine": 114,
+        "startChar": 25,
+        "endLine": 114,
+        "endChar": 52
+      },
+      "revId": "934b775e634af0c53c77d0507fef4954353f998c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "7aade967_b5516ada",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/MinMaxElementsValidation.java",
         "patchSetId": 19
@@ -59,6 +83,30 @@
       "writtenOn": "2015-11-13T11:33:29Z",
       "side": 1,
       "message": "What is reason of changing this in test?",
+      "range": {
+        "startLine": 331,
+        "startChar": 8,
+        "endLine": 331,
+        "endChar": 47
+      },
+      "revId": "934b775e634af0c53c77d0507fef4954353f998c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7aade967_35149af4",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/Bug4454Test.java",
+        "patchSetId": 19
+      },
+      "lineNbr": 331,
+      "author": {
+        "id": 4782
+      },
+      "writtenOn": "2015-11-13T12:00:06Z",
+      "side": 1,
+      "message": "the name was misspelled, this test removes all elements from list with min 1 element",
+      "parentUuid": "7aade967_d54ae626",
       "range": {
         "startLine": 331,
         "startChar": 8,
