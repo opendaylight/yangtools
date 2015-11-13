@@ -18,10 +18,12 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
@@ -226,5 +228,27 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     @Override
     public boolean isRootContext() {
         return false;
+    }
+
+    @Override
+    public boolean isConfiguration() {
+        StmtContext<Boolean, ?, ?> configStatement = StmtContextUtils.findFirstDeclaredSubstatement(this,
+                ConfigStatement.class);
+
+        if (configStatement == null) {
+            return parent.isConfiguration();
+        }
+
+        if (parent.isConfiguration() == true) {
+            return configStatement.getStatementArgument();
+        }
+
+        if (configStatement.getStatementArgument() == false) {
+            return false;
+        } else {
+            throw new InferenceException(
+                    "Parent node has config statement set to false therefor no node underneath it can have config set to true",
+                    getStatementSourceReference());
+        }
     }
 }

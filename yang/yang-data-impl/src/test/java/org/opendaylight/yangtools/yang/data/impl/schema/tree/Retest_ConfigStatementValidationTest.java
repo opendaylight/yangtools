@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -129,13 +130,13 @@ public class Retest_ConfigStatementValidationTest {
         inMemoryDataTree.commit(prepare);
     }
 
-    @Test(expected=SchemaValidationFailedException.class)
+    @Test(expected = SchemaValidationFailedException.class)
     public void testOnPathCaseLeafFail() throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree =
-                (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(TreeType.CONFIGURATION);
+        final InMemoryDataTree inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(
+                TreeType.CONFIGURATION);
         inMemoryDataTree.setSchemaContext(schemaContext);
-        final YangInstanceIdentifier.NodeIdentifier choice1Id = new YangInstanceIdentifier.NodeIdentifier(
-                QName.create(TestModel.TEST_QNAME, "choice1"));
+        final YangInstanceIdentifier.NodeIdentifier choice1Id = new YangInstanceIdentifier.NodeIdentifier(QName.create(
+                TestModel.TEST_QNAME, "choice1"));
         final YangInstanceIdentifier.NodeIdentifier case2ContId = new YangInstanceIdentifier.NodeIdentifier(
                 QName.create(TestModel.TEST_QNAME, "case2-cont"));
         final YangInstanceIdentifier ii = TestModel.TEST_PATH.node(choice1Id).node(case2ContId);
@@ -144,7 +145,7 @@ public class Retest_ConfigStatementValidationTest {
 
         final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(ii, case2Cont);
-
+        modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
         final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare);
@@ -161,11 +162,16 @@ public class Retest_ConfigStatementValidationTest {
         final ChoiceNode choice1 = Builders.choiceBuilder().withNodeIdentifier(choice1Id)
                 .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case1-leaf1"), "leaf-value")).build();
 
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
-        modificationTree.write(ii, choice1);
-        modificationTree.ready();
-        inMemoryDataTree.validate(modificationTree);
-        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
-        inMemoryDataTree.commit(prepare);
+        try {
+            final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+            modificationTree.write(ii, choice1);
+            modificationTree.ready();
+            inMemoryDataTree.validate(modificationTree);
+            final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
+            inMemoryDataTree.commit(prepare);
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 }
