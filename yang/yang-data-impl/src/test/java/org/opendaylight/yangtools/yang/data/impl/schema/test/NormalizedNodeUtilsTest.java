@@ -43,7 +43,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableCo
  */
 public class NormalizedNodeUtilsTest {
 
-    private static final QName ROOT_QNAME = QName.create("urn:opendalight:controller:sal:dom:store:test", "2014-03-13",
+    private static final QName ROOT_QNAME = QName.create("urn:opendaylight:controller:sal:dom:store:test", "2014-03-13",
             "root");
     private static final QName LIST_A_QNAME = QName.create(ROOT_QNAME, "list-a");
     private static final QName LIST_B_QNAME = QName.create(ROOT_QNAME, "list-b");
@@ -55,12 +55,10 @@ public class NormalizedNodeUtilsTest {
     private static final String TWO = "two";
 
     private static final YangInstanceIdentifier LIST_A_FOO_PATH = YangInstanceIdentifier.builder()
-                //.node(ROOT_QNAME)
                 .node(LIST_A_QNAME)
                 .nodeWithKey(LIST_A_QNAME, LEAF_A_QNAME, FOO)
                 .build();
     private static final YangInstanceIdentifier LIST_B_TWO_PATH = YangInstanceIdentifier.builder()
-                //.node(ROOT_QNAME)
                 .node(LIST_A_QNAME)
                 .nodeWithKey(LIST_A_QNAME, LEAF_A_QNAME, BAR)
                 .node(LIST_B_QNAME)
