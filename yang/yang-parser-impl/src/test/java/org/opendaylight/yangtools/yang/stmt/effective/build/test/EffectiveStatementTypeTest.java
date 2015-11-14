@@ -17,41 +17,40 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.BitsType;
-import org.opendaylight.yangtools.yang.model.util.EnumerationType;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IdentityEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.LeafEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BinaryEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BinaryTypeEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BitEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BitsSpecificationEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BooleanEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BooleanTypeEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Decimal64SpecificationEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EmptyEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EmptyTypeEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EnumEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EnumSpecificationEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.IdentityRefSpecificationEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.InstanceIdentifierSpecificationEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Int16EffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Int32EffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Int64EffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Int8EffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.InstanceIdentifierTypeEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.IntegerTypeEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LeafrefSpecificationEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LengthConstraintEffectiveImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.PatternConstraintEffectiveImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.StringEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UInt16EffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UInt32EffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UInt64EffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UInt8EffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.StringTypeEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UnionSpecificationEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UnsignedIntegerTypeEffectiveStatementImpl;
 
 public class EffectiveStatementTypeTest {
 
@@ -73,19 +72,19 @@ public class EffectiveStatementTypeTest {
                 .getDataChildByName("leaf-binary");
         assertNotNull(currentLeaf.getType());
 
-        BinaryEffectiveStatementImpl binaryEff = (BinaryEffectiveStatementImpl)
-                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next();
+        BinaryTypeDefinition binaryEff = ((BinaryTypeEffectiveStatementImpl)
+                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next()).getTypeDefinition();
 
         assertNull(binaryEff.getBaseType());
-        assertEquals("", binaryEff.getUnits());
-        assertTrue(binaryEff.getDefaultValue() instanceof List);
+        assertNull(binaryEff.getUnits());
+        assertNull(binaryEff.getDefaultValue());
         assertEquals("binary", binaryEff.getQName().getLocalName());
-        assertEquals(0, binaryEff.getLengthConstraints().get(0).getMin());
+        assertEquals(0, binaryEff.getLengthConstraints().size());
         assertEquals("CURRENT", binaryEff.getStatus().toString());
         assertEquals("binary", binaryEff.getPath().getPathFromRoot().iterator().next().getLocalName());
         assertNotNull(binaryEff.getUnknownSchemaNodes());
-        assertNotNull(binaryEff.getDescription());
-        assertNotNull(binaryEff.getReference());
+        assertNull(binaryEff.getDescription());
+        assertNull(binaryEff.getReference());
     }
 
     @Test
@@ -94,29 +93,27 @@ public class EffectiveStatementTypeTest {
                 .getDataChildByName("leaf-bits");
         assertNotNull(currentLeaf.getType());
 
-        List<BitsTypeDefinition.Bit> bitsEffIter = ((BitsType) currentLeaf.getType()).getBits();
+        List<BitsTypeDefinition.Bit> bitsEffIter = ((BitsTypeDefinition) currentLeaf.getType()).getBits();
         BitEffectiveStatementImpl bitEff = (BitEffectiveStatementImpl) bitsEffIter.get(0);
         BitEffectiveStatementImpl bitEffSecond = (BitEffectiveStatementImpl) bitsEffIter.get(1);
 
-        BitsSpecificationEffectiveStatementImpl bitsEff = (BitsSpecificationEffectiveStatementImpl)
-                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next();
-        BitsSpecificationEffectiveStatementImpl bitsEffSecond = (BitsSpecificationEffectiveStatementImpl)
-                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next();
+        BitsTypeDefinition bitsEff = ((BitsSpecificationEffectiveStatementImpl)
+                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next()).getTypeDefinition();
 
         assertNull(bitsEff.getBaseType());
         assertNotNull(bitsEff.getQName());
         assertEquals("bits", bitsEff.getQName().getLocalName());
         assertEquals("bits", bitsEff.getPath().getLastComponent().getLocalName());
         assertNotNull(bitsEff.getUnknownSchemaNodes());
-        assertNotNull(bitsEff.getDescription());
-        assertNotNull(bitsEff.getReference());
+        assertNull(bitsEff.getDescription());
+        assertNull(bitsEff.getReference());
         assertEquals("CURRENT", bitsEff.getStatus().toString());
-        assertEquals("", bitsEff.getUnits());
+        assertNull(bitsEff.getUnits());
         assertNotNull(bitsEff.toString());
         assertNotNull(bitsEff.hashCode());
         assertFalse(bitsEff.equals(null));
         assertFalse(bitsEff.equals("test"));
-        assertTrue(bitsEff.equals(bitsEffSecond));
+        assertTrue(bitsEff.equals(bitsEff));
         assertEquals(3, bitsEff.getBits().size());
         assertEquals(3, ((List<?>) bitsEff.getDefaultValue()).size());
 
@@ -141,17 +138,17 @@ public class EffectiveStatementTypeTest {
         currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
                 .getDataChildByName("leaf-boolean");
         assertNotNull(currentLeaf.getType());
-        BooleanEffectiveStatementImpl booleanEff = (BooleanEffectiveStatementImpl)
-                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next();
+        BooleanTypeDefinition booleanEff = ((BooleanTypeEffectiveStatementImpl)
+                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next()).getTypeDefinition();
 
         assertNull(booleanEff.getBaseType());
-        assertEquals("", booleanEff.getUnits());
-        assertTrue(booleanEff.getDefaultValue().equals(false));
+        assertNull(booleanEff.getUnits());
+        assertNull(booleanEff.getDefaultValue());
         assertEquals("boolean", booleanEff.getQName().getLocalName());
         assertNull(booleanEff.getPath().getParent().getParent());
         assertNotNull(booleanEff.getUnknownSchemaNodes());
-        assertNotNull(booleanEff.getDescription());
-        assertNotNull(booleanEff.getReference());
+        assertNull(booleanEff.getDescription());
+        assertNull(booleanEff.getReference());
         assertEquals("CURRENT", booleanEff.getStatus().toString());
         assertNotNull(booleanEff.toString());
     }
@@ -161,27 +158,27 @@ public class EffectiveStatementTypeTest {
         currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
                 .getDataChildByName("leaf-decimal64");
         assertNotNull(currentLeaf.getType());
-        Decimal64SpecificationEffectiveStatementImpl decimal64Eff = (Decimal64SpecificationEffectiveStatementImpl)
-                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next();
-        Decimal64SpecificationEffectiveStatementImpl decimal64EffSecond = (Decimal64SpecificationEffectiveStatementImpl)
-                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next();
+        DecimalTypeDefinition decimal64Eff = ((Decimal64SpecificationEffectiveStatementImpl)
+                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next()).getTypeDefinition();
 
-        assertEquals("decimal64", decimal64Eff.getBaseType().getQName().getLocalName());
-        assertEquals("", decimal64Eff.getUnits());
+        assertNull(decimal64Eff.getBaseType());
+        assertNull(decimal64Eff.getUnits());
         assertNull(decimal64Eff.getDefaultValue());
         assertEquals("decimal64", decimal64Eff.getQName().getLocalName());
         assertNotNull(decimal64Eff.getUnknownSchemaNodes());
-        assertNotNull(decimal64Eff.getDescription());
-        assertNotNull(decimal64Eff.getReference());
+
+        // FIXME: The model is wrong: description/reference/status are not allowed under 'type', how come we parse it?
+        assertNull(decimal64Eff.getDescription());
+        assertNull(decimal64Eff.getReference());
         assertEquals("CURRENT", decimal64Eff.getStatus().toString());
+
         assertEquals(3, decimal64Eff.getRangeConstraints().size());
         assertNotNull(decimal64Eff.toString());
         assertNotNull(decimal64Eff.hashCode());
         assertTrue(decimal64Eff.getFractionDigits().equals(2));
-        assertTrue(decimal64Eff.isExtended());
         assertFalse(decimal64Eff.equals(null));
         assertFalse(decimal64Eff.equals("test"));
-        assertTrue(decimal64Eff.equals(decimal64EffSecond));
+        assertTrue(decimal64Eff.equals(decimal64Eff));
         assertEquals("decimal64", decimal64Eff.getPath().getLastComponent().getLocalName());
     }
 
@@ -190,8 +187,8 @@ public class EffectiveStatementTypeTest {
         currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
                 .getDataChildByName("leaf-empty");
         assertNotNull(currentLeaf.getType());
-        EmptyEffectiveStatementImpl emptyEff = (EmptyEffectiveStatementImpl) ((LeafEffectiveStatementImpl) currentLeaf)
-                .effectiveSubstatements().iterator().next();
+        EmptyTypeDefinition emptyEff = ((EmptyTypeEffectiveStatementImpl) ((LeafEffectiveStatementImpl) currentLeaf)
+                .effectiveSubstatements().iterator().next()).getTypeDefinition();
 
         assertNull(emptyEff.getUnits());
         assertNull(emptyEff.getDefaultValue());
@@ -199,8 +196,8 @@ public class EffectiveStatementTypeTest {
         assertEquals("empty", emptyEff.getQName().getLocalName());
         assertNull(emptyEff.getPath().getParent().getParent());
         assertNotNull(emptyEff.getUnknownSchemaNodes());
-        assertNotNull(emptyEff.getDescription());
-        assertNotNull(emptyEff.getReference());
+        assertNull(emptyEff.getDescription());
+        assertNull(emptyEff.getReference());
         assertEquals("CURRENT", emptyEff.getStatus().toString());
         assertNotNull(emptyEff.toString());
     }
@@ -210,13 +207,11 @@ public class EffectiveStatementTypeTest {
         currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
                 .getDataChildByName("leaf-enum");
         assertNotNull(currentLeaf.getType());
-        List<EnumTypeDefinition.EnumPair> enumEffIter = ((EnumerationType) currentLeaf.getType()).getValues();
+        List<EnumTypeDefinition.EnumPair> enumEffIter = ((EnumTypeDefinition) currentLeaf.getType()).getValues();
         EnumEffectiveStatementImpl enumEff = (EnumEffectiveStatementImpl) enumEffIter.iterator().next();
 
-        EnumSpecificationEffectiveStatementImpl enumSpecEff = (EnumSpecificationEffectiveStatementImpl)
-                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next();
-        EnumSpecificationEffectiveStatementImpl enumSpecEffSecond = (EnumSpecificationEffectiveStatementImpl)
-                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next();
+        EnumTypeDefinition enumSpecEff = ((EnumSpecificationEffectiveStatementImpl)
+                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next()).getTypeDefinition();
 
         assertEquals("enumeration", enumSpecEff.getQName().getLocalName());
         assertEquals("enumeration", enumSpecEff.getPath().getLastComponent().getLocalName());
@@ -225,14 +220,14 @@ public class EffectiveStatementTypeTest {
         assertNull(enumSpecEff.getBaseType());
         assertNotNull(enumSpecEff.getUnknownSchemaNodes());
         assertEquals("CURRENT", enumSpecEff.getStatus().toString());
-        assertNotNull(enumSpecEff.getDescription());
-        assertNotNull(enumSpecEff.getReference());
-        assertEquals("", enumSpecEff.getUnits());
+        assertNull(enumSpecEff.getDescription());
+        assertNull(enumSpecEff.getReference());
+        assertNull(enumSpecEff.getUnits());
         assertNotNull(enumSpecEff.toString());
         assertNotNull(enumSpecEff.hashCode());
         assertFalse(enumSpecEff.equals(null));
         assertFalse(enumSpecEff.equals("test"));
-        assertTrue(enumSpecEff.equals(enumSpecEffSecond));
+        assertTrue(enumSpecEff.equals(enumSpecEff));
 
         assertEquals("zero", enumEff.getQName().getLocalName());
         assertEquals("zero", enumEff.getName());
@@ -249,20 +244,22 @@ public class EffectiveStatementTypeTest {
         currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
                 .getDataChildByName("leaf-identityref");
         assertNotNull(currentLeaf.getType());
-        IdentityRefSpecificationEffectiveStatementImpl identityRefEff = (IdentityRefSpecificationEffectiveStatementImpl)
-                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next();
+        IdentityrefTypeDefinition identityRefEff = ((IdentityRefSpecificationEffectiveStatementImpl)
+                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next()).getTypeDefinition();
 
-        assertTrue(identityRefEff.getDefaultValue() instanceof IdentityEffectiveStatementImpl);
+        assertNull(identityRefEff.getDefaultValue());
         assertEquals("identityref", identityRefEff.getQName().getLocalName());
         assertEquals("identityref", identityRefEff.getPath().getLastComponent().getLocalName());
         assertNull(identityRefEff.getBaseType());
         assertNotNull(identityRefEff.getUnknownSchemaNodes());
         assertEquals("CURRENT", identityRefEff.getStatus().toString());
         assertEquals("test-identity", identityRefEff.getIdentity().getQName().getLocalName());
-        assertNotNull(identityRefEff.getDescription());
-        assertNotNull(identityRefEff.getReference());
-        assertEquals("", identityRefEff.getUnits());
+        assertNull(identityRefEff.getDescription());
+        assertNull(identityRefEff.getReference());
         assertNotNull(identityRefEff.toString());
+
+        // FIXME: the model is wrong, but we accept units in 'type' statement
+        assertNull(identityRefEff.getUnits());
     }
 
     @Test
@@ -270,12 +267,9 @@ public class EffectiveStatementTypeTest {
         currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
                 .getDataChildByName("leaf-instance-identifier");
         assertNotNull(currentLeaf.getType());
-        InstanceIdentifierSpecificationEffectiveStatementImpl instanceIdentEff =
-                (InstanceIdentifierSpecificationEffectiveStatementImpl) ((LeafEffectiveStatementImpl) currentLeaf)
-                .effectiveSubstatements().iterator().next();
-        InstanceIdentifierSpecificationEffectiveStatementImpl instanceIdentEffSecond =
-                (InstanceIdentifierSpecificationEffectiveStatementImpl) ((LeafEffectiveStatementImpl) currentLeaf)
-                .effectiveSubstatements().iterator().next();
+        InstanceIdentifierTypeDefinition instanceIdentEff =
+                ((InstanceIdentifierTypeEffectiveStatementImpl) ((LeafEffectiveStatementImpl) currentLeaf)
+                .effectiveSubstatements().iterator().next()).getTypeDefinition();
         assertNotNull(instanceIdentEff.toString());
 
         assertFalse(instanceIdentEff.requireInstance());
@@ -283,16 +277,15 @@ public class EffectiveStatementTypeTest {
         assertEquals("instance-identifier", instanceIdentEff.getPath().getLastComponent().getLocalName());
         assertNull(instanceIdentEff.getBaseType());
         assertNull(instanceIdentEff.getDefaultValue());
-        assertNull(instanceIdentEff.getPathStatement());
         assertNotNull(instanceIdentEff.getUnknownSchemaNodes());
-        assertNotNull(instanceIdentEff.getDescription());
-        assertNotNull(instanceIdentEff.getReference());
-        assertEquals("", instanceIdentEff.getUnits());
+        assertNull(instanceIdentEff.getDescription());
+        assertNull(instanceIdentEff.getReference());
+        assertNull(instanceIdentEff.getUnits());
         assertEquals("CURRENT", instanceIdentEff.getStatus().toString());
         assertNotNull(instanceIdentEff.hashCode());
         assertFalse(instanceIdentEff.equals(null));
         assertFalse(instanceIdentEff.equals("test"));
-        assertTrue(instanceIdentEff.equals(instanceIdentEffSecond));
+        assertTrue(instanceIdentEff.equals(instanceIdentEff));
     }
 
     @Test
@@ -300,27 +293,24 @@ public class EffectiveStatementTypeTest {
         currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
                 .getDataChildByName("leaf-leafref");
         assertNotNull(currentLeaf.getType());
-        LeafrefSpecificationEffectiveStatementImpl leafrefEff = (LeafrefSpecificationEffectiveStatementImpl)
-                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next();
 
-        LeafrefSpecificationEffectiveStatementImpl leafrefEffSecond = (LeafrefSpecificationEffectiveStatementImpl)
-                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next();
+        LeafrefTypeDefinition leafrefEff = ((LeafrefSpecificationEffectiveStatementImpl)
+                ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next()).getTypeDefinition();
 
         assertEquals("/container-test/leaf-test", leafrefEff.getPathStatement().toString());
         assertNull(leafrefEff.getBaseType());
-        assertEquals("", leafrefEff.getUnits());
-        assertEquals("leafref", ((LeafrefSpecificationEffectiveStatementImpl) leafrefEff.getDefaultValue()).argument());
+        assertNull(leafrefEff.getUnits());
         assertNotNull(leafrefEff.toString());
         assertEquals("leafref", leafrefEff.getQName().getLocalName());
         assertEquals("CURRENT", leafrefEff.getStatus().toString());
         assertNotNull(leafrefEff.getUnknownSchemaNodes());
         assertEquals("leafref", leafrefEff.getPath().getLastComponent().getLocalName());
-        assertNotNull(leafrefEff.getDescription());
-        assertNotNull(leafrefEff.getReference());
+        assertNull(leafrefEff.getDescription());
+        assertNull(leafrefEff.getReference());
         assertNotNull(leafrefEff.hashCode());
         assertFalse(leafrefEff.equals(null));
         assertFalse(leafrefEff.equals("test"));
-        assertTrue(leafrefEff.equals(leafrefEffSecond));
+        assertTrue(leafrefEff.equals(leafrefEff));
     }
 
     @Test
@@ -328,42 +318,42 @@ public class EffectiveStatementTypeTest {
         currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
                 .getDataChildByName("leaf-int8");
         assertNotNull(currentLeaf.getType());
-        Int8EffectiveStatementImpl int8Eff = (Int8EffectiveStatementImpl) ((LeafEffectiveStatementImpl) currentLeaf)
+        IntegerTypeEffectiveStatementImpl int8Eff = (IntegerTypeEffectiveStatementImpl) ((LeafEffectiveStatementImpl) currentLeaf)
                 .effectiveSubstatements().iterator().next();
         assertNotNull(int8Eff.toString());
 
         currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
                 .getDataChildByName("leaf-int16");
         assertNotNull(currentLeaf.getType());
-        Int16EffectiveStatementImpl int16Eff = (Int16EffectiveStatementImpl) ((LeafEffectiveStatementImpl) currentLeaf)
+        IntegerTypeEffectiveStatementImpl int16Eff = (IntegerTypeEffectiveStatementImpl) ((LeafEffectiveStatementImpl) currentLeaf)
                 .effectiveSubstatements().iterator().next();
         assertNotNull(int16Eff.toString());
 
         currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
                 .getDataChildByName("leaf-int32");
         assertNotNull(currentLeaf.getType());
-        Int32EffectiveStatementImpl int32Eff = (Int32EffectiveStatementImpl) ((LeafEffectiveStatementImpl) currentLeaf)
+        IntegerTypeEffectiveStatementImpl int32Eff = (IntegerTypeEffectiveStatementImpl) ((LeafEffectiveStatementImpl) currentLeaf)
                 .effectiveSubstatements().iterator().next();
         assertNotNull(int32Eff.toString());
 
         currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
                 .getDataChildByName("leaf-int64");
         assertNotNull(currentLeaf.getType());
-        Int64EffectiveStatementImpl int64Eff = (Int64EffectiveStatementImpl) ((LeafEffectiveStatementImpl) currentLeaf)
+        IntegerTypeEffectiveStatementImpl int64Eff = (IntegerTypeEffectiveStatementImpl) ((LeafEffectiveStatementImpl) currentLeaf)
                 .effectiveSubstatements().iterator().next();
         assertNotNull(int64Eff.toString());
 
         currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
                 .getDataChildByName("leaf-uint8");
         assertNotNull(currentLeaf.getType());
-        UInt8EffectiveStatementImpl uint8Eff = (UInt8EffectiveStatementImpl) ((LeafEffectiveStatementImpl) currentLeaf)
+        UnsignedIntegerTypeEffectiveStatementImpl uint8Eff = (UnsignedIntegerTypeEffectiveStatementImpl) ((LeafEffectiveStatementImpl) currentLeaf)
                 .effectiveSubstatements().iterator().next();
         assertNotNull(uint8Eff.toString());
 
         currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
                 .getDataChildByName("leaf-uint16");
         assertNotNull(currentLeaf.getType());
-        UInt16EffectiveStatementImpl uint16Eff = (UInt16EffectiveStatementImpl) ((LeafEffectiveStatementImpl)
+        UnsignedIntegerTypeEffectiveStatementImpl uint16Eff = (UnsignedIntegerTypeEffectiveStatementImpl) ((LeafEffectiveStatementImpl)
                 currentLeaf)
                 .effectiveSubstatements().iterator().next();
         assertNotNull(uint16Eff.toString());
@@ -371,7 +361,7 @@ public class EffectiveStatementTypeTest {
         currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
                 .getDataChildByName("leaf-uint32");
         assertNotNull(currentLeaf.getType());
-        UInt32EffectiveStatementImpl uint32Eff = (UInt32EffectiveStatementImpl) ((LeafEffectiveStatementImpl)
+        UnsignedIntegerTypeEffectiveStatementImpl uint32Eff = (UnsignedIntegerTypeEffectiveStatementImpl) ((LeafEffectiveStatementImpl)
                 currentLeaf)
                 .effectiveSubstatements().iterator().next();
         assertNotNull(uint32Eff.toString());
@@ -379,7 +369,7 @@ public class EffectiveStatementTypeTest {
         currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
                 .getDataChildByName("leaf-uint64");
         assertNotNull(currentLeaf.getType());
-        UInt64EffectiveStatementImpl uint64Eff = (UInt64EffectiveStatementImpl) ((LeafEffectiveStatementImpl)
+        UnsignedIntegerTypeEffectiveStatementImpl uint64Eff = (UnsignedIntegerTypeEffectiveStatementImpl) ((LeafEffectiveStatementImpl)
                 currentLeaf)
                 .effectiveSubstatements().iterator().next();
         assertNotNull(uint64Eff.toString());
@@ -390,10 +380,8 @@ public class EffectiveStatementTypeTest {
         currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
                 .getDataChildByName("leaf-union");
         assertNotNull(currentLeaf.getType());
-        UnionSpecificationEffectiveStatementImpl unionEff = (UnionSpecificationEffectiveStatementImpl)
-                ((LeafEffectiveStatementImpl)currentLeaf).effectiveSubstatements().iterator().next();
-        UnionSpecificationEffectiveStatementImpl unionEffSecond = (UnionSpecificationEffectiveStatementImpl)
-                ((LeafEffectiveStatementImpl)currentLeaf).effectiveSubstatements().iterator().next();
+        UnionTypeDefinition unionEff = ((UnionSpecificationEffectiveStatementImpl)
+                ((LeafEffectiveStatementImpl)currentLeaf).effectiveSubstatements().iterator().next()).getTypeDefinition();
 
         assertEquals(2, unionEff.getTypes().size());
         assertEquals("union", unionEff.getQName().getLocalName());
@@ -402,13 +390,13 @@ public class EffectiveStatementTypeTest {
         assertNull(unionEff.getBaseType());
         assertNull(unionEff.getUnits());
         assertNull(unionEff.getDefaultValue());
-        assertNotNull(unionEff.getDescription());
-        assertNotNull(unionEff.getReference());
+        assertNull(unionEff.getDescription());
+        assertNull(unionEff.getReference());
         assertNotNull(unionEff.toString());
         assertNotNull(unionEff.hashCode());
         assertFalse(unionEff.equals(null));
         assertFalse(unionEff.equals("test"));
-        assertTrue(unionEff.equals(unionEffSecond));
+        assertTrue(unionEff.equals(unionEff));
         assertEquals("union", unionEff.getPath().getLastComponent().getLocalName());
     }
 
@@ -417,15 +405,12 @@ public class EffectiveStatementTypeTest {
         currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
                 .getDataChildByName("leaf-length-pattern");
         assertNotNull(currentLeaf.getType());
-        LengthConstraintEffectiveImpl lengthConstraint = (LengthConstraintEffectiveImpl)
-                ((ExtendedType) (currentLeaf.getType())).getLengthConstraints().get(0);
-        LengthConstraintEffectiveImpl lengthConstraintThird = (LengthConstraintEffectiveImpl)
-                ((ExtendedType) (currentLeaf.getType())).getLengthConstraints().get(0);
+        LengthConstraint lengthConstraint = ((StringTypeDefinition) (currentLeaf.getType())).getLengthConstraints().get(0);
+        LengthConstraint lengthConstraintThird = ((StringTypeDefinition) (currentLeaf.getType())).getLengthConstraints().get(0);
         currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
                 .getDataChildByName("leaf-length-pattern-second");
         assertNotNull(currentLeaf.getType());
-        LengthConstraintEffectiveImpl lengthConstraintSecond = (LengthConstraintEffectiveImpl)
-                ((ExtendedType) (currentLeaf.getType())).getLengthConstraints().get(0);
+        LengthConstraint lengthConstraintSecond = ((StringTypeDefinition) (currentLeaf.getType())).getLengthConstraints().get(0);
 
         assertEquals(1, lengthConstraint.getMin().intValue());
         assertEquals(255, lengthConstraint.getMax().intValue());
@@ -447,18 +432,18 @@ public class EffectiveStatementTypeTest {
                 .getDataChildByName("leaf-length-pattern");
         assertNotNull(currentLeaf.getType());
         PatternConstraintEffectiveImpl lengthConstraint = (PatternConstraintEffectiveImpl)
-                ((ExtendedType) (currentLeaf.getType())).getPatternConstraints().get(0);
+                ((StringTypeDefinition) (currentLeaf.getType())).getPatternConstraints().get(0);
         PatternConstraintEffectiveImpl lengthConstraintThird = (PatternConstraintEffectiveImpl)
-                ((ExtendedType) (currentLeaf.getType())).getPatternConstraints().get(0);
+                ((StringTypeDefinition) (currentLeaf.getType())).getPatternConstraints().get(0);
         currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
                 .getDataChildByName("leaf-length-pattern-second");
         assertNotNull(currentLeaf.getType());
         PatternConstraintEffectiveImpl lengthConstraintSecond = (PatternConstraintEffectiveImpl)
-                ((ExtendedType) (currentLeaf.getType())).getPatternConstraints().get(0);
+                ((StringTypeDefinition) (currentLeaf.getType())).getPatternConstraints().get(0);
 
         assertEquals("^[0-9a-fA-F]*$", lengthConstraint.getRegularExpression());
-        assertNotNull(lengthConstraint.getReference());
-        assertNotNull(lengthConstraint.getDescription());
+        assertNull(lengthConstraint.getReference());
+        assertNull(lengthConstraint.getDescription());
         assertEquals("String ^[0-9a-fA-F]*$ is not valid regular expression.", lengthConstraint.getErrorMessage());
         assertEquals("invalid-regular-expression", lengthConstraint.getErrorAppTag());
         assertNotNull(lengthConstraint.toString());
@@ -474,26 +459,26 @@ public class EffectiveStatementTypeTest {
         currentLeaf = (LeafSchemaNode) effectiveSchemaContext.findModuleByName("types", null)
                 .getDataChildByName("leaf-string");
         assertNotNull(currentLeaf.getType());
-        StringEffectiveStatementImpl stringEff = (StringEffectiveStatementImpl)
-                ((LeafEffectiveStatementImpl)currentLeaf).effectiveSubstatements().iterator().next();
-        StringEffectiveStatementImpl stringEffSecond = (StringEffectiveStatementImpl)
-                ((LeafEffectiveStatementImpl)currentLeaf).effectiveSubstatements().iterator().next();
+        StringTypeDefinition stringEff = ((StringTypeEffectiveStatementImpl)
+                ((LeafEffectiveStatementImpl)currentLeaf).effectiveSubstatements().iterator().next()).getTypeDefinition();
+        StringTypeDefinition stringEffSecond = ((StringTypeEffectiveStatementImpl)
+                ((LeafEffectiveStatementImpl)currentLeaf).effectiveSubstatements().iterator().next()).getTypeDefinition();
 
         assertEquals("string", stringEff.getQName().getLocalName());
         assertEquals("CURRENT", stringEff.getStatus().toString());
-        assertEquals("", stringEff.getUnits());
-        assertEquals("", stringEff.getDefaultValue());
+        assertNull(stringEff.getUnits());
+        assertNull(stringEff.getDefaultValue());
         assertNotNull(stringEff.getUnknownSchemaNodes());
         assertNull(stringEff.getBaseType());
-        assertNotNull(stringEff.getDescription());
-        assertNotNull(stringEff.getReference());
+        assertNull(stringEff.getDescription());
+        assertNull(stringEff.getReference());
         assertNotNull(stringEff.toString());
         assertNotNull(stringEff.hashCode());
         assertFalse(stringEff.equals(null));
         assertFalse(stringEff.equals("test"));
         assertTrue(stringEff.equals(stringEffSecond));
         assertEquals("string", stringEff.getPath().getLastComponent().getLocalName());
-        assertEquals(1, stringEff.getLengthConstraints().size());
+        assertEquals(0, stringEff.getLengthConstraints().size());
         assertNotNull(stringEff.getPatternConstraints());
     }
 }

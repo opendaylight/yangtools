@@ -12,7 +12,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
 import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -76,7 +75,7 @@ public class ListTest {
         leaf = (LeafSchemaNode) list.getDataChildByName("young-leaf");
         assertNotNull(leaf);
         assertFalse(leaf.getConstraints().isMandatory());
-        assertEquals("string", leaf.getType().getQName().getLocalName());
+        assertEquals("young-leaf", leaf.getType().getQName().getLocalName());
         assertEquals("default-value", leaf.getDefault());
 
         LeafListSchemaNode leafList = (LeafListSchemaNode) list.getDataChildByName("list-of-leaves");
