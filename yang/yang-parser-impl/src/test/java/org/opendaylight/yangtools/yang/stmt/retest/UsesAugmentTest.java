@@ -35,6 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.BooleanType;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
@@ -628,7 +629,7 @@ public class UsesAugmentTest {
         SchemaPath expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, intExt.getPath());
 
-        UnionType union = (UnionType)intExt.getBaseType();
+        UnionTypeDefinition union = (UnionTypeDefinition)intExt.getBaseType();
 
         TypeDefinition<?> uint8 = null;
         TypeDefinition<?> pv = null;

@@ -15,8 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafStatement> implements
         LeafSchemaNode, DerivableSchemaNode {
@@ -35,8 +35,9 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
         UnitsEffectiveStatementImpl unitsStmt = firstEffective(UnitsEffectiveStatementImpl.class);
         this.unitsStr = (unitsStmt == null) ? null : unitsStmt.argument();
 
-        EffectiveStatement<?,?> typeEffectiveSubstatement = firstEffectiveSubstatementOfType(TypeDefinition.class);
-        this.type = TypeUtils.getTypeFromEffectiveStatement(typeEffectiveSubstatement);
+        // FIXME: need to derive the time
+        final TypeEffectiveStatement<?> typeStatement = firstSubstatementOfType(TypeEffectiveStatement.class);
+        this.type = typeStatement.getTypeDefinition();
     }
 
     @Override
