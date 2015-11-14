@@ -5,38 +5,35 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
+
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.Decimal64Specification;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
-import org.opendaylight.yangtools.yang.model.util.type.DecimalTypeBuilder;
+import org.opendaylight.yangtools.yang.model.util.type.RangeRestrictedTypeBuilder;
+import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.FractionDigitsEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
-public class Decimal64SpecificationEffectiveStatementImpl extends
-        DeclaredEffectiveStatementBase<String, Decimal64Specification>
-        implements TypeEffectiveStatement<Decimal64Specification> {
+public final class DecimalEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, TypeStatement>
+        implements TypeEffectiveStatement<TypeStatement> {
 
     private final DecimalTypeDefinition typeDefinition;
 
-    public Decimal64SpecificationEffectiveStatementImpl(
-            final StmtContext<String, Decimal64Specification, EffectiveStatement<String, Decimal64Specification>> ctx) {
+    public DecimalEffectiveStatementImpl(
+            final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
+            final DecimalTypeDefinition baseType) {
         super(ctx);
 
-        final DecimalTypeBuilder builder = BaseTypes.decimalTypeBuilder(ctx.getParentContext().getSchemaPath().get());
+        final RangeRestrictedTypeBuilder<DecimalTypeDefinition> builder =
+                RestrictedTypes.newDecima64Builder(baseType, ctx.getSchemaPath().get());
 
-        for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            if (stmt instanceof FractionDigitsEffectiveStatementImpl) {
-                builder.setFractionDigits(((FractionDigitsEffectiveStatementImpl) stmt).argument());
-            }
+        for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof RangeEffectiveStatementImpl) {
-                // FIXME: implement this
-                //builder.setRangeAlternatives(((RangeEffectiveStatementImpl)stmt).argument());
+                builder.setRangeAlternatives(((RangeEffectiveStatementImpl)stmt).argument());
             }
             if (stmt instanceof UnknownEffectiveStatementImpl) {
                 builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl)stmt);
