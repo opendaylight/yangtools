@@ -23,7 +23,7 @@ final class BaseStringType extends AbstractBaseType<StringTypeDefinition> implem
 
     @Override
     public List<LengthConstraint> getLengthConstraints() {
-        return ImmutableList.of();
+        return JavaLengthConstraints.STRING_LENGTH_CONSTRAINTS;
     }
 
     @Override
