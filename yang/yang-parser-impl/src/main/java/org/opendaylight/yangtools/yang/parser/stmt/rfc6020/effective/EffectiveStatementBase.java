@@ -97,8 +97,6 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
     }
 
     protected final EffectiveStatement<?, ?> firstEffectiveSubstatementOfType(final Class<?> type) {
-        Optional<? extends EffectiveStatement<?, ?>> possible = Iterables.tryFind(substatements,
-                Predicates.instanceOf(type));
-        return possible.isPresent() ? possible.get() : null;
+        return Iterables.tryFind(substatements, Predicates.instanceOf(type)).orNull();
     }
 }
