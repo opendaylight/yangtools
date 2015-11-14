@@ -15,8 +15,11 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.util.type.LeafTypeBuilder;
+import org.opendaylight.yangtools.yang.model.util.type.LeafTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafStatement> implements
         LeafSchemaNode, DerivableSchemaNode {
@@ -29,14 +32,34 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
         super(ctx);
         this.original = ctx.getOriginalCtx() == null ? null : (LeafSchemaNode) ctx.getOriginalCtx().buildEffective();
 
-        DefaultEffectiveStatementImpl defaultStmt = firstEffective(DefaultEffectiveStatementImpl.class);
-        this.defaultStr = (defaultStmt == null) ? null : defaultStmt.argument();
+        final TypeEffectiveStatement<?> typeStmt = firstSubstatementOfType(TypeEffectiveStatement.class);
+        if (typeStmt == null) {
+            throw new SourceException("Leaf is missing a 'type' statement", ctx.getStatementSourceReference());
+        }
 
-        UnitsEffectiveStatementImpl unitsStmt = firstEffective(UnitsEffectiveStatementImpl.class);
-        this.unitsStr = (unitsStmt == null) ? null : unitsStmt.argument();
+        String dflt = null;
+        String units = null;
+        final LeafTypeBuilder<?> builder = LeafTypes.leafTypeBuilder(typeStmt.getTypeDefinition(),
+            ctx.getSchemaPath().get());
+        for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
+            if (stmt instanceof DefaultEffectiveStatementImpl) {
+                dflt = ((DefaultEffectiveStatementImpl)stmt).argument();
+                builder.setDefaultValue(stmt.argument());
+            } else if (stmt instanceof DescriptionEffectiveStatementImpl) {
+                builder.setDescription(((DescriptionEffectiveStatementImpl)stmt).argument());
+            } else if (stmt instanceof ReferenceEffectiveStatementImpl) {
+                builder.setReference(((ReferenceEffectiveStatementImpl)stmt).argument());
+            } else if (stmt instanceof StatusEffectiveStatementImpl) {
+                builder.setStatus(((StatusEffectiveStatementImpl)stmt).argument());
+            } else if (stmt instanceof UnitsEffectiveStatementImpl) {
+                units = ((UnitsEffectiveStatementImpl)stmt).argument();
+                builder.setUnits(units);
+            }
+        }
 
-        EffectiveStatement<?,?> typeEffectiveSubstatement = firstEffectiveSubstatementOfType(TypeDefinition.class);
-        this.type = TypeUtils.getTypeFromEffectiveStatement(typeEffectiveSubstatement);
+        defaultStr = dflt;
+        unitsStr = units;
+        type = builder.build();
     }
 
     @Override
@@ -73,10 +96,7 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof LeafEffectiveStatementImpl)) {
             return false;
         }
         LeafEffectiveStatementImpl other = (LeafEffectiveStatementImpl) obj;
