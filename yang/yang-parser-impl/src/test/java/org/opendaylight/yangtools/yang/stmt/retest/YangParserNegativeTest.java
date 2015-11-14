@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.yang.stmt.retest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-
-import com.google.common.base.Throwables;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -26,6 +24,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedEx
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
+import com.google.common.base.Throwables;
 
 public class YangParserNegativeTest {
 
@@ -51,7 +50,7 @@ public class YangParserNegativeTest {
         try {
             try (InputStream stream = new FileInputStream(yang)) {
                 TestUtils.loadModule(stream);
-                fail("SomeModifiersUnresolvedException should be thrown.");
+                fail("IllegalArgumentException should be thrown");
             }
         } catch (SomeModifiersUnresolvedException e) {
             Throwable rootCause = Throwables.getRootCause(e);
@@ -109,7 +108,7 @@ public class YangParserNegativeTest {
                 TestUtils.loadModule(stream);
                 fail("YangParseException should be thrown");
             }
-        } catch (YangParseException e) {
+        } catch (SourceException e) {
             assertTrue(e.getMessage().contains("Invalid length constraint: <4, 10>"));
         }
     }
@@ -122,7 +121,7 @@ public class YangParserNegativeTest {
                 TestUtils.loadModule(stream);
                 fail("Exception should be thrown");
             }
-        } catch (YangParseException e) {
+        } catch (SourceException e) {
             assertTrue(e.getMessage().contains("Invalid range constraint: <5, 20>"));
         }
     }
