@@ -21,12 +21,12 @@ public final class IdentityrefTypeBuilder extends TypeBuilder<IdentityrefTypeDef
     }
 
     public void setIdentity(@Nonnull final IdentitySchemaNode identity) {
-        Preconditions.checkState(identity == null, "Identity already set to %s", identity);
+        Preconditions.checkState(this.identity == null, "Identity already set to %s", this.identity);
         this.identity = Preconditions.checkNotNull(identity);
     }
 
     @Override
-    public BaseIdentityrefType build() {
+    public IdentityrefTypeDefinition build() {
         return new BaseIdentityrefType(getPath(), getUnknownSchemaNodes(), identity);
     }
 }
