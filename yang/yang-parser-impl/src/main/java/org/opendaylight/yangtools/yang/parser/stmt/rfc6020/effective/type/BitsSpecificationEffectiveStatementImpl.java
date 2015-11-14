@@ -7,160 +7,68 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
-import com.google.common.collect.ImmutableList;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.BitsSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.BaseTypes;
-import org.opendaylight.yangtools.yang.model.util.BitsType;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
+import org.opendaylight.yangtools.yang.model.util.BitImpl;
+import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
+import org.opendaylight.yangtools.yang.model.util.type.BitsTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
-public class BitsSpecificationEffectiveStatementImpl extends
-        DeclaredEffectiveStatementBase<String, BitsSpecification>
-        implements BitsTypeDefinition, TypeEffectiveStatement<BitsSpecification> {
+public final class BitsSpecificationEffectiveStatementImpl extends
+        DeclaredEffectiveStatementBase<String, BitsSpecification> implements TypeEffectiveStatement<BitsSpecification> {
 
-    private static final QName QNAME = BaseTypes.BITS_QNAME;
-    private static final String DESCRIPTION = "The bits built-in type represents a bit set. "
-            + "That is, a bits value is a set of flags identified by small integer position "
-            + "numbers starting at 0. Each bit number has an assigned name.";
-
-    private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.7";
-    private static final String UNITS = "";
-    private final SchemaPath path;
-    private final List<Bit> bits;
-    private BitsType bitsTypeInstance = null;
+    private final BitsTypeDefinition typeDefinition;
 
     public BitsSpecificationEffectiveStatementImpl(final StmtContext<String, BitsSpecification, EffectiveStatement<String, BitsSpecification>> ctx) {
         super(ctx);
 
-        List<Bit> bitsInit = new ArrayList<>();
+        final BitsTypeBuilder builder = BaseTypes.bitsTypeBuilder(ctx.getSchemaPath().get());
+        Long highestPosition = null;
+        for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
+            if (stmt instanceof Bit) {
+                Bit b = (Bit) stmt;
 
-        path = ctx.getParentContext().getSchemaPath().get().createChild(QNAME);
+                if (b.getPosition() == null) {
+                    final Long newPos;
+                    if (highestPosition == null) {
+                        newPos = 0L;
+                    } else if (highestPosition != 4294967295L) {
+                        newPos = highestPosition + 1;
+                    } else {
+                        throw new SourceException("Bit " + b + " must have a position statement",
+                            ctx.getStatementSourceReference());
+                    }
 
-        for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof Bit) {
-                bitsInit.add(((Bit) effectiveStatement));
+                    b = new BitImpl(newPos, b.getQName(), b.getPath(), b.getDescription(), b.getReference(),
+                        b.getStatus(), b.getUnknownSchemaNodes());
+                }
+
+                if (b.getPosition() < 0L || b.getPosition() > 4294967295L) {
+                    throw new SourceException("Bit " + b + " has illegal position", ctx.getStatementSourceReference());
+                }
+
+                if (highestPosition == null || highestPosition < b.getPosition()) {
+                    highestPosition = b.getPosition();
+                }
+
+                builder.addBit(b);
+            }
+            if (stmt instanceof UnknownEffectiveStatementImpl) {
+                builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl)stmt);
             }
         }
 
-        bits = ImmutableList.copyOf(bitsInit);
+        typeDefinition = builder.build();
     }
 
     @Override
-    public List<Bit> getBits() {
-        return bits;
-    }
-
-    @Override
-    public BitsTypeDefinition getBaseType() {
-        return null;
-    }
-
-    @Override
-    public String getUnits() {
-        return UNITS;
-    }
-
-    @Override
-    public Object getDefaultValue() {
-        // FIXME: Should return real value
-        return null;
-    }
-
-    @Override
-    public QName getQName() {
-        return QNAME;
-    }
-
-    @Override
-    public SchemaPath getPath() {
-        return path;
-    }
-
-    @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return Collections.emptyList();
-    }
-
-    @Override
-    public String getDescription() {
-        return DESCRIPTION;
-    }
-
-    @Override
-    public String getReference() {
-        return REFERENCE;
-    }
-
-    @Override
-    public Status getStatus() {
-        return Status.CURRENT;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(bits);
-        result = prime * result + QNAME.hashCode();
-        result = prime * result + path.hashCode();
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        BitsSpecificationEffectiveStatementImpl other = (BitsSpecificationEffectiveStatementImpl) obj;
-        return Objects.equals(bits, other.bits) && Objects.equals(path, other.path);
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(BitsSpecificationEffectiveStatementImpl.class.getSimpleName());
-        builder.append(" [name=");
-        builder.append(QNAME);
-        builder.append(", path=");
-        builder.append(path);
-        builder.append(", description=");
-        builder.append(DESCRIPTION);
-        builder.append(", reference=");
-        builder.append(REFERENCE);
-        builder.append(", bits=");
-        builder.append(bits);
-        builder.append(", units=");
-        builder.append(UNITS);
-        builder.append("]");
-        return builder.toString();
-    }
-
-    @Override
-    public TypeDefinition<?> getTypeDefinition() {
-        if(bitsTypeInstance != null) {
-            return bitsTypeInstance;
-        }
-
-        bitsTypeInstance = BitsType.create(path, bits);
-
-        return bitsTypeInstance;
+    public BitsTypeDefinition getTypeDefinition() {
+        return typeDefinition;
     }
 }
