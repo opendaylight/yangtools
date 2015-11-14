@@ -12,7 +12,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -159,8 +158,8 @@ public class YangParserSimpleTest {
         assertEquals(typedefQName, nodesType.getQName());
         SchemaPath nodesTypePath = TestUtils.createPath(true, snNS, snRev, snPref, "nodes", "nodes-type");
         assertEquals(nodesTypePath, nodesType.getPath());
-        assertTrue(nodesType.getDescription().isEmpty());
-        assertTrue(nodesType.getReference().isEmpty());
+        assertNull(nodesType.getDescription());
+        assertNull(nodesType.getReference());
         assertEquals(Status.CURRENT, nodesType.getStatus());
         assertEquals(0, nodesType.getUnknownSchemaNodes().size());
 
