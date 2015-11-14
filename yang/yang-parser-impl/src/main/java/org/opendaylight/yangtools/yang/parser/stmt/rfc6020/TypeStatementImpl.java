@@ -7,29 +7,46 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import java.util.Collection;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
+import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
+import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ExtendedTypeEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BinaryEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BooleanEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EmptyEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Int16EffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Int32EffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Int64EffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Int8EffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.StringEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UInt16EffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UInt32EffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UInt64EffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UInt8EffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BinaryTypeEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BitsTypeEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BooleanTypeEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.DecimalTypeEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EmptyTypeEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EnumTypeEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.IdentityrefTypeEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.InstanceIdentifierTypeEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.IntegerTypeEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LeafrefTypeEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.StringTypeEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UnionTypeEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UnsignedIntegerTypeEffectiveStatementImpl;
 
 public class TypeStatementImpl extends AbstractDeclaredStatement<String>
         implements TypeStatement {
@@ -62,44 +79,88 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
         public EffectiveStatement<String, TypeStatement> createEffective(
                 final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx) {
 
-            // :FIXME improve the test of isExtended - e.g. unknown statements,
-            // etc..
-            Collection<StatementContextBase<?, ?, ?>> declaredSubstatements = ctx
-                    .declaredSubstatements();
-            boolean isExtended = !declaredSubstatements.isEmpty();
-            if (isExtended) {
-                return new ExtendedTypeEffectiveStatementImpl(ctx, true);
+            // First look up the proper base type
+            final TypeDefinition<?> baseType;
+            switch (ctx.getStatementArgument()) {
+            case TypeUtils.BINARY:
+                baseType = BaseTypes.binaryType();
+                break;
+            case TypeUtils.BOOLEAN:
+                baseType = BaseTypes.booleanType();
+                break;
+            case TypeUtils.EMPTY:
+                baseType = BaseTypes.emptyType();
+                break;
+            case TypeUtils.INSTANCE_IDENTIFIER:
+                baseType = BaseTypes.instanceIdentifierType();
+                break;
+            case TypeUtils.INT8:
+                baseType = BaseTypes.int8Type();
+                break;
+            case TypeUtils.INT16:
+                baseType = BaseTypes.int16Type();
+                break;
+            case TypeUtils.INT32:
+                baseType = BaseTypes.int32Type();
+                break;
+            case TypeUtils.INT64:
+                baseType = BaseTypes.int64Type();
+                break;
+            case TypeUtils.STRING:
+                baseType = BaseTypes.stringType();
+                break;
+            case TypeUtils.UINT8:
+                baseType = BaseTypes.uint8Type();
+                break;
+            case TypeUtils.UINT16:
+                baseType = BaseTypes.uint16Type();
+                break;
+            case TypeUtils.UINT32:
+                baseType = BaseTypes.uint32Type();
+                break;
+            case TypeUtils.UINT64:
+                baseType = BaseTypes.uint64Type();
+                break;
+            default:
+                final QName qname = Utils.qNameFromArgument(ctx, ctx.getStatementArgument());
+                final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> typedef =
+                        ctx.getFromNamespace(TypeNamespace.class, qname);
+                if (typedef == null) {
+                    throw new SourceException("Type '" + qname + "' not found", ctx.getStatementSourceReference());
+                }
+
+                baseType = typedef.buildEffective().getTypeDefinition();
             }
 
-            switch (ctx.getStatementArgument()) {
-            case TypeUtils.INT8:
-                return new Int8EffectiveStatementImpl(ctx);
-            case TypeUtils.INT16:
-                return new Int16EffectiveStatementImpl(ctx);
-            case TypeUtils.INT32:
-                return new Int32EffectiveStatementImpl(ctx);
-            case TypeUtils.INT64:
-                return new Int64EffectiveStatementImpl(ctx);
-            case TypeUtils.UINT8:
-                return new UInt8EffectiveStatementImpl(ctx);
-            case TypeUtils.UINT16:
-                return new UInt16EffectiveStatementImpl(ctx);
-            case TypeUtils.UINT32:
-                return new UInt32EffectiveStatementImpl(ctx);
-            case TypeUtils.UINT64:
-                return new UInt64EffectiveStatementImpl(ctx);
-            case TypeUtils.STRING:
-                return new StringEffectiveStatementImpl(ctx);
-            case TypeUtils.BOOLEAN:
-                return new BooleanEffectiveStatementImpl(ctx);
-            case TypeUtils.EMPTY:
-                return new EmptyEffectiveStatementImpl(ctx);
-            case TypeUtils.BINARY:
-                return new BinaryEffectiveStatementImpl(ctx);
-            default:
-                // :FIXME try to resolve original typedef context here and
-                // return buildEffective of original typedef context
-                return new ExtendedTypeEffectiveStatementImpl(ctx, false);
+            // Now instantiate the proper effective statement for that type
+            if (baseType instanceof BinaryTypeDefinition) {
+                return new BinaryTypeEffectiveStatementImpl(ctx, (BinaryTypeDefinition) baseType);
+            } else if (baseType instanceof BitsTypeDefinition) {
+                return new BitsTypeEffectiveStatementImpl(ctx, (BitsTypeDefinition) baseType);
+            } else if (baseType instanceof BooleanTypeDefinition) {
+                return new BooleanTypeEffectiveStatementImpl(ctx, (BooleanTypeDefinition) baseType);
+            } else if (baseType instanceof DecimalTypeDefinition) {
+                return new DecimalTypeEffectiveStatementImpl(ctx, (DecimalTypeDefinition) baseType);
+            } else if (baseType instanceof EmptyTypeDefinition) {
+                return new EmptyTypeEffectiveStatementImpl(ctx, (EmptyTypeDefinition) baseType);
+            } else if (baseType instanceof EnumTypeDefinition) {
+                return new EnumTypeEffectiveStatementImpl(ctx, (EnumTypeDefinition) baseType);
+            } else if (baseType instanceof IdentityrefTypeDefinition) {
+                return new IdentityrefTypeEffectiveStatementImpl(ctx, (IdentityrefTypeDefinition) baseType);
+            } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
+                return new InstanceIdentifierTypeEffectiveStatementImpl(ctx, (InstanceIdentifierTypeDefinition) baseType);
+            } else if (baseType instanceof IntegerTypeDefinition) {
+                return new IntegerTypeEffectiveStatementImpl(ctx, (IntegerTypeDefinition) baseType);
+            } else if (baseType instanceof LeafrefTypeDefinition) {
+                return new LeafrefTypeEffectiveStatementImpl(ctx, (LeafrefTypeDefinition) baseType);
+            } else if (baseType instanceof StringTypeDefinition) {
+                return new StringTypeEffectiveStatementImpl(ctx, (StringTypeDefinition) baseType);
+            } else if (baseType instanceof UnionTypeDefinition) {
+                return new UnionTypeEffectiveStatementImpl(ctx, (UnionTypeDefinition) baseType);
+            } else if (baseType instanceof UnsignedIntegerTypeDefinition) {
+                return new UnsignedIntegerTypeEffectiveStatementImpl(ctx, (UnsignedIntegerTypeDefinition) baseType);
+            } else {
+                throw new IllegalStateException("Unhandled base type " + baseType);
             }
         }
     }
