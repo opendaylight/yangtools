@@ -5,32 +5,32 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
+
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.InstanceIdentifierSpecification;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.InstanceIdentifierTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RequireInstanceEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
-public final class InstanceIdentifierSpecificationEffectiveStatementImpl extends
-        DeclaredEffectiveStatementBase<String, InstanceIdentifierSpecification> implements
-        TypeEffectiveStatement<InstanceIdentifierSpecification> {
-
+public final class InstanceIdentifierTypeEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, TypeStatement>
+        implements TypeEffectiveStatement<TypeStatement> {
     private final InstanceIdentifierTypeDefinition typeDefinition;
 
-    public InstanceIdentifierSpecificationEffectiveStatementImpl(
-            final StmtContext<String, InstanceIdentifierSpecification, EffectiveStatement<String, InstanceIdentifierSpecification>> ctx) {
+    public InstanceIdentifierTypeEffectiveStatementImpl(
+            final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
+            final InstanceIdentifierTypeDefinition baseType) {
         super(ctx);
 
         final InstanceIdentifierTypeBuilder builder =
-                RestrictedTypes.newInstanceIdentifierBuilder(BaseTypes.instanceIdentifierType(), ctx.getSchemaPath().get());
+                RestrictedTypes.newInstanceIdentifierBuilder(baseType, TypeUtils.typeEffectiveSchemaPath(ctx));
 
         for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof RequireInstanceEffectiveStatementImpl) {
