@@ -28,9 +28,8 @@ import org.slf4j.LoggerFactory;
 
 public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConstraint> implements PatternStatement {
     private static final Logger LOG = LoggerFactory.getLogger(PatternStatementImpl.class);
-    private static final Optional<String> OPTIONAL_EMPTY = Optional.of("");
 
-    protected PatternStatementImpl(StmtContext<PatternConstraint, PatternStatement, ?> context) {
+    protected PatternStatementImpl(final StmtContext<PatternConstraint, PatternStatement, ?> context) {
         super(context);
     }
 
@@ -43,26 +42,27 @@ public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConst
         }
 
         @Override
-        public PatternConstraint parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public PatternConstraint parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             final String pattern = "^" + value + '$';
 
             try {
                 Pattern.compile(pattern);
-                return new PatternConstraintEffectiveImpl(pattern, OPTIONAL_EMPTY, OPTIONAL_EMPTY);
             } catch (PatternSyntaxException e) {
-                LOG.debug("Pattern {} failed to compile", pattern, e);
+                LOG.debug("Pattern \"{}\" failed to compile at {}", pattern, ctx.getStatementSourceReference(), e);
                 return null;
             }
+
+            return new PatternConstraintEffectiveImpl(pattern, Optional.<String>absent(), Optional.<String>absent());
         }
 
         @Override
-        public PatternStatement createDeclared(StmtContext<PatternConstraint, PatternStatement, ?> ctx) {
+        public PatternStatement createDeclared(final StmtContext<PatternConstraint, PatternStatement, ?> ctx) {
             return new PatternStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<PatternConstraint, PatternStatement> createEffective(
-                StmtContext<PatternConstraint, PatternStatement, EffectiveStatement<PatternConstraint, PatternStatement>> ctx) {
+                final StmtContext<PatternConstraint, PatternStatement, EffectiveStatement<PatternConstraint, PatternStatement>> ctx) {
             return new PatternEffectiveStatementImpl(ctx);
         }
     }
