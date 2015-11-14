@@ -11,29 +11,27 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.type.LengthRestrictedTypeBuilder;
+import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
+import org.opendaylight.yangtools.yang.model.util.type.TypeBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
-public final class BinaryEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, TypeStatement>
+public final class BitsEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, TypeStatement>
         implements TypeEffectiveStatement<TypeStatement> {
-    private final BinaryTypeDefinition typeDefinition;
 
-    public BinaryEffectiveStatementImpl(
+    private final BitsTypeDefinition typeDefinition;
+
+    public BitsEffectiveStatementImpl(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
-            final BinaryTypeDefinition baseType) {
+            final BitsTypeDefinition baseType) {
         super(ctx);
 
-        final LengthRestrictedTypeBuilder<BinaryTypeDefinition> builder =
-                RestrictedTypes.newBinaryBuilder(baseType, ctx.getSchemaPath().get());
+        final TypeBuilder<BitsTypeDefinition> builder =
+                RestrictedTypes.newBitsBuilder(baseType, ctx.getSchemaPath().get());
 
         for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            if (stmt instanceof LengthEffectiveStatementImpl) {
-                builder.setLengthAlternatives(((LengthEffectiveStatementImpl)stmt).argument());
-            }
             if (stmt instanceof UnknownEffectiveStatementImpl) {
                 builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl)stmt);
             }
@@ -43,7 +41,7 @@ public final class BinaryEffectiveStatementImpl extends DeclaredEffectiveStateme
     }
 
     @Override
-    public BinaryTypeDefinition getTypeDefinition() {
+    public BitsTypeDefinition getTypeDefinition() {
         return typeDefinition;
     }
 }

@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.UnionSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.UnionType;
+import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
@@ -41,6 +42,8 @@ public class UnionSpecificationEffectiveStatementImpl extends
     public UnionSpecificationEffectiveStatementImpl(
             final StmtContext<String, UnionSpecification, EffectiveStatement<String, UnionSpecification>> ctx) {
         super(ctx);
+
+        BaseTypes.unionTypeBuilder(path);
 
         List<TypeDefinition<?>> typesInit = new ArrayList<>();
 
