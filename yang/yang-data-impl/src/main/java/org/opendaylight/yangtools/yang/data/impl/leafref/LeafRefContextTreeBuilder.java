@@ -127,7 +127,6 @@ class LeafRefContextTreeBuilder {
                 type = ((LeafListSchemaNode) node).getType();
             }
 
-            // FIXME: fix case when type is e.g. typdef -> typedef -> leafref
             if (type instanceof LeafrefTypeDefinition) {
                 final LeafrefTypeDefinition leafrefType = (LeafrefTypeDefinition) type;
                 final String leafRefPathString = leafrefType.getPathStatement()

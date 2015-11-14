@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.stmt.test.yin;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Iterator;
@@ -24,6 +23,9 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.retest.TestUtils;
 
@@ -58,12 +60,15 @@ public class YinFileListStmtTest {
         LeafSchemaNode leaf = (LeafSchemaNode) childrenIterator.next();
         assertEquals("name", leaf.getQName().getLocalName());
         assertEquals("Unique module instance name", leaf.getDescription());
-        assertTrue(leaf.getType().toString().startsWith("StringType"));
+        assertEquals(BaseTypes.stringType(), leaf.getType());
         assertTrue(leaf.getConstraints().isMandatory());
 
         leaf = (LeafSchemaNode) childrenIterator.next();
         assertEquals("type", leaf.getQName().getLocalName());
-        assertEquals("identityref module-type", leaf.getType().toString());
+
+        final TypeDefinition<?> leafType = leaf.getType();
+        assertTrue(leafType instanceof IdentityrefTypeDefinition);
+        assertEquals("module-type", ((IdentityrefTypeDefinition)leafType).getIdentity().getQName().getLocalName());
         assertTrue(leaf.getConstraints().isMandatory());
     }
 
