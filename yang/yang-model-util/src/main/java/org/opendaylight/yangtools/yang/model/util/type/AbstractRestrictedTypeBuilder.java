@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 abstract class AbstractRestrictedTypeBuilder<T extends TypeDefinition<T>> extends TypeBuilder<T> {
-    private boolean touched = false;
+    private boolean touched;
 
     AbstractRestrictedTypeBuilder(final T baseType, final SchemaPath path) {
-        super(Preconditions.checkNotNull(baseType), path);
+        super(baseType, path);
+        touched = baseType == null;
     }
 
     final void touch() {

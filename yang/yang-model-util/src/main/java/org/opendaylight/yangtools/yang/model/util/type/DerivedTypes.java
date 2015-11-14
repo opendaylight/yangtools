@@ -50,35 +50,34 @@ public final class DerivedTypes {
         throw new UnsupportedOperationException();
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T extends TypeDefinition<T>> DerivedTypeBuilder<T> derivedTypeBuilder(@Nonnull final T baseType,
+    public static DerivedTypeBuilder<?> derivedTypeBuilder(@Nonnull final TypeDefinition<?> baseType,
             @Nonnull final SchemaPath path) {
         if (baseType instanceof BinaryTypeDefinition) {
-            return (DerivedTypeBuilder<T>) derivedBinaryBuilder((BinaryTypeDefinition) baseType, path);
+            return derivedBinaryBuilder((BinaryTypeDefinition) baseType, path);
         } else if (baseType instanceof BitsTypeDefinition) {
-            return (DerivedTypeBuilder<T>) derivedBitsBuilder((BitsTypeDefinition) baseType, path);
+            return derivedBitsBuilder((BitsTypeDefinition) baseType, path);
         } else if (baseType instanceof BooleanTypeDefinition) {
-            return (DerivedTypeBuilder<T>) derivedBooleanBuilder((BooleanTypeDefinition) baseType, path);
+            return derivedBooleanBuilder((BooleanTypeDefinition) baseType, path);
         } else if (baseType instanceof DecimalTypeDefinition) {
-            return (DerivedTypeBuilder<T>) derivedDecimalBuilder((DecimalTypeDefinition) baseType, path);
+            return derivedDecimalBuilder((DecimalTypeDefinition) baseType, path);
         } else if (baseType instanceof EmptyTypeDefinition) {
-            return (DerivedTypeBuilder<T>) derivedEmptyBuilder((EmptyTypeDefinition) baseType, path);
+            return derivedEmptyBuilder((EmptyTypeDefinition) baseType, path);
         } else if (baseType instanceof EnumTypeDefinition) {
-            return (DerivedTypeBuilder<T>) derivedEnumerationBuilder((EnumTypeDefinition) baseType, path);
+            return derivedEnumerationBuilder((EnumTypeDefinition) baseType, path);
         } else if (baseType instanceof IdentityrefTypeDefinition) {
-            return (DerivedTypeBuilder<T>) derivedIdentityrefBuilder((IdentityrefTypeDefinition) baseType, path);
+            return derivedIdentityrefBuilder((IdentityrefTypeDefinition) baseType, path);
         } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
-            return (DerivedTypeBuilder<T>) derivedInstanceIdentifierBuilder((InstanceIdentifierTypeDefinition) baseType, path);
+            return derivedInstanceIdentifierBuilder((InstanceIdentifierTypeDefinition) baseType, path);
         } else if (baseType instanceof IntegerTypeDefinition) {
-            return (DerivedTypeBuilder<T>) derivedIntegerBuilder((IntegerTypeDefinition) baseType, path);
+            return derivedIntegerBuilder((IntegerTypeDefinition) baseType, path);
         } else if (baseType instanceof LeafrefTypeDefinition) {
-            return (DerivedTypeBuilder<T>) derivedLeafrefBuilder((LeafrefTypeDefinition) baseType, path);
+            return derivedLeafrefBuilder((LeafrefTypeDefinition) baseType, path);
         } else if (baseType instanceof StringTypeDefinition) {
-            return (DerivedTypeBuilder<T>) derivedStringBuilder((StringTypeDefinition) baseType, path);
+            return derivedStringBuilder((StringTypeDefinition) baseType, path);
         } else if (baseType instanceof UnionTypeDefinition) {
-            return (DerivedTypeBuilder<T>) derivedUnionBuilder((UnionTypeDefinition) baseType, path);
+            return derivedUnionBuilder((UnionTypeDefinition) baseType, path);
         } else if (baseType instanceof UnsignedIntegerTypeDefinition) {
-            return (DerivedTypeBuilder<T>) derivedUnsignedBuilder((UnsignedIntegerTypeDefinition) baseType, path);
+            return derivedUnsignedBuilder((UnsignedIntegerTypeDefinition) baseType, path);
         } else {
             throw new IllegalArgumentException("Unhandled type definition class " + baseType.getClass());
         }
