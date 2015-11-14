@@ -28,17 +28,7 @@ public final class StringTypeBuilder extends LengthRestrictedTypeBuilder<StringT
 
     @Override
     public RestrictedStringType buildType() {
-        final List<PatternConstraint> basePatterns = getBaseType().getPatternConstraints();
-        final List<PatternConstraint> patterns;
-        if (!patternConstraints.isEmpty()) {
-            patterns = new ArrayList<>(patternConstraints.size() + basePatterns.size());
-            patterns.addAll(patternConstraints);
-            patterns.addAll(basePatterns);
-        } else {
-            patterns = getBaseType().getPatternConstraints();
-        }
-
         return new RestrictedStringType(getBaseType(), getPath(), getUnknownSchemaNodes(),
-            calculateLenghtConstraints(getBaseType().getLengthConstraints()), patterns);
+            calculateLenghtConstraints(getBaseType().getLengthConstraints()), patternConstraints);
     }
 }
