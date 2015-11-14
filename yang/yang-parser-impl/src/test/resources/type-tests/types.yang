@@ -106,7 +106,7 @@ module types {
                 value 1;
             }
             bit three {
-                position 0;
+                position 2;
                 description "test bit";
                 reference "test bit ref";
                 status current;
