@@ -15,16 +15,19 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
+import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafListStatement> implements
         LeafListSchemaNode, DerivableSchemaNode {
 
-    private final LeafListSchemaNode original;
-    private final TypeDefinition<?> type;
-    private final boolean userOrdered;
     private static final String ORDER_BY_USER_KEYWORD = "user";
+    private final TypeDefinition<?> type;
+    private final LeafListSchemaNode original;
+    private final boolean userOrdered;
 
     public LeafListEffectiveStatementImpl(
             final StmtContext<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> ctx) {
@@ -32,15 +35,34 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
         this.original = ctx.getOriginalCtx() == null ? null : (LeafListSchemaNode) ctx.getOriginalCtx()
                 .buildEffective();
 
-        OrderedByEffectiveStatementImpl orderedByStmt = firstEffective(OrderedByEffectiveStatementImpl.class);
-        if (orderedByStmt != null && orderedByStmt.argument().equals(ORDER_BY_USER_KEYWORD)) {
-            this.userOrdered = true;
-        } else {
-            this.userOrdered = false;
+        final TypeEffectiveStatement<?> typeStmt = firstSubstatementOfType(TypeEffectiveStatement.class);
+        if (typeStmt == null) {
+            throw new SourceException("Leaf-list is missing a 'type' statement", ctx.getStatementSourceReference());
         }
 
-        EffectiveStatement<?, ?> typeEffectiveSubstatement = firstEffectiveSubstatementOfType(TypeDefinition.class);
-        this.type = TypeUtils.getTypeFromEffectiveStatement(typeEffectiveSubstatement);
+        final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
+            ctx.getSchemaPath().get());
+        boolean isUserOrdered = false;
+        for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
+            if (stmt instanceof OrderedByEffectiveStatementImpl) {
+                isUserOrdered = ORDER_BY_USER_KEYWORD.equals(stmt.argument());
+            }
+
+            if (stmt instanceof DefaultEffectiveStatementImpl) {
+                builder.setDefaultValue(stmt.argument());
+            } else if (stmt instanceof DescriptionEffectiveStatementImpl) {
+                builder.setDescription(((DescriptionEffectiveStatementImpl)stmt).argument());
+            } else if (stmt instanceof ReferenceEffectiveStatementImpl) {
+                builder.setReference(((ReferenceEffectiveStatementImpl)stmt).argument());
+            } else if (stmt instanceof StatusEffectiveStatementImpl) {
+                builder.setStatus(((StatusEffectiveStatementImpl)stmt).argument());
+            } else if (stmt instanceof UnitsEffectiveStatementImpl) {
+                builder.setUnits(((UnitsEffectiveStatementImpl)stmt).argument());
+            }
+        }
+
+        type = builder.build();
+        userOrdered = isUserOrdered;
     }
 
     @Override
