@@ -2,25 +2,23 @@ package org.opendaylight.yangtools.yang.stmt.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
-import java.math.BigDecimal;
-
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
-import org.opendaylight.yangtools.yang.model.util.Decimal64;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import java.util.List;
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
-import java.util.Set;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import java.io.FileNotFoundException;
+import java.math.BigDecimal;
 import java.net.URISyntaxException;
+import java.util.List;
+import java.util.Set;
+import org.junit.Test;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.junit.Test;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 public class TypedefConstraintsTest {
 
@@ -39,9 +37,9 @@ public class TypedefConstraintsTest {
         TypeDefinition<?> myDecimal = typeDefinitions.iterator().next();
 
         assertNotNull(myDecimal);
-        assertTrue(myDecimal instanceof ExtendedType);
+        assertTrue(myDecimal instanceof DecimalTypeDefinition);
 
-        List<RangeConstraint> rangeConstraints = ((ExtendedType) myDecimal)
+        List<RangeConstraint> rangeConstraints = ((DecimalTypeDefinition) myDecimal)
                 .getRangeConstraints();
 
         assertNotNull(rangeConstraints);
@@ -54,8 +52,8 @@ public class TypedefConstraintsTest {
         LeafSchemaNode leafDecimal = (LeafSchemaNode) dataNode;
         TypeDefinition<?> type = leafDecimal.getType();
 
-        assertTrue(type instanceof ExtendedType);
-        ExtendedType decType = (ExtendedType) type;
+        assertTrue(type instanceof DecimalTypeDefinition);
+        DecimalTypeDefinition decType = (DecimalTypeDefinition) type;
 
         List<RangeConstraint> decRangeConstraints = decType.getRangeConstraints();
 
@@ -67,7 +65,7 @@ public class TypedefConstraintsTest {
 
         assertTrue(decType.getQName().getModule().equals(leafDecimal.getQName().getModule()));
         assertTrue(decType.getQName().getLocalName().equals(TypeUtils.DECIMAL64));
-        assertTrue(decType.getBaseType() instanceof Decimal64);
+        assertNull(decType.getBaseType());
     }
 
 }

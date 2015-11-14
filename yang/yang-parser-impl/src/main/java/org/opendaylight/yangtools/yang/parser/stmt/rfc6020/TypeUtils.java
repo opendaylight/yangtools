@@ -10,39 +10,23 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeDefinitionAware;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
-import org.opendaylight.yangtools.yang.model.util.BinaryType;
-import org.opendaylight.yangtools.yang.model.util.BooleanType;
-import org.opendaylight.yangtools.yang.model.util.EmptyType;
-import org.opendaylight.yangtools.yang.model.util.Int16;
-import org.opendaylight.yangtools.yang.model.util.Int32;
-import org.opendaylight.yangtools.yang.model.util.Int64;
-import org.opendaylight.yangtools.yang.model.util.Int8;
-import org.opendaylight.yangtools.yang.model.util.StringType;
-import org.opendaylight.yangtools.yang.model.util.Uint16;
-import org.opendaylight.yangtools.yang.model.util.Uint32;
-import org.opendaylight.yangtools.yang.model.util.Uint64;
-import org.opendaylight.yangtools.yang.model.util.Uint8;
+import org.opendaylight.yangtools.yang.model.util.UnresolvedNumber;
+import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LengthConstraintEffectiveImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.RangeConstraintEffectiveImpl;
-import org.opendaylight.yangtools.yang.parser.util.UnknownBoundaryNumber;
 
 /**
 * util class for manipulating YANG base and extended types implementation
@@ -69,57 +53,26 @@ public final class TypeUtils {
     public static final String UINT64 = "uint64";
     public static final String UNION = "union";
 
-    private static final Set<String> BUILT_IN_TYPES = ImmutableSet.of(
-        BINARY, BITS, BOOLEAN, DECIMAL64, EMPTY, ENUMERATION, IDENTITY_REF, INSTANCE_IDENTIFIER,
-        INT8, INT16, INT32, INT64, LEAF_REF, STRING, UINT8, UINT16, UINT32, UINT64, UNION);
-
-    public static final Set<String> TYPE_BODY_STMTS = ImmutableSet.of(
+    private static final Set<String> TYPE_BODY_STMTS = ImmutableSet.of(
         DECIMAL64, ENUMERATION, LEAF_REF, IDENTITY_REF, INSTANCE_IDENTIFIER, BITS, UNION);
-
-    public static final Map<String, TypeDefinition<?>> PRIMITIVE_TYPES_MAP;
-    static {
-        Builder<String, TypeDefinition<?>> b = ImmutableMap.<String, TypeDefinition<?>>builder();
-        b.put(BINARY, BinaryType.getInstance());
-        b.put(BOOLEAN, BooleanType.getInstance());
-        b.put(EMPTY, EmptyType.getInstance());
-        b.put(INT8, Int8.getInstance());
-        b.put(INT16, Int16.getInstance());
-        b.put(INT32, Int32.getInstance());
-        b.put(INT64, Int64.getInstance());
-        b.put(STRING, StringType.getInstance());
-        b.put(UINT8, Uint8.getInstance());
-        b.put(UINT16, Uint16.getInstance());
-        b.put(UINT32, Uint32.getInstance());
-        b.put(UINT64, Uint64.getInstance());
-        PRIMITIVE_TYPES_MAP = b.build();
-    }
-
-    private static final Comparator<TypeDefinition<?>> TYPE_SORT_COMPARATOR = new Comparator<TypeDefinition<?>>() {
-        @Override
-        public int compare(final TypeDefinition<?> o1, final TypeDefinition<?> o2) {
-            return Boolean.compare(isBuiltInType(o2), isBuiltInType(o1));
-        }
-    };
+    private static final Splitter PIPE_SPLITTER = Splitter.on('|').trimResults();
+    private static final Splitter TWO_DOTS_SPLITTER = Splitter.on("..").trimResults();
 
     private TypeUtils() {
     }
 
-    private static final Splitter PIPE_SPLITTER = Splitter.on('|').trimResults();
-    private static final Splitter TWO_DOTS_SPLITTER = Splitter.on("..").trimResults();
-
     private static BigDecimal yangConstraintToBigDecimal(final Number number) {
-        if (number instanceof UnknownBoundaryNumber) {
-            if (number.toString().equals("min")) {
-                return RangeStatementImpl.YANG_MIN_NUM;
-            } else {
-                return RangeStatementImpl.YANG_MAX_NUM;
-            }
-        } else {
-            return new BigDecimal(number.toString());
+        if (UnresolvedNumber.max().equals(number)) {
+            return RangeStatementImpl.YANG_MAX_NUM;
         }
+        if (UnresolvedNumber.min().equals(number)) {
+            return RangeStatementImpl.YANG_MIN_NUM;
+        }
+
+        return new BigDecimal(number.toString());
     }
 
-    public static int compareNumbers(final Number n1, final Number n2) {
+    private static int compareNumbers(final Number n1, final Number n2) {
 
         final BigDecimal num1 = yangConstraintToBigDecimal(n1);
         final BigDecimal num2 = yangConstraintToBigDecimal(n2);
@@ -128,41 +81,33 @@ public final class TypeUtils {
     }
 
     private static Number parseIntegerConstraintValue(final String value) {
-        Number result;
-
-        if (isMinOrMaxString(value)) {
-            result = new UnknownBoundaryNumber(value);
-        } else {
-            try {
-                result = new BigInteger(value);
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException(String.format("Value %s is not a valid integer", value), e);
-            }
+        if ("max".equals(value)) {
+            return UnresolvedNumber.max();
         }
-        return result;
+        if ("min".equals(value)) {
+            return UnresolvedNumber.min();
+        }
+
+        try {
+            return new BigInteger(value);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(String.format("Value %s is not a valid integer", value), e);
+        }
     }
 
     private static Number parseDecimalConstraintValue(final String value) {
-        final Number result;
-
-        if (isMinOrMaxString(value)) {
-            result = new UnknownBoundaryNumber(value);
-        } else {
-            try {
-                if (value.indexOf('.') != -1) {
-                    result = new BigDecimal(value);
-                } else {
-                    result = new BigInteger(value);
-                }
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException(String.format("Value %s is not a valid decimal number", value), e);
-            }
+        if ("max".equals(value)) {
+            return UnresolvedNumber.max();
         }
-        return result;
-    }
+        if ("min".equals(value)) {
+            return UnresolvedNumber.min();
+        }
 
-    private static boolean isMinOrMaxString(final String value) {
-        return "min".equals(value) || "max".equals(value);
+        try {
+            return value.indexOf('.') != -1 ? new BigDecimal(value) : new BigInteger(value);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(String.format("Value %s is not a valid decimal number", value), e);
+        }
     }
 
     public static List<RangeConstraint> parseRangeListFromString(final String rangeArgument) {
@@ -240,37 +185,14 @@ public final class TypeUtils {
         return rangeConstraints;
     }
 
-    public static boolean isBuiltInType(final TypeDefinition<?> o1) {
-        return BUILT_IN_TYPES.contains(o1.getQName().getLocalName());
-    }
-
-    public static boolean isYangBuiltInTypeString(final String typeName) {
-        return BUILT_IN_TYPES.contains(typeName);
-    }
-
-    public static boolean isYangPrimitiveTypeString(final String typeName) {
-        return PRIMITIVE_TYPES_MAP.containsKey(typeName);
-    }
-
     public static boolean isYangTypeBodyStmtString(final String typeName) {
         return TYPE_BODY_STMTS.contains(typeName);
     }
 
-    public static TypeDefinition<?> getYangPrimitiveTypeFromString(final String typeName) {
-        return PRIMITIVE_TYPES_MAP.get(typeName);
-    }
-
-    public static TypeDefinition<?> getTypeFromEffectiveStatement(final EffectiveStatement<?, ?> effectiveStatement) {
-        if (effectiveStatement instanceof TypeDefinitionAware) {
-            TypeDefinitionAware typeDefEffectiveBuilder = (TypeDefinitionAware) effectiveStatement;
-            return typeDefEffectiveBuilder.getTypeDefinition();
-        } else {
-            final String typeName = ((TypeDefinition<?>) effectiveStatement).getQName().getLocalName();
-            return PRIMITIVE_TYPES_MAP.get(typeName);
-        }
-    }
-
-    public static void sortTypes(final List<TypeDefinition<?>> typesInit) {
-        Collections.sort(typesInit, TYPE_SORT_COMPARATOR);
+    public static SchemaPath typeEffectiveSchemaPath(final StmtContext<?, ?, ?> stmtCtx) {
+        final SchemaPath path = stmtCtx.getSchemaPath().get();
+        final QName qname = stmtCtx.getFromNamespace(QNameCacheNamespace.class,
+            QName.create(path.getParent().getLastComponent(), path.getLastComponent().getLocalName()));
+        return path.getParent().createChild(qname);
     }
 }
