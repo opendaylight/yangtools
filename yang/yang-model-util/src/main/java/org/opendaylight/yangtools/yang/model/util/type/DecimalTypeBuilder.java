@@ -26,7 +26,7 @@ public final class DecimalTypeBuilder extends TypeBuilder<DecimalTypeDefinition>
     }
 
     @Override
-    public BaseDecimalType build() {
+    public DecimalTypeDefinition build() {
         Preconditions.checkState(fractionDigits != null, "Fraction digits not defined");
         return new BaseDecimalType(getPath(), getUnknownSchemaNodes(), fractionDigits);
     }
