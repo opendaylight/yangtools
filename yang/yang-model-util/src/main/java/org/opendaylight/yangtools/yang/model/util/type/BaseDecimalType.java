@@ -48,10 +48,15 @@ final class BaseDecimalType extends AbstractRangedBaseType<DecimalTypeDefinition
             Optional.<String>absent(), Optional.of("https://tools.ietf.org/html/rfc6020#section-9.3.4")));
     }
 
+    static List<RangeConstraint> constraintsForDigits(final int fractionDigits) {
+        return IMPLICIT_RANGE_STATEMENTS.get(fractionDigits - 1);
+    }
+
     private final Integer fractionDigits;
 
-    BaseDecimalType(final SchemaPath path, final List<UnknownSchemaNode> unknownSchemaNodes, final Integer fractionDigits) {
-        super(path, unknownSchemaNodes, IMPLICIT_RANGE_STATEMENTS.get(fractionDigits - 1));
+    BaseDecimalType(final SchemaPath path, final List<UnknownSchemaNode> unknownSchemaNodes, final Integer fractionDigits,
+        final List<RangeConstraint> rangeConstraints) {
+        super(path, unknownSchemaNodes, rangeConstraints);
         this.fractionDigits = fractionDigits;
     }
 
