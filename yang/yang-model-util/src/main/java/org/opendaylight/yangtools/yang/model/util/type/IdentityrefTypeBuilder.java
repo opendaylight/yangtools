@@ -26,7 +26,7 @@ public final class IdentityrefTypeBuilder extends TypeBuilder<IdentityrefTypeDef
     }
 
     @Override
-    public BaseIdentityrefType build() {
+    public IdentityrefTypeDefinition build() {
         return new BaseIdentityrefType(getPath(), getUnknownSchemaNodes(), identity);
     }
 }
