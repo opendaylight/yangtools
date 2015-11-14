@@ -42,9 +42,8 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.model.util.StringType;
+import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.w3c.dom.Document;
 
@@ -133,17 +132,17 @@ public class XmlStreamUtilsTest {
      */
     @Test
     public void testLeafRefRelativeChaining() {
-        getTargetNodeForLeafRef("leafname3", StringType.class);
+        getTargetNodeForLeafRef("leafname3", BaseTypes.stringType().getClass());
     }
 
     @Test
     public void testLeafRefRelative() {
-        getTargetNodeForLeafRef("pointToStringLeaf", StringType.class);
+        getTargetNodeForLeafRef("pointToStringLeaf", BaseTypes.stringType().getClass());
     }
 
     @Test
     public void testLeafRefAbsoluteWithSameTarget() {
-        getTargetNodeForLeafRef("absname", InstanceIdentifierType.class);
+        getTargetNodeForLeafRef("absname", BaseTypes.instanceIdentifierType().getClass());
     }
 
     /**
@@ -153,13 +152,15 @@ public class XmlStreamUtilsTest {
     // ignored because this isn't implemented
     @Test
     public void testLeafRefWithDoublePointInPath() {
-        getTargetNodeForLeafRef("lf-with-double-point-inside", StringType.class);
+        getTargetNodeForLeafRef("lf-with-double-point-inside", BaseTypes.stringType().getClass());
     }
 
     @Test
     public void testLeafRefRelativeAndAbsoluteWithSameTarget() {
-        final TypeDefinition<?> targetNodeForAbsname = getTargetNodeForLeafRef("absname", InstanceIdentifierType.class);
-        final TypeDefinition<?> targetNodeForRelname = getTargetNodeForLeafRef("relname", InstanceIdentifierType.class);
+        final TypeDefinition<?> targetNodeForAbsname = getTargetNodeForLeafRef("absname",
+            BaseTypes.instanceIdentifierType().getClass());
+        final TypeDefinition<?> targetNodeForRelname = getTargetNodeForLeafRef("relname",
+            BaseTypes.instanceIdentifierType().getClass());
         assertEquals(targetNodeForAbsname, targetNodeForRelname);
     }
 
