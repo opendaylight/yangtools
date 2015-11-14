@@ -14,7 +14,7 @@ final class BaseBooleanType extends AbstractBaseType<BooleanTypeDefinition> impl
     static final BaseBooleanType INSTANCE = new BaseBooleanType();
 
     private BaseBooleanType() {
-        super(BaseTypes.BINARY_QNAME);
+        super(BaseTypes.BOOLEAN_QNAME);
     }
 
     @Override

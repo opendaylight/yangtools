@@ -26,7 +26,7 @@ public abstract class RangeRestrictedTypeBuilder<T extends TypeDefinition<T>> ex
     private List<RangeConstraint> rangeAlternatives;
 
     RangeRestrictedTypeBuilder(final T baseType, final SchemaPath path) {
-        super(Preconditions.checkNotNull(baseType), path);
+        super(baseType, path);
     }
 
     public final void setRangeAlternatives(@Nonnull final Collection<RangeConstraint> rangeAlternatives) {

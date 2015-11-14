@@ -11,7 +11,7 @@ import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 
-public final class DecimalTypeBuilder extends TypeBuilder<DecimalTypeDefinition> {
+public final class DecimalTypeBuilder extends RangeRestrictedTypeBuilder<DecimalTypeDefinition> {
     private Integer fractionDigits;
 
     DecimalTypeBuilder(final SchemaPath path) {
@@ -26,8 +26,10 @@ public final class DecimalTypeBuilder extends TypeBuilder<DecimalTypeDefinition>
     }
 
     @Override
-    public BaseDecimalType build() {
+    DecimalTypeDefinition buildType() {
         Preconditions.checkState(fractionDigits != null, "Fraction digits not defined");
-        return new BaseDecimalType(getPath(), getUnknownSchemaNodes(), fractionDigits);
+
+        return new BaseDecimalType(getPath(), getUnknownSchemaNodes(), fractionDigits,
+            calculateRangeConstraints(BaseDecimalType.constraintsForDigits(fractionDigits)));
     }
 }
