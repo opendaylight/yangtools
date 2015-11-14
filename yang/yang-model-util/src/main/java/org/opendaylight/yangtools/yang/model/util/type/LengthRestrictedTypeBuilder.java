@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import java.util.Collection;
@@ -42,7 +41,7 @@ public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>> e
         // First check if we need to resolve anything at all
         for (LengthConstraint c : unresolved) {
             if (c.getMax() instanceof UnresolvedNumber || c.getMin() instanceof UnresolvedNumber) {
-                return resolveRanges(unresolved, baseRangeConstraints);
+                return resolveLengths(unresolved, baseRangeConstraints);
             }
         }
 
@@ -50,8 +49,8 @@ public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>> e
         return unresolved;
     }
 
-    private static List<LengthConstraint> resolveRanges(final List<LengthConstraint> unresolved,
-            final List<LengthConstraint> baseRangeConstraints) {
+    private static List<LengthConstraint> resolveLengths(final List<LengthConstraint> unresolved,
+            final List<LengthConstraint> baseLengthConstraints) {
         final Builder<LengthConstraint> builder = ImmutableList.builder();
 
         for (LengthConstraint c : unresolved) {
@@ -60,16 +59,15 @@ public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>> e
 
             if (max instanceof UnresolvedNumber || min instanceof UnresolvedNumber) {
                 final Number rMax = max instanceof UnresolvedNumber ?
-                        ((UnresolvedNumber)max).resolveLength(baseRangeConstraints) : max;
+                        ((UnresolvedNumber)max).resolveLength(baseLengthConstraints) : max;
                 final Number rMin = min instanceof UnresolvedNumber ?
-                        ((UnresolvedNumber)min).resolveLength(baseRangeConstraints) : min;
+                        ((UnresolvedNumber)min).resolveLength(baseLengthConstraints) : min;
 
                 builder.add(BaseConstraints.newLengthConstraint(rMin, rMax, Optional.fromNullable(c.getDescription()),
                     Optional.fromNullable(c.getReference())));
             } else {
                 builder.add(c);
             }
-
         }
 
         return builder.build();
@@ -144,23 +142,31 @@ public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>> e
         return ranges;
     }
 
-    final List<LengthConstraint> calculateLenghtConstraints(final List<LengthConstraint> baseLengthConstraints) {
+    abstract List<LengthConstraint> typeLengthConstraints();
+
+    final List<LengthConstraint> calculateLengthConstraints(final List<LengthConstraint> baseLengthConstraints) {
         if (lengthAlternatives == null || lengthAlternatives.isEmpty()) {
             return baseLengthConstraints;
         }
 
+        final List<LengthConstraint> baseLengths;
+        if (baseLengthConstraints.isEmpty()) {
+            baseLengths = typeLengthConstraints();
+        } else {
+            baseLengths = baseLengthConstraints;
+        }
+
         // Run through alternatives and resolve them against the base type
-        Verify.verify(!baseLengthConstraints.isEmpty(), "Base type %s does not define constraints", getBaseType());
-        final List<LengthConstraint> resolvedLengths = ensureResolvedLengths(lengthAlternatives, baseLengthConstraints);
+        final List<LengthConstraint> resolvedLengths = ensureResolvedLengths(lengthAlternatives, baseLengths);
 
         // Next up, ensure the of boundaries match base constraints
-        final Class<? extends Number> clazz = baseLengthConstraints.get(0).getMin().getClass();
+        final Class<? extends Number> clazz = baseLengths.get(0).getMin().getClass();
         final List<LengthConstraint> typedLengths = ensureTypedLengths(resolvedLengths, clazz);
 
         // Now verify if new ranges are strict subset of base ranges
         for (LengthConstraint c : typedLengths) {
-            Preconditions.checkArgument(lengthCovered(baseLengthConstraints, c),
-                "Range constraint %s is not a subset of parent constraints %s", c, baseLengthConstraints);
+            Preconditions.checkArgument(lengthCovered(baseLengths, c),
+                "Range constraint %s is not a subset of parent constraints %s", c, baseLengths);
         }
 
         return ensureAdjacentMerged(typedLengths);

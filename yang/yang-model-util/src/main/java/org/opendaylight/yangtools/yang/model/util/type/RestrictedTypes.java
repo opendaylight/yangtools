@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+import java.util.List;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
@@ -21,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
@@ -65,7 +67,16 @@ public final class RestrictedTypes {
             @Override
             BinaryTypeDefinition buildType() {
                 return new RestrictedBinaryType(getBaseType(), getPath(), getUnknownSchemaNodes(),
-                    calculateLenghtConstraints(getBaseType().getLengthConstraints()));
+                    calculateLengthConstraints(getBaseType().getLengthConstraints()));
+            }
+
+            @Override
+            List<LengthConstraint> typeLengthConstraints() {
+                /**
+                 * Length constraint imposed on YANG binary type by our implementation. byte[].length is an integer, capping our
+                 * ability to support arbitrary binary data.
+                 */
+                return JavaLengthConstraints.INTEGER_SIZE_CONSTRAINTS;
             }
         };
     }
