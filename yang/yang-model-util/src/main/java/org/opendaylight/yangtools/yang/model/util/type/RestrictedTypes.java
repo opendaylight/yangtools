@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
@@ -88,7 +89,7 @@ public final class RestrictedTypes {
     }
 
     public static RangeRestrictedTypeBuilder<DecimalTypeDefinition> newDecima64Builder(final DecimalTypeDefinition baseType, final SchemaPath path) {
-        return new RangeRestrictedTypeBuilder<DecimalTypeDefinition>(baseType, path) {
+        return new RangeRestrictedTypeBuilder<DecimalTypeDefinition>(Preconditions.checkNotNull(baseType), path) {
             @Override
             DecimalTypeDefinition buildType() {
                 return new RestrictedDecimalType(getBaseType(), getPath(), getUnknownSchemaNodes(),
@@ -138,7 +139,7 @@ public final class RestrictedTypes {
     }
 
     public static RangeRestrictedTypeBuilder<IntegerTypeDefinition> newIntegerBuilder(final IntegerTypeDefinition baseType, final SchemaPath path) {
-        return new RangeRestrictedTypeBuilder<IntegerTypeDefinition>(baseType, path) {
+        return new RangeRestrictedTypeBuilder<IntegerTypeDefinition>(Preconditions.checkNotNull(baseType), path) {
             @Override
             IntegerTypeDefinition buildType() {
                 return new RestrictedIntegerType(getBaseType(), getPath(), getUnknownSchemaNodes(),
@@ -161,7 +162,7 @@ public final class RestrictedTypes {
     }
 
     public static RangeRestrictedTypeBuilder<UnsignedIntegerTypeDefinition> newUnsignedBuilder(final UnsignedIntegerTypeDefinition baseType, final SchemaPath path) {
-        return new RangeRestrictedTypeBuilder<UnsignedIntegerTypeDefinition>(baseType, path) {
+        return new RangeRestrictedTypeBuilder<UnsignedIntegerTypeDefinition>(Preconditions.checkNotNull(baseType), path) {
             @Override
             UnsignedIntegerTypeDefinition buildType() {
                 return new RestrictedUnsignedType(getBaseType(), getPath(), getUnknownSchemaNodes(),
