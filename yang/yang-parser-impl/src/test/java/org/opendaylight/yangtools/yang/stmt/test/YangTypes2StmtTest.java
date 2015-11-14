@@ -9,22 +9,15 @@ package org.opendaylight.yangtools.yang.stmt.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.util.BooleanType;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
-import org.opendaylight.yangtools.yang.model.util.Int16;
-import org.opendaylight.yangtools.yang.model.util.Int32;
-import org.opendaylight.yangtools.yang.model.util.Int64;
-import org.opendaylight.yangtools.yang.model.util.Int8;
-import org.opendaylight.yangtools.yang.model.util.Uint16;
-import org.opendaylight.yangtools.yang.model.util.Uint32;
-import org.opendaylight.yangtools.yang.model.util.Uint64;
-import org.opendaylight.yangtools.yang.model.util.Uint8;
+import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
@@ -68,45 +61,46 @@ public class YangTypes2StmtTest {
 
         final LeafSchemaNode lfDecimalNode = (LeafSchemaNode) result.getDataChildByName(lfDecimal);
         assertNotNull(lfDecimalNode);
-        final ExtendedType lfDecimalNodeType = (ExtendedType) lfDecimalNode.getType();
-        assertEquals(ExtendedType.class, lfDecimalNodeType.getClass());
+
+        assertTrue(lfDecimalNode.getType() instanceof DecimalTypeDefinition);
+        final DecimalTypeDefinition lfDecimalNodeType = (DecimalTypeDefinition) lfDecimalNode.getType();
         assertEquals(2, lfDecimalNodeType.getFractionDigits().intValue());
 
         final LeafSchemaNode lfInt8Node = (LeafSchemaNode) result.getDataChildByName(lfInt8);
         assertNotNull(lfInt8Node);
-        assertEquals(Int8.class, lfInt8Node.getType().getClass());
+        assertEquals(BaseTypes.int8Type().getClass(), lfInt8Node.getType().getClass());
 
         final LeafSchemaNode lfInt16Node = (LeafSchemaNode) result.getDataChildByName(lfInt16);
         assertNotNull(lfInt16Node);
-        assertEquals(Int16.class, lfInt16Node.getType().getClass());
+        assertEquals(BaseTypes.int16Type().getClass(), lfInt16Node.getType().getClass());
 
         final LeafSchemaNode lfInt32Node = (LeafSchemaNode) result.getDataChildByName(lfInt32);
         assertNotNull(lfInt32Node);
-        assertEquals(Int32.class, lfInt32Node.getType().getClass());
+        assertEquals(BaseTypes.int32Type().getClass(), lfInt32Node.getType().getClass());
 
         final LeafSchemaNode lfInt64Node = (LeafSchemaNode) result.getDataChildByName(lfInt64);
         assertNotNull(lfInt64Node);
-        assertEquals(Int64.class, lfInt64Node.getType().getClass());
+        assertEquals(BaseTypes.int64Type().getClass(), lfInt64Node.getType().getClass());
 
         final LeafSchemaNode lfUInt8Node = (LeafSchemaNode) result.getDataChildByName(lfUInt8);
         assertNotNull(lfUInt8Node);
-        assertEquals(Uint8.class, lfUInt8Node.getType().getClass());
+        assertEquals(BaseTypes.uint8Type().getClass(), lfUInt8Node.getType().getClass());
 
         final LeafSchemaNode lfUInt16Node = (LeafSchemaNode) result.getDataChildByName(lfUInt16);
         assertNotNull(lfUInt16Node);
-        assertEquals(Uint16.class, lfUInt16Node.getType().getClass());
+        assertEquals(BaseTypes.uint16Type().getClass(), lfUInt16Node.getType().getClass());
 
         final LeafSchemaNode lfUInt32Node = (LeafSchemaNode) result.getDataChildByName(lfUInt32);
         assertNotNull(lfUInt32Node);
-        assertEquals(Uint32.class, lfUInt32Node.getType().getClass());
+        assertEquals(BaseTypes.uint32Type().getClass(), lfUInt32Node.getType().getClass());
 
         final LeafSchemaNode lfUInt64Node = (LeafSchemaNode) result.getDataChildByName(lfUInt64);
         assertNotNull(lfUInt64Node);
-        assertEquals(Uint64.class, lfUInt64Node.getType().getClass());
+        assertEquals(BaseTypes.uint64Type().getClass(), lfUInt64Node.getType().getClass());
 
         final LeafSchemaNode lfBoolNode = (LeafSchemaNode) result.getDataChildByName(lfBool);
         assertNotNull(lfBoolNode);
-        assertEquals(BooleanType.class, lfBoolNode.getType().getClass());
+        assertEquals(BaseTypes.booleanType().getClass(), lfBoolNode.getType().getClass());
     }
 
     private static  void addSources(final CrossSourceStatementReactor.BuildAction reactor, final StatementStreamSource... sources) {
