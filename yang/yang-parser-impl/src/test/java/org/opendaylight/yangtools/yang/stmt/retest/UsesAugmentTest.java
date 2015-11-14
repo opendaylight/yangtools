@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.model.util.BaseTypes.constructQName;
 import com.google.common.collect.Lists;
 import java.io.FileNotFoundException;
 import java.net.URI;
@@ -35,12 +36,12 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.BaseTypes;
+import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BooleanType;
 import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.Uint32;
 import org.opendaylight.yangtools.yang.model.util.Uint8;
-import org.opendaylight.yangtools.yang.model.util.UnionType;
+import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -142,7 +143,7 @@ public class UsesAugmentTest {
         path.offer(expectedQName);
         expectedPath = SchemaPath.create(Lists.newArrayList(expectedQName), true);
         assertEquals(expectedPath, version.getType().getPath());
-        assertEquals(Uint8.getInstance(), version.getType().getBaseType());
+        assertEquals(BaseTypes.uint8Type(), version.getType().getBaseType().getBaseType());
         assertTrue(version.isAddedByUses());
         // * |-- leaf type
         LeafSchemaNode type = (LeafSchemaNode) pcreq.getDataChildByName("type");
@@ -158,8 +159,8 @@ public class UsesAugmentTest {
         path.offer(expectedQName);
         expectedPath = SchemaPath.create(Lists.newArrayList(expectedQName), true);
         assertEquals(expectedPath, type.getType().getPath());
-        UnionType union = (UnionType)type.getType().getBaseType();
-        assertEquals(SchemaPath.create(true, BaseTypes.constructQName("union")), union.getPath());
+        UnionTypeDefinition union = (UnionTypeDefinition) type.getType().getBaseType();
+        assertEquals(SchemaPath.create(true, constructQName("union")), union.getPath());
         assertEquals(2, union.getTypes().size());
         // * |-- list requests
         ListSchemaNode requests = (ListSchemaNode) pcreq.getDataChildByName("requests");
@@ -628,7 +629,7 @@ public class UsesAugmentTest {
         SchemaPath expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, intExt.getPath());
 
-        UnionType union = (UnionType)intExt.getBaseType();
+        UnionTypeDefinition union = (UnionTypeDefinition)intExt.getBaseType();
 
         TypeDefinition<?> uint8 = null;
         TypeDefinition<?> pv = null;
@@ -642,7 +643,7 @@ public class UsesAugmentTest {
         assertNotNull(uint8);
         assertNotNull(pv);
 
-        QName q1 = BaseTypes.constructQName("union");
+        QName q1 = constructQName("union");
         expectedPath = SchemaPath.create(Lists.newArrayList(q1), true);
         assertEquals(expectedPath, union.getPath());
     }
