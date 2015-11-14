@@ -7,194 +7,121 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Collection;
+import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeDefinitionAware;
+import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
-import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType.Builder;
-import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
+import org.opendaylight.yangtools.yang.model.util.type.DerivedTypeBuilder;
+import org.opendaylight.yangtools.yang.model.util.type.DerivedTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Decimal64SpecificationEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LengthEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.PatternEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.RangeEffectiveStatementImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchemaNode<TypedefStatement> implements
-        TypeDefinition<TypeDefinition<?>>, TypedefEffectiveStatement {
-    private final TypeDefinition<?> baseType;
-    private final String defaultValue;
-    private final String units;
-    private final List<RangeConstraint> ranges;
-    private final List<LengthConstraint> lengths;
-    private final List<PatternConstraint> patterns;
-    private final Integer fractionDigits;
-    private ExtendedType extendedType = null;
+        TypedefEffectiveStatement {
+    private static final Logger LOG = LoggerFactory.getLogger(TypeDefEffectiveStatementImpl.class);
+    private final TypeDefinition<?> typeDefinition;
+    private TypeEffectiveStatement<TypeStatement> typeStatement;
 
     public TypeDefEffectiveStatementImpl(final StmtContext<QName, TypedefStatement, ?> ctx) {
         super(ctx);
-        baseType = parseBaseTypeFromCtx(ctx);
 
-        UnitsEffectiveStatementImpl unitsStmt = firstEffective(UnitsEffectiveStatementImpl.class);
-        this.units = (unitsStmt == null) ? null : unitsStmt.argument();
-        DefaultEffectiveStatementImpl defaultStmt = firstEffective(DefaultEffectiveStatementImpl.class);
-        this.defaultValue = (defaultStmt == null) ? null : defaultStmt.argument();
-
-        EffectiveStatementBase<?, ?> typeEffectiveStmt = firstSubstatementOfType(TypeDefinition.class,
-                EffectiveStatementBase.class);
-        ranges = initRanges(typeEffectiveStmt);
-        lengths = initLengths(typeEffectiveStmt);
-        patterns = initPatterns(typeEffectiveStmt);
-
-        // due to compatibility problems with original yang parser
-        // :FIXME try to find out better solution
-        if (typeEffectiveStmt.argument().equals(TypeUtils.DECIMAL64) && ranges.isEmpty()) {
-            fractionDigits = null;
-        } else {
-            fractionDigits = initFractionDigits(typeEffectiveStmt);
-        }
-    }
-
-    private TypeDefinition<?> parseBaseTypeFromCtx(final StmtContext<QName, TypedefStatement, ?> ctx) {
-
-        TypeDefinition<?> baseTypeInit;
-
-        QName baseTypeQName = Utils.qNameFromArgument(ctx,
-                StmtContextUtils.firstAttributeOf(ctx.declaredSubstatements(), TypeStatement.class));
-
-        if (TypeUtils.isYangBuiltInTypeString(baseTypeQName.getLocalName())) {
-            baseTypeInit = TypeUtils.getYangPrimitiveTypeFromString(baseTypeQName.getLocalName());
-            if (baseTypeInit == null) {
-                baseTypeInit = firstSubstatementOfType(TypeDefinition.class);
-
-                // due to compatibility problems with original yang parser
-                // :FIXME try to find out better solution
-                if (baseTypeInit instanceof Decimal64SpecificationEffectiveStatementImpl) {
-                    Decimal64SpecificationEffectiveStatementImpl decimal64 = (Decimal64SpecificationEffectiveStatementImpl) baseTypeInit;
-                    if (decimal64.isExtended()) {
-                        baseTypeInit = decimal64.getBaseType();
-                    }
-                }
-            }
-        } else {
-            StmtContext<?, TypedefStatement, TypedefEffectiveStatement> baseTypeCtx = ctx
-                    .getParentContext().getFromNamespace(TypeNamespace.class, baseTypeQName);
-            baseTypeInit = (TypeDefEffectiveStatementImpl) baseTypeCtx.buildEffective();
-        }
-
-        return baseTypeInit;
-    }
-
-    private static Integer initFractionDigits(final EffectiveStatementBase<?, ?> typeEffectiveStmt) {
-        final FractionDigitsEffectiveStatementImpl fractionDigitsEffStmt = typeEffectiveStmt
-                .firstEffective(FractionDigitsEffectiveStatementImpl.class);
-        return fractionDigitsEffStmt != null ? fractionDigitsEffStmt.argument() : null;
-    }
-
-    private static List<RangeConstraint> initRanges(final EffectiveStatementBase<?, ?> typeEffectiveStmt) {
-        final RangeEffectiveStatementImpl rangeConstraints = typeEffectiveStmt
-                .firstEffective(RangeEffectiveStatementImpl.class);
-        return rangeConstraints != null ? rangeConstraints.argument() : Collections.<RangeConstraint> emptyList();
-    }
-
-    private static List<LengthConstraint> initLengths(final EffectiveStatementBase<?, ?> typeEffectiveStmt) {
-        final LengthEffectiveStatementImpl lengthConstraints = typeEffectiveStmt
-                .firstEffective(LengthEffectiveStatementImpl.class);
-        return lengthConstraints != null ? lengthConstraints.argument() : Collections.<LengthConstraint> emptyList();
-    }
-
-    private static List<PatternConstraint> initPatterns(final EffectiveStatementBase<?, ?> typeEffectiveStmt) {
-        final List<PatternConstraint> patternConstraints = new ArrayList<>();
-
-        for (final EffectiveStatement<?, ?> effectiveStatement : typeEffectiveStmt.effectiveSubstatements()) {
-            if (effectiveStatement instanceof PatternEffectiveStatementImpl) {
-                final PatternConstraint pattern = ((PatternEffectiveStatementImpl) effectiveStatement).argument();
-                if (pattern != null) {
-                    patternConstraints.add(pattern);
+        final TypeEffectiveStatement<?> typeEffectiveStmt = firstSubstatementOfType(TypeEffectiveStatement.class);
+        final DerivedTypeBuilder<?> builder = DerivedTypes.derivedTypeBuilder(typeEffectiveStmt.getTypeDefinition(),
+            ctx.getSchemaPath().get());
+        for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
+            if (stmt instanceof DefaultEffectiveStatementImpl) {
+                builder.setDefaultValue(stmt.argument());
+            } else if (stmt instanceof DescriptionEffectiveStatementImpl) {
+                builder.setDescription(((DescriptionEffectiveStatementImpl)stmt).argument());
+            } else if (stmt instanceof ReferenceEffectiveStatementImpl) {
+                builder.setReference(((ReferenceEffectiveStatementImpl)stmt).argument());
+            } else if (stmt instanceof StatusEffectiveStatementImpl) {
+                builder.setStatus(((StatusEffectiveStatementImpl)stmt).argument());
+            } else if (stmt instanceof UnitsEffectiveStatementImpl) {
+                builder.setUnits(((UnitsEffectiveStatementImpl)stmt).argument());
+            } else if (stmt instanceof UnknownEffectiveStatementImpl) {
+                // FIXME: should not directly implement, I think
+                builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl)stmt);
+            } else {
+                if (!(stmt instanceof TypeEffectiveStatement)) {
+                    LOG.debug("Ignoring statement {}", stmt);
                 }
             }
         }
 
-        return ImmutableList.copyOf(patternConstraints);
-    }
-
-    @Override
-    public TypeDefinition<?> getBaseType() {
-        return baseType;
-    }
-
-    @Override
-    public String getUnits() {
-        return units;
-    }
-
-    @Override
-    public Object getDefaultValue() {
-        return defaultValue;
-    }
-
-    @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return Collections.emptyList();
-    }
-
-    public List<RangeConstraint> getRangeConstraints() {
-        return ranges;
-    }
-
-    public List<LengthConstraint> getLengthConstraints() {
-        return lengths;
-    }
-
-    public List<PatternConstraint> getPatternConstraints() {
-        return patterns;
-    }
-
-    public Integer getFractionDigits() {
-        return fractionDigits;
+        typeDefinition = builder.build();
     }
 
     @Override
     public TypeDefinition<?> getTypeDefinition() {
-        if (extendedType != null) {
-            return extendedType;
+        return typeDefinition;
+    }
+
+    public TypeEffectiveStatement<TypeStatement> asTypeEffectiveStatement() {
+        TypeEffectiveStatement<TypeStatement> ret = typeStatement;
+        if (ret == null) {
+            synchronized (this) {
+                ret = typeStatement;
+                if (ret == null) {
+                    ret = new ProxyTypeEffectiveStatement();
+                    typeStatement = ret;
+                }
+            }
         }
 
-        Builder extendedTypeBuilder;
-        if (baseType instanceof TypeDefinitionAware) {
-            TypeDefinitionAware typeDefBaseType = (TypeDefinitionAware) baseType;
-            extendedTypeBuilder = ExtendedType.builder(getQName(), typeDefBaseType.getTypeDefinition(),
-                    Optional.fromNullable(getDescription()), Optional.fromNullable(getReference()), getPath());
-        } else {
-            extendedTypeBuilder = ExtendedType.builder(getQName(), baseType, Optional.fromNullable(getDescription()),
-                    Optional.fromNullable(getReference()), getPath());
+        return ret;
+    }
+
+    private final class ProxyTypeEffectiveStatement implements TypeEffectiveStatement<TypeStatement> {
+        @Override
+        public TypeStatement getDeclared() {
+            return null;
         }
 
-        extendedTypeBuilder.defaultValue(defaultValue);
-        extendedTypeBuilder.units(units);
+        @Override
+        public <K, V, N extends IdentifierNamespace<K, V>> V get(final Class<N> namespace, final K identifier) {
+            return TypeDefEffectiveStatementImpl.this.get(namespace, identifier);
+        }
 
-        extendedTypeBuilder.fractionDigits(fractionDigits);
-        extendedTypeBuilder.ranges(ranges);
-        extendedTypeBuilder.lengths(lengths);
-        extendedTypeBuilder.patterns(patterns);
+        @Override
+        public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(final Class<N> namespace) {
+            return TypeDefEffectiveStatementImpl.this.getAll(namespace);
+        }
 
-        extendedType = extendedTypeBuilder.build();
+        @Override
+        public Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
+            // FIXME: this is tricky
+            throw new UnsupportedOperationException("Not implemented yet");
+        }
 
-        return extendedType;
+        @Override
+        public StatementDefinition statementDefinition() {
+            return Rfc6020Mapping.TYPE;
+        }
+
+        @Override
+        public String argument() {
+            return getQName().getLocalName();
+        }
+
+        @Override
+        public StatementSource getStatementSource() {
+            return StatementSource.CONTEXT;
+        }
+
+        @Override
+        public TypeDefinition<?> getTypeDefinition() {
+            return TypeDefEffectiveStatementImpl.this.getTypeDefinition();
+        }
     }
 }
