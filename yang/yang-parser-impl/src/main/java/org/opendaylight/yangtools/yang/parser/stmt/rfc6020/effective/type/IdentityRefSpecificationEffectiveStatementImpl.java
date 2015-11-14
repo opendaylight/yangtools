@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.IdentityRefSpecification;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.IdentityrefType;
+import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
@@ -47,6 +48,10 @@ public class IdentityRefSpecificationEffectiveStatementImpl extends
     public IdentityRefSpecificationEffectiveStatementImpl(
             final StmtContext<String, IdentityRefSpecification, EffectiveStatement<String, IdentityRefSpecification>> ctx) {
         super(ctx);
+
+            case "identityref":
+                BaseTypes.identityrefTypeBuilder(path);
+
 
         path = ctx.getParentContext().getSchemaPath().get().createChild(QNAME);
 
