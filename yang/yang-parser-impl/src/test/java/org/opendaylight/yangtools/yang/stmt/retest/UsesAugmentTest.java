@@ -11,17 +11,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import com.google.common.collect.Lists;
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.Deque;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,12 +34,11 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.BaseTypes;
+import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BooleanType;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
-import org.opendaylight.yangtools.yang.model.util.Uint32;
 import org.opendaylight.yangtools.yang.model.util.Uint8;
-import org.opendaylight.yangtools.yang.model.util.UnionType;
+import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -118,7 +116,7 @@ public class UsesAugmentTest {
         modules = TestUtils.loadModules(getClass().getResource("/grouping-test").toURI());
         Module testModule = TestUtils.findModule(modules, "uses-grouping");
 
-        LinkedList<QName> path = new LinkedList<>();
+        Deque<QName> path = new ArrayDeque<>();
 
         // * notification pcreq
         Set<NotificationDefinition> notifications = testModule.getNotifications();
@@ -138,11 +136,11 @@ public class UsesAugmentTest {
         path.offer(expectedQName);
         expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, version.getPath());
-        expectedQName = QName.create(GD_NS, GD_REV, "protocol-version");
+        expectedQName = QName.create(UG_NS, UG_REV, "version");
         path.offer(expectedQName);
-        expectedPath = SchemaPath.create(Lists.newArrayList(expectedQName), true);
+        expectedPath = SchemaPath.create(true, pcreq.getQName(), expectedQName);
         assertEquals(expectedPath, version.getType().getPath());
-        assertEquals(Uint8.getInstance(), version.getType().getBaseType());
+        assertEquals(BaseTypes.uint8Type(), version.getType().getBaseType().getBaseType().getBaseType());
         assertTrue(version.isAddedByUses());
         // * |-- leaf type
         LeafSchemaNode type = (LeafSchemaNode) pcreq.getDataChildByName("type");
@@ -156,10 +154,10 @@ public class UsesAugmentTest {
         assertEquals(expectedPath, type.getPath());
         expectedQName = QName.create(GD_NS, GD_REV, "int-ext");
         path.offer(expectedQName);
-        expectedPath = SchemaPath.create(Lists.newArrayList(expectedQName), true);
+        expectedPath = SchemaPath.create(true, expectedQName);
         assertEquals(expectedPath, type.getType().getPath());
-        UnionType union = (UnionType)type.getType().getBaseType();
-        assertEquals(SchemaPath.create(true, BaseTypes.constructQName("union")), union.getPath());
+        UnionTypeDefinition union = (UnionTypeDefinition) type.getType().getBaseType();
+        assertEquals(SchemaPath.create(true, expectedQName, QName.create(expectedQName, "union")), union.getPath());
         assertEquals(2, union.getTypes().size());
         // * |-- list requests
         ListSchemaNode requests = (ListSchemaNode) pcreq.getDataChildByName("requests");
@@ -192,7 +190,7 @@ public class UsesAugmentTest {
         path.offer(expectedQName);
         expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, processingRule.getPath());
-        assertEquals(BooleanType.getInstance(), processingRule.getType());
+        assertEquals(BaseTypes.booleanType(), processingRule.getType());
         assertTrue(processingRule.isAddedByUses());
         // * |-- |-- |-- leaf ignore
         LeafSchemaNode ignore = (LeafSchemaNode) rp.getDataChildByName("ignore");
@@ -203,7 +201,7 @@ public class UsesAugmentTest {
         path.offer(expectedQName);
         expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, ignore.getPath());
-        assertEquals(BooleanType.getInstance(), ignore.getType());
+        assertEquals(BaseTypes.booleanType(), ignore.getType());
         assertTrue(ignore.isAddedByUses());
         // * |-- |-- |-- leaf priority
         LeafSchemaNode priority = (LeafSchemaNode) rp.getDataChildByName("priority");
@@ -219,7 +217,7 @@ public class UsesAugmentTest {
         expectedPath = SchemaPath.create(path, true);
         // TODO
         //assertEquals(expectedPath, priority.getType().getPath());
-        assertEquals(Uint8.getInstance(), priority.getType().getBaseType());
+        assertEquals(BaseTypes.uint8Type(), priority.getType().getBaseType());
         assertTrue(priority.isAddedByUses());
         // * |-- |-- |-- container box
         ContainerSchemaNode box = (ContainerSchemaNode) rp.getDataChildByName("box");
@@ -251,7 +249,7 @@ public class UsesAugmentTest {
         path.offer(expectedQName);
         expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, delete.getPath());
-        assertEquals(Uint32.getInstance(), delete.getType());
+        assertEquals(BaseTypes.uint32Type(), delete.getType());
         assertTrue(delete.isAddedByUses());
         // * |-- |-- |-- |-- |-- leaf setup
         LeafSchemaNode setup = (LeafSchemaNode) order.getDataChildByName("setup");
@@ -262,7 +260,7 @@ public class UsesAugmentTest {
         path.offer(expectedQName);
         expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, setup.getPath());
-        assertEquals(Uint32.getInstance(), setup.getType());
+        assertEquals(BaseTypes.uint32Type(), setup.getType());
         assertTrue(setup.isAddedByUses());
         // * |-- |-- path-key-expansion
         ContainerSchemaNode pke = (ContainerSchemaNode) requests.getDataChildByName("path-key-expansion");
@@ -295,7 +293,7 @@ public class UsesAugmentTest {
         path.offer(expectedQName);
         expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, processingRule.getPath());
-        assertEquals(BooleanType.getInstance(), processingRule.getType());
+        assertEquals(BaseTypes.booleanType(), processingRule.getType());
         assertTrue(processingRule.isAddedByUses());
         // * |-- |-- |-- |-- leaf ignore
         ignore = (LeafSchemaNode) pathKey.getDataChildByName("ignore");
@@ -306,7 +304,7 @@ public class UsesAugmentTest {
         path.offer(expectedQName);
         expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, ignore.getPath());
-        assertEquals(BooleanType.getInstance(), ignore.getType());
+        assertEquals(BaseTypes.booleanType(), ignore.getType());
         assertTrue(ignore.isAddedByUses());
         // * |-- |-- |-- |-- list path-keys
         ListSchemaNode pathKeys = (ListSchemaNode) pathKey.getDataChildByName("path-keys");
@@ -328,8 +326,8 @@ public class UsesAugmentTest {
         path.offer(expectedQName);
         expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, version.getPath());
-        assertTrue(version.getType() instanceof ExtendedType);
-        assertEquals(Uint8.getInstance(), version.getType().getBaseType());
+        assertTrue(version.getType() instanceof UnsignedIntegerTypeDefinition);
+        assertEquals(BaseTypes.uint8Type(), version.getType().getBaseType().getBaseType().getBaseType());
         assertTrue(version.isAddedByUses());
         assertTrue(version.isAugmenting());
         // * |-- |-- |-- |-- |-- leaf type
@@ -341,7 +339,7 @@ public class UsesAugmentTest {
         path.offer(expectedQName);
         expectedPath= SchemaPath.create(path, true);
         assertEquals(expectedPath, type.getPath());
-        assertTrue(type.getType() instanceof ExtendedType);
+        assertTrue(type.getType() instanceof UnionTypeDefinition);
         assertTrue(type.isAddedByUses());
         assertTrue(type.isAugmenting());
         // * |-- |-- container segment-computation
@@ -624,11 +622,10 @@ public class UsesAugmentTest {
         }
         assertNotNull(intExt);
 
-        List<QName> path = Lists.newArrayList(QName.create(GD_NS, GD_REV, "int-ext"));
-        SchemaPath expectedPath = SchemaPath.create(path, true);
+        SchemaPath expectedPath = SchemaPath.create(true, QName.create(GD_NS, GD_REV, "int-ext"));
         assertEquals(expectedPath, intExt.getPath());
 
-        UnionType union = (UnionType)intExt.getBaseType();
+        UnionTypeDefinition union = (UnionTypeDefinition)intExt.getBaseType();
 
         TypeDefinition<?> uint8 = null;
         TypeDefinition<?> pv = null;
@@ -642,8 +639,7 @@ public class UsesAugmentTest {
         assertNotNull(uint8);
         assertNotNull(pv);
 
-        QName q1 = BaseTypes.constructQName("union");
-        expectedPath = SchemaPath.create(Lists.newArrayList(q1), true);
+        expectedPath = SchemaPath.create(true, QName.create(GD_NS, GD_REV, "int-ext"), QName.create(GD_NS, GD_REV, "union"));
         assertEquals(expectedPath, union.getPath());
     }
 
