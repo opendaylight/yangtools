@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.retest.TestUtils;
 
@@ -58,7 +59,7 @@ public class YinFileListStmtTest {
         LeafSchemaNode leaf = (LeafSchemaNode) childrenIterator.next();
         assertEquals("name", leaf.getQName().getLocalName());
         assertEquals("Unique module instance name", leaf.getDescription());
-        assertTrue(leaf.getType().toString().startsWith("StringType"));
+        assertEquals(BaseTypes.stringType(), leaf.getType());
         assertTrue(leaf.getConstraints().isMandatory());
 
         leaf = (LeafSchemaNode) childrenIterator.next();
