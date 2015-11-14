@@ -9,14 +9,15 @@ package org.opendaylight.yangtools.yang.stmt.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BooleanType;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
 import org.opendaylight.yangtools.yang.model.util.Int16;
 import org.opendaylight.yangtools.yang.model.util.Int32;
 import org.opendaylight.yangtools.yang.model.util.Int64;
@@ -68,8 +69,9 @@ public class YangTypes2StmtTest {
 
         final LeafSchemaNode lfDecimalNode = (LeafSchemaNode) result.getDataChildByName(lfDecimal);
         assertNotNull(lfDecimalNode);
-        final ExtendedType lfDecimalNodeType = (ExtendedType) lfDecimalNode.getType();
-        assertEquals(ExtendedType.class, lfDecimalNodeType.getClass());
+
+        assertTrue(lfDecimalNode.getType() instanceof DecimalTypeDefinition);
+        final DecimalTypeDefinition lfDecimalNodeType = (DecimalTypeDefinition) lfDecimalNode.getType();
         assertEquals(2, lfDecimalNodeType.getFractionDigits().intValue());
 
         final LeafSchemaNode lfInt8Node = (LeafSchemaNode) result.getDataChildByName(lfInt8);
