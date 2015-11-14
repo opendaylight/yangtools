@@ -11,42 +11,39 @@ import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.Decimal64Specification;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Decimal64SpecificationEffectiveStatementImpl;
 
-public class Decimal64SpecificationImpl extends AbstractDeclaredStatement<String> implements
-        TypeStatement.Decimal64Specification {
+public class Decimal64SpecificationImpl extends AbstractDeclaredStatement<String> implements Decimal64Specification {
 
-    protected Decimal64SpecificationImpl(StmtContext<String, TypeStatement.Decimal64Specification, ?> context) {
+    protected Decimal64SpecificationImpl(final StmtContext<String, Decimal64Specification, ?> context) {
         super(context);
     }
 
-    public static class Definition
-            extends
-            AbstractStatementSupport<String, TypeStatement.Decimal64Specification, EffectiveStatement<String, TypeStatement.Decimal64Specification>> {
+    public static class Definition extends
+            AbstractStatementSupport<String, Decimal64Specification, EffectiveStatement<String, Decimal64Specification>> {
 
         public Definition() {
             super(Rfc6020Mapping.TYPE);
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) throws SourceException {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) throws SourceException {
             return value;
         }
 
         @Override
-        public TypeStatement.Decimal64Specification createDeclared(
-                StmtContext<String, TypeStatement.Decimal64Specification, ?> ctx) {
+        public Decimal64Specification createDeclared(final StmtContext<String, Decimal64Specification, ?> ctx) {
             return new Decimal64SpecificationImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<String, TypeStatement.Decimal64Specification> createEffective(
-                StmtContext<String, TypeStatement.Decimal64Specification, EffectiveStatement<String, TypeStatement.Decimal64Specification>> ctx) {
+        public EffectiveStatement<String, Decimal64Specification> createEffective(
+                final StmtContext<String, Decimal64Specification, EffectiveStatement<String, Decimal64Specification>> ctx) {
             return new Decimal64SpecificationEffectiveStatementImpl(ctx);
         }
     }
