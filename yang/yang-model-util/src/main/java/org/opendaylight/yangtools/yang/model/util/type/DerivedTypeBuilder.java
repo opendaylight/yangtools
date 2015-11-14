@@ -30,6 +30,12 @@ public abstract class DerivedTypeBuilder<T extends TypeDefinition<T>> extends Ty
 
     DerivedTypeBuilder(final T baseType, final SchemaPath path) {
         super(Preconditions.checkNotNull(baseType), path);
+
+        // http://tools.ietf.org/html/rfc6020#section-7.3.4
+        defaultValue = baseType.getDefaultValue();
+
+        // In similar vein, it makes sense to propagate units
+        units = baseType.getUnits();
     }
 
     public void setDefaultValue(@Nonnull final Object defaultValue) {
