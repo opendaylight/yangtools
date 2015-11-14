@@ -11,15 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
-
-import org.opendaylight.yangtools.yang.stmt.test.StmtTestUtils;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import java.io.File;
-import java.math.BigInteger;
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -32,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -50,8 +43,12 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
-import org.opendaylight.yangtools.yang.model.util.ExtendedType;
+import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
+import org.opendaylight.yangtools.yang.stmt.test.StmtTestUtils;
 
 public class YangParserWithContextTest {
     private final DateFormat simpleDateFormat = new SimpleDateFormat(
@@ -114,26 +111,27 @@ public class YangParserWithContextTest {
 
         LeafSchemaNode leaf = (LeafSchemaNode) module.getDataChildByName("id");
 
-        ExtendedType leafType = (ExtendedType) leaf.getType();
+        assertTrue(leaf.getType() instanceof UnsignedIntegerTypeDefinition);
+        UnsignedIntegerTypeDefinition leafType = (UnsignedIntegerTypeDefinition) leaf.getType();
         QName qname = leafType.getQName();
         assertEquals(URI.create("urn:simple.demo.test1"), qname.getNamespace());
         assertEquals(simpleDateFormat.parse("2013-06-18"), qname.getRevision());
         assertEquals("port-number", qname.getLocalName());
 
-        ExtendedType leafBaseType = (ExtendedType) leafType.getBaseType();
+        UnsignedIntegerTypeDefinition leafBaseType = leafType.getBaseType();
         qname = leafBaseType.getQName();
         assertEquals(URI.create("urn:ietf:params:xml:ns:yang:ietf-inet-types"),
                 qname.getNamespace());
         assertEquals(simpleDateFormat.parse("2010-09-24"), qname.getRevision());
         assertEquals("port-number", qname.getLocalName());
 
-        ExtendedType dscpExt = (ExtendedType) TestUtils.findTypedef(
+        UnsignedIntegerTypeDefinition dscpExt = (UnsignedIntegerTypeDefinition) TestUtils.findTypedef(
                 module.getTypeDefinitions(), "dscp-ext");
         List<RangeConstraint> ranges = dscpExt.getRangeConstraints();
         assertEquals(1, ranges.size());
         RangeConstraint range = ranges.get(0);
-        assertEquals(BigInteger.ZERO, range.getMin());
-        assertEquals(BigInteger.valueOf(63), range.getMax());
+        assertEquals(0, range.getMin().intValue());
+        assertEquals(63, range.getMax().intValue());
     }
 
     @Test
