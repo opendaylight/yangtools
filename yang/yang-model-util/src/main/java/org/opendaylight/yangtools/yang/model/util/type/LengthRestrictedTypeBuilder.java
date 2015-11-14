@@ -41,7 +41,7 @@ public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>> e
         // First check if we need to resolve anything at all
         for (LengthConstraint c : unresolved) {
             if (c.getMax() instanceof UnresolvedNumber || c.getMin() instanceof UnresolvedNumber) {
-                return resolveRanges(unresolved, baseRangeConstraints);
+                return resolveLengths(unresolved, baseRangeConstraints);
             }
         }
 
@@ -49,8 +49,8 @@ public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>> e
         return unresolved;
     }
 
-    private static List<LengthConstraint> resolveRanges(final List<LengthConstraint> unresolved,
-            final List<LengthConstraint> baseRangeConstraints) {
+    private static List<LengthConstraint> resolveLengths(final List<LengthConstraint> unresolved,
+            final List<LengthConstraint> baseLengthConstraints) {
         final Builder<LengthConstraint> builder = ImmutableList.builder();
 
         for (LengthConstraint c : unresolved) {
@@ -59,16 +59,15 @@ public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>> e
 
             if (max instanceof UnresolvedNumber || min instanceof UnresolvedNumber) {
                 final Number rMax = max instanceof UnresolvedNumber ?
-                        ((UnresolvedNumber)max).resolveLength(baseRangeConstraints) : max;
+                        ((UnresolvedNumber)max).resolveLength(baseLengthConstraints) : max;
                 final Number rMin = min instanceof UnresolvedNumber ?
-                        ((UnresolvedNumber)min).resolveLength(baseRangeConstraints) : min;
+                        ((UnresolvedNumber)min).resolveLength(baseLengthConstraints) : min;
 
                 builder.add(BaseConstraints.newLengthConstraint(rMin, rMax, Optional.fromNullable(c.getDescription()),
                     Optional.fromNullable(c.getReference())));
             } else {
                 builder.add(c);
             }
-
         }
 
         return builder.build();
