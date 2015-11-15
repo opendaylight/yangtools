@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import java.util.Collections;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -20,7 +19,9 @@ import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
  * The <code>default</code> implementation of Boolean Type Definition interface.
  *
  * @see BooleanTypeDefinition
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.model.util.type.BaseTypes#booleanType()} instead
  */
+@Deprecated
 public final class BooleanType implements BooleanTypeDefinition {
     private static final BooleanType INSTANCE = new BooleanType();
     private static final SchemaPath PATH = SchemaPath.create(true, BaseTypes.BOOLEAN_QNAME);

@@ -24,7 +24,9 @@ import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
  * The <code>default</code> implementation of String Type Definition interface.
  *
  * @see StringTypeDefinition
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.model.util.type.BaseTypes#stringType()} instead
  */
+@Deprecated
 public final class StringType implements StringTypeDefinition, Immutable {
     private static final QName NAME = BaseTypes.STRING_QNAME;
     private static final SchemaPath PATH = SchemaPath.create(true, NAME);

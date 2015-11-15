@@ -35,7 +35,10 @@ import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinit
  * preserving original implemented interface instead of {@link ExtendedType}
  * which does not preserve final type of data.
  *
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.model.util.type.DerivedTypes} or
+ *             {@link org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes} instead
  */
+@Deprecated
 public abstract class DerivedType<T extends TypeDefinition<T>> implements TypeDefinition<T> {
 
     private final ExtendedType definition;
@@ -46,7 +49,7 @@ public abstract class DerivedType<T extends TypeDefinition<T>> implements TypeDe
         this.publicType = Preconditions.checkNotNull(publicType);
     }
 
-    public static TypeDefinition<?> from(TypeDefinition<?> type) {
+    public static TypeDefinition<?> from(final TypeDefinition<?> type) {
         if(type instanceof ExtendedType) {
             return from((ExtendedType) type);
         }

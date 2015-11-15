@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import java.math.BigInteger;
-
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
@@ -17,7 +16,9 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * inclusively. The Java counterpart of Yang uint64 built-in type is
  * {@link BigInteger}.
  *
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.model.util.type.BaseTypes#uint64Type()} instead
  */
+@Deprecated
 public final class Uint64 extends AbstractUnsignedInteger implements Immutable {
     public static final BigInteger MAX_VALUE = new BigInteger("18446744073709551615");
     private static final String DESCRIPTION = "uint64 represents integer values between 0 and 18446744073709551615, inclusively.";

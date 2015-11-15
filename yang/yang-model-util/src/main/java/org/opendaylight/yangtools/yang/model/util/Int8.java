@@ -15,7 +15,9 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * counterpart of Yang int8 built-in type is {@link Byte}.
  *
  * @see AbstractSignedInteger
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.model.util.type.BaseTypes#int8Type()} instead
  */
+@Deprecated
 public final class Int8 extends AbstractSignedInteger implements Immutable {
     private static final String DESCRIPTION = "represents integer values between -128 and 127, inclusively.";
 

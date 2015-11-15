@@ -25,7 +25,9 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
  * The <code>default</code> implementation of Decimal Type Definition interface.
  *
  * @see DecimalTypeDefinition
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.model.util.type.BaseTypes#decimalTypeBuilder(SchemaPath)} instead
  */
+@Deprecated
 public final class Decimal64 implements DecimalTypeDefinition {
     private static final String DESCRIPTION = "The decimal64 type represents a subset of the real numbers, which can "
             + "be represented by decimal numerals. The value space of decimal64 is the set of numbers that can "

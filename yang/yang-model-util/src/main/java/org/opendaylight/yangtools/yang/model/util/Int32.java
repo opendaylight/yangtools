@@ -16,8 +16,9 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * {@link Integer}.
  *
  * @see AbstractSignedInteger
- *
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.model.util.type.BaseTypes#int32Type()} instead
  */
+@Deprecated
 public final class Int32 extends AbstractSignedInteger implements Immutable {
     private static final String DESCRIPTION = "int32  represents integer values between -2147483648 and 2147483647, inclusively.";
 

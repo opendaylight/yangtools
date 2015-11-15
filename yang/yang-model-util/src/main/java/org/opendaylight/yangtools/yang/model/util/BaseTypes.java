@@ -115,11 +115,14 @@ public final class BaseTypes {
      * @return Returns default instance or {@link Optional#absent()} if default
      *         instance does not exists
      *
+     * @deprecated Use parser-specific lookup tables.
      */
+    @Deprecated
     public static Optional<TypeDefinition<?>> defaultBaseTypeFor(final String typeName) {
         return Optional.<TypeDefinition<?>> fromNullable(defaultBaseTypeForImpl(typeName));
     }
 
+    @Deprecated
     private static TypeDefinition<?> defaultBaseTypeForImpl(final String typeName) {
         Preconditions.checkNotNull(typeName, "typeName must not be null.");
 

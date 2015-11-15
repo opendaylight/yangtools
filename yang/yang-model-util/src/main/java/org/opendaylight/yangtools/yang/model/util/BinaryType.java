@@ -22,7 +22,9 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
  * The <code>default</code> implementation of Binary Type Definition interface.
  *
  * @see BinaryTypeDefinition
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.model.util.type.BaseTypes#binaryType()} instead
  */
+@Deprecated
 public final class BinaryType implements BinaryTypeDefinition {
     private static final String DESCRIPTION = "The binary built-in type represents any binary data, i.e., a sequence of octets.";
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.8";

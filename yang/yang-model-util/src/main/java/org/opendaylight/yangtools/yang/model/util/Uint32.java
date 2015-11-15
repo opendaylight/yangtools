@@ -13,7 +13,9 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * Implementation of Yang uint32 built-in type. <br>
  * uint32 represents integer values between 0 and 4294967295, inclusively.
  *
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.model.util.type.BaseTypes#uint32Type()} instead
  */
+@Deprecated
 public final class Uint32 extends AbstractUnsignedInteger implements Immutable {
     public static final long MAX_VALUE = 4294967295L;
     private static final String DESCRIPTION = "uint32 represents integer values between 0 and 4294967295, inclusively.";
