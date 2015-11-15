@@ -22,7 +22,9 @@ import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
  * interface.
  *
  * @see IdentityrefTypeDefinition
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.model.util.type.BaseTypes#identityrefTypeBuilder(SchemaPath)} instead
  */
+@Deprecated
 public final class IdentityrefType implements IdentityrefTypeDefinition {
     private static final QName NAME = BaseTypes.IDENTITYREF_QNAME;
     private static final String DESCRIPTION = "The identityref type is used to reference an existing identity.";

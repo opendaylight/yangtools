@@ -23,7 +23,9 @@ import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
  * interface.
  *
  * @see LeafrefTypeDefinition
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.model.util.type.BaseTypes#leafrefTypeBuilder(SchemaPath)} instead
  */
+@Deprecated
 public final class Leafref implements LeafrefTypeDefinition {
     private static final QName NAME = BaseTypes.constructQName("leafref");
     private static final SchemaPath PATH = SchemaPath.create(true, NAME);

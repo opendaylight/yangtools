@@ -14,7 +14,9 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * uint8 represents integer values between 0 and 255, inclusively.
  *
  * @see AbstractUnsignedInteger
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.model.util.type.BaseTypes#uint8Type()} instead
  */
+@Deprecated
 public final class Uint8 extends AbstractUnsignedInteger implements Immutable {
     public static final int MAX_VALUE = 255;
     private static final String DESCRIPTION = "uint8  represents integer values between 0 and 255, inclusively.";
