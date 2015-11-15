@@ -26,8 +26,9 @@ import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefi
  * returns false.
  *
  * @see InstanceIdentifierTypeDefinition
- *
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.model.util.type.BaseTypes#instanceIdentifierType()} instead
  */
+@Deprecated
 public final class InstanceIdentifierType implements InstanceIdentifierTypeDefinition, Immutable {
 
     private static final QName NAME = BaseTypes.INSTANCE_IDENTIFIER_QNAME;

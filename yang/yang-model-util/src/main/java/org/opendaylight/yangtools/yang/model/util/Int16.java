@@ -15,7 +15,9 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * Java counterpart of Yang int16 built-in type is {@link Short}.
  *
  * @see AbstractSignedInteger
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.model.util.type.BaseTypes#int16Type()} instead
  */
+@Deprecated
 public final class Int16 extends AbstractSignedInteger implements Immutable {
     private static final String DESCRIPTION = "int16  represents integer values between -32768 and 32767, inclusively.";
 
