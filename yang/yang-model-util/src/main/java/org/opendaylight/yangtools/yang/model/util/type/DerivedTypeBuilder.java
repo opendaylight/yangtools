@@ -12,6 +12,8 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Builder of {@link TypeDefinitions} for use in typedef statements.
@@ -19,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * @param <T> Resulting {@link TypeDefinition}
  */
 public abstract class DerivedTypeBuilder<T extends TypeDefinition<T>> extends TypeBuilder<T> {
+    private static final Logger LOG = LoggerFactory.getLogger(DecimalTypeBuilder.class);
     private Object defaultValue;
     private String description;
     private String reference;
@@ -46,7 +49,12 @@ public abstract class DerivedTypeBuilder<T extends TypeDefinition<T>> extends Ty
     }
 
     public final void setUnits(final String units) {
-        this.units = Preconditions.checkNotNull(units);
+        Preconditions.checkNotNull(units);
+        if (getBaseType().getUnits() != null && !units.equals(getBaseType().getUnits())) {
+            LOG.warn("Type {} uverrides 'units' of type {} to \"{}\"", getPath(), getBaseType(), units);
+        }
+
+        this.units = units;
     }
 
     final Object getDefaultValue() {
