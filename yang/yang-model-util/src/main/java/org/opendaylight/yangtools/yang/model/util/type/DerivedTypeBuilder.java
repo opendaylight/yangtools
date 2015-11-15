@@ -13,6 +13,11 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
+/**
+ * Builder of {@link TypeDefinitions} for use in typedef statements.
+ *
+ * @param <T> Resulting {@link TypeDefinition}
+ */
 public abstract class DerivedTypeBuilder<T extends TypeDefinition<T>> extends TypeBuilder<T> {
     private Object defaultValue;
     private String description;
