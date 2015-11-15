@@ -14,7 +14,9 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * uint16 represents integer values between 0 and 65535, inclusively. The Java
  * counterpart of Yang uint16 built-in type is {@link Integer}.
  *
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.model.util.type.BaseTypes#uint16Type()} instead
  */
+@Deprecated
 public final class Uint16 extends AbstractUnsignedInteger implements Immutable {
     public static final int MAX_VALUE = 65535;
     private static final String DESCRIPTION = "uint16 represents integer values between 0 and 65535, inclusively.";

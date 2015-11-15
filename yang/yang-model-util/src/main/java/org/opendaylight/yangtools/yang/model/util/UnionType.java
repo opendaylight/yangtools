@@ -18,6 +18,10 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
+/**
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.model.util.type.BaseTypes#unionTypeBuilder(SchemaPath)} instead
+ */
+@Deprecated
 public final class UnionType implements UnionTypeDefinition {
     private static final SchemaPath PATH = SchemaPath.create(true, BaseTypes.UNION_QNAME);
     private static final String DESCRIPTION = "The union built-in type represents a value that corresponds to one of its member types.";
