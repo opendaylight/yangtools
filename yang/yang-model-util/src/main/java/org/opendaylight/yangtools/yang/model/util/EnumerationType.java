@@ -24,7 +24,9 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
  * interface.
  *
  * @see EnumTypeDefinition
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.model.util.type.BaseTypes#enumerationTypeBuilder(SchemaPath)} instead
  */
+@Deprecated
 public final class EnumerationType implements EnumTypeDefinition {
     private static final String DESCRIPTION = "The enumeration built-in type represents values from a set of assigned names.";
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.6";
