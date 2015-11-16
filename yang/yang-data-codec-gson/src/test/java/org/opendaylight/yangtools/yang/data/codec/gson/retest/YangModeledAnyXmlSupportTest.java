@@ -9,14 +9,17 @@ package org.opendaylight.yangtools.yang.data.codec.gson.retest;
 
 import static org.junit.Assert.assertEquals;
 import static org.opendaylight.yangtools.yang.data.codec.gson.retest.TestUtils.loadModules;
+import static org.opendaylight.yangtools.yang.data.codec.gson.retest.TestUtils.loadTextFile;
 
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URISyntaxException;
@@ -35,7 +38,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.data.codec.gson.JSONCodecFactory;
 import org.opendaylight.yangtools.yang.data.codec.gson.JSONNormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.codec.gson.JsonParserStream;
 import org.opendaylight.yangtools.yang.data.codec.gson.JsonWriterFactory;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser.DomToNormalizedNodeParserFactory;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -71,6 +77,18 @@ public class YangModeledAnyXmlSupportTest {
         data = DomToNormalizedNodeParserFactory
                 .getInstance(DomUtils.defaultValueCodecProvider(), schemaContext).getContainerNodeParser()
                 .parse(Collections.singletonList(xmlDoc.getDocumentElement()), schemaContext);
+    }
+
+    @Test
+    public void jsonToNormalizedNodesTest() throws IOException, URISyntaxException, SAXException {
+        final String inputJson = loadTextFile("/yang-modeled-anyxml/json/baz.json");
+        final NormalizedNodeResult result = new NormalizedNodeResult();
+        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, schemaContext);
+        jsonParser.parse(new JsonReader(new StringReader(inputJson)));
+        final NormalizedNode<?, ?> transformedInput = result.getResult();
+
+        assertEquals(data.getValue().iterator().next(), transformedInput);
     }
 
     @Test
