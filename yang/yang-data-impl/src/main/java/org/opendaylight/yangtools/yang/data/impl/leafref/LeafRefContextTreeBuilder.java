@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.Leafref;
+import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
 class LeafRefContextTreeBuilder {
     private final SchemaContext schemaContext;
@@ -128,8 +128,8 @@ class LeafRefContextTreeBuilder {
             }
 
             // FIXME: fix case when type is e.g. typdef -> typedef -> leafref
-            if (type instanceof Leafref) {
-                final Leafref leafrefType = (Leafref) type;
+            if (type instanceof LeafrefTypeDefinition) {
+                final LeafrefTypeDefinition leafrefType = (LeafrefTypeDefinition) type;
                 final String leafRefPathString = leafrefType.getPathStatement()
                         .toString();
 
