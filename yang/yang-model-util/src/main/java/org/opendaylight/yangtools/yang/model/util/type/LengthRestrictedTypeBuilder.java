@@ -153,8 +153,10 @@ public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>> e
 
         // Now verify if new ranges are strict subset of base ranges
         for (LengthConstraint c : typedLengths) {
-            Preconditions.checkArgument(lengthCovered(baseLengths, c),
-                "Range constraint %s is not a subset of parent constraints %s", c, baseLengths);
+            if (!lengthCovered(baseLengths, c)) {
+                throw new InvalidLengthConstraintException(c, "Length constraint %s is not a subset of parent constraints %s",
+                c, baseLengths);
+            }
         }
 
         return buildType(typedLengths);
