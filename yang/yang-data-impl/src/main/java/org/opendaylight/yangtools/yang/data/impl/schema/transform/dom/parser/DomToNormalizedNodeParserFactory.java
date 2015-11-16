@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.opendaylight.yangtools.yang.data.api.schema.YangModeledAnyXmlNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParserFactory;
@@ -37,6 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 import org.w3c.dom.Element;
 
 public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeParserFactory<Element> {
@@ -52,6 +54,7 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
     private final UnkeyedListEntryNodeDomParser unkeyedListEntryNodeParser;
     private final UnkeyedListNodeDomParser unkeyedListNodeParser;
     private final OrderedListNodeDomParser orderedListNodeParser;
+    private final YangModeledAnyXmlDomParser yangModeledAnyXmlNodeParser;
     private final AnyXmlDomParser anyXmlNodeParser;
 
     private DomToNormalizedNodeParserFactory(final XmlCodecProvider codecProvider, final SchemaContext schema, final boolean strictParsing) {
@@ -64,6 +67,7 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
 
         };
 
+        yangModeledAnyXmlNodeParser = new YangModeledAnyXmlDomParser(dispatcher);
         containerNodeParser = new ContainerNodeDomParser(dispatcher, strictParsing);
         mapEntryNodeParser = new MapEntryNodeDomParser(dispatcher, strictParsing);
         mapNodeParser = new MapNodeDomParser(mapEntryNodeParser);
@@ -88,6 +92,7 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
 
         };
 
+        yangModeledAnyXmlNodeParser = new YangModeledAnyXmlDomParser(dispatcher);
         containerNodeParser = new ContainerNodeDomParser(dispatcher, buildingStratProvider.forContainer(), strictParsing);
         mapEntryNodeParser = new MapEntryNodeDomParser(dispatcher, buildingStratProvider.forMapEntry(), strictParsing);
         mapNodeParser = new MapNodeDomParser(mapEntryNodeParser, buildingStratProvider.forMap());
@@ -174,6 +179,11 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
     }
 
     @Override
+    public ToNormalizedNodeParser<Element, YangModeledAnyXmlNode, YangModeledAnyXmlSchemaNode> getYangModeledAnyXmlNodeParser() {
+        return yangModeledAnyXmlNodeParser;
+    }
+
+    @Override
     public ToNormalizedNodeParser<Element, AnyXmlNode, AnyXmlSchemaNode> getAnyXmlNodeParser() {
         return anyXmlNodeParser;
     }
@@ -223,4 +233,5 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
             return new BaseDispatcherParser.SimpleBuildingStrategy<>();
         }
     }
+
 }

@@ -79,7 +79,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
                 }
                 writer.argumentValue(argument, ref);
             } else {
-                writer.startStatement(QName.create(validStatementDefinition.getModule(), keywordTxt), ref);
+                writer.startStatement(validStatementDefinition, ref);
                 if (argument != null) {
                     writer.argumentValue(argument, ref);
                 }

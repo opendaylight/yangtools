@@ -61,7 +61,8 @@ public final class SubstatementValidator {
         }
     }
 
-    public void validate(StmtContext ctx) throws InvalidSubstatementException, MissingSubstatementException{
+    public void validate(final StmtContext<?, ?, ?> ctx) throws InvalidSubstatementException,
+            MissingSubstatementException {
         final Map<StatementDefinition, Integer> stmtDefMap = new HashMap<>();
         final Map<StatementDefinition, Integer> validatedMap = new HashMap<>();
         final Collection<StatementContextBase<?, ?, ?>> substatementsInit = new ArrayList<>();
@@ -78,15 +79,16 @@ public final class SubstatementValidator {
         }
 
         if (stmtDefMap.isEmpty() && specialCase == SpecialCase.NOTNULL) {
-            throw new InvalidSubstatementException(String.format("%s must contain atleast 1 element. Error in module " +
-                            "%s (%s)", currentStatement, ctx.getRoot().getStatementArgument(), ctx.getFromNamespace
-                            (ModuleCtxToModuleQName.class, ctx.getRoot())), ctx.getStatementSourceReference());
+            throw new InvalidSubstatementException(String.format("%s must contain atleast 1 element. Error in module "
+                    + "%s (%s)", currentStatement, ctx.getRoot().getStatementArgument(),
+                    ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx.getRoot())),
+                    ctx.getStatementSourceReference());
         }
 
         for (Map.Entry entry : stmtDefMap.entrySet()) {
             final StatementDefinition key = (StatementDefinition) entry.getKey();
             if (!cardinalityMap.containsKey(key)) {
-                if (ctx.getFromNamespace(ExtensionNamespace.class, key.getArgumentName()) != null) {
+                if (ctx.getFromNamespace(ExtensionNamespace.class, key.getStatementName()) != null) {
                     continue;
                 }
                 throw new InvalidSubstatementException(String.format("%s is not valid for %s. Error in module %s (%s)",
@@ -94,16 +96,16 @@ public final class SubstatementValidator {
                         ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx.getRoot())),
                         ctx.getStatementSourceReference());
             }
-            if (cardinalityMap.get(key).getMin() > (Integer)entry.getValue()) {
-                throw new InvalidSubstatementException(String.format("Minimal count of %s for %s is %s, detected %s. " +
-                                "Error in module %s (%s)", key, currentStatement, cardinalityMap.get(key).getMin(),
+            if (cardinalityMap.get(key).getMin() > (Integer) entry.getValue()) {
+                throw new InvalidSubstatementException(String.format("Minimal count of %s for %s is %s, detected %s. "
+                        + "Error in module %s (%s)", key, currentStatement, cardinalityMap.get(key).getMin(),
                         entry.getValue(), ctx.getRoot().getStatementArgument(),
                         ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx.getRoot())),
                         ctx.getStatementSourceReference());
             }
-            if (cardinalityMap.get(key).getMax() < (Integer)entry.getValue()) {
-                throw new InvalidSubstatementException(String.format("Maximal count of %s for %s is %s, detected %s. " +
-                                "Error in module %s (%s)", key, currentStatement, cardinalityMap.get(key).getMax(),
+            if (cardinalityMap.get(key).getMax() < (Integer) entry.getValue()) {
+                throw new InvalidSubstatementException(String.format("Maximal count of %s for %s is %s, detected %s. "
+                        + "Error in module %s (%s)", key, currentStatement, cardinalityMap.get(key).getMax(),
                         entry.getValue(), ctx.getRoot().getStatementArgument(),
                         ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx.getRoot())),
                         ctx.getStatementSourceReference());
@@ -114,11 +116,11 @@ public final class SubstatementValidator {
         final MapDifference<StatementDefinition, Object> diff = Maps.difference(validatedMap, cardinalityMap);
 
         for (Map.Entry entry : diff.entriesOnlyOnRight().entrySet()) {
-            final int min = ((Cardinality)entry.getValue()).getMin();
+            final int min = ((Cardinality) entry.getValue()).getMin();
             if (min > 0) {
-                throw new MissingSubstatementException(String.format("%s is missing %s. Minimal count is %s. Error in" +
-                        "  module %s (%s)", currentStatement, entry.getKey(), min, ctx.getRoot().getStatementArgument(),
-                        ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx.getRoot())),
+                throw new MissingSubstatementException(String.format("%s is missing %s. Minimal count is %s. Error in"
+                        + "  module %s (%s)", currentStatement, entry.getKey(), min, ctx.getRoot()
+                        .getStatementArgument(), ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx.getRoot())),
                         ctx.getStatementSourceReference());
             }
         }

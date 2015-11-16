@@ -147,8 +147,7 @@ public class YinStatementParserImpl {
                 if (identifier.equals(Rfc6020Mapping.TYPE.getStatementName())) {
                     isType = true;
                 } else {
-                    startStatement(QName.create(validStatementDefinition.getModule(), getElementFullName
-                            (inputReader)),  ref);
+                    startStatement(validStatementDefinition, ref);
                     if (isStatementWithYinElement(identifier, stmtDef)) {
                         action = false;
                     }
