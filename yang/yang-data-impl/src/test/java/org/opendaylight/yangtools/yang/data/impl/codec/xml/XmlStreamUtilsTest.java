@@ -40,10 +40,10 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.InstanceIdentifierType;
+import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.model.util.StringType;
 import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.w3c.dom.Document;
 
@@ -133,17 +133,17 @@ public class XmlStreamUtilsTest {
      */
     @Test
     public void testLeafRefRelativeChaining() {
-        getTargetNodeForLeafRef("leafname3",StringType.class);
+        getTargetNodeForLeafRef("leafname3", StringTypeDefinition.class);
     }
 
     @Test
     public void testLeafRefRelative() {
-        getTargetNodeForLeafRef("pointToStringLeaf",StringType.class);
+        getTargetNodeForLeafRef("pointToStringLeaf", StringTypeDefinition.class);
     }
 
     @Test
     public void testLeafRefAbsoluteWithSameTarget() {
-        getTargetNodeForLeafRef("absname",InstanceIdentifierType.class);
+        getTargetNodeForLeafRef("absname", InstanceIdentifierTypeDefinition.class);
     }
 
     /**
@@ -152,13 +152,15 @@ public class XmlStreamUtilsTest {
     @Ignore //ignored because this isn't implemented
     @Test
     public void testLeafRefWithDoublePointInPath() {
-        getTargetNodeForLeafRef("lf-with-double-point-inside",StringType.class);
+        getTargetNodeForLeafRef("lf-with-double-point-inside", StringTypeDefinition.class);
     }
 
     @Test
     public void testLeafRefRelativeAndAbsoluteWithSameTarget() {
-        final TypeDefinition<?> targetNodeForAbsname = getTargetNodeForLeafRef("absname",InstanceIdentifierType.class);
-        final TypeDefinition<?> targetNodeForRelname = getTargetNodeForLeafRef("relname",InstanceIdentifierType.class);
+        final TypeDefinition<?> targetNodeForAbsname = getTargetNodeForLeafRef("absname",
+            InstanceIdentifierTypeDefinition.class);
+        final TypeDefinition<?> targetNodeForRelname = getTargetNodeForLeafRef("relname",
+            InstanceIdentifierTypeDefinition.class);
         assertEquals(targetNodeForAbsname, targetNodeForRelname);
     }
 
@@ -168,7 +170,7 @@ public class XmlStreamUtilsTest {
         final LeafrefTypeDefinition leafrefTypedef = findLeafrefType(schemaNode);
         assertNotNull(leafrefTypedef);
         final TypeDefinition<?> targetBaseType = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypedef, schemaContext, schemaNode);
-        assertEquals("Wrong class found.", clas, targetBaseType.getClass());
+        assertTrue("Wrong class found.", clas.isInstance(targetBaseType));
         return targetBaseType;
     }
 
