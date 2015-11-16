@@ -1,0 +1,19 @@
+{
+   "baz:baz":{
+      "my-container-1":{
+         "my-leaf-1":"value1"
+      },
+      "my-container-2":{
+         "inner-container":{
+            "my-leaf-2":"value2"
+         },
+         "my-leaf-3":"value3"
+      },
+      "my-anyxml-data":{
+         "inner-container":{
+            "my-leaf-2":"any-xml-leaf-2-value"
+         },
+         "my-leaf-3":"any-xml-leaf-3-value"
+      }
+   }
+}
