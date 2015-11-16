@@ -79,6 +79,11 @@ abstract class ForwardingNormalizedNodeStreamWriter extends ForwardingObject imp
     }
 
     @Override
+    public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
+        delegate().startYangModeledAnyXmlNode(name, childSizeHint);
+    }
+
+    @Override
     public void endNode() throws IOException {
         delegate().endNode();
     }

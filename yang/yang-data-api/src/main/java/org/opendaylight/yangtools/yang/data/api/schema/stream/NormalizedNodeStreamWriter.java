@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  *
  * <ul>
  * <li><code>container</code> - Container node representation, start event is
- * emitted using {@link #startContainerNode(NodeIdentifier, int)} and node end event is
+ * emitted using {@link #startContainerNode} and node end event is
  * emitted using {@link #endNode()}. Container node is implementing
  * the org.opendaylight.yangtools.yang.binding.DataObject interface.
  *
@@ -32,36 +32,36 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  *
  * <ul>
  * <li><code>Map</code> - Map start event is emitted using
- * {@link #startMapNode(NodeIdentifier, int)} and is ended using {@link #endNode()}. Each map
- * entry start is emitted using {@link #startMapEntryNode(NodeIdentifierWithPredicates, int)} with Map of keys
+ * {@link #startMapNode} and is ended using {@link #endNode()}. Each map
+ * entry start is emitted using {@link #startMapEntryNode} with Map of keys
  * and finished using {@link #endNode()}.</li>
  *
  * <li><code>UnkeyedList</code> - Unkeyed list represent list without keys,
- * unkeyed list start is emitted using {@link #startUnkeyedList(NodeIdentifier, int)} list
+ * unkeyed list start is emitted using {@link #startUnkeyedList} list
  * end is emitted using {@link #endNode()}. Each list item is emitted using
- * {@link #startUnkeyedListItem(NodeIdentifier, int)} and ended using {@link #endNode()}.</li>
+ * {@link #startUnkeyedListItem} and ended using {@link #endNode()}.</li>
  * </ul></li>
  *
  * <li><code>leaf</code> - Leaf node event is emitted using
- * {@link #leafNode(NodeIdentifier, Object)}. {@link #endNode()} MUST NOT BE emitted for
+ * {@link #leafNode}. {@link #endNode()} MUST NOT BE emitted for
  * leaf node.</li>
  *
  * <li><code>leaf-list</code> - Leaf list start is emitted using
- * {@link #startLeafSet(NodeIdentifier, int)}. Leaf list end is emitted using
+ * {@link #startLeafSet}. Leaf list end is emitted using
  * {@link #endNode()}. Leaf list entries are emmited using
  * {@link #leafSetEntryNode(Object)}.
  *
  * <li><code>anyxml - AN node event is emitted using
- * {@link #leafNode(NodeIdentifier, Object)}. {@link #endNode()} MUST NOT BE emitted
+ * {@link #leafNode}. {@link #endNode()} MUST NOT BE emitted
  * for anyxml node.</code></li>
  *
  *
  * <li><code>choice</code> Choice node event is emmited by
- * {@link #startChoiceNode(NodeIdentifier, int)} event and
+ * {@link #startChoiceNode} event and
  * finished by invoking {@link #endNode()}
  * <li>
  * <code>augment</code> - Represents augmentation, augmentation node is started
- * by invoking {@link #startAugmentationNode(AugmentationIdentifier)} and
+ * by invoking {@link #startAugmentationNode} and
  * finished by invoking {@link #endNode()}.</li>
  *
  * </ul>
@@ -101,7 +101,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *            name of node as defined in schema, namespace and revision are
      *            derived from parent node.
      * @param value
-     *            Value of leaf node. v
+     *            Value of leaf node.
      * @throws IllegalArgumentException
      *             If emitted leaf node has invalid value in current context or
      *             was emitted multiple times.
@@ -162,12 +162,12 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      * Valid sub-events are:
      * <ul>
      * <li>{@link #leafNode}</li>
-     * <li>{@link #startContainerNode(NodeIdentifier, int)}</li>
-     * <li>{@link #startChoiceNode(NodeIdentifier, int)}</li>
-     * <li>{@link #startLeafSet(NodeIdentifier, int)}</li>
-     * <li>{@link #startMapNode(NodeIdentifier, int)}</li>
-     * <li>{@link #startUnkeyedList(NodeIdentifier, int)}</li>
-     * <li>{@link #startAugmentationNode(AugmentationIdentifier)}</li>
+     * <li>{@link #startContainerNode}</li>
+     * <li>{@link #startChoiceNode}</li>
+     * <li>{@link #startLeafSet}</li>
+     * <li>{@link #startMapNode}</li>
+     * <li>{@link #startUnkeyedList}</li>
+     * <li>{@link #startAugmentationNode}</li>
      * </ul>
      *
      * @param name
@@ -194,7 +194,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *
      * <p>
      * End of unkeyed list event is emitted by invoking {@link #endNode()}.
-     * Valid subevents is only {@link #startUnkeyedListItem(NodeIdentifier, int)}. All other
+     * Valid subevents is only {@link #startUnkeyedListItem}. All other
      * methods will throw {@link IllegalArgumentException}.
      *
      * @param name
@@ -223,12 +223,12 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      * sub-events are:
      * <ul>
      * <li>{@link #leafNode}</li>
-     * <li>{@link #startContainerNode(NodeIdentifier, int)}</li>
-     * <li>{@link #startChoiceNode(NodeIdentifier, int)}</li>
-     * <li>{@link #startLeafSet(NodeIdentifier, int)}</li>
-     * <li>{@link #startMapNode(NodeIdentifier, int)}</li>
-     * <li>{@link #startUnkeyedList(NodeIdentifier, int)}</li>
-     * <li>{@link #startAugmentationNode(AugmentationIdentifier)}</li>
+     * <li>{@link #startContainerNode}</li>
+     * <li>{@link #startChoiceNode}</li>
+     * <li>{@link #startLeafSet}</li>
+     * <li>{@link #startMapNode}</li>
+     * <li>{@link #startUnkeyedList}</li>
+     * <li>{@link #startAugmentationNode}</li>
      * </ul>
      *
      * @param name Identifier of node
@@ -250,14 +250,20 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      * <p>
      * End of map node event is emitted by invoking {@link #endNode()}. Valid
      * subevents is only
-     * {@link #startMapEntryNode(NodeIdentifierWithPredicates, int)}. All other
+     * {@link #startMapEntryNode}. All other
      * methods will throw {@link IllegalArgumentException}.
      *
      * @param name
      *            name of node as defined in schema, namespace and revision are
      *            derived from parent node.
      * @param childSizeHint
+     *            Non-negative count of expected direct child nodes or
+     *            {@link #UNKNOWN_SIZE} if count is unknown. This is only hint
+     *            and should not fail writing of child events, if there are more
+     *            events than count.
      * @throws IllegalArgumentException
+     *             If emitted node is invalid in current context or was emitted
+     *             multiple times.
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.
@@ -276,17 +282,22 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      * Valid sub-events are:
      * <ul>
      * <li>{@link #leafNode}</li>
-     * <li>{@link #startContainerNode(NodeIdentifier, int)}</li>
-     * <li>{@link #startChoiceNode(NodeIdentifier, int)}</li>
-     * <li>{@link #startLeafSet(NodeIdentifier, int)}</li>
-     * <li>{@link #startMapNode(NodeIdentifier, int)}</li>
-     * <li>{@link #startUnkeyedList(NodeIdentifier, int)}</li>
-     * <li>{@link #startAugmentationNode(AugmentationIdentifier)}</li>
+     * <li>{@link #startContainerNode}</li>
+     * <li>{@link #startChoiceNode}</li>
+     * <li>{@link #startLeafSet}</li>
+     * <li>{@link #startMapNode}</li>
+     * <li>{@link #startUnkeyedList}</li>
+     * <li>{@link #startAugmentationNode}</li>
      * </ul>
      *
      *
      * @param identifier
      *            QName to value pairs of keys of map entry node. Values  MUST BE constant over time.
+     * @param childSizeHint
+     *            Non-negative count of expected direct child nodes or
+     *            {@link #UNKNOWN_SIZE} if count is unknown. This is only hint
+     *            and should not fail writing of child events, if there are more
+     *            events than count.
      * @throws IllegalArgumentException
      *             If key contains incorrect value.
      * @throws IllegalStateException
@@ -302,13 +313,20 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      * <p>
      * End of map node event is emitted by invoking {@link #endNode()}. Valid
      * subevents is only
-     * {@link #startMapEntryNode(NodeIdentifierWithPredicates, int)}. All other
+     * {@link #startMapEntryNode}. All other
      * methods will throw {@link IllegalArgumentException}.
      *
      * @param name
      *            name of node as defined in schema, namespace and revision are
      *            derived from parent node.
+     * @param childSizeHint
+     *            Non-negative count of expected direct child nodes or
+     *            {@link #UNKNOWN_SIZE} if count is unknown. This is only hint
+     *            and should not fail writing of child events, if there are more
+     *            events than count.
      * @throws IllegalArgumentException
+     *             If emitted node is invalid in current context or was emitted
+     *             multiple times.
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.
@@ -324,7 +342,13 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *            name of node as defined in schema, namespace and revision are
      *            derived from parent node.
      * @param childSizeHint
+     *            Non-negative count of expected direct child nodes or
+     *            {@link #UNKNOWN_SIZE} if count is unknown. This is only hint
+     *            and should not fail writing of child events, if there are more
+     *            events than count.
      * @throws IllegalArgumentException
+     *             If emitted node is invalid in current context or was emitted
+     *             multiple times.
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.
@@ -343,11 +367,11 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *
      * <ul>
      * <li>{@link #leafNode}</li>
-     * <li>{@link #startContainerNode(NodeIdentifier, int)}</li>
-     * <li>{@link #startChoiceNode(NodeIdentifier, int)}</li>
-     * <li>{@link #startLeafSet(NodeIdentifier, int)}</li>
-     * <li>{@link #startMapNode(NodeIdentifier, int)}</li>
-     * <li>{@link #startUnkeyedList(NodeIdentifier, int)}</li>
+     * <li>{@link #startContainerNode}</li>
+     * <li>{@link #startChoiceNode}</li>
+     * <li>{@link #startLeafSet}</li>
+     * <li>{@link #startMapNode}</li>
+     * <li>{@link #startUnkeyedList}</li>
      * </ul>
      *
      * @param identifier
@@ -362,14 +386,54 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      * Emits anyxml node event.
      *
      * @param name
+     *            name of node as defined in schema, namespace and revision are
+     *            derived from parent node.
      * @param value
+     *             Value of AnyXml node.
      * @throws IllegalArgumentException
+     *             If emitted node is invalid in current context or was emitted
+     *             multiple times.
      * @throws IllegalStateException
      *             If node was emitted inside <code>map</code>,
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
     void anyxmlNode(NodeIdentifier name, Object value) throws IOException;
+
+    /**
+    *
+    * Emits start of new yang modeled anyXml node.
+    *
+    * <p>
+    * End of yang modeled anyXml node event is emitted by invoking {@link #endNode()}.
+    *
+    * <p>
+    * Valid sub-events are:
+    * <ul>
+    * <li>{@link #leafNode}</li>
+    * <li>{@link #startContainerNode}</li>
+    * <li>{@link #startLeafSet}</li>
+    * <li>{@link #startMapNode}</li>
+    * <li>{@link #startUnkeyedList}</li>
+    * </ul>
+    *
+    * @param name
+    *            name of node as defined in schema, namespace and revision are
+    *            derived from parent node.
+    * @param childSizeHint
+    *            Non-negative count of expected direct child nodes or
+    *            {@link #UNKNOWN_SIZE} if count is unknown. This is only hint
+    *            and should not fail writing of child events, if there are more
+    *            events than count.
+    * @throws IllegalArgumentException
+    *             If emitted node is invalid in current context or was emitted
+    *             multiple times.
+    * @throws IllegalStateException
+    *             If node was emitted inside <code>map</code>,
+    *             <code>choice</code> <code>unkeyed list</code> node.
+    * @throws IOException if an underlying IO error occurs
+    */
+    void startYangModeledAnyXmlNode(NodeIdentifier name, int childSizeHint) throws IOException;
 
     /**
      * Emits end event for node.
