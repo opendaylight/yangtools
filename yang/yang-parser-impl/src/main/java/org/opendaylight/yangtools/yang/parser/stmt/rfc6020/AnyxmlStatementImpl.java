@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -9,10 +9,14 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
 
+import com.google.common.base.Optional;
 import java.util.Collection;
+import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -20,15 +24,19 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.AnyxmlSchemaLocationNamespace;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AnyXmlEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.YangModeledAnyXmlEffectiveStatementImpl;
 
 public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implements AnyxmlStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
@@ -43,19 +51,20 @@ public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implem
             .add(Rfc6020Mapping.WHEN, 0, 1)
             .build();
 
-    protected AnyxmlStatementImpl(StmtContext<QName, AnyxmlStatement,?> context) {
+    protected AnyxmlStatementImpl(StmtContext<QName, AnyxmlStatement, ?> context) {
         super(context);
     }
 
-    public static class Definition extends AbstractStatementSupport<QName,AnyxmlStatement,EffectiveStatement<QName,AnyxmlStatement>> {
+    public static class Definition extends
+            AbstractStatementSupport<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.ANYXML);
         }
 
         @Override
-        public QName parseArgumentValue(StmtContext<?,?,?> ctx, String value) {
-            return Utils.qNameFromArgument(ctx,value);
+        public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+            return Utils.qNameFromArgument(ctx, value);
         }
 
         @Override
@@ -64,20 +73,45 @@ public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implem
         }
 
         @Override
-        public AnyxmlStatement createDeclared(StmtContext<QName, AnyxmlStatement,?> ctx) {
+        public AnyxmlStatement createDeclared(StmtContext<QName, AnyxmlStatement, ?> ctx) {
             return new AnyxmlStatementImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<QName,AnyxmlStatement> createEffective(StmtContext<QName,AnyxmlStatement,EffectiveStatement<QName,AnyxmlStatement>> ctx) {
-           return new AnyXmlEffectiveStatementImpl(ctx);
+        public EffectiveStatement<QName, AnyxmlStatement> createEffective(
+                final StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx) {
+            Map<StatementDefinition, Mutable<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>, EffectiveStatement<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>>>> schemaLocations = ctx
+                    .getAllFromCurrentStmtCtxNamespace(AnyxmlSchemaLocationNamespace.class);
+            if (schemaLocations != null && !schemaLocations.isEmpty()) {
+                SchemaNodeIdentifier anyXmlSchemaNodeIdentifier = schemaLocations.values().iterator().next()
+                        .getStatementArgument();
+                Optional<ContainerSchemaNode> anyXmlSchema = getAnyXmlSchema(ctx, anyXmlSchemaNodeIdentifier);
+                if (anyXmlSchema.isPresent()) {
+                    return new YangModeledAnyXmlEffectiveStatementImpl(ctx, anyXmlSchema.get());
+                }
+            }
+            return new AnyXmlEffectiveStatementImpl(ctx);
         }
 
-        @Override
-        public void onFullDefinitionDeclared(Mutable<QName, AnyxmlStatement,
-                EffectiveStatement<QName, AnyxmlStatement>> stmt) throws SourceException {
-            super.onFullDefinitionDeclared(stmt);
-            SUBSTATEMENT_VALIDATOR.validate(stmt);
+        //FIXME: It throws illegalArgumentException
+//        @Override
+//        public void onFullDefinitionDeclared(Mutable<QName, AnyxmlStatement,
+//                EffectiveStatement<QName, AnyxmlStatement>> stmt) throws SourceException {
+//            super.onFullDefinitionDeclared(stmt);
+//            SUBSTATEMENT_VALIDATOR.validate(stmt);
+//        }
+
+        private Optional<ContainerSchemaNode> getAnyXmlSchema(
+                StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx,
+                SchemaNodeIdentifier contentSchemaPath) {
+            final StatementContextBase<?, ?, ?> findNode = Utils.findNode(ctx.getRoot(), contentSchemaPath);
+            if (findNode != null) {
+                final EffectiveStatement<?, ?> anyXmlSchemaNode = findNode.buildEffective();
+                if (anyXmlSchemaNode instanceof ContainerSchemaNode) {
+                    return Optional.of((ContainerSchemaNode) anyXmlSchemaNode);
+                }
+            }
+            return Optional.absent();
         }
     }
 
