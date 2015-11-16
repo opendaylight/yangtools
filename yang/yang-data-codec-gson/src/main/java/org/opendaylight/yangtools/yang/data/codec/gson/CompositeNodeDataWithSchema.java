@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 
 /**
  * A node which is composed of multiple simpler nodes.
@@ -96,6 +97,10 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
         if (schema instanceof LeafSchemaNode) {
             newChild = new LeafNodeDataWithSchema(schema);
         } else if (schema instanceof AnyXmlSchemaNode) {
+            // YangModeledAnyXmlSchemaNode is handled by addCompositeChild method.
+            if (schema instanceof YangModeledAnyXmlSchemaNode) {
+                return null;
+            }
             newChild = new AnyXmlNodeDataWithSchema(schema);
         } else {
             return null;
@@ -133,16 +138,20 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
     }
 
     AbstractNodeDataWithSchema addCompositeChild(final DataSchemaNode schema) {
-        CompositeNodeDataWithSchema newChild;
+        final CompositeNodeDataWithSchema newChild;
+
         if (schema instanceof ListSchemaNode) {
             newChild = new ListNodeDataWithSchema(schema);
         } else if (schema instanceof LeafListSchemaNode) {
             newChild = new LeafListNodeDataWithSchema(schema);
         } else if (schema instanceof ContainerSchemaNode) {
             newChild = new ContainerNodeDataWithSchema(schema);
+        } else if (schema instanceof YangModeledAnyXmlSchemaNode) {
+            newChild = new YangModeledAnyXmlNodeDataWithSchema((YangModeledAnyXmlSchemaNode)schema);
         } else {
             newChild = new CompositeNodeDataWithSchema(schema);
         }
+
         addCompositeChild(newChild);
         return newChild;
     }
