@@ -99,24 +99,21 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
         if (def == null) {
             //unknown-stmts (from import, include or local-scope)
-            if (qNameToStmtDefMap.get(Utils.trimPrefix(name)) != null) {
-                QName key = Utils.qNameFromArgument(current, name.getLocalName());
-                if (key != null) {
-                    final StatementContextBase<?,?,?> extension = (StatementContextBase<?, ?, ?>) currentContext
-                            .getAllFromNamespace(ExtensionNamespace.class).get(key);
-                    if (extension != null) {
-                        final QName arg = (QName) extension.getStatementArgument();
-                        final QName qName = current.getFromNamespace(QNameCacheNamespace.class,
+            if (qNameToStmtDefMap.get(name) != null) {
+                final StatementContextBase<?, ?, ?> extension = (StatementContextBase<?, ?, ?>) currentContext
+                        .getAllFromNamespace(ExtensionNamespace.class).get(name);
+                if (extension != null) {
+                    final QName arg = (QName) extension.getStatementArgument();
+                    final QName qName = current.getFromNamespace(QNameCacheNamespace.class,
                             QName.create(arg, extension.getIdentifier().getArgument()));
 
-                        def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition
-                                (getNewStatementDefinition(qName)));
-                    } else {
-                        throw new IllegalArgumentException("Not found unknown statement: " + name);
-                    }
+                    def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition(
+                            getNewStatementDefinition(qName)));
+                } else {
+                    throw new IllegalArgumentException("Not found unknown statement: " + name);
                 }
             } else {
-                //type-body-stmts
+                // type-body-stmts
                 def = resolveTypeBodyStmts(name.getLocalName());
             }
         }
