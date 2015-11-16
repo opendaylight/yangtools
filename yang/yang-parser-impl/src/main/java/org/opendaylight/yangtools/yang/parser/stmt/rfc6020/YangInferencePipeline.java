@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.global;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.sourceLocal;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.treeScoped;
+
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
@@ -23,6 +24,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedIdentitiesNamespac
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
+import org.opendaylight.yangtools.yang.parser.spi.source.AnyxmlSchemaLocationNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
@@ -147,6 +149,8 @@ public final class YangInferencePipeline {
             .addSupport(new FeatureStatementImpl.Definition())
             .addSupport(new PositionStatementImpl.Definition())
             .addSupport(new ValueStatementImpl.Definition())
+            .addSupport(new AnyxmlSchemaLocationStatementImpl.AnyxmlSchemaLocationSupport())
+            .addSupport(treeScoped(AnyxmlSchemaLocationNamespace.class))
             .addSupport(global(StmtOrderingNamespace.class))
             .build();
 
