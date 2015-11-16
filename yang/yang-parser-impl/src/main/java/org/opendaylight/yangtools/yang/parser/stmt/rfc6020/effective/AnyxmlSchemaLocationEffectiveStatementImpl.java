@@ -8,42 +8,30 @@
 
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import com.google.common.annotations.Beta;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-public final class UnknownEffectiveStatementImpl extends UnknownEffectiveStatementBase<String> {
+@Beta
+public final class AnyxmlSchemaLocationEffectiveStatementImpl extends
+        UnknownEffectiveStatementBase<SchemaNodeIdentifier> {
 
-    private final QName maybeQNameArgument;
     private final SchemaPath path;
 
-    public UnknownEffectiveStatementImpl(final StmtContext<String, UnknownStatement<String>, ?> ctx) {
+    public AnyxmlSchemaLocationEffectiveStatementImpl(
+            final StmtContext<SchemaNodeIdentifier, UnknownStatement<SchemaNodeIdentifier>, ?> ctx) {
         super(ctx);
 
-        // FIXME: Remove following section after fixing 4380
-        final UnknownSchemaNode original = ctx.getOriginalCtx() == null ? null : (UnknownSchemaNode) ctx
-                .getOriginalCtx().buildEffective();
-        if (original != null) {
-            this.maybeQNameArgument = original.getQName();
-        } else {
-            QName maybeQNameArgumentInit = null;
-            try {
-                maybeQNameArgumentInit = Utils.qNameFromArgument(ctx, argument());
-            } catch (IllegalArgumentException e) {
-                maybeQNameArgumentInit = getNodeType();
-            }
-            this.maybeQNameArgument = maybeQNameArgumentInit;
-        }
-        path = ctx.getParentContext().getSchemaPath().get().createChild(maybeQNameArgument);
+        path = ctx.getParentContext().getSchemaPath().get().createChild(getNodeType());
     }
 
     @Override
     public QName getQName() {
-        return maybeQNameArgument;
+        return getNodeType();
     }
 
     @Override
@@ -55,7 +43,6 @@ public final class UnknownEffectiveStatementImpl extends UnknownEffectiveStateme
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Objects.hashCode(maybeQNameArgument);
         result = prime * result + Objects.hashCode(path);
         result = prime * result + Objects.hashCode(getNodeType());
         result = prime * result + Objects.hashCode(getNodeParameter());
@@ -73,10 +60,7 @@ public final class UnknownEffectiveStatementImpl extends UnknownEffectiveStateme
         if (getClass() != obj.getClass()) {
             return false;
         }
-        UnknownEffectiveStatementImpl other = (UnknownEffectiveStatementImpl) obj;
-        if (!Objects.equals(maybeQNameArgument, other.maybeQNameArgument)) {
-            return false;
-        }
+        AnyxmlSchemaLocationEffectiveStatementImpl other = (AnyxmlSchemaLocationEffectiveStatementImpl) obj;
         if (!Objects.equals(path, other.path)) {
             return false;
         }
