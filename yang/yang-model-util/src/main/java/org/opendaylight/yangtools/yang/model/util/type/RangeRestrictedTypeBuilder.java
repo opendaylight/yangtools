@@ -138,8 +138,10 @@ public abstract class RangeRestrictedTypeBuilder<T extends TypeDefinition<T>> ex
 
         // Now verify if new ranges are strict subset of base ranges
         for (RangeConstraint c : typedRanges) {
-            Preconditions.checkArgument(rangeCovered(baseRangeConstraints, c),
-                "Range constraint %s is not a subset of parent constraints %s", c, baseRangeConstraints);
+            if (!rangeCovered(baseRangeConstraints, c)) {
+                throw new InvalidRangeConstraintException(c, "Range constraint %s is not a subset of parent constraints %s",
+                    c, baseRangeConstraints);
+            }
         }
 
         return typedRanges;
