@@ -35,6 +35,12 @@ abstract class ForwardingNormalizedNodeStreamAttributeWriter extends ForwardingN
     }
 
     @Override
+    public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint,
+            final Map<QName, String> attributes) throws IOException {
+        delegate().startYangModeledAnyXmlNode(name, childSizeHint, attributes);
+    }
+
+    @Override
     public void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint,
             final Map<QName, String> attributes) throws IOException {
         delegate().startUnkeyedListItem(name, childSizeHint, attributes);

@@ -7,9 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.codec;
 
-import org.opendaylight.yangtools.concepts.Codec;
-
 import com.google.common.primitives.UnsignedLong;
+import org.opendaylight.yangtools.concepts.Codec;
 
 /**
  *
@@ -18,6 +17,7 @@ import com.google.common.primitives.UnsignedLong;
  * @author ttkacik
  *
  * @param <T>
+ *          Output type of serialization.
  */
 public interface Uint32Codec<T>  extends Codec<T,Long> {
     @Override

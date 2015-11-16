@@ -71,7 +71,7 @@ public abstract class LeafSetEntryNodeBaseParser<E> implements ExtensibleParser<
 
     /**
      *
-     * @param e
+     * @param e element to be parsed
      * @return attributes mapped to QNames
      */
     protected abstract Map<QName, String> getAttributes(E e);

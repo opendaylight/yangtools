@@ -67,7 +67,7 @@ public abstract class LeafNodeBaseParser<E> implements ExtensibleParser<NodeIden
 
     /**
      *
-     * @param e
+     * @param e element to be parsed
      * @return attributes mapped to QNames
      */
     protected abstract Map<QName, String> getAttributes(E e);
