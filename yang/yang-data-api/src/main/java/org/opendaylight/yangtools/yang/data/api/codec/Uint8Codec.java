@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.concepts.Codec;
  * @author ttkacik
  *
  * @param <T>
+ *          Output type of serialization.
  */
 public interface Uint8Codec<T> extends Codec<T,Short> {
     @Override
