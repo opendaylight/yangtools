@@ -24,12 +24,12 @@ final class DerivedDecimalType extends AbstractDerivedType<DecimalTypeDefinition
 
     @Override
     public Integer getFractionDigits() {
-        return getBaseType().getFractionDigits();
+        return baseType().getFractionDigits();
     }
 
     @Override
     public List<RangeConstraint> getRangeConstraints() {
-        return getBaseType().getRangeConstraints();
+        return baseType().getRangeConstraints();
     }
 
     @Override

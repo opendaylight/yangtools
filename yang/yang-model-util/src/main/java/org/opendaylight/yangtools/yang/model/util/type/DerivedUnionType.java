@@ -24,7 +24,7 @@ final class DerivedUnionType extends AbstractDerivedType<UnionTypeDefinition> im
 
     @Override
     public List<TypeDefinition<?>> getTypes() {
-        return getBaseType().getTypes();
+        return baseType().getTypes();
     }
 
     @Override

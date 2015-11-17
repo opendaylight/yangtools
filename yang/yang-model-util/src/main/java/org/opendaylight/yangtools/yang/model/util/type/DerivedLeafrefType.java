@@ -23,7 +23,7 @@ final class DerivedLeafrefType extends AbstractDerivedType<LeafrefTypeDefinition
 
     @Override
     public RevisionAwareXPath getPathStatement() {
-        return getBaseType().getPathStatement();
+        return baseType().getPathStatement();
     }
 
     @Override

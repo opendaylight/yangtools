@@ -24,12 +24,12 @@ final class DerivedStringType extends AbstractDerivedType<StringTypeDefinition> 
 
     @Override
     public List<PatternConstraint> getPatternConstraints() {
-        return getBaseType().getPatternConstraints();
+        return baseType().getPatternConstraints();
     }
 
     @Override
     public List<LengthConstraint> getLengthConstraints() {
-        return getBaseType().getLengthConstraints();
+        return baseType().getLengthConstraints();
     }
 
     @Override

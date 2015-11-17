@@ -24,7 +24,7 @@ final class DerivedBinaryType extends AbstractDerivedType<BinaryTypeDefinition> 
 
     @Override
     public List<LengthConstraint> getLengthConstraints() {
-        return getBaseType().getLengthConstraints();
+        return baseType().getLengthConstraints();
     }
 
     @Override

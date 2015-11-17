@@ -23,7 +23,7 @@ final class DerivedBitsType extends AbstractDerivedType<BitsTypeDefinition> impl
 
     @Override
     public List<Bit> getBits() {
-        return getBaseType().getBits();
+        return baseType().getBits();
     }
 
     @Override

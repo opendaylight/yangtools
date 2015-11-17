@@ -23,7 +23,7 @@ final class DerivedIntegerType extends AbstractDerivedType<IntegerTypeDefinition
 
     @Override
     public List<RangeConstraint> getRangeConstraints() {
-        return getBaseType().getRangeConstraints();
+        return baseType().getRangeConstraints();
     }
 
     @Override
