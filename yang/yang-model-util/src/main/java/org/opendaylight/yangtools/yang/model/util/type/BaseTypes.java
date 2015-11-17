@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
@@ -84,16 +85,32 @@ public final class BaseTypes {
         return BaseInt8Type.INSTANCE;
     }
 
+    public static boolean isInt8(final TypeDefinition<?> type) {
+        return BaseInt8Type.INSTANCE.getPath().equals(findBaseTypePath(type));
+    }
+
     public static IntegerTypeDefinition int16Type() {
         return BaseInt16Type.INSTANCE;
+    }
+
+    public static boolean isInt16(final TypeDefinition<?> type) {
+        return BaseInt16Type.INSTANCE.getPath().equals(findBaseTypePath(type));
     }
 
     public static IntegerTypeDefinition int32Type() {
         return BaseInt32Type.INSTANCE;
     }
 
+    public static boolean isInt32(final TypeDefinition<?> type) {
+        return BaseInt32Type.INSTANCE.getPath().equals(findBaseTypePath(type));
+    }
+
     public static IntegerTypeDefinition int64Type() {
         return BaseInt64Type.INSTANCE;
+    }
+
+    public static boolean isInt64(final TypeDefinition<?> type) {
+        return BaseInt64Type.INSTANCE.getPath().equals(findBaseTypePath(type));
     }
 
     public static LeafrefTypeBuilder leafrefTypeBuilder(final SchemaPath path) {
@@ -112,15 +129,39 @@ public final class BaseTypes {
         return BaseUint8Type.INSTANCE;
     }
 
+    public static boolean isUint8(final TypeDefinition<?> type) {
+        return BaseUint8Type.INSTANCE.getPath().equals(findBaseTypePath(type));
+    }
+
     public static UnsignedIntegerTypeDefinition uint16Type() {
         return BaseUint16Type.INSTANCE;
+    }
+
+    public static boolean isUint16(final TypeDefinition<?> type) {
+        return BaseUint16Type.INSTANCE.getPath().equals(findBaseTypePath(type));
     }
 
     public static UnsignedIntegerTypeDefinition uint32Type() {
         return BaseUint32Type.INSTANCE;
     }
 
+    public static boolean isUint32(final TypeDefinition<?> type) {
+        return BaseUint32Type.INSTANCE.getPath().equals(findBaseTypePath(type));
+    }
+
     public static UnsignedIntegerTypeDefinition uint64Type() {
         return BaseUint64Type.INSTANCE;
+    }
+
+    public static boolean isUint64(final TypeDefinition<?> type) {
+        return BaseUint64Type.INSTANCE.getPath().equals(findBaseTypePath(type));
+    }
+
+    private static SchemaPath findBaseTypePath(final TypeDefinition<?> type) {
+        TypeDefinition<?> ret = type;
+        while (ret.getBaseType() != null) {
+            ret = ret.getBaseType();
+        }
+        return ret.getPath();
     }
 }
