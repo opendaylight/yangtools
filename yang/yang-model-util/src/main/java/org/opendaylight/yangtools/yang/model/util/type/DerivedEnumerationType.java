@@ -23,7 +23,7 @@ final class DerivedEnumerationType extends AbstractDerivedType<EnumTypeDefinitio
 
     @Override
     public List<EnumPair> getValues() {
-        return getBaseType().getValues();
+        return baseType().getValues();
     }
 
     @Override

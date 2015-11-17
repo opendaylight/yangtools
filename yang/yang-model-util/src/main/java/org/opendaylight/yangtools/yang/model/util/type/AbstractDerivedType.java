@@ -36,6 +36,15 @@ abstract class AbstractDerivedType<T extends TypeDefinition<T>> extends Abstract
 
     @Override
     public final T getBaseType() {
+        return baseType instanceof AbstractRestrictedType ? baseType.getBaseType() : baseType;
+    }
+
+    /**
+     * Return the stored base type. Unlike {@link #getBaseType()}, this method returns the underlying restricted type.
+     *
+     * @return
+     */
+    final T baseType() {
         return baseType;
     }
 

@@ -26,7 +26,7 @@ final class DerivedUnsignedType extends AbstractDerivedType<UnsignedIntegerTypeD
 
     @Override
     public List<RangeConstraint> getRangeConstraints() {
-        return getBaseType().getRangeConstraints();
+        return baseType().getRangeConstraints();
     }
 
     @Override
