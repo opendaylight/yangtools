@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -15,7 +16,12 @@ abstract class AbstractRestrictedTypeBuilder<T extends TypeDefinition<T>> extend
 
     AbstractRestrictedTypeBuilder(final T baseType, final SchemaPath path) {
         super(baseType, path);
-        touched = baseType == null;
+        if (baseType != null) {
+            Preconditions.checkArgument(baseType instanceof AbstractBaseType || baseType instanceof AbstractDerivedType,
+                "Restricted type has to be based on either a base or derived type, not %s", baseType);
+        } else {
+            touched = true;
+        }
     }
 
     final void touch() {
