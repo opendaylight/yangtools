@@ -241,7 +241,7 @@ public class YangParserTest {
         assertEquals(1, patterns.size());
         PatternConstraint pattern = patterns.iterator().next();
         assertEquals("^[e-z]*$", pattern.getRegularExpression());
-        assertTrue(type.getLengthConstraints().isEmpty());
+        assertEquals(1, type.getLengthConstraints().size());
 
         StringTypeDefinition baseType1 = type.getBaseType().getBaseType();
         QName baseType1QName = baseType1.getQName();
@@ -254,7 +254,7 @@ public class YangParserTest {
         assertEquals(1, patterns.size());
         pattern = patterns.iterator().next();
         assertEquals("^[b-u]*$", pattern.getRegularExpression());
-        assertTrue(baseType1.getLengthConstraints().isEmpty());
+        assertEquals(1, baseType1.getLengthConstraints().size());
 
         StringTypeDefinition baseType2 = baseType1.getBaseType().getBaseType();
         QName baseType2QName = baseType2.getQName();
@@ -331,7 +331,7 @@ public class YangParserTest {
         assertEquals(1, patterns.size());
         PatternConstraint pattern = patterns.iterator().next();
         assertEquals("^[e-z]*$", pattern.getRegularExpression());
-        assertTrue(type.getLengthConstraints().isEmpty());
+        assertEquals(1, type.getLengthConstraints().size());
 
         final LeafSchemaNode multiplePatternDirectStringDefLeaf = (LeafSchemaNode) foo
                 .getDataChildByName("multiple-pattern-direct-string-def-leaf");
