@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -23,15 +25,23 @@ public final class BitsTypeBuilder extends TypeBuilder<BitsTypeDefinition> {
     }
 
     public void addBit(@Nonnull final Bit item) {
+        Preconditions.checkArgument(item.getPosition() != null, "Bit %s has null position", item);
+
         builder.put(item.getName(), item);
     }
 
     @Override
     public BitsTypeDefinition build() {
         final Map<String, Bit> map = builder.build();
+        final Map<Long, Bit> positionMap = new HashMap<>();
 
-        // FIXME: run null position checks and re-generate Bit items as appropriate
+        for (Bit b : map.values()) {
+            final Bit conflict = positionMap.put(b.getPosition(), b);
+            if (conflict != null) {
+                throw new InvalidBitDefinitionException(b, "Bit %s conflicts on position with bit ", conflict);
+            }
+        }
 
-        return new BaseBitsType(getPath(), getUnknownSchemaNodes(), map.values());
+        return new BaseBitsType(getPath(), getUnknownSchemaNodes(), positionMap.values());
     }
 }
