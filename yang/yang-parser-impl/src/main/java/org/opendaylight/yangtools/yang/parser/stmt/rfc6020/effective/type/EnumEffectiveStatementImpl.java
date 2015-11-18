@@ -27,7 +27,7 @@ public class EnumEffectiveStatementImpl extends DeclaredEffectiveStatementBase<S
     private final SchemaPath path;
     private String description;
     private String reference;
-    private Status status;
+    private Status status = Status.CURRENT;
     private Integer value;
 
     public EnumEffectiveStatementImpl(final StmtContext<String, EnumStatement, ?> ctx) {
