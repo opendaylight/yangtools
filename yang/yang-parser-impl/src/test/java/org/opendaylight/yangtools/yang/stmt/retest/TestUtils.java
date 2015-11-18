@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.stmt.retest;
 
 import static org.junit.Assert.assertEquals;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -44,8 +43,11 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceIm
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YinStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
 import org.opendaylight.yangtools.yang.stmt.test.StmtTestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class TestUtils {
+    private static final Logger LOG = LoggerFactory.getLogger(TestUtils.class);
 
     private TestUtils() {
     }
@@ -57,8 +59,11 @@ public final class TestUtils {
         File[] files = new File(resourceDirectory).listFiles();
 
         for (File file : files) {
-            addSources(reactor, new YangStatementSourceImpl(file.getPath(),
-                    true));
+            if (file.getName().endsWith(".yang")) {
+                addSources(reactor, new YangStatementSourceImpl(file.getPath(), true));
+            } else {
+                LOG.info("Ignoring non-yang file {}", file);
+            }
         }
 
         EffectiveSchemaContext ctx = reactor.buildEffective();
@@ -239,15 +244,15 @@ public final class TestUtils {
     }
 
     private static void addSources(
-            CrossSourceStatementReactor.BuildAction reactor,
-            YangStatementSourceImpl... sources) {
+            final CrossSourceStatementReactor.BuildAction reactor,
+            final YangStatementSourceImpl... sources) {
         for (YangStatementSourceImpl source : sources) {
             reactor.addSource(source);
         }
     }
 
     public static SchemaContext parseYangSources(
-            StatementStreamSource... sources) throws SourceException,
+            final StatementStreamSource... sources) throws SourceException,
             ReactorException {
 
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
@@ -257,7 +262,7 @@ public final class TestUtils {
         return reactor.buildEffective();
     }
 
-    public static SchemaContext parseYangSources(File... files)
+    public static SchemaContext parseYangSources(final File... files)
             throws SourceException, ReactorException, FileNotFoundException {
 
         StatementStreamSource[] sources = new StatementStreamSource[files.length];
@@ -270,12 +275,12 @@ public final class TestUtils {
         return parseYangSources(sources);
     }
 
-    public static SchemaContext parseYangSources(Collection<File> files)
+    public static SchemaContext parseYangSources(final Collection<File> files)
             throws SourceException, ReactorException, FileNotFoundException {
         return parseYangSources(files.toArray(new File[files.size()]));
     }
 
-    public static SchemaContext parseYangSources(String yangSourcesDirectoryPath)
+    public static SchemaContext parseYangSources(final String yangSourcesDirectoryPath)
             throws SourceException, ReactorException, FileNotFoundException,
             URISyntaxException {
 
@@ -286,7 +291,7 @@ public final class TestUtils {
         return parseYangSources(testSourcesDir.listFiles());
     }
 
-    public static SchemaContext parseYangSource(String yangSourceFilePath)
+    public static SchemaContext parseYangSource(final String yangSourceFilePath)
             throws SourceException, ReactorException, FileNotFoundException,
             URISyntaxException {
 
@@ -297,7 +302,7 @@ public final class TestUtils {
         return parseYangSources(testSourcesFile);
     }
 
-    private static void addYinSources(CrossSourceStatementReactor.BuildAction reactor, YinStatementSourceImpl...
+    private static void addYinSources(final CrossSourceStatementReactor.BuildAction reactor, final YinStatementSourceImpl...
             sources) {
         for (YinStatementSourceImpl source : sources) {
             reactor.addSource(source);
