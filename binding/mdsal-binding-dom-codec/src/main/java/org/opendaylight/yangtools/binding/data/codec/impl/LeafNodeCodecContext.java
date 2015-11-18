@@ -93,8 +93,13 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
     private static Object domValueFromString(final Codec<Object, Object> codec, final TypeDefinition<?> type,
     Object defaultValue) {
         TypeDefinitionAwareCodec typeDefAwareCodec = TypeDefinitionAwareCodec.from(type);
-        Object castedDefaultValue = typeDefAwareCodec.deserialize((String) defaultValue);
-        return codec.deserialize(castedDefaultValue);
+        if (typeDefAwareCodec != null) {
+            Object castedDefaultValue = typeDefAwareCodec.deserialize((String) defaultValue);
+            return codec.deserialize(castedDefaultValue);
+        }
+        // FIXME: BUG-4647 Refactor / redesign this to throw hard error,
+        // once BUG-4638 is fixed and will provide proper getDefaultValue implementation.
+        return null;
     }
 
     @Override
