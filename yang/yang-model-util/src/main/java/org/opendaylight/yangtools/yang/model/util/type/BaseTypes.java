@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.annotations.Beta;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
@@ -86,7 +87,7 @@ public final class BaseTypes {
     }
 
     public static boolean isInt8(final TypeDefinition<?> type) {
-        return BaseInt8Type.INSTANCE.getPath().equals(findBaseTypePath(type));
+        return BaseInt8Type.INSTANCE.getPath().equals(type.getPath());
     }
 
     public static IntegerTypeDefinition int16Type() {
@@ -94,7 +95,7 @@ public final class BaseTypes {
     }
 
     public static boolean isInt16(final TypeDefinition<?> type) {
-        return BaseInt16Type.INSTANCE.getPath().equals(findBaseTypePath(type));
+        return BaseInt16Type.INSTANCE.getPath().equals(type.getPath());
     }
 
     public static IntegerTypeDefinition int32Type() {
@@ -102,7 +103,7 @@ public final class BaseTypes {
     }
 
     public static boolean isInt32(final TypeDefinition<?> type) {
-        return BaseInt32Type.INSTANCE.getPath().equals(findBaseTypePath(type));
+        return BaseInt32Type.INSTANCE.getPath().equals(type.getPath());
     }
 
     public static IntegerTypeDefinition int64Type() {
@@ -110,7 +111,7 @@ public final class BaseTypes {
     }
 
     public static boolean isInt64(final TypeDefinition<?> type) {
-        return BaseInt64Type.INSTANCE.getPath().equals(findBaseTypePath(type));
+        return BaseInt64Type.INSTANCE.getPath().equals(type.getPath());
     }
 
     public static LeafrefTypeBuilder leafrefTypeBuilder(final SchemaPath path) {
@@ -129,39 +130,79 @@ public final class BaseTypes {
         return BaseUint8Type.INSTANCE;
     }
 
-    public static boolean isUint8(final TypeDefinition<?> type) {
-        return BaseUint8Type.INSTANCE.getPath().equals(findBaseTypePath(type));
+    /**
+     * Check if a particular type is the base type for uint8. Unlike {@link DerivedTypes#isUint8(TypeDefinition)},
+     * this method does not perform recursive base type lookup.
+     *
+     * @param type The type to check
+     * @return If the type corresponds to the base uint8 type.
+     * @throws NullPointerException if type is null
+     */
+    public static boolean isUint8(@Nonnull final TypeDefinition<?> type) {
+        return BaseUint8Type.INSTANCE.getPath().equals(type.getPath());
     }
 
     public static UnsignedIntegerTypeDefinition uint16Type() {
         return BaseUint16Type.INSTANCE;
     }
 
-    public static boolean isUint16(final TypeDefinition<?> type) {
-        return BaseUint16Type.INSTANCE.getPath().equals(findBaseTypePath(type));
+    /**
+     * Check if a particular type is the base type for uint16. Unlike {@link DerivedTypes#isUint16(TypeDefinition)},
+     * this method does not perform recursive base type lookup.
+     *
+     * @param type The type to check
+     * @return If the type corresponds to the base uint16 type.
+     * @throws NullPointerException if type is null
+     */
+    public static boolean isUint16(@Nonnull final TypeDefinition<?> type) {
+        return BaseUint16Type.INSTANCE.getPath().equals(type.getPath());
     }
 
     public static UnsignedIntegerTypeDefinition uint32Type() {
         return BaseUint32Type.INSTANCE;
     }
 
-    public static boolean isUint32(final TypeDefinition<?> type) {
-        return BaseUint32Type.INSTANCE.getPath().equals(findBaseTypePath(type));
+    /**
+     * Check if a particular type is the base type for uint32. Unlike {@link DerivedTypes#isUint32(TypeDefinition)},
+     * this method does not perform recursive base type lookup.
+     *
+     * @param type The type to check
+     * @return If the type corresponds to the base uint32 type.
+     * @throws NullPointerException if type is null
+     */
+    public static boolean isUint32(@Nonnull final TypeDefinition<?> type) {
+        return BaseUint32Type.INSTANCE.getPath().equals(type.getPath());
     }
 
     public static UnsignedIntegerTypeDefinition uint64Type() {
         return BaseUint64Type.INSTANCE;
     }
 
-    public static boolean isUint64(final TypeDefinition<?> type) {
-        return BaseUint64Type.INSTANCE.getPath().equals(findBaseTypePath(type));
+    /**
+     * Check if a particular type is the base type for uint64. Unlike {@link DerivedTypes#isUint64(TypeDefinition)},
+     * this method does not perform recursive base type lookup.
+     *
+     * @param type The type to check
+     * @return If the type corresponds to the base uint64 type.
+     * @throws NullPointerException if type is null
+     */
+    public static boolean isUint64(@Nonnull final TypeDefinition<?> type) {
+        return BaseUint64Type.INSTANCE.getPath().equals(type.getPath());
     }
 
-    private static SchemaPath findBaseTypePath(final TypeDefinition<?> type) {
+    /**
+     * Return the base type of a particular type. This method performs recursive lookup through the type's base type
+     * until it finds the last element and returns it. If the argument is already the base type, it is returned as is.
+     *
+     * @param type Type for which to find the base type
+     * @return Base type of specified type
+     * @throws NullPointerException if type is null
+     */
+    public static TypeDefinition<?> baseTypeOf(@Nonnull final TypeDefinition<?> type) {
         TypeDefinition<?> ret = type;
         while (ret.getBaseType() != null) {
             ret = ret.getBaseType();
         }
-        return ret.getPath();
+        return ret;
     }
 }
