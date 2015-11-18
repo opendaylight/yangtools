@@ -7,12 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static org.junit.Assert.*;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.sql.Types;
-import org.opendaylight.yangtools.yang.model.api.Status;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
 
 public class StringTypeTest {
 
@@ -33,7 +38,7 @@ public class StringTypeTest {
     @Test
     public void testGetters() {
         assertEquals(string.getUnits(), "");
-        assertEquals(string.getDefaultValue(), "");
+        assertNull(string.getDefaultValue());
         assertEquals(string.getDescription(), "");
         assertEquals(string.getReference(), "");
         assertEquals(string.getQName(), BaseTypes.STRING_QNAME);

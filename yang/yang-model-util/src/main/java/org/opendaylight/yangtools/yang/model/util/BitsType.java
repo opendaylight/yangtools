@@ -80,7 +80,8 @@ public final class BitsType implements BitsTypeDefinition {
      */
     @Override
     public Object getDefaultValue() {
-        return bits;
+        // FIXME: Return real bits.
+        return null;
     }
 
     /*

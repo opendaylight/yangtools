@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 public final class StringType implements StringTypeDefinition, Immutable {
     private static final QName NAME = BaseTypes.STRING_QNAME;
     private static final SchemaPath PATH = SchemaPath.create(true, NAME);
-    private static final String DEFAULT_VALUE = "";
+    private static final String DEFAULT_VALUE = null;
     private static final String DESCRIPTION = "";
     private static final String REFERENCE = "";
     private final List<LengthConstraint> lengthStatements;
