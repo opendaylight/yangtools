@@ -138,11 +138,11 @@ public abstract class LengthRestrictedTypeBuilder<T extends TypeDefinition<T>> e
 
     @Override
     final T buildType() {
-        if (lengthAlternatives == null || lengthAlternatives.isEmpty()) {
-            return buildType(ImmutableList.<LengthConstraint>of());
-        }
-
         final List<LengthConstraint> baseLengths = findLenghts();
+
+        if (lengthAlternatives == null || lengthAlternatives.isEmpty()) {
+            return buildType(baseLengths);
+        }
 
         // Run through alternatives and resolve them against the base type
         final List<LengthConstraint> resolvedLengths = ensureResolvedLengths(lengthAlternatives, baseLengths);
