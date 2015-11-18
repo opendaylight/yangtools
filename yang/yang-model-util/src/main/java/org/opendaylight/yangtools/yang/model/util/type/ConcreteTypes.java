@@ -29,46 +29,46 @@ import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinit
  * Support for creating {@link TypeDefinition} instances defined by leaf and leaf-list statements.
  */
 @Beta
-public final class LeafTypes {
-    private LeafTypes() {
+public final class ConcreteTypes {
+    private ConcreteTypes() {
         throw new UnsupportedOperationException();
     }
 
-    public static LeafTypeBuilder<?> leafTypeBuilder(@Nonnull final TypeDefinition<?> baseType,
+    public static ConcreteTypeBuilder<?> concreteTypeBuilder(@Nonnull final TypeDefinition<?> baseType,
             @Nonnull final SchemaPath path) {
         if (baseType instanceof BinaryTypeDefinition) {
-            return leafBinaryBuilder((BinaryTypeDefinition) baseType, path);
+            return concreteBinaryBuilder((BinaryTypeDefinition) baseType, path);
         } else if (baseType instanceof BitsTypeDefinition) {
-            return leafBitsBuilder((BitsTypeDefinition) baseType, path);
+            return concreteBitsBuilder((BitsTypeDefinition) baseType, path);
         } else if (baseType instanceof BooleanTypeDefinition) {
-            return leafBooleanBuilder((BooleanTypeDefinition) baseType, path);
+            return concreteBooleanBuilder((BooleanTypeDefinition) baseType, path);
         } else if (baseType instanceof DecimalTypeDefinition) {
-            return leafDecimalBuilder((DecimalTypeDefinition) baseType, path);
+            return concreteDecimalBuilder((DecimalTypeDefinition) baseType, path);
         } else if (baseType instanceof EmptyTypeDefinition) {
-            return leafEmptyBuilder((EmptyTypeDefinition) baseType, path);
+            return concreteEmptyBuilder((EmptyTypeDefinition) baseType, path);
         } else if (baseType instanceof EnumTypeDefinition) {
-            return leafEnumerationBuilder((EnumTypeDefinition) baseType, path);
+            return concreteEnumerationBuilder((EnumTypeDefinition) baseType, path);
         } else if (baseType instanceof IdentityrefTypeDefinition) {
-            return leafIdentityrefBuilder((IdentityrefTypeDefinition) baseType, path);
+            return concreteIdentityrefBuilder((IdentityrefTypeDefinition) baseType, path);
         } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
-            return leafInstanceIdentifierBuilder((InstanceIdentifierTypeDefinition) baseType, path);
+            return concreteInstanceIdentifierBuilder((InstanceIdentifierTypeDefinition) baseType, path);
         } else if (baseType instanceof IntegerTypeDefinition) {
-            return leafIntegerBuilder((IntegerTypeDefinition) baseType, path);
+            return concreteIntegerBuilder((IntegerTypeDefinition) baseType, path);
         } else if (baseType instanceof LeafrefTypeDefinition) {
-            return leafLeafrefBuilder((LeafrefTypeDefinition) baseType, path);
+            return concreteLeafrefBuilder((LeafrefTypeDefinition) baseType, path);
         } else if (baseType instanceof StringTypeDefinition) {
-            return leafStringBuilder((StringTypeDefinition) baseType, path);
+            return concreteStringBuilder((StringTypeDefinition) baseType, path);
         } else if (baseType instanceof UnionTypeDefinition) {
-            return leafUnionBuilder((UnionTypeDefinition) baseType, path);
+            return concreteUnionBuilder((UnionTypeDefinition) baseType, path);
         } else if (baseType instanceof UnsignedIntegerTypeDefinition) {
-            return leafUnsignedBuilder((UnsignedIntegerTypeDefinition) baseType, path);
+            return concreteUnsignedBuilder((UnsignedIntegerTypeDefinition) baseType, path);
         } else {
             throw new IllegalArgumentException("Unhandled type definition class " + baseType.getClass());
         }
     }
 
-    private static LeafTypeBuilder<BinaryTypeDefinition> leafBinaryBuilder(@Nonnull final BinaryTypeDefinition baseType, @Nonnull final SchemaPath path) {
-        return new LeafTypeBuilder<BinaryTypeDefinition>(baseType, path) {
+    private static ConcreteTypeBuilder<BinaryTypeDefinition> concreteBinaryBuilder(@Nonnull final BinaryTypeDefinition baseType, @Nonnull final SchemaPath path) {
+        return new ConcreteTypeBuilder<BinaryTypeDefinition>(baseType, path) {
             @Override
             public BinaryTypeDefinition buildType() {
                 return new DerivedBinaryType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
@@ -77,8 +77,8 @@ public final class LeafTypes {
         };
     }
 
-    private static LeafTypeBuilder<BitsTypeDefinition> leafBitsBuilder(final BitsTypeDefinition baseType, final SchemaPath path) {
-        return new LeafTypeBuilder<BitsTypeDefinition>(baseType, path) {
+    private static ConcreteTypeBuilder<BitsTypeDefinition> concreteBitsBuilder(final BitsTypeDefinition baseType, final SchemaPath path) {
+        return new ConcreteTypeBuilder<BitsTypeDefinition>(baseType, path) {
             @Override
             public BitsTypeDefinition buildType() {
                 return new DerivedBitsType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
@@ -87,8 +87,8 @@ public final class LeafTypes {
         };
     }
 
-    private static LeafTypeBuilder<BooleanTypeDefinition> leafBooleanBuilder(@Nonnull final BooleanTypeDefinition baseType, @Nonnull final SchemaPath path) {
-        return new LeafTypeBuilder<BooleanTypeDefinition>(baseType, path) {
+    private static ConcreteTypeBuilder<BooleanTypeDefinition> concreteBooleanBuilder(@Nonnull final BooleanTypeDefinition baseType, @Nonnull final SchemaPath path) {
+        return new ConcreteTypeBuilder<BooleanTypeDefinition>(baseType, path) {
             @Override
             public BooleanTypeDefinition buildType() {
                 return new DerivedBooleanType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
@@ -97,8 +97,8 @@ public final class LeafTypes {
         };
     }
 
-    private static LeafTypeBuilder<DecimalTypeDefinition> leafDecimalBuilder(final DecimalTypeDefinition baseType, final SchemaPath path) {
-        return new LeafTypeBuilder<DecimalTypeDefinition>(baseType, path) {
+    private static ConcreteTypeBuilder<DecimalTypeDefinition> concreteDecimalBuilder(final DecimalTypeDefinition baseType, final SchemaPath path) {
+        return new ConcreteTypeBuilder<DecimalTypeDefinition>(baseType, path) {
             @Override
             public DecimalTypeDefinition buildType() {
                 return new DerivedDecimalType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
@@ -107,8 +107,8 @@ public final class LeafTypes {
         };
     }
 
-    private static LeafTypeBuilder<EmptyTypeDefinition> leafEmptyBuilder(final EmptyTypeDefinition baseType, final SchemaPath path) {
-        return new LeafTypeBuilder<EmptyTypeDefinition>(baseType, path) {
+    private static ConcreteTypeBuilder<EmptyTypeDefinition> concreteEmptyBuilder(final EmptyTypeDefinition baseType, final SchemaPath path) {
+        return new ConcreteTypeBuilder<EmptyTypeDefinition>(baseType, path) {
             @Override
             public EmptyTypeDefinition buildType() {
                 return new DerivedEmptyType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
@@ -117,8 +117,8 @@ public final class LeafTypes {
         };
     }
 
-    private static LeafTypeBuilder<EnumTypeDefinition> leafEnumerationBuilder(final EnumTypeDefinition baseType, final SchemaPath path) {
-        return new LeafTypeBuilder<EnumTypeDefinition>(baseType, path) {
+    private static ConcreteTypeBuilder<EnumTypeDefinition> concreteEnumerationBuilder(final EnumTypeDefinition baseType, final SchemaPath path) {
+        return new ConcreteTypeBuilder<EnumTypeDefinition>(baseType, path) {
             @Override
             public EnumTypeDefinition buildType() {
                 return new DerivedEnumerationType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
@@ -127,8 +127,8 @@ public final class LeafTypes {
         };
     }
 
-    private static LeafTypeBuilder<IdentityrefTypeDefinition> leafIdentityrefBuilder(final IdentityrefTypeDefinition baseType, final SchemaPath path) {
-        return new LeafTypeBuilder<IdentityrefTypeDefinition>(baseType, path) {
+    private static ConcreteTypeBuilder<IdentityrefTypeDefinition> concreteIdentityrefBuilder(final IdentityrefTypeDefinition baseType, final SchemaPath path) {
+        return new ConcreteTypeBuilder<IdentityrefTypeDefinition>(baseType, path) {
             @Override
             public IdentityrefTypeDefinition buildType() {
                 return new DerivedIdentityrefType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
@@ -137,8 +137,8 @@ public final class LeafTypes {
         };
     }
 
-    private static LeafTypeBuilder<InstanceIdentifierTypeDefinition> leafInstanceIdentifierBuilder(final InstanceIdentifierTypeDefinition baseType, final SchemaPath path) {
-        return new LeafTypeBuilder<InstanceIdentifierTypeDefinition>(baseType, path) {
+    private static ConcreteTypeBuilder<InstanceIdentifierTypeDefinition> concreteInstanceIdentifierBuilder(final InstanceIdentifierTypeDefinition baseType, final SchemaPath path) {
+        return new ConcreteTypeBuilder<InstanceIdentifierTypeDefinition>(baseType, path) {
             @Override
             public InstanceIdentifierTypeDefinition buildType() {
                 return new DerivedInstanceIdentifierType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
@@ -147,8 +147,8 @@ public final class LeafTypes {
         };
     }
 
-    private static LeafTypeBuilder<IntegerTypeDefinition> leafIntegerBuilder(final IntegerTypeDefinition baseType, final SchemaPath path) {
-        return new LeafTypeBuilder<IntegerTypeDefinition>(baseType, path) {
+    private static ConcreteTypeBuilder<IntegerTypeDefinition> concreteIntegerBuilder(final IntegerTypeDefinition baseType, final SchemaPath path) {
+        return new ConcreteTypeBuilder<IntegerTypeDefinition>(baseType, path) {
             @Override
             public IntegerTypeDefinition buildType() {
                 return new DerivedIntegerType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
@@ -157,8 +157,8 @@ public final class LeafTypes {
         };
     }
 
-    private static LeafTypeBuilder<LeafrefTypeDefinition> leafLeafrefBuilder(final LeafrefTypeDefinition baseType, final SchemaPath path) {
-        return new LeafTypeBuilder<LeafrefTypeDefinition>(baseType, path) {
+    private static ConcreteTypeBuilder<LeafrefTypeDefinition> concreteLeafrefBuilder(final LeafrefTypeDefinition baseType, final SchemaPath path) {
+        return new ConcreteTypeBuilder<LeafrefTypeDefinition>(baseType, path) {
             @Override
             public LeafrefTypeDefinition buildType() {
                 return new DerivedLeafrefType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
@@ -167,8 +167,8 @@ public final class LeafTypes {
         };
     }
 
-    private static LeafTypeBuilder<StringTypeDefinition> leafStringBuilder(final StringTypeDefinition baseType, final SchemaPath path) {
-        return new LeafTypeBuilder<StringTypeDefinition>(baseType, path) {
+    private static ConcreteTypeBuilder<StringTypeDefinition> concreteStringBuilder(final StringTypeDefinition baseType, final SchemaPath path) {
+        return new ConcreteTypeBuilder<StringTypeDefinition>(baseType, path) {
             @Override
             public StringTypeDefinition buildType() {
                 return new DerivedStringType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
@@ -177,8 +177,8 @@ public final class LeafTypes {
         };
     }
 
-    private static LeafTypeBuilder<UnionTypeDefinition> leafUnionBuilder(final UnionTypeDefinition baseType, final SchemaPath path) {
-        return new LeafTypeBuilder<UnionTypeDefinition>(baseType, path) {
+    private static ConcreteTypeBuilder<UnionTypeDefinition> concreteUnionBuilder(final UnionTypeDefinition baseType, final SchemaPath path) {
+        return new ConcreteTypeBuilder<UnionTypeDefinition>(baseType, path) {
             @Override
             public DerivedUnionType buildType() {
                 return new DerivedUnionType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
@@ -187,8 +187,8 @@ public final class LeafTypes {
         };
     }
 
-    private static LeafTypeBuilder<UnsignedIntegerTypeDefinition> leafUnsignedBuilder(final UnsignedIntegerTypeDefinition baseType, final SchemaPath path) {
-        return new LeafTypeBuilder<UnsignedIntegerTypeDefinition>(baseType, path) {
+    private static ConcreteTypeBuilder<UnsignedIntegerTypeDefinition> concreteUnsignedBuilder(final UnsignedIntegerTypeDefinition baseType, final SchemaPath path) {
+        return new ConcreteTypeBuilder<UnsignedIntegerTypeDefinition>(baseType, path) {
             @Override
             public UnsignedIntegerTypeDefinition buildType() {
                 return new DerivedUnsignedType(getBaseType(), getPath(), getDefaultValue(), getDescription(), getReference(),
