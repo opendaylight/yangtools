@@ -587,6 +587,20 @@ module opendaylight-default-value-test {
         leaf bits-leaf {
             type my-bits;
         }
+
+        leaf bits-leaf2 {
+            type bits {
+                bit disable-nagle {
+                    position 0;
+                }
+                bit auto-sense-speed {
+                    position 1;
+                }
+                bit 10-Mb-only {
+                    position 2;
+                }
+            }
+        }
     }
 
     container binary-container {

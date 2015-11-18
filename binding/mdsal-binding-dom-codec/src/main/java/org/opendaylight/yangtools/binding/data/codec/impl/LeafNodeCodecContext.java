@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -32,7 +34,6 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IdentityEffectiveStatementImpl;
 
 final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<D> implements NodeContextSupplier {
@@ -73,6 +74,10 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
                     if (defaultValue instanceof IdentitySchemaNode) {
                         defaultValue = ((IdentityEffectiveStatementImpl) defaultValue).argument();
                         return codec.deserialize(defaultValue);
+                    }
+
+                    if (defaultValue instanceof ImmutableList) {
+                        return codec.deserialize(ImmutableSet.copyOf((ImmutableList) defaultValue));
                     }
 
                     if (defaultValue instanceof List) {
