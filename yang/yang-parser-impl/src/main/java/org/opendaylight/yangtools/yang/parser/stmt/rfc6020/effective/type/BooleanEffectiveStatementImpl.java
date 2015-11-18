@@ -50,7 +50,7 @@ public class BooleanEffectiveStatementImpl extends DeclaredEffectiveStatementBas
 
     @Override
     public Object getDefaultValue() {
-        return false;
+        return null;
     }
 
     @Override

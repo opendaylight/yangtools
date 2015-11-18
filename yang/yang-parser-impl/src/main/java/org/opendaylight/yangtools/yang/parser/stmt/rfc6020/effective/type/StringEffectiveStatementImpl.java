@@ -32,7 +32,6 @@ public class StringEffectiveStatementImpl extends DeclaredEffectiveStatementBase
     public static final String LOCAL_NAME = TypeUtils.STRING;
     private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, LOCAL_NAME);
     private static final SchemaPath PATH = SchemaPath.create(true, QNAME);
-    private static final String DEFAULT_VALUE = "";
     private static final String DESCRIPTION = "The string built-in type represents human-readable strings in YANG. "
             + "Legal characters are tab, carriage return, line feed, and the legal "
             + "characters of Unicode and ISO/IEC 10646";
@@ -76,7 +75,7 @@ public class StringEffectiveStatementImpl extends DeclaredEffectiveStatementBase
 
     @Override
     public Object getDefaultValue() {
-        return DEFAULT_VALUE;
+        return null;
     }
 
     @Override
@@ -149,8 +148,7 @@ public class StringEffectiveStatementImpl extends DeclaredEffectiveStatementBase
         builder.append(QNAME);
         builder.append(", path=");
         builder.append(PATH);
-        builder.append(", defaultValue=");
-        builder.append(DEFAULT_VALUE);
+        builder.append(", defaultValue=null");
         builder.append(", description=");
         builder.append(DESCRIPTION);
         builder.append(", reference=");

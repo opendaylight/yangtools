@@ -13,6 +13,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
@@ -146,7 +147,7 @@ public class EffectiveStatementTypeTest {
 
         assertNull(booleanEff.getBaseType());
         assertEquals("", booleanEff.getUnits());
-        assertTrue(booleanEff.getDefaultValue().equals(false));
+        assertNull(booleanEff.getDefaultValue());
         assertEquals("boolean", booleanEff.getQName().getLocalName());
         assertNull(booleanEff.getPath().getParent().getParent());
         assertNotNull(booleanEff.getUnknownSchemaNodes());
@@ -482,7 +483,7 @@ public class EffectiveStatementTypeTest {
         assertEquals("string", stringEff.getQName().getLocalName());
         assertEquals("CURRENT", stringEff.getStatus().toString());
         assertEquals("", stringEff.getUnits());
-        assertEquals("", stringEff.getDefaultValue());
+        assertNull(stringEff.getDefaultValue());
         assertNotNull(stringEff.getUnknownSchemaNodes());
         assertNull(stringEff.getBaseType());
         assertNotNull(stringEff.getDescription());
