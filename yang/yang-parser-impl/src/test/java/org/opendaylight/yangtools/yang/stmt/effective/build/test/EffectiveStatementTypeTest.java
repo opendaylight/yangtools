@@ -79,7 +79,7 @@ public class EffectiveStatementTypeTest {
 
         assertNull(binaryEff.getBaseType());
         assertEquals("", binaryEff.getUnits());
-        assertTrue(binaryEff.getDefaultValue() instanceof List);
+        assertNull(binaryEff.getDefaultValue());
         assertEquals("binary", binaryEff.getQName().getLocalName());
         assertEquals(0, binaryEff.getLengthConstraints().get(0).getMin());
         assertEquals("CURRENT", binaryEff.getStatus().toString());
