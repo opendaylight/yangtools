@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
@@ -20,21 +19,21 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * 4</a>). <br>
  * The canonical form of a binary value follows the rules in <a
  * href="https://tools.ietf.org/html/rfc4648">[RFC4648]</a>.
- * 
+ *
  * <br>
  * <br>
  * This interface was modeled according to definition in <a
  * href="https://tools.ietf.org/html/rfc6020#section-9.8">[RFC-6020] The binary
  * Built-In Type</a>
- * 
  */
 public interface BinaryTypeDefinition extends TypeDefinition<BinaryTypeDefinition> {
 
     /**
-     * Returns List of number of octets that binary value contains.
-     * 
+     * Returns List of number of octets that binary value contains. These are the effective constraints, e.g. they include
+     * any range constraints imposed by base types.
+     *
      * @return List of number of octets that binary value contains.
-     * 
+     *
      * @see LengthConstraint
      */
     List<LengthConstraint> getLengthConstraints();
