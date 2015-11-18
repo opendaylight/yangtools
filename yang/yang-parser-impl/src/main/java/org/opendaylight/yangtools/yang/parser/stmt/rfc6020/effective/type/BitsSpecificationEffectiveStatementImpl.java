@@ -74,7 +74,8 @@ public class BitsSpecificationEffectiveStatementImpl extends
 
     @Override
     public Object getDefaultValue() {
-        return bits;
+        // FIXME: Should return real value
+        return null;
     }
 
     @Override
