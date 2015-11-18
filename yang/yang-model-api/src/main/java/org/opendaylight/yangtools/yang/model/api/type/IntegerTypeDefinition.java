@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.List;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
@@ -25,9 +26,10 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 public interface IntegerTypeDefinition extends TypeDefinition<IntegerTypeDefinition> {
 
     /**
-     * Returns Range Constraints defined for given Integer Type.
+     * Returns Range Constraints defined for given Integer Type. These are the effective constraints, e.g. they include
+     * any range constraints imposed by base types.
      *
      * @return Range Constraints defined for given Integer Type.
      */
-    List<RangeConstraint> getRangeConstraints();
+    @Nonnull List<RangeConstraint> getRangeConstraints();
 }
