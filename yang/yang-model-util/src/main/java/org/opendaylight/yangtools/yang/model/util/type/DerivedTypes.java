@@ -83,7 +83,103 @@ public final class DerivedTypes {
         }
     }
 
-    public static DerivedTypeBuilder<BinaryTypeDefinition> derivedBinaryBuilder(@Nonnull final BinaryTypeDefinition baseType, @Nonnull final SchemaPath path) {
+    /**
+     * Check if a particular type is corresponds to int8. Unlike {@link BaseTypes#isInt8(TypeDefinition)}, this
+     * method performs recursive lookup to find the base type.
+     *
+     * @param type The type to check
+     * @return If the type belongs to the int8 type family.
+     * @throws NullPointerException if type is null
+     */
+    public static boolean isInt8(@Nonnull final TypeDefinition<?> type) {
+        return BaseTypes.isInt8(BaseTypes.baseTypeOf(type));
+    }
+
+    /**
+     * Check if a particular type is corresponds to int16. Unlike {@link BaseTypes#isInt16(TypeDefinition)}, this
+     * method performs recursive lookup to find the base type.
+     *
+     * @param type The type to check
+     * @return If the type belongs to the int16 type family.
+     * @throws NullPointerException if type is null
+     */
+    public static boolean isInt16(@Nonnull final TypeDefinition<?> type) {
+        return BaseTypes.isInt16(BaseTypes.baseTypeOf(type));
+    }
+
+    /**
+     * Check if a particular type is corresponds to int32. Unlike {@link BaseTypes#isInt32(TypeDefinition)}, this
+     * method performs recursive lookup to find the base type.
+     *
+     * @param type The type to check
+     * @return If the type belongs to the int32 type family.
+     * @throws NullPointerException if type is null
+     */
+    public static boolean isInt32(@Nonnull final TypeDefinition<?> type) {
+        return BaseTypes.isInt32(BaseTypes.baseTypeOf(type));
+    }
+
+    /**
+     * Check if a particular type is corresponds to int64. Unlike {@link BaseTypes#isInt64(TypeDefinition)}, this
+     * method performs recursive lookup to find the base type.
+     *
+     * @param type The type to check
+     * @return If the type belongs to the int64 type family.
+     * @throws NullPointerException if type is null
+     */
+    public static boolean isInt64(@Nonnull final TypeDefinition<?> type) {
+        return BaseTypes.isInt64(BaseTypes.baseTypeOf(type));
+    }
+
+    /**
+     * Check if a particular type is corresponds to uint8. Unlike {@link BaseTypes#isUint8(TypeDefinition)}, this
+     * method performs recursive lookup to find the base type.
+     *
+     * @param type The type to check
+     * @return If the type belongs to the uint8 type family.
+     * @throws NullPointerException if type is null
+     */
+    public static boolean isUint8(@Nonnull final TypeDefinition<?> type) {
+        return BaseTypes.isUint8(BaseTypes.baseTypeOf(type));
+    }
+
+    /**
+     * Check if a particular type is corresponds to uint16. Unlike {@link BaseTypes#isUint16(TypeDefinition)}, this
+     * method performs recursive lookup to find the base type.
+     *
+     * @param type The type to check
+     * @return If the type belongs to the uint16 type family.
+     * @throws NullPointerException if type is null
+     */
+    public static boolean isUint16(@Nonnull final TypeDefinition<?> type) {
+        return BaseTypes.isUint16(BaseTypes.baseTypeOf(type));
+    }
+
+    /**
+     * Check if a particular type is corresponds to uint32. Unlike {@link BaseTypes#isUint32(TypeDefinition)}, this
+     * method performs recursive lookup to find the base type.
+     *
+     * @param type The type to check
+     * @return If the type belongs to the uint32 type family.
+     * @throws NullPointerException if type is null
+     */
+    public static boolean isUint32(@Nonnull final TypeDefinition<?> type) {
+        return BaseTypes.isUint32(BaseTypes.baseTypeOf(type));
+    }
+
+    /**
+     * Check if a particular type is corresponds to uint64. Unlike {@link BaseTypes#isUint64(TypeDefinition)}, this
+     * method performs recursive lookup to find the base type.
+     *
+     * @param type The type to check
+     * @return If the type belongs to the uint64 type family.
+     * @throws NullPointerException if type is null
+     */
+    public static boolean isUint64(@Nonnull final TypeDefinition<?> type) {
+        return BaseTypes.isUint64(BaseTypes.baseTypeOf(type));
+    }
+
+    private static DerivedTypeBuilder<BinaryTypeDefinition> derivedBinaryBuilder(@Nonnull final BinaryTypeDefinition baseType, @Nonnull final SchemaPath path) {
         return new DerivedTypeBuilder<BinaryTypeDefinition>(baseType, path) {
             @Override
             public BinaryTypeDefinition build() {
@@ -93,7 +189,7 @@ public final class DerivedTypes {
         };
     }
 
-    public static DerivedTypeBuilder<BitsTypeDefinition> derivedBitsBuilder(final BitsTypeDefinition baseType, final SchemaPath path) {
+    private static DerivedTypeBuilder<BitsTypeDefinition> derivedBitsBuilder(final BitsTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<BitsTypeDefinition>(baseType, path) {
             @Override
             public BitsTypeDefinition build() {
@@ -103,7 +199,7 @@ public final class DerivedTypes {
         };
     }
 
-    public static DerivedTypeBuilder<BooleanTypeDefinition> derivedBooleanBuilder(@Nonnull final BooleanTypeDefinition baseType, @Nonnull final SchemaPath path) {
+    private static DerivedTypeBuilder<BooleanTypeDefinition> derivedBooleanBuilder(@Nonnull final BooleanTypeDefinition baseType, @Nonnull final SchemaPath path) {
         return new DerivedTypeBuilder<BooleanTypeDefinition>(baseType, path) {
             @Override
             public BooleanTypeDefinition build() {
@@ -113,7 +209,7 @@ public final class DerivedTypes {
         };
     }
 
-    public static DerivedTypeBuilder<DecimalTypeDefinition> derivedDecimalBuilder(final DecimalTypeDefinition baseType, final SchemaPath path) {
+    private static DerivedTypeBuilder<DecimalTypeDefinition> derivedDecimalBuilder(final DecimalTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<DecimalTypeDefinition>(baseType, path) {
             @Override
             public DecimalTypeDefinition build() {
@@ -123,7 +219,7 @@ public final class DerivedTypes {
         };
     }
 
-    public static DerivedTypeBuilder<EmptyTypeDefinition> derivedEmptyBuilder(final EmptyTypeDefinition baseType, final SchemaPath path) {
+    private static DerivedTypeBuilder<EmptyTypeDefinition> derivedEmptyBuilder(final EmptyTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<EmptyTypeDefinition>(baseType, path) {
             @Override
             public EmptyTypeDefinition build() {
@@ -133,7 +229,7 @@ public final class DerivedTypes {
         };
     }
 
-    public static DerivedTypeBuilder<EnumTypeDefinition> derivedEnumerationBuilder(final EnumTypeDefinition baseType, final SchemaPath path) {
+    private static DerivedTypeBuilder<EnumTypeDefinition> derivedEnumerationBuilder(final EnumTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<EnumTypeDefinition>(baseType, path) {
             @Override
             public EnumTypeDefinition build() {
@@ -143,7 +239,7 @@ public final class DerivedTypes {
         };
     }
 
-    public static DerivedTypeBuilder<IdentityrefTypeDefinition> derivedIdentityrefBuilder(final IdentityrefTypeDefinition baseType, final SchemaPath path) {
+    private static DerivedTypeBuilder<IdentityrefTypeDefinition> derivedIdentityrefBuilder(final IdentityrefTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<IdentityrefTypeDefinition>(baseType, path) {
             @Override
             public IdentityrefTypeDefinition build() {
@@ -153,7 +249,7 @@ public final class DerivedTypes {
         };
     }
 
-    public static DerivedTypeBuilder<InstanceIdentifierTypeDefinition> derivedInstanceIdentifierBuilder(final InstanceIdentifierTypeDefinition baseType, final SchemaPath path) {
+    private static DerivedTypeBuilder<InstanceIdentifierTypeDefinition> derivedInstanceIdentifierBuilder(final InstanceIdentifierTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<InstanceIdentifierTypeDefinition>(baseType, path) {
             @Override
             public InstanceIdentifierTypeDefinition build() {
@@ -163,7 +259,7 @@ public final class DerivedTypes {
         };
     }
 
-    public static DerivedTypeBuilder<IntegerTypeDefinition> derivedIntegerBuilder(final IntegerTypeDefinition baseType, final SchemaPath path) {
+    private static DerivedTypeBuilder<IntegerTypeDefinition> derivedIntegerBuilder(final IntegerTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<IntegerTypeDefinition>(baseType, path) {
             @Override
             public IntegerTypeDefinition build() {
@@ -173,7 +269,7 @@ public final class DerivedTypes {
         };
     }
 
-    public static DerivedTypeBuilder<LeafrefTypeDefinition> derivedLeafrefBuilder(final LeafrefTypeDefinition baseType, final SchemaPath path) {
+    private static DerivedTypeBuilder<LeafrefTypeDefinition> derivedLeafrefBuilder(final LeafrefTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<LeafrefTypeDefinition>(baseType, path) {
             @Override
             public LeafrefTypeDefinition build() {
@@ -183,7 +279,7 @@ public final class DerivedTypes {
         };
     }
 
-    public static DerivedTypeBuilder<StringTypeDefinition> derivedStringBuilder(final StringTypeDefinition baseType, final SchemaPath path) {
+    private static DerivedTypeBuilder<StringTypeDefinition> derivedStringBuilder(final StringTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<StringTypeDefinition>(baseType, path) {
             @Override
             public StringTypeDefinition build() {
@@ -193,7 +289,7 @@ public final class DerivedTypes {
         };
     }
 
-    public static DerivedTypeBuilder<UnionTypeDefinition> derivedUnionBuilder(final UnionTypeDefinition baseType, final SchemaPath path) {
+    private static DerivedTypeBuilder<UnionTypeDefinition> derivedUnionBuilder(final UnionTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<UnionTypeDefinition>(baseType, path) {
             @Override
             public DerivedUnionType build() {
@@ -203,7 +299,7 @@ public final class DerivedTypes {
         };
     }
 
-    public static DerivedTypeBuilder<UnsignedIntegerTypeDefinition> derivedUnsignedBuilder(final UnsignedIntegerTypeDefinition baseType, final SchemaPath path) {
+    private static DerivedTypeBuilder<UnsignedIntegerTypeDefinition> derivedUnsignedBuilder(final UnsignedIntegerTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<UnsignedIntegerTypeDefinition>(baseType, path) {
             @Override
             public UnsignedIntegerTypeDefinition build() {
