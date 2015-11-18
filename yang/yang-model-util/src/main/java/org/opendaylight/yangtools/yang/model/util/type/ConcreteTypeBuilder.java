@@ -22,8 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * @param <T> Resulting {@link TypeDefinition}
  */
 @Beta
-public abstract class LeafTypeBuilder<T extends TypeDefinition<T>> extends DerivedTypeBuilder<T> {
-    LeafTypeBuilder(final T baseType, final SchemaPath path) {
+public abstract class ConcreteTypeBuilder<T extends TypeDefinition<T>> extends DerivedTypeBuilder<T> {
+    ConcreteTypeBuilder(final T baseType, final SchemaPath path) {
         super(baseType, path);
 
         if (baseType.getDescription() != null) {

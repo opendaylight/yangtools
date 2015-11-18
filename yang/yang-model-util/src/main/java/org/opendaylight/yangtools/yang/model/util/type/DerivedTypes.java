@@ -34,16 +34,6 @@ import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinit
  * and units attributes are inherited from the super (base or restricted) type, others are left undefined if not
  * explicitly set. Status defaults to current.
  */
-/*
- * FIXME: Create ConcreteTypes
- *        Leaf and leaf-list statements provide for a similar mechanism by which a particular type is changed, most
- *        notably with the ability to redefine the default type. The resulting types could conceivably be called
- *        'concrete types', as they cannot be referenced by another leaf or type definition. This aspect needs to be
- *        split out into a 'ConcreteTypes' class.
- *
- *        Builders should use the fly-weight pattern to minimize footprint for cases when leaves do not override any
- *        aspect of the base type.
- */
 @Beta
 public final class DerivedTypes {
     private DerivedTypes() {
