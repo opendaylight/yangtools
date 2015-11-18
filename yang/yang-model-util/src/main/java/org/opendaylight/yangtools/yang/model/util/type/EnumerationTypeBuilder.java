@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -23,14 +25,21 @@ public final class EnumerationTypeBuilder extends TypeBuilder<EnumTypeDefinition
     }
 
     public void addEnum(@Nonnull final EnumPair item) {
+        Preconditions.checkArgument(item.getValue() != null, "Enum %s has null value", item);
         builder.put(item.getName(), item);
     }
 
     @Override
     public EnumTypeDefinition build() {
         final Map<String, EnumPair> map = builder.build();
+        final Map<Integer, EnumPair> positionMap = new HashMap<>();
 
-        // FIXME: run null value checks and re-generate EnumPairs as appropriate
+        for (EnumPair p : map.values()) {
+            final EnumPair conflict = positionMap.put(p.getValue(), p);
+            if (conflict != null) {
+                throw new InvalidEnumDefinitionException(p, "Bit %s conflicts on position with bit ", conflict);
+            }
+        }
 
         return new BaseEnumerationType(getPath(), getUnknownSchemaNodes(), map.values());
     }
