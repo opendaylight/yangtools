@@ -33,7 +33,6 @@ public class BinaryEffectiveStatementImpl extends DeclaredEffectiveStatementBase
     private static final QName QNAME = QName.create(YangConstants.RFC6020_YANG_MODULE, "binary");
     private static final SchemaPath PATH = SchemaPath.create(true, QNAME);
     private static final Optional<String> OPTIONAL_EMPTY = Optional.of("");
-    private final List<Byte> defaultValue = Collections.emptyList();
     private final List<LengthConstraint> lengthConstraints;
 
     public BinaryEffectiveStatementImpl(
@@ -62,7 +61,7 @@ public class BinaryEffectiveStatementImpl extends DeclaredEffectiveStatementBase
 
     @Override
     public Object getDefaultValue() {
-        return defaultValue;
+        return null;
     }
 
     @Override
