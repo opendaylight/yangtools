@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7aade967_f4758f32",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/stmt/effective/build/test/EffectiveStatementTypeTest.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 507,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-11-19T09:53:39Z",
+      "side": 1,
+      "message": "Test does not match introduced behaviour -\ntest verifies if STRING type is added,\nbut code was modified to throw error when such case is detected.\n\nPlease remove this test and introduce separate model and test for negative scenario.",
+      "range": {
+        "startLine": 502,
+        "startChar": 4,
+        "endLine": 507,
+        "endChar": 5
+      },
+      "revId": "384e414435ab38c4b69f173b2704932f92d4d4e9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7aade967_54cb4372",
+        "filename": "yang/yang-parser-impl/src/test/resources/type-tests/types.yang",
+        "patchSetId": 5
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-11-19T09:53:39Z",
+      "side": 1,
+      "message": "For negative test case (failure of model) please introduce new model.",
+      "range": {
+        "startLine": 95,
+        "startChar": 0,
+        "endLine": 97,
+        "endChar": 5
+      },
+      "revId": "384e414435ab38c4b69f173b2704932f92d4d4e9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
