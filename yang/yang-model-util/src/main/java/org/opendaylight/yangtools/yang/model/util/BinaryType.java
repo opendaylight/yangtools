@@ -77,7 +77,7 @@ public final class BinaryType implements BinaryTypeDefinition {
      */
     @Override
     public Object getDefaultValue() {
-        return bytes;
+        return null;
     }
 
     /*

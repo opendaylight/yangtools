@@ -7,15 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Collections;
+import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 
 public class BinaryTypeTest {
 
@@ -30,7 +31,7 @@ public class BinaryTypeTest {
         assertTrue(lengthConstraints.toString().contains("max=9223372036854775807"));
         assertTrue(lengthConstraints.toString().contains("min=0"));
 
-        assertEquals("Default value is []", Collections.EMPTY_LIST, binType.getDefaultValue());
+        assertNull(binType.getDefaultValue());
         assertEquals("CURRENT", Status.CURRENT, binType.getStatus());
         assertEquals("Base type is null", null, binType.getBaseType());
         assertEquals("getQName gives BINARY_QNAME", BaseTypes.BINARY_QNAME, binType.getQName());
