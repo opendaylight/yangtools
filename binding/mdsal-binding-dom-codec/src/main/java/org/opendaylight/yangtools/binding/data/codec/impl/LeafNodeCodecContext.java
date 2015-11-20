@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IdentityEffectiveStatementImpl;
 
 final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<D> implements NodeContextSupplier {
 
@@ -72,7 +71,7 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
                     }
 
                     if (defaultValue instanceof IdentitySchemaNode) {
-                        defaultValue = ((IdentityEffectiveStatementImpl) defaultValue).argument();
+                        defaultValue = ((IdentitySchemaNode) defaultValue).getQName();
                         return codec.deserialize(defaultValue);
                     }
 
