@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.UnionType;
 
 final class UnionTypeCodec extends ReflectionBasedCodec {
 
@@ -53,9 +52,9 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
     }
 
     private static Codec<Object, Object> getCodecForType(final Class<?> valueType, final TypeDefinition<?> subtype) {
-        if (subtype.getBaseType() instanceof UnionType) {
+        if (subtype.getBaseType() instanceof UnionTypeDefinition) {
             try {
-                return UnionTypeCodec.loader(valueType, (UnionType) subtype.getBaseType()).call();
+                return UnionTypeCodec.loader(valueType, (UnionTypeDefinition) subtype.getBaseType()).call();
             } catch (final Exception e) {
                 throw new IllegalStateException("Could not construct Union Type Codec");
             }
