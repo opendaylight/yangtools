@@ -310,7 +310,7 @@ public class EffectiveStatementTypeTest {
         assertEquals("/container-test/leaf-test", leafrefEff.getPathStatement().toString());
         assertNull(leafrefEff.getBaseType());
         assertEquals("", leafrefEff.getUnits());
-        assertEquals("leafref", ((LeafrefSpecificationEffectiveStatementImpl) leafrefEff.getDefaultValue()).argument());
+        assertNull("leafref", leafrefEff.getDefaultValue());
         assertNotNull(leafrefEff.toString());
         assertEquals("leafref", leafrefEff.getQName().getLocalName());
         assertEquals("CURRENT", leafrefEff.getStatus().toString());
