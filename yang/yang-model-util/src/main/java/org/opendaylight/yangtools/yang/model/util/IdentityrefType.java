@@ -57,7 +57,7 @@ public final class IdentityrefType implements IdentityrefTypeDefinition {
 
     @Override
     public Object getDefaultValue() {
-        return identity;
+        return null;
     }
 
     @Override

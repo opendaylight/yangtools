@@ -68,7 +68,7 @@ public class LeafrefSpecificationEffectiveStatementImpl extends DeclaredEffectiv
 
     @Override
     public Object getDefaultValue() {
-        return this;
+        return null;
     }
 
     @Override

@@ -73,7 +73,7 @@ public final class BooleanType implements BooleanTypeDefinition {
      */
     @Override
     public Object getDefaultValue() {
-        return false;
+        return null;
     }
 
     /*

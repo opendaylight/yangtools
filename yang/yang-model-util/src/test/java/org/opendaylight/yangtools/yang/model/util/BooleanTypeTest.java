@@ -7,13 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import java.util.Collections;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Status;
-
-import java.util.Collections;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class BooleanTypeTest {
 
@@ -36,7 +35,7 @@ public class BooleanTypeTest {
 
         assertEquals("Base type is null", null, boolType.getBaseType());
 
-        assertEquals("Default value is false", false, boolType.getDefaultValue());
+        assertNull("Default value is null", boolType.getDefaultValue());
 
         assertEquals("Status CURRENT", Status.CURRENT, boolType.getStatus());
 
