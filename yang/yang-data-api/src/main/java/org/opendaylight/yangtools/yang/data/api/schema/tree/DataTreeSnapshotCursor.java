@@ -37,7 +37,7 @@ public interface DataTreeSnapshotCursor extends AutoCloseable {
 
     /**
      * Move the cursor to the specified child of the current position. This is
-     * the equivalent of multiple invocations of {@link #enter(PathArgument)},
+     * the equivalent of multiple invocations of {@link #enter},
      * except the operation is performed all at once.
      *
      * @param path Nested child identifier
@@ -51,7 +51,7 @@ public interface DataTreeSnapshotCursor extends AutoCloseable {
 
     /**
      * Move the cursor to the specified child of the current position. This is
-     * equivalent to {@link #enter(PathArgument...)}, except it takes an {@link Iterable}
+     * equivalent to {@link #enter}, except it takes an {@link Iterable}
      * argument.
      *
      * @param path Nested child identifier
