@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7aade967_04326e10",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/codec/SchemaTracker.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 243,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-11-23T23:59:55Z",
+      "side": 1,
+      "message": "unneeded local variable, just move the expression into the precondition",
+      "revId": "e96e53eb6534b7b6d821cf49ba20814c99416c4e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7aade967_c43bf6e9",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/builder/impl/ImmutableYangModeledAnyXmlNodeBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-11-23T23:59:55Z",
+      "side": 1,
+      "message": "can be combined with assignment",
+      "revId": "e96e53eb6534b7b6d821cf49ba20814c99416c4e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
