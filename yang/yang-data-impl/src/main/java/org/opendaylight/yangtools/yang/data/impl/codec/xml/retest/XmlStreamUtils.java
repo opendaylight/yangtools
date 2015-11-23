@@ -73,7 +73,7 @@ public class XmlStreamUtils {
      *            XML Stream writer
      * @param id
      *            InstanceIdentifier
-     * @throws XMLStreamException
+     * @throws XMLStreamException XMLStreamException object
      *
      * @deprecated Use {@link #writeInstanceIdentifier(XMLStreamWriter, YangInstanceIdentifier)} instead.
      */

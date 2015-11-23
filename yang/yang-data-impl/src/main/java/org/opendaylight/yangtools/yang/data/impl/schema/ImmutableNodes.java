@@ -50,6 +50,7 @@ public final class ImmutableNodes {
      *
      * @param name Identifier of leaf node
      * @param value Value of leaf node
+     * @param <T> Type of leaf node value
      * @return Leaf node with supplied identifier and value
      */
     public static <T> LeafNode<T> leafNode(final NodeIdentifier name, final T value) {
@@ -64,6 +65,7 @@ public final class ImmutableNodes {
      *
      * @param name QName which will be used as node identifier
      * @param value Value of leaf node.
+     * @param <T> Type of leaf node value
      * @return Leaf node with supplied identifier and value
      */
     public static <T> LeafNode<T> leafNode(final QName name,final T value) {

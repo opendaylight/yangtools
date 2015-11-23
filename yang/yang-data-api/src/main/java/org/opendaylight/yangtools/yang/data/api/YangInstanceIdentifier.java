@@ -46,16 +46,18 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  * which conceptually is XPath expression minimized to uniquely identify element
  * in data tree which conforms to constraints maintained by YANG Model,
  * effectively this makes Instance Identifier a path to element in data tree.
+ * </p>
  * <p>
  * Constraints put in YANG specification on instance-identifier allowed it to be
  * effectively represented in Java and it's evaluation does not require
  * full-blown XPath processor.
- * <p>
+ * </p>
  * <h3>Path Arguments</h3>
+ * <p>
  * Path to the node represented in instance identifier consists of
  * {@link PathArgument} which carries necessary information to uniquely identify
  * node on particular level in the subtree.
- * <p>
+ * </p>
  * <ul>
  * <li>{@link NodeIdentifier} - Identifier of node, which has cardinality
  * <code>0..1</code> in particular subtree in data tree.</li>
