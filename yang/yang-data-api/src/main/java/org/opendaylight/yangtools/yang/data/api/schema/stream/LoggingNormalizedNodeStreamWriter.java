@@ -128,6 +128,12 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     @Override
+    public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) {
+        LOG.debug("{}{}(yangModeledAnyXml)", ind(), name);
+        incIndent();
+    }
+
+    @Override
     public void flush() {
         LOG.trace("<<FLUSH>>");
     }
