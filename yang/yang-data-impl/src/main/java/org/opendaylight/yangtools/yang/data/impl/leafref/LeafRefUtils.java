@@ -26,9 +26,10 @@ public final class LeafRefUtils {
     }
 
     /**
-     * @param leafRefPath
-     * @param contextNodeSchemaPath
-     * @return
+     * @param leafRefPath leafRefPath
+     * @param contextNodeSchemaPath contextNodeSchemaPath
+     * @param module module
+     * @return LeafRefPath object
      */
     public static LeafRefPath createAbsoluteLeafRefPath(
             final LeafRefPath leafRefPath, final SchemaPath contextNodeSchemaPath,
