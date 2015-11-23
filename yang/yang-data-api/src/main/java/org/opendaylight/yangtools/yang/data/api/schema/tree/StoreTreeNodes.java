@@ -29,7 +29,8 @@ public final class StoreTreeNodes {
 
     /**
      * Finds a node in tree
-     *
+     * @param <T>
+     *          Store tree node type.
      * @param tree Data Tree
      * @param path Path to the node
      * @return Optional with node if the node is present in tree, {@link Optional#absent()} otherwise.
@@ -61,7 +62,8 @@ public final class StoreTreeNodes {
 
     /**
      * Finds a node or closest parent in  the tree
-     *
+     * @param <T>
+     *          Store tree node type.
      * @param tree Data Tree
      * @param path Path to the node
      * @return Map.Entry Entry with key which is path to closest parent and value is parent node.

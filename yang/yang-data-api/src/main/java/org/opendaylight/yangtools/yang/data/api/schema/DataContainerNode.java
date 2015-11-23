@@ -39,7 +39,7 @@ public interface DataContainerNode<K extends PathArgument> extends //
      * <b>Implementation Notes:</b>
      * <p>
      * All nodes returned in this iterable, MUST also be accessible via
-     * {@link #getChild(PathArgument)} using their associated identifier.
+     * {@link #getChild} using their associated identifier.
      *
      * @return Iteration of all child nodes
      */
