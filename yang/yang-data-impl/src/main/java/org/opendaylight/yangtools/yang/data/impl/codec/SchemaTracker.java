@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -39,6 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -231,6 +231,19 @@ public final class SchemaTracker {
 
         Preconditions.checkArgument(isAllowed, "Node %s is not a container nor a notification", schema.getPath());
         schemaStack.push(schema);
+
+        return schema;
+    }
+
+    public SchemaNode startYangModeledAnyXmlNode(final NodeIdentifier name) {
+        LOG.debug("Enter yang modeled anyXml {}", name);
+        final SchemaNode schema = getSchema(name);
+
+        Preconditions.checkArgument(schema instanceof YangModeledAnyXmlSchemaNode,
+                "Node %s is not an yang modeled anyXml.", schema.getPath());
+
+        schemaStack.push(((YangModeledAnyXmlSchemaNode) schema).getSchemaOfAnyXmlData());
+
         return schema;
     }
 

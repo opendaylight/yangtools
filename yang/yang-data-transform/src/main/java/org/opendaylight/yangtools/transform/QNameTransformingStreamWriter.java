@@ -161,6 +161,11 @@ public abstract class QNameTransformingStreamWriter extends ForwardingObject imp
     }
 
     @Override
+    public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) throws IOException, IllegalArgumentException {
+        delegate().startYangModeledAnyXmlNode(transform(name), childSizeHint);
+    }
+
+    @Override
     public void endNode() throws IOException, IllegalStateException {
         delegate().endNode();
     }
