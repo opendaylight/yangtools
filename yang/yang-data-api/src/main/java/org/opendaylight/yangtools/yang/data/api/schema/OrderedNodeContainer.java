@@ -24,7 +24,7 @@ public interface OrderedNodeContainer<V extends NormalizedNode<?, ?>> extends Mi
      *
      * @param position Position of child node
      * @return Child Node
-     * @throws IndexOutOfBoundsException
+     * @throws IndexOutOfBoundsException Out of bound Exception
      */
     V getChild(int position);
 

@@ -168,6 +168,7 @@ public final class SchemaUtils {
     /**
      * Recursively find all child nodes that come from choices.
      *
+     * @param schema schema
      * @return Map with all child nodes, to their most top augmentation
      */
     public static Map<QName, ChoiceSchemaNode> mapChildElementsFromChoices(final DataNodeContainer schema) {
@@ -213,6 +214,7 @@ public final class SchemaUtils {
     /**
      * Recursively find all child nodes that come from augmentations.
      *
+     * @param schema schema
      * @return Map with all child nodes, to their most top augmentation
      */
     public static Map<QName, AugmentationSchema> mapChildElementsFromAugments(final AugmentationTarget schema) {
@@ -276,6 +278,9 @@ public final class SchemaUtils {
      * Recursively list all child nodes.
      *
      * In case of choice, augment and cases, step in.
+     *
+     * @param nodeContainer node container
+     * @return set of QNames
      */
     public static Set<QName> getChildNodesRecursive(final DataNodeContainer nodeContainer) {
         Set<QName> allChildNodes = Sets.newHashSet();
@@ -302,6 +307,9 @@ public final class SchemaUtils {
      * Schema of the same child node from augment, and directly from target is not the same.
      * Schema of child node from augment is incomplete, therefore its useless for XML/NormalizedNode translation.
      *
+     * @param targetSchema target schema
+     * @param augmentSchema augment schema
+     * @return set of nodes
      */
     public static Set<DataSchemaNode> getRealSchemasForAugment(final AugmentationTarget targetSchema, final AugmentationSchema augmentSchema) {
         if (!(targetSchema.getAvailableAugmentations().contains(augmentSchema))) {
@@ -367,6 +375,10 @@ public final class SchemaUtils {
     /**
      * Tries to find in {@code parent} which is dealed as augmentation target node with QName as {@code child}. If such
      * node is found then it is returned, else null.
+     *
+     * @param parent parent node
+     * @param child child node
+     * @return augmentation schema
      */
     public static AugmentationSchema findCorrespondingAugment(final DataSchemaNode parent, final DataSchemaNode child) {
         if (parent instanceof AugmentationTarget && !(parent instanceof ChoiceSchemaNode)) {

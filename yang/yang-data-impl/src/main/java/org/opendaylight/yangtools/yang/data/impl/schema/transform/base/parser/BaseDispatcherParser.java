@@ -46,14 +46,14 @@ public abstract class BaseDispatcherParser<E, P extends YangInstanceIdentifier.P
 
     /**
      *
-     * @param schema
+     * @param schema schema belonging to the type N of NormalizedNode
      * @return New(empty) instance of a builder to build node identified by schema.
      */
     protected abstract DataContainerNodeBuilder<P, N> getBuilder(S schema);
 
     /**
      *
-     * @param schema
+     * @param schema schema belonging to the type N of NormalizedNode
      * @param childQName QName of a child being parsed, QName does not continue revision date
      * @return schema object for child identified by parent schema: schema and QName childQName
      */
@@ -61,14 +61,14 @@ public abstract class BaseDispatcherParser<E, P extends YangInstanceIdentifier.P
 
     /**
      *
-     * @param xml
+     * @param elements elements to be parsed into NormalizedNode
      * @return map from QName to child elements. Multiple elements are allowed under QName.
      */
-    protected abstract LinkedListMultimap<QName, E> mapChildElements(Iterable<E> xml);
+    protected abstract LinkedListMultimap<QName, E> mapChildElements(Iterable<E> elements);
 
     /**
      *
-     * @param schema
+     * @param schema schema belonging to the type N of NormalizedNode
      * @return map from QName to ChoiceNode schema of child nodes that are
      *         contained within a choice statement under current schema.
      */
@@ -76,7 +76,7 @@ public abstract class BaseDispatcherParser<E, P extends YangInstanceIdentifier.P
 
     /**
      *
-     * @param schema
+     * @param schema schema belonging to the type N of NormalizedNode
      * @return map from QName to child elements that are added by augmentation
      *         that targets current schema.
      */
@@ -84,8 +84,8 @@ public abstract class BaseDispatcherParser<E, P extends YangInstanceIdentifier.P
 
     /**
      *
-     * @param schema
-     * @param augmentSchema
+     * @param schema schema belonging to the type N of NormalizedNode
+     * @param augmentSchema augmentSchema
      * @return Set of real schema objects that represent child nodes of an
      *         augmentation. Augmentation schema child nodes, if further
      *         augmented, do not contain further augmented, that are crucial for
@@ -102,9 +102,9 @@ public abstract class BaseDispatcherParser<E, P extends YangInstanceIdentifier.P
 
     /**
      * can return null only if you override ParsingStrategy and explicitely return null
-     * @param elements
-     * @param schema
-     * @return
+     * @param elements elements to be parsed into NormalizedNode
+     * @param schema schema belonging to the type N of NormalizedNode
+     * @return child of DataContainerNode as a result of parsing list of E elements with schema S
      */
     @Nullable
     @Override
