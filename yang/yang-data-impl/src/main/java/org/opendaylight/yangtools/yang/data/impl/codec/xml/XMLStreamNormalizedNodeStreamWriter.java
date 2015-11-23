@@ -79,6 +79,7 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
      *
      * @param writer Output {@link XMLStreamWriter}
      * @param context Associated {@link SchemaContext}.
+     * @param path path
      *
      * @return A new {@link NormalizedNodeStreamWriter}
      */
@@ -173,6 +174,12 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
     @Override
     public void startContainerNode(final NodeIdentifier name, final int childSizeHint, final Map<QName, String> attributes) throws IOException {
         startContainerNode(name, childSizeHint);
+        writeAttributes(attributes);
+    }
+
+    @Override
+    public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint, final Map<QName, String> attributes) throws IOException {
+        startYangModeledAnyXmlNode(name, childSizeHint);
         writeAttributes(attributes);
     }
 
@@ -277,6 +284,12 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
                 throw new IOException("Unable to transform anyXml(" + name + ") value: " + value, e);
             }
         }
+    }
+
+    @Override
+    public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
+        final SchemaNode schema = tracker.startYangModeledAnyXmlNode(name);
+        startElement(schema.getQName());
     }
 
     public static String toString(final Element xml) {
