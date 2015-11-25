@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import java.util.Collection;
+import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
 
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -19,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -28,6 +30,21 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.GroupingEff
 
 public class GroupingStatementImpl extends AbstractDeclaredStatement<QName>
         implements GroupingStatement {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .GROUPING)
+            .add(Rfc6020Mapping.ANYXML, 0, MAX)
+            .add(Rfc6020Mapping.CHOICE, 0, MAX)
+            .add(Rfc6020Mapping.CONTAINER, 0, MAX)
+            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
+            .add(Rfc6020Mapping.GROUPING, 0, MAX)
+            .add(Rfc6020Mapping.LEAF, 0, MAX)
+            .add(Rfc6020Mapping.LEAF_LIST, 0, MAX)
+            .add(Rfc6020Mapping.LIST, 0, MAX)
+            .add(Rfc6020Mapping.REFERENCE, 0, 1)
+            .add(Rfc6020Mapping.STATUS, 0, 1)
+            .add(Rfc6020Mapping.TYPEDEF, 0, MAX)
+            .add(Rfc6020Mapping.USES, 0, MAX)
+            .build();
 
     protected GroupingStatementImpl(
             StmtContext<QName, GroupingStatement, ?> context) {
@@ -60,7 +77,10 @@ public class GroupingStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public void onFullDefinitionDeclared(Mutable<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> stmt) throws SourceException {
+        public void onFullDefinitionDeclared(Mutable<QName, GroupingStatement,
+                EffectiveStatement<QName, GroupingStatement>> stmt) throws SourceException {
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
+
             if (stmt != null && stmt.getParentContext() != null) {
                 stmt.getParentContext().addContext(GroupingNamespace.class, stmt.getStatementArgument(), stmt);
             }

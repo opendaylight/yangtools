@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -6,6 +6,8 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
+
+import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
 
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -15,13 +17,27 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.OutputEffectiveStatementImpl;
 
 public class OutputStatementImpl extends AbstractDeclaredStatement<QName> implements OutputStatement {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .OUTPUT)
+            .add(Rfc6020Mapping.ANYXML, 0, MAX)
+            .add(Rfc6020Mapping.CHOICE, 0, MAX)
+            .add(Rfc6020Mapping.CONTAINER, 0, MAX)
+            .add(Rfc6020Mapping.GROUPING, 0, MAX)
+            .add(Rfc6020Mapping.LEAF, 0, MAX)
+            .add(Rfc6020Mapping.LEAF_LIST, 0, MAX)
+            .add(Rfc6020Mapping.LIST, 0, MAX)
+            .add(Rfc6020Mapping.TYPEDEF, 0, MAX)
+            .add(Rfc6020Mapping.USES, 0, MAX)
+            .build();
 
     protected OutputStatementImpl(final StmtContext<QName, OutputStatement, ?> context) {
         super(context);
@@ -53,6 +69,13 @@ public class OutputStatementImpl extends AbstractDeclaredStatement<QName> implem
         public EffectiveStatement<QName, OutputStatement> createEffective(
                 final StmtContext<QName, OutputStatement, EffectiveStatement<QName, OutputStatement>> ctx) {
             return new OutputEffectiveStatementImpl(ctx);
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(Mutable<QName, OutputStatement,
+                EffectiveStatement<QName, OutputStatement>> stmt) throws SourceException {
+            super.onFullDefinitionDeclared(stmt);
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
     }
 
