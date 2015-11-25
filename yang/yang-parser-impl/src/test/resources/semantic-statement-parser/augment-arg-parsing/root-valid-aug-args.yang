@@ -2,7 +2,9 @@ module root-valid-aug-args {
 	namespace root;
 	prefix root;
 
-	import imported;
+	import imported {
+		prefix "imp";
+	}
 
 	augment "/aug1/aug11/aug111" {
 		container add {
