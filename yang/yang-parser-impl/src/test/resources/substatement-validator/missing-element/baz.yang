@@ -1,0 +1,16 @@
+module baz {
+    yang-version 1;
+    namespace "urn:opendaylight.baz";
+    prefix "baz";
+
+    import missing {
+        revision-date 2015-11-11;
+    }
+
+    organization "opendaylight";
+    contact "http://www.opendaylight.org/";
+
+    revision "2015-11-11" {
+        reference " WILL BE DEFINED LATER";
+    }
+}

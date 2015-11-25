@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
+
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -20,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -37,6 +40,16 @@ import org.slf4j.LoggerFactory;
 
 
 public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implements UsesStatement {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .USES)
+            .add(Rfc6020Mapping.AUGMENT, 0, 1)
+            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
+            .add(Rfc6020Mapping.IF_FEATURE, 0, MAX)
+            .add(Rfc6020Mapping.REFINE, 0, MAX)
+            .add(Rfc6020Mapping.REFERENCE, 0, 1)
+            .add(Rfc6020Mapping.STATUS, 0, 1)
+            .add(Rfc6020Mapping.WHEN, 0, 1)
+            .build();
 
     private static final Logger LOG = LoggerFactory.getLogger(UsesStatementImpl.class);
 
@@ -60,6 +73,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
         public void onFullDefinitionDeclared(
                 final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode)
                 throws SourceException {
+            SUBSTATEMENT_VALIDATOR.validate(usesNode);
 
             if(StmtContextUtils.isInExtensionBody(usesNode)) {
                 return;

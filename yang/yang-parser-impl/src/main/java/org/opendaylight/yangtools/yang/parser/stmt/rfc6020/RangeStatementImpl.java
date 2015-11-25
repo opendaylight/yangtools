@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.math.BigDecimal;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -18,12 +17,21 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.RangeEffectiveStatementImpl;
 
 public class RangeStatementImpl extends AbstractDeclaredStatement<List<RangeConstraint>> implements RangeStatement {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .RANGE)
+            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
+            .add(Rfc6020Mapping.ERROR_APP_TAG, 0, 1)
+            .add(Rfc6020Mapping.ERROR_MESSAGE, 0, 1)
+            .add(Rfc6020Mapping.REFERENCE, 0, 1)
+            .build();
 
     // these objects are to compare whether range has MAX or MIN value
     // none of these values should appear as Yang number according to spec so they are safe to use
@@ -56,6 +64,13 @@ public class RangeStatementImpl extends AbstractDeclaredStatement<List<RangeCons
         public EffectiveStatement<List<RangeConstraint>, RangeStatement> createEffective(
                 StmtContext<List<RangeConstraint>, RangeStatement, EffectiveStatement<List<RangeConstraint>, RangeStatement>> ctx) {
             return new RangeEffectiveStatementImpl(ctx);
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(StmtContext.Mutable<List<RangeConstraint>, RangeStatement,
+                EffectiveStatement<List<RangeConstraint>, RangeStatement>> stmt) throws SourceException {
+            super.onFullDefinitionDeclared(stmt);
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
     }
 
