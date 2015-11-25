@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -33,6 +34,10 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.BelongsEffe
 
 public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
         implements BelongsToStatement {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .BELONGS_TO)
+            .add(Rfc6020Mapping.PREFIX, 1, 1)
+            .build();
 
     protected BelongsToStatementImpl(
             final StmtContext<String, BelongsToStatement, ?> context) {
@@ -97,6 +102,13 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
         private static ModuleIdentifier getModuleIdentifier(final StmtContext.Mutable<String, BelongsToStatement, EffectiveStatement<String, BelongsToStatement>> belongsToCtx) {
             String moduleName = belongsToCtx.getStatementArgument();
             return new ModuleIdentifierImpl(moduleName, Optional.<URI> absent(), Optional.of(SimpleDateFormatUtil.DEFAULT_BELONGS_TO_DATE));
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(StmtContext.Mutable<String, BelongsToStatement,
+                EffectiveStatement<String, BelongsToStatement>> stmt) throws SourceException {
+            super.onFullDefinitionDeclared(stmt);
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
     }
 

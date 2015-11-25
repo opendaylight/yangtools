@@ -7,16 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PrefixEffectiveStatementImpl;
-
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PrefixEffectiveStatementImpl;
 
 public class PrefixStatementImpl extends AbstractDeclaredStatement<String> implements PrefixStatement {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .PREFIX)
+            .build();
 
     public static class Definition extends AbstractStatementSupport<String,PrefixStatement,EffectiveStatement<String,PrefixStatement>> {
 
@@ -37,6 +41,13 @@ public class PrefixStatementImpl extends AbstractDeclaredStatement<String> imple
         @Override
         public EffectiveStatement<String,PrefixStatement> createEffective(StmtContext<String, PrefixStatement,EffectiveStatement<String,PrefixStatement>> ctx) {
             return new PrefixEffectiveStatementImpl(ctx);
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(StmtContext.Mutable<String, PrefixStatement,
+                EffectiveStatement<String, PrefixStatement>> stmt) throws SourceException {
+            super.onFullDefinitionDeclared(stmt);
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
     }
 

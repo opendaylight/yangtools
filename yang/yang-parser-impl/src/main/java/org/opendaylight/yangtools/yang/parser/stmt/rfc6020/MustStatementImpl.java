@@ -17,12 +17,21 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.MustEffectiveStatementImpl;
 
 public class MustStatementImpl extends AbstractDeclaredStatement<RevisionAwareXPath> implements MustStatement {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .MUST)
+            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
+            .add(Rfc6020Mapping.ERROR_APP_TAG, 0, 1)
+            .add(Rfc6020Mapping.ERROR_MESSAGE, 0, 1)
+            .add(Rfc6020Mapping.REFERENCE, 0, 1)
+            .build();
 
     protected MustStatementImpl(final StmtContext<RevisionAwareXPath, MustStatement, ?> context) {
         super(context);
@@ -49,6 +58,13 @@ public class MustStatementImpl extends AbstractDeclaredStatement<RevisionAwareXP
         public EffectiveStatement<RevisionAwareXPath, MustStatement> createEffective(
                 final StmtContext<RevisionAwareXPath, MustStatement, EffectiveStatement<RevisionAwareXPath, MustStatement>> ctx) {
             return new MustEffectiveStatementImpl(ctx);
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(StmtContext.Mutable<RevisionAwareXPath, MustStatement,
+                EffectiveStatement<RevisionAwareXPath, MustStatement>> stmt) throws SourceException {
+            super.onFullDefinitionDeclared(stmt);
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
     }
 
