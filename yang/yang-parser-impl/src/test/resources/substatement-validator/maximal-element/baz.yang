@@ -1,0 +1,25 @@
+module baz {
+    yang-version 1;
+    namespace "urn:opendaylight.baz";
+    prefix "baz";
+
+    import maximal {
+        prefix "max";
+        revision-date 2015-11-11;
+    }
+
+    organization "opendaylight";
+    contact "http://www.opendaylight.org/";
+
+    revision "2015-11-11" {
+        reference " WILL BE DEFINED LATER";
+    }
+
+    augment "/max:interfaces/max:ifEntry" {
+        description "Test describtion";
+        description "Test describtion";
+        container augment-holder2 {
+            description "Description for augment holder";
+        }
+    }
+}

@@ -15,12 +15,21 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BitEffectiveStatementImpl;
 
 public class BitStatementImpl extends AbstractDeclaredStatement<QName> implements BitStatement {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .BIT)
+            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
+            .add(Rfc6020Mapping.REFERENCE, 0, 1)
+            .add(Rfc6020Mapping.STATUS, 0, 1)
+            .add(Rfc6020Mapping.POSITION, 0, 1)
+            .build();
 
     protected BitStatementImpl(StmtContext<QName, BitStatement, ?> context) {
         super(context);
@@ -49,6 +58,12 @@ public class BitStatementImpl extends AbstractDeclaredStatement<QName> implement
             return new BitEffectiveStatementImpl(ctx);
         }
 
+        @Override
+        public void onFullDefinitionDeclared(StmtContext.Mutable<QName, BitStatement,
+                EffectiveStatement<QName, BitStatement>> stmt) throws SourceException {
+            super.onFullDefinitionDeclared(stmt);
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
+        }
     }
 
     @Override

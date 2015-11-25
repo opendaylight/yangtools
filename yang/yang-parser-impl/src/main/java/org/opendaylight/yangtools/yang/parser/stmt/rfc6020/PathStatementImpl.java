@@ -12,12 +12,17 @@ import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PathEffectiveStatementImpl;
 
 public class PathStatementImpl extends AbstractDeclaredStatement<RevisionAwareXPath> implements PathStatement {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .PATH)
+            .build();
 
     protected PathStatementImpl(final StmtContext<RevisionAwareXPath, PathStatement, ?> context) {
         super(context);
@@ -44,6 +49,13 @@ public class PathStatementImpl extends AbstractDeclaredStatement<RevisionAwareXP
         public EffectiveStatement<RevisionAwareXPath, PathStatement> createEffective(
                 final StmtContext<RevisionAwareXPath, PathStatement, EffectiveStatement<RevisionAwareXPath, PathStatement>> ctx) {
             return new PathEffectiveStatementImpl(ctx);
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(StmtContext.Mutable<RevisionAwareXPath, PathStatement,
+                EffectiveStatement<RevisionAwareXPath, PathStatement>> stmt) throws SourceException {
+            super.onFullDefinitionDeclared(stmt);
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
     }
 

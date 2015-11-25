@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -24,6 +25,13 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IdentityEff
 
 public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
         implements IdentityStatement {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .IDENTITY)
+            .add(Rfc6020Mapping.BASE, 0, 1)
+            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
+            .add(Rfc6020Mapping.REFERENCE, 0, 1)
+            .add(Rfc6020Mapping.STATUS, 0, 1)
+            .build();
 
     protected IdentityStatementImpl(
             final StmtContext<QName, IdentityStatement, ?> context) {
@@ -56,6 +64,13 @@ public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
         @Override
         public void onStatementDefinitionDeclared(final StmtContext.Mutable<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> stmt) throws SourceException {
             stmt.addToNs(IdentityNamespace.class, stmt.getStatementArgument(), stmt);
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(StmtContext.Mutable<QName, IdentityStatement,
+                EffectiveStatement<QName, IdentityStatement>> stmt) throws SourceException {
+            super.onFullDefinitionDeclared(stmt);
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
     }
 

@@ -7,18 +7,24 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LeafrefSpecificationEffectiveStatementImpl;
 
 public class LeafrefSpecificationImpl extends AbstractDeclaredStatement<String>
         implements TypeStatement.LeafrefSpecification {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .TYPE)
+            .add(Rfc6020Mapping.PATH, 1, 1)
+            .add(Rfc6020Mapping.REQUIRE_INSTANCE, 0, 1)
+            .build();
 
     protected LeafrefSpecificationImpl(
             StmtContext<String, TypeStatement.LeafrefSpecification, ?> context) {
@@ -49,6 +55,13 @@ public class LeafrefSpecificationImpl extends AbstractDeclaredStatement<String>
         public EffectiveStatement<String, TypeStatement.LeafrefSpecification> createEffective(
                 StmtContext<String, TypeStatement.LeafrefSpecification, EffectiveStatement<String, TypeStatement.LeafrefSpecification>> ctx) {
             return new LeafrefSpecificationEffectiveStatementImpl(ctx);
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(StmtContext.Mutable<String, LeafrefSpecification,
+                EffectiveStatement<String, LeafrefSpecification>> stmt) throws SourceException {
+            super.onFullDefinitionDeclared(stmt);
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
     }
 

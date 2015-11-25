@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -25,6 +26,15 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.TypeDefEffectiveStatementImpl;
 
 public class TypedefStatementImpl extends AbstractDeclaredStatement<QName> implements TypedefStatement {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .TYPEDEF)
+            .add(Rfc6020Mapping.DEFAULT, 0, 1)
+            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
+            .add(Rfc6020Mapping.REFERENCE, 0, 1)
+            .add(Rfc6020Mapping.STATUS, 0, 1)
+            .add(Rfc6020Mapping.TYPE, 1, 1)
+            .add(Rfc6020Mapping.UNITS, 0, 1)
+            .build();
 
     protected TypedefStatementImpl(StmtContext<QName, TypedefStatement, ?> context) {
         super(context);
@@ -65,6 +75,13 @@ public class TypedefStatementImpl extends AbstractDeclaredStatement<QName> imple
 
                 stmt.getParentContext().addContext(TypeNamespace.class, stmt.getStatementArgument(), stmt);
             }
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(StmtContext.Mutable<QName, TypedefStatement,
+                EffectiveStatement<QName, TypedefStatement>> stmt) throws SourceException {
+            super.onFullDefinitionDeclared(stmt);
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
     }
 

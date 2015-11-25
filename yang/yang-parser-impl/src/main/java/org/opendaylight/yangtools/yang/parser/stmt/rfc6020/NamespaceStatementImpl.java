@@ -7,16 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.NamespaceEffectiveStatementImpl;
-
 import java.net.URI;
+import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.NamespaceEffectiveStatementImpl;
 
 public class NamespaceStatementImpl extends AbstractDeclaredStatement<URI> implements NamespaceStatement {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .NAMESPACE)
+            .build();
 
     public static class Definition extends AbstractStatementSupport<URI,NamespaceStatement,EffectiveStatement<URI,NamespaceStatement>> {
 
@@ -39,6 +44,12 @@ public class NamespaceStatementImpl extends AbstractDeclaredStatement<URI> imple
             return new NamespaceEffectiveStatementImpl(ctx);
         }
 
+        @Override
+        public void onFullDefinitionDeclared(StmtContext.Mutable<URI, NamespaceStatement,
+                EffectiveStatement<URI, NamespaceStatement>> stmt) throws SourceException {
+            super.onFullDefinitionDeclared(stmt);
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
+        }
     }
 
     NamespaceStatementImpl(StmtContext<URI, NamespaceStatement,?> context) {
