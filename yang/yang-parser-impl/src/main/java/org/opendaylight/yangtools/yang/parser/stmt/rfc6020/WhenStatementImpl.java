@@ -15,12 +15,17 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.WhenEffectiveStatementImpl;
 
 public class WhenStatementImpl extends AbstractDeclaredStatement<RevisionAwareXPath> implements WhenStatement {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .WHEN)
+            .build();
 
     protected WhenStatementImpl(final StmtContext<RevisionAwareXPath, WhenStatement, ?> context) {
         super(context);
@@ -47,6 +52,13 @@ public class WhenStatementImpl extends AbstractDeclaredStatement<RevisionAwareXP
         public EffectiveStatement<RevisionAwareXPath, WhenStatement> createEffective(
                 final StmtContext<RevisionAwareXPath, WhenStatement, EffectiveStatement<RevisionAwareXPath, WhenStatement>> ctx) {
             return new WhenEffectiveStatementImpl(ctx);
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(StmtContext.Mutable<RevisionAwareXPath, WhenStatement,
+                EffectiveStatement<RevisionAwareXPath, WhenStatement>> stmt) throws SourceException {
+            super.onFullDefinitionDeclared(stmt);
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
     }
 

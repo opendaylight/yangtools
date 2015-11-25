@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -7,18 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DescriptionEffectiveStatementImpl;
-
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DescriptionEffectiveStatementImpl;
 
 public class DescriptionStatementImpl extends AbstractDeclaredStatement<String> implements DescriptionStatement {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .DESCRIPTION)
+            .build();
 
     protected DescriptionStatementImpl(
             StmtContext<String, DescriptionStatement, ?> context) {
@@ -44,6 +47,13 @@ public class DescriptionStatementImpl extends AbstractDeclaredStatement<String> 
         @Override
         public EffectiveStatement<String, DescriptionStatement> createEffective(StmtContext<String, DescriptionStatement, EffectiveStatement<String, DescriptionStatement>> ctx) {
             return new DescriptionEffectiveStatementImpl(ctx);
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(StmtContext.Mutable<String, DescriptionStatement,
+                EffectiveStatement<String, DescriptionStatement>> stmt) throws SourceException {
+            super.onFullDefinitionDeclared(stmt);
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
     }
 

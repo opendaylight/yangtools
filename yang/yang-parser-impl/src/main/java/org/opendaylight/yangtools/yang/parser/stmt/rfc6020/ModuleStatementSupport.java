@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import com.google.common.base.Optional;
@@ -23,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -38,6 +40,35 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ModuleEffec
 
 public class ModuleStatementSupport extends
         AbstractStatementSupport<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .MODULE)
+            .add(Rfc6020Mapping.ANYXML, 0, MAX)
+            .add(Rfc6020Mapping.AUGMENT, 0, MAX)
+            .add(Rfc6020Mapping.CHOICE, 0, MAX)
+            .add(Rfc6020Mapping.CONTACT, 0, 1)
+            .add(Rfc6020Mapping.CONTAINER, 0, MAX)
+            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
+            .add(Rfc6020Mapping.DEVIATION, 0, MAX)
+            .add(Rfc6020Mapping.EXTENSION, 0, MAX)
+            .add(Rfc6020Mapping.FEATURE, 0, MAX)
+            .add(Rfc6020Mapping.GROUPING, 0, MAX)
+            .add(Rfc6020Mapping.IDENTITY, 0, MAX)
+            .add(Rfc6020Mapping.IMPORT, 0, MAX)
+            .add(Rfc6020Mapping.INCLUDE, 0, MAX)
+            .add(Rfc6020Mapping.LEAF, 0, MAX)
+            .add(Rfc6020Mapping.LEAF_LIST, 0, MAX)
+            .add(Rfc6020Mapping.LIST, 0, MAX)
+            .add(Rfc6020Mapping.NAMESPACE, 1, 1)
+            .add(Rfc6020Mapping.NOTIFICATION, 0, MAX)
+            .add(Rfc6020Mapping.ORGANIZATION, 0, 1)
+            .add(Rfc6020Mapping.PREFIX, 1, 1)
+            .add(Rfc6020Mapping.REFERENCE, 0, 1)
+            .add(Rfc6020Mapping.REVISION, 0, MAX)
+            .add(Rfc6020Mapping.RPC, 0, MAX)
+            .add(Rfc6020Mapping.TYPEDEF, 0, MAX)
+            .add(Rfc6020Mapping.USES, 0, MAX)
+            .add(Rfc6020Mapping.YANG_VERSION, 0, 1)
+            .build();
 
     public ModuleStatementSupport() {
         super(Rfc6020Mapping.MODULE);
@@ -97,4 +128,10 @@ public class ModuleStatementSupport extends
         stmt.addToNs(ImpPrefixToModuleIdentifier.class, modulePrefix, moduleIdentifier);
     }
 
+    @Override
+    public void onFullDefinitionDeclared(Mutable<String, ModuleStatement,
+            EffectiveStatement<String, ModuleStatement>> stmt) throws SourceException {
+        super.onFullDefinitionDeclared(stmt);
+        SUBSTATEMENT_VALIDATOR.validate(stmt);
+    }
 }
