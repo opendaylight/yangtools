@@ -1,0 +1,19 @@
+module bug4310 {
+    yang-version 1;
+    namespace "urn:opendaylight.bug4310";
+    prefix "bug";
+
+    organization "opendaylight";
+    contact "http://www.opendaylight.org/";
+
+    leaf datapath-id {
+        type union {
+            bug:simple-ext-w-arg "key:value";
+        }
+    }
+
+    extension simple-ext-w-arg {
+        argument "ext-arg";
+        description "Extension with single argument definition.";
+    }
+}
