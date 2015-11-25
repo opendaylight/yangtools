@@ -81,6 +81,23 @@ public final class StmtContextUtils {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
+    public static <AT,DT extends DeclaredStatement<AT>> StmtContext<AT, ?, ?> findFirstEffectiveSubstatement(
+            final StmtContext<?, ?, ?> stmtContext, final Class<DT> declaredType) {
+        for (StmtContext<?, ?, ?> subStmtContext : stmtContext.effectiveSubstatements()) {
+            if (producesDeclared(subStmtContext,declaredType)) {
+                return (StmtContext<AT, ?, ?>) subStmtContext;
+            }
+        }
+        return null;
+    }
+
+    public static <AT,DT extends DeclaredStatement<AT>> StmtContext<AT, ?, ?> findFirstSubstatement(
+            final StmtContext<?, ?, ?> stmtContext, final Class<DT> declaredType) {
+        StmtContext<AT, ?, ?> declaredSubstatement = findFirstDeclaredSubstatement(stmtContext, declaredType);
+        return declaredSubstatement != null ? declaredSubstatement : findFirstEffectiveSubstatement(stmtContext, declaredType);
+    }
+
     @SafeVarargs
     public static StmtContext<?, ?, ?> findFirstDeclaredSubstatement(final StmtContext<?, ?, ?> stmtContext,
             int startIndex, final Class<? extends DeclaredStatement<?>>... types) {

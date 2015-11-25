@@ -18,10 +18,12 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
@@ -226,5 +228,39 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     @Override
     public boolean isRootContext() {
         return false;
+    }
+
+    @Override
+    public boolean isConfiguration() {
+        StmtContext<Boolean, ?, ?> configStatement = StmtContextUtils
+                .findFirstSubstatement(this, ConfigStatement.class);
+
+        /*
+         * If "config" statement is not specified, the default is the same as
+         * the parent schema node's "config" value.
+         */
+        if (configStatement == null) {
+            return parent.isConfiguration();
+        }
+
+        /*
+         * If a parent node has "config" set to "true", the node underneath it can
+         * have "config" set to "true" or "false".
+         */
+        if (parent.isConfiguration()) {
+            return configStatement.getStatementArgument();
+        }
+
+        /*
+         * If a parent node has "config" set to "false", no node underneath it
+         * can have "config" set to "true", therefore only "false" is permitted.
+         */
+        if (!configStatement.getStatementArgument()) {
+            return false;
+        }
+
+        throw new InferenceException(
+                "Parent node has config statement set to false, therefore no node underneath it can have config set to true",
+                getStatementSourceReference());
     }
 }
