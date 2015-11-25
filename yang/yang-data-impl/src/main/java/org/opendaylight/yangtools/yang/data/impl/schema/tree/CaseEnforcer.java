@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -53,5 +54,9 @@ final class CaseEnforcer implements Immutable {
 
     void enforceOnTreeNode(final TreeNode tree) {
         enforcer.enforceOnTreeNode(tree);
+    }
+
+    void enforceOnTreeNode(final NormalizedNode<?, ?> normalizedNode) {
+        enforcer.enforceOnTreeNode(normalizedNode);
     }
 }
