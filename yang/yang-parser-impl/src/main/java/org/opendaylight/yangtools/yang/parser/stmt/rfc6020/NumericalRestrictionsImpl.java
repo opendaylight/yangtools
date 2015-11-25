@@ -11,13 +11,19 @@ import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.NumericalRestrictionsEffectiveStatementImpl;
 
 public class NumericalRestrictionsImpl extends AbstractDeclaredStatement<String> implements
         TypeStatement.NumericalRestrictions {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .TYPE)
+            .add(Rfc6020Mapping.RANGE, 1, 1)
+            .build();
 
     protected NumericalRestrictionsImpl(final StmtContext<String, TypeStatement.NumericalRestrictions, ?> context) {
         super(context);
@@ -45,6 +51,13 @@ public class NumericalRestrictionsImpl extends AbstractDeclaredStatement<String>
         public EffectiveStatement<String, TypeStatement.NumericalRestrictions> createEffective(
                 final StmtContext<String, TypeStatement.NumericalRestrictions, EffectiveStatement<String, TypeStatement.NumericalRestrictions>> ctx) {
             return new NumericalRestrictionsEffectiveStatementImpl(ctx);
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(StmtContext.Mutable<String, NumericalRestrictions,
+                EffectiveStatement<String, NumericalRestrictions>> stmt) throws SourceException {
+            super.onFullDefinitionDeclared(stmt);
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
     }
 

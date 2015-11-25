@@ -1,0 +1,19 @@
+module empty {
+    namespace "root-module";
+    prefix empty;
+
+    container root-container {
+        uses grp-1 {
+            refine container-from-grouping/list-in-container {
+            }
+        }
+    }
+
+    grouping grp-1 {
+        container container-from-grouping {
+            list list-in-container {
+                description "original description";
+            }
+        }
+    }
+}

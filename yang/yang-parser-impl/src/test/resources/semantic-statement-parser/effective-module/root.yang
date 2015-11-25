@@ -38,8 +38,6 @@ module root {
 
     deviation /cont {
         deviate add {
-            container subcont {
-            }
         }
         reference "deviate reference";
     }
