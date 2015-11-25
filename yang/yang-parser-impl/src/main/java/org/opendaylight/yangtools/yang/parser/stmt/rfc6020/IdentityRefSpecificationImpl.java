@@ -8,23 +8,27 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import com.google.common.base.Preconditions;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
-import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.IdentityRefSpecificationEffectiveStatementImpl;
 
-import javax.annotation.Nonnull;
-
 public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<String> implements TypeStatement.IdentityRefSpecification {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .TYPE)
+            .add(Rfc6020Mapping.BASE, 1, 1)
+            .build();
 
     protected IdentityRefSpecificationImpl(
             StmtContext<String, TypeStatement.IdentityRefSpecification, ?> context) {
@@ -72,6 +76,13 @@ public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<Stri
             Preconditions.checkArgument(stmtCtx != null, "Referenced base identity '%s' doesn't exist " +
                         "in " + "given scope " + "(module, imported submodules), source: '%s'", baseIdentity
                     .getLocalName(), stmt.getStatementSourceReference());
+        }
+
+        @Override
+        public void onStatementDefinitionDeclared(StmtContext.Mutable<String, IdentityRefSpecification,
+                EffectiveStatement<String, IdentityRefSpecification>> stmt) throws SourceException {
+            super.onStatementDefinitionDeclared(stmt);
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
     }
 

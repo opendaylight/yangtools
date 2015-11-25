@@ -7,12 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
+
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -41,6 +44,18 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UInt8E
 
 public class TypeStatementImpl extends AbstractDeclaredStatement<String>
         implements TypeStatement {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .TYPE)
+            .add(Rfc6020Mapping.BIT, 0, MAX)
+            .add(Rfc6020Mapping.ENUM, 0, MAX)
+            .add(Rfc6020Mapping.FRACTION_DIGITS, 0, 1)
+            .add(Rfc6020Mapping.LENGTH, 0, 1)
+            .add(Rfc6020Mapping.PATH, 0, 1)
+            .add(Rfc6020Mapping.PATTERN, 0, MAX)
+            .add(Rfc6020Mapping.RANGE, 0, 1)
+            .add(Rfc6020Mapping.REQUIRE_INSTANCE, 0, 1)
+            .add(Rfc6020Mapping.TYPE, 0, MAX)
+            .build();
 
     protected TypeStatementImpl(final StmtContext<String, TypeStatement, ?> context) {
         super(context);
@@ -115,6 +130,7 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
         public void onFullDefinitionDeclared(
                 final Mutable<String, TypeStatement, EffectiveStatement<String, TypeStatement>> stmt)
                 throws SourceException {
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
 
             // if it is yang built-in type, no prerequisite is needed, so simply return
             if (TypeUtils.isYangBuiltInTypeString(stmt.getStatementArgument())) {

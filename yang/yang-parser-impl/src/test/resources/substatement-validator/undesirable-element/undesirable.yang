@@ -1,0 +1,13 @@
+module undesirable {
+    yang-version 1;
+    namespace "urn:opendaylight.undesirable";
+    prefix "undesirable";
+
+    organization "opendaylight";
+    contact "http://www.opendaylight.org/";
+
+    revision "2015-11-11" {
+        reference " WILL BE DEFINED LATER";
+        type "string";
+    }
+}
