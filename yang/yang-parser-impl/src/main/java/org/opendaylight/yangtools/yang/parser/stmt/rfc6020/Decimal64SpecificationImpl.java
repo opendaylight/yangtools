@@ -12,6 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.Decimal64Specification;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -19,6 +20,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Decimal64SpecificationEffectiveStatementImpl;
 
 public class Decimal64SpecificationImpl extends AbstractDeclaredStatement<String> implements Decimal64Specification {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .TYPE)
+            .add(Rfc6020Mapping.FRACTION_DIGITS, 1, 1)
+            .add(Rfc6020Mapping.RANGE, 0, 1)
+            .build();
 
     protected Decimal64SpecificationImpl(final StmtContext<String, Decimal64Specification, ?> context) {
         super(context);
@@ -45,6 +51,13 @@ public class Decimal64SpecificationImpl extends AbstractDeclaredStatement<String
         public EffectiveStatement<String, Decimal64Specification> createEffective(
                 final StmtContext<String, Decimal64Specification, EffectiveStatement<String, Decimal64Specification>> ctx) {
             return new Decimal64SpecificationEffectiveStatementImpl(ctx);
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(StmtContext.Mutable<String, Decimal64Specification,
+                EffectiveStatement<String, Decimal64Specification>> stmt) throws SourceException {
+            super.onFullDefinitionDeclared(stmt);
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
     }
 

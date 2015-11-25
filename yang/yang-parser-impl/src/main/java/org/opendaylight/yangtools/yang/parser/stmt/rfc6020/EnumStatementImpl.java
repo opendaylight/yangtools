@@ -14,12 +14,21 @@ import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueStatement;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EnumEffectiveStatementImpl;
 
 public class EnumStatementImpl extends AbstractDeclaredStatement<String> implements EnumStatement {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .ENUM)
+            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
+            .add(Rfc6020Mapping.REFERENCE, 0, 1)
+            .add(Rfc6020Mapping.STATUS, 0, 1)
+            .add(Rfc6020Mapping.VALUE, 0, 1)
+            .build();
 
     protected EnumStatementImpl(final StmtContext<String, EnumStatement, ?> context) {
         super(context);
@@ -47,6 +56,13 @@ public class EnumStatementImpl extends AbstractDeclaredStatement<String> impleme
         public EffectiveStatement<String, EnumStatement> createEffective(
                 final StmtContext<String, EnumStatement, EffectiveStatement<String, EnumStatement>> ctx) {
             return new EnumEffectiveStatementImpl(ctx);
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(StmtContext.Mutable<String, EnumStatement,
+                EffectiveStatement<String, EnumStatement>> stmt) throws SourceException {
+            super.onFullDefinitionDeclared(stmt);
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
     }
 

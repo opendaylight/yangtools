@@ -1,0 +1,33 @@
+module maximal {
+    yang-version 1;
+    namespace "urn:opendaylight.maximal";
+    prefix "maximal";
+
+    organization "opendaylight";
+    contact "http://www.opendaylight.org/";
+
+    revision "2015-11-11" {
+        reference " WILL BE DEFINED LATER";
+    }
+
+    container interfaces {
+        grouping ifEntry {
+            container augment-holder;
+        }
+        list ifEntry {
+            key "ifIndex";
+
+            leaf ifIndex {
+                type uint32;
+                units minutes;
+            }
+
+            leaf ifMtu {
+                type int32;
+            }
+
+            min-elements 1;
+            max-elements 11;
+        }
+    }
+}

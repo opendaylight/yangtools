@@ -33,11 +33,6 @@ module types2 {
         default "auto-sense-speed";
     }
 
-    type union {
-        type int32;
-        type string;
-    }
-
     grouping grp1 {
         leaf myenum {
             type enumeration {
