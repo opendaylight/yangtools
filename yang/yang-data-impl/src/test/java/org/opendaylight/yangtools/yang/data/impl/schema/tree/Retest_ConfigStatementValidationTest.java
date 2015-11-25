@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -144,7 +145,7 @@ public class Retest_ConfigStatementValidationTest {
 
         final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(ii, case2Cont);
-
+        modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
         final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare);
