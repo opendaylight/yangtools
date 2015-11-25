@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -15,12 +15,26 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RefineEffectiveStatementImpl;
 
 public class RefineStatementImpl extends AbstractDeclaredStatement<SchemaNodeIdentifier> implements RefineStatement {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .REFINE)
+            .add(Rfc6020Mapping.DEFAULT, 0, 1)
+            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
+            .add(Rfc6020Mapping.REFERENCE, 0, 1)
+            .add(Rfc6020Mapping.CONFIG, 0, 1)
+            .add(Rfc6020Mapping.MANDATORY, 0, 1)
+            .add(Rfc6020Mapping.PRESENCE, 0, 1)
+            .add(Rfc6020Mapping.MUST, 0, 1)
+            .add(Rfc6020Mapping.MIN_ELEMENTS, 0, 1)
+            .add(Rfc6020Mapping.MAX_ELEMENTS, 0, 1)
+            .build(SubstatementValidator.SpecialCase.NOTNULL);
 
     protected RefineStatementImpl(final StmtContext<SchemaNodeIdentifier, RefineStatement, ?> context) {
         super(context);
@@ -47,6 +61,13 @@ public class RefineStatementImpl extends AbstractDeclaredStatement<SchemaNodeIde
         public EffectiveStatement<SchemaNodeIdentifier, RefineStatement> createEffective(
                 final StmtContext<SchemaNodeIdentifier, RefineStatement, EffectiveStatement<SchemaNodeIdentifier, RefineStatement>> ctx) {
             return new RefineEffectiveStatementImpl(ctx);
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(StmtContext.Mutable<SchemaNodeIdentifier, RefineStatement,
+                EffectiveStatement<SchemaNodeIdentifier, RefineStatement>> stmt) throws SourceException {
+            super.onFullDefinitionDeclared(stmt);
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
     }
 

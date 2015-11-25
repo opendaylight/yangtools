@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
+
 import com.google.common.base.Optional;
 import java.net.URI;
 import java.util.Collection;
@@ -26,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
@@ -34,10 +36,16 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ImportEffectiveStatementImpl;
 
 public class ImportStatementDefinition
         extends AbstractStatementSupport<String, ImportStatement, EffectiveStatement<String, ImportStatement>> {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .IMPORT)
+            .add(Rfc6020Mapping.PREFIX, 1, 1)
+            .add(Rfc6020Mapping.REVISION_DATE, 0, 1)
+            .build();
 
     public ImportStatementDefinition() {
         super(Rfc6020Mapping.IMPORT);
@@ -58,6 +66,13 @@ public class ImportStatementDefinition
     public EffectiveStatement<String, ImportStatement> createEffective(
             final StmtContext<String, ImportStatement, EffectiveStatement<String, ImportStatement>> ctx) {
         return new ImportEffectiveStatementImpl(ctx);
+    }
+
+    @Override
+    public void onFullDefinitionDeclared(Mutable<String, ImportStatement,
+            EffectiveStatement<String, ImportStatement>> stmt) throws SourceException {
+        super.onFullDefinitionDeclared(stmt);
+        SUBSTATEMENT_VALIDATOR.validate(stmt);
     }
 
     @Override
@@ -122,6 +137,8 @@ public class ImportStatementDefinition
                 }
             }
         });
+
+
     }
 
     private static ModuleIdentifier getImportedModuleIdentifier(final Mutable<String, ImportStatement, ?> stmt) {

@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ContainerEffectiveStatementImpl;
+import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
 
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -25,12 +25,35 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ContainerEffectiveStatementImpl;
 
 public class ContainerStatementImpl extends AbstractDeclaredStatement<QName> implements ContainerStatement {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .CONTAINER)
+            .add(Rfc6020Mapping.ANYXML, 0, MAX)
+            .add(Rfc6020Mapping.CHOICE, 0, MAX)
+            .add(Rfc6020Mapping.CONFIG, 0, 1)
+            .add(Rfc6020Mapping.CONTAINER, 0, MAX)
+            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
+            .add(Rfc6020Mapping.GROUPING, 0, MAX)
+            .add(Rfc6020Mapping.IF_FEATURE, 0, MAX)
+            .add(Rfc6020Mapping.LEAF, 0, MAX)
+            .add(Rfc6020Mapping.LEAF_LIST, 0, MAX)
+            .add(Rfc6020Mapping.LIST, 0, MAX)
+            .add(Rfc6020Mapping.MUST, 0, MAX)
+            .add(Rfc6020Mapping.PRESENCE, 0, 1)
+            .add(Rfc6020Mapping.REFERENCE, 0, 1)
+            .add(Rfc6020Mapping.STATUS, 0, 1)
+            .add(Rfc6020Mapping.TYPEDEF, 0, MAX)
+            .add(Rfc6020Mapping.USES, 0, MAX)
+            .add(Rfc6020Mapping.WHEN, 0, 1)
+            .build();
 
     protected ContainerStatementImpl(StmtContext<QName, ContainerStatement,?> context) {
         super(context);
@@ -63,6 +86,12 @@ public class ContainerStatementImpl extends AbstractDeclaredStatement<QName> imp
            return new ContainerEffectiveStatementImpl(ctx);
         }
 
+        @Override
+        public void onFullDefinitionDeclared(Mutable<QName, ContainerStatement,
+                EffectiveStatement<QName, ContainerStatement>> stmt) throws SourceException {
+            super.onFullDefinitionDeclared(stmt);
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
+        }
     }
 
     @Override

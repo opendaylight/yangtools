@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -7,17 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PositionEffectiveStatementImpl;
-
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PositionEffectiveStatementImpl;
 
 public class PositionStatementImpl extends AbstractDeclaredStatement<Long>
         implements PositionStatement {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .POSITION)
+            .build();
 
     protected PositionStatementImpl(
             StmtContext<Long, PositionStatement, ?> context) {
@@ -53,6 +57,12 @@ public class PositionStatementImpl extends AbstractDeclaredStatement<Long>
             return new PositionEffectiveStatementImpl(ctx);
         }
 
+        @Override
+        public void onFullDefinitionDeclared(StmtContext.Mutable<Long, PositionStatement,
+                EffectiveStatement<Long, PositionStatement>> stmt) throws SourceException {
+            super.onFullDefinitionDeclared(stmt);
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
+        }
     }
 
     @Override

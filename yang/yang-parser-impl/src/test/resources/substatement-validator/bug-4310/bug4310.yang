@@ -1,0 +1,15 @@
+module bug4310 {
+    yang-version 1;
+    namespace "urn:opendaylight.bug4310";
+    prefix "bug";
+
+    organization "opendaylight";
+    contact "http://www.opendaylight.org/";
+
+    leaf datapath-id {
+        type union {
+            yang-types:hex-string;
+            uint64;
+        }
+    }
+}
