@@ -7,13 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import java.util.Collection;
+import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
 
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -22,6 +24,11 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.String
 
 public class StringRestrictionsImpl extends AbstractDeclaredStatement<String> implements
         TypeStatement.StringRestrictions {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
+            .TYPE)
+            .add(Rfc6020Mapping.LENGTH, 0, 1)
+            .add(Rfc6020Mapping.PATTERN, 0, MAX)
+            .build();
 
     protected StringRestrictionsImpl(StmtContext<String, TypeStatement.StringRestrictions, ?> context) {
         super(context);
@@ -50,6 +57,13 @@ public class StringRestrictionsImpl extends AbstractDeclaredStatement<String> im
         public EffectiveStatement<String, TypeStatement.StringRestrictions> createEffective(
                 StmtContext<String, TypeStatement.StringRestrictions, EffectiveStatement<String, TypeStatement.StringRestrictions>> ctx) {
             return new StringRestrictionsEffectiveStatementImpl(ctx);
+        }
+
+        @Override
+        public void onFullDefinitionDeclared(StmtContext.Mutable<String, StringRestrictions,
+                EffectiveStatement<String, StringRestrictions>> stmt) throws SourceException {
+            super.onFullDefinitionDeclared(stmt);
+            SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
     }
 
