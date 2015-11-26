@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
 import com.google.common.base.Preconditions;
+import java.io.IOException;
 import java.util.List;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParserFactory;
@@ -27,7 +28,15 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  */
 public interface NodeParserDispatcher<E> {
 
-    DataContainerChild<?, ?> dispatchChildElement(Object schema, List<E> childNodes);
+    /**
+     * Dispatches the parsing process of childNodes according to schema and returns the parsed NormalizedNode.
+     *
+     * @param schema schema belonging to the NormalizedNode to be parsed
+     * @param childNodes elements to be parsed into NormalizedNode
+     * @return parsed NormalizedNode
+     * @throws IOException if an underlying IO error occurs while emitting a node into a NormalizedNodeStreamWriter
+     */
+    DataContainerChild<?, ?> dispatchChildElement(Object schema, List<E> childNodes) throws IOException;
 
     /**
      * Abstract implementation that implements the dispatch conditions. Only requires parsers to be provided.
@@ -41,7 +50,8 @@ public interface NodeParserDispatcher<E> {
         }
 
         @Override
-        public final DataContainerChild<?, ?> dispatchChildElement(final Object schema, final List<E> childNodes) {
+        public final DataContainerChild<?, ?> dispatchChildElement(final Object schema, final List<E> childNodes)
+                throws IOException {
             Preconditions.checkArgument(!childNodes.isEmpty());
 
             if (schema instanceof ContainerSchemaNode) {

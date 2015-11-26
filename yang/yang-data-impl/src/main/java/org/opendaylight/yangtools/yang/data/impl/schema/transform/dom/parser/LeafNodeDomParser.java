@@ -12,6 +12,7 @@ import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.LeafNodeBaseParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
@@ -24,14 +25,17 @@ final class LeafNodeDomParser extends LeafNodeBaseParser<Element> {
     private final XmlCodecProvider codecProvider;
     private final SchemaContext ctx;
 
-    LeafNodeDomParser(final XmlCodecProvider codecProvider, final SchemaContext schema) {
+    LeafNodeDomParser(final XmlCodecProvider codecProvider, final SchemaContext schema,
+                      final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(writer);
         this.ctx = schema;
         this.codecProvider = Preconditions.checkNotNull(codecProvider);
     }
 
     LeafNodeDomParser(final XmlCodecProvider codecProvider, final SchemaContext schema,
-        final BuildingStrategy<NodeIdentifier, LeafNode<?>> strategy) {
-        super(strategy);
+        final BuildingStrategy<NodeIdentifier, LeafNode<?>> strategy,
+                      final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(strategy, writer);
         this.ctx = schema;
         this.codecProvider = Preconditions.checkNotNull(codecProvider);
     }

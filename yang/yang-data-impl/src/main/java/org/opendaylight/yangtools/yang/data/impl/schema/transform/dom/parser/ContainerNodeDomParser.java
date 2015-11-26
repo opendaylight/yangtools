@@ -11,8 +11,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.LinkedListMultimap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.ContainerNodeBaseParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.NodeParserDispatcher;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
@@ -23,18 +24,24 @@ final class ContainerNodeDomParser extends ContainerNodeBaseParser<Element> {
     private final NodeParserDispatcher<Element> dispatcher;
     private final boolean strictParsing;
 
-    ContainerNodeDomParser(final NodeParserDispatcher<Element> dispatcher) {
+    ContainerNodeDomParser(final NodeParserDispatcher<Element> dispatcher,
+                           final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(writer);
         this.dispatcher = Preconditions.checkNotNull(dispatcher);
         strictParsing = super.strictParsing();
     }
 
-    public ContainerNodeDomParser(final NodeParserDispatcher<Element> dispatcher, final boolean strictParsing) {
-        this.dispatcher = dispatcher;
+    public ContainerNodeDomParser(final NodeParserDispatcher<Element> dispatcher, final boolean strictParsing,
+                                  final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(writer);
+        this.dispatcher = Preconditions.checkNotNull(dispatcher);
         this.strictParsing = strictParsing;
     }
 
-    ContainerNodeDomParser(final NodeParserDispatcher<Element> dispatcher, final BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, ContainerNode> parsingStrategy, final boolean strictParsing) {
-        super(parsingStrategy);
+    ContainerNodeDomParser(final NodeParserDispatcher<Element> dispatcher,
+                           final BuildingStrategy<NodeIdentifier, ContainerNode> parsingStrategy,
+                           final boolean strictParsing, final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(parsingStrategy, writer);
         this.dispatcher = Preconditions.checkNotNull(dispatcher);
         this.strictParsing = strictParsing;
     }

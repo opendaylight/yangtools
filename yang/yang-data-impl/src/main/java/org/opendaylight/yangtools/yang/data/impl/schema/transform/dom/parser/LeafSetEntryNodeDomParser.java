@@ -12,6 +12,7 @@ import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.LeafSetEntryNodeBaseParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
@@ -24,14 +25,17 @@ final class LeafSetEntryNodeDomParser extends LeafSetEntryNodeBaseParser<Element
     private final XmlCodecProvider codecProvider;
     private final SchemaContext ctx;
 
-    LeafSetEntryNodeDomParser(final XmlCodecProvider codecProvider, final SchemaContext schema) {
+    LeafSetEntryNodeDomParser(final XmlCodecProvider codecProvider, final SchemaContext schema,
+                              final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(writer);
         this.ctx = schema;
         this.codecProvider = Preconditions.checkNotNull(codecProvider);
     }
 
     LeafSetEntryNodeDomParser(final XmlCodecProvider codecProvider, final SchemaContext schema,
-        final  BuildingStrategy<NodeWithValue, LeafSetEntryNode<?>> strategy) {
-        super(strategy);
+        final  BuildingStrategy<NodeWithValue, LeafSetEntryNode<?>> strategy,
+                              final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(strategy, writer);
         this.ctx = schema;
         this.codecProvider = Preconditions.checkNotNull(codecProvider);
     }

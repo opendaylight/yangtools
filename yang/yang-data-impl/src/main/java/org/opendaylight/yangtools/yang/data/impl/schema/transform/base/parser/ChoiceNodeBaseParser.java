@@ -7,13 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
@@ -30,10 +34,28 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  */
 public abstract class ChoiceNodeBaseParser<E> extends BaseDispatcherParser<E, YangInstanceIdentifier.NodeIdentifier, ChoiceNode, ChoiceSchemaNode> {
 
-    protected ChoiceNodeBaseParser() {}
+    protected ChoiceNodeBaseParser(final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(writer);
+    }
 
-    protected ChoiceNodeBaseParser(final BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, ChoiceNode> buildingStrategy) {
-        super(buildingStrategy);
+    protected ChoiceNodeBaseParser(final BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, ChoiceNode>
+                                           buildingStrategy, final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(buildingStrategy, writer);
+    }
+
+    @Override
+    public final ChoiceNode parse(final Iterable<E> elements, final ChoiceSchemaNode schema) throws IOException {
+        final NodeIdentifier nodeIdentifier = NodeIdentifier.create(schema.getQName());
+        final int size = Iterables.size(elements);
+
+        writer.nextDataSchemaNode(schema);
+        writer.startChoiceNode(nodeIdentifier, size);
+
+        ChoiceNode choiceNode = super.parse(elements, schema);
+
+        writer.endNode();
+
+        return choiceNode;
     }
 
     @Override
