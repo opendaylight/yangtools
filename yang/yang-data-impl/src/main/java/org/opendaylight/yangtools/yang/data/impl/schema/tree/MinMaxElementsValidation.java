@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
@@ -112,19 +113,17 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
     private static int numOfChildrenFromChildMods(final ModifiedNode modification, final Optional<TreeNode> current) {
         int result = 0;
         for (final ModifiedNode modChild : modification.getChildren()) {
+            final Optional<TreeNode> currentChild = StoreTreeNodes.getChild(current, modChild.getIdentifier());
+
             switch (modChild.getOperation()) {
-                case WRITE:
-                    if (!modChild.getOriginal().isPresent()) {
-                        result++;
-                    }
-                    break;
                 case MERGE:
-                    if (!current.isPresent()) {
+                case WRITE:
+                    if (!currentChild.isPresent()) {
                         result++;
                     }
                     break;
                 case DELETE:
-                    if (modChild.getOriginal().isPresent()) {
+                    if (currentChild.isPresent()) {
                         result--;
                     }
                     break;
