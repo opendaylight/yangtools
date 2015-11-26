@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.LeafSetNodeBaseParser;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -17,7 +18,10 @@ final class LeafSetNodeDomParser extends LeafSetNodeBaseParser<Element> {
 
     private final LeafSetEntryNodeDomParser leafSetEntryNodeBaseParser;
 
-    LeafSetNodeDomParser(LeafSetEntryNodeDomParser leafSetEntryNodeBaseParser) {
+    LeafSetNodeDomParser(LeafSetEntryNodeDomParser leafSetEntryNodeBaseParser,
+                         final SchemaAwareNormalizedNodeStreamWriter
+            writer) {
+        super(writer);
         this.leafSetEntryNodeBaseParser = leafSetEntryNodeBaseParser;
     }
 

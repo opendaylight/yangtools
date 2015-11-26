@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns="urn:opendaylight:params:xml:ns:yangtools:test-module">
+    <test-container>
+        <nested-container1>
+            <list-with-no-key>
+                <lwnk-leaf1>leaf11 test</lwnk-leaf1>
+                <lwnk-leaf2>leaf21 test</lwnk-leaf2>
+            </list-with-no-key>
+            <list-with-key>
+                <lwk-key>key leaf test</lwk-key>
+                <lwk-leaf1>leaf12 test</lwk-leaf1>
+                <lwk-leaf2>leaf22 test</lwk-leaf2>
+            </list-with-key>
+        </nested-container1>
+        <nested-container2>
+            <list-with-two-keys>
+                <lwtk-key1>key leaf 1 test</lwtk-key1>
+                <lwtk-key2>key leaf 2 test</lwtk-key2>
+                <lwtk-leaf1>leaf13 test</lwtk-leaf1>
+                <lwtk-leaf2>leaf23 test</lwtk-leaf2>
+            </list-with-two-keys>
+            <list-ordered-by-user>
+                <lobu-key>key leaf test</lobu-key>
+                <lobu-leaf1>leaf 14 test</lobu-leaf1>
+                <lobu-leaf2>leaf 24 test</lobu-leaf2>
+            </list-ordered-by-user>
+        </nested-container2>
+        <nested-container3>
+            <lf-list>leaf list test value 1</lf-list>
+            <lf-list>leaf list test value 2</lf-list>
+            <anyxml-data>value for testing</anyxml-data>
+        </nested-container3>
+        <nested-container4>
+            <cs2-leaf>case2 leaf test</cs2-leaf>
+            <augment-leaf>augment leaf test</augment-leaf>
+        </nested-container4>
+    </test-container>
+</root>

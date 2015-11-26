@@ -9,11 +9,13 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
+import java.io.IOException;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
@@ -27,18 +29,22 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 public abstract class LeafSetEntryNodeBaseParser<E> implements ExtensibleParser<YangInstanceIdentifier.NodeWithValue, E, LeafSetEntryNode<?>, LeafListSchemaNode> {
 
     private final BuildingStrategy<YangInstanceIdentifier.NodeWithValue, LeafSetEntryNode<?>> buildingStrategy;
+    private final SchemaAwareNormalizedNodeStreamWriter writer;
 
-    public LeafSetEntryNodeBaseParser() {
+    public LeafSetEntryNodeBaseParser(final SchemaAwareNormalizedNodeStreamWriter writer) {
         buildingStrategy = new SimpleLeafSetEntryBuildingStrategy();
+        this.writer = writer;
     }
 
-    public LeafSetEntryNodeBaseParser(final BuildingStrategy<YangInstanceIdentifier.NodeWithValue, LeafSetEntryNode<?>> buildingStrategy) {
+    public LeafSetEntryNodeBaseParser(final BuildingStrategy<YangInstanceIdentifier.NodeWithValue,
+            LeafSetEntryNode<?>> buildingStrategy, final SchemaAwareNormalizedNodeStreamWriter writer) {
         this.buildingStrategy = buildingStrategy;
+        this.writer = writer;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public final LeafSetEntryNode<?> parse(Iterable<E> elements, LeafListSchemaNode schema) {
+    public final LeafSetEntryNode<?> parse(Iterable<E> elements, LeafListSchemaNode schema) throws IOException {
         final int size = Iterables.size(elements);
         Preconditions.checkArgument(size == 1, "Xml elements mapped to leaf node illegal count: %s", size);
 
@@ -49,6 +55,9 @@ public abstract class LeafSetEntryNodeBaseParser<E> implements ExtensibleParser<
                 .leafSetEntryBuilder(schema);
         leafEntryBuilder.withAttributes(getAttributes(e));
         leafEntryBuilder.withValue(value);
+
+        writer.nextDataSchemaNode(schema);
+        writer.leafSetEntryNode(value);
 
         final BuildingStrategy rawBuildingStrat = buildingStrategy;
         return (LeafSetEntryNode<?>) rawBuildingStrat.build(leafEntryBuilder);

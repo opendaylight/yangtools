@@ -7,9 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
+import com.google.common.collect.Iterables;
+import java.io.IOException;
 import java.util.Collections;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
@@ -23,11 +27,24 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 public abstract class LeafSetNodeBaseParser<E> implements
         ToNormalizedNodeParser<E, LeafSetNode<?>, LeafListSchemaNode> {
 
+    private final SchemaAwareNormalizedNodeStreamWriter writer;
+
+    public LeafSetNodeBaseParser(final SchemaAwareNormalizedNodeStreamWriter writer) {
+        this.writer = writer;
+    }
+
     @Override
-    public final LeafSetNode<?> parse(Iterable<E> childNodes, LeafListSchemaNode schema) {
+    public final LeafSetNode<?> parse(Iterable<E> childNodes, LeafListSchemaNode schema) throws IOException {
 
         ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafListBuilder =
           (schema.isUserOrdered() ? Builders.orderedLeafSetBuilder(schema) : Builders.leafSetBuilder(schema));
+
+        final NodeIdentifier nodeIdentifier = NodeIdentifier.create(schema.getQName());
+        final int size = Iterables.size(childNodes);
+
+        writer.nextDataSchemaNode(schema);
+        writer.startLeafSet(nodeIdentifier, size);
+
         for (E childNode : childNodes) {
             LeafSetEntryNode<?> builtChild = getLeafSetEntryNodeParser().parse(
                     Collections.singletonList(childNode), schema);
@@ -37,6 +54,8 @@ public abstract class LeafSetNodeBaseParser<E> implements
             final LeafSetEntryNode<Object> child = (LeafSetEntryNode<Object>) builtChild;
             leafListBuilder.withChild(child);
         }
+
+        writer.endNode();
 
         return leafListBuilder.build();
     }
