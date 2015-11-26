@@ -9,11 +9,13 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
+import java.io.IOException;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
@@ -28,18 +30,22 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 public abstract class LeafNodeBaseParser<E> implements ExtensibleParser<NodeIdentifier, E, LeafNode<?>, LeafSchemaNode> {
 
     private final BuildingStrategy<NodeIdentifier, LeafNode<?>> buildingStrategy;
+    private final SchemaAwareNormalizedNodeStreamWriter writer;
 
-    public LeafNodeBaseParser() {
+    public LeafNodeBaseParser(final SchemaAwareNormalizedNodeStreamWriter writer) {
         buildingStrategy = new SimpleLeafBuildingStrategy();
+        this.writer = writer;
     }
 
-    public LeafNodeBaseParser(final BuildingStrategy<NodeIdentifier, LeafNode<?>> buildingStrategy) {
+    public LeafNodeBaseParser(final BuildingStrategy<NodeIdentifier, LeafNode<?>> buildingStrategy,
+                              final SchemaAwareNormalizedNodeStreamWriter writer) {
         this.buildingStrategy = buildingStrategy;
+        this.writer = writer;
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public final LeafNode<?> parse(final Iterable<E> elements, final LeafSchemaNode schema) {
+    public final LeafNode<?> parse(final Iterable<E> elements, final LeafSchemaNode schema) throws IOException {
         final int size = Iterables.size(elements);
         Preconditions.checkArgument(size == 1, "Elements mapped to leaf node illegal count: %s", size);
 
@@ -50,6 +56,11 @@ public abstract class LeafNodeBaseParser<E> implements ExtensibleParser<NodeIden
                 Builders.leafBuilder(schema);
 
         leafBuilder.withAttributes(getAttributes(e));
+
+        final NodeIdentifier nodeIdentifier = NodeIdentifier.create(schema.getQName());
+
+        writer.nextDataSchemaNode(schema);
+        writer.leafNode(nodeIdentifier, value);
 
         final BuildingStrategy rawBuildingStrat = buildingStrategy;
         return LeafInterner.forSchema(schema).intern((LeafNode<?>)rawBuildingStrat.build(leafBuilder.withValue(value)));
