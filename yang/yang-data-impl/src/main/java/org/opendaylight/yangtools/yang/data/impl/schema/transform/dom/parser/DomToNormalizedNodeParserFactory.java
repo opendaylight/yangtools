@@ -20,7 +20,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParserFactory;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.BaseDispatcherParser;
@@ -54,49 +57,60 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
     private final OrderedListNodeDomParser orderedListNodeParser;
     private final AnyXmlDomParser anyXmlNodeParser;
 
+    private final NormalizedNodeResult result = new NormalizedNodeResult();
+    private final SchemaAwareNormalizedNodeStreamWriter writer = (SchemaAwareNormalizedNodeStreamWriter)
+            ImmutableNormalizedNodeStreamWriter.from(result);
+
     private DomToNormalizedNodeParserFactory(final XmlCodecProvider codecProvider, final SchemaContext schema, final boolean strictParsing) {
-        leafNodeParser = new LeafNodeDomParser(codecProvider, schema);
-        leafSetEntryNodeParser = new LeafSetEntryNodeDomParser(codecProvider, schema);
-        leafSetNodeParser = new LeafSetNodeDomParser(leafSetEntryNodeParser);
-        anyXmlNodeParser = new AnyXmlDomParser();
+        leafNodeParser = new LeafNodeDomParser(codecProvider, schema, writer);
+        leafSetEntryNodeParser = new LeafSetEntryNodeDomParser(codecProvider, schema, writer);
+        leafSetNodeParser = new LeafSetNodeDomParser(leafSetEntryNodeParser, writer);
+        anyXmlNodeParser = new AnyXmlDomParser(writer);
 
         final NodeParserDispatcher<Element> dispatcher = new NodeParserDispatcher.BaseNodeParserDispatcher<Element>(this) {
 
         };
 
-        containerNodeParser = new ContainerNodeDomParser(dispatcher, strictParsing);
-        mapEntryNodeParser = new MapEntryNodeDomParser(dispatcher, strictParsing);
-        mapNodeParser = new MapNodeDomParser(mapEntryNodeParser);
-        orderedListNodeParser = new OrderedListNodeDomParser(mapEntryNodeParser);
-        unkeyedListEntryNodeParser = new UnkeyedListEntryNodeDomParser(dispatcher);
-        unkeyedListNodeParser = new UnkeyedListNodeDomParser(unkeyedListEntryNodeParser);
-        choiceNodeParser = new ChoiceNodeDomParser(dispatcher);
-        augmentationNodeParser = new AugmentationNodeDomParser(dispatcher, strictParsing);
+        containerNodeParser = new ContainerNodeDomParser(dispatcher, strictParsing, writer);
+        mapEntryNodeParser = new MapEntryNodeDomParser(dispatcher, strictParsing, writer);
+        mapNodeParser = new MapNodeDomParser(mapEntryNodeParser, writer);
+        orderedListNodeParser = new OrderedListNodeDomParser(mapEntryNodeParser, writer);
+        unkeyedListEntryNodeParser = new UnkeyedListEntryNodeDomParser(dispatcher, writer);
+        unkeyedListNodeParser = new UnkeyedListNodeDomParser(unkeyedListEntryNodeParser, writer);
+        choiceNodeParser = new ChoiceNodeDomParser(dispatcher, writer);
+        augmentationNodeParser = new AugmentationNodeDomParser(dispatcher, strictParsing, writer);
     }
 
     private DomToNormalizedNodeParserFactory(final XmlCodecProvider codecProvider, final SchemaContext schema,
                                              final BuildingStrategyProvider buildingStratProvider, final boolean strictParsing) {
-        leafNodeParser = new LeafNodeDomParser(codecProvider, schema, buildingStratProvider.forLeaf());
-        leafSetEntryNodeParser = new LeafSetEntryNodeDomParser(codecProvider, schema, buildingStratProvider.forLeafSetEntry());
+        leafNodeParser = new LeafNodeDomParser(codecProvider, schema, buildingStratProvider.forLeaf(), writer);
+        leafSetEntryNodeParser = new LeafSetEntryNodeDomParser(codecProvider, schema,
+                buildingStratProvider.forLeafSetEntry(), writer);
 
         // no buildingStrategy for Augment (no use case for now)
-        leafSetNodeParser = new LeafSetNodeDomParser(leafSetEntryNodeParser);
+        leafSetNodeParser = new LeafSetNodeDomParser(leafSetEntryNodeParser, writer);
         // no buildingStrategy for anyXml (probably not necessary)
-        anyXmlNodeParser = new AnyXmlDomParser();
+        anyXmlNodeParser = new AnyXmlDomParser(writer);
 
         final NodeParserDispatcher<Element> dispatcher = new NodeParserDispatcher.BaseNodeParserDispatcher<Element>(this) {
 
         };
 
-        containerNodeParser = new ContainerNodeDomParser(dispatcher, buildingStratProvider.forContainer(), strictParsing);
-        mapEntryNodeParser = new MapEntryNodeDomParser(dispatcher, buildingStratProvider.forMapEntry(), strictParsing);
-        mapNodeParser = new MapNodeDomParser(mapEntryNodeParser, buildingStratProvider.forMap());
-        orderedListNodeParser = new OrderedListNodeDomParser(mapEntryNodeParser, buildingStratProvider.forOrderedList());
-        unkeyedListEntryNodeParser = new UnkeyedListEntryNodeDomParser(buildingStratProvider.forUnkeyedListEntry(), dispatcher);
-        unkeyedListNodeParser = new UnkeyedListNodeDomParser(buildingStratProvider.forUnkeyedList(), unkeyedListEntryNodeParser);
-        choiceNodeParser = new ChoiceNodeDomParser(dispatcher, buildingStratProvider.forChoice());
+        containerNodeParser = new ContainerNodeDomParser(dispatcher, buildingStratProvider.forContainer(),
+                strictParsing, writer);
+        mapEntryNodeParser = new MapEntryNodeDomParser(dispatcher, buildingStratProvider.forMapEntry(),
+                strictParsing, writer);
+        mapNodeParser = new MapNodeDomParser(mapEntryNodeParser, buildingStratProvider.forMap(), writer);
+        orderedListNodeParser = new OrderedListNodeDomParser(mapEntryNodeParser, buildingStratProvider.forOrderedList(),
+                writer);
+        unkeyedListEntryNodeParser = new UnkeyedListEntryNodeDomParser(buildingStratProvider.forUnkeyedListEntry(),
+                dispatcher, writer);
+        unkeyedListNodeParser = new UnkeyedListNodeDomParser(buildingStratProvider.forUnkeyedList(),
+                unkeyedListEntryNodeParser, writer);
+        choiceNodeParser = new ChoiceNodeDomParser(dispatcher, buildingStratProvider.forChoice(), writer);
         // no buildingStrategy for Augment (no use case for now)
-        augmentationNodeParser = new AugmentationNodeDomParser(buildingStratProvider.forAugmentation(), dispatcher, strictParsing);
+        augmentationNodeParser = new AugmentationNodeDomParser(buildingStratProvider.forAugmentation(), dispatcher,
+                strictParsing, writer);
     }
 
     public static DomToNormalizedNodeParserFactory getInstance(final XmlCodecProvider codecProvider, final SchemaContext schema, final boolean strictParsing) {

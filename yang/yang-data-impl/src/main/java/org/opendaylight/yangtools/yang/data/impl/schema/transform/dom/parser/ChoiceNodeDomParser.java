@@ -10,8 +10,9 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.LinkedListMultimap;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.ChoiceNodeBaseParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.NodeParserDispatcher;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
@@ -21,12 +22,16 @@ final class ChoiceNodeDomParser extends ChoiceNodeBaseParser<Element> {
 
     private final NodeParserDispatcher<Element> dispatcher;
 
-    ChoiceNodeDomParser(final NodeParserDispatcher<Element> dispatcher) {
+    ChoiceNodeDomParser(final NodeParserDispatcher<Element> dispatcher,
+                        final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(writer);
         this.dispatcher = Preconditions.checkNotNull(dispatcher);
     }
 
-    ChoiceNodeDomParser(final NodeParserDispatcher<Element> dispatcher, final BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, ChoiceNode> buildingStrategy) {
-        super(buildingStrategy);
+    ChoiceNodeDomParser(final NodeParserDispatcher<Element> dispatcher,
+                        final BuildingStrategy<NodeIdentifier, ChoiceNode> buildingStrategy,
+                        final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(buildingStrategy, writer);
         this.dispatcher = Preconditions.checkNotNull(dispatcher);
     }
 

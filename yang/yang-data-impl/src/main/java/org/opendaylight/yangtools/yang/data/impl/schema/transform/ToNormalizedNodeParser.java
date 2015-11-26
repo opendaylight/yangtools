@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform;
 
+import java.io.IOException;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
@@ -33,7 +34,8 @@ public interface ToNormalizedNodeParser<E, N extends NormalizedNode<?, ?>, S> {
      * @param elements elements to be parsed into NormalizedNode
      * @param schema schema belonging to the type N of NormalizedNode
      * @return NormalizedNode as a result of parsing list of E elements with schema S
+     * @throws IOException if an underlying IO error occurs while emitting a node into a NormalizedNodeStreamWriter
      */
     @Nullable
-    N parse(Iterable<E> elements, S schema);
+    N parse(Iterable<E> elements, S schema) throws IOException;
 }

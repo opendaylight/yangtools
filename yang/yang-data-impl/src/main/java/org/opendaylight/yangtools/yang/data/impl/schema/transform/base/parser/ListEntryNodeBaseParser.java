@@ -7,17 +7,31 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.LinkedListMultimap;
+import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlCodecProvider;
+import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
+import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.w3c.dom.Element;
 
 /**
  * Abstract(base) parser for ListNodes (MapNode, UnkeyedListNode), parses elements of type E.
@@ -28,11 +42,13 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 public abstract class ListEntryNodeBaseParser<P extends YangInstanceIdentifier.PathArgument, E, N extends DataContainerNode<P>> extends
         BaseDispatcherParser<E, P, N, ListSchemaNode> {
 
-    public ListEntryNodeBaseParser(final BuildingStrategy<P, N> buildingStrategy) {
-        super(buildingStrategy);
+    public ListEntryNodeBaseParser(final BuildingStrategy<P, N> buildingStrategy,
+                                   final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(buildingStrategy, writer);
     }
 
-    public ListEntryNodeBaseParser() {
+    public ListEntryNodeBaseParser(final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(writer);
     }
 
     @Override
@@ -56,9 +72,36 @@ public abstract class ListEntryNodeBaseParser<P extends YangInstanceIdentifier.P
     }
 
     @Override
-    public final N parse(final Iterable<E> elements, final ListSchemaNode schema) {
+    public final N parse(final Iterable<E> elements, final ListSchemaNode schema) throws IOException {
         checkOnlyOneNode(schema, elements);
-        return super.parse(elements, schema);
+
+        final int size = Iterables.size(elements);
+        final LinkedListMultimap<QName, E> mappedChildElements = mapChildElements(elements);
+
+        writer.nextDataSchemaNode(schema);
+        if (schema.getKeyDefinition().isEmpty()) {
+            final NodeIdentifier nodeIdentifier = NodeIdentifier.create(schema.getQName());
+            writer.startUnkeyedListItem(nodeIdentifier, size);
+        } else {
+            final Map<QName, Object> predicates = new LinkedHashMap<>();
+            for (QName keyQName : schema.getKeyDefinition()) {
+                Element keyXml = (Element) mappedChildElements.get(keyQName.withoutRevision()).get(0);
+                TypeDefinition<?> keyType = ((LeafSchemaNode) SchemaUtils.findSchemaForChild(schema, keyQName)).getType();
+                Object keyValue = DomUtils.parseXmlValue(keyXml, DomUtils.defaultValueCodecProvider(), keyType);
+
+                predicates.put(keyQName, keyValue);
+            }
+
+            final NodeIdentifierWithPredicates nodeIdentifierWithPredicates = new NodeIdentifierWithPredicates(schema
+                    .getQName(), predicates);
+            writer.startMapEntryNode(nodeIdentifierWithPredicates, size);
+        }
+
+        N listEntry = super.parse(elements, schema);
+
+        writer.endNode();
+
+        return listEntry;
     }
 
     @Override
