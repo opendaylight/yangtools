@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -69,14 +70,21 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
             LOG.debug("Could not validate {}, does not implement expected class {}", nodeMod, ModifiedNode.class);
             return;
         }
-        final ModifiedNode modification = (ModifiedNode) nodeMod;
 
+        final ModifiedNode modification = (ModifiedNode) nodeMod;
         final int childrenBefore = (modification.getOperation() == LogicalOperation.WRITE) ? 0 : findChildrenBefore
                 (current);
+        Verify.verify(childrenBefore >= 0, "Child count before is %s (from %s)", childrenBefore, current);
 
         final int childrenAfter = findChildrenAfter(modification);
+        Verify.verify(childrenAfter >= 0, "Child count after is %s (from %s)", childrenAfter, modification);
 
-        final int childrenTotal = childrenBefore + childrenAfter + numOfChildrenFromChildMods(modification, current);
+        final int childrenModified = numOfChildrenFromChildMods(modification, current);
+        LOG.debug("Modified child count is %s (from %s and %s)", childrenModified, modification, current);
+
+        final int childrenTotal = childrenBefore + childrenAfter + childrenModified;
+        Verify.verify(childrenTotal >= 0, "Total child count is %s (from %s and %s)", childrenTotal, modification, current);
+
         if (minElements != null && minElements > childrenTotal) {
             throw new DataValidationFailedException(path, String.format(
                     "%s does not have enough elements (%s), needs at least %s", modification.getIdentifier(),
