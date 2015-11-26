@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
@@ -27,17 +29,21 @@ public abstract class ListNodeBaseParser<E, N extends NormalizedNode<?, ?>, O ex
         implements ExtensibleParser<YangInstanceIdentifier.NodeIdentifier, E, O, S> {
 
     private final BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, O> buildingStrategy;
+    protected final SchemaAwareNormalizedNodeStreamWriter writer;
 
-    public ListNodeBaseParser() {
+    public ListNodeBaseParser(final SchemaAwareNormalizedNodeStreamWriter writer) {
         buildingStrategy = new SimpleListNodeBuildingStrategy<>();
+        this.writer = writer;
     }
 
-    public ListNodeBaseParser(final BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, O> buildingStrategy) {
+    public ListNodeBaseParser(final BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, O> buildingStrategy,
+                              final SchemaAwareNormalizedNodeStreamWriter writer) {
         this.buildingStrategy = buildingStrategy;
+        this.writer = writer;
     }
 
     @Override
-    public O parse(Iterable<E> childNodes, S schema) {
+    public O parse(Iterable<E> childNodes, S schema) throws IOException {
         CollectionNodeBuilder<N, O> listBuilder = provideBuilder(schema);
 
         buildingStrategy.prepareAttributes(Collections.<QName, String>emptyMap(), listBuilder);

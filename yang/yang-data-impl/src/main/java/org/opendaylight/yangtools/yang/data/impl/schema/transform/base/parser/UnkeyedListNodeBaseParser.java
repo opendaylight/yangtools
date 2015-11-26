@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
+import com.google.common.collect.Iterables;
+import java.io.IOException;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -23,11 +26,28 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 public abstract class UnkeyedListNodeBaseParser<E> extends
         ListNodeBaseParser<E, UnkeyedListEntryNode, UnkeyedListNode, ListSchemaNode> {
 
-    public UnkeyedListNodeBaseParser(final BuildingStrategy<NodeIdentifier, UnkeyedListNode> buildingStrategy) {
-        super(buildingStrategy);
+    public UnkeyedListNodeBaseParser(final BuildingStrategy<NodeIdentifier, UnkeyedListNode> buildingStrategy,
+                                     final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(buildingStrategy, writer);
     }
 
-    public UnkeyedListNodeBaseParser() {
+    public UnkeyedListNodeBaseParser(final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(writer);
+    }
+
+    @Override
+    public UnkeyedListNode parse(Iterable<E> childNodes, ListSchemaNode schema) throws IOException {
+        final NodeIdentifier nodeIdentifier = NodeIdentifier.create(schema.getQName());
+        final int size = Iterables.size(childNodes);
+
+        writer.nextDataSchemaNode(schema);
+        writer.startUnkeyedList(nodeIdentifier, size);
+
+        UnkeyedListNode unkeyedListNode = super.parse(childNodes, schema);
+
+        writer.endNode();
+
+        return unkeyedListNode;
     }
 
     @Override

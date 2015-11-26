@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.ToNormalizedNodeParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.OrderedListNodeBaseParser;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -19,12 +20,15 @@ final class OrderedListNodeDomParser extends OrderedListNodeBaseParser<Element> 
 
     private final MapEntryNodeDomParser mapEntryNodeParser;
 
-    OrderedListNodeDomParser(final MapEntryNodeDomParser mapEntryNodeParser) {
+    OrderedListNodeDomParser(final MapEntryNodeDomParser mapEntryNodeParser, final SchemaAwareNormalizedNodeStreamWriter
+            writer) {
+        super(writer);
         this.mapEntryNodeParser = mapEntryNodeParser;
     }
 
-    OrderedListNodeDomParser(MapEntryNodeDomParser mapEntryNodeParser, final BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, OrderedMapNode> strategy) {
-        super(strategy);
+    OrderedListNodeDomParser(MapEntryNodeDomParser mapEntryNodeParser, final BuildingStrategy<YangInstanceIdentifier
+            .NodeIdentifier, OrderedMapNode> strategy, final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(strategy, writer);
         this.mapEntryNodeParser = mapEntryNodeParser;
     }
 

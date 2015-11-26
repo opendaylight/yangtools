@@ -13,6 +13,7 @@ import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.ListEntryNodeBaseParser;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.NodeParserDispatcher;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.DomUtils;
@@ -22,12 +23,15 @@ abstract class ListEntryNodeDomParser<P extends YangInstanceIdentifier.PathArgum
 
     private final NodeParserDispatcher<Element> dispatcher;
 
-    ListEntryNodeDomParser(final NodeParserDispatcher<Element> dispatcher) {
+    ListEntryNodeDomParser(final NodeParserDispatcher<Element> dispatcher, final SchemaAwareNormalizedNodeStreamWriter
+            writer) {
+        super(writer);
         this.dispatcher = Preconditions.checkNotNull(dispatcher);
     }
 
-    ListEntryNodeDomParser(final BuildingStrategy<P, N> buildingStrategy, final NodeParserDispatcher<Element> dispatcher) {
-        super(buildingStrategy);
+    ListEntryNodeDomParser(final BuildingStrategy<P, N> buildingStrategy, final NodeParserDispatcher<Element>
+            dispatcher, final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(buildingStrategy, writer);
         this.dispatcher = dispatcher;
     }
 
