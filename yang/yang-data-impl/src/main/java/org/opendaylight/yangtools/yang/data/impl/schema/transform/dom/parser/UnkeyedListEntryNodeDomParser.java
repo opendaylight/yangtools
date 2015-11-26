@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.NodeParserDispatcher;
@@ -17,12 +18,15 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.w3c.dom.Element;
 
 final class UnkeyedListEntryNodeDomParser extends ListEntryNodeDomParser<YangInstanceIdentifier.NodeIdentifier, UnkeyedListEntryNode> {
-    UnkeyedListEntryNodeDomParser(final NodeParserDispatcher<Element> dispatcher) {
-        super(dispatcher);
+    UnkeyedListEntryNodeDomParser(final NodeParserDispatcher<Element> dispatcher,
+                                  final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(dispatcher, writer);
     }
 
-    UnkeyedListEntryNodeDomParser(final BuildingStrategy<NodeIdentifier, UnkeyedListEntryNode> buildingStrategy, final NodeParserDispatcher<Element> dispatcher) {
-        super(buildingStrategy, dispatcher);
+    UnkeyedListEntryNodeDomParser(final BuildingStrategy<NodeIdentifier, UnkeyedListEntryNode> buildingStrategy,
+                                  final NodeParserDispatcher<Element> dispatcher,
+                                  final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(buildingStrategy, dispatcher, writer);
     }
 
     @Override

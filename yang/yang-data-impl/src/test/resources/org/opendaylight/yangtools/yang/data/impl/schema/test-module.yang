@@ -1,0 +1,118 @@
+module test-module {
+
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yangtools:test-module";
+    prefix "tstmdl";
+
+    organization "Cisco Systems, Inc.";
+
+    revision "2015-11-19" {
+        description
+            "Initial revision";
+    }
+
+    container test-container {
+
+        container nested-container1 {
+
+            list list-with-no-key {
+                leaf lwnk-leaf1 {
+                    type string;
+                }
+
+                leaf lwnk-leaf2 {
+                    type string;
+                }
+            }
+
+            list list-with-key {
+                key "lwk-key";
+
+                leaf lwk-key {
+                    type string;
+                }
+
+                leaf lwk-leaf1 {
+                    type string;
+                }
+
+                leaf lwk-leaf2 {
+                    type string;
+                }
+            }
+        }
+
+        container nested-container2 {
+
+            list list-with-two-keys {
+                key "lwtk-key1 lwtk-key2";
+
+                leaf lwtk-key1 {
+                    type string;
+                }
+
+                leaf lwtk-key2 {
+                    type string;
+                }
+
+                leaf lwtk-leaf1 {
+                    type string;
+                }
+
+                leaf lwtk-leaf2 {
+                    type string;
+                }
+            }
+
+            list list-ordered-by-user {
+                ordered-by user;
+                key "lobu-key";
+
+                leaf lobu-key {
+                    type string;
+                }
+
+                leaf lobu-leaf1 {
+                    type string;
+                }
+
+                leaf lobu-leaf2 {
+                    type string;
+                }
+            }
+        }
+
+        container nested-container3 {
+
+            leaf-list lf-list {
+                type string;
+            }
+
+            anyxml anyxml-data;
+        }
+
+        container nested-container4 {
+
+            choice test-choice {
+                case cs1 {
+                    leaf cs1-leaf {
+                        type string;
+                    }
+                }
+
+                case cs2 {
+                    leaf cs2-leaf {
+                        type string;
+                    }
+                }
+            }
+        }
+    }
+
+    augment "/test-container/nested-container4/" {
+        leaf augment-leaf {
+            type string;
+        }
+    }
+
+}
