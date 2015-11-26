@@ -277,7 +277,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
         AbstractReadyIterator current = AbstractReadyIterator.create(rootNode, strategyTree);
         do {
-            current = current.process();
+            current = current.process(version);
         } while (current != null);
     }
 }

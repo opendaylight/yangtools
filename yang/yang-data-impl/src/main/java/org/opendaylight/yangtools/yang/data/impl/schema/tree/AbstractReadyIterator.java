@@ -11,6 +11,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.Collection;
 import java.util.Iterator;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 
 abstract class AbstractReadyIterator {
     final Iterator<ModifiedNode> children;
@@ -28,7 +29,7 @@ abstract class AbstractReadyIterator {
         return new RootReadyIterator(root, root.getChildren().iterator(), operation);
     }
 
-    final AbstractReadyIterator process() {
+    final AbstractReadyIterator process(final Version version) {
         // Walk all child nodes and remove any children which have not
         // been modified. If a child
         while (children.hasNext()) {
@@ -37,18 +38,20 @@ abstract class AbstractReadyIterator {
             Preconditions.checkState(childOperation.isPresent(), "Schema for child %s is not present.",
                     child.getIdentifier());
             final Collection<ModifiedNode> grandChildren = child.getChildren();
+            final ModificationApplyOperation childOp = childOperation.get();
+
             if (grandChildren.isEmpty()) {
 
-                child.seal(childOperation.get());
+                child.seal(childOp, version);
                 if (child.getOperation() == LogicalOperation.NONE) {
                     children.remove();
                 }
             } else {
-                return new NestedReadyIterator(this, child, grandChildren.iterator(), childOperation.get());
+                return new NestedReadyIterator(this, child, grandChildren.iterator(), childOp);
             }
         }
 
-        node.seal(op);
+        node.seal(op, version);
 
         // Remove from parent if we have one and this is a no-op
         if (node.getOperation() == LogicalOperation.NONE) {
