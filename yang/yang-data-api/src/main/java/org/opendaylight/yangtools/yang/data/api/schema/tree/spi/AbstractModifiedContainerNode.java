@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import java.util.Map;
 import org.opendaylight.yangtools.util.MapAdaptor;
@@ -38,5 +39,11 @@ abstract class AbstractModifiedContainerNode extends AbstractContainerNode {
     @Override
     public final Version getSubtreeVersion() {
         return subtreeVersion;
+    }
+
+    @Override
+    public final String toString() {
+        return MoreObjects.toStringHelper(this).add("subtreeVersion", subtreeVersion).add("children", children)
+                .toString();
     }
 }
