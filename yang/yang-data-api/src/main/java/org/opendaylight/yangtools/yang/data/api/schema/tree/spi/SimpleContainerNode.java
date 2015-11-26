@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -32,5 +33,10 @@ final class SimpleContainerNode extends AbstractContainerNode {
     @Override
     public MutableTreeNode mutable() {
         return new LazyMutableContainerNode(this);
+    }
+
+    @Override
+    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return helper.add("data", getData());
     }
 }

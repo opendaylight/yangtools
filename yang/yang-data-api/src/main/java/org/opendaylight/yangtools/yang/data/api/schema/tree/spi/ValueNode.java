@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.base.Optional;
 
 /**
  * Concretization of AbstractTreeNode for leaf nodes which only contain data.
@@ -44,5 +44,10 @@ final class ValueNode extends AbstractTreeNode {
          * replace. That means they don't haver need to be made mutable.
          */
         throw new UnsupportedOperationException(String.format("Attempted to mutate value-node %s", this));
+    }
+
+    @Override
+    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return helper.add("value", getData());
     }
 }
