@@ -7,11 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
+import com.google.common.collect.Iterables;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
@@ -29,10 +33,13 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 public abstract class ContainerNodeBaseParser<E> extends
         BaseDispatcherParser<E, YangInstanceIdentifier.NodeIdentifier, ContainerNode, ContainerSchemaNode> {
 
-    public ContainerNodeBaseParser() {}
+    public ContainerNodeBaseParser(final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(writer);
+    }
 
-    public ContainerNodeBaseParser(final BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, ContainerNode> buildingStrategy) {
-        super(buildingStrategy);
+    public ContainerNodeBaseParser(final BuildingStrategy<YangInstanceIdentifier.NodeIdentifier, ContainerNode>
+                                           buildingStrategy, final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(buildingStrategy, writer);
     }
 
     @Override
@@ -42,9 +49,20 @@ public abstract class ContainerNodeBaseParser<E> extends
     }
 
     @Override
-    public final ContainerNode parse(final Iterable<E> elements, final ContainerSchemaNode schema) {
+    public final ContainerNode parse(final Iterable<E> elements, final ContainerSchemaNode schema) throws IOException {
         checkOnlyOneNode(schema, elements);
-        return super.parse(elements, schema);
+
+        final NodeIdentifier nodeIdentifier = NodeIdentifier.create(schema.getQName());
+        final int size = Iterables.size(elements);
+
+        writer.nextDataSchemaNode(schema);
+        writer.startContainerNode(nodeIdentifier, size);
+
+        ContainerNode containerNode = super.parse(elements, schema);
+
+        writer.endNode();
+
+        return containerNode;
     }
 
     @Override

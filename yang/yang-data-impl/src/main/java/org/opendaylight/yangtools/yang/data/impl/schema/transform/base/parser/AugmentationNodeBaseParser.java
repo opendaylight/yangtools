@@ -7,12 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 
+import java.io.IOException;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
@@ -28,11 +32,31 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 public abstract class AugmentationNodeBaseParser<E> extends
         BaseDispatcherParser<E, YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode, AugmentationSchema> {
 
-    public AugmentationNodeBaseParser(final BuildingStrategy<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> buildingStrategy) {
-        super(buildingStrategy);
+    public AugmentationNodeBaseParser(final BuildingStrategy<YangInstanceIdentifier.AugmentationIdentifier,
+            AugmentationNode> buildingStrategy, final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(buildingStrategy, writer);
     }
 
-    public AugmentationNodeBaseParser() {}
+    public AugmentationNodeBaseParser(final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(writer);
+    }
+
+    @Override
+    public AugmentationNode parse(final Iterable<E> elements, final AugmentationSchema schema) throws IOException {
+        Set<QName> qnames = new LinkedHashSet<>(schema.getChildNodes().size());
+        for (DataSchemaNode node : schema.getChildNodes()) {
+            qnames.add(node.getQName());
+        }
+        AugmentationIdentifier augmentationIdentifier = new AugmentationIdentifier(qnames);
+
+        writer.startAugmentationNode(augmentationIdentifier);
+
+        AugmentationNode augmentationNode = super.parse(elements, schema);
+
+        writer.endNode();
+
+        return augmentationNode;
+    }
 
     @Override
     protected final DataContainerNodeBuilder<YangInstanceIdentifier.AugmentationIdentifier, AugmentationNode> getBuilder(final AugmentationSchema schema) {

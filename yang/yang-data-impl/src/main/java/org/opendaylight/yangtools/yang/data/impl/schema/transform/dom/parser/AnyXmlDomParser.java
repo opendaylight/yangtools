@@ -11,11 +11,16 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 import com.google.common.base.Preconditions;
 import javax.xml.transform.dom.DOMSource;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser.AnyXmlNodeBaseParser;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.w3c.dom.Element;
 
 public class AnyXmlDomParser extends AnyXmlNodeBaseParser<Element> {
+
+    AnyXmlDomParser(final SchemaAwareNormalizedNodeStreamWriter writer) {
+        super(writer);
+    }
 
     @Override
     protected DOMSource parseAnyXml(final Element element, final AnyXmlSchemaNode schema) {

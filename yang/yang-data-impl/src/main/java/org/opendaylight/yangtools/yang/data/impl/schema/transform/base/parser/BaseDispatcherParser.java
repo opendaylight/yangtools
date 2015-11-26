@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.transform.base.parser;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedListMultimap;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.AttributesBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
@@ -35,13 +37,16 @@ public abstract class BaseDispatcherParser<E, P extends YangInstanceIdentifier.P
         implements ExtensibleParser<P, E, N, S> {
 
     private final BuildingStrategy<P, N> buildingStrategy;
+    protected final SchemaAwareNormalizedNodeStreamWriter writer;
 
-    public BaseDispatcherParser(final BuildingStrategy<P, N> buildingStrategy) {
-        this.buildingStrategy = buildingStrategy;
+    public BaseDispatcherParser(final BuildingStrategy<P, N> buildingStrategy, SchemaAwareNormalizedNodeStreamWriter
+            writer) {
+        this.buildingStrategy = Preconditions.checkNotNull(buildingStrategy);
+        this.writer = Preconditions.checkNotNull(writer);
     }
 
-    public BaseDispatcherParser() {
-        this.buildingStrategy = new SimpleBuildingStrategy<>();
+    public BaseDispatcherParser(SchemaAwareNormalizedNodeStreamWriter writer) {
+        this(new SimpleBuildingStrategy<P, N>(), writer);
     }
 
     /**
@@ -108,7 +113,7 @@ public abstract class BaseDispatcherParser<E, P extends YangInstanceIdentifier.P
      */
     @Nullable
     @Override
-    public N parse(final Iterable<E> elements, final S schema) {
+    public N parse(final Iterable<E> elements, final S schema) throws IOException {
 
         checkAtLeastOneNode(schema, elements);
 
