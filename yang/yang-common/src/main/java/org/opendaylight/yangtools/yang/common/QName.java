@@ -81,7 +81,10 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         final QNameModule cacheMod = QNameModule.cachedReference(myMod);
 
         final QName what;
-        if (cacheMod.equals(myMod)) {
+        // Identity comparison is here on purpose, as we are deciding whether to potentially store 'qname'
+        // into cache. It is important that it does not hold user-supplied reference (such a String instance from
+        // XML parser.
+        if (cacheMod == myMod) {
             what = qname;
         } else {
             what = QName.create(cacheMod, qname.localName);
