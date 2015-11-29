@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.common;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.Interner;
+import com.google.common.collect.Interners;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -20,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class QNameModule implements Immutable, Serializable {
+    private static final Interner<QNameModule> INTERNER = Interners.newWeakInterner();
     private static final ObjectCache CACHE = ObjectCacheFactory.getObjectCache(QNameModule.class);
     private static final Logger LOG = LoggerFactory.getLogger(QNameModule.class);
     private static final QNameModule NULL_INSTANCE = new QNameModule(null, null);
@@ -44,9 +47,21 @@ public final class QNameModule implements Immutable, Serializable {
      *
      * @param module Module instance
      * @return Cached instance, according to {@link ObjectCache} policy.
+     *
+     * @deprecated Use {@link #intern()} instead.
      */
+    @Deprecated
     public static QNameModule cachedReference(final QNameModule module) {
         return CACHE.getReference(module);
+    }
+
+    /**
+     * Return an interned reference to a equivalent QNameModule.
+     *
+     * @return Interned reference, or this object if it was interned.
+     */
+    public QNameModule intern() {
+        return INTERNER.intern(this);
     }
 
     /**
