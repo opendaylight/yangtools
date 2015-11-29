@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.common;
 
 import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.getRevisionFormat;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Interner;
+import com.google.common.collect.Interners;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -46,6 +48,7 @@ import org.opendaylight.yangtools.objcache.ObjectCacheFactory;
  *
  */
 public final class QName implements Immutable, Serializable, Comparable<QName> {
+    private static final Interner<QName> INTERNER = Interners.newWeakInterner();
     private static final ObjectCache CACHE = ObjectCacheFactory.getObjectCache(QName.class);
     private static final long serialVersionUID = 5398411242927766414L;
 
@@ -74,7 +77,10 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *
      * @param qname QName instance
      * @return Cached instance, according to {@link ObjectCache} policy.
+     *
+     * @deprecated Use {@link #intern()} instead.
      */
+    @Deprecated
     public static QName cachedReference(final QName qname) {
         // We also want to make sure we keep the QNameModule cached
         final QNameModule myMod = qname.getModule();
@@ -92,6 +98,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
 
         return CACHE.getReference(what);
     }
+
 
     /**
      * QName Constructor.
@@ -182,6 +189,23 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      */
     public Date getRevision() {
         return module.getRevision();
+    }
+
+    /**
+     * Return an interned reference to a equivalent QName.
+     *
+     * @return Interned reference, or this object if it was interned.
+     */
+    public QName intern() {
+        // We also want to make sure we keep the QNameModule cached
+        final QNameModule cacheMod = module.intern();
+
+        // Identity comparison is here on purpose, as we are deciding whether to potentially store 'qname' into the
+        // interner. It is important that it does not hold user-supplied reference (such a String instance from
+        // parsing of an XML document).
+        final QName template = cacheMod == module ? this : QName.create(cacheMod, localName);
+
+        return INTERNER.intern(template);
     }
 
     @Override
