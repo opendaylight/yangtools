@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "5aaae553_4282b301",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SubstatementContext.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 238,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-11-30T21:35:41Z",
+      "side": 1,
+      "message": "some comments about the algorithm/rules would be nice",
+      "revId": "e2b00c4bc309114f806d5dede07f028077f520f2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5aaae553_2279b72f",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SubstatementContext.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 242,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-11-30T21:35:41Z",
+      "side": 1,
+      "message": "boolean compared to true: sonar does not like it, just use boolean directly",
+      "revId": "e2b00c4bc309114f806d5dede07f028077f520f2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5aaae553_c2754333",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SubstatementContext.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 246,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-11-30T21:35:41Z",
+      "side": 1,
+      "message": "same thing: if (!configStatement...) {",
+      "revId": "e2b00c4bc309114f806d5dede07f028077f520f2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "5aaae553_e272bf48",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SubstatementContext.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-11-30T21:35:41Z",
+      "side": 1,
+      "message": "get rid of the else block and add a single empty line -- that way it is more readable",
+      "revId": "e2b00c4bc309114f806d5dede07f028077f520f2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
