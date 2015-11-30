@@ -106,17 +106,17 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
         for (final ModifiedNode modChild : modification.getChildren()) {
             switch (modChild.getOperation()) {
                 case WRITE:
-                    if (!modChild.getOriginal().isPresent()) {
+                    if (!checkOriginalPresent(modChild)) {
                         result++;
                     }
                     break;
                 case MERGE:
-                    if (!current.isPresent()) {
+                    if (!modChild.getOriginal().asSet().contains(modChild)) {
                         result++;
                     }
                     break;
                 case DELETE:
-                    if (modChild.getOriginal().isPresent()) {
+                    if (checkOriginalPresent(modChild)) {
                         result--;
                     }
                     break;
@@ -129,6 +129,10 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
             }
         }
         return result;
+    }
+
+    private static boolean checkOriginalPresent(ModifiedNode child) {
+        return child.getOriginal().isPresent();
     }
 
     @Override
