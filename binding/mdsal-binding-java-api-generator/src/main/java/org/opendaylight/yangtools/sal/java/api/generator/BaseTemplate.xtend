@@ -391,8 +391,8 @@ abstract class BaseTemplate {
     def protected emitConstant(Constant c) '''
         «IF c.value instanceof QName»
             «val qname = c.value as QName»
-            public static final «c.type.importedName» «c.name» = «QName.name».cachedReference(
-                «QName.name».create("«qname.namespace.toString»", "«qname.formattedRevision»", "«qname.localName»"));
+            public static final «c.type.importedName» «c.name» = «QName.name».create("«qname.namespace.toString»",
+                "«qname.formattedRevision»", "«qname.localName»").intern();
         «ELSE»
             public static final «c.type.importedName» «c.name» = «c.value»;
         «ENDIF»
