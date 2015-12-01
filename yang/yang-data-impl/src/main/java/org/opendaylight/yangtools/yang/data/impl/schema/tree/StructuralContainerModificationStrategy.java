@@ -23,12 +23,12 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
 /**
- * Structural containers are special in that they appear when implied by child
- * nodes and disappear whenever they are empty. We could implement this as a
- * subclass of {@link SchemaAwareApplyOperation}, but the automatic semantic
- * is quite different from all the other strategies. We create a
- * {@link PresenceContainerModificationStrategy} to tap into that logic, but
- * wrap it so we only call out into it
+ * Structural containers are special in that they appear when implied by child nodes and disappear whenever they are
+ * empty. We could implement this as a subclass of {@link SchemaAwareApplyOperation}, but the automatic semantic
+ * is quite different from all the other strategies. We create a {@link ContainerModificationStrategy} to tap into that
+ * logic, but wrap it so we only call out into it. We do not use {@link PresenceContainerModificationStrategy} because
+ * it enforces presence of mandatory leaves, which is not something we want here, as structural containers are not
+ * root anchors for that validation.
  */
 final class StructuralContainerModificationStrategy extends ModificationApplyOperation {
     /**
@@ -37,10 +37,10 @@ final class StructuralContainerModificationStrategy extends ModificationApplyOpe
      * {@link #apply(ModifiedNode, Optional, Version)} we will use the appropriate version as provided to us.
      */
     private static final Version FAKE_VERSION = Version.initial();
-    private final PresenceContainerModificationStrategy delegate;
+    private final ContainerModificationStrategy delegate;
 
     StructuralContainerModificationStrategy(final ContainerSchemaNode schemaNode, final TreeType treeType) {
-        this.delegate = new PresenceContainerModificationStrategy(schemaNode, treeType);
+        this.delegate = new ContainerModificationStrategy(schemaNode, treeType);
     }
 
     private Optional<TreeNode> fakeMeta(final Version version) {

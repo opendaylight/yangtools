@@ -107,6 +107,9 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
                         firstChild.getIdentifier(), enforcer, id, other, maybeChild.orNull());
                 }
             }
+
+            // Make sure all mandatory children are present
+            enforcer.enforceOnTreeNode(normalizedNode);
         }
     }
 
