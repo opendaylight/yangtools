@@ -13,7 +13,7 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>bundle-parent</artifactId>
-        <version>1.5.3-SNAPSHOT</version>
+        <version>1.5.3-Lithium-SR3</version>
         <relativePath/>
     </parent>
 
@@ -21,10 +21,10 @@
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yang-model-parent</artifactId>
     <packaging>pom</packaging>
-    <version>0.7.3-SNAPSHOT</version>
+    <version>0.7.3-Lithium-SR3</version>
 
     <properties>
-        <yangtools.version>0.7.3-SNAPSHOT</yangtools.version>
+        <yangtools.version>0.7.3-Lithium-SR3</yangtools.version>
     </properties>
 
     <dependencyManagement>

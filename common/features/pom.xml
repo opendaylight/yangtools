@@ -12,13 +12,13 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>features-parent</artifactId>
-        <version>1.5.3-SNAPSHOT</version>
+        <version>1.5.3-Lithium-SR3</version>
         <relativePath/>
     </parent>
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>features-yangtools</artifactId>
-    <version>0.7.3-SNAPSHOT</version>
+    <version>0.7.3-Lithium-SR3</version>
     <packaging>jar</packaging>
 
     <dependencyManagement>
