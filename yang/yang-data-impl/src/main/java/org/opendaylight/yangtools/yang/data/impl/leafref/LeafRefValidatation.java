@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -43,7 +43,6 @@ import org.slf4j.LoggerFactory;
 public class LeafRefValidatation {
 
     private static final Logger LOG = LoggerFactory.getLogger(LeafRefValidatation.class);
-    private static final String NEW_LINE = System.getProperty("line.separator");
     private static final String FAILED = " -> FAILED";
     private static final String SUCCESS = " -> OK";
 
@@ -102,8 +101,8 @@ public class LeafRefValidatation {
     }
 
     private void validateNode(final DataTreeCandidateNode node,
-            final LeafRefContext referencedByCtx, final LeafRefContext referencingCtx,
-            final YangInstanceIdentifier current) {
+                              final LeafRefContext referencedByCtx, final LeafRefContext referencingCtx,
+                              final YangInstanceIdentifier current) {
 
         if ((node.getModificationType() == ModificationType.WRITE)
                 && node.getDataAfter().isPresent()) {
@@ -192,8 +191,8 @@ public class LeafRefValidatation {
     }
 
     private void validateNodeData(final NormalizedNode<?, ?> node,
-            final LeafRefContext referencedByCtx, final LeafRefContext referencingCtx,
-            final ModificationType modificationType, final YangInstanceIdentifier current) {
+                                  final LeafRefContext referencedByCtx, final LeafRefContext referencingCtx,
+                                  final ModificationType modificationType, final YangInstanceIdentifier current) {
 
         if (node instanceof LeafNode) {
             final LeafNode<?> leaf = (LeafNode<?>) node;
@@ -357,27 +356,15 @@ public class LeafRefValidatation {
 
     @SuppressWarnings("rawtypes")
     private void validateLeafRefTargetNodeData(final NormalizedNode<?, ?> leaf,
-            final LeafRefContext referencedByCtx, final ModificationType modificationType) {
-
-        final StringBuilder header_log = new StringBuilder();
-        final StringBuilder log = new StringBuilder();
-        header_log.append("Operation [" + modificationType
-                + "] validate data of leafref TARGET node: name["
-                + referencedByCtx.getNodeName() + "] = value["
-                + leaf.getValue() + "]");
-
+                                                  final LeafRefContext referencedByCtx, final ModificationType modificationType) {
+        final Map<LeafRefContext, Set> leafRefsValues = new HashMap<>();
         if (validatedLeafRefCtx.contains(referencedByCtx)) {
-            header_log.append(" -> SKIP: Already validated");
-            LOG.debug(header_log.toString());
+            leafRefTargetNodeDataLog(leaf, referencedByCtx, modificationType, leafRefsValues, null);
             return;
         }
 
-        final Map<QName, LeafRefContext> allReferencedByLeafRefCtxs = referencedByCtx
-                .getAllReferencedByLeafRefCtxs();
-
-        final Map<LeafRefContext, Set> leafRefsValues = new HashMap<>();
-        final Collection<LeafRefContext> leafrefs = allReferencedByLeafRefCtxs
-                .values();
+        final Map<QName, LeafRefContext> allReferencedByLeafRefCtxs = referencedByCtx.getAllReferencedByLeafRefCtxs();
+        final Collection<LeafRefContext> leafrefs = allReferencedByLeafRefCtxs.values();
         for (final LeafRefContext leafRefContext : leafrefs) {
             if (leafRefContext.isReferencing()) {
                 final Set<Object> values = new HashSet<>();
@@ -395,126 +382,83 @@ public class LeafRefValidatation {
             }
         }
 
-        final Set<Object> leafRefTargetNodeValues = new HashSet<>();
-        final SchemaPath nodeSchemaPath = referencedByCtx.getCurrentNodePath();
-        final LeafRefPath nodePath = LeafRefUtils.schemaPathToLeafRefPath(
-                nodeSchemaPath, referencedByCtx.getLeafRefContextModule());
-        addValues(leafRefTargetNodeValues, tree.getRootNode().getDataAfter(),
-                nodePath.getPathFromRoot(), null, QNameWithPredicate.ROOT);
-
-        boolean valid = true;
-        final Set<Entry<LeafRefContext, Set>> entrySet = leafRefsValues
-                .entrySet();
-        for (final Entry<LeafRefContext, Set> entry : entrySet) {
-            final LeafRefContext leafRefContext = entry.getKey();
-            final Set leafRefValuesSet = entry.getValue();
-            for (final Object leafRefsValue : leafRefValuesSet) {
-                if (!leafRefTargetNodeValues.contains(leafRefsValue)) {
-
-                    final StringBuilder sb = createInvalidTargetMessage(leaf,
-                            leafRefTargetNodeValues, leafRefContext,
-                            leafRefsValue);
-                    log.append(NEW_LINE);
-                    log.append(sb.toString());
-                    log.append(FAILED);
-
-                    sb.append(NEW_LINE);
-                    errorsMessages.add(sb.toString());
-
-                    valid = false;
-                } else {
-                    log.append(NEW_LINE);
-                    log.append("Valid leafref value [");
-                    log.append(leafRefsValue);
-                    log.append("]");
-                    log.append(SUCCESS);
-                }
-            }
+        if (!leafRefsValues.isEmpty()) {
+            final Set<Object> leafRefTargetNodeValues = new HashSet<>();
+            final SchemaPath nodeSchemaPath = referencedByCtx.getCurrentNodePath();
+            final LeafRefPath nodePath = LeafRefUtils.schemaPathToLeafRefPath(nodeSchemaPath, referencedByCtx
+                    .getLeafRefContextModule());
+            addValues(leafRefTargetNodeValues, tree.getRootNode().getDataAfter(), nodePath.getPathFromRoot(), null,
+                    QNameWithPredicate.ROOT);
+            leafRefTargetNodeDataLog(leaf, referencedByCtx, modificationType, leafRefsValues,
+                    leafRefTargetNodeValues);
+        } else {
+            leafRefTargetNodeDataLog(leaf, referencedByCtx, modificationType, null, null);
         }
-
-        header_log.append(valid ? SUCCESS : FAILED);
-        LOG.debug(header_log.append(log.toString()).toString());
-
         validatedLeafRefCtx.add(referencedByCtx);
     }
 
-    private static StringBuilder createInvalidTargetMessage(final NormalizedNode<?, ?> leaf,
-            final Set<?> leafRefTargetNodeValues, final LeafRefContext leafRefContext,
-            final Object leafRefsValue) {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("Invalid leafref value [");
-        sb.append(leafRefsValue);
-        sb.append("] allowed values ");
-        sb.append(leafRefTargetNodeValues);
-        sb.append(" by validation of leafref TARGET node: ");
-        sb.append(leaf.getNodeType());
-        sb.append(" path of invalid LEAFREF node: ");
-        sb.append(leafRefContext.getCurrentNodePath());
-        sb.append(" leafRef target path: ");
-        sb.append(leafRefContext.getAbsoluteLeafRefTargetPath());
-        return sb;
+    private void leafRefTargetNodeDataLog(final NormalizedNode<?, ?> leaf, final LeafRefContext referencedByCtx,
+                                            final ModificationType modificationType,
+                                            final Map<LeafRefContext, Set> leafRefsValues,
+                                            final Set<Object> leafRefTargetNodeValues) {
+
+        if (leafRefsValues != null && !leafRefsValues.isEmpty()) {
+            final Set<Entry<LeafRefContext, Set>> entrySet = leafRefsValues.entrySet();
+            LOG.debug("Operation [{}] validate data of leafref TARGET node: name[{}] = value[{}]",
+                    modificationType, referencedByCtx.getNodeName(), leaf.getValue());
+            for (final Entry<LeafRefContext, Set> entry : entrySet) {
+                final LeafRefContext leafRefContext = entry.getKey();
+                final Set leafRefValuesSet = entry.getValue();
+                for (final Object leafRefsValue : leafRefValuesSet) {
+                    if (leafRefTargetNodeValues != null && !leafRefTargetNodeValues.contains(leafRefsValue)) {
+                        LOG.debug("Invalid leafref value [{}] allowed values {} by validation of leafref TARGET node:" +
+                                " {} path of invalid LEAFREF node: {} leafRef target path: {} {}", leafRefsValue,
+                                leafRefTargetNodeValues, leaf.getNodeType(), leafRefContext.getCurrentNodePath(),
+                                leafRefContext.getAbsoluteLeafRefTargetPath(), FAILED);
+                        errorsMessages.add(String.format("Invalid leafref value [%s] allowed values %s by validation " +
+                                        "of  leafref TARGET node: %s path of invalid LEAFREF node: %s leafRef target " +
+                                        "path: %s %s", leafRefsValue, leafRefTargetNodeValues, leaf.getNodeType(),
+                                leafRefContext.getCurrentNodePath(), leafRefContext.getAbsoluteLeafRefTargetPath(),
+                                FAILED));
+                    } else {
+                        LOG.debug("Valid leafref value [{}] {}", leafRefsValue, SUCCESS);
+                    }
+                }
+            }
+        } else if (leafRefsValues != null) {
+            LOG.debug("Operation [{}] validate data of leafref TARGET node: name[{}] = value[{}] -> SKIP: Already validated",
+                    modificationType, referencedByCtx.getNodeName(), leaf.getValue());
+        }
     }
 
-    private void validateLeafRefNodeData(final NormalizedNode<?, ?> leaf,
-            final LeafRefContext referencingCtx, final ModificationType modificationType,
-            final YangInstanceIdentifier current) {
-
-        final StringBuilder headerLog = new StringBuilder();
-        final StringBuilder log = new StringBuilder();
-
-        headerLog.append("Operation [");
-        headerLog.append(modificationType);
-        headerLog.append("] validate data of LEAFREF node: name[");
-        headerLog.append(referencingCtx.getNodeName());
-        headerLog.append("] = value[");
-        headerLog.append(leaf.getValue());
-        headerLog.append(']');
-
+    private void validateLeafRefNodeData(final NormalizedNode<?, ?> leaf, final LeafRefContext referencingCtx,
+                                         final ModificationType modificationType,
+                                         final YangInstanceIdentifier current) {
         final HashSet<Object> values = new HashSet<>();
         final LeafRefPath targetPath = referencingCtx.getAbsoluteLeafRefTargetPath();
-        final Iterable<QNameWithPredicate> pathFromRoot = targetPath
-                .getPathFromRoot();
+        final Iterable<QNameWithPredicate> pathFromRoot = targetPath.getPathFromRoot();
 
         addValues(values, tree.getRootNode().getDataAfter(), pathFromRoot,
                 current, QNameWithPredicate.ROOT);
 
         if (!values.contains(leaf.getValue())) {
-            final StringBuilder sb = createInvalidLeafRefMessage(leaf,
-                    referencingCtx, values);
-            errorsMessages.add(sb.toString());
-
-            headerLog.append(FAILED);
-            log.append(sb.toString());
+            LOG.debug("Operation [{}] validate data of LEAFREF node: name[{}] = value[{}] {}",
+                    modificationType, referencingCtx.getNodeName(), leaf.getValue(), FAILED);
+            LOG.debug("Invalid leafref value [{}] allowed values {} of LEAFREF node: {} leafRef target path: {}",
+                    leaf.getValue(), values, leaf.getNodeType(), referencingCtx.getAbsoluteLeafRefTargetPath());
+            errorsMessages.add(String.format("Invalid leafref value [%s] allowed values %s of LEAFREF node: %s " +
+                            "leafRef  target path: %s", leaf.getValue(), values, leaf.getNodeType(), referencingCtx
+                    .getAbsoluteLeafRefTargetPath()));
         } else {
-            headerLog.append(SUCCESS);
+            LOG.debug("Operation [{}] validate data of LEAFREF node: name[{}] = value[{}] {}", modificationType,
+                    referencingCtx.getNodeName(), leaf.getValue(), SUCCESS);
         }
-
-        LOG.debug(headerLog.toString());
-        if (log.length() != 0) {
-            LOG.debug(log.toString());
-        }
-    }
-
-    private static StringBuilder createInvalidLeafRefMessage(
-            final NormalizedNode<?, ?> leaf, final LeafRefContext referencingCtx,
-            final Set<?> values) {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("Invalid leafref value [");
-        sb.append(leaf.getValue());
-        sb.append("] allowed values ");
-        sb.append(values);
-        sb.append(" of LEAFREF node: ");
-        sb.append(leaf.getNodeType());
-        sb.append(" leafRef target path: ");
-        sb.append(referencingCtx.getAbsoluteLeafRefTargetPath());
-        sb.append(NEW_LINE);
-        return sb;
     }
 
     private void addValues(final Set<Object> values,
-            final Optional<? extends NormalizedNode<?, ?>> optDataNode,
-            final Iterable<QNameWithPredicate> path, final YangInstanceIdentifier current,
-            final QNameWithPredicate previousQName) {
+                           final Optional<? extends NormalizedNode<?, ?>> optDataNode,
+                           final Iterable<QNameWithPredicate> path, final YangInstanceIdentifier current,
+                           final QNameWithPredicate previousQName) {
 
         if (!optDataNode.isPresent()) {
             return;
@@ -614,7 +558,6 @@ public class LeafRefValidatation {
                         }
                     }
                 }
-
             }
         }
     }
@@ -634,7 +577,7 @@ public class LeafRefValidatation {
     }
 
     private static boolean isMatchingPredicate(final MapEntryNode mapEntryNode,
-            final Map<QName, Set<?>> allowedKeyValues) {
+                                               final Map<QName, Set<?>> allowedKeyValues) {
 
         final NodeIdentifierWithPredicates identifier = mapEntryNode.getIdentifier();
         final Map<QName, Object> entryKeyValues = identifier.getKeyValues();
@@ -648,7 +591,6 @@ public class LeafRefValidatation {
             if (allowedValues != null && !allowedValues.contains(value)) {
                 return false;
             }
-
         }
 
         return true;
