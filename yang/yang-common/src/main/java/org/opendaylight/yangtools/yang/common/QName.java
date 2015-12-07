@@ -20,8 +20,6 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.objcache.ObjectCache;
-import org.opendaylight.yangtools.objcache.ObjectCacheFactory;
 
 /**
  * The QName from XML consists of local name of element and XML namespace, but
@@ -49,7 +47,6 @@ import org.opendaylight.yangtools.objcache.ObjectCacheFactory;
  */
 public final class QName implements Immutable, Serializable, Comparable<QName> {
     private static final Interner<QName> INTERNER = Interners.newWeakInterner();
-    private static final ObjectCache CACHE = ObjectCacheFactory.getObjectCache(QName.class);
     private static final long serialVersionUID = 5398411242927766414L;
 
     static final String QNAME_REVISION_DELIMITER = "?revision=";
@@ -76,27 +73,13 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * Look up specified QName in the global cache and return a shared reference.
      *
      * @param qname QName instance
-     * @return Cached instance, according to {@link ObjectCache} policy.
+     * @return Cached instance, according to {@link org.opendaylight.yangtools.objcache.ObjectCache} policy.
      *
      * @deprecated Use {@link #intern()} instead.
      */
     @Deprecated
     public static QName cachedReference(final QName qname) {
-        // We also want to make sure we keep the QNameModule cached
-        final QNameModule myMod = qname.getModule();
-        final QNameModule cacheMod = QNameModule.cachedReference(myMod);
-
-        final QName what;
-        // Identity comparison is here on purpose, as we are deciding whether to potentially store 'qname'
-        // into cache. It is important that it does not hold user-supplied reference (such a String instance from
-        // XML parser.
-        if (cacheMod == myMod) {
-            what = qname;
-        } else {
-            what = QName.create(cacheMod, qname.localName);
-        }
-
-        return CACHE.getReference(what);
+        return qname.intern();
     }
 
     /**
