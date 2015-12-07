@@ -16,14 +16,11 @@ import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.Objects;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.objcache.ObjectCache;
-import org.opendaylight.yangtools.objcache.ObjectCacheFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class QNameModule implements Immutable, Serializable {
     private static final Interner<QNameModule> INTERNER = Interners.newWeakInterner();
-    private static final ObjectCache CACHE = ObjectCacheFactory.getObjectCache(QNameModule.class);
     private static final Logger LOG = LoggerFactory.getLogger(QNameModule.class);
     private static final QNameModule NULL_INSTANCE = new QNameModule(null, null);
     private static final long serialVersionUID = 1L;
@@ -46,13 +43,13 @@ public final class QNameModule implements Immutable, Serializable {
      * Look up specified module in the global cache and return a shared reference.
      *
      * @param module Module instance
-     * @return Cached instance, according to {@link ObjectCache} policy.
+     * @return Cached instance, according to {@link org.opendaylight.yangtools.objcache.ObjectCache} policy.
      *
      * @deprecated Use {@link #intern()} instead.
      */
     @Deprecated
     public static QNameModule cachedReference(final QNameModule module) {
-        return CACHE.getReference(module);
+        return module.intern();
     }
 
     /**
