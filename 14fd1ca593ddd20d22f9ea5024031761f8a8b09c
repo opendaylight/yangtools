@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aa4ed85_12b092dc",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/ParserListenerUtils.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 987,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T21:25:26Z",
+      "side": 1,
+      "message": "create a constant for that 30",
+      "revId": "14fd1ca593ddd20d22f9ea5024031761f8a8b09c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_92c32238",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/ParserListenerUtils.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 991,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T21:25:26Z",
+      "side": 1,
+      "message": "LOG.debug() the exception for tracking down potential issues",
+      "revId": "14fd1ca593ddd20d22f9ea5024031761f8a8b09c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_d2c99a5b",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/ParserListenerUtils.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 996,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T21:25:26Z",
+      "side": 1,
+      "message": "return here...",
+      "revId": "14fd1ca593ddd20d22f9ea5024031761f8a8b09c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_f2c61649",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/impl/ParserListenerUtils.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 1001,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T21:25:26Z",
+      "side": 1,
+      "message": "log a warning",
+      "revId": "14fd1ca593ddd20d22f9ea5024031761f8a8b09c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
