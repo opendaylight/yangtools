@@ -1,0 +1,395 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aa4ed85_f23db6bc",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/ToNormalizedNodeParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T20:43:48Z",
+      "side": 1,
+      "message": "please document the new exception",
+      "revId": "8a3e4c1eda3f76d03e4c3033741018cfad4b2c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_b2473e4b",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/base/parser/AnyXmlNodeBaseParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T20:43:48Z",
+      "side": 1,
+      "message": "Preconditions.checkNotNull()",
+      "revId": "8a3e4c1eda3f76d03e4c3033741018cfad4b2c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_7279c692",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/base/parser/AnyXmlNodeBaseParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 49,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T20:43:48Z",
+      "side": 1,
+      "message": "I think the API part is in, is this still relevant?",
+      "revId": "8a3e4c1eda3f76d03e4c3033741018cfad4b2c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_9261e2d5",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/base/parser/AugmentationNodeBaseParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T20:43:48Z",
+      "side": 1,
+      "message": "HashSet will lose ordering",
+      "revId": "8a3e4c1eda3f76d03e4c3033741018cfad4b2c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_12a5f203",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/base/parser/BaseDispatcherParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T20:43:48Z",
+      "side": 1,
+      "message": "Preconditions.checkNotNull()",
+      "revId": "8a3e4c1eda3f76d03e4c3033741018cfad4b2c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_b25e5e11",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/base/parser/BaseDispatcherParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 50,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T20:43:48Z",
+      "side": 1,
+      "message": "this(writer, new SimpleBuildingStrategy());",
+      "revId": "8a3e4c1eda3f76d03e4c3033741018cfad4b2c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_b2b5fe32",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/base/parser/LeafNodeBaseParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T20:43:48Z",
+      "side": 1,
+      "message": "this(writer, ...)",
+      "revId": "8a3e4c1eda3f76d03e4c3033741018cfad4b2c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_92b8022c",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/base/parser/LeafNodeBaseParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T20:43:48Z",
+      "side": 1,
+      "message": "Preconditions.checkNotNull()",
+      "revId": "8a3e4c1eda3f76d03e4c3033741018cfad4b2c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_72878662",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/base/parser/LeafSetNodeBaseParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T20:43:48Z",
+      "side": 1,
+      "message": "Preconditions.checkNotNull()",
+      "revId": "8a3e4c1eda3f76d03e4c3033741018cfad4b2c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_127c1272",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/base/parser/ListEntryNodeBaseParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 85,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T20:43:48Z",
+      "side": 1,
+      "message": "} else {",
+      "revId": "8a3e4c1eda3f76d03e4c3033741018cfad4b2c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_d2951a89",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/base/parser/ListNodeBaseParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T20:43:48Z",
+      "side": 1,
+      "message": "Preconditions.checkNotNull()",
+      "revId": "8a3e4c1eda3f76d03e4c3033741018cfad4b2c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_f292969e",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/base/parser/ListNodeBaseParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 42,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T20:43:48Z",
+      "side": 1,
+      "message": "this(...)",
+      "revId": "8a3e4c1eda3f76d03e4c3033741018cfad4b2c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_b28c1e81",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/base/parser/NodeParserDispatcher.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T20:43:48Z",
+      "side": 1,
+      "message": "please add javadoc",
+      "revId": "8a3e4c1eda3f76d03e4c3033741018cfad4b2c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_12f3b20b",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/parser/DomToNormalizedNodeParserFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 88,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T20:43:48Z",
+      "side": 1,
+      "message": "keep the object and method on one line",
+      "revId": "8a3e4c1eda3f76d03e4c3033741018cfad4b2c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_72eea624",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/parser/DomToNormalizedNodeParserFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T20:43:48Z",
+      "side": 1,
+      "message": "format properly",
+      "revId": "8a3e4c1eda3f76d03e4c3033741018cfad4b2c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_52d04a53",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/parser/LeafNodeDomParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T20:43:48Z",
+      "side": 1,
+      "message": "move to new line so the type and name are on the same line",
+      "revId": "8a3e4c1eda3f76d03e4c3033741018cfad4b2c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_72d54642",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/parser/LeafSetEntryNodeDomParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 36,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T20:43:48Z",
+      "side": 1,
+      "message": "move \u0027final\u0027 to the next line",
+      "revId": "8a3e4c1eda3f76d03e4c3033741018cfad4b2c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_d2c3da88",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/parser/LeafSetNodeDomParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T20:43:48Z",
+      "side": 1,
+      "message": "move the previous line, since you are adding the final keyword to new argument, also add it to pre-existing one",
+      "revId": "8a3e4c1eda3f76d03e4c3033741018cfad4b2c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_f2c0567e",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/parser/ListEntryNodeDomParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T20:43:48Z",
+      "side": 1,
+      "message": "move to new line",
+      "revId": "8a3e4c1eda3f76d03e4c3033741018cfad4b2c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_92bd6205",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/parser/ListEntryNodeDomParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T20:43:48Z",
+      "side": 1,
+      "message": "type and name should be on the same line",
+      "revId": "8a3e4c1eda3f76d03e4c3033741018cfad4b2c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_5237eab0",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/parser/MapNodeDomParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T20:43:48Z",
+      "side": 1,
+      "message": "import NodeIdentifier and use the short form",
+      "revId": "8a3e4c1eda3f76d03e4c3033741018cfad4b2c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_1241720b",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/parser/OrderedListNodeDomParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T20:43:48Z",
+      "side": 1,
+      "message": "import NodeIdentifier",
+      "revId": "8a3e4c1eda3f76d03e4c3033741018cfad4b2c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_3246ee24",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/parser/UnkeyedListNodeDomParser.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2015-12-08T20:43:48Z",
+      "side": 1,
+      "message": "argument types and names should be on the same line",
+      "revId": "8a3e4c1eda3f76d03e4c3033741018cfad4b2c21",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
