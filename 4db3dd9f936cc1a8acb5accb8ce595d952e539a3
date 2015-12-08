@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aa4ed85_e9507160",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/SubstatementValidator.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-12-08T12:46:14Z",
+      "side": 1,
+      "message": "Please throw SourceException (or introduce its subclass, which will better describe issue at hand eg.. InvalidSubstatementException, MissingSubstatementException)\n\nwhich contains StatementReference (stmtContext.getDeclaration in order to provide programmatic access to identify location of error (via ctx.getStatementSourceReference()).",
+      "range": {
+        "startLine": 127,
+        "startChar": 26,
+        "endLine": 127,
+        "endChar": 72
+      },
+      "revId": "4db3dd9f936cc1a8acb5accb8ce595d952e539a3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
