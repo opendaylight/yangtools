@@ -414,10 +414,6 @@ class BuilderTemplate extends BaseTemplate {
         «IF properties !== null»
             «FOR f : properties»
                 private«IF _final» final«ENDIF» «f.returnType.importedName» «f.fieldName»;
-                «val restrictions = f.returnType.restrictions»
-                «IF !_final && restrictions != null && !(restrictions.lengthConstraints.empty)»
-                    «LengthGenerator.generateLengthChecker(f.fieldName.toString, f.returnType, restrictions.lengthConstraints)»
-                «ENDIF»
             «ENDFOR»
         «ENDIF»
     '''
@@ -442,9 +438,13 @@ class BuilderTemplate extends BaseTemplate {
                     «rangeGenerator.generateRangeChecker(field.name.toFirstUpper, restrictions.rangeConstraints)»
 
                 «ENDIF»
+                «IF !restrictions.lengthConstraints.nullOrEmpty»
+                    «LengthGenerator.generateLengthChecker(field.fieldName.toString, field.returnType, restrictions.lengthConstraints)»
+
+                «ENDIF»
             «ENDIF»
-            public «type.name»«BUILDER» set«field.name.toFirstUpper»(«field.returnType.importedName» value) {
-                «IF restrictions != null»
+            public «type.name»«BUILDER» set«field.name.toFirstUpper»(final «field.returnType.importedName» value) {
+                «IF restrictions != null && (!restrictions.rangeConstraints.nullOrEmpty || !restrictions.lengthConstraints.nullOrEmpty)»
                 if (value != null) {
                     «IF !restrictions.rangeConstraints.nullOrEmpty»
                         «val rangeGenerator = AbstractRangeGenerator.forType(field.returnType)»
@@ -454,7 +454,13 @@ class BuilderTemplate extends BaseTemplate {
                             «rangeGenerator.generateRangeCheckerCall(field.name.toFirstUpper, "value.getValue()")»
                         «ENDIF»
                     «ENDIF»
-                    «generateRestrictions(field, "value")»
+                    «IF !restrictions.lengthConstraints.nullOrEmpty»
+                        «IF field.returnType instanceof ConcreteType»
+                            «LengthGenerator.generateLengthCheckerCall(field.fieldName.toString, "value")»
+                         «ELSE»
+                            «LengthGenerator.generateLengthCheckerCall(field.fieldName.toString, "value.getValue()")»
+                        «ENDIF»
+                    «ENDIF»
                 }
                 «ENDIF»
                 this.«field.fieldName» = value;
@@ -482,18 +488,6 @@ class BuilderTemplate extends BaseTemplate {
                 }
                 return this;
             }
-        «ENDIF»
-    '''
-
-    def private generateRestrictions(GeneratedProperty field, String paramName) '''
-        «val Type type = field.returnType»
-        «val restrictions = type.getRestrictions»
-        «IF restrictions !== null && !restrictions.lengthConstraints.empty»
-            «IF type instanceof ConcreteType»
-                «LengthGenerator.generateLengthCheckerCall(field.fieldName.toString, paramName)»
-            «ELSE»
-                «LengthGenerator.generateLengthCheckerCall(field.fieldName.toString, paramName + ".getValue()")»
-            «ENDIF»
         «ENDIF»
     '''
 
