@@ -8,8 +8,9 @@
 package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.List;
-
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
@@ -35,6 +36,27 @@ public interface EnumTypeDefinition extends TypeDefinition<EnumTypeDefinition> {
      * enumeration item which represents <code>enum</code> YANG type.
      */
     interface EnumPair extends SchemaNode {
+
+        /**
+         * 
+         * @deprecated Enum pair SHOULD NOT have schema path, since it's argument is only string and
+         *             not QName.
+         * 
+         */
+        @Deprecated
+        @Override
+        SchemaPath getPath();
+
+        /**
+         * 
+         * @deprecated Enum pair SHOULD NOT have QName, since it's argument is only string (allows
+         *             characters not allowed in QName) and not QName. Use {@link #getName()}
+         *             instead.
+         * 
+         */
+        @Deprecated
+        @Override
+        QName getQName();
 
         /**
          * The name to specify each assigned name of an enumeration type.
