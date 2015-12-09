@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.stmt.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.FileNotFoundException;
@@ -38,7 +39,7 @@ public class Bug4933Test {
             StmtTestUtils.parseYangSources("/bugs/bug4933/incorrect");
             fail("NullPointerException should be thrown.");
         } catch (NullPointerException e) {
-            assertEquals("String 'not_supported' is not valid deviate argument", e.getMessage());
+            assertTrue(e.getMessage().startsWith("String 'not_supported' is not valid deviate argument. Statement source at"));
         }
     }
 }

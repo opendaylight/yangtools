@@ -55,6 +55,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModul
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -102,7 +103,8 @@ public final class Utils {
         // to detect if key contains duplicates
         if ((new HashSet<>(keyTokens)).size() < keyTokens.size()) {
             // FIXME: report all duplicate keys
-            throw new IllegalArgumentException();
+            throw new SourceException(String.format("Duplicate value in list key: %s", value),
+                    ctx.getStatementSourceReference());
         }
 
         Set<SchemaNodeIdentifier.Relative> keyNodes = new HashSet<>();
@@ -253,8 +255,9 @@ public final class Utils {
             break;
         }
 
-        Preconditions.checkArgument(qNameModule != null, "Error in module '%s': can not resolve QNameModule for '%s'.",
-                ctx.getRoot().rawStatementArgument(), value);
+        Preconditions.checkArgument(qNameModule != null,
+                "Error in module '%s': can not resolve QNameModule for '%s'. Statement source at %s",
+                ctx.getRoot().rawStatementArgument(), value, ctx.getStatementSourceReference());
         final QNameModule resultQNameModule;
         if (qNameModule.getRevision() == null) {
             resultQNameModule = QNameModule.create(qNameModule.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV)
@@ -313,9 +316,10 @@ public final class Utils {
                 .isAssignableFrom(UnknownStatementImpl.class);
     }
 
-    public static Deviation.Deviate parseDeviateFromString(final String deviateKeyword) {
+    public static Deviation.Deviate parseDeviateFromString(final StmtContext<?, ?, ?> ctx, final String deviateKeyword) {
         return Preconditions.checkNotNull(KEYWORD_TO_DEVIATE_MAP.get(deviateKeyword),
-                "String '%s' is not valid deviate argument", deviateKeyword);
+                "String '%s' is not valid deviate argument. Statement source at %s", deviateKeyword,
+                ctx.getStatementSourceReference());
     }
 
     public static Status parseStatus(final String value) {
