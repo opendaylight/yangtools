@@ -17,25 +17,29 @@ import javax.annotation.Nonnull;
  */
 public class SourceException extends RuntimeException {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
 
     private final StatementSourceReference sourceRef;
 
     public SourceException(@Nonnull String message,@Nonnull StatementSourceReference source) {
-        super(Preconditions.checkNotNull(message));
-        sourceRef = Preconditions.checkNotNull(source);
+        super(createMessage(message, source));
+        sourceRef = source;
     }
 
     public SourceException(@Nonnull String message,@Nonnull StatementSourceReference source, Throwable cause) {
-        super(Preconditions.checkNotNull(message),cause);
-        sourceRef = Preconditions.checkNotNull(source);
+        super(createMessage(message, source), cause);
+        sourceRef = source;
     }
 
     public @Nonnull StatementSourceReference getSourceReference() {
         return sourceRef;
+    }
+
+    private static String createMessage(@Nonnull final String message, @Nonnull final StatementSourceReference source) {
+        Preconditions.checkNotNull(message);
+        Preconditions.checkNotNull(source);
+
+        return String.format("%s\nStatement source at %s", message, source);
     }
 
 }

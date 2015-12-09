@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
@@ -155,8 +156,8 @@ public class YinStatementParserImpl {
             } else {
                 //if statement not found through all phases, throw exception
                 if (writer.getPhase().equals(ModelProcessingPhase.FULL_DECLARATION)) {
-                    throw new IllegalArgumentException(identifier.getLocalName() + " is not a YIN " +
-                            "statement or use of extension. Source: " + ref);
+                    throw new SourceException(String.format("%s is not a YIN statement or use of extension.",
+                            identifier.getLocalName()), ref);
                 } else {
                     //otherwise skip it (statement not to be read yet)
                     action = false;

@@ -36,9 +36,8 @@ public class LengthStatementImpl extends AbstractDeclaredStatement<List<LengthCo
         super(context);
     }
 
-    public static class Definition
-            extends
-            AbstractStatementSupport<List<LengthConstraint>, LengthStatement, EffectiveStatement<List<LengthConstraint>, LengthStatement>> {
+    public static class Definition extends AbstractStatementSupport<List<LengthConstraint>, LengthStatement,
+            EffectiveStatement<List<LengthConstraint>, LengthStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.LENGTH);
@@ -46,7 +45,7 @@ public class LengthStatementImpl extends AbstractDeclaredStatement<List<LengthCo
 
         @Override
         public List<LengthConstraint> parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
-            return TypeUtils.parseLengthListFromString(value);
+            return TypeUtils.parseLengthListFromString(ctx, value);
         }
 
         @Override
@@ -56,7 +55,8 @@ public class LengthStatementImpl extends AbstractDeclaredStatement<List<LengthCo
 
         @Override
         public EffectiveStatement<List<LengthConstraint>, LengthStatement> createEffective(
-                StmtContext<List<LengthConstraint>, LengthStatement, EffectiveStatement<List<LengthConstraint>, LengthStatement>> ctx) {
+                StmtContext<List<LengthConstraint>, LengthStatement, EffectiveStatement<List<LengthConstraint>,
+                        LengthStatement>> ctx) {
             return new LengthEffectiveStatementImpl(ctx);
         }
 

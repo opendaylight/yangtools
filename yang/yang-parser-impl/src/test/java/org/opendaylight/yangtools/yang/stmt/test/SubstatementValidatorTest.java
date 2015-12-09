@@ -22,6 +22,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.retest.TestUtils;
 
@@ -68,7 +69,7 @@ public class SubstatementValidatorTest {
 
     @Test
     public void missingElementException() throws URISyntaxException, ReactorException {
-        expectedEx.expect(IllegalStateException.class);
+        expectedEx.expect(MissingSubstatementException.class);
 
         Set<Module> modules = TestUtils.loadModules(getClass().getResource
                 ("/substatement-validator/missing-element").toURI());

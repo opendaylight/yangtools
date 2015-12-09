@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -97,10 +98,10 @@ public final class AugmentUtils {
             for (final StatementContextBase<?, ?, ?> sourceSubStatement : sourceSubStatements) {
                 if (sourceSubStatement.getPublicDefinition().getDeclaredRepresentationClass()
                         .equals(MandatoryStatement.class)) {
-                    throw new IllegalArgumentException(
+                    throw new InferenceException(
                             String.format(
                                     "An augment cannot add node '%s' because it is mandatory and in module different from target",
-                                    sourceCtx.rawStatementArgument()));
+                                    sourceCtx.rawStatementArgument()), sourceCtx.getStatementSourceReference());
                 }
             }
         }
@@ -115,9 +116,9 @@ public final class AugmentUtils {
                     && Objects.equals(sourceCtx.getStatementArgument(), subStatement.getStatementArgument());
 
             if (qNamesEqual) {
-                throw new IllegalStateException(String.format(
+                throw new InferenceException(String.format(
                         "An augment cannot add node named '%s' because this name is already used in target",
-                        sourceCtx.rawStatementArgument()));
+                        sourceCtx.rawStatementArgument()), sourceCtx.getStatementSourceReference());
             }
         }
     }
