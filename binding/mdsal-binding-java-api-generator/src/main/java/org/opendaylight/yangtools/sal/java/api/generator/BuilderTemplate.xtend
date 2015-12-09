@@ -431,19 +431,21 @@ class BuilderTemplate extends BaseTemplate {
      */
     def private generateSetters() '''
         «FOR field : properties SEPARATOR '\n'»
-            «val restrictions = field.returnType.restrictions»
-            «IF restrictions != null»
-                «IF !restrictions.rangeConstraints.nullOrEmpty»
-                    «val rangeGenerator = AbstractRangeGenerator.forType(field.returnType)»
-                    «rangeGenerator.generateRangeChecker(field.name.toFirstUpper, restrictions.rangeConstraints)»
+             «/* FIXME: generate checkers as simple blocks and embed them directly in setters  */»
+             «val restrictions = field.returnType.restrictions»
+             «IF !(field.returnType instanceof GeneratedType) && restrictions != null»
+                    «IF !restrictions.rangeConstraints.nullOrEmpty»
+                        «val rangeGenerator = AbstractRangeGenerator.forType(field.returnType)»
+                        «rangeGenerator.generateRangeChecker(field.name.toFirstUpper, restrictions.rangeConstraints)»
 
-                «ENDIF»
-                «IF !restrictions.lengthConstraints.nullOrEmpty»
+                    «ENDIF»
+                    «IF !restrictions.lengthConstraints.nullOrEmpty»
                     «LengthGenerator.generateLengthChecker(field.fieldName.toString, field.returnType, restrictions.lengthConstraints)»
 
-                «ENDIF»
+                    «ENDIF»
             «ENDIF»
             public «type.name»«BUILDER» set«field.name.toFirstUpper»(final «field.returnType.importedName» value) {
+            «IF !(field.returnType instanceof GeneratedType) && restrictions != null»
                 «IF restrictions != null && (!restrictions.rangeConstraints.nullOrEmpty || !restrictions.lengthConstraints.nullOrEmpty)»
                 if (value != null) {
                     «IF !restrictions.rangeConstraints.nullOrEmpty»
@@ -463,6 +465,7 @@ class BuilderTemplate extends BaseTemplate {
                     «ENDIF»
                 }
                 «ENDIF»
+            «ENDIF»
                 this.«field.fieldName» = value;
                 return this;
             }
