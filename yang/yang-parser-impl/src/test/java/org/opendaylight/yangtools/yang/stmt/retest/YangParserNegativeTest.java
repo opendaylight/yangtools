@@ -12,7 +12,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import com.google.common.base.Throwables;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +22,7 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
 
 public class YangParserNegativeTest {
@@ -31,7 +31,7 @@ public class YangParserNegativeTest {
     public void testInvalidImport() throws Exception {
         File yang = new File(getClass().getResource("/negative-scenario/testfile1.yang").toURI());
         try {
-            try (InputStream stream = new FileInputStream(yang)) {
+            try (InputStream stream = new NamedFileInputStream(yang, yang.getPath())) {
                 TestUtils.loadModule(stream);
                 fail("SomeModifiersUnresolvedException should be thrown");
             }
@@ -39,7 +39,7 @@ public class YangParserNegativeTest {
             Throwable rootCause = Throwables.getRootCause(e);
             assertTrue(rootCause instanceof InferenceException);
             assertTrue(rootCause.getMessage().startsWith("Imported module"));
-            assertTrue(rootCause.getMessage().endsWith("was not found."));
+            assertTrue(rootCause.getMessage().contains("was not found."));
         }
     }
 
@@ -47,9 +47,9 @@ public class YangParserNegativeTest {
     public void testTypeNotFound() throws Exception {
         File yang = new File(getClass().getResource("/negative-scenario/testfile2.yang").toURI());
         try {
-            try (InputStream stream = new FileInputStream(yang)) {
+            try (InputStream stream = new NamedFileInputStream(yang, yang.getPath())) {
                 TestUtils.loadModule(stream);
-                fail("IllegalArgumentException should be thrown");
+                fail("InferenceException should be thrown");
             }
         } catch (SomeModifiersUnresolvedException e) {
             Throwable rootCause = Throwables.getRootCause(e);
@@ -65,9 +65,9 @@ public class YangParserNegativeTest {
         File yang2 = new File(getClass().getResource("/negative-scenario/testfile3.yang").toURI());
         try {
             final List<InputStream> streams = new ArrayList<>(2);
-            try (InputStream testFile0 = new FileInputStream(yang1)) {
+            try (InputStream testFile0 = new NamedFileInputStream(yang1, yang1.getPath())) {
                 streams.add(testFile0);
-                try (InputStream testFile3 = new FileInputStream(yang2)) {
+                try (InputStream testFile3 = new NamedFileInputStream(yang2, yang2.getPath())) {
                     streams.add(testFile3);
                     assertEquals("Expected loaded files count is 2", 2, streams.size());
                     TestUtils.loadModules(streams);
@@ -77,9 +77,8 @@ public class YangParserNegativeTest {
         } catch (SomeModifiersUnresolvedException e) {
             final Throwable rootCause = Throwables.getRootCause(e);
             assertTrue(rootCause instanceof InferenceException);
-            assertEquals(
-                    "Augment target not found: Absolute{path=[(urn:simple.container.demo?revision=1970-01-01)unknown]}",
-                    rootCause.getMessage());
+            assertTrue(rootCause.getMessage().startsWith("Augment target not found: Absolute{path=[(urn:simple" +
+                            ".container.demo?revision=1970-01-01)unknown]}"));
         }
     }
 
@@ -87,15 +86,14 @@ public class YangParserNegativeTest {
     public void testInvalidRefine() throws Exception {
         File yang = new File(getClass().getResource("/negative-scenario/testfile4.yang").toURI());
         try {
-            try (InputStream stream = new FileInputStream(yang)) {
+            try (InputStream stream = new NamedFileInputStream(yang, yang.getPath())) {
                 TestUtils.loadModule(stream);
                 fail("SourceException should be thrown");
             }
         } catch (SourceException e) {
-            assertTrue(e
-                    .getMessage()
-                    .contains(
-                            "Error in module 'test4' in the refine of uses 'Relative{path=[(urn:simple.container.demo?revision=1970-01-01)node]}': can not perform refine of 'PRESENCE' for the target 'LEAF_LIST'."));
+            assertTrue(e.getMessage().contains("Error in module 'test4' in the refine of uses 'Relative{path=[" +
+                    "(urn:simple.container.demo?revision=1970-01-01)node]}': can not perform refine of 'PRESENCE' for" +
+                    " the target 'LEAF_LIST'."));
         }
     }
 
@@ -103,7 +101,7 @@ public class YangParserNegativeTest {
     public void testInvalidLength() throws Exception {
         File yang = new File(getClass().getResource("/negative-scenario/testfile5.yang").toURI());
         try {
-            try (InputStream stream = new FileInputStream(yang)) {
+            try (InputStream stream = new NamedFileInputStream(yang, yang.getPath())) {
                 TestUtils.loadModule(stream);
                 fail("YangParseException should be thrown");
             }
@@ -116,7 +114,7 @@ public class YangParserNegativeTest {
     public void testInvalidRange() throws Exception {
         File yang = new File(getClass().getResource("/negative-scenario/testfile6.yang").toURI());
         try {
-            try (InputStream stream = new FileInputStream(yang)) {
+            try (InputStream stream = new NamedFileInputStream(yang, yang.getPath())) {
                 TestUtils.loadModule(stream);
                 fail("Exception should be thrown");
             }
@@ -129,13 +127,15 @@ public class YangParserNegativeTest {
     public void testDuplicateContainer() throws Exception {
         File yang = new File(getClass().getResource("/negative-scenario/duplicity/container.yang").toURI());
         try {
-            try (InputStream stream = new FileInputStream(yang)) {
+            try (InputStream stream = new NamedFileInputStream(yang, yang.getPath())) {
                 TestUtils.loadModule(stream);
                 fail("SourceException should be thrown");
             }
         } catch (SourceException e) {
-            String expected = "Error in module 'container': can not add '(urn:simple.container.demo?revision=1970-01-01)foo'. Node name collision: '(urn:simple.container.demo?revision=1970-01-01)foo' already declared.";
-            assertEquals(expected, e.getMessage());
+            String expected = "Error in module 'container': can not add '(urn:simple.container" +
+                    ".demo?revision=1970-01-01)foo'. Node name collision: '(urn:simple.container" +
+                    ".demo?revision=1970-01-01)foo' already declared.";
+            assertTrue(e.getMessage().contains(expected));
         }
     }
 
@@ -143,13 +143,15 @@ public class YangParserNegativeTest {
     public void testDuplicateContainerList() throws Exception {
         File yang = new File(getClass().getResource("/negative-scenario/duplicity/container-list.yang").toURI());
         try {
-            try (InputStream stream = new FileInputStream(yang)) {
+            try (InputStream stream = new NamedFileInputStream(yang, yang.getPath())) {
                 TestUtils.loadModule(stream);
                 fail("SourceException should be thrown");
             }
         } catch (SourceException e) {
-            String expected = "Error in module 'container-list': can not add '(urn:simple.container.demo?revision=1970-01-01)foo'. Node name collision: '(urn:simple.container.demo?revision=1970-01-01)foo' already declared.";
-            assertEquals(expected, e.getMessage());
+            String expected = "Error in module 'container-list': can not add '(urn:simple.container" +
+                    ".demo?revision=1970-01-01)foo'. Node name collision: '(urn:simple.container" +
+                    ".demo?revision=1970-01-01)foo' already declared.";
+            assertTrue(e.getMessage().contains(expected));
         }
     }
 
@@ -157,13 +159,15 @@ public class YangParserNegativeTest {
     public void testDuplicateContainerLeaf() throws Exception {
         File yang = new File(getClass().getResource("/negative-scenario/duplicity/container-leaf.yang").toURI());
         try {
-            try (InputStream stream = new FileInputStream(yang)) {
+            try (InputStream stream = new NamedFileInputStream(yang, yang.getPath())) {
                 TestUtils.loadModule(stream);
                 fail("SourceException should be thrown");
             }
         } catch (SourceException e) {
-            String expected = "Error in module 'container-leaf': can not add '(urn:simple.container.demo?revision=1970-01-01)foo'. Node name collision: '(urn:simple.container.demo?revision=1970-01-01)foo' already declared.";
-            assertEquals(expected, e.getMessage());
+            String expected = "Error in module 'container-leaf': can not add '(urn:simple.container" +
+                    ".demo?revision=1970-01-01)foo'. Node name collision: '(urn:simple.container" +
+                    ".demo?revision=1970-01-01)foo' already declared.";
+            assertTrue(e.getMessage().contains(expected));
         }
     }
 
@@ -171,13 +175,15 @@ public class YangParserNegativeTest {
     public void testDuplicateTypedef() throws Exception {
         File yang = new File(getClass().getResource("/negative-scenario/duplicity/typedef.yang").toURI());
         try {
-            try (InputStream stream = new FileInputStream(yang)) {
+            try (InputStream stream = new NamedFileInputStream(yang, yang.getPath())) {
                 TestUtils.loadModule(stream);
-                fail("IllegalArgumentException should be thrown");
+                fail("SourceException should be thrown");
             }
-        } catch (IllegalArgumentException e) {
-            String expected = "Duplicate name for typedef (urn:simple.container.demo?revision=1970-01-01)int-ext";
-            assertEquals(expected, e.getMessage());
+        } catch (SourceException e) {
+            String expected = "Error in module 'typedef': can not add '(urn:simple.container" +
+                    ".demo?revision=1970-01-01)int-ext'. Node name collision: '(urn:simple.container" +
+                    ".demo?revision=1970-01-01)int-ext' already declared.";
+            assertTrue(e.getMessage().startsWith(expected));
         }
     }
 
@@ -186,7 +192,8 @@ public class YangParserNegativeTest {
         File yang1 = new File(getClass().getResource("/negative-scenario/duplicity/augment0.yang").toURI());
         File yang2 = new File(getClass().getResource("/negative-scenario/duplicity/augment1.yang").toURI());
         try {
-            try (InputStream stream1 = new FileInputStream(yang1); InputStream stream2 = new FileInputStream(yang2)) {
+            try (InputStream stream1 = new NamedFileInputStream(yang1, yang1.getPath());
+                 InputStream stream2 = new NamedFileInputStream(yang2, yang2.getPath())) {
                 TestUtils.loadModules(Arrays.asList(stream1, stream2));
                 fail("IllegalStateException should be thrown");
             }
@@ -201,7 +208,8 @@ public class YangParserNegativeTest {
         File yang1 = new File(getClass().getResource("/negative-scenario/duplicity/augment0.yang").toURI());
         File yang2 = new File(getClass().getResource("/negative-scenario/duplicity/augment2.yang").toURI());
         try {
-            try (InputStream stream1 = new FileInputStream(yang1); InputStream stream2 = new FileInputStream(yang2)) {
+            try (InputStream stream1 = new NamedFileInputStream(yang1, yang1.getPath());
+                 InputStream stream2 = new NamedFileInputStream(yang2, yang2.getPath())) {
                 TestUtils.loadModules(Arrays.asList(stream1, stream2));
                 fail("IllegalStateException should be thrown");
             }
@@ -216,12 +224,14 @@ public class YangParserNegativeTest {
         File yang1 = new File(getClass().getResource("/negative-scenario/testfile8.yang").toURI());
         File yang2 = new File(getClass().getResource("/negative-scenario/testfile7.yang").toURI());
         try {
-            try (InputStream stream1 = new FileInputStream(yang1); InputStream stream2 = new FileInputStream(yang2)) {
+            try (InputStream stream1 = new NamedFileInputStream(yang1, yang1.getPath());
+                 InputStream stream2 = new NamedFileInputStream(yang2, yang2.getPath())) {
                 TestUtils.loadModules(Arrays.asList(stream1, stream2));
                 fail("IllegalArgumentException should be thrown");
             }
         } catch (IllegalArgumentException e) {
-            String expected = "An augment cannot add node 'linkleaf' because it is mandatory and in module different from target";
+            String expected = "An augment cannot add node 'linkleaf' because it is mandatory and in module different " +
+                    "from target";
             assertEquals(expected, e.getMessage());
         }
     }
@@ -258,12 +268,13 @@ public class YangParserNegativeTest {
     public void testInvalidListKeyDefinition() throws Exception {
         File yang1 = new File(getClass().getResource("/negative-scenario/invalid-list-key-def.yang").toURI());
         try {
-            try (InputStream stream1 = new FileInputStream(yang1)) {
+            try (InputStream stream1 = new NamedFileInputStream(yang1, yang1.getPath())) {
                 TestUtils.loadModule(stream1);
-                fail("IllegalArgumentException should be thrown");
+                fail("InferenceException should be thrown");
             }
-        } catch (IllegalArgumentException e) {
-            String expected = "Key 'rib-id' misses node 'rib-id' in list '(invalid:list:key:def?revision=1970-01-01)application-map'";
+        } catch (InferenceException e) {
+            String expected = "Key 'rib-id' misses node 'rib-id' in list '(invalid:list:key:def?revision=1970-01-01)" +
+                    "application-map'";
             assertTrue(e.getMessage().startsWith(expected));
         }
     }
