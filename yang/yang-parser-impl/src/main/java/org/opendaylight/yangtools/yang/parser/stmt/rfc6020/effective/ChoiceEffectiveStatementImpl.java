@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -31,9 +31,12 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<ChoiceStatement> implements
         ChoiceSchemaNode, DerivableSchemaNode {
+
+    private final StatementSourceReference ref;
 
     private final ChoiceSchemaNode original;
     private final String defaultCase;
@@ -44,6 +47,7 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
     public ChoiceEffectiveStatementImpl(
             final StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
         super(ctx);
+        this.ref = ctx.getStatementSourceReference();
         this.original = ctx.getOriginalCtx() == null ? null : (ChoiceSchemaNode) ctx.getOriginalCtx().buildEffective();
 
         DefaultEffectiveStatementImpl defaultStmt = firstEffective(DefaultEffectiveStatementImpl.class);
@@ -117,7 +121,7 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
 
     @Override
     public ChoiceCaseNode getCaseNodeByName(final QName name) {
-        Preconditions.checkArgument(name != null, "Choice Case QName cannot be NULL!");
+        Preconditions.checkArgument(name != null, "Choice Case QName cannot be NULL! Statement source at %s", ref);
 
         for (final ChoiceCaseNode caseNode : cases) {
             if (caseNode != null && name.equals(caseNode.getQName())) {
@@ -129,7 +133,8 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
 
     @Override
     public ChoiceCaseNode getCaseNodeByName(final String name) {
-        Preconditions.checkArgument(name != null, "Choice Case string Name cannot be NULL!");
+        Preconditions.checkArgument(name != null, "Choice Case string Name cannot be NULL! Statement source at %s",
+                ref);
 
         for (final ChoiceCaseNode caseNode : cases) {
             if (caseNode != null && (caseNode.getQName() != null) && name.equals(caseNode.getQName().getLocalName())) {
