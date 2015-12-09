@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDataNodeContainer<ListStatement> implements
@@ -63,9 +64,9 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
                 final QName keyQName = key.getLastComponent();
 
                 if (!possibleLeafQNamesForKey.contains(keyQName)) {
-                    throw new IllegalArgumentException(String.format("Key '%s' misses node '%s' in list '%s', file %s",
+                    throw new InferenceException(String.format("Key '%s' misses node '%s' in list '%s'",
                             keyEffectiveSubstatement.getDeclared().rawArgument(), keyQName.getLocalName(),
-                            ctx.getStatementArgument(), ctx.getStatementSourceReference()));
+                            ctx.getStatementArgument()), ctx.getStatementSourceReference());
                 }
 
                 keyDefinitionInit.add(keyQName);

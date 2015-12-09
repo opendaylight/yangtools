@@ -94,14 +94,15 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         return currentContext.getStatementDefinition(name);
     }
 
-    ContextBuilder<?, ?, ?> createDeclaredChild(final StatementContextBase<?, ?, ?> current, final QName name, final StatementSourceReference ref) {
+    ContextBuilder<?, ?, ?> createDeclaredChild(final StatementContextBase<?, ?, ?> current, final QName name,
+                                                final StatementSourceReference ref) {
         StatementDefinitionContext<?, ?, ?> def = getDefinition(name);
 
         if (def == null) {
-            //unknown-stmts (from import, include or local-scope)
+            // unknown-stmts (from import, include or local-scope)
             if (qNameToStmtDefMap.get(name) != null) {
-                final StatementContextBase<?, ?, ?> extension = (StatementContextBase<?, ?, ?>) currentContext
-                        .getAllFromNamespace(ExtensionNamespace.class).get(name);
+                    final StatementContextBase<?, ?, ?> extension =
+                            (StatementContextBase<?, ?, ?>) currentContext.getAllFromNamespace(ExtensionNamespace.class).get(name);
                 if (extension != null) {
                     final QName arg = (QName) extension.getStatementArgument();
                     final QName qName = current.getFromNamespace(QNameCacheNamespace.class,
@@ -110,7 +111,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                     def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition(
                             getNewStatementDefinition(qName)));
                 } else {
-                    throw new IllegalArgumentException("Not found unknown statement: " + name);
+                        throw new SourceException("Extension not found: " + name,
+                                current.getStatementSourceReference());
                 }
             } else {
                 // type-body-stmts
@@ -137,7 +139,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private ContextBuilder<?, ?, ?> createDeclaredRoot(final StatementDefinitionContext<?, ?, ?> def, final StatementSourceReference ref) {
+    private ContextBuilder<?, ?, ?> createDeclaredRoot(final StatementDefinitionContext<?, ?, ?> def,
+                                                       final StatementSourceReference ref) {
         return new ContextBuilder(def, ref) {
 
             @Override
@@ -145,7 +148,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                 if (root == null) {
                     root = new RootStatementContext(this, SourceSpecificContext.this);
                 } else {
-                    Preconditions.checkState(root.getIdentifier().equals(createIdentifier()), "Root statement was already defined as %s.", root.getIdentifier());
+                    Preconditions.checkState(root.getIdentifier().equals(createIdentifier()),
+                            "Root statement was already defined as %s.", root.getIdentifier());
                 }
                 root.resetLists();
                 return root;
@@ -167,14 +171,16 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     void startPhase(final ModelProcessingPhase phase) {
-        @Nullable ModelProcessingPhase previousPhase = phase.getPreviousPhase();
+        @Nullable
+        ModelProcessingPhase previousPhase = phase.getPreviousPhase();
         Preconditions.checkState(Objects.equals(previousPhase, finishedPhase));
         Preconditions.checkState(modifiers.get(previousPhase).isEmpty());
         inProgressPhase = phase;
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> void addToLocalStorage(final Class<N> type, final K key, final V value) {
+    public <K, V, N extends IdentifierNamespace<K, V>> void addToLocalStorage(final Class<N> type, final K key,
+           final V value) {
         if (ImportedNamespaceContext.class.isAssignableFrom(type)) {
             importedNamespaces.add((NamespaceStorageNode) value);
         }
@@ -221,7 +227,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(final Class<N> type) {
+    public <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(
+            final Class<N> type) {
         return currentContext.getNamespaceBehaviour(type);
     }
 
@@ -357,14 +364,14 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     private QNameToStatementDefinition stmtDef() {
-        //regular YANG statements added
+        // regular YANG statements added
         ImmutableMap<QName, StatementSupport<?, ?, ?>> definitions = currentContext.getSupportsForPhase(
                 inProgressPhase).getDefinitions();
         for (Map.Entry<QName, StatementSupport<?, ?, ?>> entry : definitions.entrySet()) {
             qNameToStmtDefMap.put(entry.getKey(), entry.getValue());
         }
 
-        //extensions added
+        // extensions added
         if (inProgressPhase.equals(ModelProcessingPhase.FULL_DECLARATION)) {
             Map<QName, StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>>> extensions = currentContext
                     .getAllFromNamespace(ExtensionNamespace.class);
