@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.stmt.retest;
 
 import static org.junit.Assert.assertEquals;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URI;
@@ -42,6 +41,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YinStatementSourceImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveSchemaContext;
+import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 import org.opendaylight.yangtools.yang.stmt.test.StmtTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -268,8 +268,7 @@ public final class TestUtils {
         StatementStreamSource[] sources = new StatementStreamSource[files.length];
 
         for (int i = 0; i < files.length; i++) {
-            sources[i] = new YangStatementSourceImpl(new FileInputStream(
-                    files[i]));
+            sources[i] = new YangStatementSourceImpl(new NamedFileInputStream(files[i], files[i].getPath()));
         }
 
         return parseYangSources(sources);
@@ -302,8 +301,8 @@ public final class TestUtils {
         return parseYangSources(testSourcesFile);
     }
 
-    private static void addYinSources(final CrossSourceStatementReactor.BuildAction reactor, final YinStatementSourceImpl...
-            sources) {
+    private static void addYinSources(final CrossSourceStatementReactor.BuildAction reactor,
+                                      final YinStatementSourceImpl... sources) {
         for (YinStatementSourceImpl source : sources) {
             reactor.addSource(source);
         }
