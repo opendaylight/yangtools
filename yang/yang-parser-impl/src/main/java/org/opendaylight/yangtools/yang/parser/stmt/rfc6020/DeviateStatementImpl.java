@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeviateEffectiveStatementImpl;
-
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
@@ -27,7 +26,8 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<Deviation.De
         super(context);
     }
 
-    public static class Definition extends AbstractStatementSupport<Deviation.Deviate,DeviateStatement,EffectiveStatement<Deviation.Deviate,DeviateStatement>> {
+    public static class Definition extends AbstractStatementSupport<Deviation.Deviate, DeviateStatement,
+            EffectiveStatement<Deviation.Deviate, DeviateStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.DEVIATE);
@@ -35,7 +35,7 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<Deviation.De
 
         @Override public Deviation.Deviate parseArgumentValue(
                 StmtContext<?, ?, ?> ctx, String value) throws SourceException {
-            return Utils.parseDeviateFromString(value);
+            return Utils.parseDeviateFromString(ctx, value);
         }
 
         @Override public DeviateStatement createDeclared(
@@ -44,7 +44,8 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<Deviation.De
         }
 
         @Override public EffectiveStatement<Deviation.Deviate, DeviateStatement> createEffective(
-                StmtContext<Deviation.Deviate, DeviateStatement, EffectiveStatement<Deviation.Deviate, DeviateStatement>> ctx) {
+                StmtContext<Deviation.Deviate, DeviateStatement, EffectiveStatement<Deviation.Deviate,
+                        DeviateStatement>> ctx) {
             return new DeviateEffectiveStatementImpl(ctx);
         }
 

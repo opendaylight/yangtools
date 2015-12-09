@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import java.math.BigDecimal;
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -34,9 +33,8 @@ public class RangeStatementImpl extends AbstractDeclaredStatement<List<RangeCons
         super(context);
     }
 
-    public static class Definition
-            extends
-            AbstractStatementSupport<List<RangeConstraint>, RangeStatement, EffectiveStatement<List<RangeConstraint>, RangeStatement>> {
+    public static class Definition extends AbstractStatementSupport<List<RangeConstraint>, RangeStatement,
+            EffectiveStatement<List<RangeConstraint>, RangeStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.RANGE);
@@ -44,7 +42,7 @@ public class RangeStatementImpl extends AbstractDeclaredStatement<List<RangeCons
 
         @Override
         public List<RangeConstraint> parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
-            return TypeUtils.parseRangeListFromString(value);
+            return TypeUtils.parseRangeListFromString(ctx, value);
         }
 
         @Override
@@ -54,7 +52,8 @@ public class RangeStatementImpl extends AbstractDeclaredStatement<List<RangeCons
 
         @Override
         public EffectiveStatement<List<RangeConstraint>, RangeStatement> createEffective(
-                StmtContext<List<RangeConstraint>, RangeStatement, EffectiveStatement<List<RangeConstraint>, RangeStatement>> ctx) {
+                StmtContext<List<RangeConstraint>, RangeStatement, EffectiveStatement<List<RangeConstraint>,
+                        RangeStatement>> ctx) {
             return new RangeEffectiveStatementImpl(ctx);
         }
     }
