@@ -53,6 +53,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModul
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,7 +92,8 @@ public final class Utils {
         // to detect if key contains duplicates
         if ((new HashSet<>(keyTokens)).size() < keyTokens.size()) {
             // FIXME: report all duplicate keys
-            throw new IllegalArgumentException();
+            throw new SourceException(String.format("Duplicate value in list key: %s", value),
+                    ctx.getStatementSourceReference());
         }
 
         Set<SchemaNodeIdentifier.Relative> keyNodes = new HashSet<>();
@@ -242,8 +244,9 @@ public final class Utils {
             break;
         }
 
-        Preconditions.checkArgument(qNameModule != null, "Error in module '%s': can not resolve QNameModule for '%s'.",
-                ctx.getRoot().rawStatementArgument(), value);
+        Preconditions.checkArgument(qNameModule != null, "Error in module '%s': can not resolve QNameModule for '%s'." +
+                        " Statement source at %s", ctx.getRoot().rawStatementArgument(), value,
+                ctx.getStatementSourceReference());
         final QNameModule resultQNameModule;
         if (qNameModule.getRevision() == null) {
             resultQNameModule = QNameModule.cachedReference(
@@ -303,19 +306,21 @@ public final class Utils {
                 .isAssignableFrom(UnknownStatementImpl.class);
     }
 
-    public static Deviation.Deviate parseDeviateFromString(final String deviate) {
+    public static Deviation.Deviate parseDeviateFromString(final StmtContext<?, ?, ?> ctx, final String deviate) {
 
         // Yang constants should be lowercase so we have throw if value does not
         // suit this
         String deviateUpper = deviate.toUpperCase();
         Preconditions.checkArgument(!Objects.equals(deviate, deviateUpper),
-            "String %s is not valid deviate argument", deviate);
+            "String %s is not valid deviate argument. Statement source at %s", deviate,
+                ctx.getStatementSourceReference());
 
         // but Java enum is uppercase so we cannot use lowercase here
         try {
             return Deviation.Deviate.valueOf(deviateUpper);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(String.format("String %s is not valid deviate argument", deviate), e);
+            throw new SourceException(String.format("String %s is not valid deviate argument", deviate),
+                    ctx.getStatementSourceReference(), e);
         }
     }
 

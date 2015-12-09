@@ -29,9 +29,8 @@ public class FractionDigitsStatementImpl extends AbstractDeclaredStatement<Integ
         super(context);
     }
 
-    public static class Definition
-            extends
-            AbstractStatementSupport<Integer, FractionDigitsStatement, EffectiveStatement<Integer, FractionDigitsStatement>> {
+    public static class Definition extends AbstractStatementSupport<Integer, FractionDigitsStatement,
+            EffectiveStatement<Integer, FractionDigitsStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.FRACTION_DIGITS);
@@ -45,13 +44,13 @@ public class FractionDigitsStatementImpl extends AbstractDeclaredStatement<Integ
             try {
                 fractionDigits = Integer.parseInt(value);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException(String.format("%s is not valid fraction-digits integer argument",
-                        value), e);
+                throw new SourceException(String.format("%s is not valid fraction-digits integer argument",
+                        value), ctx.getStatementSourceReference(), e);
             }
 
             if (!FRAC_DIGITS_ALLOWED.contains(fractionDigits)) {
-                throw new IllegalArgumentException(String.format("fraction-digits argument should be integer within %s",
-                        FRAC_DIGITS_ALLOWED));
+                throw new SourceException(String.format("fraction-digits argument should be integer within %s, is %d",
+                        FRAC_DIGITS_ALLOWED, fractionDigits), ctx.getStatementSourceReference());
             }
 
             return fractionDigits;
@@ -64,7 +63,8 @@ public class FractionDigitsStatementImpl extends AbstractDeclaredStatement<Integ
 
         @Override
         public EffectiveStatement<Integer, FractionDigitsStatement> createEffective(
-                StmtContext<Integer, FractionDigitsStatement, EffectiveStatement<Integer, FractionDigitsStatement>> ctx) {
+                StmtContext<Integer, FractionDigitsStatement,
+                        EffectiveStatement<Integer, FractionDigitsStatement>> ctx) {
             return new FractionDigitsEffectiveStatementImpl(ctx);
         }
 
