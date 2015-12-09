@@ -38,10 +38,8 @@ public class ValueStatementImpl extends AbstractDeclaredStatement<Integer> imple
             try {
                 valueNum = Integer.parseInt(value);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException(
-                        String.format(
-                                "%s is not valid value statement integer argument in a range of -2147483648..2147483647",
-                                value), e);
+                throw new SourceException(String.format("%s is not valid value statement integer argument in a range " +
+                                "of -2147483648..2147483647", value), ctx.getStatementSourceReference(), e);
             }
 
             return valueNum;
