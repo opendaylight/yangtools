@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -152,12 +152,13 @@ public final class GroupingUtils {
 
         Object refineArgument = refineCtx.getStatementArgument();
         Preconditions.checkArgument(refineArgument instanceof SchemaNodeIdentifier,
-            "Invalid refine argument %s. It must be instance of SchemaNodeIdentifier", refineArgument);
+            "Invalid refine argument %s. It must be instance of SchemaNodeIdentifier. At %s", refineArgument,
+                refineCtx.getStatementSourceReference());
 
         SchemaNodeIdentifier refineTargetNodeIdentifier = (SchemaNodeIdentifier) refineArgument;
         StatementContextBase<?, ?, ?> refineTargetNodeCtx = Utils.findNode(usesParentCtx, refineTargetNodeIdentifier);
-        Preconditions.checkArgument(refineTargetNodeCtx != null, "Refine target node %s not found.",
-                refineTargetNodeIdentifier);
+        Preconditions.checkArgument(refineTargetNodeCtx != null, "Refine target node %s not found. At %s",
+                refineTargetNodeIdentifier, refineCtx.getStatementSourceReference());
 
         addOrReplaceNodes(refineCtx, refineTargetNodeCtx);
         refineCtx.addAsEffectOfStatement(refineTargetNodeCtx);
