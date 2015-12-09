@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -117,7 +117,7 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
 
     @Override
     public ChoiceCaseNode getCaseNodeByName(final QName name) {
-        Preconditions.checkArgument(name != null, "Choice Case QName cannot be NULL!");
+        Preconditions.checkArgument(name != null, "Choice Case QName cannot be NULL! Statement source at %s");
 
         for (final ChoiceCaseNode caseNode : cases) {
             if (caseNode != null && name.equals(caseNode.getQName())) {
@@ -129,7 +129,7 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
 
     @Override
     public ChoiceCaseNode getCaseNodeByName(final String name) {
-        Preconditions.checkArgument(name != null, "Choice Case string Name cannot be NULL!");
+        Preconditions.checkArgument(name != null, "Choice Case string Name cannot be NULL! Statement source at %s");
 
         for (final ChoiceCaseNode caseNode : cases) {
             if (caseNode != null && (caseNode.getQName() != null) && name.equals(caseNode.getQName().getLocalName())) {
