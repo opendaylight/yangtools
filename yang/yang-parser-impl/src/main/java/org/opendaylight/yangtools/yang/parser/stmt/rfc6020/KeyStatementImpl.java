@@ -35,7 +35,8 @@ public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<Schem
 
     public static class Definition
             extends
-            AbstractStatementSupport<Collection<SchemaNodeIdentifier>, KeyStatement, EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement>> {
+            AbstractStatementSupport<Collection<SchemaNodeIdentifier>, KeyStatement,
+                    EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.KEY);
@@ -53,7 +54,8 @@ public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<Schem
             // Throws NPE on nulls, retains first inserted value, cannot be modified
             final Collection<SchemaNodeIdentifier> ret = builder.build();
 
-            Preconditions.checkArgument(ret.size() == tokens, "Key argument '%s' contains duplicates", value);
+            Preconditions.checkArgument(ret.size() == tokens, "Key argument '%s' contains duplicates. At %s", value,
+                    ctx.getStatementSourceReference());
             return ret;
         }
 
@@ -64,7 +66,8 @@ public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<Schem
 
         @Override
         public EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement> createEffective(
-                final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement>> ctx) {
+                final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement,
+                        EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement>> ctx) {
             return new KeyEffectiveStatementImpl(ctx);
         }
 

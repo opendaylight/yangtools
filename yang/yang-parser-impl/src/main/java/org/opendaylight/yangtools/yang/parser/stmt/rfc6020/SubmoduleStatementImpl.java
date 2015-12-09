@@ -32,8 +32,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModule
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.SubmoduleEffectiveStatementImpl;
 
-public class SubmoduleStatementImpl extends
-        AbstractRootStatement<SubmoduleStatement> implements SubmoduleStatement {
+public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleStatement> implements SubmoduleStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .SUBMODULE)
             .add(Rfc6020Mapping.ANYXML, 0, MAX)
@@ -63,14 +62,12 @@ public class SubmoduleStatementImpl extends
             .add(Rfc6020Mapping.YANG_VERSION, 0, 1)
             .build();
 
-    protected SubmoduleStatementImpl(
-            StmtContext<String, SubmoduleStatement, ?> context) {
+    protected SubmoduleStatementImpl(StmtContext<String, SubmoduleStatement, ?> context) {
         super(context);
     }
 
-    public static class Definition
-            extends
-            AbstractStatementSupport<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> {
+    public static class Definition extends AbstractStatementSupport<String, SubmoduleStatement,
+            EffectiveStatement<String, SubmoduleStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.SUBMODULE);
@@ -115,9 +112,8 @@ public class SubmoduleStatementImpl extends
                     stmt, 0, BelongsToStatement.class, PrefixStatement.class);
 
             if (prefixSubStmtCtx == null) {
-                throw new IllegalArgumentException(
-                        "Prefix of belongsTo statement is missing in submodule ["
-                                + stmt.getStatementArgument() + "].");
+                throw new SourceException(String.format("Prefix of belongsTo statement is missing in submodule [%s]",
+                        stmt.getStatementArgument()), stmt.getStatementSourceReference());
             }
 
             String prefix = (String) prefixSubStmtCtx.getStatementArgument();

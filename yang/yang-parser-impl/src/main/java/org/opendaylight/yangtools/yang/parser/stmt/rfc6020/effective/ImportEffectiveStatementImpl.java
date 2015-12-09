@@ -12,6 +12,7 @@ import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, ImportStatement> implements
@@ -33,7 +34,8 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
         if (prefixStmt != null ) {
             this.prefix = prefixStmt.argument();
         } else {
-            throw new IllegalStateException("Prefix is mandatory substatement of import statement");
+            throw new MissingSubstatementException("Prefix is mandatory substatement of import statement",
+                    ctx.getStatementSourceReference());
         }
     }
 

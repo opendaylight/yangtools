@@ -42,9 +42,8 @@ public class RangeStatementImpl extends AbstractDeclaredStatement<List<RangeCons
         super(context);
     }
 
-    public static class Definition
-            extends
-            AbstractStatementSupport<List<RangeConstraint>, RangeStatement, EffectiveStatement<List<RangeConstraint>, RangeStatement>> {
+    public static class Definition extends AbstractStatementSupport<List<RangeConstraint>, RangeStatement,
+            EffectiveStatement<List<RangeConstraint>, RangeStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.RANGE);
@@ -52,7 +51,7 @@ public class RangeStatementImpl extends AbstractDeclaredStatement<List<RangeCons
 
         @Override
         public List<RangeConstraint> parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
-            return TypeUtils.parseRangeListFromString(value);
+            return TypeUtils.parseRangeListFromString(ctx, value);
         }
 
         @Override
@@ -62,7 +61,8 @@ public class RangeStatementImpl extends AbstractDeclaredStatement<List<RangeCons
 
         @Override
         public EffectiveStatement<List<RangeConstraint>, RangeStatement> createEffective(
-                StmtContext<List<RangeConstraint>, RangeStatement, EffectiveStatement<List<RangeConstraint>, RangeStatement>> ctx) {
+                StmtContext<List<RangeConstraint>, RangeStatement, EffectiveStatement<List<RangeConstraint>,
+                        RangeStatement>> ctx) {
             return new RangeEffectiveStatementImpl(ctx);
         }
 
