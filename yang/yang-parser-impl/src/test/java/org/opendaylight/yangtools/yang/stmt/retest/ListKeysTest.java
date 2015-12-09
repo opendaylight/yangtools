@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
@@ -49,7 +50,7 @@ public class ListKeysTest {
             reactor.buildEffective();
             fail("effective build should fail due to list instead of leaf referenced in list key");
         } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
+            assertEquals(InferenceException.class, e.getClass());
             assertTrue(e.getMessage().startsWith("Key 'test1_key1 test1_key2' misses node 'test1_key2'"));
         }
     }
@@ -67,7 +68,7 @@ public class ListKeysTest {
             reactor.buildEffective();
             fail("effective build should fail due to missing leaf referenced in list key");
         } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
+            assertEquals(InferenceException.class, e.getClass());
             assertTrue(e.getMessage().startsWith("Key 'test1_key1 test1_key2' misses node 'test1_key2'"));
         }
     }
@@ -85,7 +86,7 @@ public class ListKeysTest {
             reactor.buildEffective();
             fail("effective build should fail due to list instead of leaf in grouping referenced in list key");
         } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
+            assertEquals(InferenceException.class, e.getClass());
             assertTrue(e.getMessage().startsWith("Key 'grp_list' misses node 'grp_list'"));
         }
     }
@@ -101,14 +102,16 @@ public class ListKeysTest {
 
         try {
             reactor.buildEffective();
-            fail("effective build should fail due to list instead of leaf in grouping augmented to list referenced in list key");
+            fail("effective build should fail due to list instead of leaf in grouping augmented to list referenced " +
+                    "in list key");
         } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
+            assertEquals(InferenceException.class, e.getClass());
             assertTrue(e.getMessage().startsWith("Key 'grp_leaf' misses node 'grp_leaf'"));
         }
     }
 
-    private static void addSources(final CrossSourceStatementReactor.BuildAction reactor, final YangStatementSourceImpl... sources) {
+    private static void addSources(final CrossSourceStatementReactor.BuildAction reactor,
+                                   final YangStatementSourceImpl... sources) {
         for (YangStatementSourceImpl source : sources) {
             reactor.addSource(source);
         }

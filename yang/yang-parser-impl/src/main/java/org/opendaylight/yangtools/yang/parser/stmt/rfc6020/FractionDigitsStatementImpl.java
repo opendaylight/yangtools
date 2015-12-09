@@ -30,9 +30,8 @@ public class FractionDigitsStatementImpl extends AbstractDeclaredStatement<Integ
         super(context);
     }
 
-    public static class Definition
-            extends
-            AbstractStatementSupport<Integer, FractionDigitsStatement, EffectiveStatement<Integer, FractionDigitsStatement>> {
+    public static class Definition extends AbstractStatementSupport<Integer, FractionDigitsStatement,
+            EffectiveStatement<Integer, FractionDigitsStatement>> {
 
         public Definition() {
             super(Rfc6020Mapping.FRACTION_DIGITS);
@@ -46,8 +45,8 @@ public class FractionDigitsStatementImpl extends AbstractDeclaredStatement<Integ
             try {
                 fractionDigits = Integer.parseInt(value);
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException(String.format("%s is not valid fraction-digits integer argument",
-                        value), e);
+                throw new SourceException(String.format("%s is not valid fraction-digits integer argument",
+                        value), ctx.getStatementSourceReference(), e);
             }
 
             Preconditions.checkArgument(FRAC_DIGITS_ALLOWED.contains(fractionDigits),
