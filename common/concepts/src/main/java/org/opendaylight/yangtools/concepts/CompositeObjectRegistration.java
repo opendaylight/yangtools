@@ -12,6 +12,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * @deprecated This class does not have good semantics with regard to constituent registrations' lifecycle and should
+ *             not be used.
+ */
+@Deprecated
 public final class CompositeObjectRegistration<T> extends AbstractObjectRegistration<T> {
 
     private final Set<Registration> registrations;

@@ -9,6 +9,10 @@ package org.opendaylight.yangtools.concepts;
 
 import java.util.Set;
 
+/**
+ * @deprecated Unused undocumented concept. Scheduled for removal.
+ */
+@Deprecated
 public interface Namespace<K,V> {
 
     V get(K key);
