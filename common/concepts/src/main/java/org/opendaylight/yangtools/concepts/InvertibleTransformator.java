@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.concepts;
 
+/**
+ * @deprecated Unused undocumented concept, scheduled for removal. Users should migrate to Guava's Converter.
+ */
+@Deprecated
 public interface InvertibleTransformator<P, I> extends Transformator<P, I> {
 
     I fromProduct(P product);

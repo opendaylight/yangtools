@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.concepts;
 
+/**
+ * @deprecated Unused undocumented concept, scheduled for removal. Users should use Guava's Function interface.
+ */
+@Deprecated
 public interface Transformator<P,I> {
 
     P transform(I input);
