@@ -12,10 +12,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
-public abstract class DeclaredEffectiveStatementBase<A, D extends DeclaredStatement<A>>
-        extends EffectiveStatementBase<A, D> {
+public abstract class DeclaredEffectiveStatementBase<A, D extends DeclaredStatement<A>> extends
+        EffectiveStatementBase<A, D> {
 
+    private final StatementSource statementSource;
+    private final A argument;
     private final D declaredInstance;
 
     public DeclaredEffectiveStatementBase(final StmtContext<A, D, ?> ctx) {
@@ -34,8 +37,21 @@ public abstract class DeclaredEffectiveStatementBase<A, D extends DeclaredStatem
      *            method of EffectiveStatementBase class. The main purpose of
      *            this is to allow the build of recursive extension definitions.
      */
-    protected DeclaredEffectiveStatementBase(final StmtContext<A, D, ?> ctx, boolean buildUnknownSubstatements) {
+    protected DeclaredEffectiveStatementBase(StmtContext<A, D, ?> ctx, final boolean buildUnknownSubstatements) {
         super(ctx, buildUnknownSubstatements);
+
+        this.argument = ctx.getStatementArgument();
+        this.statementSource = ctx.getStatementSource();
+
+        /*
+         * Share original instance of declared statement between all effective
+         * statements which have been copied or derived from this original
+         * declared statement.
+         */
+        StatementContextBase<A, D, ?> originalCtx = (StatementContextBase<A, D, ?>) ctx.getOriginalCtx();
+        if (originalCtx != null) {
+            ctx = originalCtx;
+        }
         declaredInstance = Verify.verifyNotNull(ctx.buildDeclared(), "Statement %s failed to build declared statement",
                 ctx);
     }
@@ -47,12 +63,12 @@ public abstract class DeclaredEffectiveStatementBase<A, D extends DeclaredStatem
 
     @Override
     public final A argument() {
-        return declaredInstance.argument();
+        return argument;
     }
 
     @Override
     public final StatementSource getStatementSource() {
-        return declaredInstance.getStatementSource();
+        return statementSource;
     }
 
     @Override

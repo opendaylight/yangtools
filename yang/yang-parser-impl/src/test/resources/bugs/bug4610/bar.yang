@@ -1,0 +1,18 @@
+module bar {
+    yang-version 1;
+    namespace "bar";
+    prefix bar;
+
+    revision 2015-12-12 {
+        description "Bug 4610 test model.";
+    }
+
+    grouping g1 {
+        container c1 {
+        }
+    }
+
+    grouping g2 {
+        uses g1;
+    }
+}

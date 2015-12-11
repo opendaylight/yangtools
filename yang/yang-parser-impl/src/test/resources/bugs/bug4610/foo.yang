@@ -1,0 +1,19 @@
+module foo {
+    yang-version 1;
+    namespace "foo";
+    prefix foo;
+
+    import bar { prefix bar; revision-date 2015-12-12; }
+
+    revision 2015-12-12 {
+        description "Bug 4610 test model";
+    }
+
+    grouping g3 {
+        uses bar:g2;
+    }
+
+    container root {
+        uses g3;
+    }
+}
