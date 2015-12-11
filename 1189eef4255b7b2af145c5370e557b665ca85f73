@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aa4ed85_def0b7cb",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/DeclaredEffectiveStatementBase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-12-11T12:50:23Z",
+      "side": 1,
+      "message": "Since argument is copied and it is raw text and does not change by copying we could delegate to original declaredInstance.\nSame goes for statementDefinition",
+      "range": {
+        "startLine": 45,
+        "startChar": 8,
+        "endLine": 45,
+        "endChar": 51
+      },
+      "revId": "1189eef4255b7b2af145c5370e557b665ca85f73",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_5edda741",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/DeclaredEffectiveStatementBase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-12-11T12:50:23Z",
+      "side": 1,
+      "message": "SHould not this be while cycle to get up to the root?",
+      "range": {
+        "startLine": 53,
+        "startChar": 105,
+        "endLine": 56,
+        "endChar": 9
+      },
+      "revId": "1189eef4255b7b2af145c5370e557b665ca85f73",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
