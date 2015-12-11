@@ -95,7 +95,7 @@ public class DataTreeCandidateValidatorTest {
 
     private static QName leafrefLeafList;
 
-    private static final Logger LOG = LoggerFactory.getLogger("");
+    private static final Logger LOG = LoggerFactory.getLogger(DataTreeCandidateValidatorTest.class);
     private static final String NEW_LINE = System.getProperty("line.separator");
 
     static {
