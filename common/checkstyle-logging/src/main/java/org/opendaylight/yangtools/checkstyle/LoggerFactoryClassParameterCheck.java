@@ -27,11 +27,18 @@ public class LoggerFactoryClassParameterCheck extends Check {
         final String methodName = CheckLoggingUtil.getMethodName(aAST);
         if(methodName.equals(METHOD_NAME)) {
             final String className = CheckLoggingUtil.getClassName(aAST);
-            final String parameter = aAST.findFirstToken(TokenTypes.ELIST).getFirstChild().getFirstChild().getFirstChild().getText();
+            final DetailAST token = getToken(aAST.findFirstToken(TokenTypes.ELIST).getFirstChild());
+            final String parameter = token.getText();
             if(!parameter.equals(className)) {
                 log(aAST.getLineNo(), LOG_MESSAGE);
             }
         }
     }
 
+    private DetailAST getToken(DetailAST token) {
+        while (token.getFirstChild() != null) {
+            token = token.getFirstChild();
+        }
+        return token;
+    }
 }
