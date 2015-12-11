@@ -76,7 +76,7 @@ public class DataTreeCandidateValidatorTest3 {
     private static QName type3;
     private static QName desc;
 
-    private static final Logger LOG = LoggerFactory.getLogger("");
+    private static final Logger LOG = LoggerFactory.getLogger(DataTreeCandidateValidatorTest3.class);
     private static final String NEW_LINE = System.getProperty("line.separator");
 
     static {
