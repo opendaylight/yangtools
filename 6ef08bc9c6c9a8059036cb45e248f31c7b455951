@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aa4ed85_be37f6af",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/leafref/LeafRefValidatation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-12-14T09:24:49Z",
+      "side": 1,
+      "message": "Please use normal LOG.debug(\"Operation [{}] ....\", leaf referencedByCtx, modificationType...)\n\nIf LOG statement is reasuable then create method, which will use this style of logging instead of StringBuilder.\n\nStringBuilder should not be used for creating log messages.",
+      "range": {
+        "startLine": 364,
+        "startChar": 22,
+        "endLine": 364,
+        "endChar": 109
+      },
+      "revId": "6ef08bc9c6c9a8059036cb45e248f31c7b455951",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
