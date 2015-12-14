@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aa4ed85_9ecf9ab0",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/AnyxmlStatementImpl.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-12-14T09:22:44Z",
+      "side": 1,
+      "message": "Please do not modify existing anyxml, this extension should exist in separate YANG model and statement.",
+      "range": {
+        "startLine": 37,
+        "startChar": 3,
+        "endLine": 37,
+        "endChar": 99
+      },
+      "revId": "8aef3147fb733e00bb318212068c38c62c6e5a34",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
