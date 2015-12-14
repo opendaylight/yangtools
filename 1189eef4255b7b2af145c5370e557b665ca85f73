@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "1aa4ed85_3e26a617",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/DeclaredEffectiveStatementBase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2015-12-14T10:43:48Z",
+      "side": 1,
+      "message": "The getStatementArgument returns parsed argument of the statement (e.g. QName), which it may be changed by copying.\nRaw argument text is returned by getStatmentRawArgument method.  \n\nStatementDefinition done.",
+      "parentUuid": "1aa4ed85_def0b7cb",
+      "range": {
+        "startLine": 45,
+        "startChar": 8,
+        "endLine": 45,
+        "endChar": 51
+      },
+      "revId": "1189eef4255b7b2af145c5370e557b665ca85f73",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_5edda741",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/DeclaredEffectiveStatementBase.java",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2015-12-11T12:50:23Z",
       "side": 1,
       "message": "SHould not this be while cycle to get up to the root?",
+      "range": {
+        "startLine": 53,
+        "startChar": 105,
+        "endLine": 56,
+        "endChar": 9
+      },
+      "revId": "1189eef4255b7b2af145c5370e557b665ca85f73",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_1e464ac0",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/DeclaredEffectiveStatementBase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 56,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2015-12-14T10:43:48Z",
+      "side": 1,
+      "message": "No, ctx.getOriginalCtx always returns the original context (or null, if it is the original context already).",
+      "parentUuid": "1aa4ed85_5edda741",
       "range": {
         "startLine": 53,
         "startChar": 105,
