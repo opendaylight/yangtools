@@ -16,6 +16,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -50,7 +51,23 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
      * @param threadPrefix
      *            the name prefix for threads created by this executor.
      */
-    public CachedThreadPoolExecutor( final int maximumPoolSize, final int maximumQueueSize, final String threadPrefix ) {
+    public CachedThreadPoolExecutor(final int maximumPoolSize, final int maximumQueueSize, final String threadPrefix) {
+        this(maximumPoolSize, maximumQueueSize, new ThreadFactoryBuilder().setDaemon(true)
+            .setNameFormat(threadPrefix + "-%d").build());
+    }
+
+    /**
+     * Constructs an instance.
+     *
+     * @param maximumPoolSize
+     *            the maximum number of threads to allow in the pool. Threads will terminate after
+     *            being idle for 60 seconds.
+     * @param maximumQueueSize
+     *            the capacity of the queue.
+     * @param threadPrefix
+     *            the name prefix for threads created by this executor.
+     */
+    public CachedThreadPoolExecutor( final int maximumPoolSize, final int maximumQueueSize, final ThreadFactory threadFactory) {
         // We're using a custom SynchronousQueue that has a backing bounded LinkedBlockingQueue.
         // We don't specify any core threads (first parameter) so, when a task is submitted,
         // the base class will always try to offer to the queue. If there is an existing waiting
@@ -60,14 +77,11 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
         // been reached, the task will be rejected. We specify a RejectedTaskHandler that tries
         // to offer to the backing queue. If that succeeds, the task will execute as soon as a
         // thread becomes available. If the offer fails to the backing queue, the task is rejected.
-        super( 0, maximumPoolSize, IDLE_TIMEOUT_IN_SEC, TimeUnit.SECONDS,
-               new ExecutorQueue( maximumQueueSize ) );
+        super(0, maximumPoolSize, IDLE_TIMEOUT_IN_SEC, TimeUnit.SECONDS, new ExecutorQueue(maximumQueueSize),
+            threadFactory);
 
-        this.threadPrefix = Preconditions.checkNotNull( threadPrefix );
+        this.threadPrefix = null;
         this.maximumQueueSize = maximumQueueSize;
-
-        setThreadFactory( new ThreadFactoryBuilder().setDaemon( true )
-                                            .setNameFormat( this.threadPrefix + "-%d" ).build() );
 
         executorQueue = (ExecutorQueue)super.getQueue();
 
