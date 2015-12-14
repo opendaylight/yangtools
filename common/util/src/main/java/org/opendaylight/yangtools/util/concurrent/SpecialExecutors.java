@@ -9,6 +9,7 @@
 package org.opendaylight.yangtools.util.concurrent;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -48,8 +49,8 @@ public final class SpecialExecutors {
      *            the name prefix for threads created by this executor.
      * @return a new ExecutorService with the specified configuration.
      */
-    public static ExecutorService newBoundedFastThreadPool( int maximumPoolSize,
-            int maximumQueueSize, String threadPrefix ) {
+    public static ExecutorService newBoundedFastThreadPool( final int maximumPoolSize,
+            final int maximumQueueSize, final String threadPrefix ) {
         return new FastThreadPoolExecutor( maximumPoolSize, maximumQueueSize, threadPrefix );
     }
 
@@ -68,8 +69,8 @@ public final class SpecialExecutors {
      *            the name prefix for threads created by this executor.
      * @return a new ExecutorService with the specified configuration.
      */
-    public static ExecutorService newBlockingBoundedFastThreadPool( int maximumPoolSize,
-            int maximumQueueSize, String threadPrefix ) {
+    public static ExecutorService newBlockingBoundedFastThreadPool( final int maximumPoolSize,
+            final int maximumQueueSize, final String threadPrefix ) {
 
         FastThreadPoolExecutor executor =
                 new FastThreadPoolExecutor( maximumPoolSize, maximumQueueSize, threadPrefix );
@@ -104,8 +105,8 @@ public final class SpecialExecutors {
      *            the name prefix for threads created by this executor.
      * @return a new ExecutorService with the specified configuration.
      */
-    public static ExecutorService newBoundedCachedThreadPool( int maximumPoolSize,
-            int maximumQueueSize, String threadPrefix ) {
+    public static ExecutorService newBoundedCachedThreadPool( final int maximumPoolSize,
+            final int maximumQueueSize, final String threadPrefix ) {
         return new CachedThreadPoolExecutor( maximumPoolSize, maximumQueueSize, threadPrefix );
     }
 
@@ -124,11 +125,35 @@ public final class SpecialExecutors {
      *            the name prefix for threads created by this executor.
      * @return a new ExecutorService with the specified configuration.
      */
-    public static ExecutorService newBlockingBoundedCachedThreadPool( int maximumPoolSize,
-            int maximumQueueSize, String threadPrefix ) {
+    public static ExecutorService newBlockingBoundedCachedThreadPool( final int maximumPoolSize,
+            final int maximumQueueSize, final String threadPrefix ) {
 
         CachedThreadPoolExecutor executor =
                 new CachedThreadPoolExecutor( maximumPoolSize, maximumQueueSize, threadPrefix );
+        executor.setRejectedExecutionHandler( CountingRejectedExecutionHandler.newCallerRunsPolicy() );
+        return executor;
+    }
+
+    /**
+     * Creates an ExecutorService similar to {@link #newBoundedCachedThreadPool } except that it
+     * handles rejected tasks by running them in the same thread as the caller. Therefore if the
+     * queue is full, the caller submitting the task will be blocked until the task completes. In
+     * this manner, tasks are never rejected.
+     *
+     * @param maximumPoolSize
+     *            the maximum number of threads to allow in the pool. Threads will terminate after
+     *            being idle for 60 seconds.
+     * @param maximumQueueSize
+     *            the capacity of the queue.
+     * @param threadFactory
+     *            the thread factory to use for creation of worker threads
+     * @return a new ExecutorService with the specified configuration.
+     */
+    public static ExecutorService newBlockingBoundedCachedThreadPool( final int maximumPoolSize,
+            final int maximumQueueSize, final ThreadFactory threadFactory ) {
+
+        CachedThreadPoolExecutor executor =
+                new CachedThreadPoolExecutor( maximumPoolSize, maximumQueueSize, threadFactory );
         executor.setRejectedExecutionHandler( CountingRejectedExecutionHandler.newCallerRunsPolicy() );
         return executor;
     }
@@ -145,8 +170,8 @@ public final class SpecialExecutors {
      *            the name prefix for the thread created by this executor.
      * @return a new ExecutorService with the specified configuration.
      */
-    public static ExecutorService newBoundedSingleThreadExecutor( int maximumQueueSize,
-            String threadPrefix ) {
+    public static ExecutorService newBoundedSingleThreadExecutor( final int maximumQueueSize,
+            final String threadPrefix ) {
         return new FastThreadPoolExecutor( 1, maximumQueueSize, Long.MAX_VALUE, TimeUnit.SECONDS,
                 threadPrefix );
     }
