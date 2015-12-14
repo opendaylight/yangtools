@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aa4ed85_3e72267d",
+        "filename": "common/checkstyle-logging/src/main/java/org/opendaylight/yangtools/checkstyle/LoggerFactoryClassParameterCheck.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 21
+      },
+      "writtenOn": "2015-12-14T09:32:00Z",
+      "side": 1,
+      "message": "It is possible for this to return incorrect TOKEN?",
+      "range": {
+        "startLine": 30,
+        "startChar": 36,
+        "endLine": 30,
+        "endChar": 44
+      },
+      "revId": "fda85f3342cf225728805e26f5f089f300ca98b4",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
