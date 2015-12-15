@@ -10,8 +10,10 @@ package org.opendaylight.yangtools.util;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.Map;
 
@@ -35,8 +37,19 @@ final class OffsetMapCache {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Ordered lookup of offsets. Returned map will have the same iteration order.
+     */
     @SuppressWarnings("unchecked")
-    static <T> Map<T, Integer> offsetsFor(final Collection<T> args) {
-        return (Map<T, Integer>) CACHE.getUnchecked(args);
+    static <T> Map<T, Integer> orderedOffsets(final Collection<T> args) {
+        return (Map<T, Integer>) CACHE.getUnchecked(ImmutableList.copyOf(args));
+    }
+
+    /**
+     * Unordered lookup of offsets. Returned map can have a different iterator order.
+     */
+    @SuppressWarnings("unchecked")
+    static <T> Map<T, Integer> unorderedOffsets(final Collection<T> args) {
+        return (Map<T, Integer>) CACHE.getUnchecked(ImmutableSet.copyOf(args));
     }
 }

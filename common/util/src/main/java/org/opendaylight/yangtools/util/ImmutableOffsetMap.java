@@ -94,12 +94,13 @@ public final class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K, V
             return ImmutableMap.of();
         }
         if (size == 1) {
-            // Efficient single-entry implementation
+            // Efficient single-entry implementation.
             final Entry<K, V> e = m.entrySet().iterator().next();
             return SharedSingletonMap.of(e.getKey(), e.getValue());
         }
 
-        final Map<K, Integer> offsets = OffsetMapCache.offsetsFor(m.keySet());
+        // copyOf() disconnects the key set while retaining its order across cache lookup.
+        final Map<K, Integer> offsets = OffsetMapCache.orderedOffsets(m.keySet());
         @SuppressWarnings("unchecked")
         final V[] array = (V[]) new Object[offsets.size()];
         for (Entry<K, V> e : m.entrySet()) {
@@ -235,7 +236,7 @@ public final class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K, V
 
     @Override
     public MutableOffsetMap<K, V> toModifiableMap() {
-        return new MutableOffsetMap<>(this);
+        return MutableOffsetMap.copyOf(this);
     }
 
     @Override
@@ -324,6 +325,7 @@ public final class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K, V
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         final int s = in.readInt();
 
+        // ImmutableList.build() does not have a sizing hint ...
         final List<K> keys = new ArrayList<>(s);
         final V[] values = (V[]) new Object[s];
 
@@ -332,7 +334,7 @@ public final class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K, V
             values[i] = (V)in.readObject();
         }
 
-        setField(OFFSETS_FIELD, OffsetMapCache.offsetsFor(keys));
+        setField(OFFSETS_FIELD, OffsetMapCache.orderedOffsets(keys));
         setField(ARRAY_FIELD, values);
     }
 }
