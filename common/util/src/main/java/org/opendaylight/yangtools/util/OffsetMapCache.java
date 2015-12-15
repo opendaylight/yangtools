@@ -13,6 +13,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 final class OffsetMapCache {
@@ -35,8 +36,12 @@ final class OffsetMapCache {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Ordered lookup of offsets. Returned map will have the same iteration order. Note the argument will be
+     * used as caching key, hence it should be disconnected from data we do not want to retain.
+     */
     @SuppressWarnings("unchecked")
-    static <T> Map<T, Integer> offsetsFor(final Collection<T> args) {
+    static <T> Map<T, Integer> offsetsFor(final List<T> args) {
         return (Map<T, Integer>) CACHE.getUnchecked(args);
     }
 }
