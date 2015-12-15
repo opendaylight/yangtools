@@ -10,16 +10,16 @@ package org.opendaylight.yangtools.util;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -50,11 +50,11 @@ public final class MutableOffsetMap<K, V> extends AbstractMap<K, V> implements C
     private boolean needClone = true;
 
     public MutableOffsetMap() {
-        this(Collections.<K>emptySet());
+        this(ImmutableList.<K>of());
     }
 
     @SuppressWarnings("unchecked")
-    protected MutableOffsetMap(final Collection<K> keySet) {
+    protected MutableOffsetMap(final List<K> keySet) {
         if (!keySet.isEmpty()) {
             removed = keySet.size();
             offsets = OffsetMapCache.offsetsFor(keySet);
@@ -69,11 +69,6 @@ public final class MutableOffsetMap<K, V> extends AbstractMap<K, V> implements C
 
     protected MutableOffsetMap(final ImmutableOffsetMap<K, V> m) {
         this(m.offsets(), m.objects());
-    }
-
-    @SuppressWarnings("unchecked")
-    protected MutableOffsetMap(final Map<K, V> m) {
-        this(OffsetMapCache.offsetsFor(m.keySet()), (V[])m.values().toArray());
     }
 
     protected MutableOffsetMap(final MutableOffsetMap<K, V> m) {
@@ -97,17 +92,17 @@ public final class MutableOffsetMap<K, V> extends AbstractMap<K, V> implements C
             return ((ImmutableOffsetMap<K, V>) m).toModifiableMap();
         }
 
-        return new MutableOffsetMap<>(m);
+        final List<K> keys = ImmutableList.copyOf(m.keySet());
+        @SuppressWarnings("unchecked")
+        final V[] values = (V[])m.values().toArray();
+
+        return new MutableOffsetMap<>(OffsetMapCache.offsetsFor(keys), values);
     }
 
     public static <K, V> MutableOffsetMap<K, V> forOffsets(final Map<K, Integer> offsets) {
         @SuppressWarnings("unchecked")
         final V[] objects = (V[]) new Object[offsets.size()];
         return new MutableOffsetMap<>(offsets, objects);
-    }
-
-    public static <K, V> MutableOffsetMap<K, V> forKeySet(final Collection<K> keySet) {
-        return forOffsets(OffsetMapCache.offsetsFor(keySet));
     }
 
     @Override
@@ -223,7 +218,7 @@ public final class MutableOffsetMap<K, V> extends AbstractMap<K, V> implements C
         }
 
         // Construct the set of keys
-        final Collection<K> keyset = new ArrayList<>(s);
+        final List<K> keyset = new ArrayList<>(s);
         if (removed != 0) {
             if (removed != offsets.size()) {
                 for (Entry<K, Integer> e : offsets.entrySet()) {

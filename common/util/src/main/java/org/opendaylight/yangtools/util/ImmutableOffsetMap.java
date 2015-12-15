@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.util;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.UnmodifiableIterator;
 import java.io.IOException;
@@ -99,7 +100,7 @@ public final class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K, V
             return SharedSingletonMap.of(e.getKey(), e.getValue());
         }
 
-        final Map<K, Integer> offsets = OffsetMapCache.offsetsFor(m.keySet());
+        final Map<K, Integer> offsets = OffsetMapCache.offsetsFor(ImmutableList.copyOf(m.keySet()));
         @SuppressWarnings("unchecked")
         final V[] array = (V[]) new Object[offsets.size()];
         for (Entry<K, V> e : m.entrySet()) {

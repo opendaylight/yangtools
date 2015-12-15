@@ -12,14 +12,14 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 final class OffsetMapCache {
-    private static final LoadingCache<Collection<?>, Map<Object, Integer>> CACHE =
-            CacheBuilder.newBuilder().weakValues().build(new CacheLoader<Collection<?>, Map<Object, Integer>>() {
+    private static final LoadingCache<List<?>, Map<Object, Integer>> CACHE =
+            CacheBuilder.newBuilder().weakValues().build(new CacheLoader<List<?>, Map<Object, Integer>>() {
                 @Override
-                public Map<Object, Integer> load(final Collection<?> key) {
+                public Map<Object, Integer> load(final List<?> key) {
                     final Builder<Object, Integer> b = ImmutableMap.builder();
                     int i = 0;
 
@@ -36,7 +36,7 @@ final class OffsetMapCache {
     }
 
     @SuppressWarnings("unchecked")
-    static <T> Map<T, Integer> offsetsFor(final Collection<T> args) {
+    static <T> Map<T, Integer> offsetsFor(final List<T> args) {
         return (Map<T, Integer>) CACHE.getUnchecked(args);
     }
 }
