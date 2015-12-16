@@ -10,9 +10,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
-import java.util.Arrays;
+import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -30,59 +29,41 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
-public class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
+final class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
 
     private final DataSchemaNode caseShorthandNode;
-    private final QName qName;
-    private final SchemaPath path;
-    private final String description;
-    private final String reference;
-    private final Status status;
-    private final boolean augmenting;
-    private final boolean addedByUses;
-    private final ConstraintDefinition constraints;
-    private final List<UnknownSchemaNode> unknownNodes;
     private final ChoiceCaseNode original;
+    private final SchemaPath path;
 
-    public CaseShorthandImpl(final DataSchemaNode caseShorthandNode) {
-        this.caseShorthandNode = caseShorthandNode;
-        this.qName = caseShorthandNode.getQName();
+    CaseShorthandImpl(final DataSchemaNode caseShorthandNode) {
+        this.caseShorthandNode = Preconditions.checkNotNull(caseShorthandNode);
         this.path = Preconditions.checkNotNull(caseShorthandNode.getPath().getParent());
-        this.description = caseShorthandNode.getDescription();
-        this.reference = caseShorthandNode.getReference();
-        this.status = caseShorthandNode.getStatus();
-
-        this.augmenting = caseShorthandNode.isAugmenting();
-        this.addedByUses = caseShorthandNode.isAddedByUses();
-        this.constraints = caseShorthandNode.getConstraints();
-        this.unknownNodes = ImmutableList.copyOf(caseShorthandNode.getUnknownSchemaNodes());
-
         this.original = getOriginalIfPresent(caseShorthandNode);
     }
 
     @Override
     public boolean isAugmenting() {
-        return augmenting;
+        return caseShorthandNode.isAugmenting();
     }
 
     @Override
     public boolean isAddedByUses() {
-        return addedByUses;
+        return caseShorthandNode.isAddedByUses();
     }
 
     @Override
     public boolean isConfiguration() {
-        return false;
+        return caseShorthandNode.isConfiguration();
     }
 
     @Override
     public ConstraintDefinition getConstraints() {
-        return constraints;
+        return caseShorthandNode.getConstraints();
     }
 
     @Override
     public QName getQName() {
-        return qName;
+        return caseShorthandNode.getQName();
     }
 
     @Override
@@ -92,42 +73,42 @@ public class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
 
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return unknownNodes;
+        return ImmutableList.of();
     }
 
     @Override
     public String getDescription() {
-        return description;
+        return caseShorthandNode.getDescription();
     }
 
     @Override
     public String getReference() {
-        return reference;
+        return caseShorthandNode.getReference();
     }
 
     @Override
     public Status getStatus() {
-        return status;
+        return caseShorthandNode.getStatus();
     }
 
     @Override
     public Set<TypeDefinition<?>> getTypeDefinitions() {
-        return Collections.emptySet();
+        return ImmutableSet.of();
     }
 
     @Override
     public Collection<DataSchemaNode> getChildNodes() {
-        return Arrays.asList(caseShorthandNode);
+        return ImmutableList.of(caseShorthandNode);
     }
 
     @Override
     public Set<GroupingDefinition> getGroupings() {
-        return Collections.emptySet();
+        return ImmutableSet.of();
     }
 
     @Override
     public DataSchemaNode getDataChildByName(final QName name) {
-        if (qName.equals(name)) {
+        if (getQName().equals(name)) {
             return caseShorthandNode;
         } else {
             return null;
@@ -136,7 +117,7 @@ public class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
 
     @Override
     public DataSchemaNode getDataChildByName(final String name) {
-        if (qName.getLocalName().equals(name)) {
+        if (getQName().getLocalName().equals(name)) {
             return caseShorthandNode;
         } else {
             return null;
@@ -145,12 +126,12 @@ public class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
 
     @Override
     public Set<UsesNode> getUses() {
-        return Collections.emptySet();
+        return ImmutableSet.of();
     }
 
     @Override
     public Set<AugmentationSchema> getAvailableAugmentations() {
-        return Collections.emptySet();
+        return ImmutableSet.of();
     }
 
     @Override
@@ -162,7 +143,7 @@ public class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Objects.hashCode(qName);
+        result = prime * result + Objects.hashCode(getQName());
         result = prime * result + Objects.hashCode(path);
         return result;
     }
@@ -179,7 +160,7 @@ public class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
             return false;
         }
         CaseShorthandImpl other = (CaseShorthandImpl) obj;
-        return Objects.equals(qName, other.qName) && Objects.equals(path, other.path);
+        return Objects.equals(getQName(), other.getQName()) && Objects.equals(path, other.path);
     }
 
     @Override
@@ -187,7 +168,7 @@ public class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
         StringBuilder sb = new StringBuilder(CaseShorthandImpl.class.getSimpleName());
         sb.append("[");
         sb.append("qname=");
-        sb.append(qName);
+        sb.append(getQName());
         sb.append("]");
         return sb.toString();
     }
