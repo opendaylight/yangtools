@@ -188,22 +188,27 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
 
     private CtClass generateEmitter0(final Class<?> type, final DataObjectSerializerSource source, final String serializerName) {
         final CtClass product;
+
+        /*
+         * getSerializerBody() has side effects, such as loading classes and codecs, it should be run in model class
+         * loader in order to correctly reference load child classes.
+         *
+         * Furthermore the fact that getSerializedBody() can trigger other code generation to happen, we need to take
+         * care of this before calling instantiatePrototype(), as that will call our customizer with the lock held,
+         * hence any code generation will end up being blocked on the javassist lock.
+         */
+        final String body = ClassLoaderUtils.withClassLoader(type.getClassLoader(), new Supplier<String>() {
+                @Override
+                public String get() {
+                    return source.getSerializerBody().toString();
+                }
+            }
+        );
+
         try {
             product = javassist.instantiatePrototype(DataObjectSerializerPrototype.class.getName(), serializerName, new ClassCustomizer() {
                 @Override
                 public void customizeClass(final CtClass cls) throws CannotCompileException, NotFoundException {
-                    /* getSerializerBody() has side effects, such as loading classes
-                     * and codecs, it should be run in model class loader in order to
-                     * correctly reference load child classes
-                     */
-                    final String body = ClassLoaderUtils.withClassLoader(type.getClassLoader(), new Supplier<String>() {
-                            @Override
-                            public String get() {
-                                return source.getSerializerBody().toString();
-                            }
-                        }
-                    );
-
                     // Generate any static fields
                     for (final StaticConstantDefinition def : source.getStaticConstants()) {
                         final CtField field = new CtField(javassist.asCtClass(def.getType()), def.getName(), cls);
