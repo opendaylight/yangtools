@@ -286,53 +286,54 @@ public final class MutableOffsetMap<K, V> extends AbstractMap<K, V> implements C
         if (o == this) {
             return true;
         }
-        if (o == null) {
+        if (!(o instanceof Map)) {
             return false;
         }
 
         if (o instanceof ImmutableOffsetMap) {
             final ImmutableOffsetMap<?, ?> om = (ImmutableOffsetMap<?, ?>) o;
-            if (newKeys.isEmpty() && offsets == om.offsets() && Arrays.deepEquals(objects, om.objects())) {
-                return true;
+
+            if (newKeys.isEmpty() && offsets.equals(om.offsets())) {
+                return Arrays.deepEquals(objects, om.objects());
             }
         } else if (o instanceof MutableOffsetMap) {
             final MutableOffsetMap<?, ?> om = (MutableOffsetMap<?, ?>) o;
-            if (offsets == om.offsets && Arrays.deepEquals(objects, om.objects) && newKeys.equals(om.newKeys)) {
-                return true;
+
+            if (offsets.equals(om.offsets)) {
+                return Arrays.deepEquals(objects, om.objects) && newKeys.equals(om.newKeys);
             }
-        } else if (o instanceof Map) {
-            final Map<?, ?> om = (Map<?, ?>)o;
-
-            // Size and key sets have to match
-            if (size() != om.size() || !keySet().equals(om.keySet())) {
-                return false;
-            }
-
-            try {
-                // Ensure all newKeys are present. Note newKeys is guaranteed to
-                // not contain null value.
-                for (Entry<K, V> e : newKeys.entrySet()) {
-                    if (!e.getValue().equals(om.get(e.getKey()))) {
-                        return false;
-                    }
-                }
-
-                // Ensure all objects are present
-                for (Entry<K, Integer> e : offsets.entrySet()) {
-                    final V v = objects[e.getValue()];
-                    if (v != null && !v.equals(om.get(e.getKey()))) {
-                        return false;
-                    }
-                }
-            } catch (ClassCastException e) {
-                // Can be thrown by om.get() and indicate we have incompatible key types
-                return false;
-            }
-
-            return true;
         }
 
-        return false;
+        // Fall back to brute map compare
+        final Map<?, ?> other = (Map<?, ?>)o;
+
+        // Size and key sets have to match
+        if (size() != other.size() || !keySet().equals(other.keySet())) {
+            return false;
+        }
+
+        try {
+            // Ensure all newKeys are present. Note newKeys is guaranteed to
+            // not contain null value.
+            for (Entry<K, V> e : newKeys.entrySet()) {
+                if (!e.getValue().equals(other.get(e.getKey()))) {
+                    return false;
+                }
+            }
+
+            // Ensure all objects are present
+            for (Entry<K, Integer> e : offsets.entrySet()) {
+                final V v = objects[e.getValue()];
+                if (v != null && !v.equals(other.get(e.getKey()))) {
+                    return false;
+                }
+            }
+        } catch (ClassCastException e) {
+            // Can be thrown by other.get() and indicate we have incompatible key types
+            return false;
+        }
+
+        return true;
     }
 
     @Override
