@@ -139,42 +139,42 @@ public final class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K, V
         if (o == this) {
             return true;
         }
-        if (o == null) {
+        if (!(o instanceof Map)) {
             return false;
         }
 
         if (o instanceof ImmutableOffsetMap) {
             final ImmutableOffsetMap<?, ?> om = (ImmutableOffsetMap<?, ?>) o;
-            if (offsets.equals(om.offsets) && Arrays.deepEquals(objects, om.objects)) {
-                return true;
+
+            // If the offset match, the arrays have to match, too
+            if (offsets.equals(om.offsets)) {
+                return Arrays.deepEquals(objects, om.objects);
             }
         } else if (o instanceof MutableOffsetMap) {
             // Let MutableOffsetMap do the actual work.
             return o.equals(this);
-        } else if (o instanceof Map) {
-            final Map<?, ?> om = (Map<?, ?>)o;
-
-            // Size and key sets have to match
-            if (size() != om.size() || !keySet().equals(om.keySet())) {
-                return false;
-            }
-
-            try {
-                // Ensure all objects are present
-                for (Entry<K, Integer> e : offsets.entrySet()) {
-                    if (!objects[e.getValue()].equals(om.get(e.getKey()))) {
-                        return false;
-                    }
-                }
-            } catch (ClassCastException e) {
-                // Can be thrown by om.get() indicating we have incompatible key types
-                return false;
-            }
-
-            return true;
         }
 
-        return false;
+        final Map<?, ?> other = (Map<?, ?>)o;
+
+        // Size and key sets have to match
+        if (size() != other.size() || !keySet().equals(other.keySet())) {
+            return false;
+        }
+
+        try {
+            // Ensure all objects are present
+            for (Entry<K, Integer> e : offsets.entrySet()) {
+                if (!objects[e.getValue()].equals(other.get(e.getKey()))) {
+                    return false;
+                }
+            }
+        } catch (ClassCastException e) {
+            // Can be thrown by om.get() indicating we have incompatible key types
+            return false;
+        }
+
+        return true;
     }
 
     @Override
