@@ -14,8 +14,8 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -352,7 +352,7 @@ public class OffsetMapTest {
 
     @Test
     public void testMutableWithKeyset() {
-        final MutableOffsetMap<String, String> map = new MutableOffsetMap<>(ImmutableList.of("k1", "k2"));
+        final MutableOffsetMap<String, String> map = new MutableOffsetMap<>(ImmutableSet.of("k1", "k2"));
         assertTrue(map.isEmpty());
         assertTrue(map.keySet().isEmpty());
         assertNull(map.get("k1"));

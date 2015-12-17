@@ -56,7 +56,7 @@ public final class SharedSingletonMap<K, V> implements Serializable, Unmodifiabl
 
     @Override
     public ModifiableMapPhase<K, V> toModifiableMap() {
-        return MutableOffsetMap.copyOf(this);
+        return new MutableOffsetMap<K, V>(this);
     }
 
     @Override
