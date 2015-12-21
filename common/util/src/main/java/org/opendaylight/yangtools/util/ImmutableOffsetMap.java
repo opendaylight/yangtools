@@ -36,7 +36,20 @@ import javax.annotation.Nonnull;
  * @param <V> the type of mapped values
  */
 @Beta
-public final class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K, V>, Serializable {
+public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K, V>, Serializable {
+    static final class Ordered<K, V> extends ImmutableOffsetMap<K, V> {
+        private static final long serialVersionUID = 1L;
+
+        Ordered(final Map<K, Integer> offsets, final V[] objects) {
+            super(offsets, objects);
+        }
+
+        @Override
+        public MutableOffsetMap<K, V> toModifiableMap() {
+            return new MutableOffsetMap<>(this);
+        }
+    }
+
     private static final long serialVersionUID = 1L;
 
     private final Map<K, Integer> offsets;
@@ -65,6 +78,9 @@ public final class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K, V
         this.offsets = m.offsets;
         this.objects = m.objects;
     }
+
+    @Override
+    public abstract MutableOffsetMap<K, V> toModifiableMap();
 
     /**
      * Create an {@link ImmutableOffsetMap} as a copy of an existing map. This is actually not completely true,
@@ -106,21 +122,21 @@ public final class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K, V
             array[offsets.get(e.getKey())] = e.getValue();
         }
 
-        return new ImmutableOffsetMap<>(offsets, array);
+        return new Ordered<>(offsets, array);
     }
 
     @Override
-    public int size() {
+    public final int size() {
         return offsets.size();
     }
 
     @Override
-    public boolean isEmpty() {
+    public final boolean isEmpty() {
         return offsets.isEmpty();
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         if (hashCode != 0) {
             return hashCode;
         }
@@ -135,7 +151,7 @@ public final class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K, V
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (o == this) {
             return true;
         }
@@ -178,12 +194,12 @@ public final class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K, V
     }
 
     @Override
-    public boolean containsKey(final Object key) {
+    public final boolean containsKey(final Object key) {
         return offsets.containsKey(key);
     }
 
     @Override
-    public boolean containsValue(final Object value) {
+    public final boolean containsValue(final Object value) {
         for (Object o : objects) {
             if (value.equals(o)) {
                 return true;
@@ -193,53 +209,48 @@ public final class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K, V
     }
 
     @Override
-    public V get(final Object key) {
+    public final V get(final Object key) {
         final Integer offset = offsets.get(key);
         return offset == null ? null : objects[offset];
     }
 
     @Override
-    public V remove(final Object key) {
+    public final V remove(final Object key) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public V put(final K key, final V value) {
+    public final V put(final K key, final V value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void putAll(final Map<? extends K, ? extends V> m) {
+    public final void putAll(final Map<? extends K, ? extends V> m) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void clear() {
+    public final void clear() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Set<K> keySet() {
+    public final Set<K> keySet() {
         return offsets.keySet();
     }
 
     @Override
-    public Collection<V> values() {
+    public final Collection<V> values() {
         return new ConstantArrayCollection<>(objects);
     }
 
     @Override
-    public Set<Entry<K, V>> entrySet() {
+    public final Set<Entry<K, V>> entrySet() {
         return new EntrySet();
     }
 
     @Override
-    public MutableOffsetMap<K, V> toModifiableMap() {
-        return new MutableOffsetMap<>(this);
-    }
-
-    @Override
-    public String toString() {
+    public final String toString() {
         final StringBuilder sb = new StringBuilder("{");
         final Iterator<K> it = offsets.keySet().iterator();
         int i = 0;
@@ -256,11 +267,11 @@ public final class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K, V
         return sb.append('}').toString();
     }
 
-    Map<K, Integer> offsets() {
+    final Map<K, Integer> offsets() {
         return offsets;
     }
 
-    V[] objects() {
+    final V[] objects() {
         return objects;
     }
 
