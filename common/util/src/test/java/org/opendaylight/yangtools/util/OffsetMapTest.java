@@ -38,7 +38,11 @@ public class OffsetMapTest {
     private final Map<String, String> threeEntryMap = ImmutableMap.of("k1", "v1", "k2", "v2", "k3", "v3");
 
     private ImmutableOffsetMap<String, String> createMap() {
-        return (ImmutableOffsetMap<String, String>) ImmutableOffsetMap.copyOf(twoEntryMap);
+        return (ImmutableOffsetMap<String, String>) ImmutableOffsetMap.orderedCopyOf(twoEntryMap);
+    }
+
+    private ImmutableOffsetMap<String, String> unorderedMap() {
+        return (ImmutableOffsetMap<String, String>) ImmutableOffsetMap.unorderedCopyOf(twoEntryMap);
     }
 
     @Before
@@ -54,7 +58,7 @@ public class OffsetMapTest {
     @Test
     public void testCopyEmptyMap() {
         final Map<String, String> source = Collections.emptyMap();
-        final Map<String, String> result = ImmutableOffsetMap.copyOf(source);
+        final Map<String, String> result = ImmutableOffsetMap.orderedCopyOf(source);
 
         assertEquals(source, result);
         assertTrue(result instanceof ImmutableMap);
@@ -63,7 +67,7 @@ public class OffsetMapTest {
     @Test
     public void testCopySingletonMap() {
         final Map<String, String> source = Collections.singletonMap("a", "b");
-        final Map<String, String> result = ImmutableOffsetMap.copyOf(source);
+        final Map<String, String> result = ImmutableOffsetMap.orderedCopyOf(source);
 
         assertEquals(source, result);
         assertTrue(result instanceof SharedSingletonMap);
@@ -84,10 +88,10 @@ public class OffsetMapTest {
         assertTrue(Iterators.elementsEqual(twoEntryMap.entrySet().iterator(), map.entrySet().iterator()));
 
         // Should result in the same object
-        assertSame(map, ImmutableOffsetMap.copyOf(map));
+        assertSame(map, ImmutableOffsetMap.orderedCopyOf(map));
 
         final Map<String, String> mutable = map.toModifiableMap();
-        final Map<String, String> copy = ImmutableOffsetMap.copyOf(mutable);
+        final Map<String, String> copy = ImmutableOffsetMap.orderedCopyOf(mutable);
 
         assertEquals(mutable, copy);
         assertEquals(map, copy);
@@ -335,8 +339,27 @@ public class OffsetMapTest {
     }
 
     @Test
+    public void testReusedOffsetsUnordered() {
+        final ImmutableOffsetMap<String, String> source = unorderedMap();
+        final MutableOffsetMap<String, String> mutable = source.toModifiableMap();
+
+        mutable.remove("k1");
+        mutable.put("k1", "v1");
+
+        final ImmutableOffsetMap<String, String> result = (ImmutableOffsetMap<String, String>) mutable.toUnmodifiableMap();
+        assertEquals(source, result);
+
+        // Only offsets should be shared
+        assertSame(source.offsets(), result.offsets());
+        assertNotSame(source.objects(), result.objects());
+
+        // Iterator order needs to be preserved
+        assertTrue(Iterators.elementsEqual(source.entrySet().iterator(), result.entrySet().iterator()));
+    }
+
+    @Test
     public void testEmptyMutable() throws CloneNotSupportedException {
-        final MutableOffsetMap<String, String> map = MutableOffsetMap.of();
+        final MutableOffsetMap<String, String> map = MutableOffsetMap.ordered();
         assertTrue(map.isEmpty());
 
         final Map<String, String> other = map.clone();
@@ -413,6 +436,24 @@ public class OffsetMapTest {
     }
 
     @Test
+    public void testExpansionWithoutOrder() {
+        final MutableOffsetMap<String, String> mutable = unorderedMap().toModifiableMap();
+
+        mutable.remove("k1");
+        mutable.put("k3", "v3");
+        mutable.put("k1", "v1");
+
+        assertEquals(ImmutableMap.of("k3", "v3"), mutable.newKeys());
+
+        final Map<String, String> result = mutable.toUnmodifiableMap();
+
+        assertTrue(result instanceof ImmutableOffsetMap);
+        assertEquals(threeEntryMap, result);
+        assertEquals(result, threeEntryMap);
+        assertTrue(Iterators.elementsEqual(threeEntryMap.entrySet().iterator(), result.entrySet().iterator()));
+    }
+
+    @Test
     public void testReplacedValue() {
         final ImmutableOffsetMap<String, String> source = createMap();
         final MutableOffsetMap<String, String> mutable = source.toModifiableMap();
@@ -460,6 +501,38 @@ public class OffsetMapTest {
         assertTrue(source.equals(immutable));
         assertTrue(immutable.equals(source));
         assertTrue(Iterables.elementsEqual(source.entrySet(), immutable.entrySet()));
+    }
+
+    @Test
+    public void testCloneableFlippingUnordered() throws CloneNotSupportedException {
+        final MutableOffsetMap<String, String> source = unorderedMap().toModifiableMap();
+
+        // Must clone before mutation
+        assertTrue(source.needClone());
+
+        // Non-existent entry, should not clone
+        source.remove("non-existent");
+        assertTrue(source.needClone());
+
+        // Changes the array, should clone
+        source.remove("k1");
+        assertFalse(source.needClone());
+
+        // Create a clone of the map, which shares the array
+        final MutableOffsetMap<String, String> result = source.clone();
+        assertFalse(source.needClone());
+        assertTrue(result.needClone());
+        assertSame(source.array(), result.array());
+
+        // Changes the array, should clone
+        source.put("k1", "v2");
+        assertFalse(source.needClone());
+        assertTrue(result.needClone());
+
+        // Creates a immutable view, which shares the array
+        final ImmutableOffsetMap<String, String> immutable = (ImmutableOffsetMap<String, String>) source.toUnmodifiableMap();
+        assertTrue(source.needClone());
+        assertSame(source.array(), immutable.objects());
     }
 
     @Test
