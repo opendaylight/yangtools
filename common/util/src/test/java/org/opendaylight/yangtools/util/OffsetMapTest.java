@@ -366,7 +366,7 @@ public class OffsetMapTest {
         final Map<String, String> result = mutable.toUnmodifiableMap();
 
         // Should devolve to a singleton
-        assertTrue(result instanceof ImmutableMap);
+        assertTrue(result instanceof SharedSingletonMap);
         assertEquals(ImmutableMap.of("k2", "v2"), result);
     }
 
