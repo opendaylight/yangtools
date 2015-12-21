@@ -37,7 +37,7 @@ public class OffsetMapTest {
     private final Map<String, String> threeEntryMap = ImmutableMap.of("k1", "v1", "k2", "v2", "k3", "v3");
 
     private ImmutableOffsetMap<String, String> createMap() {
-        return (ImmutableOffsetMap<String, String>) ImmutableOffsetMap.copyOf(twoEntryMap);
+        return (ImmutableOffsetMap<String, String>) ImmutableOffsetMap.orderedCopyOf(twoEntryMap);
     }
 
     @Before
@@ -53,7 +53,7 @@ public class OffsetMapTest {
     @Test
     public void testCopyEmptyMap() {
         final Map<String, String> source = Collections.emptyMap();
-        final Map<String, String> result = ImmutableOffsetMap.copyOf(source);
+        final Map<String, String> result = ImmutableOffsetMap.orderedCopyOf(source);
 
         assertEquals(source, result);
         assertTrue(result instanceof ImmutableMap);
@@ -62,7 +62,7 @@ public class OffsetMapTest {
     @Test
     public void testCopySingletonMap() {
         final Map<String, String> source = Collections.singletonMap("a", "b");
-        final Map<String, String> result = ImmutableOffsetMap.copyOf(source);
+        final Map<String, String> result = ImmutableOffsetMap.orderedCopyOf(source);
 
         assertEquals(source, result);
         assertTrue(result instanceof SharedSingletonMap);
@@ -83,10 +83,10 @@ public class OffsetMapTest {
         assertTrue(Iterators.elementsEqual(twoEntryMap.entrySet().iterator(), map.entrySet().iterator()));
 
         // Should result in the same object
-        assertSame(map, ImmutableOffsetMap.copyOf(map));
+        assertSame(map, ImmutableOffsetMap.orderedCopyOf(map));
 
         final Map<String, String> mutable = map.toModifiableMap();
-        final Map<String, String> copy = ImmutableOffsetMap.copyOf(mutable);
+        final Map<String, String> copy = ImmutableOffsetMap.orderedCopyOf(mutable);
 
         assertEquals(mutable, copy);
         assertEquals(map, copy);
@@ -338,7 +338,7 @@ public class OffsetMapTest {
 
     @Test
     public void testEmptyMutable() throws CloneNotSupportedException {
-        final MutableOffsetMap<String, String> map = MutableOffsetMap.of();
+        final MutableOffsetMap<String, String> map = MutableOffsetMap.ordered();
         assertTrue(map.isEmpty());
 
         final Map<String, String> other = map.clone();

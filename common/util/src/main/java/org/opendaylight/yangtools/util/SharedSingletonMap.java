@@ -34,7 +34,20 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
 
         @Override
         public ModifiableMapPhase<K, V> toModifiableMap() {
-            return MutableOffsetMap.copyOf(this);
+            return MutableOffsetMap.orderedCopyOf(this);
+        }
+    }
+
+    private static final class Unordered<K, V> extends SharedSingletonMap<K, V> {
+        private static final long serialVersionUID = 1L;
+
+        Unordered(final K key, final V value) {
+            super(key, value);
+        }
+
+        @Override
+        public ModifiableMapPhase<K, V> toModifiableMap() {
+            return MutableOffsetMap.unorderedCopyOf(this);
         }
     }
 
@@ -56,15 +69,42 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
         this.value = Preconditions.checkNotNull(value);
     }
 
+    /**
+     * @deprecated Use {@link #orderedOf(Object, Object)} or {@link #unorderedOf(Object, Object)} instead.
+     */
+    @Deprecated
     public static <K, V> SharedSingletonMap<K, V> of(final K key, final V value) {
         return new Ordered<>(key, value);
     }
 
+    public static <K, V> SharedSingletonMap<K, V> orderedOf(final K key, final V value) {
+        return new Ordered<>(key, value);
+    }
+
+    public static <K, V> SharedSingletonMap<K, V> unorderedOf(final K key, final V value) {
+        return new Unordered<>(key, value);
+    }
+
+    /**
+     * @deprecated Use {@link #orderedCopyOf(Map)} or {@link #unorderedCopyOf(Map)} instead.
+     */
+    @Deprecated
     public static <K, V> SharedSingletonMap<K, V> copyOf(final Map<K, V> m) {
+        return orderedCopyOf(m);
+    }
+
+    public static <K, V> SharedSingletonMap<K, V> orderedCopyOf(final Map<K, V> m) {
         Preconditions.checkArgument(m.size() == 1);
 
         final Entry<K, V> e = m.entrySet().iterator().next();
         return new Ordered<>(e.getKey(), e.getValue());
+    }
+
+    public static <K, V> SharedSingletonMap<K, V> unorderedCopyOf(final Map<K, V> m) {
+        Preconditions.checkArgument(m.size() == 1);
+
+        final Entry<K, V> e = m.entrySet().iterator().next();
+        return new Unordered<>(e.getKey(), e.getValue());
     }
 
     @Override
