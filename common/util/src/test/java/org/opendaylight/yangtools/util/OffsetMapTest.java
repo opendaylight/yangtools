@@ -15,7 +15,6 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -333,21 +332,12 @@ public class OffsetMapTest {
 
     @Test
     public void testEmptyMutable() throws CloneNotSupportedException {
-        final MutableOffsetMap<String, String> map = new MutableOffsetMap<>();
+        final MutableOffsetMap<String, String> map = MutableOffsetMap.of();
         assertTrue(map.isEmpty());
 
         final Map<String, String> other = map.clone();
         assertEquals(other, map);
         assertNotSame(other, map);
-    }
-
-    @Test
-    public void testMutableWithKeyset() {
-        final MutableOffsetMap<String, String> map = new MutableOffsetMap<>(ImmutableSet.of("k1", "k2"));
-        assertTrue(map.isEmpty());
-        assertTrue(map.keySet().isEmpty());
-        assertNull(map.get("k1"));
-        assertNull(map.remove("k2"));
     }
 
     @Test
