@@ -48,6 +48,11 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         public MutableOffsetMap<K, V> toModifiableMap() {
             return MutableOffsetMap.copyOf(this);
         }
+
+        @Override
+        Map<K, Integer> resolveKeys(final List<K> keys) {
+            return OffsetMapCache.orderedOffsets(keys);
+        }
     }
 
     private static final long serialVersionUID = 1L;
@@ -71,6 +76,8 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
 
     @Override
     public abstract MutableOffsetMap<K, V> toModifiableMap();
+
+    abstract Map<K, Integer> resolveKeys(List<K> keys);
 
     /**
      * Create an {@link ImmutableOffsetMap} as a copy of an existing map. This is actually not completely true,
@@ -105,7 +112,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
             return SharedSingletonMap.of(e.getKey(), e.getValue());
         }
 
-        final Map<K, Integer> offsets = OffsetMapCache.offsetsFor(m.keySet());
+        final Map<K, Integer> offsets = OffsetMapCache.orderedOffsets(m.keySet());
         @SuppressWarnings("unchecked")
         final V[] array = (V[]) new Object[offsets.size()];
         for (Entry<K, V> e : m.entrySet()) {
@@ -333,7 +340,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
             values[i] = (V)in.readObject();
         }
 
-        setField(OFFSETS_FIELD, OffsetMapCache.offsetsFor(keys));
+        setField(OFFSETS_FIELD, resolveKeys(keys));
         setField(ARRAY_FIELD, values);
     }
 }
