@@ -24,7 +24,20 @@ import java.util.Map;
  * @param <V> the type of mapped values
  */
 @Beta
-public final class SharedSingletonMap<K, V> implements Serializable, UnmodifiableMapPhase<K, V> {
+public abstract class SharedSingletonMap<K, V> implements Serializable, UnmodifiableMapPhase<K, V> {
+    private static final class Ordered<K, V> extends SharedSingletonMap<K, V> {
+        private static final long serialVersionUID = 1L;
+
+        Ordered(final K key, final V value) {
+            super(key, value);
+        }
+
+        @Override
+        public ModifiableMapPhase<K, V> toModifiableMap() {
+            return new MutableOffsetMap<K, V>(this);
+        }
+    }
+
     private static final long serialVersionUID = 1L;
     private static final LoadingCache<Object, SingletonSet<Object>> CACHE = CacheBuilder.newBuilder().weakValues()
             .build(new CacheLoader<Object, SingletonSet<Object>>() {
@@ -38,89 +51,84 @@ public final class SharedSingletonMap<K, V> implements Serializable, Unmodifiabl
     private int hashCode;
 
     @SuppressWarnings("unchecked")
-    private SharedSingletonMap(final K key, final V value) {
+    SharedSingletonMap(final K key, final V value) {
         this.keySet = (SingletonSet<K>) CACHE.getUnchecked(key);
         this.value = Preconditions.checkNotNull(value);
     }
 
     public static <K, V> SharedSingletonMap<K, V> of(final K key, final V value) {
-        return new SharedSingletonMap<>(key, value);
+        return new Ordered<>(key, value);
     }
 
     public static <K, V> SharedSingletonMap<K, V> copyOf(final Map<K, V> m) {
         Preconditions.checkArgument(m.size() == 1);
 
         final Entry<K, V> e = m.entrySet().iterator().next();
-        return new SharedSingletonMap<>(e.getKey(), e.getValue());
+        return new Ordered<>(e.getKey(), e.getValue());
     }
 
     @Override
-    public ModifiableMapPhase<K, V> toModifiableMap() {
-        return new MutableOffsetMap<K, V>(this);
-    }
-
-    @Override
-    public SingletonSet<Entry<K, V>> entrySet() {
+    public final SingletonSet<Entry<K, V>> entrySet() {
         return SingletonSet.<Entry<K, V>>of(new SimpleImmutableEntry<>(keySet.getElement(), value));
     }
 
     @Override
-    public SingletonSet<K> keySet() {
+    public final SingletonSet<K> keySet() {
         return keySet;
     }
 
     @Override
-    public SingletonSet<V> values() {
+    public final SingletonSet<V> values() {
         return SingletonSet.of(value);
     }
 
     @Override
-    public boolean containsKey(final Object key) {
+    public final boolean containsKey(final Object key) {
         return keySet.contains(key);
     }
 
     @Override
-    public boolean containsValue(final Object value) {
+    public final boolean containsValue(final Object value) {
         return this.value.equals(value);
     }
 
     @Override
-    public V get(final Object key) {
+    public final V get(final Object key) {
         return keySet.contains(key) ? value : null;
     }
 
     @Override
-    public int size() {
+    public final int size() {
         return 1;
     }
 
     @Override
-    public boolean isEmpty() {
+    public final boolean isEmpty() {
         return false;
     }
 
     @Override
-    public V put(final K key, final V value) {
+    public final V put(final K key, final V value) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public V remove(final Object key) {
+    public final V remove(final Object key) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void putAll(final Map<? extends K, ? extends V> m) {
+    public final void putAll(final Map<? extends K, ? extends V> m) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void clear() {
+    public final void clear() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         if (hashCode == 0) {
             hashCode = keySet.getElement().hashCode() ^ value.hashCode();
         }
@@ -128,7 +136,7 @@ public final class SharedSingletonMap<K, V> implements Serializable, Unmodifiabl
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public final boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -141,7 +149,7 @@ public final class SharedSingletonMap<K, V> implements Serializable, Unmodifiabl
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return "{" + keySet.getElement() + '=' + value + '}';
     }
 }
