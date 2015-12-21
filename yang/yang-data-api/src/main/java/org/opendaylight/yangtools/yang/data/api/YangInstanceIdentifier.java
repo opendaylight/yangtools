@@ -509,11 +509,11 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         public NodeIdentifierWithPredicates(final QName node, final Map<QName, Object> keyValues) {
             super(node);
             // Retains ImmutableMap for empty maps. For larger sizes uses a shared key set.
-            this.keyValues = ImmutableOffsetMap.copyOf(keyValues);
+            this.keyValues = ImmutableOffsetMap.unorderedCopyOf(keyValues);
         }
 
         public NodeIdentifierWithPredicates(final QName node, final QName key, final Object value) {
-            this(node, SharedSingletonMap.of(key, value));
+            this(node, SharedSingletonMap.unorderedOf(key, value));
         }
 
         public Map<QName, Object> getKeyValues() {
