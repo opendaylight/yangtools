@@ -15,6 +15,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -326,14 +327,11 @@ public class OffsetMapTest {
         mutable.put("k1", "v1");
 
         final ImmutableOffsetMap<String, String> result = (ImmutableOffsetMap<String, String>) mutable.toUnmodifiableMap();
-        assertEquals(source, result);
+        assertTrue(source.equals(result));
+        assertTrue(result.equals(source));
 
-        // Only offsets should be shared
-        assertSame(source.offsets(), result.offsets());
-        assertNotSame(source.objects(), result.objects());
-
-        // Iterator order needs to be preserved
-        assertTrue(Iterators.elementsEqual(source.entrySet().iterator(), result.entrySet().iterator()));
+        // Iterator order must not be preserved
+        assertFalse(Iterators.elementsEqual(source.entrySet().iterator(), result.entrySet().iterator()));
     }
 
     @Test
@@ -366,7 +364,7 @@ public class OffsetMapTest {
         final Map<String, String> result = mutable.toUnmodifiableMap();
 
         // Should devolve to a singleton
-        assertTrue(result instanceof ImmutableMap);
+        assertTrue(result instanceof SharedSingletonMap);
         assertEquals(ImmutableMap.of("k2", "v2"), result);
     }
 
@@ -404,14 +402,14 @@ public class OffsetMapTest {
         mutable.put("k3", "v3");
         mutable.put("k1", "v1");
 
-        assertEquals(ImmutableMap.of("k3", "v3"), mutable.newKeys());
+        assertEquals(ImmutableMap.of("k1", "v1", "k3", "v3"), mutable.newKeys());
 
         final Map<String, String> result = mutable.toUnmodifiableMap();
 
         assertTrue(result instanceof ImmutableOffsetMap);
         assertEquals(threeEntryMap, result);
         assertEquals(result, threeEntryMap);
-        assertTrue(Iterators.elementsEqual(threeEntryMap.entrySet().iterator(), result.entrySet().iterator()));
+        assertFalse(Iterators.elementsEqual(threeEntryMap.entrySet().iterator(), result.entrySet().iterator()));
     }
 
     @Test
@@ -456,10 +454,12 @@ public class OffsetMapTest {
         assertFalse(source.needClone());
         assertTrue(result.needClone());
 
-        // Creates a immutable view, which shares the array
+        // Forced copy, no cloning needed, but maps are equal
         final ImmutableOffsetMap<String, String> immutable = (ImmutableOffsetMap<String, String>) source.toUnmodifiableMap();
-        assertTrue(source.needClone());
-        assertSame(source.array(), immutable.objects());
+        assertFalse(source.needClone());
+        assertTrue(source.equals(immutable));
+        assertTrue(immutable.equals(source));
+        assertTrue(Iterables.elementsEqual(source.entrySet(), immutable.entrySet()));
     }
 
     @Test
