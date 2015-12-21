@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.util;
 
+import com.google.common.base.Verify;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -14,7 +15,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
+import java.lang.reflect.Array;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 final class OffsetMapCache {
@@ -56,5 +60,36 @@ final class OffsetMapCache {
         }
 
         return offsets(ImmutableSet.copyOf(args));
+    }
+
+    private static <K, V> V[] adjustArray(final Map<K, Integer> offsets, final List<K> keys, final V[] array) {
+        @SuppressWarnings("unchecked")
+        final V[] ret = (V[]) Array.newInstance(array.getClass().getComponentType(), array.length);
+
+        int i = 0;
+        for (final K k : keys) {
+            final Integer o = Verify.verifyNotNull(offsets.get(k), "Key %s not present in offsets %s", k, offsets);
+            ret[o] = array[i++];
+        }
+
+        return ret;
+    }
+
+    static <K, V> V[] adjustedArray(final Map<K, Integer> offsets, final List<K> keys, final V[] array) {
+        Verify.verify(offsets.size() == keys.size(), "Offsets %s do not match keys %s", offsets, keys);
+
+        // This relies on the fact that offsets has an ascending iterator
+        final Iterator<K> oi = offsets.keySet().iterator();
+        final Iterator<K> ki = keys.iterator();
+
+        while (oi.hasNext()) {
+            final K o = oi.next();
+            final K k = ki.next();
+            if (!k.equals(o)) {
+                return adjustArray(offsets, keys, array);
+            }
+        }
+
+        return array;
     }
 }

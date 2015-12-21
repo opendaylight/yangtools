@@ -69,6 +69,46 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         UnmodifiableMapPhase<K, V> unmodifiedMap(final Map<K, Integer> offsets, final V[] objects) {
             return new ImmutableOffsetMap.Ordered<>(offsets, objects);
         }
+
+        @Override
+        SharedSingletonMap<K, V> singletonMap() {
+            return SharedSingletonMap.orderedCopyOf(this);
+        }
+    }
+
+    static final class Unordered<K, V> extends MutableOffsetMap<K, V> {
+        Unordered() {
+            super(new HashMap<K, V>());
+        }
+
+        Unordered(final Map<K, V> source) {
+            super(OffsetMapCache.unorderedOffsets(source.keySet()), source, new HashMap<K, V>());
+        }
+
+        Unordered(final Map<K, Integer> offsets, final V[] objects) {
+            super(offsets, objects, new HashMap<K, V>());
+        }
+
+        @Override
+        Object removedObject() {
+            return null;
+        }
+
+        @Override
+        UnmodifiableMapPhase<K, V> modifiedMap(final List<K> keys, final V[] objects) {
+            final Map<K, Integer> offsets = OffsetMapCache.unorderedOffsets(keys);
+            return new ImmutableOffsetMap.Unordered<>(offsets, OffsetMapCache.adjustedArray(offsets, keys, objects));
+        }
+
+        @Override
+        UnmodifiableMapPhase<K, V> unmodifiedMap(final Map<K, Integer> offsets, final V[] objects) {
+            return new ImmutableOffsetMap.Unordered<>(offsets, objects);
+        }
+
+        @Override
+        SharedSingletonMap<K, V> singletonMap() {
+            return SharedSingletonMap.unorderedCopyOf(this);
+        }
     }
 
     private static final Object[] EMPTY_ARRAY = new Object[0];
@@ -103,25 +143,58 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         this.needClone = false;
     }
 
+    /**
+     * @deprecated Use {@link #orderedCopyOf(Map)} or {@link #unorderedCopyOf(Map)} instead.
+     */
+    @Deprecated
     public static <K, V> MutableOffsetMap<K, V> copyOf(final Map<K, V> m) {
-        if (m instanceof MutableOffsetMap) {
-            return ((MutableOffsetMap<K, V>) m).clone();
+        return orderedCopyOf(m);
+    }
+
+    public static <K, V> MutableOffsetMap<K, V> orderedCopyOf(final Map<K, V> m) {
+        if (m instanceof Ordered) {
+            return ((Ordered<K, V>) m).clone();
         }
         if (m instanceof ImmutableOffsetMap) {
             final ImmutableOffsetMap<K, V> om = (ImmutableOffsetMap<K, V>) m;
-            return new MutableOffsetMap.Ordered<>(om.offsets(), om.objects());
+            return new Ordered<>(om.offsets(), om.objects());
         }
 
-        return new MutableOffsetMap.Ordered<>(m);
+        return new Ordered<>(m);
     }
 
+    public static <K, V> MutableOffsetMap<K, V> unorderedCopyOf(final Map<K, V> m) {
+        if (m instanceof Unordered) {
+            return ((Unordered<K, V>) m).clone();
+        }
+        if (m instanceof ImmutableOffsetMap) {
+            final ImmutableOffsetMap<K, V> om = (ImmutableOffsetMap<K, V>) m;
+            return new Unordered<>(om.offsets(), om.objects());
+        }
+
+        return new Unordered<>(m);
+    }
+
+    /**
+     * @deprecated Use {@link #ordered()} or {@link #unordered()} instead.
+     */
+    @Deprecated
     public static <K, V> MutableOffsetMap<K, V> of() {
+        return ordered();
+    }
+
+    public static <K, V> MutableOffsetMap<K, V> ordered() {
         return new MutableOffsetMap.Ordered<>();
+    }
+
+    public static <K, V> MutableOffsetMap<K, V> unordered() {
+        return new MutableOffsetMap.Unordered<>();
     }
 
     abstract Object removedObject();
     abstract UnmodifiableMapPhase<K, V> modifiedMap(List<K> keys, V[] objects);
     abstract UnmodifiableMapPhase<K, V> unmodifiedMap(Map<K, Integer> offsets, V[] objects);
+    abstract SharedSingletonMap<K, V> singletonMap();
 
     @Override
     public final int size() {
@@ -273,7 +346,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             return ImmutableMap.of();
         }
         if (s == 1) {
-            return SharedSingletonMap.copyOf(this);
+            return singletonMap();
         }
 
         // Construct the set of keys
