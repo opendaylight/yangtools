@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import com.google.common.collect.ImmutableMap;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -18,7 +19,7 @@ import org.junit.Test;
 
 public class SharedSingletonMapTest {
     private static UnmodifiableMapPhase<String, String> create() {
-        return SharedSingletonMap.of("k1", "v1");
+        return SharedSingletonMap.orderedOf("k1", "v1");
     }
 
     @Test
@@ -59,10 +60,37 @@ public class SharedSingletonMapTest {
         assertFalse(m.equals(Collections.singletonMap("k1", null)));
         assertFalse(m.equals(Collections.singletonMap(null, "v1")));
         assertFalse(m.equals(Collections.singletonMap("k1", "v2")));
+        assertFalse(m.equals(ImmutableMap.of("k1", "v1", "k2", "v2")));
 
         final Set<String> set = m.keySet();
         assertTrue(set instanceof SingletonSet);
         assertTrue(set.contains("k1"));
+    }
+
+    @Test
+    public void testOrderedCopyOf() {
+        final Map<String, String> t = Collections.singletonMap("k1", "v1");
+        final Map<String, String> m = SharedSingletonMap.orderedCopyOf(t);
+        assertTrue(t.equals(m));
+        assertTrue(m.equals(t));
+    }
+
+    @Test
+    public void testUnorderedCopyOf() {
+        final Map<String, String> t = Collections.singletonMap("k1", "v1");
+        final Map<String, String> m = SharedSingletonMap.unorderedCopyOf(t);
+        assertTrue(t.equals(m));
+        assertTrue(m.equals(t));
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testEmptyOrderedCopyOf() {
+        SharedSingletonMap.orderedCopyOf(ImmutableMap.of());
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void testEmptyUnorderedCopyOf() {
+        SharedSingletonMap.unorderedCopyOf(ImmutableMap.of());
     }
 
     @Test(expected=UnsupportedOperationException.class)

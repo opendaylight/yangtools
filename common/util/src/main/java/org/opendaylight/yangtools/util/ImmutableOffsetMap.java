@@ -46,20 +46,42 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
 
         @Override
         public MutableOffsetMap<K, V> toModifiableMap() {
-            return MutableOffsetMap.copyOf(this);
+            return MutableOffsetMap.orderedCopyOf(this);
         }
 
         @Override
-        Map<K, Integer> resolveKeys(final List<K> keys) {
-            return OffsetMapCache.orderedOffsets(keys);
+        void setFields(final List<K> keys, final V[] values) throws IOException {
+            setField(this, OFFSETS_FIELD, OffsetMapCache.orderedOffsets(keys));
+            setField(this, ARRAY_FIELD, values);
+        }
+    }
+
+    static final class Unordered<K, V> extends ImmutableOffsetMap<K, V> {
+        private static final long serialVersionUID = 1L;
+
+        Unordered(final Map<K, Integer> offsets, final V[] objects) {
+            super(offsets, objects);
+        }
+
+        @Override
+        public MutableOffsetMap<K, V> toModifiableMap() {
+            return MutableOffsetMap.unorderedCopyOf(this);
+        }
+
+        @Override
+        void setFields(final List<K> keys, final V[] values) throws IOException {
+            final Map<K, Integer> offsets = OffsetMapCache.unorderedOffsets(keys);
+
+            setField(this, OFFSETS_FIELD, offsets);
+            setField(this, ARRAY_FIELD, OffsetMapCache.adjustedArray(offsets, keys, values));
         }
     }
 
     private static final long serialVersionUID = 1L;
 
-    private final Map<K, Integer> offsets;
-    private final V[] objects;
-    private int hashCode;
+    private transient final Map<K, Integer> offsets;
+    private transient final V[] objects;
+    private transient int hashCode;
 
     /**
      * Construct a new instance backed by specified key-to-offset map and array of objects.
@@ -77,7 +99,24 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
     @Override
     public abstract MutableOffsetMap<K, V> toModifiableMap();
 
-    abstract Map<K, Integer> resolveKeys(List<K> keys);
+    abstract void setFields(List<K> keys, V[] values) throws IOException;
+
+    /**
+     * Create an {@link ImmutableOffsetMap} as a copy of an existing map. This is actually not completely true,
+     * as this method returns an {@link ImmutableMap} for empty and singleton inputs, as those are more memory-efficient.
+     * This method also recognizes {@link ImmutableOffsetMap} on input, and returns it back without doing anything else.
+     * It also recognizes {@link MutableOffsetMap} (as returned by {@link #toModifiableMap()}) and makes an efficient
+     * copy of its contents. All other maps are converted to an {@link ImmutableOffsetMap} with the same iteration
+     * order as input.
+     *
+     * @param m Input map, may not be null.
+     * @return An isolated, immutable copy of the input map
+     * @deprecated Use {@link #orderedCopyOf(Map)} or {@link #unorderedCopyOf(Map)} instead.
+     */
+    @Deprecated
+    @Nonnull public static <K, V> Map<K, V> copyOf(@Nonnull final Map<K, V> m) {
+        return orderedCopyOf(m);
+    }
 
     /**
      * Create an {@link ImmutableOffsetMap} as a copy of an existing map. This is actually not completely true,
@@ -90,7 +129,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
      * @param m Input map, may not be null.
      * @return An isolated, immutable copy of the input map
      */
-    @Nonnull public static <K, V> Map<K, V> copyOf(@Nonnull final Map<K, V> m) {
+    @Nonnull public static <K, V> Map<K, V> orderedCopyOf(@Nonnull final Map<K, V> m) {
         // Prevent a copy. Note that ImmutableMap is not listed here because of its potentially larger keySet overhead.
         if (m instanceof ImmutableOffsetMap || m instanceof SharedSingletonMap) {
             return m;
@@ -109,7 +148,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         if (size == 1) {
             // Efficient single-entry implementation
             final Entry<K, V> e = m.entrySet().iterator().next();
-            return SharedSingletonMap.of(e.getKey(), e.getValue());
+            return SharedSingletonMap.orderedOf(e.getKey(), e.getValue());
         }
 
         final Map<K, Integer> offsets = OffsetMapCache.orderedOffsets(m.keySet());
@@ -120,6 +159,49 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         }
 
         return new Ordered<>(offsets, array);
+    }
+
+    /**
+     * Create an {@link ImmutableOffsetMap} as a copy of an existing map. This is actually not completely true,
+     * as this method returns an {@link ImmutableMap} for empty and singleton inputs, as those are more memory-efficient.
+     * This method also recognizes {@link ImmutableOffsetMap} on input, and returns it back without doing anything else.
+     * It also recognizes {@link MutableOffsetMap} (as returned by {@link #toModifiableMap()}) and makes an efficient
+     * copy of its contents. All other maps are converted to an {@link ImmutableOffsetMap}. Iterator order is not
+     * guaranteed to be retained.
+     *
+     * @param m Input map, may not be null.
+     * @return An isolated, immutable copy of the input map
+     */
+    @Nonnull public static <K, V> Map<K, V> unorderedCopyOf(@Nonnull final Map<K, V> m) {
+        // Prevent a copy. Note that ImmutableMap is not listed here because of its potentially larger keySet overhead.
+        if (m instanceof ImmutableOffsetMap || m instanceof SharedSingletonMap) {
+            return m;
+        }
+
+        // Familiar and efficient to copy
+        if (m instanceof MutableOffsetMap) {
+            return ((MutableOffsetMap<K, V>) m).toUnmodifiableMap();
+        }
+
+        final int size = m.size();
+        if (size == 0) {
+            // Shares a single object
+            return ImmutableMap.of();
+        }
+        if (size == 1) {
+            // Efficient single-entry implementation
+            final Entry<K, V> e = m.entrySet().iterator().next();
+            return SharedSingletonMap.unorderedOf(e.getKey(), e.getValue());
+        }
+
+        final Map<K, Integer> offsets = OffsetMapCache.unorderedOffsets(m.keySet());
+        @SuppressWarnings("unchecked")
+        final V[] array = (V[]) new Object[offsets.size()];
+        for (Entry<K, V> e : m.entrySet()) {
+            array[offsets.get(e.getKey())] = e.getValue();
+        }
+
+        return new Unordered<>(offsets, array);
     }
 
     @Override
@@ -320,9 +402,9 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         return f;
     }
 
-    private void setField(final Field field, final Object value) throws IOException {
+    private static void setField(final ImmutableOffsetMap<?, ?> map, final Field field, final Object value) throws IOException {
         try {
-            field.set(this, value);
+            field.set(map, value);
         } catch (IllegalArgumentException | IllegalAccessException e) {
             throw new IOException("Failed to set field " + field, e);
         }
@@ -340,7 +422,6 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
             values[i] = (V)in.readObject();
         }
 
-        setField(OFFSETS_FIELD, resolveKeys(keys));
-        setField(ARRAY_FIELD, values);
+        setFields(keys, values);
     }
 }
