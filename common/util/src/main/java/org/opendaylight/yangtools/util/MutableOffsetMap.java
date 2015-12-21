@@ -48,7 +48,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         }
 
         Ordered(final Map<K, V> source) {
-            super(OffsetMapCache.offsetsFor(source.keySet()), source, new LinkedHashMap<K, V>());
+            super(OffsetMapCache.orderedOffsets(source.keySet()), source, new LinkedHashMap<K, V>());
         }
 
         Ordered(final Map<K, Integer> offsets, final V[] objects) {
@@ -251,7 +251,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             values[i++] = v;
         }
 
-        return new ImmutableOffsetMap.Ordered<>(OffsetMapCache.offsetsFor(keyset), values);
+        return new ImmutableOffsetMap.Ordered<>(OffsetMapCache.orderedOffsets(keyset), values);
     }
 
     @SuppressWarnings("unchecked")
