@@ -342,7 +342,7 @@ public class OffsetMapTest {
 
     @Test
     public void testEmptyMutable() throws CloneNotSupportedException {
-        final MutableOffsetMap<String, String> map = new MutableOffsetMap<>();
+        final MutableOffsetMap<String, String> map = MutableOffsetMap.of();
         assertTrue(map.isEmpty());
 
         final Map<String, String> other = map.clone();
@@ -352,7 +352,7 @@ public class OffsetMapTest {
 
     @Test
     public void testMutableWithKeyset() {
-        final MutableOffsetMap<String, String> map = new MutableOffsetMap<>(ImmutableSet.of("k1", "k2"));
+        final MutableOffsetMap<String, String> map = MutableOffsetMap.forKeySet(ImmutableSet.of("k1", "k2"));
         assertTrue(map.isEmpty());
         assertTrue(map.keySet().isEmpty());
         assertNull(map.get("k1"));
