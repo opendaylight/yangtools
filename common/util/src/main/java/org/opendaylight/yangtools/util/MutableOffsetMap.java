@@ -10,14 +10,15 @@ package org.opendaylight.yangtools.util;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableMap;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.ConcurrentModificationException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -40,53 +41,50 @@ import java.util.Set;
  * @param <V> the type of mapped values
  */
 @Beta
-public final class MutableOffsetMap<K, V> extends AbstractMap<K, V> implements Cloneable, ModifiableMapPhase<K, V> {
+public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implements Cloneable, ModifiableMapPhase<K, V> {
+    static final class Ordered<K, V> extends MutableOffsetMap<K, V> {
+        Ordered() {
+            super(new LinkedHashMap<K, V>());
+        }
+
+        Ordered(final Map<K, V> source) {
+            super(OffsetMapCache.offsetsFor(source.keySet()), source, new LinkedHashMap<K, V>());
+        }
+
+        Ordered(final Map<K, Integer> offsets, final V[] objects) {
+            super(offsets, objects, new LinkedHashMap<K, V>());
+        }
+    }
+
     private static final Object[] EMPTY_ARRAY = new Object[0];
     private final Map<K, Integer> offsets;
-    private final Map<K, V> newKeys;
+    private HashMap<K, V> newKeys;
     private V[] objects;
     private int removed = 0;
     private transient volatile int modCount;
     private boolean needClone = true;
 
-    public MutableOffsetMap() {
-        this(Collections.<K>emptySet());
-    }
-
-    @SuppressWarnings("unchecked")
-    protected MutableOffsetMap(final Collection<K> keySet) {
-        if (!keySet.isEmpty()) {
-            removed = keySet.size();
-            offsets = OffsetMapCache.offsetsFor(keySet);
-            objects = (V[])new Object[removed];
-        } else {
-            offsets = ImmutableMap.of();
-            objects = (V[])EMPTY_ARRAY;
-        }
-
-        this.newKeys = new LinkedHashMap<>();
-    }
-
-    protected MutableOffsetMap(final ImmutableOffsetMap<K, V> m) {
-        this(m.offsets(), m.objects());
-    }
-
-    @SuppressWarnings("unchecked")
-    protected MutableOffsetMap(final Map<K, V> m) {
-        this(OffsetMapCache.offsetsFor(m.keySet()), (V[])m.values().toArray());
-    }
-
-    protected MutableOffsetMap(final MutableOffsetMap<K, V> m) {
-        this.offsets = m.offsets;
-        this.objects = m.objects;
-        this.newKeys = new LinkedHashMap<>(m.newKeys);
-        this.removed = m.removed;
-    }
-
-    private MutableOffsetMap(final Map<K, Integer> offsets, final V[] objects) {
+    MutableOffsetMap(final Map<K, Integer> offsets, final V[] objects, final HashMap<K, V> newKeys) {
+        Verify.verify(newKeys.isEmpty());
         this.offsets = Preconditions.checkNotNull(offsets);
         this.objects = Preconditions.checkNotNull(objects);
-        this.newKeys = new LinkedHashMap<>();
+        this.newKeys = Preconditions.checkNotNull(newKeys);
+    }
+
+    @SuppressWarnings("unchecked")
+    MutableOffsetMap(final HashMap<K, V> newKeys) {
+        this(ImmutableMap.<K, Integer>of(), (V[]) EMPTY_ARRAY, newKeys);
+    }
+
+    @SuppressWarnings("unchecked")
+    MutableOffsetMap(final Map<K, Integer> offsets, final Map<K, V> source, final HashMap<K, V> newKeys) {
+        this(offsets, (V[]) new Object[offsets.size()], newKeys);
+
+        for (Entry<K, V> e : source.entrySet()) {
+            objects[offsets.get(e.getKey())] = Preconditions.checkNotNull(e.getValue());
+        }
+
+        this.needClone = false;
     }
 
     public static <K, V> MutableOffsetMap<K, V> copyOf(final Map<K, V> m) {
@@ -94,40 +92,35 @@ public final class MutableOffsetMap<K, V> extends AbstractMap<K, V> implements C
             return ((MutableOffsetMap<K, V>) m).clone();
         }
         if (m instanceof ImmutableOffsetMap) {
-            return ((ImmutableOffsetMap<K, V>) m).toModifiableMap();
+            final ImmutableOffsetMap<K, V> om = (ImmutableOffsetMap<K, V>) m;
+            return new MutableOffsetMap.Ordered<>(om.offsets(), om.objects());
         }
 
-        return new MutableOffsetMap<>(m);
+        return new MutableOffsetMap.Ordered<>(m);
     }
 
-    public static <K, V> MutableOffsetMap<K, V> forOffsets(final Map<K, Integer> offsets) {
-        @SuppressWarnings("unchecked")
-        final V[] objects = (V[]) new Object[offsets.size()];
-        return new MutableOffsetMap<>(offsets, objects);
-    }
-
-    public static <K, V> MutableOffsetMap<K, V> forKeySet(final Collection<K> keySet) {
-        return forOffsets(OffsetMapCache.offsetsFor(keySet));
+    public static <K, V> MutableOffsetMap<K, V> of() {
+        return new MutableOffsetMap.Ordered<>();
     }
 
     @Override
-    public int size() {
+    public final int size() {
         return offsets.size() + newKeys.size() - removed;
     }
 
     @Override
-    public boolean isEmpty() {
+    public final boolean isEmpty() {
         return size() == 0;
     }
 
     @Override
-    public boolean containsKey(final Object key) {
+    public final boolean containsKey(final Object key) {
         final Integer offset = offsets.get(key);
         return offset == null ? newKeys.containsKey(key) : objects[offset] != null;
     }
 
     @Override
-    public V get(final Object key) {
+    public final V get(final Object key) {
         final Integer offset = offsets.get(key);
         return offset == null ? newKeys.get(key) : objects[offset];
     }
@@ -197,7 +190,7 @@ public final class MutableOffsetMap<K, V> extends AbstractMap<K, V> implements C
     }
 
     @Override
-    public Set<Entry<K, V>> entrySet() {
+    public final Set<Entry<K, V>> entrySet() {
         return new EntrySet();
     }
 
@@ -261,14 +254,24 @@ public final class MutableOffsetMap<K, V> extends AbstractMap<K, V> implements C
         return new ImmutableOffsetMap.Ordered<>(OffsetMapCache.offsetsFor(keyset), values);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public MutableOffsetMap<K, V> clone() {
-        // FIXME: super.clone()
-        return new MutableOffsetMap<K, V>(this);
+        final MutableOffsetMap<K, V> ret;
+
+        try {
+            ret = (MutableOffsetMap<K, V>) super.clone();
+        } catch (CloneNotSupportedException e) {
+           throw new IllegalStateException("Clone is expected to work", e);
+        }
+
+        ret.newKeys = (HashMap<K, V>) newKeys.clone();
+        ret.needClone = true;
+        return ret;
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         int result = 0;
 
         for (Entry<K, Integer> e : offsets.entrySet()) {
@@ -282,7 +285,7 @@ public final class MutableOffsetMap<K, V> extends AbstractMap<K, V> implements C
     }
 
     @Override
-    public boolean equals(final Object o) {
+    public final boolean equals(final Object o) {
         if (o == this) {
             return true;
         }
@@ -337,22 +340,22 @@ public final class MutableOffsetMap<K, V> extends AbstractMap<K, V> implements C
     }
 
     @Override
-    public Set<K> keySet() {
+    public final Set<K> keySet() {
         return new KeySet();
     }
 
     @VisibleForTesting
-    boolean needClone() {
+    final boolean needClone() {
         return needClone;
     }
 
     @VisibleForTesting
-    Object array() {
+    final Object array() {
         return objects;
     }
 
     @VisibleForTesting
-    Object newKeys() {
+    final Object newKeys() {
         return newKeys;
     }
 
