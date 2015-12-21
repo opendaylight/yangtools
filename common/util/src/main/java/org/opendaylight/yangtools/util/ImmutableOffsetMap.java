@@ -46,7 +46,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
 
         @Override
         public MutableOffsetMap<K, V> toModifiableMap() {
-            return new MutableOffsetMap<>(this);
+            return MutableOffsetMap.copyOf(this);
         }
     }
 
