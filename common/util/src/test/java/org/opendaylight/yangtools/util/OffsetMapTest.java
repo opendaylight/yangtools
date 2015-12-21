@@ -42,7 +42,7 @@ public class OffsetMapTest {
 
     @Test(expected=IllegalArgumentException.class)
     public void testWrongImmutableConstruction() {
-        new ImmutableOffsetMap<String, String>(Collections.<String, Integer>emptyMap(), new String[1]);
+        new ImmutableOffsetMap.Ordered<String, String>(Collections.<String, Integer>emptyMap(), new String[1]);
     }
 
     @Test
@@ -96,15 +96,6 @@ public class OffsetMapTest {
         assertTrue(map.equals(map));
         assertFalse(map.equals(null));
         assertFalse(map.equals("string"));
-    }
-
-    @Test
-    public void testImmutableCopyConstructor() {
-        final ImmutableOffsetMap<String, String> source = createMap();
-        final ImmutableOffsetMap<String, String> result = new ImmutableOffsetMap<>(source);
-
-        assertSame(source.offsets(), result.offsets());
-        assertSame(source.objects(), result.objects());
     }
 
     @Test
