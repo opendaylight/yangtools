@@ -16,11 +16,11 @@ import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -54,12 +54,28 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         Ordered(final Map<K, Integer> offsets, final V[] objects) {
             super(offsets, objects, new LinkedHashMap<K, V>());
         }
+
+        @Override
+        Object removedObject() {
+            return REMOVED;
+        }
+
+        @Override
+        UnmodifiableMapPhase<K, V> modifiedMap(final List<K> keys, final V[] objects) {
+            return new ImmutableOffsetMap.Ordered<>(OffsetMapCache.orderedOffsets(keys), objects);
+        }
+
+        @Override
+        UnmodifiableMapPhase<K, V> unmodifiedMap(final Map<K, Integer> offsets, final V[] objects) {
+            return new ImmutableOffsetMap.Ordered<>(offsets, objects);
+        }
     }
 
     private static final Object[] EMPTY_ARRAY = new Object[0];
+    private static final Object REMOVED = new Object();
     private final Map<K, Integer> offsets;
     private HashMap<K, V> newKeys;
-    private V[] objects;
+    private Object[] objects;
     private int removed = 0;
     private transient volatile int modCount;
     private boolean needClone = true;
@@ -103,6 +119,10 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         return new MutableOffsetMap.Ordered<>();
     }
 
+    abstract Object removedObject();
+    abstract UnmodifiableMapPhase<K, V> modifiedMap(List<K> keys, V[] objects);
+    abstract UnmodifiableMapPhase<K, V> unmodifiedMap(Map<K, Integer> offsets, V[] objects);
+
     @Override
     public final int size() {
         return offsets.size() + newKeys.size() - removed;
@@ -116,13 +136,35 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     @Override
     public final boolean containsKey(final Object key) {
         final Integer offset = offsets.get(key);
-        return offset == null ? newKeys.containsKey(key) : objects[offset] != null;
+        if (offset != null) {
+            final Object obj = objects[offset];
+            if (!REMOVED.equals(obj)) {
+                return obj != null;
+            }
+        }
+
+        return newKeys.containsKey(key);
     }
 
     @Override
     public final V get(final Object key) {
         final Integer offset = offsets.get(key);
-        return offset == null ? newKeys.get(key) : objects[offset];
+        if (offset != null) {
+            final Object obj = objects[offset];
+
+            /*
+             * This is a bit tricky:  Ordered will put REMOVED to removed objects to retain strict insertion order.
+             * Unordered will add null, indicating that the slot may be reused in future. Hence if we see a REMOVED
+             * marker, we need to fall back to checking with new keys.
+             */
+            if (!REMOVED.equals(obj)) {
+                @SuppressWarnings("unchecked")
+                final V ret = (V)obj;
+                return ret;
+            }
+        }
+
+        return newKeys.get(key);
     }
 
     private void cloneArray() {
@@ -135,55 +177,76 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     }
 
     @Override
-    public V put(final K key, final V value) {
+    public final V put(final K key, final V value) {
         Preconditions.checkNotNull(value);
         final Integer offset = offsets.get(Preconditions.checkNotNull(key));
-        if (offset == null) {
-            final V ret = newKeys.put(key, value);
-            if (ret == null) {
-                modCount++;
+        if (offset != null) {
+            final Object obj = objects[offset];
+
+            /*
+             * Put which can potentially replace something in objects. Replacing an object does not cause iterators
+             * to be invalidated and does follow insertion order (since it is not a fresh insert). If the object has
+             * been removed, we fall back to newKeys.
+             */
+            if (!REMOVED.equals(obj)) {
+                @SuppressWarnings("unchecked")
+                final V ret = (V)obj;
+
+                cloneArray();
+                objects[offset] = value;
+                if (ret == null) {
+                    modCount++;
+                    removed--;
+                }
+
+                return ret;
             }
-            return ret;
         }
 
-        cloneArray();
-        final V ret = objects[offset];
-        objects[offset] = value;
+        final V ret = newKeys.put(key, value);
         if (ret == null) {
             modCount++;
-            removed--;
         }
-
         return ret;
     }
 
     @Override
-    public V remove(final Object key) {
+    public final V remove(final Object key) {
         final Integer offset = offsets.get(key);
-        if (offset == null) {
-            final V ret = newKeys.remove(key);
-            if (ret != null) {
-                modCount++;
+        if (offset != null) {
+            final Object obj = objects[offset];
+
+            /*
+             * A previous remove() may have indicated that the objects slot cannot be reused. In that case we need
+             * to fall back to checking with newKeys.
+             */
+            if (!REMOVED.equals(obj)) {
+                cloneArray();
+
+                @SuppressWarnings("unchecked")
+                final V ret = (V)obj;
+                objects[offset] = removedObject();
+                if (ret != null) {
+                    modCount++;
+                    removed++;
+                }
+                return ret;
             }
-            return ret;
         }
 
-        cloneArray();
-        final V ret = objects[offset];
-        objects[offset] = null;
+        final V ret = newKeys.remove(key);
         if (ret != null) {
             modCount++;
-            removed++;
         }
         return ret;
     }
 
     @Override
-    public void clear() {
+    public final void clear() {
         if (size() != 0) {
             newKeys.clear();
             cloneArray();
-            Arrays.fill(objects, null);
+            Arrays.fill(objects, removedObject());
             removed = objects.length;
             modCount++;
         }
@@ -196,15 +259,20 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
     @Override
     public Map<K, V> toUnmodifiableMap() {
-        if (newKeys.isEmpty() && removed == 0) {
+        if (removed == 0 && newKeys.isEmpty()) {
             // Make sure next modification clones the array, as we leak it to the map we return.
             needClone = true;
+
+            // We have ended up with no removed objects, hence this cast is safe
+            @SuppressWarnings("unchecked")
+            final V[] values = (V[])objects;
+
             /*
              * TODO: we could track the ImmutableOffsetMap from which this one was instantiated and if we do not
              *       perform any modifications, just return the original instance. The trade-off is increased complexity
              *       and an additional field in this class.
              */
-            return new ImmutableOffsetMap.Ordered<>(offsets, objects);
+            return unmodifiedMap(offsets, values);
         }
 
         final int s = size();
@@ -212,15 +280,16 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             return ImmutableMap.of();
         }
         if (s == 1) {
-            return ImmutableMap.copyOf(this);
+            return SharedSingletonMap.copyOf(this);
         }
 
         // Construct the set of keys
-        final Collection<K> keyset = new ArrayList<>(s);
+        final List<K> keyset = new ArrayList<>(s);
         if (removed != 0) {
             if (removed != offsets.size()) {
                 for (Entry<K, Integer> e : offsets.entrySet()) {
-                    if (objects[e.getValue()] != null) {
+                    final Object o = objects[e.getValue()];
+                    if (o != null && !REMOVED.equals(o)) {
                         keyset.add(e.getKey());
                     }
                 }
@@ -237,9 +306,11 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         if (removed != 0) {
             if (removed != offsets.size()) {
                 for (Entry<K, Integer> e : offsets.entrySet()) {
-                    final V o = objects[e.getValue()];
-                    if (o != null) {
-                        values[i++] = o;
+                    final Object o = objects[e.getValue()];
+                    if (o != null && !REMOVED.equals(o)) {
+                        @SuppressWarnings("unchecked")
+                        final V v = (V) o;
+                        values[i++] = v;
                     }
                 }
             }
@@ -251,7 +322,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             values[i++] = v;
         }
 
-        return new ImmutableOffsetMap.Ordered<>(OffsetMapCache.orderedOffsets(keyset), values);
+        return modifiedMap(keyset, values);
     }
 
     @SuppressWarnings("unchecked")
@@ -326,8 +397,8 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
             // Ensure all objects are present
             for (Entry<K, Integer> e : offsets.entrySet()) {
-                final V v = objects[e.getValue()];
-                if (v != null && !v.equals(other.get(e.getKey()))) {
+                final Object obj = objects[e.getValue()];
+                if (obj != null && !REMOVED.equals(obj) && !obj.equals(other.get(e.getKey()))) {
                     return false;
                 }
             }
@@ -454,7 +525,8 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         private void updateNextKey() {
             while (oldIterator.hasNext()) {
                 final Entry<K, Integer> e = oldIterator.next();
-                if (objects[e.getValue()] != null) {
+                final Object obj = objects[e.getValue()];
+                if (obj != null && !REMOVED.equals(obj)) {
                     nextKey = e.getKey();
                     return;
                 }
@@ -483,7 +555,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             final Integer offset = offsets.get(currentKey);
             if (offset != null) {
                 cloneArray();
-                objects[offset] = null;
+                objects[offset] = removedObject();
                 removed++;
             } else {
                 newIterator.remove();
