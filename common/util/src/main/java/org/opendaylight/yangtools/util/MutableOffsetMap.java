@@ -211,7 +211,7 @@ public final class MutableOffsetMap<K, V> extends AbstractMap<K, V> implements C
              *       perform any modifications, just return the original instance. The trade-off is increased complexity
              *       and an additional field in this class.
              */
-            return new ImmutableOffsetMap<>(offsets, objects);
+            return new ImmutableOffsetMap.Ordered<>(offsets, objects);
         }
 
         final int s = size();
@@ -258,7 +258,7 @@ public final class MutableOffsetMap<K, V> extends AbstractMap<K, V> implements C
             values[i++] = v;
         }
 
-        return new ImmutableOffsetMap<>(OffsetMapCache.offsetsFor(keyset), values);
+        return new ImmutableOffsetMap.Ordered<>(OffsetMapCache.offsetsFor(keyset), values);
     }
 
     @Override
