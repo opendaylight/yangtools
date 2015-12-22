@@ -1,0 +1,20 @@
+module foo {
+    yang-version 1;
+    namespace "foo";
+    prefix "fo";
+
+    revision "2015-09-09" {
+            reference "NO REF";
+    }
+
+    container root-fnt {
+        config false;
+        choice choice-fnt {
+            case case-fnt {
+                container c-fnt {
+                    config true;
+                }
+            }
+        }
+    }
+}
