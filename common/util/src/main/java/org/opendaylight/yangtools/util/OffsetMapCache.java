@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.util;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -40,6 +41,11 @@ final class OffsetMapCache {
     @SuppressWarnings("unchecked")
     private static <T> Map<T, Integer> offsets(final Collection<T> args) {
         return (Map<T, Integer>) CACHE.getUnchecked(args);
+    }
+
+    @VisibleForTesting
+    static void invalidateCache() {
+        CACHE.invalidateAll();
     }
 
     static <T> Map<T, Integer> orderedOffsets(final Collection<T> args) {

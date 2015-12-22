@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import org.junit.Before;
 import org.junit.Test;
 
 public class OffsetMapTest {
@@ -37,6 +38,11 @@ public class OffsetMapTest {
 
     private ImmutableOffsetMap<String, String> createMap() {
         return (ImmutableOffsetMap<String, String>) ImmutableOffsetMap.copyOf(twoEntryMap);
+    }
+
+    @Before
+    public void setup() {
+        OffsetMapCache.invalidateCache();
     }
 
     @Test(expected=IllegalArgumentException.class)
