@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aa4ed85_18063ecf",
+        "filename": "yang/yang-parser-impl/src/test/resources/case-test/case-test-exceptions/case/foo.yang",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2015-12-22T15:18:40Z",
+      "side": 1,
+      "message": "fnt?",
+      "range": {
+        "startLine": 10,
+        "startChar": 19,
+        "endLine": 10,
+        "endChar": 22
+      },
+      "revId": "3147acd63173dbef56d32a3693e141b95be7d26c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_98f9ceca",
+        "filename": "yang/yang-parser-impl/src/test/resources/case-test/case-test-exceptions/choice/foo.yang",
+        "patchSetId": 2
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2015-12-22T15:18:40Z",
+      "side": 1,
+      "message": "ftn?",
+      "range": {
+        "startLine": 10,
+        "startChar": 19,
+        "endLine": 10,
+        "endChar": 22
+      },
+      "revId": "3147acd63173dbef56d32a3693e141b95be7d26c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
