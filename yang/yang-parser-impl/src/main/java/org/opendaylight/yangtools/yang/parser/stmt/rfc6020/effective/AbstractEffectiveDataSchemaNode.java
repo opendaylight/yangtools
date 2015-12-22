@@ -27,9 +27,7 @@ abstract class AbstractEffectiveDataSchemaNode<D extends DeclaredStatement<QName
     public AbstractEffectiveDataSchemaNode(final StmtContext<QName, D, ?> ctx) {
         super(ctx);
         this.constraints = EffectiveConstraintDefinitionImpl.forParent(this);
-
-        ConfigEffectiveStatementImpl configStmt = firstEffective(ConfigEffectiveStatementImpl.class);
-        this.configuration = (configStmt == null) ? true : configStmt.argument();
+        this.configuration = ctx.isConfiguration();
 
         // initCopyType
         List<TypeOfCopy> copyTypesFromOriginal = ctx.getCopyHistory();
