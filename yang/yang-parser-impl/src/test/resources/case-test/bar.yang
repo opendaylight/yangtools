@@ -1,0 +1,21 @@
+module bar {
+    yang-version 1;
+    namespace "bar";
+    prefix "br";
+
+    revision "2015-09-09" {
+            reference "NO REF";
+    }
+
+    container sh-root-fff {
+        config false;
+        choice sh-choice-fff {
+            config false;
+            case sh-case-fff {
+                container sh-c-fff {
+                    config false;
+                }
+            }
+        }
+    }
+}

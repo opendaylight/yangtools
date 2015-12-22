@@ -1,0 +1,22 @@
+module foo {
+    yang-version 1;
+    namespace "foo";
+    prefix "fo";
+
+    import bar { prefix br; }
+
+    revision "2015-09-09" {
+            reference "NO REF";
+    }
+
+    container root-fff {
+        config false;
+        choice choice-fff {
+            case case-fff {
+                container c-fff {
+                    config true;
+                }
+            }
+        }
+    }
+}

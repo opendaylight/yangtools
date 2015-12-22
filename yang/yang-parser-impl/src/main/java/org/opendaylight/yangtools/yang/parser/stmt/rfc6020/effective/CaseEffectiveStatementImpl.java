@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.base.Optional;
+import java.util.Collection;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -15,21 +16,44 @@ import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public final class CaseEffectiveStatementImpl extends AbstractEffectiveSimpleDataNodeContainer<CaseStatement> implements
         ChoiceCaseNode, DerivableSchemaNode {
 
     private final ChoiceCaseNode original;
+    private final boolean configuration;
 
     public CaseEffectiveStatementImpl(
             final StmtContext<QName, CaseStatement, EffectiveStatement<QName, CaseStatement>> ctx) {
         super(ctx);
         this.original = ctx.getOriginalCtx() == null ? null : (ChoiceCaseNode) ctx.getOriginalCtx().buildEffective();
+
+        if(ctx.isConfiguration()) {
+            configuration = isAtLeastOneChildConfiguration(ctx.declaredSubstatements()) ||
+                    isAtLeastOneChildConfiguration(ctx.effectiveSubstatements());
+        } else {
+            configuration = false;
+        }
+    }
+
+    private boolean isAtLeastOneChildConfiguration(Collection<StatementContextBase<?, ?, ?>> substatements) {
+        for (StatementContextBase<?, ?, ?> substatement : substatements) {
+            if(substatement.isConfiguration()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public Optional<ChoiceCaseNode> getOriginal() {
         return Optional.fromNullable(original);
+    }
+
+    @Override
+    public boolean isConfiguration() {
+        return configuration;
     }
 
     @Override
