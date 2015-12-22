@@ -1,0 +1,168 @@
+module bar {
+    yang-version 1;
+    namespace "bar";
+    prefix "br";
+
+    revision "2015-09-09" {
+            reference "NO REF";
+    }
+
+    container sh-root-fff {
+        config false;
+        choice sh-choice-fff {
+            config false;
+            container sh-c-fff {
+                config false;
+            }
+        }
+    }
+
+    container sh-root-ffn {
+        config false;
+        choice sh-choice-ffn {
+            config false;
+            container sh-c-ffn {
+            }
+        }
+    }
+
+    container sh-root-fnf {
+        config false;
+        choice sh-choice-fnf {
+            container sh-c-fnf {
+                config false;
+            }
+        }
+    }
+
+    container sh-root-nff {
+        choice sh-choice-nff {
+            config false;
+            container sh-c-nff {
+                config false;
+            }
+        }
+    }
+
+    container sh-root-nnf {
+        choice sh-choice-nnf {
+            container sh-c-nnf {
+                config false;
+            }
+        }
+    }
+
+    container sh-root-nfn {
+        choice sh-choice-nfn {
+            config false;
+            container sh-c-nfn {
+            }
+        }
+    }
+
+    container sh-root-fnn {
+        config false;
+        choice sh-choice-fnn {
+            container sh-c-fnn {
+            }
+        }
+    }
+
+    container sh-root-ttt {
+        config true;
+        choice sh-choice-ttt {
+            config true;
+            container sh-c-ttt {
+                config true;
+            }
+        }
+    }
+
+    container sh-root-ntt {
+        choice sh-choice-ntt {
+            config true;
+            container sh-c-ntt {
+                config true;
+            }
+        }
+    }
+
+    container sh-root-tnt {
+        config true;
+        choice sh-choice-tnt {
+            container sh-c-tnt {
+                config true;
+            }
+        }
+    }
+
+    container sh-root-ttn {
+        config true;
+        choice sh-choice-ttt {
+            config true;
+            container sh-c-ttt {
+            }
+        }
+    }
+
+    container sh-root-tnn {
+        config true;
+        choice sh-choice-tnn {
+            container sh-c-tnn {
+            }
+        }
+    }
+
+    container sh-root-ntn {
+        choice sh-choice-ntn {
+            config true;
+            container sh-c-ntn {
+            }
+        }
+    }
+
+    container sh-root-nnt {
+        choice sh-choice-nnt {
+            container sh-c-nnt {
+                config true;
+            }
+        }
+    }
+
+    container sh-root-tff {
+        config true;
+        choice sh-choice-tff {
+            config false;
+            container c-tff {
+                config false;
+            }
+        }
+    }
+
+    container sh-root-tfn {
+        config true;
+        choice sh-choice-tfn {
+            config false;
+            container sh-c-tfn {
+            }
+        }
+    }
+
+    container sh-root-tnf {
+        config true;
+        choice sh-choice-tnf {
+            container sh-c-tnf {
+                config false;
+            }
+        }
+    }
+
+    container sh-root-ntf {
+        choice sh-choice-ntf {
+            config true;
+            container sh-c-ntf {
+                config false;
+            }
+        }
+    }
+}

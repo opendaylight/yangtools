@@ -1,0 +1,206 @@
+module foo {
+    yang-version 1;
+    namespace "foo";
+    prefix "fo";
+
+    import bar { prefix br; }
+
+    revision "2015-09-09" {
+            reference "NO REF";
+    }
+
+    container root-fff {
+        config false;
+        choice choice-fff {
+            config false;
+            case case-fff {
+                container c-fff {
+                    config false;
+                }
+            }
+        }
+    }
+
+    container root-ffn {
+        config false;
+        choice choice-ffn {
+            config false;
+            case case-ffn {
+                container c-ffn {
+                }
+            }
+        }
+    }
+
+    container root-fnf {
+        config false;
+        choice choice-fnf {
+            case case-fnf {
+                container c-fnf {
+                    config false;
+                }
+            }
+        }
+    }
+
+    container root-nff {
+        choice choice-nff {
+            config false;
+            case case-nff {
+                container c-nff {
+                    config false;
+                }
+            }
+        }
+    }
+
+    container root-nnf {
+        choice choice-nnf {
+            case case-nnf {
+                container c-nnf {
+                    config false;
+                }
+            }
+        }
+    }
+
+    container root-nfn {
+        choice choice-nfn {
+            config false;
+            case case-nfn {
+                container c-nfn {
+                }
+            }
+        }
+    }
+
+    container root-fnn {
+        config false;
+        choice choice-fnn {
+            case case-fnn {
+                container c-fnn {
+                }
+            }
+        }
+    }
+
+    container root-ttt {
+        config true;
+        choice choice-ttt {
+            config true;
+            case case-ttt {
+                container c-ttt {
+                    config true;
+                }
+            }
+        }
+    }
+
+    container root-ntt {
+        choice choice-ntt {
+            config true;
+            case case-ntt {
+                container c-ntt {
+                    config true;
+                }
+            }
+        }
+    }
+
+    container root-tnt {
+        config true;
+        choice choice-tnt {
+            case case-tnt {
+                container c-tnt {
+                    config true;
+                }
+            }
+        }
+    }
+
+    container root-ttn {
+        config true;
+        choice choice-ttt {
+            config true;
+            case case-ttt {
+                container c-ttt {
+                }
+            }
+        }
+    }
+
+    container root-tnn {
+        config true;
+        choice choice-tnn {
+            case case-tnn {
+                container c-tnn {
+                }
+            }
+        }
+    }
+
+    container root-ntn {
+        choice choice-ntn {
+            config true;
+            case case-ntn {
+                container c-ntn {
+                }
+            }
+        }
+    }
+
+    container root-nnt {
+        choice choice-nnt {
+            case case-nnt {
+                container c-nnt {
+                    config true;
+                }
+            }
+        }
+    }
+
+    container root-tff {
+        config true;
+        choice choice-tff {
+            config false;
+            case case-tff {
+                container c-tff {
+                    config false;
+                }
+            }
+        }
+    }
+
+    container root-tfn {
+        config true;
+        choice choice-tfn {
+            config false;
+            case case-tfn {
+                container c-tfn {
+                }
+            }
+        }
+    }
+
+    container root-tnf {
+        config true;
+        choice choice-tnf {
+            case case-tnf {
+                container c-tnf {
+                    config false;
+                }
+            }
+        }
+    }
+
+    container root-ntf {
+        choice choice-ntf {
+            config true;
+            case case-ntf {
+                container c-ntf {
+                    config false;
+                }
+            }
+        }
+    }
+}
