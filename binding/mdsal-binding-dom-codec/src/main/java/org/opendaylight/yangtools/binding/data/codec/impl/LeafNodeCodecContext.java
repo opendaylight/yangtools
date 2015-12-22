@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,6 +21,7 @@ import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
@@ -31,9 +30,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
 final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<D> implements NodeContextSupplier {
 
@@ -57,36 +56,32 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
             Object defaultValue = ((LeafSchemaNode) schema).getDefault();
             TypeDefinition<?> type = ((LeafSchemaNode) schema).getType();
             if (defaultValue != null) {
+                if (type instanceof IdentityrefTypeDefinition) {
+                    return qnameDomValueFromString(codec, schema, defaultValue);
+                }
                 return domValueFromString(codec, type, defaultValue);
-            }
-            else {
+            } else {
                 while (type.getBaseType() != null && type.getDefaultValue() == null) {
                     type = type.getBaseType();
                 }
 
                 defaultValue = type.getDefaultValue();
                 if (defaultValue != null) {
-                    if (defaultValue instanceof Boolean) {
-                        return codec.deserialize(defaultValue);
+                    if (type instanceof IdentityrefTypeDefinition) {
+                        return qnameDomValueFromString(codec, schema, defaultValue);
                     }
 
-                    if (defaultValue instanceof IdentitySchemaNode) {
-                        defaultValue = ((IdentitySchemaNode) defaultValue).getQName();
-                        return codec.deserialize(defaultValue);
-                    }
-
-                    if (defaultValue instanceof ImmutableList) {
-                        return codec.deserialize(ImmutableSet.copyOf((ImmutableList) defaultValue));
-                    }
-
-                    if (defaultValue instanceof List) {
-                        return codec.deserialize(defaultValue);
-                    }
                     return domValueFromString(codec, type, defaultValue);
                 }
             }
         }
         return null;
+    }
+
+    private static Object qnameDomValueFromString(final Codec<Object, Object> codec, final DataSchemaNode schema,
+                                               final Object defaultValue) {
+        Object qname = QName.create(schema.getQName(), (String) defaultValue);
+        return codec.deserialize(qname);
     }
 
     private static Object domValueFromString(final Codec<Object, Object> codec, final TypeDefinition<?> type,
