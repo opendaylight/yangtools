@@ -187,7 +187,7 @@ public enum Rfc6020Mapping implements StatementDefinition {
     }
 
     @Nonnull private static QName yinQName(String nameStr) {
-        return QName.cachedReference(QName.create(YangConstants.RFC6020_YIN_MODULE, nameStr));
+        return QName.create(YangConstants.RFC6020_YIN_MODULE, nameStr).intern();
     }
 
     @Override

@@ -246,8 +246,8 @@ public final class Utils {
                 ctx.getRoot().rawStatementArgument(), value);
         final QNameModule resultQNameModule;
         if (qNameModule.getRevision() == null) {
-            resultQNameModule = QNameModule.cachedReference(
-                QNameModule.create(qNameModule.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV));
+            resultQNameModule = QNameModule.create(qNameModule.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV)
+                .intern();
         } else {
             resultQNameModule = qNameModule;
         }
@@ -288,8 +288,7 @@ public final class Utils {
             return qNameModule;
         }
 
-        return QNameModule.cachedReference(
-            QNameModule.create(qNameModule.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV));
+        return QNameModule.create(qNameModule.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV).intern();
     }
 
     @Nullable
