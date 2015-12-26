@@ -25,7 +25,7 @@ class QNameModuleReplacementFunction implements Function<QName, QName> {
     public QName apply(QName input) {
         QNameModule potential = mapping.get(input.getModule());
         if (potential != null) {
-            return QName.cachedReference(QName.create(potential, input.getLocalName()));
+            return QName.create(potential, input.getLocalName()).intern();
         }
         return input;
     }

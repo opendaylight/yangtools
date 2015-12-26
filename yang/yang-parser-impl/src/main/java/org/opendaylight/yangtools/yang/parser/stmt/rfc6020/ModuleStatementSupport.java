@@ -106,7 +106,7 @@ public class ModuleStatementSupport extends
             revisionDate = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);
         }
 
-        QNameModule qNameModule = QNameModule.cachedReference(QNameModule.create(moduleNs.get(), revisionDate.orNull()));
+        QNameModule qNameModule = QNameModule.create(moduleNs.get(), revisionDate.orNull()).intern();
         ModuleIdentifier moduleIdentifier = new ModuleIdentifierImpl(stmt.getStatementArgument(),
                 Optional.<URI> absent(), revisionDate);
 

@@ -89,7 +89,7 @@ public final class BaseTypes {
      * @return built-in base yang type QName.
      */
     public static QName constructQName(final String typeName) {
-        return QName.cachedReference(QName.create(YangConstants.RFC6020_YANG_MODULE, typeName));
+        return QName.create(YangConstants.RFC6020_YANG_MODULE, typeName).intern();
     }
 
     /**

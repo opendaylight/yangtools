@@ -600,7 +600,7 @@ public final class YangParserListenerImpl extends YangParserBaseListener {
                     namespace = namespaces.get(revision);
                 }
 
-                final QNameModule mod = QNameModule.cachedReference(QNameModule.create(namespace, revision));
+                final QNameModule mod = QNameModule.create(namespace, revision).intern();
                 qname = QName.create(mod, name);
             }
         }

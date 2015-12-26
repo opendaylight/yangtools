@@ -75,8 +75,8 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
         this.submodules = ImmutableSet.<Module> copyOf(builder.submodules);
         this.prefix = builder.getPrefix();
 
-        this.qnameModule = QNameModule.cachedReference(QNameModule.create(builder.getNamespace(),
-                builder.getRevision() == null ? null : new Date(builder.getRevision().getTime())));
+        this.qnameModule = QNameModule.create(builder.getNamespace(),
+                builder.getRevision() == null ? null : new Date(builder.getRevision().getTime())).intern();
         this.yangVersion = builder.getYangVersion();
         this.organization = builder.getOrganization();
         this.contact = builder.getContact();

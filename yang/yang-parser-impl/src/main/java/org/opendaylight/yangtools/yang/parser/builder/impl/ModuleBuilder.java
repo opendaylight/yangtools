@@ -63,7 +63,7 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
  * otherwise result may not be valid.
  */
 public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder implements DocumentedNodeBuilder {
-    private static final QNameModule EMPTY_QNAME_MODULE = QNameModule.cachedReference(QNameModule.create(null, null));
+    private static final QNameModule EMPTY_QNAME_MODULE = QNameModule.create(null, null).intern();
     private static final String GROUPING_STR = "Grouping";
     private static final String TYPEDEF_STR = "typedef";
     private ModuleImpl instance;
@@ -349,7 +349,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public void setNamespace(final URI namespace) {
-        this.qnameModule = QNameModule.cachedReference(QNameModule.create(namespace, qnameModule.getRevision()));
+        this.qnameModule = QNameModule.create(namespace, qnameModule.getRevision()).intern();
     }
 
     public String getPrefix() {
@@ -411,7 +411,7 @@ public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder im
     }
 
     public void setRevision(final Date revision) {
-        this.qnameModule = QNameModule.cachedReference(QNameModule.create(qnameModule.getNamespace(), revision));
+        this.qnameModule = QNameModule.create(qnameModule.getNamespace(), revision).intern();
     }
 
     public void setPrefix(final String prefix) {

@@ -24,8 +24,7 @@ public final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<
 
         final QNameModule module = ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx);
         if (module.getRevision() == null) {
-            qNameModule = QNameModule.cachedReference(
-                QNameModule.create(module.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV));
+            qNameModule = QNameModule.create(module.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV).intern();
         } else {
             qNameModule = module;
         }

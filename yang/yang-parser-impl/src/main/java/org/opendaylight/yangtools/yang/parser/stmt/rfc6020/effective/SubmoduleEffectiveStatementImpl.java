@@ -30,9 +30,9 @@ public final class SubmoduleEffectiveStatementImpl extends AbstractEffectiveModu
                 belongsToModuleName);
         RevisionEffectiveStatementImpl submoduleRevision = firstEffective(RevisionEffectiveStatementImpl.class);
 
-        this.qNameModule = QNameModule.cachedReference(submoduleRevision == null ?
+        this.qNameModule = (submoduleRevision == null ?
                 QNameModule.create(belongsToModuleQName.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV) :
-                    QNameModule.create(belongsToModuleQName.getNamespace(), submoduleRevision.argument()));
+                    QNameModule.create(belongsToModuleQName.getNamespace(), submoduleRevision.argument())).intern();
     }
 
     @Override
