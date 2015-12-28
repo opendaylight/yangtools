@@ -12,7 +12,6 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree;
  * thus allowing existence of multiple candidates, which can be {@link #commit(DataTreeCandidate)}ed
  * in sequence.
  */
-public interface TipProducingDataTree extends DataTree {
-    @Override
-    DataTreeCandidateTip prepare(DataTreeModification modification);
+public interface TipProducingDataTree extends DataTree, TipProducingDataTreeTip {
+
 }
