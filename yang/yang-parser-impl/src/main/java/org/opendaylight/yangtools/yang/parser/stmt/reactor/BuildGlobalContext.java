@@ -59,7 +59,6 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     private final Map<QName,StatementDefinitionContext<?,?,?>> definitions = new HashMap<>();
     private final Map<Class<?>,NamespaceBehaviourWithListeners<?, ?, ?>> supportedNamespaces = new HashMap<>();
 
-
     private final Map<ModelProcessingPhase,StatementSupportBundle> supports;
     private final Set<SourceSpecificContext> sources = new HashSet<>();
 
@@ -71,12 +70,11 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         this.supports = Preconditions.checkNotNull(supports, "BuildGlobalContext#supports cannot be null");
     }
 
-    public BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports,  final Map<ValidationBundleType,Collection<?>> supportedValidation) {
+    public BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports, final Map<ValidationBundleType,Collection<?>> supportedValidation) {
         super();
         this.supports = Preconditions.checkNotNull(supports, "BuildGlobalContext#supports cannot be null");
 
-        Set<Entry<ValidationBundleType, Collection<?>>> validationBundles = supportedValidation.entrySet();
-        for (Entry<ValidationBundleType, Collection<?>> validationBundle : validationBundles) {
+        for (Entry<ValidationBundleType, Collection<?>> validationBundle : supportedValidation.entrySet()) {
             addToNs(ValidationBundlesNamespace.class, validationBundle.getKey(), validationBundle.getValue());
         }
     }
@@ -109,7 +107,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         NamespaceBehaviourWithListeners<?, ?, ?> potential = supportedNamespaces.get(type);
         if (potential == null) {
             NamespaceBehaviour<K, V, N> potentialRaw = supports.get(currentPhase).getNamespaceBehaviour(type);
-            if(potentialRaw != null) {
+            if (potentialRaw != null) {
                 potential = createNamespaceContext(potentialRaw);
                 supportedNamespaces.put(type, potential);
             } else {
@@ -119,7 +117,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         }
 
         Verify.verify(type.equals(potential.getIdentifier()));
-            /*
+        /*
          * Safe cast, previous checkState checks equivalence of key from which type argument are
          * derived
          */
@@ -141,9 +139,9 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     public StatementDefinitionContext<?, ?, ?> getStatementDefinition(final QName name) {
         StatementDefinitionContext<?, ?, ?> potential = definitions.get(name);
-        if(potential == null) {
+        if (potential == null) {
             StatementSupport<?, ?, ?> potentialRaw = supports.get(currentPhase).getStatementDefinition(name);
-            if(potentialRaw != null) {
+            if (potentialRaw != null) {
                 potential = new StatementDefinitionContext<>(potentialRaw);
                 definitions.put(name, potential);
             }
@@ -152,7 +150,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     }
 
     public EffectiveModelContext build() throws SourceException, ReactorException {
-        for(ModelProcessingPhase phase : PHASE_EXECUTION_ORDER) {
+        for (ModelProcessingPhase phase : PHASE_EXECUTION_ORDER) {
             startPhase(phase);
             loadPhaseStatements();
             completePhaseActions();
@@ -163,16 +161,15 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     private EffectiveModelContext transform() {
         Preconditions.checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
-        List<DeclaredStatement<?>> rootStatements = new ArrayList<>();
-        for(SourceSpecificContext source : sources) {
-            DeclaredStatement<?> root = source.getRoot().buildDeclared();
-            rootStatements.add(root);
+        List<DeclaredStatement<?>> rootStatements = new ArrayList<>(sources.size());
+        for (SourceSpecificContext source : sources) {
+            rootStatements.add(source.getRoot().buildDeclared());
         }
         return new EffectiveModelContext(rootStatements);
     }
 
     public EffectiveSchemaContext buildEffective() throws SourceException, ReactorException {
-        for(ModelProcessingPhase phase : PHASE_EXECUTION_ORDER) {
+        for (ModelProcessingPhase phase : PHASE_EXECUTION_ORDER) {
             startPhase(phase);
             loadPhaseStatements();
             completePhaseActions();
@@ -183,23 +180,21 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     private EffectiveSchemaContext transformEffective() {
         Preconditions.checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
-        List<DeclaredStatement<?>> rootStatements = new ArrayList<>();
-        List<EffectiveStatement<?,?>> rootEffectiveStatements = new ArrayList<>();
+        List<DeclaredStatement<?>> rootStatements = new ArrayList<>(sources.size());
+        List<EffectiveStatement<?,?>> rootEffectiveStatements = new ArrayList<>(sources.size());
 
-        for(SourceSpecificContext source : sources) {
-            DeclaredStatement<?> root = source.getRoot().buildDeclared();
-            rootStatements.add(root);
-
-            EffectiveStatement<?,?> rootEffective = source.getRoot().buildEffective();
-            rootEffectiveStatements.add(rootEffective);
+        for (SourceSpecificContext source : sources) {
+            final RootStatementContext<?, ?, ?> root = source.getRoot();
+            rootStatements.add(root.buildDeclared());
+            rootEffectiveStatements.add(root.buildEffective());
         }
 
-        return new EffectiveSchemaContext(rootStatements,rootEffectiveStatements);
+        return new EffectiveSchemaContext(rootStatements, rootEffectiveStatements);
     }
 
     private void startPhase(final ModelProcessingPhase phase) {
         Preconditions.checkState(Objects.equals(finishedPhase, phase.getPreviousPhase()));
-        for(SourceSpecificContext source : sources) {
+        for (SourceSpecificContext source : sources) {
             source.startPhase(phase);
         }
         currentPhase = phase;
@@ -207,7 +202,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
 
     private  void loadPhaseStatements() throws SourceException {
         Preconditions.checkState(currentPhase != null);
-        for(SourceSpecificContext source : sources) {
+        for (SourceSpecificContext source : sources) {
             source.loadStatements();
         }
     }
@@ -243,7 +238,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
                 }
             }
 
-            if(!addedCause) {
+            if (!addedCause) {
                 addedCause = true;
                 buildFailure.initCause(sourceEx);
             } else {
@@ -258,7 +253,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         List<SourceSpecificContext> sourcesToProgress = Lists.newArrayList(sources);
         try {
             boolean progressing = true;
-            while(progressing) {
+            while (progressing) {
                 // We reset progressing to false.
                 progressing = false;
                 Iterator<SourceSpecificContext> currentSource = sourcesToProgress.iterator();
@@ -283,7 +278,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         } catch (SourceException e) {
             throw Throwables.propagate(e);
         }
-        if(!sourcesToProgress.isEmpty()) {
+        if (!sourcesToProgress.isEmpty()) {
             SomeModifiersUnresolvedException buildFailure = new SomeModifiersUnresolvedException(currentPhase);
             buildFailure = addSourceExceptions(buildFailure, sourcesToProgress);
             throw buildFailure;
@@ -298,5 +293,4 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     public Set<SourceSpecificContext> getSources() {
         return sources;
     }
-
 }
