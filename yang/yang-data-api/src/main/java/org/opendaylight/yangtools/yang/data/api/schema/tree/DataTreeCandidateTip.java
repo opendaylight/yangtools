@@ -18,5 +18,6 @@ import com.google.common.annotations.Beta;
  */
 @Beta
 public interface DataTreeCandidateTip extends DataTreeCandidate, DataTreeTip {
-
+    @Override
+    DataTreeCandidateTip prepare(DataTreeModification modification);
 }
