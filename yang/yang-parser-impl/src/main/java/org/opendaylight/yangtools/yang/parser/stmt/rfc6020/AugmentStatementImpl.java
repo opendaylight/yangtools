@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
-
 import com.google.common.base.Preconditions;
 import java.util.Collection;
 import java.util.regex.Pattern;
@@ -152,7 +151,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
             });
         }
 
-        private Mutable<?, ?, ?> getSearchRoot(Mutable<?, ?, ?> augmentContext) {
+        private static Mutable<?, ?, ?> getSearchRoot(final Mutable<?, ?, ?> augmentContext) {
             Mutable<?, ?, ?> parent = augmentContext.getParentContext();
             // Augment is in uses - we need to augment instantiated nodes in parent.
             if(Rfc6020Mapping.USES.equals(parent.getPublicDefinition())) {
