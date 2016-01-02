@@ -7,12 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface PositionStatement extends DeclaredStatement<Long> {
 
-    // FIXME: turn this into a long
-    @Nonnull
-    Long getValue();
+    long getValue();
 }
