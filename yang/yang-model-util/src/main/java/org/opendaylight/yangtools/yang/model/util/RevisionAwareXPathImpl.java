@@ -21,9 +21,6 @@ public class RevisionAwareXPathImpl implements RevisionAwareXPath {
     private final String xpath;
     private final boolean absolute;
 
-    private static final int HASH_BOOLEAN_TRUE = 1231;
-    private static final int HASH_BOOLEAN_FALSE = 1237;
-
     public RevisionAwareXPathImpl(final String xpath, final boolean absolute) {
         this.xpath = xpath;
         this.absolute = absolute;
@@ -39,7 +36,7 @@ public class RevisionAwareXPathImpl implements RevisionAwareXPath {
         final int prime = 31;
         int result = 1;
         result = prime * result + Objects.hashCode(xpath);
-        result = prime * result + (absolute ? HASH_BOOLEAN_TRUE : HASH_BOOLEAN_FALSE);
+        result = prime * result + Boolean.hashCode(absolute);
         return result;
     }
 
