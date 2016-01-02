@@ -17,7 +17,6 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.augmenta
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
-
 import com.google.common.collect.Sets;
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
@@ -31,8 +30,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -283,7 +280,7 @@ public class JsonStreamToNormalizedNodeTest {
         assertEquals(cont1Normalized, transformedInput);
     }
 
-    private void verifyTransformationToNormalizedNode(final String inputJson,
+    private static void verifyTransformationToNormalizedNode(final String inputJson,
             final NormalizedNode<?, ?> awaitedStructure) {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);

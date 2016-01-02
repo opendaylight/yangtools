@@ -20,14 +20,14 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 final class JSONStringInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec implements JSONCodec<YangInstanceIdentifier> {
-    private final SchemaContext context;
     private final DataSchemaContextTree dataContextTree;
     private final JSONCodecFactory codecFactory;
+    private final SchemaContext context;
 
     JSONStringInstanceIdentifierCodec(final SchemaContext context, final JSONCodecFactory jsonCodecFactory) {
         this.context = Preconditions.checkNotNull(context);
         this.dataContextTree = DataSchemaContextTree.from(context);
-        this.codecFactory = jsonCodecFactory;
+        this.codecFactory = Preconditions.checkNotNull(jsonCodecFactory);
     }
 
     @Override
@@ -52,7 +52,7 @@ final class JSONStringInstanceIdentifierCodec extends AbstractModuleStringInstan
     }
 
     @Override
-    protected Object deserializeKeyValue(DataSchemaNode schemaNode, String value) {
+    protected Object deserializeKeyValue(final DataSchemaNode schemaNode, final String value) {
         Preconditions.checkNotNull(schemaNode, "schemaNode cannot be null");
         Preconditions.checkArgument(schemaNode instanceof LeafSchemaNode, "schemaNode must be of type LeafSchemaNode");
         final JSONCodec<Object> objectJSONCodec = codecFactory.codecFor(schemaNode);
@@ -66,7 +66,7 @@ final class JSONStringInstanceIdentifierCodec extends AbstractModuleStringInstan
      * @param value YangInstanceIdentifier
      */
     @Override
-    public void serializeToWriter(JsonWriter writer, YangInstanceIdentifier value) throws IOException {
+    public void serializeToWriter(final JsonWriter writer, final YangInstanceIdentifier value) throws IOException {
         writer.value(serialize(value));
     }
 }

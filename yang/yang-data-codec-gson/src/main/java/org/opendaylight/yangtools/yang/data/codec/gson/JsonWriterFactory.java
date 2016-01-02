@@ -17,16 +17,17 @@ import java.io.Writer;
  */
 @Beta
 public final class JsonWriterFactory {
-
     private JsonWriterFactory() {
+        throw new UnsupportedOperationException();
     }
+
     /**
      * Create a new JsonWriter, which writes to the specified output writer.
      *
      * @param writer Output writer
      * @return A JsonWriter instance
      */
-    public static JsonWriter createJsonWriter(Writer writer) {
+    public static JsonWriter createJsonWriter(final Writer writer) {
         return new JsonWriter(writer);
     }
 
@@ -37,11 +38,10 @@ public final class JsonWriterFactory {
      * @param indentSize size of the indent
      * @return A JsonWriter instance
      */
-    public static JsonWriter createJsonWriter(Writer writer, int indentSize) {
+    public static JsonWriter createJsonWriter(final Writer writer, final int indentSize) {
         JsonWriter jsonWriter = new JsonWriter(writer);
         final String indent = Strings.repeat(" ", indentSize);
         jsonWriter.setIndent(indent);
         return jsonWriter;
     }
-
 }

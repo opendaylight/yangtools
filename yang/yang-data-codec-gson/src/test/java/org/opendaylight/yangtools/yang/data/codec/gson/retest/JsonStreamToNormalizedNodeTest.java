@@ -17,14 +17,11 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.augmenta
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
-
 import com.google.common.collect.Sets;
 import com.google.gson.stream.JsonReader;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
-
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -285,7 +282,7 @@ public class JsonStreamToNormalizedNodeTest {
         assertEquals(cont1Normalized, transformedInput);
     }
 
-    private void verifyTransformationToNormalizedNode(final String inputJson,
+    private static void verifyTransformationToNormalizedNode(final String inputJson,
             final NormalizedNode<?, ?> awaitedStructure) {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
