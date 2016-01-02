@@ -90,6 +90,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
             checkArgument(getIdentifier().getNodeType().equals(legacyData.getNodeType()),
                     "Node QName must be %s was %s", getIdentifier().getNodeType(), legacyData.getNodeType());
         }
+        @SuppressWarnings("rawtypes")
         final NormalizedNodeContainerBuilder builder = createBuilder(legacyData);
 
         if (iterator.hasNext()) {
