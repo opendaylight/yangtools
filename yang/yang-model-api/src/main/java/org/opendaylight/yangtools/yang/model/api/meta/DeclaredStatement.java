@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.meta;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 /**
  * Represents declared statement
  *
@@ -18,7 +19,6 @@ import javax.annotation.Nullable;
 public interface DeclaredStatement<A> extends ModelStatement<A> {
 
     /**
-     *
      * Returns statement argument as was present in original source.
      *
      * @return statement argument as was present in original source or null, if statement does not take argument.
@@ -26,7 +26,6 @@ public interface DeclaredStatement<A> extends ModelStatement<A> {
     @Nullable String rawArgument();
 
     /**
-     *
      * Returns collection of explicitly declared child statements, while preserving its original
      * ordering from original source.
      *
@@ -34,5 +33,4 @@ public interface DeclaredStatement<A> extends ModelStatement<A> {
      *         source of model.
      */
     @Nonnull Collection<? extends DeclaredStatement<?>> declaredSubstatements();
-
 }

@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.model.api.meta;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
 /**
- *
  * Model specific namespace which allows access to specific
  *
  * {@link IdentifierNamespace} serves as common superclass for YANG model
@@ -24,14 +24,11 @@ import javax.annotation.Nullable;
  * @param <V> Value type
  */
 public interface IdentifierNamespace<K,V> {
-
     /**
-     *
      * Returns value associated with supplied identifier
      *
      * @param identifier Identifier of value
      * @return value or null, if identifier is not present in namespace.
      */
     @Nullable V get(@Nonnull K identifier);
-
 }

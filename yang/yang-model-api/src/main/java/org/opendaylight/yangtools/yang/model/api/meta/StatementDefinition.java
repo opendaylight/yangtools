@@ -13,7 +13,6 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
- *
  * Definition / model of YANG {@link DeclaredStatement} and {@link EffectiveStatement}.
  *
  * Statement concept is defined in RFC6020 section 6.3:
@@ -23,13 +22,9 @@ import org.opendaylight.yangtools.yang.common.QName;
  * </blockquote>
  *
  * Source: <a href="https://tools.ietf.org/html/rfc6020#section-6.3"> </a>
- *
- *
  */
 public interface StatementDefinition extends Immutable {
-
     /**
-     *
      * Returns name of the statement
      *
      * @return Name of the statement
@@ -38,7 +33,6 @@ public interface StatementDefinition extends Immutable {
     QName getStatementName();
 
     /**
-     *
      * Returns name of statement argument or null, if statement does not have
      * argument.
      *
@@ -48,7 +42,6 @@ public interface StatementDefinition extends Immutable {
     QName getArgumentName();
 
     /**
-     *
      * Returns class which represents declared version of statement associated
      * with this definition.
      *
@@ -62,7 +55,6 @@ public interface StatementDefinition extends Immutable {
     Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass();
 
     /**
-     *
      * Returns class which represents derived behaviour from supplied statement.
      *
      * This class should be interface, which defines convenience access to
@@ -73,5 +65,4 @@ public interface StatementDefinition extends Immutable {
      */
     @Nonnull
     Class<? extends EffectiveStatement<?,?>> getEffectiveRepresentationClass();
-
 }
