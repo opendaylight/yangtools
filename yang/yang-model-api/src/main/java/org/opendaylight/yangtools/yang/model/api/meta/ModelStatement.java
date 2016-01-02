@@ -11,7 +11,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 /**
- *
  * Model statement
  *
  * There are two base types of model statements:
@@ -32,7 +31,6 @@ import javax.annotation.Nullable;
  * @param <A> Argument type ({@link Void} if statement does not have argument.)
  */
 public interface ModelStatement<A> {
-
     /**
      * Statement Definition of this statement.
      *
@@ -41,7 +39,6 @@ public interface ModelStatement<A> {
     @Nonnull StatementDefinition statementDefinition();
 
     /**
-     *
      * Returns statement argument
      *
      * @return statement argument or null if statement does not have argument.
@@ -56,5 +53,4 @@ public interface ModelStatement<A> {
      * @return statement source.
      */
     @Nonnull StatementSource getStatementSource();
-
 }

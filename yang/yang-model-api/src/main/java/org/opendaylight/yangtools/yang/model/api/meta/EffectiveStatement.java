@@ -34,7 +34,6 @@ public interface EffectiveStatement<A, S extends DeclaredStatement<A>> extends M
     S getDeclared();
 
     /**
-     *
      * Returns value associated with supplied identifier
      *
      * @param <K>
@@ -48,15 +47,12 @@ public interface EffectiveStatement<A, S extends DeclaredStatement<A>> extends M
      * @param identifier
      *            Identifier of element.
      * @return Value if present, null otherwise.
-     *
-     *
      */
     //<K, V, N extends IdentifierNamespace<? super K, ? extends V>> V
     @Nullable
     <K,V,N extends IdentifierNamespace<K, V>> V get(@Nonnull Class<N> namespace,@Nonnull  K identifier);
 
     /**
-     *
      * Returns all local values from supplied namespace.
      *
      * @param <K>
@@ -73,11 +69,9 @@ public interface EffectiveStatement<A, S extends DeclaredStatement<A>> extends M
     <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(@Nonnull Class<N> namespace);
 
     /**
+     * Returns a collection of all effective substatements.
      *
-     * Returns iteration of all effective substatements.
-     *
-     * @return iteration of all effective substatements.
+     * @return collection of all effective substatements.
      */
-    Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements();
-
+    @Nonnull Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements();
 }
