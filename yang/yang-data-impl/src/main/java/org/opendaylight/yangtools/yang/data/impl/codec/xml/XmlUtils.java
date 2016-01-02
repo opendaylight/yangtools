@@ -24,8 +24,13 @@ public final class XmlUtils {
     };
 
     private XmlUtils() {
+        throw new UnsupportedOperationException();
     }
 
+    /**
+     * @deprecated This utility method is no longer needed: check type identity directly
+     */
+    @Deprecated
     public static TypeDefinition<?> resolveBaseTypeFrom(final @Nonnull TypeDefinition<?> type) {
         TypeDefinition<?> superType = type;
         while (superType.getBaseType() != null) {
