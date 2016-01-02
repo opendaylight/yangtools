@@ -14,15 +14,13 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ValueEffectiveStatementImpl;
 
 public class ValueStatementImpl extends AbstractDeclaredStatement<Integer> implements ValueStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
-            .VALUE)
-            .build();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
+        Rfc6020Mapping.VALUE).build();
 
-    protected ValueStatementImpl(StmtContext<Integer, ValueStatement, ?> context) {
+    protected ValueStatementImpl(final StmtContext<Integer, ValueStatement, ?> context) {
         super(context);
     }
 
@@ -34,7 +32,7 @@ public class ValueStatementImpl extends AbstractDeclaredStatement<Integer> imple
         }
 
         @Override
-        public Integer parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public Integer parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             int valueNum;
 
             try {
@@ -50,27 +48,26 @@ public class ValueStatementImpl extends AbstractDeclaredStatement<Integer> imple
         }
 
         @Override
-        public ValueStatement createDeclared(StmtContext<Integer, ValueStatement, ?> ctx) {
+        public ValueStatement createDeclared(final StmtContext<Integer, ValueStatement, ?> ctx) {
             return new ValueStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<Integer, ValueStatement> createEffective(
-                StmtContext<Integer, ValueStatement, EffectiveStatement<Integer, ValueStatement>> ctx) {
+                final StmtContext<Integer, ValueStatement, EffectiveStatement<Integer, ValueStatement>> ctx) {
             return new ValueEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<Integer, ValueStatement,
-                EffectiveStatement<Integer, ValueStatement>> stmt) throws SourceException {
+        public void onFullDefinitionDeclared(
+                final StmtContext.Mutable<Integer, ValueStatement, EffectiveStatement<Integer, ValueStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
     }
 
     @Override
-    public Integer getValue() {
+    public int getValue() {
         return argument();
     }
-
 }

@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface ValueStatement extends DeclaredStatement<Integer> {
-    // FIXME: turn this into an int
-    @Nonnull Integer getValue();
+
+    int getValue();
 }
