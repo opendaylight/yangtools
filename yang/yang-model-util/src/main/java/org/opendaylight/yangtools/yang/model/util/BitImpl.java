@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.Preconditions;
-import java.util.Collections;
+import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Objects;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -26,7 +26,7 @@ public final class BitImpl implements BitsTypeDefinition.Bit, Immutable {
     private final String description;
     private final String reference;
     private final Status status;
-    private List<UnknownSchemaNode> unknownNodes = Collections.emptyList();
+    private final List<UnknownSchemaNode> unknownNodes;
 
     public BitImpl(final Long position, final QName qname, final SchemaPath schemaPath, final String description,
             final String reference, final Status status, final List<UnknownSchemaNode> unknownNodes) {
@@ -38,6 +38,8 @@ public final class BitImpl implements BitsTypeDefinition.Bit, Immutable {
         this.status = status;
         if (unknownNodes != null) {
             this.unknownNodes = unknownNodes;
+        } else {
+            this.unknownNodes = ImmutableList.of();
         }
     }
 
@@ -88,7 +90,7 @@ public final class BitImpl implements BitsTypeDefinition.Bit, Immutable {
         result = prime * result + qname.hashCode();
         result = prime * result + schemaPath.hashCode();
         result = prime * result + position.hashCode();
-        result = prime * result + Objects.hashCode(unknownNodes);
+        result = prime * result + unknownNodes.hashCode();
         return result;
     }
 
