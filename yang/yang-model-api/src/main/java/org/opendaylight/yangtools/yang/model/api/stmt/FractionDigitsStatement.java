@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface FractionDigitsStatement extends DeclaredStatement<Integer> {
-    // FIXME: make this an int or a byte
-    @Nonnull Integer getValue();
+
+    int getValue();
 }
