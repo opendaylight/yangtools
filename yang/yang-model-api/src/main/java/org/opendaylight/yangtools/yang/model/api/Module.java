@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.List;
 import java.util.Set;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 
 /**
@@ -212,8 +213,12 @@ public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIden
     List<UnknownSchemaNode> getUnknownSchemaNodes();
 
     /**
-     * Get yang source.
+     * Get YANG source.
+     *
+     * @return YANG text of this module, or null if the source is not available.
+     * @deprecated Use {@link org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository#getSchemaSource(org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier, Class)}
+     *             instead.
      */
-    String getSource();
-
+    @Deprecated
+    @Nullable String getSource();
 }
