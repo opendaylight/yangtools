@@ -22,7 +22,7 @@ final class EnumStringCodec extends TypeDefinitionAwareCodec<String, EnumTypeDef
     private EnumStringCodec(final Optional<EnumTypeDefinition> typeDef) {
         super(typeDef, String.class);
         if (typeDef.isPresent()) {
-            final Builder<String, String> b = ImmutableMap.<String, String>builder();
+            final Builder<String, String> b = ImmutableMap.builder();
             for (final EnumPair pair : typeDef.get().getValues()) {
                 // Intern the String to get wide reuse
                 final String v = pair.getName().intern();
