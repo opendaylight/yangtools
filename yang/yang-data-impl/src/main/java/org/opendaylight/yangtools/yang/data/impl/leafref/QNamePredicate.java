@@ -7,12 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
+import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 
-public interface QNamePredicate {
-
-    QName getIdentifier();
+public interface QNamePredicate extends Identifiable<QName> {
 
     LeafRefPath getPathKeyExpression();
-
 }
