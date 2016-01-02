@@ -40,7 +40,6 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.w3c.dom.Element;
 
 /**
@@ -95,18 +94,6 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
             if (!ns.equals(parentNs)) {
                 writer.writeDefaultNamespace(ns);
             }
-        }
-    }
-
-    private void writeElement(final QName qname, final TypeDefinition<?> type, final Object value) throws IOException {
-        try {
-            writeStartElement(qname);
-            if (value != null) {
-                streamUtils.writeValue(writer, type, value, qname.getModule());
-            }
-            writer.writeEndElement();
-        } catch (XMLStreamException e) {
-            throw new IOException("Failed to emit element", e);
         }
     }
 
