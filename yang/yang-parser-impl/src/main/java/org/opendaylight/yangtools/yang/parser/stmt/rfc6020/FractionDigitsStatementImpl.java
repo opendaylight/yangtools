@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Range;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -25,7 +26,7 @@ public class FractionDigitsStatementImpl extends AbstractDeclaredStatement<Integ
 
     private static final Range<Integer> FRAC_DIGITS_ALLOWED = Range.closed(1, 18);
 
-    protected FractionDigitsStatementImpl(StmtContext<Integer, FractionDigitsStatement, ?> context) {
+    protected FractionDigitsStatementImpl(final StmtContext<Integer, FractionDigitsStatement, ?> context) {
         super(context);
     }
 
@@ -38,7 +39,7 @@ public class FractionDigitsStatementImpl extends AbstractDeclaredStatement<Integ
         }
 
         @Override
-        public Integer parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public Integer parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
 
             int fractionDigits;
 
@@ -49,27 +50,25 @@ public class FractionDigitsStatementImpl extends AbstractDeclaredStatement<Integ
                         value), e);
             }
 
-            if (!FRAC_DIGITS_ALLOWED.contains(fractionDigits)) {
-                throw new IllegalArgumentException(String.format("fraction-digits argument should be integer within %s",
-                        FRAC_DIGITS_ALLOWED));
-            }
+            Preconditions.checkArgument(FRAC_DIGITS_ALLOWED.contains(fractionDigits),
+                "fraction-digits argument should be integer within %s", FRAC_DIGITS_ALLOWED);
 
             return fractionDigits;
         }
 
         @Override
-        public FractionDigitsStatement createDeclared(StmtContext<Integer, FractionDigitsStatement, ?> ctx) {
+        public FractionDigitsStatement createDeclared(final StmtContext<Integer, FractionDigitsStatement, ?> ctx) {
             return new FractionDigitsStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<Integer, FractionDigitsStatement> createEffective(
-                StmtContext<Integer, FractionDigitsStatement, EffectiveStatement<Integer, FractionDigitsStatement>> ctx) {
+                final StmtContext<Integer, FractionDigitsStatement, EffectiveStatement<Integer, FractionDigitsStatement>> ctx) {
             return new FractionDigitsEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<Integer, FractionDigitsStatement,
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<Integer, FractionDigitsStatement,
                 EffectiveStatement<Integer, FractionDigitsStatement>> stmt) throws SourceException {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
@@ -77,7 +76,7 @@ public class FractionDigitsStatementImpl extends AbstractDeclaredStatement<Integ
     }
 
     @Override
-    public Integer getValue() {
+    public int getValue() {
         return argument();
     }
 }
