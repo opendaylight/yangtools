@@ -13,5 +13,4 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 public interface UnknownStatement<S> extends DeclaredStatement<S> {
 
     @Nullable S getArgument();
-
 }

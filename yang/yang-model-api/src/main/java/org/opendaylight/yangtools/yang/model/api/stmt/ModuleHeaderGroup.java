@@ -14,7 +14,8 @@ import javax.annotation.Nullable;
 public interface ModuleHeaderGroup {
 
     @Nullable YangVersionStatement getYangVersion();
-    @Nonnull NamespaceStatement getNamespace();
-    @Nonnull PrefixStatement getPrefix();
 
+    @Nonnull NamespaceStatement getNamespace();
+
+    @Nonnull PrefixStatement getPrefix();
 }

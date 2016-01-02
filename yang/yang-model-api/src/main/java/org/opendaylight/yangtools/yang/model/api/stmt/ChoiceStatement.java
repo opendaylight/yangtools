@@ -11,8 +11,6 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-
-
 public interface ChoiceStatement extends DataDefinitionStatement {
 
     @Nullable DefaultStatement getDefault();

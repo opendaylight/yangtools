@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface YangVersionStatement extends DeclaredStatement<String> {
 
-        @Nonnull String getValue();
+    @Nonnull String getValue();
 }
 

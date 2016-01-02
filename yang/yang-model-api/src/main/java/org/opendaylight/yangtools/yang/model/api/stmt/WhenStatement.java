@@ -14,6 +14,5 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 public interface WhenStatement extends DeclaredStatement<RevisionAwareXPath>, DocumentationGroup {
 
     @Nonnull RevisionAwareXPath getCondition();
-
 }
 

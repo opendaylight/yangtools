@@ -21,7 +21,6 @@ public interface TypeStatement extends DeclaredStatement<String> {
     interface NumericalRestrictions extends TypeStatement {
 
         @Nonnull RangeStatement getRange();
-
     }
 
     @Rfc6020AbnfRule("decimal64-specification")
@@ -30,7 +29,6 @@ public interface TypeStatement extends DeclaredStatement<String> {
         @Nonnull FractionDigitsStatement getFractionDigits();
 
         @Nullable RangeStatement getRange();
-
     }
 
     @Rfc6020AbnfRule("string-restrictions")
@@ -45,14 +43,12 @@ public interface TypeStatement extends DeclaredStatement<String> {
     interface EnumSpecification extends TypeStatement {
 
         @Nonnull Collection<? extends EnumStatement> getEnums();
-
     }
 
     @Rfc6020AbnfRule("leafref-specification")
     interface LeafrefSpecification extends TypeStatement {
 
         @Nonnull PathStatement getPath();
-
     }
 
     @Rfc6020AbnfRule("instanceidentifier-specification")
@@ -65,21 +61,18 @@ public interface TypeStatement extends DeclaredStatement<String> {
     interface IdentityRefSpecification extends TypeStatement {
 
         @Nonnull BaseStatement getBase();
-
     }
 
     @Rfc6020AbnfRule("bits-specification")
     interface BitsSpecification extends TypeStatement {
 
         @Nonnull Collection<? extends BitStatement> getBits();
-
     }
 
     @Rfc6020AbnfRule("union-specification")
     interface UnionSpecification extends TypeStatement {
 
         @Nonnull Collection<? extends TypeStatement> getTypes();
-
     }
 
     @Rfc6020AbnfRule("binary-specification")

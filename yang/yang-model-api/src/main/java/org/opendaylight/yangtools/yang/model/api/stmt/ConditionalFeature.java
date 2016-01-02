@@ -10,10 +10,8 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 
-
 @Rfc6020AbnfRule("*(if-feature-stmt)")
 public interface ConditionalFeature {
 
     @Nonnull Collection<? extends IfFeatureStatement> getIfFeatures();
-
 }

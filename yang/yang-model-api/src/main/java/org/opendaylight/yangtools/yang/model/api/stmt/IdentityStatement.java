@@ -17,5 +17,4 @@ public interface IdentityStatement extends DeclaredStatement<QName>, Documentati
     @Nonnull QName getName();
 
     @Nullable BaseStatement getBase();
-
 }

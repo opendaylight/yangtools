@@ -14,5 +14,4 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 public interface FeatureStatement extends DeclaredStatement<QName>, DocumentationGroup.WithStatus, ConditionalFeature {
 
     @Nonnull QName getName();
-
 }

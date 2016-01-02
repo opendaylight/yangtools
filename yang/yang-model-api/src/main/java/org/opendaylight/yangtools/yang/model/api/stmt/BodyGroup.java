@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 
-
 @Rfc6020AbnfRule("body-stmts")
 public interface BodyGroup extends DataDefinitionContainer.WithReusableDefinitions {
 
@@ -27,5 +26,4 @@ public interface BodyGroup extends DataDefinitionContainer.WithReusableDefinitio
     @Nonnull Collection<? extends NotificationStatement> getNotifications();
 
     @Nonnull Collection<? extends DeviationStatement> getDeviations();
-
 }

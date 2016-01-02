@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 
-
 @Rfc6020AbnfRule("linkage-stms")
 public interface LinkageGroup {
 

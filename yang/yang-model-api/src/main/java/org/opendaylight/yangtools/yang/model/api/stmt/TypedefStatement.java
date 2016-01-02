@@ -13,8 +13,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface TypedefStatement extends DeclaredStatement<QName>,DocumentationGroup.WithStatus, TypeGroup {
 
-
     @Nonnull QName getName();
-
 }
 

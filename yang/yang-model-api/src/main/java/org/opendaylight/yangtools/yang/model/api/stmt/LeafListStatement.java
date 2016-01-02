@@ -10,12 +10,9 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.util.Collection;
 import javax.annotation.Nullable;
 
-
-
 public interface LeafListStatement extends DataDefinitionStatement, MultipleElementsGroup, TypeGroup {
 
     @Nullable Collection<? extends MustStatement> getMusts();
 
     @Nullable ConfigStatement getConfig();
-
 }

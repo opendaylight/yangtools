@@ -13,5 +13,4 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 public interface AugmentStatement extends DeclaredStatement<SchemaNodeIdentifier> , DataDefinitionContainer {
 
     @Nonnull SchemaNodeIdentifier getTargetNode();
-
 }

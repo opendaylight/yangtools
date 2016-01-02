@@ -14,5 +14,4 @@ public interface ModuleStatement extends DeclaredStatement<String>, ModuleHeader
         RevisionGroup, BodyGroup {
 
     @Nonnull String getName();
-
 }

@@ -11,18 +11,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface SubmoduleStatement extends
-    DeclaredStatement<String>,
-    LinkageGroup,
-    MetaGroup,
-    RevisionGroup,
-    BodyGroup {
+public interface SubmoduleStatement extends DeclaredStatement<String>, LinkageGroup, MetaGroup, RevisionGroup,
+        BodyGroup {
 
     @Nonnull String getName();
 
     @Nullable YangVersionStatement getYangVersion();
 
     @Nonnull BelongsToStatement getBelongsTo();
-
 }
 

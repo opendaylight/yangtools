@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-
 public interface UnitsStatement extends DeclaredStatement<String> {
 
     @Nonnull String getName();

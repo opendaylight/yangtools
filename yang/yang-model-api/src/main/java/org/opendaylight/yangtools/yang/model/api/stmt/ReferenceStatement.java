@@ -13,6 +13,5 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 public interface ReferenceStatement extends DeclaredStatement<String> {
 
     @Nonnull String getText();
-
 }
 

@@ -14,6 +14,4 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 public interface ExtensionStatement extends DeclaredStatement<QName>, DocumentationGroup.WithStatus {
 
     @Nullable ArgumentStatement getArgument();
-
-
 }

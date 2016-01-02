@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.util.Collection;
 import javax.annotation.Nullable;
 
-
 public interface ContainerStatement extends DataDefinitionStatement, DataDefinitionContainer.WithReusableDefinitions {
 
     @Nullable Collection<? extends MustStatement> getMusts();
@@ -18,5 +17,4 @@ public interface ContainerStatement extends DataDefinitionStatement, DataDefinit
     @Nullable PresenceStatement getPresence();
 
     @Nullable ConfigStatement getConfig();
-
 }

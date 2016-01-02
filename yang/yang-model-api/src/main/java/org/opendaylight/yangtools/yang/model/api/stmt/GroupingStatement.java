@@ -11,9 +11,7 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-
 public interface GroupingStatement extends DeclaredStatement<QName>, DocumentationGroup.WithStatus,DataDefinitionContainer.WithReusableDefinitions {
 
     @Nonnull QName getName();
-
 }

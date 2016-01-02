@@ -14,5 +14,4 @@ public interface DocumentedConstraintGroup extends DocumentationGroup {
     @Nullable ErrorAppTagStatement getErrorAppTagStatement();
 
     @Nullable ErrorMessageStatement getErrorMessageStatement();
-
 }

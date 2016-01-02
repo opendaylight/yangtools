@@ -12,14 +12,11 @@ import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-
-
 @Rfc6020AbnfRule("argument-stmt")
 public interface ArgumentStatement extends DeclaredStatement<QName> {
 
     @Nonnull QName getName();
 
     @Nullable YinElementStatement getYinElement();
-
 }
 

@@ -15,6 +15,5 @@ public interface PathStatement extends DeclaredStatement<RevisionAwareXPath> {
 
     // FIXME: Introduce proper type representing parsed leafref
     @Nonnull String getValue();
-
 }
 
