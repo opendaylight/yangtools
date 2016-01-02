@@ -20,7 +20,10 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
  * Common XML-related utility methods, which are not specific to a particular JAXP API.
+ *
+ * @deprecated Used for interim testing, to be removed in near future.
  */
+@Deprecated
 public final class XmlUtils {
     public static final XmlCodecProvider DEFAULT_XML_CODEC_PROVIDER = new XmlCodecProvider() {
         @Override
