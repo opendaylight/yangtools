@@ -43,6 +43,11 @@ public class XmlStreamUtils {
     private final XmlCodecProvider codecProvider;
     private final Optional<SchemaContext> schemaContext;
 
+    /**
+     * @deprecated Use {@link #create(XmlCodecProvider)} instead. This method will be hidden and the class
+     *             made final in a future release.
+     */
+    @Deprecated
     protected XmlStreamUtils(final XmlCodecProvider codecProvider) {
         this(codecProvider, null);
     }
@@ -59,7 +64,11 @@ public class XmlStreamUtils {
      * @return A new instance
      */
     public static XmlStreamUtils create(final XmlCodecProvider codecProvider) {
-        return new XmlStreamUtils(codecProvider);
+        return new XmlStreamUtils(codecProvider, null);
+    }
+
+    public static XmlStreamUtils create(final XmlCodecProvider codecProvider, final SchemaContext schemaContext) {
+        return new XmlStreamUtils(codecProvider, schemaContext);
     }
 
     @VisibleForTesting
@@ -211,9 +220,5 @@ public class XmlStreamUtils {
             final String p = e.getValue();
             writer.writeNamespace(p, ns);
         }
-    }
-
-    public static XmlStreamUtils create(final XmlCodecProvider codecProvider, final SchemaContext schemaContext) {
-        return new XmlStreamUtils(codecProvider, schemaContext);
     }
 }
