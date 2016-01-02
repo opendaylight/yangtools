@@ -28,9 +28,9 @@ class LeafRefContextBuilder {
     private boolean isReferencedBy = false;
     private boolean isReferencing = false;
 
-    private Map<QName, LeafRefContext> referencingChilds = new HashMap<QName, LeafRefContext>();
-    private Map<QName, LeafRefContext> referencedByChilds = new HashMap<QName, LeafRefContext>();
-    private Map<QName, LeafRefContext> referencedByLeafRefCtx = new HashMap<QName, LeafRefContext>();
+    private final Map<QName, LeafRefContext> referencingChildren = new HashMap<>();
+    private final Map<QName, LeafRefContext> referencedByChildren = new HashMap<>();
+    private final Map<QName, LeafRefContext> referencedByLeafRefCtx = new HashMap<>();
 
     public LeafRefContextBuilder(final QName currentNodeQName,
             final SchemaPath currentNodePath, final SchemaContext schemaContext) {
@@ -42,9 +42,10 @@ class LeafRefContextBuilder {
     public LeafRefContext build() {
         final LeafRefContext leafRefContext = new LeafRefContext(this);
 
-        referencingChilds = new HashMap<QName, LeafRefContext>();
-        referencedByChilds = new HashMap<QName, LeafRefContext>();
-        referencedByLeafRefCtx = new HashMap<QName, LeafRefContext>();
+        // LeafRefContext has made a copy of these
+        referencingChildren.clear();
+        referencedByChildren.clear();
+        referencedByLeafRefCtx.clear();
 
         return leafRefContext;
     }
@@ -54,11 +55,11 @@ class LeafRefContextBuilder {
     }
 
     public boolean hasReferencedByChild() {
-        return !referencedByChilds.isEmpty();
+        return !referencedByChildren.isEmpty();
     }
 
     public boolean hasReferencingChild() {
-        return !referencingChilds.isEmpty();
+        return !referencingChildren.isEmpty();
     }
 
     public boolean isReferencedBy() {
@@ -78,27 +79,27 @@ class LeafRefContextBuilder {
     }
 
     public void addReferencingChild(final LeafRefContext child, final QName childQName) {
-        referencingChilds.put(childQName, child);
+        referencingChildren.put(childQName, child);
     }
 
     public LeafRefContext getReferencingChildByName(final QName name) {
-        return referencingChilds.get(name);
+        return referencingChildren.get(name);
     }
 
     public Map<QName, LeafRefContext> getReferencingChilds() {
-        return referencingChilds;
+        return referencingChildren;
     }
 
     public void addReferencedByChild(final LeafRefContext child, final QName childQName) {
-        referencedByChilds.put(childQName, child);
+        referencedByChildren.put(childQName, child);
     }
 
     public LeafRefContext getReferencedByChildByName(final QName name) {
-        return referencedByChilds.get(name);
+        return referencedByChildren.get(name);
     }
 
     public Map<QName, LeafRefContext> getReferencedByChilds() {
-        return referencedByChilds;
+        return referencedByChildren;
     }
 
     public SchemaPath getCurrentNodePath() {
