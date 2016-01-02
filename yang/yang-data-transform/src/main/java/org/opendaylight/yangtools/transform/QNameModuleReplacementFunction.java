@@ -17,17 +17,13 @@ class QNameModuleReplacementFunction implements Function<QName, QName> {
 
     private final Map<QNameModule, QNameModule> mapping;
 
-    QNameModuleReplacementFunction(Map<QNameModule, QNameModule> mapping) {
+    QNameModuleReplacementFunction(final Map<QNameModule, QNameModule> mapping) {
         this.mapping = Preconditions.checkNotNull(mapping);
     }
 
     @Override
-    public QName apply(QName input) {
-        QNameModule potential = mapping.get(input.getModule());
-        if (potential != null) {
-            return QName.cachedReference(QName.create(potential, input.getLocalName()));
-        }
-        return input;
+    public QName apply(final QName input) {
+        final QNameModule potential = mapping.get(input.getModule());
+        return potential == null ? input : QName.create(potential, input.getLocalName()).intern();
     }
-
 }
