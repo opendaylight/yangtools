@@ -14,17 +14,13 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PositionEffectiveStatementImpl;
 
-public class PositionStatementImpl extends AbstractDeclaredStatement<Long>
-        implements PositionStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
-            .POSITION)
-            .build();
+public class PositionStatementImpl extends AbstractDeclaredStatement<Long> implements PositionStatement {
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
+        Rfc6020Mapping.POSITION).build();
 
-    protected PositionStatementImpl(
-            StmtContext<Long, PositionStatement, ?> context) {
+    protected PositionStatementImpl(final StmtContext<Long, PositionStatement, ?> context) {
         super(context);
     }
 
@@ -37,7 +33,7 @@ public class PositionStatementImpl extends AbstractDeclaredStatement<Long>
         }
 
         @Override
-        public Long parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public Long parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             try {
                 return Long.parseLong(value);
             } catch (NumberFormatException e) {
@@ -46,28 +42,26 @@ public class PositionStatementImpl extends AbstractDeclaredStatement<Long>
         }
 
         @Override
-        public PositionStatement createDeclared(
-                StmtContext<Long, PositionStatement, ?> ctx) {
+        public PositionStatement createDeclared(final StmtContext<Long, PositionStatement, ?> ctx) {
             return new PositionStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<Long, PositionStatement> createEffective(
-                StmtContext<Long, PositionStatement, EffectiveStatement<Long, PositionStatement>> ctx) {
+                final StmtContext<Long, PositionStatement, EffectiveStatement<Long, PositionStatement>> ctx) {
             return new PositionEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<Long, PositionStatement,
-                EffectiveStatement<Long, PositionStatement>> stmt) throws SourceException {
+        public void onFullDefinitionDeclared(
+                final StmtContext.Mutable<Long, PositionStatement, EffectiveStatement<Long, PositionStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
     }
 
     @Override
-    public Long getValue() {
+    public long getValue() {
         return argument();
     }
-
 }
