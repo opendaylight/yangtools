@@ -12,8 +12,7 @@ import java.io.Serializable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
-class QNamePredicateImpl implements Immutable, Serializable,
-        QNamePredicate {
+class QNamePredicateImpl implements Immutable, Serializable, QNamePredicate {
 
     private static final long serialVersionUID = 1L;
     private final QName identifier;
