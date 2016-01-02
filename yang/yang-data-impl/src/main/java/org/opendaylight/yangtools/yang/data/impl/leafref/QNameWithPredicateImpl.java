@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
+import com.google.common.collect.ImmutableList;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +28,7 @@ final class QNameWithPredicateImpl implements Immutable, Serializable,
             final List<QNamePredicate> qnamePredicates) {
         this.moduleQname = moduleQname;
         this.localName = localName;
-        this.qnamePredicates = qnamePredicates;
+        this.qnamePredicates = ImmutableList.copyOf(qnamePredicates);
     }
 
     @Override
