@@ -8,9 +8,10 @@
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
 import java.io.IOException;
-import java.io.InputStream;
-import org.antlr.v4.runtime.ANTLRInputStream;
+import java.io.Reader;
+import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.UnbufferedCharStream;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefPathParser.Path_argContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -28,22 +29,19 @@ final class LeafRefPathParserImpl {
         this.node = currentNode;
     }
 
-    public LeafRefPath parseLeafRefPathSourceToSchemaPath(final InputStream stream) throws IOException, LeafRefYangSyntaxErrorException {
-
-        final Path_argContext pathCtx = parseLeafRefPathSource(stream);
-
+    public LeafRefPath parseLeafRefPathSourceToSchemaPath(final Reader reader) throws IOException, LeafRefYangSyntaxErrorException {
+        final Path_argContext pathCtx = parseLeafRefPathSource(new UnbufferedCharStream(reader));
         final ParseTreeWalker walker = new ParseTreeWalker();
         final LeafRefPathParserListenerImpl leafRefPathParserListenerImpl = new LeafRefPathParserListenerImpl(schemaContext, module, node);
-        walker.walk(leafRefPathParserListenerImpl,pathCtx);
+        walker.walk(leafRefPathParserListenerImpl, pathCtx);
 
         final LeafRefPath leafRefPath = leafRefPathParserListenerImpl.getLeafRefPath();
 
         return leafRefPath;
     }
 
-
-    private Path_argContext parseLeafRefPathSource(final InputStream stream) throws IOException, LeafRefYangSyntaxErrorException {
-        final LeafRefPathLexer lexer = new LeafRefPathLexer(new ANTLRInputStream(stream));
+    private Path_argContext parseLeafRefPathSource(final CharStream stream) throws IOException, LeafRefYangSyntaxErrorException {
+        final LeafRefPathLexer lexer = new LeafRefPathLexer(stream);
         final CommonTokenStream tokens = new CommonTokenStream(lexer);
         final LeafRefPathParser parser = new LeafRefPathParser(tokens);
         parser.removeErrorListeners();
