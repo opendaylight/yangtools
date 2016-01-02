@@ -26,7 +26,7 @@ public interface UsesNode {
 
     /**
      *
-     * Returns agumentations which were specified in this uses node.
+     * Returns augmentations which were specified in this uses node.
      *
      * @return Set of augment statements defined under this uses node
      */

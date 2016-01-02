@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 /**
- * Enum describing YANG 'status' statement. If no status is specified, the
+ * Enumeration describing YANG 'status' statement. If no status is specified, the
  * default is CURRENT.
  */
 public enum Status {
