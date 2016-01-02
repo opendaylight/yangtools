@@ -10,6 +10,10 @@ package org.opendaylight.yangtools.yang.model.util;
 import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
+/**
+ * @deprecated Deprecated {@link DerivedType} subclass.
+ */
+@Deprecated
 class DerivedBitsType extends DerivedType<BitsTypeDefinition> implements BitsTypeDefinition {
 
     public DerivedBitsType(final ExtendedType definition) {

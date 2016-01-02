@@ -10,6 +10,10 @@ package org.opendaylight.yangtools.yang.model.util;
 import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 
+/**
+ * @deprecated Deprecated {@link DerivedType} subclass.
+ */
+@Deprecated
 class DerivedEnumType extends DerivedType<EnumTypeDefinition> implements EnumTypeDefinition {
 
     public DerivedEnumType(final ExtendedType definition) {

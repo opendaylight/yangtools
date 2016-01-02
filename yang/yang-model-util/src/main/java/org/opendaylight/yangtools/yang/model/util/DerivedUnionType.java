@@ -11,6 +11,10 @@ import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
+/**
+ * @deprecated Deprecated {@link DerivedType} subclass.
+ */
+@Deprecated
 class DerivedUnionType extends DerivedType<UnionTypeDefinition> implements UnionTypeDefinition {
 
     public DerivedUnionType(final ExtendedType definition) {
