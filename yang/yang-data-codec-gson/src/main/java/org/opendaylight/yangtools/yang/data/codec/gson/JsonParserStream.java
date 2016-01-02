@@ -52,15 +52,17 @@ public final class JsonParserStream implements Closeable, Flushable {
     private final SchemaContext schema;
     private final DataSchemaNode parentNode;
 
-    private JsonParserStream(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext, final DataSchemaNode parentNode) {
+    private JsonParserStream(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
+            final DataSchemaNode parentNode) {
         this.schema = Preconditions.checkNotNull(schemaContext);
         this.writer = DataSchemaNodeAwareAdaptor.forWriter(writer);
         this.codecs = JSONCodecFactory.create(schemaContext);
         this.parentNode = parentNode;
     }
 
-    public static JsonParserStream create(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext, final SchemaNode parentNode ) {
-        if(parentNode instanceof RpcDefinition) {
+    public static JsonParserStream create(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
+            final SchemaNode parentNode ) {
+        if (parentNode instanceof RpcDefinition) {
             return new JsonParserStream(writer, schemaContext, new RpcAsContainer((RpcDefinition) parentNode));
         }
         Preconditions.checkArgument(parentNode instanceof DataSchemaNode, "Instance of DataSchemaNode class awaited.");

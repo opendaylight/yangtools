@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import com.google.common.base.Preconditions;
 import com.google.gson.stream.JsonWriter;
 
-
-
 /**
  * A virtual recursion level in {@link JSONNormalizedNodeStreamWriter}, used for nodes
  * which are not emitted in the JSON representation.

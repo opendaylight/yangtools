@@ -12,9 +12,11 @@ import java.io.IOException;
 import org.opendaylight.yangtools.concepts.Codec;
 
 interface JSONCodec<T> extends Codec<String, T> {
-    // FIXME: Unused, remove once we are sure we do not need this anymore.
+    /**
+     * @deprecated Unused, remove once we are sure we do not need this anymore.
+     */
+    @Deprecated
     boolean needQuotes();
-
 
     /**
      * Serialize specified value with specified JsonWriter.
