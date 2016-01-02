@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+/**
+ * @deprecated Use {@link SchemaContextProvider} instead.
+ */
+@Deprecated
 public interface SchemaContextHolder {
 
     SchemaContext getSchemaContext();
