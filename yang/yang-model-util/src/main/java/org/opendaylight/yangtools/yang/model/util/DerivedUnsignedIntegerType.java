@@ -11,6 +11,10 @@ import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
+/**
+ * @deprecated Deprecated {@link DerivedType} subclass.
+ */
+@Deprecated
 class DerivedUnsignedIntegerType extends DerivedType<UnsignedIntegerTypeDefinition> implements
         UnsignedIntegerTypeDefinition {
 

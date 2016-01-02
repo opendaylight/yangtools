@@ -10,6 +10,10 @@ package org.opendaylight.yangtools.yang.model.util;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 
+/**
+ * @deprecated Deprecated {@link DerivedType} subclass.
+ */
+@Deprecated
 class DerivedInstanceIdentifierType extends DerivedType<InstanceIdentifierTypeDefinition> implements
         InstanceIdentifierTypeDefinition {
 

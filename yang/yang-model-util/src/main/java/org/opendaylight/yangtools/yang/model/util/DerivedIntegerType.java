@@ -11,6 +11,10 @@ import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
+/**
+ * @deprecated Deprecated {@link DerivedType} subclass.
+ */
+@Deprecated
 class DerivedIntegerType extends DerivedType<IntegerTypeDefinition> implements IntegerTypeDefinition {
 
     public DerivedIntegerType(final ExtendedType definition) {

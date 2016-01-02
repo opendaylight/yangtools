@@ -10,6 +10,10 @@ package org.opendaylight.yangtools.yang.model.util;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
+/**
+ * @deprecated Deprecated {@link DerivedType} subclass.
+ */
+@Deprecated
 class DerivedLeafrefType extends DerivedType<LeafrefTypeDefinition> implements LeafrefTypeDefinition {
 
     public DerivedLeafrefType(final ExtendedType definition) {

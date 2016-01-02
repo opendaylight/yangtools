@@ -12,6 +12,10 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 
+/**
+ * @deprecated Deprecated {@link DerivedType} subclass.
+ */
+@Deprecated
 class DerivedStringType extends DerivedType<StringTypeDefinition> implements StringTypeDefinition {
 
     public DerivedStringType(final ExtendedType definition) {

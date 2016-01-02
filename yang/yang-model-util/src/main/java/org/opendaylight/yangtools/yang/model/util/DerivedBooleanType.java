@@ -9,6 +9,10 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 
+/**
+ * @deprecated Deprecated {@link DerivedType} subclass.
+ */
+@Deprecated
 class DerivedBooleanType extends DerivedType<BooleanTypeDefinition> implements BooleanTypeDefinition {
 
     public DerivedBooleanType(final ExtendedType definition) {

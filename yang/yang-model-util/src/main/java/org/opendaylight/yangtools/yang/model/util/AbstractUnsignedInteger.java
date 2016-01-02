@@ -33,7 +33,9 @@ import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinit
  * inclusively.</li>
  * </ul>
  *
+ * @deprecated Used only by deprecated {@link Uint8} and friends.
  */
+@Deprecated
 abstract class AbstractUnsignedInteger implements UnsignedIntegerTypeDefinition {
     private static final String REFERENCE = "https://tools.ietf.org/html/rfc6020#section-9.2";
     private static final Optional<String> OPT_REF = Optional.of("https://tools.ietf.org/html/rfc6020#section-9.2.4");

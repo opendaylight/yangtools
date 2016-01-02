@@ -10,6 +10,10 @@ package org.opendaylight.yangtools.yang.model.util;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
+/**
+ * @deprecated Deprecated {@link DerivedType} subclass.
+ */
+@Deprecated
 class DerivedIdentityrefType extends DerivedType<IdentityrefTypeDefinition> implements
         IdentityrefTypeDefinition {
 

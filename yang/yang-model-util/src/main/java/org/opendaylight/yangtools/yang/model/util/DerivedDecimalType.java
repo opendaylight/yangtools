@@ -11,6 +11,10 @@ import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
+/**
+ * @deprecated Deprecated {@link DerivedType} subclass.
+ */
+@Deprecated
 class DerivedDecimalType extends DerivedType<DecimalTypeDefinition> implements DecimalTypeDefinition {
 
     public DerivedDecimalType(final ExtendedType definition) {

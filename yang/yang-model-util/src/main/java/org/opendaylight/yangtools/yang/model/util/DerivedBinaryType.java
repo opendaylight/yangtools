@@ -11,6 +11,10 @@ import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
+/**
+ * @deprecated Deprecated {@link DerivedType} subclass.
+ */
+@Deprecated
 class DerivedBinaryType extends DerivedType<BinaryTypeDefinition> implements BinaryTypeDefinition {
 
     public DerivedBinaryType(final ExtendedType definition) {
