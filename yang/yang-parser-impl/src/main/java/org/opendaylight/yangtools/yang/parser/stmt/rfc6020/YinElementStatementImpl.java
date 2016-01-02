@@ -19,17 +19,14 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.YinElementE
 
 public class YinElementStatementImpl extends AbstractDeclaredStatement<Boolean>
         implements YinElementStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
-            .YIN_ELEMENT)
-            .build();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
+        Rfc6020Mapping.YIN_ELEMENT).build();
 
-    protected YinElementStatementImpl(
-            StmtContext<Boolean, YinElementStatement, ?> context) {
+    protected YinElementStatementImpl(final StmtContext<Boolean, YinElementStatement, ?> context) {
         super(context);
     }
 
-    public static class Definition
-            extends
+    public static class Definition extends
             AbstractStatementSupport<Boolean, YinElementStatement, EffectiveStatement<Boolean, YinElementStatement>> {
 
         public Definition() {
@@ -37,24 +34,23 @@ public class YinElementStatementImpl extends AbstractDeclaredStatement<Boolean>
         }
 
         @Override
-        public Boolean parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public Boolean parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return Boolean.valueOf(value);
         }
 
         @Override
-        public YinElementStatement createDeclared(
-                StmtContext<Boolean, YinElementStatement, ?> ctx) {
+        public YinElementStatement createDeclared(final StmtContext<Boolean, YinElementStatement, ?> ctx) {
             return new YinElementStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<Boolean, YinElementStatement> createEffective(
-                StmtContext<Boolean, YinElementStatement, EffectiveStatement<Boolean, YinElementStatement>> ctx) {
+                final StmtContext<Boolean, YinElementStatement, EffectiveStatement<Boolean, YinElementStatement>> ctx) {
             return new YinElementEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<Boolean, YinElementStatement,
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<Boolean, YinElementStatement,
                 EffectiveStatement<Boolean, YinElementStatement>> stmt) throws SourceException {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
@@ -62,8 +58,7 @@ public class YinElementStatementImpl extends AbstractDeclaredStatement<Boolean>
     }
 
     @Override
-    public Boolean getValue() {
+    public boolean getValue() {
         return argument();
     }
-
 }
