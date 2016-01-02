@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.leafref;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -127,28 +127,23 @@ class LeafRefContextTreeBuilder {
                 type = ((LeafListSchemaNode) node).getType();
             }
 
-            // FIXME: fix case when type is e.g. typdef -> typedef -> leafref
+            // FIXME: fix case when type is e.g. typedef -> typedef -> leafref
             if (type instanceof LeafrefTypeDefinition) {
                 final LeafrefTypeDefinition leafrefType = (LeafrefTypeDefinition) type;
-                final String leafRefPathString = leafrefType.getPathStatement()
-                        .toString();
+                final String leafRefPathString = leafrefType.getPathStatement().toString();
 
-                currentLeafRefContextBuilder
-                        .setLeafRefTargetPathString(leafRefPathString);
+                currentLeafRefContextBuilder.setLeafRefTargetPathString(leafRefPathString);
                 currentLeafRefContextBuilder.setReferencing(true);
 
                 final LeafRefPathParserImpl leafRefPathParser = new LeafRefPathParserImpl(
                         schemaContext, currentModule, node);
 
-                final ByteArrayInputStream leafRefPathInputStream = new ByteArrayInputStream(
-                        leafRefPathString.getBytes(Charset.forName("UTF-8")));
-                final LeafRefPath leafRefPath = leafRefPathParser
-                        .parseLeafRefPathSourceToSchemaPath(leafRefPathInputStream);
+                final LeafRefPath leafRefPath = leafRefPathParser.parseLeafRefPathSourceToSchemaPath(
+                    new ByteArrayInputStream(leafRefPathString.getBytes(StandardCharsets.UTF_8)));
 
                 currentLeafRefContextBuilder.setLeafRefTargetPath(leafRefPath);
 
-                final LeafRefContext currentLeafRefContext = currentLeafRefContextBuilder
-                        .build();
+                final LeafRefContext currentLeafRefContext = currentLeafRefContextBuilder.build();
                 leafRefs.add(currentLeafRefContext);
                 return currentLeafRefContext;
             }
