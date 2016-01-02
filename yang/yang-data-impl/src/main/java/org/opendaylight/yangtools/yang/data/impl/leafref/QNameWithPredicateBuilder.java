@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
 class QNameWithPredicateBuilder {
 
-    private List<QNamePredicate> qnamePredicates;
+    private final List<QNamePredicate> qnamePredicates = new ArrayList<>();
     private QNameModule moduleQname;
     private String localName;
 
@@ -29,15 +29,14 @@ class QNameWithPredicateBuilder {
     public QNameWithPredicateBuilder(final QNameModule moduleQname, final String localName) {
         this.moduleQname = moduleQname;
         this.localName = localName;
-        this.qnamePredicates = new LinkedList<>();
     }
 
     public QNameWithPredicate build() {
         final QNameWithPredicateImpl qNameWithPredicateImpl = new QNameWithPredicateImpl(
                 moduleQname, localName, qnamePredicates);
 
-        this.qnamePredicates = new LinkedList<>();
-
+        // QNameWithPredicateImpl has taken a copy
+        qnamePredicates.clear();
         return qNameWithPredicateImpl;
     }
 
@@ -81,7 +80,7 @@ class QNameWithPredicateBuilder {
     @Override
     public int hashCode() {
         int result = moduleQname != null ? moduleQname.hashCode() : 0;
-        result = 31 * result + (localName != null ? localName.hashCode() : 0);
+        result = 31 * result + Objects.hashCode(localName);
         return result;
     }
 
