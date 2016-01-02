@@ -9,17 +9,10 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.common.QName;
-
-
 
 public interface UsesStatement extends DataDefinitionStatement {
-
-    @Override
-    @Nonnull QName getName();
 
     @Nonnull Collection<? extends RefineStatement> getRefines();
 
     @Nonnull Collection<? extends AugmentStatement> getAugments();
-
 }
