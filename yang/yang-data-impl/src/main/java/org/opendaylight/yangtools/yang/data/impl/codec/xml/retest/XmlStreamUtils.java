@@ -37,7 +37,10 @@ import org.slf4j.LoggerFactory;
 /**
  * Utility class for bridging JAXP Stream and YANG Data APIs. Note that the definition of this class by no means final
  * and subject to change as more functionality is centralized here.
+ *
+ * @deprecated Used for interim testing, to be removed in near future.
  */
+@Deprecated
 @Beta
 public class XmlStreamUtils {
     private static final Logger LOG = LoggerFactory.getLogger(XmlStreamUtils.class);
@@ -245,7 +248,7 @@ public class XmlStreamUtils {
         }
     }
 
-    public void writeInstanceIdentifier(XMLStreamWriter writer, YangInstanceIdentifier value) throws XMLStreamException {
+    public void writeInstanceIdentifier(final XMLStreamWriter writer, final YangInstanceIdentifier value) throws XMLStreamException {
         if (schemaContext.isPresent()) {
             RandomPrefixInstanceIdentifierSerializer iiCodec = new RandomPrefixInstanceIdentifierSerializer(
                     schemaContext.get());
@@ -258,7 +261,7 @@ public class XmlStreamUtils {
         }
     }
 
-    private static void writeNamespaceDeclarations(XMLStreamWriter writer, Iterable<Entry<URI, String>> prefixes)
+    private static void writeNamespaceDeclarations(final XMLStreamWriter writer, final Iterable<Entry<URI, String>> prefixes)
             throws XMLStreamException {
         for (Entry<URI, String> e : prefixes) {
             final String ns = e.getKey().toString();

@@ -11,13 +11,15 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-
 import java.net.URI;
 import java.util.Map;
-
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 
+/**
+ * @deprecated Used for interim testing, to be removed in near future.
+ */
+@Deprecated
 class RandomPrefix {
     // 32 characters, carefully chosen
     private static final String LOOKUP = "abcdefghiknoprstABCDEFGHIKNOPRST";
