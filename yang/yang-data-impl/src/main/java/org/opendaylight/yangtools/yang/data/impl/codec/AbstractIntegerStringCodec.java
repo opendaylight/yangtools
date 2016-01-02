@@ -15,14 +15,13 @@ import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT16_QNAME;
 import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT32_QNAME;
 import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT64_QNAME;
 import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT8_QNAME;
-
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Range;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
@@ -49,24 +48,27 @@ abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N>, T ex
 
     protected AbstractIntegerStringCodec(final Optional<T> typeDefinition, final List<RangeConstraint> constraints , final Class<N> outputClass) {
         super(typeDefinition, outputClass);
-        if(constraints.isEmpty()) {
+        if (constraints.isEmpty()) {
             rangeConstraints = Collections.emptyList();
         } else {
-            final ArrayList<Range<N>> builder = new ArrayList<>(constraints.size());
-            for(final RangeConstraint yangConstraint : constraints) {
-                builder.add(createRange(yangConstraint.getMin(),yangConstraint.getMax()));
+            final List<Range<N>> builder = new ArrayList<>(constraints.size());
+            for (final RangeConstraint yangConstraint : constraints) {
+                builder.add(createRange(yangConstraint.getMin(), yangConstraint.getMax()));
             }
             rangeConstraints = builder;
         }
-
     }
 
     static TypeDefinitionAwareCodec<?, IntegerTypeDefinition> from(final IntegerTypeDefinition type) {
-        final Optional<IntegerTypeDefinition> typeOptional = Optional.of(type);
+        // FIXME: this is not necessary with yang.model.util.type
         IntegerTypeDefinition baseType = type;
-        while(baseType.getBaseType() != null) {
+        while (baseType.getBaseType() != null) {
             baseType = baseType.getBaseType();
         }
+
+        final Optional<IntegerTypeDefinition> typeOptional = Optional.of(type);
+
+        // FIXME: use DerivedTypes#isInt8() and friends
         if (INT8_QNAME.equals(baseType.getQName())) {
             return new Int8StringCodec(typeOptional);
         } else if (INT16_QNAME.equals(baseType.getQName())) {
@@ -75,16 +77,21 @@ abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N>, T ex
             return new Int32StringCodec(typeOptional);
         } else if (INT64_QNAME.equals(baseType.getQName())) {
             return new Int64StringCodec(typeOptional);
+        } else {
+            throw new IllegalArgumentException("Unsupported base type: " + baseType.getQName());
         }
-        throw new IllegalArgumentException("Unsupported base type: " + baseType.getQName());
     }
 
     static TypeDefinitionAwareCodec<?, UnsignedIntegerTypeDefinition> from(final UnsignedIntegerTypeDefinition type) {
-        final Optional<UnsignedIntegerTypeDefinition> typeOptional = Optional.of(type);
+        // FIXME: this is not necessary with yang.model.util.type
         UnsignedIntegerTypeDefinition baseType = type;
-        while(baseType.getBaseType() != null) {
+        while (baseType.getBaseType() != null) {
             baseType = baseType.getBaseType();
         }
+
+        final Optional<UnsignedIntegerTypeDefinition> typeOptional = Optional.of(type);
+
+        // FIXME: use DerivedTypes#isUint8() and friends
         if (UINT8_QNAME.equals(baseType.getQName())) {
             return new Uint8StringCodec(typeOptional);
         } else if (UINT16_QNAME.equals(baseType.getQName())) {
@@ -93,8 +100,9 @@ abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N>, T ex
             return new Uint32StringCodec(typeOptional);
         } else if (UINT64_QNAME.equals(baseType.getQName())) {
             return new Uint64StringCodec(typeOptional);
+        } else {
+            throw new IllegalArgumentException("Unsupported base type: " + baseType.getQName());
         }
-        throw new IllegalArgumentException("Unsupported base type: " + baseType.getQName());
     }
 
     private Range<N> createRange(final Number yangMin, final Number yangMax) {
@@ -146,50 +154,38 @@ abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N>, T ex
 
 
     protected static List<RangeConstraint> extractRange(final IntegerTypeDefinition type) {
-        if(type == null) {
+        if (type == null) {
             return Collections.emptyList();
         }
         return type.getRangeConstraints();
     }
 
     protected static List<RangeConstraint> extractRange(final UnsignedIntegerTypeDefinition type) {
-        if(type == null) {
+        if (type == null) {
             return Collections.emptyList();
         }
         return type.getRangeConstraints();
     }
 
     private static int provideBase(final String integer) {
-        if (integer == null) {
-            throw new IllegalArgumentException("String representing integer number cannot be NULL");
-        }
+        Preconditions.checkArgument(integer != null, "String representing integer number cannot be NULL");
 
-        if ((integer.length() == 1) && (integer.charAt(0) == '0')) {
+        if (integer.length() == 1 && integer.charAt(0) == '0') {
             return 10;
-        }
-
-        final Matcher intMatcher = INT_PATTERN.matcher(integer);
-        if (intMatcher.matches()) {
+        } else if (INT_PATTERN.matcher(integer).matches()) {
             return 10;
-        }
-        final Matcher hexMatcher = HEX_PATTERN.matcher(integer);
-        if (hexMatcher.matches()) {
+        } else if (HEX_PATTERN.matcher(integer).matches()) {
             return 16;
-        }
-        final Matcher octMatcher = OCT_PATTERN.matcher(integer);
-        if (octMatcher.matches()) {
+        } else if (OCT_PATTERN.matcher(integer).matches()) {
             return 8;
+        } else {
+            throw new NumberFormatException(String.format(INCORRECT_LEXICAL_REPRESENTATION, integer));
         }
-        final String formatedMessage =
-                String.format(INCORRECT_LEXICAL_REPRESENTATION, integer);
-        throw new NumberFormatException(formatedMessage);
     }
 
     private static String normalizeHexadecimal(final String hexInt) {
-        if (hexInt == null) {
-            throw new IllegalArgumentException(
-                    "String representing integer number in Hexadecimal format cannot be NULL!");
-        }
+        Preconditions.checkArgument(hexInt != null,
+                "String representing integer number in Hexadecimal format cannot be NULL!");
 
         return X_MATCHER.removeFrom(hexInt);
     }
