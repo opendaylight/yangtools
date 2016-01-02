@@ -12,6 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface ConfigStatement extends DeclaredStatement<Boolean> {
 
+    // FIXME: turn this into a boolean
     @Nonnull Boolean getValue();
 }
 
