@@ -11,7 +11,6 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface YinElementStatement extends DeclaredStatement<Boolean> {
-
+    // FIXME: turn this into a boolean
     @Nonnull Boolean getValue();
 }
-
