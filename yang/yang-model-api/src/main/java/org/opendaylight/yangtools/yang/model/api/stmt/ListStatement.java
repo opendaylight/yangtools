@@ -8,17 +8,17 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public interface ListStatement extends DataDefinitionStatement, MultipleElementsGroup,
         DataDefinitionContainer.WithReusableDefinitions {
 
-    Collection<? extends MustStatement> getMusts();
+    @Nonnull Collection<? extends MustStatement> getMusts();
 
     @Nullable KeyStatement getKey();
 
-    Collection<? extends UniqueStatement> getUnique();
+    @Nonnull Collection<? extends UniqueStatement> getUnique();
 
     @Nullable ConfigStatement getConfig();
-
 }

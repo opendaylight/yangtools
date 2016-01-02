@@ -8,34 +8,31 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-
 public interface RefineStatement extends DeclaredStatement<SchemaNodeIdentifier>, DocumentationGroup {
-
     String getTargetNode();
 
     interface RefineContainerStatement extends RefineStatement {
 
-        Collection<? extends MustStatement> getMusts();
+        @Nonnull Collection<? extends MustStatement> getMusts();
 
         @Nullable ConfigStatement getConfig();
 
         @Nullable PresenceStatement getPresence();
-
     }
 
     interface RefineLeafStatement extends RefineStatement {
 
-        Collection<? extends MustStatement> getMusts();
+        @Nonnull Collection<? extends MustStatement> getMusts();
 
         @Nullable DefaultStatement getDefault();
 
         @Nullable ConfigStatement getConfig();
 
         @Nullable PresenceStatement getPresence();
-
     }
 }
 

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
@@ -15,12 +16,11 @@ public interface RpcStatement extends DeclaredStatement<QName>, DocumentationGro
 
     QName getName();
 
-    Collection<? extends TypedefStatement> getTypedefs();
+    @Nonnull Collection<? extends TypedefStatement> getTypedefs();
 
-    Collection<? extends GroupingStatement> getGroupings();
+    @Nonnull Collection<? extends GroupingStatement> getGroupings();
 
     InputStatement getInput();
 
     OutputStatement getOutput();
-
 }

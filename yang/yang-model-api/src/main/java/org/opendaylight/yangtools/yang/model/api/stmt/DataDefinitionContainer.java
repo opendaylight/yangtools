@@ -8,19 +8,16 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
-
+import javax.annotation.Nonnull;
 
 public interface DataDefinitionContainer {
 
-    Collection<? extends DataDefinitionStatement> getDataDefinitions();
-
+    @Nonnull Collection<? extends DataDefinitionStatement> getDataDefinitions();
 
     interface WithReusableDefinitions extends DataDefinitionContainer {
 
-        Collection<? extends TypedefStatement> getTypedefs();
+        @Nonnull Collection<? extends TypedefStatement> getTypedefs();
 
-        Collection<? extends GroupingStatement> getGroupings();
-
+        @Nonnull Collection<? extends GroupingStatement> getGroupings();
     }
-
 }
