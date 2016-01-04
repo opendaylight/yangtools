@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
-
 import com.google.common.base.Verify;
 import java.util.Collection;
 import javax.annotation.Nonnull;
@@ -151,9 +150,7 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
                 final QName qname = Utils.qNameFromArgument(ctx, ctx.getStatementArgument());
                 final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> typedef =
                         ctx.getFromNamespace(TypeNamespace.class, qname);
-                if (typedef == null) {
-                    throw new SourceException("Type '" + qname + "' not found", ctx.getStatementSourceReference());
-                }
+                SourceException.throwIfNull(typedef, ctx.getStatementSourceReference(), "Type '%s' not found", qname);
 
                 final TypedefEffectiveStatement effectiveTypedef = typedef.buildEffective();
                 Verify.verify(effectiveTypedef instanceof TypeDefEffectiveStatementImpl);
@@ -199,8 +196,7 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
 
         @Override
         public void onFullDefinitionDeclared(
-                final Mutable<String, TypeStatement, EffectiveStatement<String, TypeStatement>> stmt)
-                throws SourceException {
+                final Mutable<String, TypeStatement, EffectiveStatement<String, TypeStatement>> stmt){
             SUBSTATEMENT_VALIDATOR.validate(stmt);
 
             // if it is yang built-in type, no prerequisite is needed, so simply return
@@ -219,18 +215,15 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
              * Otherwise perform no operation.
              */
             typeAction.apply(new InferenceAction() {
-
                 @Override
                 public void apply() {
                     // Intentional NOOP
                 }
 
                 @Override
-                public void prerequisiteFailed(Collection<? extends Prerequisite<?>> failed) {
-                    if (failed.contains(typePrereq)) {
-                        throw new InferenceException(String.format("Type [%s] was not found.", typeQName), stmt
-                                .getStatementSourceReference());
-                    }
+                public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
+                    InferenceException.throwIf(failed.contains(typePrereq), stmt.getStatementSourceReference(),
+                        "Type [%s] was not found.", typeQName);
                 }
             });
         }

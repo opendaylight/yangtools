@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
@@ -36,7 +37,7 @@ public class TypedefStatementImpl extends AbstractDeclaredStatement<QName> imple
             .add(Rfc6020Mapping.UNITS, 0, 1)
             .build();
 
-    protected TypedefStatementImpl(StmtContext<QName, TypedefStatement, ?> context) {
+    protected TypedefStatementImpl(final StmtContext<QName, TypedefStatement, ?> context) {
         super(context);
     }
 
@@ -48,37 +49,36 @@ public class TypedefStatementImpl extends AbstractDeclaredStatement<QName> imple
         }
 
         @Override
-        public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) throws SourceException {
+        public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return Utils.qNameFromArgument(ctx, value);
         }
 
         @Override
-        public TypedefStatement createDeclared(StmtContext<QName, TypedefStatement, ?> ctx) {
+        public TypedefStatement createDeclared(final StmtContext<QName, TypedefStatement, ?> ctx) {
             return new TypedefStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<QName, TypedefStatement> createEffective(
-                StmtContext<QName, TypedefStatement, EffectiveStatement<QName, TypedefStatement>> ctx) {
+                final StmtContext<QName, TypedefStatement, EffectiveStatement<QName, TypedefStatement>> ctx) {
             return new TypeDefEffectiveStatementImpl(ctx);
         }
 
         @Override
         public void onStatementDefinitionDeclared(
-                StmtContext.Mutable<QName, TypedefStatement, EffectiveStatement<QName, TypedefStatement>> stmt)
-                throws SourceException {
+                final StmtContext.Mutable<QName, TypedefStatement, EffectiveStatement<QName, TypedefStatement>> stmt) {
             if (stmt != null && stmt.getParentContext() != null) {
-                if (stmt.getParentContext().getFromNamespace(TypeNamespace.class, stmt.getStatementArgument()) != null) {
-                    throw new SourceException(String.format("Duplicate name for typedef %s",
-                            stmt.getStatementArgument()), stmt.getStatementSourceReference());
-                }
+                final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> existing =
+                        stmt.getParentContext().getFromNamespace(TypeNamespace.class, stmt.getStatementArgument());
+                SourceException.throwIf(existing != null, stmt.getStatementSourceReference(),
+                        "Duplicate name for typedef %s", stmt.getStatementArgument());
 
                 stmt.getParentContext().addContext(TypeNamespace.class, stmt.getStatementArgument(), stmt);
             }
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<QName, TypedefStatement,
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<QName, TypedefStatement,
                 EffectiveStatement<QName, TypedefStatement>> stmt) throws SourceException {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);

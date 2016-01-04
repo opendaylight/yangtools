@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
-
 import com.google.common.base.Optional;
 import java.net.URI;
 import java.util.Collection;
@@ -37,12 +36,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IncludeEffectiveStatementImpl;
 
 public class IncludeStatementImpl extends AbstractDeclaredStatement<String> implements IncludeStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
-            .INCLUDE)
-            .add(Rfc6020Mapping.REVISION_DATE, 0, 1)
-            .build();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
+        Rfc6020Mapping.INCLUDE).add(Rfc6020Mapping.REVISION_DATE, 0, 1).build();
 
-    protected IncludeStatementImpl(StmtContext<String, IncludeStatement, ?> context) {
+    protected IncludeStatementImpl(final StmtContext<String, IncludeStatement, ?> context) {
         super(context);
     }
 
@@ -54,25 +51,24 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 
         @Override
-        public IncludeStatement createDeclared(StmtContext<String, IncludeStatement, ?> ctx) {
+        public IncludeStatement createDeclared(final StmtContext<String, IncludeStatement, ?> ctx) {
             return new IncludeStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<String, IncludeStatement> createEffective(
-                StmtContext<String, IncludeStatement, EffectiveStatement<String, IncludeStatement>> ctx) {
+                final StmtContext<String, IncludeStatement, EffectiveStatement<String, IncludeStatement>> ctx) {
             return new IncludeEffectiveStatementImpl(ctx);
         }
 
         @Override
         public void onLinkageDeclared(
-                final Mutable<String, IncludeStatement, EffectiveStatement<String, IncludeStatement>> stmt)
-                throws SourceException {
+                final Mutable<String, IncludeStatement, EffectiveStatement<String, IncludeStatement>> stmt) {
             final ModuleIdentifier includeSubmoduleIdentifier = getIncludeSubmoduleIdentifier(stmt);
 
             ModelActionBuilder includeAction = stmt.newInferenceAction(SOURCE_LINKAGE);
@@ -80,9 +76,8 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
                     SubmoduleNamespace.class, includeSubmoduleIdentifier, SOURCE_LINKAGE);
 
             includeAction.apply(new InferenceAction() {
-
                 @Override
-                public void apply() throws InferenceException {
+                public void apply() {
                     StmtContext<?, ?, ?> includedSubModuleContext = requiresCtxPrerequisite.get();
 
                     stmt.addToNs(IncludedModuleContext.class, includeSubmoduleIdentifier,
@@ -92,16 +87,15 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
                 }
 
                 @Override
-                public void prerequisiteFailed(Collection<? extends Prerequisite<?>> failed) throws InferenceException {
-                    if (failed.contains(requiresCtxPrerequisite)) {
-                        throw new InferenceException("Included submodule was not found: "+stmt.getStatementArgument(), stmt
-                                .getStatementSourceReference());
-                    }
+                public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
+                    InferenceException.throwIf(failed.contains(requiresCtxPrerequisite),
+                        stmt.getStatementSourceReference(),
+                        "Included submodule '%s' was not found: ", stmt.getStatementArgument());
                 }
             });
         }
 
-        private static ModuleIdentifier getIncludeSubmoduleIdentifier(Mutable<String, IncludeStatement, ?> stmt) {
+        private static ModuleIdentifier getIncludeSubmoduleIdentifier(final Mutable<String, IncludeStatement, ?> stmt) {
 
             String subModuleName = stmt.getStatementArgument();
 
@@ -114,7 +108,7 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
         }
 
         @Override
-        public void onFullDefinitionDeclared(Mutable<String, IncludeStatement,
+        public void onFullDefinitionDeclared(final Mutable<String, IncludeStatement,
                 EffectiveStatement<String, IncludeStatement>> stmt) throws SourceException {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
