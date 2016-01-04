@@ -179,15 +179,12 @@ public final class GroupingUtils {
         StatementDefinition refineSubstatementDef = refineSubstatementCtx.getPublicDefinition();
         StatementDefinition refineTargetNodeDef = refineTargetNodeCtx.getPublicDefinition();
 
-        if (!isSupportedRefineTarget(refineSubstatementCtx, refineTargetNodeCtx)) {
-            throw new SourceException("Error in module '"
-                    + refineSubstatementCtx.getRoot().getStatementArgument()
-                    + "' in the refine of uses '"
-                    + refineSubstatementCtx.getParentContext().getStatementArgument()
-                    + "': can not perform refine of '" + refineSubstatementCtx.getPublicDefinition()
-                    + "' for the target '" + refineTargetNodeCtx.getPublicDefinition() + "'.",
-                    refineSubstatementCtx.getStatementSourceReference());
-        }
+        SourceException.throwIf(!isSupportedRefineTarget(refineSubstatementCtx, refineTargetNodeCtx),
+            refineSubstatementCtx.getStatementSourceReference(),
+            "Error in module '%s' in the refine of uses '%s': can not perform refine of '%s' for the target '%s'.",
+                    refineSubstatementCtx.getRoot().getStatementArgument(),
+                    refineSubstatementCtx.getParentContext().getStatementArgument(),
+                    refineSubstatementCtx.getPublicDefinition(), refineTargetNodeCtx.getPublicDefinition());
 
         if (isAllowedToAddByRefine(refineSubstatementDef)) {
             refineTargetNodeCtx.addEffectiveSubstatement(refineSubstatementCtx);
