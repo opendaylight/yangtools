@@ -32,10 +32,9 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
         super(ctx);
         this.original = ctx.getOriginalCtx() == null ? null : (LeafSchemaNode) ctx.getOriginalCtx().buildEffective();
 
-        final TypeEffectiveStatement<?> typeStmt = firstSubstatementOfType(TypeEffectiveStatement.class);
-        if (typeStmt == null) {
-            throw new SourceException("Leaf is missing a 'type' statement", ctx.getStatementSourceReference());
-        }
+        final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
+                firstSubstatementOfType(TypeEffectiveStatement.class), ctx.getStatementSourceReference(),
+                "Leaf is missing a 'type' statement");
 
         String dflt = null;
         String units = null;

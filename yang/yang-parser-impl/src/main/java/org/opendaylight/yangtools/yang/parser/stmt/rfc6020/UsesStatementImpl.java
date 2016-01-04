@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
-
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
@@ -75,7 +74,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
                 throws SourceException {
             SUBSTATEMENT_VALIDATOR.validate(usesNode);
 
-            if(StmtContextUtils.isInExtensionBody(usesNode)) {
+            if (StmtContextUtils.isInExtensionBody(usesNode)) {
                 return;
             }
 
@@ -90,7 +89,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
             usesAction.apply(new InferenceAction() {
 
                 @Override
-                public void apply() throws InferenceException {
+                public void apply() {
                     StatementContextBase<?, ?, ?> targetNodeStmtCtx = (StatementContextBase<?, ?, ?>) targetNodePre.get();
                     StatementContextBase<?, ?, ?> sourceGrpStmtCtx = (StatementContextBase<?, ?, ?>) sourceGroupingPre.get();
 
@@ -104,11 +103,9 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
                 }
 
                 @Override
-                public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) throws InferenceException {
-                    if (failed.contains(sourceGroupingPre)) {
-                        throw new InferenceException("Grouping " + groupingName + " was not resolved.", usesNode
-                                .getStatementSourceReference());
-                    }
+                public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
+                    InferenceException.throwIf(failed.contains(sourceGroupingPre),
+                        usesNode.getStatementSourceReference(), "Grouping '%s' was not resolved.", groupingName);
                     throw new InferenceException("Unknown error occurred.", usesNode.getStatementSourceReference());
                 }
             });
