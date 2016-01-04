@@ -257,30 +257,13 @@ module opendaylight-default-value-test {
     }
 
     identity my-identity {
-        description "parent identity for testing purposes";
-    }
-
-    identity my-derived-identity {
-        base my-identity;
-        description "child identity for testing purposes";
-    }
-
-    identity my-derived-identity2 {
-        base my-derived-identity;
-        description "another child identity for testing purposes";
+        description "identity for testing purposes";
     }
 
     typedef my-identityref {
         type identityref {
             base my-identity;
         }
-    }
-
-    typedef my-identityref2 {
-        type identityref {
-            base my-identity;
-        }
-        default "my-derived-identity";
     }
 
     container tiny-int-container {
@@ -638,20 +621,6 @@ module opendaylight-default-value-test {
 
         leaf identityref-leaf {
             type my-identityref;
-        }
-
-        leaf identityref-leaf2 {
-            type my-identityref;
-            default "my-derived-identity";
-        }
-
-        leaf identityref-leaf3 {
-            type my-identityref2;
-        }
-
-        leaf identityref-leaf4 {
-            type my-identityref;
-            default "my-derived-identity2";
         }
     }
 }
