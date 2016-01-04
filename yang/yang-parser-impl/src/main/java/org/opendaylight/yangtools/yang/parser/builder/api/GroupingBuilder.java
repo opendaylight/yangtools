@@ -13,7 +13,10 @@ import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 
 /**
  * Interface for builders of 'grouping' statement.
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public interface GroupingBuilder extends DataNodeContainerBuilder, SchemaNodeBuilder, GroupingMember {
 
     /**

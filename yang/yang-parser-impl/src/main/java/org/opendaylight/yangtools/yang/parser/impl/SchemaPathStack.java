@@ -8,13 +8,15 @@
 package org.opendaylight.yangtools.yang.parser.impl;
 
 import com.google.common.base.Preconditions;
-
 import java.util.Deque;
 import java.util.LinkedList;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 final class SchemaPathStack {
     private final Deque<SchemaPath> paths = new LinkedList<>();
 

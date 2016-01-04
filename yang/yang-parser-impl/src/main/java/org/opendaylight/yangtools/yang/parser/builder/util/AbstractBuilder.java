@@ -17,7 +17,9 @@ import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuild
 /**
  * Base helper implementation of Builders for Yang Model elements.
  *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public abstract class AbstractBuilder implements Builder {
     private final String moduleName;
     private final int line;

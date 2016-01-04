@@ -32,8 +32,11 @@ import org.opendaylight.yangtools.yang.parser.builder.util.AbstractSchemaNodeBui
 import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
-public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements DataSchemaNodeBuilder,
-AugmentationTargetBuilder {
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
+public final class ChoiceBuilder extends AbstractSchemaNodeBuilder implements DataSchemaNodeBuilder, AugmentationTargetBuilder {
     private ChoiceSchemaNodeImpl instance;
 
     // DataSchemaNode args

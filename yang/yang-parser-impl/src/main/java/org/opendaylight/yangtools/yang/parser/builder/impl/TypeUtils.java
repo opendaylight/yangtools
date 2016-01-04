@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import static org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils.findBaseIdentity;
-
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
@@ -31,7 +30,10 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 /**
  * Utility class which contains helper methods for dealing with type operations.
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public final class TypeUtils {
 
     private TypeUtils() {
@@ -135,7 +137,7 @@ public final class TypeUtils {
      *            name of type
      * @return type with given name if present in collection, null otherwise
      */
-    private static TypeDefinitionBuilder findTypedefBuilderByName(Set<TypeDefinitionBuilder> types, String name) {
+    private static TypeDefinitionBuilder findTypedefBuilderByName(final Set<TypeDefinitionBuilder> types, final String name) {
         for (TypeDefinitionBuilder td : types) {
             if (td.getQName().getLocalName().equals(name)) {
                 return td;

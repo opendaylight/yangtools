@@ -12,6 +12,10 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 public interface UnknownSchemaNodeBuilder extends SchemaNodeBuilder, DocumentedNodeBuilder {
 
     @Override

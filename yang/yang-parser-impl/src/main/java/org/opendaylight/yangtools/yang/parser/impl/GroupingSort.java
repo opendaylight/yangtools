@@ -27,6 +27,10 @@ import org.opendaylight.yangtools.yang.parser.util.NodeWrappedType;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort;
 import org.opendaylight.yangtools.yang.parser.util.TopologicalSort.Node;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 public final class GroupingSort {
     private GroupingSort() {
         throw new UnsupportedOperationException("Utility class should not be instantiated");

@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
 import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
 import org.junit.Before;
@@ -18,6 +17,10 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.builder.impl.AugmentationSchemaBuilderImpl;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 public class AugmentationSchemaBuilderImplTest {
 
     private AugmentationSchemaBuilderImpl augmentSchemaBuilderImpl;

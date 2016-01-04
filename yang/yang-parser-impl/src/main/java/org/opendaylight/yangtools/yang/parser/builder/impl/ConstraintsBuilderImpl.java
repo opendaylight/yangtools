@@ -18,6 +18,10 @@ import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.parser.builder.api.ConstraintsBuilder;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 public final class ConstraintsBuilderImpl implements ConstraintsBuilder {
     private static final ConstraintDefinitionImpl EMPTY_CONSTRAINT = new ConstraintDefinitionImpl();
     private static final ConstraintDefinitionImpl EMPTY_MANDATORY_CONSTRAINT;

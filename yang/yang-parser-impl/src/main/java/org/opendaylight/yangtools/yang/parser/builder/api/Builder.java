@@ -12,7 +12,10 @@ import org.opendaylight.yangtools.concepts.Mutable;
 
 /**
  * Parent interface for all builder interfaces.
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public interface Builder extends Mutable {
 
     /**

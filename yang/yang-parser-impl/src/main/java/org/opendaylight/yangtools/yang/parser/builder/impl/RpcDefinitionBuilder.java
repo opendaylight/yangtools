@@ -26,6 +26,10 @@ import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuild
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 public final class RpcDefinitionBuilder extends AbstractSchemaNodeBuilder {
     private RpcDefinitionImpl instance;
     private ContainerSchemaNodeBuilder inputBuilder;

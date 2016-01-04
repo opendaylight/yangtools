@@ -26,6 +26,10 @@ import org.opendaylight.yangtools.yang.parser.builder.api.RefineBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.impl.RefineHolderImpl;
 import org.opendaylight.yangtools.yang.parser.builder.impl.UnknownSchemaNodeBuilderImpl;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 public class RefineHolderTest {
 
     private RefineHolderImpl rh;

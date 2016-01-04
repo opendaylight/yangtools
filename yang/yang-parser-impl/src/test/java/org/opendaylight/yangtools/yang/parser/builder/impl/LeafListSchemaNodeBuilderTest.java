@@ -6,8 +6,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
-import static org.junit.Assert.*;
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
@@ -23,7 +27,10 @@ import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuild
  * @see org.opendaylight.yangtools.yang.parser.builder.impl.LeafListSchemaNodeBuilder
  *
  * @author Lukas Sedlak <lsedlak@cisco.com>
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public class LeafListSchemaNodeBuilderTest extends AbstractBuilderTest {
 
     @Test

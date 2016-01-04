@@ -18,6 +18,10 @@ import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuild
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 public final class DeviationBuilder extends AbstractBuilder {
     private DeviationImpl instance;
     private final SchemaPath targetPath;
@@ -119,7 +123,7 @@ public final class DeviationBuilder extends AbstractBuilder {
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (this == obj) {
                 return true;
             }

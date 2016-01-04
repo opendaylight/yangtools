@@ -9,7 +9,6 @@
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
@@ -36,6 +35,10 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implements Module, Immutable {
 
     private final QNameModule qnameModule;

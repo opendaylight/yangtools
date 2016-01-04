@@ -17,8 +17,11 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainer;
 
-final class GroupingDefinitionImpl extends AbstractDocumentedDataNodeContainer implements
-GroupingDefinition {
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
+final class GroupingDefinitionImpl extends AbstractDocumentedDataNodeContainer implements GroupingDefinition {
     private final QName qname;
     private final SchemaPath path;
 

@@ -14,7 +14,10 @@ import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 
 /**
  * Basic implementation for TypeAwareBuilder builders.
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public abstract class AbstractTypeAwareBuilder extends AbstractBuilder implements TypeAwareBuilder {
     protected QName qname;
     protected TypeDefinition<?> type;
@@ -43,13 +46,13 @@ public abstract class AbstractTypeAwareBuilder extends AbstractBuilder implement
     }
 
     @Override
-    public void setType(TypeDefinition<?> type) {
+    public void setType(final TypeDefinition<?> type) {
         this.type = type;
         this.typedef = null;
     }
 
     @Override
-    public void setTypedef(TypeDefinitionBuilder typedef) {
+    public void setTypedef(final TypeDefinitionBuilder typedef) {
         this.typedef = typedef;
         this.type = null;
     }
@@ -60,7 +63,7 @@ public abstract class AbstractTypeAwareBuilder extends AbstractBuilder implement
     }
 
     @Override
-    public void setTypeQName(QName qname) {
+    public void setTypeQName(final QName qname) {
         this.baseTypeName = qname;
     }
 

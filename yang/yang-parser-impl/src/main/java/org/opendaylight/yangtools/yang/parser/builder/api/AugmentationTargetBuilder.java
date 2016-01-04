@@ -9,7 +9,10 @@ package org.opendaylight.yangtools.yang.parser.builder.api;
 
 /**
  * Interface for builders of those nodes, which can be augmentation targets.
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public interface AugmentationTargetBuilder {
 
     /**

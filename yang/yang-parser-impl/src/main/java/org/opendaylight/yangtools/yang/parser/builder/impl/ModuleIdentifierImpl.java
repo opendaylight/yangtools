@@ -18,7 +18,10 @@ import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
  * ModuleIdentifier that can be used for indexing/searching by name.
  * Name is only non-null attribute.
  * Equality check on namespace and revision is only triggered if they are non-null
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public class ModuleIdentifierImpl implements ModuleIdentifier {
     private final QNameModule qnameModule;
     private final String name;

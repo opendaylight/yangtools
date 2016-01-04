@@ -16,7 +16,10 @@ import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 
 /**
  * Basic implementation of SchemaNodeBuilder.
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public abstract class AbstractSchemaNodeBuilder extends AbstractBuilder implements SchemaNodeBuilder {
     protected final QName qname;
     protected SchemaPath schemaPath;
@@ -70,7 +73,7 @@ public abstract class AbstractSchemaNodeBuilder extends AbstractBuilder implemen
     }
 
     @Override
-    public void setStatus(Status status) {
+    public void setStatus(final Status status) {
         this.status = Preconditions.checkNotNull(status, "status cannot be null");
     }
 
@@ -84,7 +87,7 @@ public abstract class AbstractSchemaNodeBuilder extends AbstractBuilder implemen
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

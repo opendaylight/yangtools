@@ -25,7 +25,10 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
  * @see org.opendaylight.yangtools.yang.parser.builder.impl.RefineUtils
  *
  * @author Lukas Sedlak <lsedlak@cisco.com>
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public class RefineUtilsTest extends AbstractBuilderTest {
 
     @Test

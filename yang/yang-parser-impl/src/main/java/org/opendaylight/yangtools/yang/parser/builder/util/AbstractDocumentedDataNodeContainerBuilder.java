@@ -32,7 +32,10 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 /**
  * Basic implementation of DataNodeContainerBuilder.
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public abstract class AbstractDocumentedDataNodeContainerBuilder extends AbstractDocumentedNodeBuilder implements DataNodeContainerBuilder {
     protected final QName qname;
 

@@ -16,8 +16,9 @@ import org.opendaylight.yangtools.yang.model.api.MustDefinition;
  * Represents a local change to node introduced by uses statement
  * e.g. change in documentation, configuration or properties.
  *
- *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public interface RefineBuilder extends DocumentedNodeBuilder {
 
     /**

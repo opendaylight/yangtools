@@ -12,6 +12,10 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.parser.builder.api.DocumentedNodeBuilder;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 public abstract class AbstractDocumentedNodeBuilder extends AbstractBuilder implements DocumentedNodeBuilder{
     private String description = null;
     private String reference = null;

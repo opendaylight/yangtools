@@ -21,6 +21,10 @@ import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuild
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractTypeAwareBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 public final class LeafSchemaNodeBuilder extends AbstractTypeAwareBuilder implements DataSchemaNodeBuilder {
     private LeafSchemaNodeImpl instance;
     private String defaultStr;

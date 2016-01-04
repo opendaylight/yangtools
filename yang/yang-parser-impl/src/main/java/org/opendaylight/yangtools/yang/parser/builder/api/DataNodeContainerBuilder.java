@@ -21,7 +21,10 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * Common builder for for all YANG {@link DataNodeContainer}
  * <code>augment, case, container,
  * grouping, list, module, notification</code>.
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public interface DataNodeContainerBuilder extends Builder {
 
     /**

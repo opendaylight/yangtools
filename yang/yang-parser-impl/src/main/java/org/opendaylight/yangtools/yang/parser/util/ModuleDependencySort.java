@@ -8,15 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.util;
 
 import static java.util.Arrays.asList;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -84,11 +81,17 @@ public final class ModuleDependencySort {
      * @param builders builders of Module object
      * @return Sorted list of Module builders. Modules can be further processed
      *         in returned order.
+     * @deprecated Pre-Beryllium implementation, scheduled for removal.
      */
+    @Deprecated
     public static List<ModuleBuilder> sort(final ModuleBuilder... builders) {
         return sort(asList(builders));
     }
 
+    /**
+     * @deprecated Pre-Beryllium implementation, scheduled for removal.
+     */
+    @Deprecated
     public static List<ModuleBuilder> sort(final Collection<ModuleBuilder> builders) {
         List<TopologicalSort.Node> sorted = sortInternal(ModuleOrModuleBuilder.fromAll(
                 Collections.<Module>emptySet(),builders));
@@ -381,41 +384,4 @@ public final class ModuleDependencySort {
 
     }
 
-}
-class ModuleOrModuleBuilder {
-    private final Optional<Module> maybeModule;
-    private final Optional<ModuleBuilder> maybeModuleBuilder;
-
-    ModuleOrModuleBuilder(final Module module) {
-        maybeModule = Optional.of(module);
-        maybeModuleBuilder = Optional.absent();
-    }
-
-    ModuleOrModuleBuilder(final ModuleBuilder moduleBuilder) {
-        maybeModule = Optional.absent();
-        maybeModuleBuilder = Optional.of(moduleBuilder);
-    }
-    boolean isModule(){
-        return maybeModule.isPresent();
-    }
-    boolean isModuleBuilder(){
-        return maybeModuleBuilder.isPresent();
-    }
-    Module getModule(){
-        return maybeModule.get();
-    }
-    ModuleBuilder getModuleBuilder(){
-        return maybeModuleBuilder.get();
-    }
-
-    static List<ModuleOrModuleBuilder> fromAll(final Collection<Module> modules, final Collection<ModuleBuilder> moduleBuilders) {
-        List<ModuleOrModuleBuilder> result = new ArrayList<>(modules.size() + moduleBuilders.size());
-        for(Module m: modules){
-            result.add(new ModuleOrModuleBuilder(m));
-        }
-        for (ModuleBuilder mb : moduleBuilders) {
-            result.add(new ModuleOrModuleBuilder(mb));
-        }
-        return result;
-    }
 }

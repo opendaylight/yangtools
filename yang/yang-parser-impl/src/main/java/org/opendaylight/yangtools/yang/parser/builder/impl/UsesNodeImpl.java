@@ -20,6 +20,10 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 final class UsesNodeImpl implements UsesNode {
     private final SchemaPath groupingPath;
     ImmutableSet<AugmentationSchema> augmentations;

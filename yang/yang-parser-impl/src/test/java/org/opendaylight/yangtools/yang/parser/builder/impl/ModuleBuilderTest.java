@@ -33,7 +33,10 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
  * @see org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder
  *
  * @author Lukas Sedlak <lsedlak@cisco.com>
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public class ModuleBuilderTest {
 
     private final static String TEST_MODULE_NAMESPACE = "urn:opendaylight.foo";

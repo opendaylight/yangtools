@@ -16,7 +16,10 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
 /**
  * Interface for builders of 'typedef' statement.
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public interface TypeDefinitionBuilder extends TypeAwareBuilder, SchemaNodeBuilder, GroupingMember {
 
     /**

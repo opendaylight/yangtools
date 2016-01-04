@@ -12,7 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
-
+import com.google.common.base.Optional;
 import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -43,15 +42,16 @@ import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
-import com.google.common.base.Optional;
-
 /**
  * Test suite for increasing of test coverage of BuilderUtils implementation.
  *
  * @see org.opendaylight.yangtools.yang.parser.builder.impl.BuilderUtils
  *
  * @author Lukas Sedlak <lsedlak@cisco.com>
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public class BuilderUtilsTest {
 
     private final static String MASTER_MODULE_NAMESPACE = "urn:opendaylight.master-model";

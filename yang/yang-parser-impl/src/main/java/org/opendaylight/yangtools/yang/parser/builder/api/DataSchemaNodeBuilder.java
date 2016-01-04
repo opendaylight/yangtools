@@ -12,7 +12,10 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 /**
  * Interface for all yang data-schema nodes [anyxml, case, container, grouping,
  * list, module, notification].
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public interface DataSchemaNodeBuilder extends SchemaNodeBuilder, GroupingMember {
 
     /**

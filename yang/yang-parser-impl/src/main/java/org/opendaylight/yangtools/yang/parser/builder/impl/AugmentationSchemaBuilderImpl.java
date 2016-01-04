@@ -18,6 +18,10 @@ import org.opendaylight.yangtools.yang.parser.builder.api.Builder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainerBuilder;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataNodeContainerBuilder implements AugmentationSchemaBuilder {
     private final int order;
     private AugmentationSchemaImpl instance;
@@ -107,7 +111,7 @@ public final class AugmentationSchemaBuilderImpl extends AbstractDocumentedDataN
      *  In such case, augmentation is skipped and AugmentationSchema is not built.
      */
     @Override
-    public void setUnsupportedTarget(boolean unsupportedTarget) {
+    public void setUnsupportedTarget(final boolean unsupportedTarget) {
         this.unsupportedTarget = unsupportedTarget;
     }
 

@@ -34,6 +34,10 @@ import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractBuilder;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 public final class UsesNodeBuilderImpl extends AbstractBuilder implements UsesNodeBuilder {
     private UsesNodeImpl instance;
     private DataNodeContainerBuilder parentBuilder;

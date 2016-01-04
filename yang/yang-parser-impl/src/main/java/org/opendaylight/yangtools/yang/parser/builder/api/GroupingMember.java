@@ -10,7 +10,10 @@ package org.opendaylight.yangtools.yang.parser.builder.api;
 /**
  * Marker interface for nodes which can be defined in grouping statement.
  * [anyxml, choice, container, grouping, leaf, leaf-list, list, typedef, uses]
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public interface GroupingMember extends Builder {
 
     /**

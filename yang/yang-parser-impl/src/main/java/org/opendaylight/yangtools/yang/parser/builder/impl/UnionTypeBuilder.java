@@ -29,7 +29,10 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
  * TypeDefinition object (resolved type) or in form of TypeDefinitionBuilder.
  * When build is called, types in builder form will be built and add to resolved
  * types.
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements TypeDefinitionBuilder {
     private static final SchemaPath SCHEMA_PATH = SchemaPath.create(true, BaseTypes.UNION_QNAME);
     private static final String NAME = "union";
@@ -39,7 +42,7 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
     private UnionType instance;
     private boolean isBuilt;
 
-    private List<QName> baseTypesQNames = new ArrayList<>();
+    private final List<QName> baseTypesQNames = new ArrayList<>();
 
     public UnionTypeBuilder(final String moduleName, final int line) {
         super(moduleName, line, BaseTypes.UNION_QNAME);

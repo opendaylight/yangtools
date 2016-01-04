@@ -26,6 +26,10 @@ import org.opendaylight.yangtools.yang.parser.builder.util.AbstractTypeAwareBuil
 import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 public final class TypeDefinitionBuilderImpl extends AbstractTypeAwareBuilder implements TypeDefinitionBuilder {
     private SchemaPath schemaPath;
     private List<RangeConstraint> ranges = Collections.emptyList();

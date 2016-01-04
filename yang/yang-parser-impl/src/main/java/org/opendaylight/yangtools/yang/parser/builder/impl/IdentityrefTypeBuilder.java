@@ -26,7 +26,10 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 
 /**
  * Builder for YANG identityref type.
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder implements TypeDefinitionBuilder {
     private static final String NAME = "identityref";
 

@@ -14,7 +14,10 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 /**
  * Builder for nodes, which can have 'type' statement must implement this
  * interface. [typedef, type, leaf, leaf-list, deviate]
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public interface TypeAwareBuilder extends Builder {
 
     QName getTypeQName();

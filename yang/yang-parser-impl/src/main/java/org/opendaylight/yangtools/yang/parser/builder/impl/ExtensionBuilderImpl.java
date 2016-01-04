@@ -16,6 +16,10 @@ import org.opendaylight.yangtools.yang.parser.builder.api.ExtensionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractSchemaNodeBuilder;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 public final class ExtensionBuilderImpl extends AbstractSchemaNodeBuilder implements ExtensionBuilder {
     private ExtensionDefinitionImpl instance;
     private String argument;

@@ -61,7 +61,10 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
  * Builder of Module object. If this module is dependent on external
  * module/modules, these dependencies must be resolved before module is built,
  * otherwise result may not be valid.
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public class ModuleBuilder extends AbstractDocumentedDataNodeContainerBuilder implements DocumentedNodeBuilder {
     private static final QNameModule EMPTY_QNAME_MODULE = QNameModule.create(null, null).intern();
     private static final String GROUPING_STR = "Grouping";

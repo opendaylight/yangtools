@@ -9,7 +9,6 @@
 package org.opendaylight.yangtools.yang.parser.impl;
 
 import static com.google.common.base.Preconditions.checkState;
-
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
@@ -437,7 +436,9 @@ public final class ParserListenerUtils {
      *            context to parse
      * @param builder
      *            builder to fill in with parsed statements
+     * @deprecated Pre-Beryllium implementation, scheduled for removal.
      */
+    @Deprecated
     public static void parseSchemaNodeArgs(final ParseTree ctx, final SchemaNodeBuilder builder) {
         for (int i = 0; i < ctx.getChildCount(); i++) {
             final ParseTree child = ctx.getChild(i);
@@ -1003,7 +1004,7 @@ public final class ParserListenerUtils {
         return rawPattern;
     }
 
-    private static String fixUnknownScripts(String exMessage, String rawPattern) {
+    private static String fixUnknownScripts(final String exMessage, final String rawPattern) {
         StringBuilder result = new StringBuilder(rawPattern);
         Matcher matcher = BETWEEN_CURLY_BRACES_PATTERN.matcher(exMessage);
         if (matcher.find()) {
@@ -1016,7 +1017,7 @@ public final class ParserListenerUtils {
         return result.toString();
     }
 
-    private static String wrapPattern(String rawPattern) {
+    private static String wrapPattern(final String rawPattern) {
         final StringBuilder wrapPatternBuilder = new StringBuilder(rawPattern.length() + 2);
         wrapPatternBuilder.append('^');
         wrapPatternBuilder.append(rawPattern);
@@ -1235,7 +1236,9 @@ public final class ParserListenerUtils {
      * @param line
      *            line in current module
      * @return config statement parsed from given context
+     * @deprecated Pre-Beryllium implementation, scheduled for removal.
      */
+    @Deprecated
     public static boolean getConfig(final ParseTree ctx, final Builder node, final String moduleName, final int line) {
         boolean result;
         // parse configuration statement
@@ -1266,6 +1269,10 @@ public final class ParserListenerUtils {
         return result;
     }
 
+    /**
+     * @deprecated Pre-Beryllium implementation, scheduled for removal.
+     */
+    @Deprecated
     private static boolean getParentConfig(final Builder node) {
         Builder parent = node.getParent();
         boolean config;
@@ -1329,9 +1336,12 @@ public final class ParserListenerUtils {
      *            current module qname
      * @param actualPath
      *            actual path in model
+     *
+     * @deprecated Pre-Beryllium implementation, scheduled for removal.
      */
-    public static void parseUnknownTypeWithBody(Type_body_stmtsContext typeBody, TypeAwareBuilder parent,
-            QName prefixedQName, ModuleBuilder moduleBuilder, QName moduleQName, SchemaPath actualPath) {
+    @Deprecated
+    public static void parseUnknownTypeWithBody(final Type_body_stmtsContext typeBody, final TypeAwareBuilder parent,
+            final QName prefixedQName, final ModuleBuilder moduleBuilder, final QName moduleQName, final SchemaPath actualPath) {
         final int line = typeBody.getStart().getLine();
 
         List<RangeConstraint> rangeStatements = getRangeConstraints(typeBody, moduleBuilder.getName());
@@ -1376,7 +1386,10 @@ public final class ParserListenerUtils {
      * @param parent
      *            parent builder
      * @return TypeDefinition object based on parsed values.
+     *
+     * @deprecated Pre-Beryllium implementation, scheduled for removal.
      */
+    @Deprecated
     public static TypeDefinition<?> parseTypeWithBody(final String typeName, final Type_body_stmtsContext typeBody,
             final SchemaPath actualPath, final QName moduleQName, final Builder parent) {
 
@@ -1641,7 +1654,10 @@ public final class ParserListenerUtils {
      *            context to parse
      * @param constraints
      *            ConstraintsBuilder to fill
+     *
+     * @deprecated Pre-Beryllium implementation, scheduled for removal.
      */
+    @Deprecated
     public static void parseConstraints(final ParseTree ctx, final ConstraintsBuilder constraints) {
         for (int i = 0; i < ctx.getChildCount(); ++i) {
             final ParseTree childNode = ctx.getChild(i);
@@ -1776,7 +1792,10 @@ public final class ParserListenerUtils {
      * @param moduleName
      *            name of current module
      * @return RefineHolder object representing this refine statement
+     *
+     * @deprecated Pre-Beryllium implementation, scheduled for removal.
      */
+    @Deprecated
     public static RefineHolderImpl parseRefine(final Refine_stmtContext refineCtx, final String moduleName) {
         final String refineTarget = stringFromNode(refineCtx);
         final RefineHolderImpl refine = new RefineHolderImpl(moduleName, refineCtx.getStart().getLine(), refineTarget);
@@ -1806,6 +1825,10 @@ public final class ParserListenerUtils {
         return refine;
     }
 
+    /**
+     * @deprecated Pre-Beryllium implementation, scheduled for removal.
+     */
+    @Deprecated
     private static void parseRefineDefault(final RefineHolderImpl refine, final ParseTree refineStmt) {
         for (int i = 0; i < refineStmt.getChildCount(); i++) {
             ParseTree refineArg = refineStmt.getChild(i);
@@ -1822,6 +1845,10 @@ public final class ParserListenerUtils {
         }
     }
 
+    /**
+     * @deprecated Pre-Beryllium implementation, scheduled for removal.
+     */
+    @Deprecated
     private static RefineBuilder parseRefine(final RefineHolderImpl refine, final Refine_leaf_stmtsContext refineStmt) {
         for (int i = 0; i < refineStmt.getChildCount(); i++) {
             ParseTree refineArg = refineStmt.getChild(i);
@@ -1845,6 +1872,10 @@ public final class ParserListenerUtils {
         return refine;
     }
 
+    /**
+     * @deprecated Pre-Beryllium implementation, scheduled for removal.
+     */
+    @Deprecated
     private static RefineBuilder parseRefine(final RefineBuilder refine, final Refine_container_stmtsContext refineStmt) {
         for (int i = 0; i < refineStmt.getChildCount(); i++) {
             ParseTree refineArg = refineStmt.getChild(i);
@@ -1858,6 +1889,10 @@ public final class ParserListenerUtils {
         return refine;
     }
 
+    /**
+     * @deprecated Pre-Beryllium implementation, scheduled for removal.
+     */
+    @Deprecated
     private static RefineBuilder parseRefine(final RefineHolderImpl refine, final Refine_list_stmtsContext refineStmt) {
         for (int i = 0; i < refineStmt.getChildCount(); i++) {
             ParseTree refineArg = refineStmt.getChild(i);
@@ -1875,6 +1910,10 @@ public final class ParserListenerUtils {
         return refine;
     }
 
+    /**
+     * @deprecated Pre-Beryllium implementation, scheduled for removal.
+     */
+    @Deprecated
     private static RefineBuilder parseRefine(final RefineHolderImpl refine, final Refine_leaf_list_stmtsContext refineStmt) {
         for (int i = 0; i < refineStmt.getChildCount(); i++) {
             ParseTree refineArg = refineStmt.getChild(i);
@@ -1892,6 +1931,10 @@ public final class ParserListenerUtils {
         return refine;
     }
 
+    /**
+     * @deprecated Pre-Beryllium implementation, scheduled for removal.
+     */
+    @Deprecated
     private static RefineBuilder parseRefine(final RefineHolderImpl refine, final Refine_choice_stmtsContext refineStmt) {
         for (int i = 0; i < refineStmt.getChildCount(); i++) {
             ParseTree refineArg = refineStmt.getChild(i);
@@ -1911,6 +1954,10 @@ public final class ParserListenerUtils {
         return refine;
     }
 
+    /**
+     * @deprecated Pre-Beryllium implementation, scheduled for removal.
+     */
+    @Deprecated
     private static RefineBuilder parseRefine(final RefineBuilder refine, final Refine_anyxml_stmtsContext refineStmt) {
         for (int i = 0; i < refineStmt.getChildCount(); i++) {
             ParseTree refineArg = refineStmt.getChild(i);

@@ -26,6 +26,10 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 public final class GroupingUtils {
     private static final Logger LOG = LoggerFactory.getLogger(GroupingUtils.class);
 

@@ -7,18 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.model.parser.api;
 
+import com.google.common.io.ByteSource;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
-
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-import com.google.common.io.ByteSource;
-
 /**
- * Parse yang models and convert data to SchemaContext.
+ * Parse YANG models and convert data to SchemaContext.
  *
+ * @deprecated Use {@link org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory} and related classes
+ *             instead.
  */
+@Deprecated
 public interface YangContextParser extends YangModelParser {
 
     /**

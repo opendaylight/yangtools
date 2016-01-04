@@ -24,6 +24,10 @@ import org.opendaylight.yangtools.yang.parser.builder.api.TypeDefinitionBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainerBuilder;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 public final class GroupingBuilderImpl extends AbstractDocumentedDataNodeContainerBuilder implements GroupingBuilder {
     private GroupingDefinitionImpl instance;
     // SchemaNode args

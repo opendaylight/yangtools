@@ -13,6 +13,10 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.parser.builder.api.RefineBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractBuilder;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 public final class RefineHolderImpl extends AbstractBuilder implements RefineBuilder {
     private final String targetPathString;
     private String defaultStr;

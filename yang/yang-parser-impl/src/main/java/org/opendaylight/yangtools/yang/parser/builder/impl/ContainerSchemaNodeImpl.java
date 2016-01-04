@@ -23,6 +23,10 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainer;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 final class ContainerSchemaNodeImpl extends AbstractDocumentedDataNodeContainer implements
         ContainerSchemaNode, DerivableSchemaNode {
     private final QName qname;

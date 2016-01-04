@@ -15,7 +15,10 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 /**
  * Builder for  'uses' statement.
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public interface UsesNodeBuilder extends GroupingMember {
 
     /**

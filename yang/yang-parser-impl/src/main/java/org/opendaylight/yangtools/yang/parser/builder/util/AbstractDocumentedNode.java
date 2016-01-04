@@ -12,6 +12,10 @@ import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 public abstract class AbstractDocumentedNode implements DocumentedNode {
 
     private final String description;

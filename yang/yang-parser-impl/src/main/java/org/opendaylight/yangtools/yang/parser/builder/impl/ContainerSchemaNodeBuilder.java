@@ -25,6 +25,10 @@ import org.opendaylight.yangtools.yang.parser.builder.api.SchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainerBuilder;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 public final class ContainerSchemaNodeBuilder extends AbstractDocumentedDataNodeContainerBuilder implements
         AugmentationTargetBuilder, DataSchemaNodeBuilder {
     private ContainerSchemaNodeImpl instance;

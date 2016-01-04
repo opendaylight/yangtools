@@ -21,7 +21,6 @@ import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.pa
 import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.parseUserOrdered;
 import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.parseYinValue;
 import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.stringFromNode;
-
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
@@ -103,6 +102,10 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 public final class YangParserListenerImpl extends YangParserBaseListener {
     private static final Logger LOG = LoggerFactory.getLogger(YangParserListenerImpl.class);
     private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings();

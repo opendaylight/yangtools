@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import java.net.URI;
@@ -24,6 +23,10 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainer;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 final class AugmentationSchemaImpl extends AbstractDocumentedDataNodeContainer implements AugmentationSchema, NamespaceRevisionAware, Comparable<AugmentationSchemaImpl> {
     private final int order;
     private final SchemaPath targetPath;

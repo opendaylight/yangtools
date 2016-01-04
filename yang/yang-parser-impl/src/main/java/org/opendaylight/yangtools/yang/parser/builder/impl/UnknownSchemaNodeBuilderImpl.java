@@ -20,8 +20,12 @@ import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuild
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractBuilder;
 import org.opendaylight.yangtools.yang.parser.builder.util.Comparators;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 public final class UnknownSchemaNodeBuilderImpl extends AbstractBuilder implements UnknownSchemaNodeBuilder {
-    private QName qname;
+    private final QName qname;
     private SchemaPath schemaPath;
     private String description;
     private String reference;
@@ -67,7 +71,7 @@ public final class UnknownSchemaNodeBuilderImpl extends AbstractBuilder implemen
     }
 
     @Override
-    public void setPath(SchemaPath schemaPath) {
+    public void setPath(final SchemaPath schemaPath) {
         this.schemaPath = schemaPath;
     }
 

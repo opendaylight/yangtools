@@ -15,7 +15,10 @@ import org.opendaylight.yangtools.yang.parser.builder.api.UsesNodeBuilder;
 
 /**
  * Created by lukas on 10/14/14.
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public abstract class AbstractBuilderTest {
 
     protected final static String MODULE_NAMESPACE = "urn:opendaylight.rpc:def:test-model";
@@ -61,7 +64,7 @@ public abstract class AbstractBuilderTest {
         return unknownNodeBuilder;
     }
 
-    protected ChoiceBuilder provideChoiceBuilder(String choiceLocalName) {
+    protected ChoiceBuilder provideChoiceBuilder(final String choiceLocalName) {
         final QName choiceName = QName.create(module.getNamespace(), module.getRevision(), choiceLocalName);
         final SchemaPath choicePath = SchemaPath.create(true, choiceName);
         final ChoiceBuilder choiceBuilder = new ChoiceBuilder(module.getModuleName(), 22, choiceName, choicePath);

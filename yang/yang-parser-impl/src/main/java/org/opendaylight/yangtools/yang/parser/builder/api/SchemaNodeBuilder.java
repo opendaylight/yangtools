@@ -13,7 +13,10 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 /**
  * Builder for {@link SchemaNode}.
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public interface SchemaNodeBuilder extends DocumentedNodeBuilder, Builder {
 
     /**

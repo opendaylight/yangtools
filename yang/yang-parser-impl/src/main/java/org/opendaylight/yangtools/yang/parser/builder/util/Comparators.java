@@ -15,6 +15,10 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.api.AugmentationSchemaBuilder;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 public final class Comparators {
 
     /**
@@ -42,7 +46,7 @@ public final class Comparators {
 
     private static final class AugmentBuilderComparator implements Comparator<AugmentationSchemaBuilder> {
         @Override
-        public int compare(AugmentationSchemaBuilder o1, AugmentationSchemaBuilder o2) {
+        public int compare(final AugmentationSchemaBuilder o1, final AugmentationSchemaBuilder o2) {
             int length1 = Iterables.size(o1.getTargetPath().getPathFromRoot());
             int length2 = Iterables.size(o2.getTargetPath().getPathFromRoot());
             return length1 - length2;
@@ -51,7 +55,7 @@ public final class Comparators {
 
     private static final class AugmentComparator implements Comparator<AugmentationSchema> {
         @Override
-        public int compare(AugmentationSchema augSchema1, AugmentationSchema augSchema2) {
+        public int compare(final AugmentationSchema augSchema1, final AugmentationSchema augSchema2) {
             final Iterator<QName> thisIt = augSchema1.getTargetPath().getPathFromRoot().iterator();
             final Iterator<QName> otherIt = augSchema2.getTargetPath().getPathFromRoot().iterator();
 

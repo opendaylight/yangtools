@@ -12,7 +12,9 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 /**
  * Mixin-style builder interfac for nodes, which may have documentation attached.
  *
- **/
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 public interface DocumentedNodeBuilder {
 
     /**

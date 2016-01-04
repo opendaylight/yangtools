@@ -23,7 +23,10 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 /**
  * Utility class with helper methods to perform operations tied to refine
  * process.
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public final class RefineUtils {
 
     private RefineUtils() {

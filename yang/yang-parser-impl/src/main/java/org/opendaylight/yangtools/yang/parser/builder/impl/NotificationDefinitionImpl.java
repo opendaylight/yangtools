@@ -20,8 +20,11 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.parser.builder.util.AbstractDocumentedDataNodeContainer;
 
-final class NotificationDefinitionImpl extends AbstractDocumentedDataNodeContainer implements
-NotificationDefinition {
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
+final class NotificationDefinitionImpl extends AbstractDocumentedDataNodeContainer implements NotificationDefinition {
     private final QName qname;
     private final SchemaPath path;
     ImmutableSet<AugmentationSchema> augmentations;

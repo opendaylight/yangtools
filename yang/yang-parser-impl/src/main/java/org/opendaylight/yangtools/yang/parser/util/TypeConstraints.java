@@ -19,7 +19,10 @@ import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 
 /**
  * Holder object for holding YANG type constraints.
+ *
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
+@Deprecated
 public final class TypeConstraints {
     private final String moduleName;
     private final int line;

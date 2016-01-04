@@ -24,6 +24,10 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
+/**
+ * @deprecated Pre-Beryllium implementation, scheduled for removal.
+ */
+@Deprecated
 final class ChoiceSchemaNodeImpl implements ChoiceSchemaNode, DerivableSchemaNode {
     private final QName qname;
     private final SchemaPath path;
