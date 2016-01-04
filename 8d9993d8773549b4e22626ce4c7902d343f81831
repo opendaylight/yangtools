@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aa4ed85_3e42f03e",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/ChoiceEffectiveStatementImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-01-04T14:04:11Z",
+      "side": 1,
+      "message": "effective statements should not retain source reference",
+      "revId": "8d9993d8773549b4e22626ce4c7902d343f81831",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_1e47f44c",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/ChoiceEffectiveStatementImpl.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 136,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-01-04T14:04:11Z",
+      "side": 1,
+      "message": "this is completely unneeded, as the argument is not coming from the statement at all, but rather from the caller. Someone up in the call stack should catch this exception and provide diagnostics as to what was going on.",
+      "revId": "8d9993d8773549b4e22626ce4c7902d343f81831",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
