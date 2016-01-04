@@ -12,22 +12,18 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public final class EffectiveStmtUtils {
+final class EffectiveStmtUtils {
 
     private EffectiveStmtUtils() {
         throw new UnsupportedOperationException("Utility class");
     }
 
-    public static SourceException createNameCollisionSourceException(final StmtContext<?, ?, ?> ctx,
+    static SourceException createNameCollisionSourceException(final StmtContext<?, ?, ?> ctx,
             final EffectiveStatement<?, ?> effectiveStatement) {
-        return new SourceException("Error in module '"
-                + ctx.getRoot().getStatementArgument()
-                + "': can not add '"
-                + effectiveStatement.argument()
-                + "'. Node name collision: '"
-                + effectiveStatement.argument()
-                + "' already declared.",
-                ctx.getStatementSourceReference());
+        return new SourceException(ctx.getStatementSourceReference(),
+            "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared.",
+            ctx.getRoot().getStatementArgument(),
+            effectiveStatement.argument(),
+            effectiveStatement.argument());
     }
-
 }
