@@ -11,35 +11,113 @@ import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 
 /**
- *
  * Thrown to indicate error in YANG model source.
- *
  */
 public class SourceException extends RuntimeException {
-
     private static final long serialVersionUID = 1L;
 
     private final StatementSourceReference sourceRef;
 
-    public SourceException(@Nonnull String message,@Nonnull StatementSourceReference source) {
+    /**
+     * Create a new instance with the specified message and source. The message will be appended with
+     * the source reference.
+     *
+     * @param message Context message
+     * @param source Statement source
+     */
+    public SourceException(@Nonnull final String message, @Nonnull final StatementSourceReference source) {
         super(createMessage(message, source));
         sourceRef = source;
     }
 
-    public SourceException(@Nonnull String message,@Nonnull StatementSourceReference source, Throwable cause) {
+    /**
+     * Create a new instance with the specified message and source. The message will be appended with
+     * the source reference.
+     *
+     * @param message Context message
+     * @param source Statement source
+     * @param cause Underlying cause of this exception
+     */
+    public SourceException(@Nonnull final String message, @Nonnull final StatementSourceReference source,
+            final Throwable cause) {
         super(createMessage(message, source), cause);
         sourceRef = source;
     }
 
+    /**
+     * Create a new instance with the specified source and a formatted message. The message will be appended with
+     * the source reference.
+     *
+     * @param source Statement source
+     * @param format Format string, according to {@link String#format(String, Object...)}.
+     * @param args Format string arguments, according to {@link String#format(String, Object...)}
+     */
+    public SourceException(@Nonnull final StatementSourceReference source, @Nonnull final String format,
+            final Object... args) {
+        this(String.format(format, args), source);
+    }
+
+    /**
+     * Create a new instance with the specified source and a formatted message. The message will be appended with
+     * the source reference.
+     *
+     * @param source Statement source
+     * @param cause Underlying cause of this exception
+     * @param format Format string, according to {@link String#format(String, Object...)}.
+     * @param args Format string arguments, according to {@link String#format(String, Object...)}
+     */
+    public SourceException(@Nonnull final StatementSourceReference source, final Throwable cause,
+            @Nonnull final String format, final Object... args) {
+        this(String.format(format, args), source, cause);
+    }
+
+    /**
+     * Return the reference to the source which caused this exception.
+     *
+     * @return Source reference
+     */
     public @Nonnull StatementSourceReference getSourceReference() {
         return sourceRef;
+    }
+
+    /**
+     * Throw an instance of this exception if an expression evaluates to true. If the expression evaluates to false,
+     * this method does nothing.
+     *
+     * @param expression Expression to be evaluated
+     * @param source Statement source reference
+     * @param format Format string, according to {@link String#format(String, Object...)}.
+     * @param args Format string arguments, according to {@link String#format(String, Object...)}
+     * @throws SourceException if the expression evaluates to true.
+     */
+    public static void throwIf(final boolean expression, @Nonnull final StatementSourceReference source,
+            @Nonnull final String format, final Object... args) {
+        if (!expression) {
+            throw new SourceException(source, format, args);
+        }
+    }
+
+    /**
+     * Throw an instance of this exception if an object is null. If the object is non-null, it will be returned as
+     * the result of this method.
+     *
+     * @param expression Expression to be evaluated
+     * @param source Statement source reference
+     * @param format Format string, according to {@link String#format(String, Object...)}.
+     * @param args Format string arguments, according to {@link String#format(String, Object...)}
+     * @return Object if it is not null
+     * @throws SourceException if object is null
+     */
+    @Nonnull public static <T> T throwIfNull(final T obj, @Nonnull final StatementSourceReference source,
+            @Nonnull final String format, final Object... args) {
+        throwIf(obj == null, source, format, args);
+        return obj;
     }
 
     private static String createMessage(@Nonnull final String message, @Nonnull final StatementSourceReference source) {
         Preconditions.checkNotNull(message);
         Preconditions.checkNotNull(source);
 
-        return String.format("%s\nStatement source at %s", message, source);
+        return message + " [at " + source + ']';
     }
-
 }

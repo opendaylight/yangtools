@@ -41,17 +41,16 @@ public final class BitsSpecificationEffectiveStatementImpl extends
                     } else if (highestPosition != 4294967295L) {
                         newPos = highestPosition + 1;
                     } else {
-                        throw new SourceException("Bit " + b + " must have a position statement",
-                            ctx.getStatementSourceReference());
+                        throw new SourceException(ctx.getStatementSourceReference(),
+                            "Bit %s must have a position statement", b);
                     }
 
                     b = new BitImpl(newPos, b.getQName(), b.getPath(), b.getDescription(), b.getReference(),
                         b.getStatus(), b.getUnknownSchemaNodes());
                 }
 
-                if (b.getPosition() < 0L || b.getPosition() > 4294967295L) {
-                    throw new SourceException("Bit " + b + " has illegal position", ctx.getStatementSourceReference());
-                }
+                SourceException.throwIf(b.getPosition() < 0L && b.getPosition() > 4294967295L,
+                        ctx.getStatementSourceReference(), "Bit %s has illegal position", b);
 
                 if (highestPosition == null || highestPosition < b.getPosition()) {
                     highestPosition = b.getPosition();

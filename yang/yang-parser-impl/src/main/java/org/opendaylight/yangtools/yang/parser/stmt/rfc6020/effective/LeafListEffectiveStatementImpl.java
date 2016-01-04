@@ -35,10 +35,9 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
         this.original = ctx.getOriginalCtx() == null ? null : (LeafListSchemaNode) ctx.getOriginalCtx()
                 .buildEffective();
 
-        final TypeEffectiveStatement<?> typeStmt = firstSubstatementOfType(TypeEffectiveStatement.class);
-        if (typeStmt == null) {
-            throw new SourceException("Leaf-list is missing a 'type' statement", ctx.getStatementSourceReference());
-        }
+        final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
+            firstSubstatementOfType(TypeEffectiveStatement.class), ctx.getStatementSourceReference(),
+            "Leaf-list is missing a 'type' statement");
 
         final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
             ctx.getSchemaPath().get());

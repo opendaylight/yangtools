@@ -31,7 +31,7 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
         this.revision = (revisionDateStmt == null) ? SimpleDateFormatUtil.DEFAULT_DATE_IMP : revisionDateStmt.argument();
 
         PrefixEffectiveStatementImpl prefixStmt = firstEffective(PrefixEffectiveStatementImpl.class);
-        if (prefixStmt != null ) {
+        if (prefixStmt != null) {
             this.prefix = prefixStmt.argument();
         } else {
             throw new MissingSubstatementException("Prefix is mandatory substatement of import statement",

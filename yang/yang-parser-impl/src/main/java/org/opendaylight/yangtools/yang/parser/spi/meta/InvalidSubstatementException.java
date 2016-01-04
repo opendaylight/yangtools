@@ -17,11 +17,17 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 public class InvalidSubstatementException extends SourceException {
     private static final long serialVersionUID = 1L;
 
-    public InvalidSubstatementException(@Nonnull final String message, @Nonnull final StatementSourceReference source, final Throwable cause) {
+    public InvalidSubstatementException(@Nonnull final String message, @Nonnull final StatementSourceReference source,
+            final Throwable cause) {
         super(message, source, cause);
     }
 
     public InvalidSubstatementException(@Nonnull final String message, @Nonnull final StatementSourceReference source) {
         super(message, source);
+    }
+
+    public InvalidSubstatementException(@Nonnull final StatementSourceReference source, @Nonnull final String format,
+            final Object... args) {
+        this(String.format(format, args), source);
     }
 }

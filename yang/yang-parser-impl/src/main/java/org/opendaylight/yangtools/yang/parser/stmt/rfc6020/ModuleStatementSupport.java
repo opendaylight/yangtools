@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
-
 import com.google.common.base.Optional;
 import java.net.URI;
 import java.util.Date;
@@ -75,31 +74,28 @@ public class ModuleStatementSupport extends
     }
 
     @Override
-    public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+    public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return value;
     }
 
     @Override
-    public ModuleStatement createDeclared(StmtContext<String, ModuleStatement, ?> ctx) {
+    public ModuleStatement createDeclared(final StmtContext<String, ModuleStatement, ?> ctx) {
         return new ModuleStatementImpl(ctx);
     }
 
     @Override
     public EffectiveStatement<String, ModuleStatement> createEffective(
-            StmtContext<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> ctx) {
+            final StmtContext<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> ctx) {
         return new ModuleEffectiveStatementImpl(ctx);
     }
 
     @Override
-    public void onLinkageDeclared(Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt)
-            throws SourceException {
+    public void onLinkageDeclared(final Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt) {
 
         Optional<URI> moduleNs = Optional.fromNullable(firstAttributeOf(stmt.declaredSubstatements(),
                 NamespaceStatement.class));
-        if (!moduleNs.isPresent()) {
-            throw new SourceException(String.format("Namespace of the module [%s] is missing",
-                    stmt.getStatementArgument()), stmt.getStatementSourceReference());
-        }
+        SourceException.throwIf(!moduleNs.isPresent(), stmt.getStatementSourceReference(),
+            "Namespace of the module [%s] is missing", stmt.getStatementArgument());
 
         Optional<Date> revisionDate = Optional.fromNullable(Utils.getLatestRevision(stmt.declaredSubstatements()));
         if (!revisionDate.isPresent()) {
@@ -114,23 +110,20 @@ public class ModuleStatementSupport extends
         stmt.addContext(ModuleNamespaceForBelongsTo.class, moduleIdentifier.getName(), stmt);
         stmt.addContext(NamespaceToModule.class, qNameModule, stmt);
 
-        String modulePrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
-        if (modulePrefix == null) {
-            throw new SourceException(String.format("Prefix of the module [%s] is missing",
-                    stmt.getStatementArgument()), stmt.getStatementSourceReference());
-        }
+        final String modulePrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
+        SourceException.throwIfNull(modulePrefix, stmt.getStatementSourceReference(),
+            "Prefix of the module [%s] is missing", stmt.getStatementArgument());
 
         stmt.addToNs(PrefixToModule.class, modulePrefix, qNameModule);
         stmt.addToNs(ModuleNameToModuleQName.class, stmt.getStatementArgument(), qNameModule);
         stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule);
         stmt.addToNs(ModuleQNameToModuleName.class, qNameModule, stmt.getStatementArgument());
         stmt.addToNs(ModuleIdentifierToModuleQName.class, moduleIdentifier, qNameModule);
-
         stmt.addToNs(ImpPrefixToModuleIdentifier.class, modulePrefix, moduleIdentifier);
     }
 
     @Override
-    public void onFullDefinitionDeclared(Mutable<String, ModuleStatement,
+    public void onFullDefinitionDeclared(final Mutable<String, ModuleStatement,
             EffectiveStatement<String, ModuleStatement>> stmt) throws SourceException {
         super.onFullDefinitionDeclared(stmt);
         SUBSTATEMENT_VALIDATOR.validate(stmt);

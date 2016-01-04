@@ -64,9 +64,9 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
                 final QName keyQName = key.getLastComponent();
 
                 if (!possibleLeafQNamesForKey.contains(keyQName)) {
-                    throw new InferenceException(String.format("Key '%s' misses node '%s' in list '%s'",
-                            keyEffectiveSubstatement.getDeclared().rawArgument(), keyQName.getLocalName(),
-                            ctx.getStatementArgument()), ctx.getStatementSourceReference());
+                    throw new InferenceException(ctx.getStatementSourceReference(),
+                        "Key '%s' misses node '%s' in list '%s'", keyEffectiveSubstatement.getDeclared().rawArgument(),
+                        keyQName.getLocalName(), ctx.getStatementArgument());
                 }
 
                 keyDefinitionInit.add(keyQName);
