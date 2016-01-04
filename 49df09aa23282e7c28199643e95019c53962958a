@@ -71,6 +71,23 @@
     },
     {
       "key": {
+        "uuid": "1aa4ed85_1d6e1902",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/StatementContextBase.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 172,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-01-04T23:24:52Z",
+      "side": 1,
+      "message": "Preconditions take a format string here. Do not use string concatenation, but String.format()-like notation.",
+      "revId": "49df09aa23282e7c28199643e95019c53962958a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_fe49b8d0",
         "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/stmt/retest/TestUtils.java",
         "patchSetId": 8
