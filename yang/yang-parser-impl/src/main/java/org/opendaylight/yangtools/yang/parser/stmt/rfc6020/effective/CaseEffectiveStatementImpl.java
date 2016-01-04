@@ -37,7 +37,7 @@ public final class CaseEffectiveStatementImpl extends AbstractEffectiveSimpleDat
         }
     }
 
-    private boolean isAtLeastOneChildConfiguration(Collection<StatementContextBase<?, ?, ?>> substatements) {
+    private static boolean isAtLeastOneChildConfiguration(final Collection<StatementContextBase<?, ?, ?>> substatements) {
         for (StatementContextBase<?, ?, ?> substatement : substatements) {
             if (substatement.isConfiguration()) {
                 return true;
