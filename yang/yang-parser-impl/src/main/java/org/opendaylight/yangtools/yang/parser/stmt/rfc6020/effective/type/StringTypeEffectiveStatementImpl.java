@@ -59,8 +59,8 @@ public final class StringTypeEffectiveStatementImpl extends DeclaredEffectiveSta
             typeDefinition = builder.build();
         } catch (InvalidLengthConstraintException e) {
             final LengthConstraint c = e.getOffendingConstraint();
-            throw new SourceException(String.format("Invalid length constraint: <%s, %s>", c.getMin(), c.getMax()),
-                ctx.getStatementSourceReference(), e);
+            throw new SourceException(ctx.getStatementSourceReference(), e, "Invalid length constraint: <%s, %s>",
+                c.getMin(), c.getMax());
         }
     }
 

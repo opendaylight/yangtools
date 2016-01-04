@@ -107,8 +107,7 @@ public final class Utils {
         // to detect if key contains duplicates
         if ((new HashSet<>(keyTokens)).size() < keyTokens.size()) {
             // FIXME: report all duplicate keys
-            throw new SourceException(String.format("Duplicate value in list key: %s", value),
-                    ctx.getStatementSourceReference());
+            throw new SourceException(ctx.getStatementSourceReference(), "Duplicate value in list key: %s", value);
         }
 
         Set<SchemaNodeIdentifier.Relative> keyNodes = new HashSet<>();

@@ -42,8 +42,8 @@ public final class EnumSpecificationEffectiveStatementImpl extends
                     } else if (highestValue != 2147483647) {
                         newValue = highestValue + 1;
                     } else {
-                        throw new SourceException("Enum " + p + " must have a value statement",
-                            ctx.getStatementSourceReference());
+                        throw new SourceException(ctx.getStatementSourceReference(),
+                            "Enum '%s' must have a value statement", p);
                     }
 
                     p = new EnumPairImpl(p.getName(), newValue, p.getPath(), p.getDescription(), p.getReference(),

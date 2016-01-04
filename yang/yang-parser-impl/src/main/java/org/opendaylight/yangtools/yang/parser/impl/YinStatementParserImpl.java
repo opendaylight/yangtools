@@ -37,17 +37,17 @@ public class YinStatementParserImpl {
 
     private static final Logger LOG = LoggerFactory.getLogger(YinStatementParserImpl.class);
 
+    private final List<String> toBeSkipped = new ArrayList<>();
+    private final String sourceName;
     private StatementWriter writer;
     private QNameToStatementDefinition stmtDef;
     private PrefixToModule prefixes;
-    private final String sourceName;
     private String uriStr;
     private boolean isType = false;
     private boolean action = true;
     private boolean yinElement = false;
-    private List<String> toBeSkipped = new ArrayList<>();
 
-    public YinStatementParserImpl(String sourceName) {
+    public YinStatementParserImpl(final String sourceName) {
         this.sourceName = Preconditions.checkNotNull(sourceName);
     }
 
@@ -57,18 +57,16 @@ public class YinStatementParserImpl {
      * created.
      * When done, start walking through YIN source
      *
-     *
      * @param writer - instance of StatementWriter to emit declared statements
      * @param stmtDef - map of valid statement definitions for linkage phase
      *
      */
-    public void setAttributes(StatementWriter writer, QNameToStatementDefinition stmtDef) {
+    public void setAttributes(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
         this.writer = writer;
         this.stmtDef = stmtDef;
     }
 
     /**
-     *
      * This method is supposed to be called in any phase but linkage, when YinStatementParserImpl instance has already
      * been created.
      * When done, start walking through YIN source
@@ -78,20 +76,18 @@ public class YinStatementParserImpl {
      * @param prefixes - map of valid prefixes for any phase but linkage
      *
      */
-    public void setAttributes(StatementWriter writer, QNameToStatementDefinition stmtDef, PrefixToModule prefixes) {
+    public void setAttributes(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes) {
         this.writer = writer;
         this.stmtDef = stmtDef;
         this.prefixes = prefixes;
     }
 
     /**
-     *
      * This method executes parsing YIN source and emitting declared statements via attached StatementWriter
      *
      * @param inputReader - instance of XMlStreamReader, allows forward, read-only access to XML.
-     *
      */
-    public void walk(XMLStreamReader inputReader) {
+    public void walk(final XMLStreamReader inputReader) {
         try {
             while (inputReader.hasNext()) {
                 inputReader.next();
@@ -110,11 +106,11 @@ public class YinStatementParserImpl {
         }
     }
 
-    private void startStatement(QName identifier, StatementSourceReference ref) {
+    private void startStatement(final QName identifier, final StatementSourceReference ref) {
         writer.startStatement(identifier, ref);
     }
 
-    private void argumentValue(XMLStreamReader inputReader, StatementSourceReference ref, QName identifier, boolean
+    private void argumentValue(final XMLStreamReader inputReader, final StatementSourceReference ref, final QName identifier, final boolean
             yinElement) {
         if (yinElement) {
             writeTextOnlyElement(inputReader, ref);
@@ -123,11 +119,11 @@ public class YinStatementParserImpl {
         }
     }
 
-    private void endStatement(StatementSourceReference ref) {
+    private void endStatement(final StatementSourceReference ref) {
         writer.endStatement(ref);
     }
 
-    private void enterStatement(XMLStreamReader inputReader) throws URISyntaxException {
+    private void enterStatement(final XMLStreamReader inputReader) throws URISyntaxException {
         final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, inputReader
                 .getLocation().getLineNumber(), inputReader.getLocation().getColumnNumber());
         uriStr = inputReader.getNamespaceURI();
@@ -155,14 +151,12 @@ public class YinStatementParserImpl {
                 }
             } else {
                 //if statement not found through all phases, throw exception
-                if (writer.getPhase().equals(ModelProcessingPhase.FULL_DECLARATION)) {
-                    throw new SourceException(String.format("%s is not a YIN statement or use of extension.",
-                            identifier.getLocalName()), ref);
-                } else {
-                    //otherwise skip it (statement not to be read yet)
-                    action = false;
-                    toBeSkipped.add(getElementFullName(inputReader));
-                }
+                SourceException.throwIf(writer.getPhase().equals(ModelProcessingPhase.FULL_DECLARATION), ref,
+                    "%s is not a YIN statement or use of extension.", identifier.getLocalName());
+
+                //otherwise skip it (statement not to be read yet)
+                action = false;
+                toBeSkipped.add(getElementFullName(inputReader));
             }
 
             if (isType) {
@@ -175,7 +169,7 @@ public class YinStatementParserImpl {
         }
     }
 
-    private void exitStatement(XMLStreamReader inputReader) throws URISyntaxException {
+    private void exitStatement(final XMLStreamReader inputReader) throws URISyntaxException {
         final String statementName = getElementFullName(inputReader);
         final QName identifier = new QName(new URI(inputReader.getNamespaceURI()), statementName);
         final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, inputReader
@@ -196,7 +190,7 @@ public class YinStatementParserImpl {
         }
     }
 
-    private void writeTextOnlyElement(XMLStreamReader inputReader, StatementSourceReference ref) {
+    private void writeTextOnlyElement(final XMLStreamReader inputReader, final StatementSourceReference ref) {
         try {
             writer.argumentValue(inputReader.getElementText(), ref);
         } catch (XMLStreamException e) {
@@ -204,14 +198,15 @@ public class YinStatementParserImpl {
         }
     }
 
-    private void writeNormalizedAttributeValue(XMLStreamReader inputReader, QName
-            identifier, StatementSourceReference ref) {
+    private void writeNormalizedAttributeValue(final XMLStreamReader inputReader, final QName
+            identifier, final StatementSourceReference ref) {
         final String attributeValue = getAttributeValue(inputReader, identifier, stmtDef);
-        if (attributeValue != null)
+        if (attributeValue != null) {
             writer.argumentValue(attributeValue, ref);
+        }
     }
 
-    private void writeTypeStmtAndArg(XMLStreamReader inputReader, QName identifier, StatementSourceReference ref) {
+    private void writeTypeStmtAndArg(final XMLStreamReader inputReader, final QName identifier, final StatementSourceReference ref) {
         String argument = getAttributeValue(inputReader, identifier, stmtDef);
         if (TypeUtils.isYangTypeBodyStmtString(argument)) {
             startStatement(new QName(YangConstants.RFC6020_YIN_NAMESPACE, argument), ref);
@@ -223,7 +218,7 @@ public class YinStatementParserImpl {
         isType = false;
     }
 
-    private static String getElementFullName(XMLStreamReader inputReader) {
+    private static String getElementFullName(final XMLStreamReader inputReader) {
         if (!inputReader.getPrefix().isEmpty()) {
             return inputReader.getPrefix() + ":" + inputReader.getLocalName();
         } else {
@@ -231,29 +226,28 @@ public class YinStatementParserImpl {
         }
     }
 
-    private static boolean isStatementWithArgument(QName identifier, QNameToStatementDefinition stmtDef) {
+    private static boolean isStatementWithArgument(final QName identifier, final QNameToStatementDefinition stmtDef) {
         if (stmtDef != null && stmtDef.get(Utils.trimPrefix(identifier)) == null) {
             return false;
-        } else if (((StatementSupport) stmtDef.get(Utils.trimPrefix(identifier)))
-                .getPublicView().getArgumentName() == null) {
+        } else if (((StatementSupport<?, ?, ?>) stmtDef.get(Utils.trimPrefix(identifier))).getPublicView().getArgumentName() == null) {
             return false;
         }
         return true;
     }
 
-    private static boolean isStatementWithYinElement(QName identifier, QNameToStatementDefinition stmtDef) {
+    private static boolean isStatementWithYinElement(final QName identifier, final QNameToStatementDefinition stmtDef) {
         final StatementDefinition statementDefinition = stmtDef.get(Utils.trimPrefix(identifier));
-        if (statementDefinition != null) {
-            return ((Rfc6020Mapping) ((StatementSupport) statementDefinition).getPublicView()).isArgumentYinElement();
-        } else {
+        if (statementDefinition == null) {
             return false;
         }
+
+        return ((Rfc6020Mapping) ((StatementSupport<?, ?, ?>) statementDefinition).getPublicView()).isArgumentYinElement();
     }
 
-    private static String getAttributeValue(XMLStreamReader inputReader, QName identifier, QNameToStatementDefinition
+    private static String getAttributeValue(final XMLStreamReader inputReader, final QName identifier, final QNameToStatementDefinition
             stmtDef) {
         String namespace = null;
-        return inputReader.getAttributeValue(namespace, (((StatementSupport) stmtDef.get(Utils.trimPrefix(identifier)))
+        return inputReader.getAttributeValue(namespace, (((StatementSupport<?, ?, ?>) stmtDef.get(Utils.trimPrefix(identifier)))
                 .getPublicView()).getArgumentName().getLocalName());
     }
 }

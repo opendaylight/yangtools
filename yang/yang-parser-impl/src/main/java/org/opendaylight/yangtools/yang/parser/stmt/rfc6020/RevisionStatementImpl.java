@@ -25,14 +25,11 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RevisionEff
 
 public class RevisionStatementImpl extends AbstractDeclaredStatement<Date>
         implements RevisionStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
-            .REVISION)
-            .add(Rfc6020Mapping.DESCRIPTION, 0, 1)
-            .add(Rfc6020Mapping.REFERENCE, 0, 1)
-            .build();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
+        Rfc6020Mapping.REVISION)
+            .add(Rfc6020Mapping.DESCRIPTION, 0, 1).add(Rfc6020Mapping.REFERENCE, 0, 1).build();
 
-    protected RevisionStatementImpl(
-            StmtContext<Date, RevisionStatement, ?> context) {
+    protected RevisionStatementImpl(final StmtContext<Date, RevisionStatement, ?> context) {
         super(context);
     }
 
@@ -45,35 +42,29 @@ public class RevisionStatementImpl extends AbstractDeclaredStatement<Date>
         }
 
         @Override
-        public Date parseArgumentValue(StmtContext<?, ?, ?> ctx, String value)
-                throws SourceException {
-            Date revision;
+        public Date parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             try {
-                revision = SimpleDateFormatUtil.getRevisionFormat()
-                        .parse(value);
+                return SimpleDateFormatUtil.getRevisionFormat().parse(value);
             } catch (ParseException e) {
-                throw new SourceException(String.format("Revision value %s is not in required format yyyy-MM-dd",
-                        value), ctx.getStatementSourceReference(), e);
+                throw new SourceException(ctx.getStatementSourceReference(), e,
+                    "Revision value %s is not in required format yyyy-MM-dd", value);
             }
-
-            return revision;
         }
 
         @Override
-        public RevisionStatement createDeclared(
-                StmtContext<Date, RevisionStatement, ?> ctx) {
+        public RevisionStatement createDeclared(final StmtContext<Date, RevisionStatement, ?> ctx) {
             return new RevisionStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<Date, RevisionStatement> createEffective(
-                StmtContext<Date, RevisionStatement, EffectiveStatement<Date, RevisionStatement>> ctx) {
+                final StmtContext<Date, RevisionStatement, EffectiveStatement<Date, RevisionStatement>> ctx) {
             return new RevisionEffectiveStatementImpl(ctx);
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<Date, RevisionStatement,
-                EffectiveStatement<Date, RevisionStatement>> stmt) throws SourceException {
+        public void onFullDefinitionDeclared(
+                final StmtContext.Mutable<Date, RevisionStatement, EffectiveStatement<Date, RevisionStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
