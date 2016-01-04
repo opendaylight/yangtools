@@ -48,8 +48,8 @@ public final class IntegerTypeEffectiveStatementImpl extends
             typeDefinition = builder.build();
         } catch (InvalidRangeConstraintException e) {
             final RangeConstraint c = e.getOffendingConstraint();
-            throw new SourceException(String.format("Invalid range constraint: <%s, %s>", c.getMin(), c.getMax()),
-                ctx.getStatementSourceReference(), e);
+            throw new SourceException(ctx.getStatementSourceReference(), e, "Invalid range constraint: <%s, %s>",
+                c.getMin(), c.getMax());
         }
     }
 
