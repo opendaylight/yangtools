@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aa4ed85_5ec6cc4a",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/source/SourceException.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 3635
+      },
+      "writtenOn": "2016-01-04T15:29:42Z",
+      "side": 1,
+      "message": "Should be final",
+      "range": {
+        "startLine": 38,
+        "startChar": 40,
+        "endLine": 38,
+        "endChar": 63
+      },
+      "revId": "49df09aa23282e7c28199643e95019c53962958a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_fec45841",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/source/SourceException.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 3635
+      },
+      "writtenOn": "2016-01-04T15:29:42Z",
+      "side": 1,
+      "message": "Should be final.",
+      "range": {
+        "startLine": 38,
+        "startChar": 65,
+        "endLine": 38,
+        "endChar": 105
+      },
+      "revId": "49df09aa23282e7c28199643e95019c53962958a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_5ef48c86",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/StatementContextBase.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 3635
+      },
+      "writtenOn": "2016-01-04T15:29:42Z",
+      "side": 1,
+      "message": "Not familiar enough with this code to tell;  could  \"original.getStatementSourceReference()\" return null?  I see no syntax guards against it in ContextBuilder, but then again I don\u0027t know if this is semantically impossible.",
+      "range": {
+        "startLine": 171,
+        "startChar": 50,
+        "endLine": 171,
+        "endChar": 79
+      },
+      "revId": "49df09aa23282e7c28199643e95019c53962958a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_fe49b8d0",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/stmt/retest/TestUtils.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 3635
+      },
+      "writtenOn": "2016-01-04T15:29:42Z",
+      "side": 1,
+      "message": "Is there a reason that this uses indexing rather than an iterator?",
+      "range": {
+        "startLine": 270,
+        "startChar": 8,
+        "endLine": 272,
+        "endChar": 9
+      },
+      "revId": "49df09aa23282e7c28199643e95019c53962958a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
