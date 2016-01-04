@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
-
 import com.google.common.base.Optional;
 import java.net.URI;
 import java.util.Date;
@@ -61,8 +60,9 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
             .add(Rfc6020Mapping.USES, 0, MAX)
             .add(Rfc6020Mapping.YANG_VERSION, 0, 1)
             .build();
+    private static final Optional<Date> DEFAULT_REVISION = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);
 
-    protected SubmoduleStatementImpl(StmtContext<String, SubmoduleStatement, ?> context) {
+    protected SubmoduleStatementImpl(final StmtContext<String, SubmoduleStatement, ?> context) {
         super(context);
     }
 
@@ -74,35 +74,32 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 
         @Override
         public SubmoduleStatement createDeclared(
-                StmtContext<String, SubmoduleStatement, ?> ctx) {
+                final StmtContext<String, SubmoduleStatement, ?> ctx) {
             return new SubmoduleStatementImpl(ctx);
         }
 
         @Override
         public EffectiveStatement<String, SubmoduleStatement> createEffective(
-                StmtContext<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> ctx) {
+                final StmtContext<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> ctx) {
             return new SubmoduleEffectiveStatementImpl(ctx);
         }
 
         @Override
         public void onLinkageDeclared(
-                Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> stmt)
+                final Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> stmt)
                 throws SourceException {
 
-            Optional<Date> revisionDate = Optional.fromNullable(Utils.getLatestRevision(stmt.declaredSubstatements()));
-            if (!revisionDate.isPresent()) {
-                revisionDate = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);
-            }
+            final Optional<Date> revisionDate = Optional.fromNullable(
+                Utils.getLatestRevision(stmt.declaredSubstatements())).or(DEFAULT_REVISION);
 
-            ModuleIdentifier submoduleIdentifier = new ModuleIdentifierImpl(
-                    stmt.getStatementArgument(), Optional.<URI> absent(),
-                    revisionDate);
+            ModuleIdentifier submoduleIdentifier = new ModuleIdentifierImpl(stmt.getStatementArgument(),
+                Optional.<URI> absent(), revisionDate);
 
             stmt.addContext(SubmoduleNamespace.class, submoduleIdentifier, stmt);
 
@@ -110,20 +107,16 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
                     stmt.declaredSubstatements(), BelongsToStatement.class);
             StmtContext<?, ?, ?> prefixSubStmtCtx = findFirstDeclaredSubstatement(
                     stmt, 0, BelongsToStatement.class, PrefixStatement.class);
-
-            if (prefixSubStmtCtx == null) {
-                throw new SourceException(String.format("Prefix of belongsTo statement is missing in submodule [%s]",
-                        stmt.getStatementArgument()), stmt.getStatementSourceReference());
-            }
+            SourceException.throwIfNull(prefixSubStmtCtx, stmt.getStatementSourceReference(),
+                "Prefix of belongsTo statement is missing in submodule [%s]", stmt.getStatementArgument());
 
             String prefix = (String) prefixSubStmtCtx.getStatementArgument();
 
-            stmt.addToNs(BelongsToPrefixToModuleName.class, prefix,
-                    belongsToModuleName);
+            stmt.addToNs(BelongsToPrefixToModuleName.class, prefix, belongsToModuleName);
         }
 
         @Override
-        public void onFullDefinitionDeclared(Mutable<String, SubmoduleStatement,
+        public void onFullDefinitionDeclared(final Mutable<String, SubmoduleStatement,
                 EffectiveStatement<String, SubmoduleStatement>> stmt) throws SourceException {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
