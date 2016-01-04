@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Throwables;
 import javax.annotation.Nonnull;
 
 /**
@@ -16,10 +17,6 @@ import javax.annotation.Nonnull;
  *
  */
 public class SourceException extends RuntimeException {
-
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
 
     private final StatementSourceReference sourceRef;
@@ -33,9 +30,28 @@ public class SourceException extends RuntimeException {
         super(Preconditions.checkNotNull(message),cause);
         sourceRef = Preconditions.checkNotNull(source);
     }
+    
+    public SourceException(@Nonnull StatementSourceReference source, String format, Object... args) {
+        this(String.format(format, args), source);
+    }
 
+    public SourceException(@Nonnull StatementSourceReference source, Throwable cause, String format, Object... args) {
+        this(String.format(format, args), source, cause);
+    }
+    
     public @Nonnull StatementSourceReference getSourceReference() {
         return sourceRef;
     }
 
+    public static void check(boolean expression, StatementSourceReference source, String format, Object... args) {
+        if (!expression) {
+            throw new SourceException(source, format, args);
+        }
+    }
+    
+    public static void checkNotNull(final Object obj, StatementSourceReference source, String format, Object... args) {
+        if (obj == null) {
+            throw new SourceException(source, format, args);
+        }
+    }
 }
