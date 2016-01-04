@@ -1,0 +1,72 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1aa4ed85_03e6c1b4",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/parser/YangModeledAnyXmlDomParser.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-01-04T13:40:11Z",
+      "side": 1,
+      "message": "Preconditions.checkNotNull()?",
+      "revId": "d8b338301cc9ff9e34833b1e06c783d61e854c18",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_83e95182",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/AnyxmlSchemaLocationStatementImpl.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-01-04T13:40:11Z",
+      "side": 1,
+      "message": "final class, this should be package-private",
+      "revId": "d8b338301cc9ff9e34833b1e06c783d61e854c18",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_43035942",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/UnknownEffectiveStatementBase.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-01-04T13:40:11Z",
+      "side": 1,
+      "message": "\u0027public abstract\u0027",
+      "revId": "d8b338301cc9ff9e34833b1e06c783d61e854c18",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_63fe953a",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/effective/YangModeledAnyXmlEffectiveStatementImpl.java",
+        "patchSetId": 12
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-01-04T13:40:11Z",
+      "side": 1,
+      "message": "Preconditions.checkNotNull() ?",
+      "revId": "d8b338301cc9ff9e34833b1e06c783d61e854c18",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
