@@ -96,13 +96,11 @@ public final class AugmentUtils {
                     .addAll(sourceCtx.declaredSubstatements()).addAll(sourceCtx.effectiveSubstatements()).build();
 
             for (final StatementContextBase<?, ?, ?> sourceSubStatement : sourceSubStatements) {
-                if (sourceSubStatement.getPublicDefinition().getDeclaredRepresentationClass()
-                        .equals(MandatoryStatement.class)) {
-                    throw new InferenceException(
-                            String.format(
-                                    "An augment cannot add node '%s' because it is mandatory and in module different from target",
-                                    sourceCtx.rawStatementArgument()), sourceCtx.getStatementSourceReference());
-                }
+                InferenceException.throwIf(MandatoryStatement.class.equals(
+                    sourceSubStatement.getPublicDefinition().getDeclaredRepresentationClass()),
+                    sourceCtx.getStatementSourceReference(),
+                    "An augment cannot add node '%s' because it is mandatory and in module different from target",
+                    sourceCtx.rawStatementArgument());
             }
         }
 
@@ -115,11 +113,9 @@ public final class AugmentUtils {
             boolean qNamesEqual = sourceIsDataNode && targetIsDataNode
                     && Objects.equals(sourceCtx.getStatementArgument(), subStatement.getStatementArgument());
 
-            if (qNamesEqual) {
-                throw new InferenceException(String.format(
-                        "An augment cannot add node named '%s' because this name is already used in target",
-                        sourceCtx.rawStatementArgument()), sourceCtx.getStatementSourceReference());
-            }
+            InferenceException.throwIf(qNamesEqual, sourceCtx.getStatementSourceReference(),
+                "An augment cannot add node named '%s' because this name is already used in target",
+                sourceCtx.rawStatementArgument());
         }
     }
 

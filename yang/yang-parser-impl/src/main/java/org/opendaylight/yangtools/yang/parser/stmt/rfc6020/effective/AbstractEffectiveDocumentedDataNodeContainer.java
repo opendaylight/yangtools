@@ -49,10 +49,9 @@ abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends Declare
 
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
             if (effectiveStatement instanceof DataSchemaNode) {
-                DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;
+                final DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;
                 if (!mutableChildNodes.containsKey(dataSchemaNode.getQName())) {
-                    mutableChildNodes.put(dataSchemaNode.getQName(),
-                            dataSchemaNode);
+                    mutableChildNodes.put(dataSchemaNode.getQName(), dataSchemaNode);
                     mutablePublicChildNodes.add(dataSchemaNode);
                 } else {
                     throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);

@@ -101,29 +101,27 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         if (def == null) {
             // unknown-stmts (from import, include or local-scope)
             if (qNameToStmtDefMap.get(name) != null) {
-                    final StatementContextBase<?, ?, ?> extension =
-                            (StatementContextBase<?, ?, ?>) currentContext.getAllFromNamespace(ExtensionNamespace.class).get(name);
-                if (extension != null) {
-                    final QName arg = (QName) extension.getStatementArgument();
-                    final QName qName = current.getFromNamespace(QNameCacheNamespace.class,
-                            QName.create(arg, extension.getIdentifier().getArgument()));
+                final StatementContextBase<?, ?, ?> extension =
+                        (StatementContextBase<?, ?, ?>) currentContext.getAllFromNamespace(ExtensionNamespace.class).get(name);
 
-                    def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition(
-                            getNewStatementDefinition(qName)));
-                } else {
-                        throw new SourceException("Extension not found: " + name,
-                                current.getStatementSourceReference());
-                }
+                SourceException.throwIfNull(extension, current.getStatementSourceReference(), "Extension %s not found",
+                    name);
+
+                final QName arg = (QName) extension.getStatementArgument();
+                final QName qName = current.getFromNamespace(QNameCacheNamespace.class,
+                    QName.create(arg, extension.getIdentifier().getArgument()));
+
+                def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition(
+                    getNewStatementDefinition(qName)));
             } else {
                 // type-body-stmts
                 def = resolveTypeBodyStmts(name.getLocalName());
             }
-        }
-        else if (current != null && current.definition().getRepresentingClass().equals(UnknownStatementImpl.class)) {
+        } else if (current != null && current.definition().getRepresentingClass().equals(UnknownStatementImpl.class)) {
             QName qName = Utils.qNameFromArgument(current, name.getLocalName());
 
-            def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition
-                    (getNewStatementDefinition(qName)));
+            def = new StatementDefinitionContext<>(new UnknownStatementImpl.Definition(
+                getNewStatementDefinition(qName)));
         }
 
         Preconditions.checkArgument(def != null, "Statement %s does not have type mapping defined.", name);
@@ -144,7 +142,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         return new ContextBuilder(def, ref) {
 
             @Override
-            public StatementContextBase build() throws SourceException {
+            public StatementContextBase build() {
                 if (root == null) {
                     root = new RootStatementContext(this, SourceSpecificContext.this);
                 } else {
@@ -259,9 +257,9 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
 
     private static boolean tryToProgress(final Collection<ModifierImpl> currentPhaseModifiers) {
-
-        Iterator<ModifierImpl> modifier = currentPhaseModifiers.iterator();
         boolean hasProgressed = false;
+
+        final Iterator<ModifierImpl> modifier = currentPhaseModifiers.iterator();
         while (modifier.hasNext()) {
             if (modifier.next().tryApply()) {
                 modifier.remove();
@@ -352,12 +350,13 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                 .class);
         final Map<String, ModuleIdentifier> belongsToPrefixes = getRoot().getAllFromNamespace
                 (BelongsToPrefixToModuleIdentifier.class);
-        if (belongsToPrefixes != null)
+        if (belongsToPrefixes != null) {
             allPrefixes.putAll(belongsToPrefixes);
+        }
 
         for (Entry<String, ModuleIdentifier> stringModuleIdentifierEntry : allPrefixes.entrySet()) {
             final QNameModule namespace = getRoot().getFromNamespace(ModuleIdentifierToModuleQName.class,
-                    stringModuleIdentifierEntry.getValue());
+                stringModuleIdentifierEntry.getValue());
             prefixToModuleMap.put(stringModuleIdentifierEntry.getKey(), namespace);
         }
         return prefixToModuleMap;
@@ -367,22 +366,20 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         // regular YANG statements added
         ImmutableMap<QName, StatementSupport<?, ?, ?>> definitions = currentContext.getSupportsForPhase(
                 inProgressPhase).getDefinitions();
-        for (Map.Entry<QName, StatementSupport<?, ?, ?>> entry : definitions.entrySet()) {
+        for (Entry<QName, StatementSupport<?, ?, ?>> entry : definitions.entrySet()) {
             qNameToStmtDefMap.put(entry.getKey(), entry.getValue());
         }
 
         // extensions added
         if (inProgressPhase.equals(ModelProcessingPhase.FULL_DECLARATION)) {
-            Map<QName, StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>>> extensions = currentContext
-                    .getAllFromNamespace(ExtensionNamespace.class);
+            Map<QName, StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>>> extensions =
+                    currentContext.getAllFromNamespace(ExtensionNamespace.class);
             if (extensions != null) {
-                for (Map.Entry<QName, StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>>> extension : extensions
-                        .entrySet()) {
-                    qNameToStmtDefMap
-                              .put((extension.getKey()),
-                                    (StatementDefinition) ((StatementContextBase<?, ?, ?>) extension
-                                            .getValue()).definition()
-                                            .getFactory());
+                for (Entry<QName, StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>>> extension :
+                    extensions.entrySet()) {
+                    qNameToStmtDefMap.put((extension.getKey()),
+                        (StatementDefinition) ((StatementContextBase<?, ?, ?>) extension.getValue()).definition()
+                        .getFactory());
                 }
             }
         }
