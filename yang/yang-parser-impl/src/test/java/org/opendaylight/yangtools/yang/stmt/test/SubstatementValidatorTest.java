@@ -8,9 +8,8 @@
 
 package org.opendaylight.yangtools.yang.stmt.test;
 
-import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
-
+import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
