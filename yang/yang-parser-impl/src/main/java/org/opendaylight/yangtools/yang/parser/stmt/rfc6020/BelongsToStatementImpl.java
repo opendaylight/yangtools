@@ -29,18 +29,14 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.BelongsEffectiveToStatementImpl;
 
 public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
         implements BelongsToStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
-            .BELONGS_TO)
-            .add(Rfc6020Mapping.PREFIX, 1, 1)
-            .build();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+            SubstatementValidator.builder(Rfc6020Mapping.BELONGS_TO).add(Rfc6020Mapping.PREFIX, 1, 1).build();
 
-    protected BelongsToStatementImpl(
-            final StmtContext<String, BelongsToStatement, ?> context) {
+    protected BelongsToStatementImpl(final StmtContext<String, BelongsToStatement, ?> context) {
         super(context);
     }
 
@@ -70,43 +66,46 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
-        public void onLinkageDeclared(final StmtContext.Mutable<String, BelongsToStatement, EffectiveStatement<String, BelongsToStatement>> belongsToCtx) throws SourceException {
+        public void onLinkageDeclared(
+                final StmtContext.Mutable<String, BelongsToStatement, EffectiveStatement<String, BelongsToStatement>> belongsToCtx) {
             ModelActionBuilder belongsToAction = belongsToCtx.newInferenceAction(ModelProcessingPhase.SOURCE_LINKAGE);
 
             final ModuleIdentifier belongsToModuleIdentifier = getModuleIdentifier(belongsToCtx);
-            final ModelActionBuilder.Prerequisite<StmtContext<?, ?, ?>> belongsToPrereq = belongsToAction.requiresCtx(belongsToCtx, ModuleNamespaceForBelongsTo.class, belongsToModuleIdentifier.getName(), ModelProcessingPhase.SOURCE_LINKAGE);
+            final ModelActionBuilder.Prerequisite<StmtContext<?, ?, ?>> belongsToPrereq = belongsToAction.requiresCtx(
+                belongsToCtx, ModuleNamespaceForBelongsTo.class, belongsToModuleIdentifier.getName(),
+                ModelProcessingPhase.SOURCE_LINKAGE);
 
             belongsToAction.apply(new InferenceAction() {
-
                 @Override
-                public void apply() throws InferenceException {
+                public void apply() {
                     StmtContext<?, ?, ?> belongsToModuleCtx = belongsToPrereq.get();
 
-                    belongsToCtx.addToNs(BelongsToModuleContext.class, belongsToModuleIdentifier,
-                            belongsToModuleCtx);
-                    belongsToCtx.addToNs(BelongsToPrefixToModuleIdentifier.class, StmtContextUtils
-                            .findFirstDeclaredSubstatement(belongsToCtx, PrefixStatement.class).getStatementArgument
-                                    (), belongsToModuleIdentifier);
+                    belongsToCtx.addToNs(BelongsToModuleContext.class, belongsToModuleIdentifier, belongsToModuleCtx);
+                    belongsToCtx.addToNs(BelongsToPrefixToModuleIdentifier.class,
+                        StmtContextUtils.findFirstDeclaredSubstatement(belongsToCtx, PrefixStatement.class)
+                        .getStatementArgument(), belongsToModuleIdentifier);
                 }
 
                 @Override
-                public void prerequisiteFailed(final Collection<? extends ModelActionBuilder.Prerequisite<?>> failed) throws InferenceException {
+                public void prerequisiteFailed(final Collection<? extends ModelActionBuilder.Prerequisite<?>> failed) {
                     if (failed.contains(belongsToPrereq)) {
-                        throw new InferenceException("Module from belongs-to was not found: " + belongsToCtx.getStatementArgument(), belongsToCtx
-                                .getStatementSourceReference());
+                        throw new InferenceException(belongsToCtx.getStatementSourceReference(),
+                            "Module '%s' from belongs-to was not found", belongsToCtx.getStatementArgument());
                     }
                 }
             });
         }
 
-        private static ModuleIdentifier getModuleIdentifier(final StmtContext.Mutable<String, BelongsToStatement, EffectiveStatement<String, BelongsToStatement>> belongsToCtx) {
+        private static ModuleIdentifier getModuleIdentifier(
+                final StmtContext.Mutable<String, BelongsToStatement, EffectiveStatement<String, BelongsToStatement>> belongsToCtx) {
             String moduleName = belongsToCtx.getStatementArgument();
-            return new ModuleIdentifierImpl(moduleName, Optional.<URI> absent(), Optional.of(SimpleDateFormatUtil.DEFAULT_BELONGS_TO_DATE));
+            return new ModuleIdentifierImpl(moduleName, Optional.<URI> absent(),
+                Optional.of(SimpleDateFormatUtil.DEFAULT_BELONGS_TO_DATE));
         }
 
         @Override
-        public void onFullDefinitionDeclared(StmtContext.Mutable<String, BelongsToStatement,
-                EffectiveStatement<String, BelongsToStatement>> stmt) throws SourceException {
+        public void onFullDefinitionDeclared(final StmtContext.Mutable<String, BelongsToStatement,
+                EffectiveStatement<String, BelongsToStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
