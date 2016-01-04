@@ -28,13 +28,11 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.BaseEffectiveStatementImpl;
 
 public class BaseStatementImpl extends AbstractDeclaredStatement<QName> implements BaseStatement {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
-            .BASE)
-            .build();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+            SubstatementValidator.builder(Rfc6020Mapping.BASE).build();
 
     protected BaseStatementImpl(final StmtContext<QName, BaseStatement, ?> context) {
         super(context);
@@ -70,14 +68,16 @@ public class BaseStatementImpl extends AbstractDeclaredStatement<QName> implemen
             if (StmtContextUtils.producesDeclared(baseParentCtx, IdentityStatement.class)) {
 
                 final QName baseIdentityQName = baseStmtCtx.getStatementArgument();
-                ModelActionBuilder baseIdentityAction = baseStmtCtx.newInferenceAction(ModelProcessingPhase.STATEMENT_DEFINITION);
-                final Prerequisite<StmtContext<?, ?, ?>> requiresPrereq = baseIdentityAction.requiresCtx(baseStmtCtx, IdentityNamespace.class, baseIdentityQName, ModelProcessingPhase.STATEMENT_DEFINITION);
-                final Prerequisite<StmtContext.Mutable<?, ?, ?>> mutatesPrereq = baseIdentityAction.mutatesCtx
-                        (baseParentCtx, ModelProcessingPhase.STATEMENT_DEFINITION);
+                final ModelActionBuilder baseIdentityAction = baseStmtCtx.newInferenceAction(
+                    ModelProcessingPhase.STATEMENT_DEFINITION);
+                final Prerequisite<StmtContext<?, ?, ?>> requiresPrereq = baseIdentityAction.requiresCtx(baseStmtCtx,
+                    IdentityNamespace.class, baseIdentityQName, ModelProcessingPhase.STATEMENT_DEFINITION);
+                final Prerequisite<StmtContext.Mutable<?, ?, ?>> mutatesPrereq = baseIdentityAction.mutatesCtx(
+                    baseParentCtx, ModelProcessingPhase.STATEMENT_DEFINITION);
 
                 baseIdentityAction.apply(new InferenceAction() {
                     @Override
-                    public void apply() throws InferenceException {
+                    public void apply() {
                         List<StmtContext<?, ?, ?>> derivedIdentities =
                                 baseStmtCtx.getFromNamespace(DerivedIdentitiesNamespace.class, baseStmtCtx.getStatementArgument());
                         if (derivedIdentities == null) {
@@ -89,17 +89,17 @@ public class BaseStatementImpl extends AbstractDeclaredStatement<QName> implemen
 
                     @Override
                     public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                        throw new InferenceException(
-                            "Unable to resolve identity " + baseParentCtx.getStatementArgument() + " and base identity "
-                        + baseStmtCtx.getStatementArgument(), baseStmtCtx.getStatementSourceReference());
+                        throw new InferenceException(baseStmtCtx.getStatementSourceReference(),
+                            "Unable to resolve identity %s and base identity %s",
+                            baseParentCtx.getStatementArgument(), baseStmtCtx.getStatementArgument());
                     }
                 });
             }
         }
 
         @Override
-        public void onFullDefinitionDeclared(Mutable<QName, BaseStatement,
-                EffectiveStatement<QName, BaseStatement>> stmt) throws SourceException {
+        public void onFullDefinitionDeclared(
+                final Mutable<QName, BaseStatement, EffectiveStatement<QName, BaseStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

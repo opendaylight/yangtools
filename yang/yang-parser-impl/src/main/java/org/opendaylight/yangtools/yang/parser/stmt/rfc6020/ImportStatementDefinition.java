@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
-
 import com.google.common.base.Optional;
 import java.net.URI;
 import java.util.Collection;
@@ -36,16 +35,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ImportEffectiveStatementImpl;
 
 public class ImportStatementDefinition
         extends AbstractStatementSupport<String, ImportStatement, EffectiveStatement<String, ImportStatement>> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
-            .IMPORT)
-            .add(Rfc6020Mapping.PREFIX, 1, 1)
-            .add(Rfc6020Mapping.REVISION_DATE, 0, 1)
-            .build();
+    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
+            SubstatementValidator.builder(Rfc6020Mapping.IMPORT)
+            .add(Rfc6020Mapping.PREFIX, 1, 1).add(Rfc6020Mapping.REVISION_DATE, 0, 1).build();
 
     public ImportStatementDefinition() {
         super(Rfc6020Mapping.IMPORT);
@@ -57,8 +53,7 @@ public class ImportStatementDefinition
     }
 
     @Override
-    public ImportStatement createDeclared(
-            final StmtContext<String, ImportStatement, ?> ctx) {
+    public ImportStatement createDeclared(final StmtContext<String, ImportStatement, ?> ctx) {
         return new ImportStatementImpl(ctx);
     }
 
@@ -69,8 +64,8 @@ public class ImportStatementDefinition
     }
 
     @Override
-    public void onFullDefinitionDeclared(Mutable<String, ImportStatement,
-            EffectiveStatement<String, ImportStatement>> stmt) throws SourceException {
+    public void onFullDefinitionDeclared(
+            final Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt) {
         super.onFullDefinitionDeclared(stmt);
         SUBSTATEMENT_VALIDATOR.validate(stmt);
     }
@@ -86,12 +81,12 @@ public class ImportStatementDefinition
 
         importAction.apply(new InferenceAction() {
             @Override
-            public void apply() throws InferenceException {
+            public void apply() {
                 StmtContext<?, ?, ?> importedModule = null;
                 ModuleIdentifier importedModuleIdentifier = null;
                 if (impIdentifier.getRevision() == SimpleDateFormatUtil.DEFAULT_DATE_IMP) {
-                    Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> recentModuleEntry = findRecentModule(
-                            impIdentifier, stmt.getAllFromNamespace(ModuleNamespace.class));
+                    Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> recentModuleEntry =
+                            findRecentModule(impIdentifier, stmt.getAllFromNamespace(ModuleNamespace.class));
                     if (recentModuleEntry != null) {
                         importedModuleIdentifier = recentModuleEntry.getKey();
                         importedModule = recentModuleEntry.getValue();
@@ -119,9 +114,11 @@ public class ImportStatementDefinition
                 Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> recentModuleEntry = null;
 
                 for (Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>> moduleEntry : allModules.entrySet()) {
-                    if (moduleEntry.getKey().getName().equals(impIdentifier.getName())
-                            && moduleEntry.getKey().getRevision().compareTo(recentModuleIdentifier.getRevision()) > 0) {
-                        recentModuleIdentifier = moduleEntry.getKey();
+                    final ModuleIdentifier id = moduleEntry.getKey();
+
+                    if (id.getName().equals(impIdentifier.getName())
+                            && id.getRevision().compareTo(recentModuleIdentifier.getRevision()) > 0) {
+                        recentModuleIdentifier = id;
                         recentModuleEntry = moduleEntry;
                     }
                 }
@@ -132,8 +129,8 @@ public class ImportStatementDefinition
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed)  {
                 if (failed.contains(imported)) {
-                    throw new InferenceException(String.format("Imported module [%s] was not found.", impIdentifier),
-                        stmt.getStatementSourceReference());
+                    throw new InferenceException(stmt.getStatementSourceReference(),
+                        "Imported module [%s] was not found.", impIdentifier);
                 }
             }
         });
