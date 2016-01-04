@@ -111,7 +111,7 @@ public class YangParserNegativeTest {
             }
         } catch (SourceException e) {
             assertTrue(e.getMessage().contains("Error in module 'test4' in the refine of uses 'Relative{path=[" +
-                    "(urn:simple.container.demo?revision=1970-01-01)node]}': can not perform refine of 'PRESENCE' for" +
+                    "(urn:simple.container.demo?revision=1970-01-01)node]}': cannot perform refine of 'PRESENCE' for" +
                     " the target 'LEAF_LIST'."));
         }
     }
@@ -151,7 +151,7 @@ public class YangParserNegativeTest {
                 fail("SourceException should be thrown");
             }
         } catch (SourceException e) {
-            String expected = "Error in module 'container': can not add '(urn:simple.container" +
+            String expected = "Error in module 'container': cannot add '(urn:simple.container" +
                     ".demo?revision=1970-01-01)foo'. Node name collision: '(urn:simple.container" +
                     ".demo?revision=1970-01-01)foo' already declared.";
             assertTrue(e.getMessage().contains(expected));
@@ -167,7 +167,7 @@ public class YangParserNegativeTest {
                 fail("SourceException should be thrown");
             }
         } catch (SourceException e) {
-            String expected = "Error in module 'container-list': can not add '(urn:simple.container" +
+            String expected = "Error in module 'container-list': cannot add '(urn:simple.container" +
                     ".demo?revision=1970-01-01)foo'. Node name collision: '(urn:simple.container" +
                     ".demo?revision=1970-01-01)foo' already declared.";
             assertTrue(e.getMessage().contains(expected));
@@ -183,7 +183,7 @@ public class YangParserNegativeTest {
                 fail("SourceException should be thrown");
             }
         } catch (SourceException e) {
-            String expected = "Error in module 'container-leaf': can not add '(urn:simple.container" +
+            String expected = "Error in module 'container-leaf': cannot add '(urn:simple.container" +
                     ".demo?revision=1970-01-01)foo'. Node name collision: '(urn:simple.container" +
                     ".demo?revision=1970-01-01)foo' already declared.";
             assertTrue(e.getMessage().contains(expected));
@@ -199,7 +199,7 @@ public class YangParserNegativeTest {
                 fail("SourceException should be thrown");
             }
         } catch (SourceException e) {
-            String expected = "Error in module 'typedef': can not add '(urn:simple.container" +
+            String expected = "Error in module 'typedef': cannot add '(urn:simple.container" +
                     ".demo?revision=1970-01-01)int-ext'. Node name collision: '(urn:simple.container" +
                     ".demo?revision=1970-01-01)int-ext' already declared.";
             assertTrue(e.getMessage().startsWith(expected));

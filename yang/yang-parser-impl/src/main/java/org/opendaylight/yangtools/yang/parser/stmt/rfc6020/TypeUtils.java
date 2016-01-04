@@ -135,23 +135,19 @@ public final class TypeUtils {
                 max = parseDecimalConstraintValue(ctx, boundaries.next());
 
                 // if min larger than max then error
-                if (compareNumbers(min, max) == 1) {
-                    throw new InferenceException(String.format(
-                            "Range constraint %s has descending order of boundaries; should be ascending",
-                            singleRange), ctx.getStatementSourceReference());
-                }
-                if (boundaries.hasNext()) {
-                    throw new SourceException(String.format("Wrong number of boundaries in range constraint %s",
-                            singleRange), ctx.getStatementSourceReference());
-                }
+                InferenceException.throwIf(compareNumbers(min, max) == 1, ctx.getStatementSourceReference(),
+                        "Range constraint %s has descending order of boundaries; should be ascending", singleRange);
+
+                SourceException.throwIf(boundaries.hasNext(), ctx.getStatementSourceReference(),
+                    "Wrong number of boundaries in range constraint %s", singleRange);
             } else {
                 max = min;
             }
 
             // some of intervals overlapping
             if (rangeConstraints.size() > 1 && compareNumbers(min, Iterables.getLast(rangeConstraints).getMax()) != 1) {
-                throw new InferenceException(String.format("Some of the ranges in %s are not disjoint",
-                        rangeArgument), ctx.getStatementSourceReference());
+                throw new InferenceException(ctx.getStatementSourceReference(),
+                    "Some of the ranges in %s are not disjoint", rangeArgument);
             }
 
             rangeConstraints.add(new RangeConstraintEffectiveImpl(min, max, description, reference));
@@ -188,8 +184,8 @@ public final class TypeUtils {
 
             // some of intervals overlapping
             if (rangeConstraints.size() > 1 && compareNumbers(min, Iterables.getLast(rangeConstraints).getMax()) != 1) {
-                throw new InferenceException(String.format("Some of the length ranges in %s are not disjoint",
-                        rangeArgument), ctx.getStatementSourceReference());
+                throw new InferenceException(ctx.getStatementSourceReference(),
+                    "Some of the length ranges in %s are not disjoint", rangeArgument);
             }
 
             rangeConstraints.add(new LengthConstraintEffectiveImpl(min, max, description, reference));
