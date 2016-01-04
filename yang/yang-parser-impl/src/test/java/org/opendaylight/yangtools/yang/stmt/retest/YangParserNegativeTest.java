@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.stmt.retest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import com.google.common.base.Throwables;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -22,9 +23,7 @@ import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.util.YangParseException;
 import org.opendaylight.yangtools.yang.parser.util.YangValidationException;
-import com.google.common.base.Throwables;
 
 public class YangParserNegativeTest {
 
