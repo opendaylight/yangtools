@@ -27,4 +27,11 @@ final class UnkeyedListItemModificationStrategy extends AbstractDataNodeContaine
         checkArgument(original instanceof UnkeyedListEntryNode);
         return ImmutableUnkeyedListEntryNodeBuilder.create((UnkeyedListEntryNode) original);
     }
+
+    @Override
+    protected NormalizedNode<?, ?> createEmptyValue(NormalizedNode<?, ?> original) {
+        checkArgument(original instanceof UnkeyedListEntryNode);
+        return ImmutableUnkeyedListEntryNodeBuilder.create()
+                .withNodeIdentifier(((UnkeyedListEntryNode) original).getIdentifier()).build();
+    }
 }

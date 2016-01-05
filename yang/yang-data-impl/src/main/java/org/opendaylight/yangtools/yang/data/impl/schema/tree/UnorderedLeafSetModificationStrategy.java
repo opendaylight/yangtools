@@ -35,6 +35,13 @@ final class UnorderedLeafSetModificationStrategy extends AbstractNodeContainerMo
     }
 
     @Override
+    protected NormalizedNode<?, ?> createEmptyValue(NormalizedNode<?, ?> original) {
+        checkArgument(original instanceof LeafSetNode<?>);
+        return ImmutableLeafSetNodeBuilder.create().withNodeIdentifier(((LeafSetNode<?>) original).getIdentifier())
+                .build();
+    }
+
+    @Override
     public Optional<ModificationApplyOperation> getChild(final YangInstanceIdentifier.PathArgument identifier) {
         if (identifier instanceof YangInstanceIdentifier.NodeWithValue) {
             return entryStrategy;
