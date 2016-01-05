@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
@@ -53,4 +54,11 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
         checkArgument(original instanceof ChoiceNode);
         return ImmutableChoiceNodeBuilder.create((ChoiceNode) original);
     }
+
+    @Override
+    protected NormalizedNode<?, ?> createEmptyValue(NormalizedNode<?, ?> original) {
+        checkArgument(original instanceof ChoiceNode);
+        return ImmutableChoiceNodeBuilder.create().withNodeIdentifier(((ChoiceNode) original).getIdentifier()).build();
+    }
 }
+
