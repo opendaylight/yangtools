@@ -2,6 +2,29 @@
   "comments": [
     {
       "key": {
+        "uuid": "1aa4ed85_fd721de2",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/source/SourceException.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-01-05T06:59:09Z",
+      "side": 1,
+      "message": "missing a space here",
+      "range": {
+        "startLine": 30,
+        "startChar": 44,
+        "endLine": 30,
+        "endChar": 50
+      },
+      "revId": "49df09aa23282e7c28199643e95019c53962958a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_5ec6cc4a",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/spi/source/SourceException.java",
         "patchSetId": 8
@@ -48,6 +71,40 @@
     },
     {
       "key": {
+        "uuid": "1aa4ed85_9d81a991",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceSpecificContext.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-01-05T06:59:09Z",
+      "side": 1,
+      "message": "keep these one one line each, they are missing documentation",
+      "revId": "49df09aa23282e7c28199643e95019c53962958a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_bd7ca5b6",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/SourceSpecificContext.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-01-05T06:59:09Z",
+      "side": 1,
+      "message": "move the entire string to new line to prevent concat",
+      "revId": "49df09aa23282e7c28199643e95019c53962958a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_5ef48c86",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/StatementContextBase.java",
         "patchSetId": 8
@@ -82,6 +139,23 @@
       "writtenOn": "2016-01-04T23:24:52Z",
       "side": 1,
       "message": "Preconditions take a format string here. Do not use string concatenation, but String.format()-like notation.",
+      "revId": "49df09aa23282e7c28199643e95019c53962958a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "1aa4ed85_5d4b3187",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/FractionDigitsStatementImpl.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-01-05T06:59:09Z",
+      "side": 1,
+      "message": "trailing whitespace",
       "revId": "49df09aa23282e7c28199643e95019c53962958a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
