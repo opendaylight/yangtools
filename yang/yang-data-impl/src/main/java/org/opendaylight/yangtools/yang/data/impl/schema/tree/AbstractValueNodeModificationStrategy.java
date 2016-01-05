@@ -72,4 +72,25 @@ abstract class AbstractValueNodeModificationStrategy<T extends DataSchemaNode> e
             final Optional<TreeNode> current) throws IncorrectDataStructureException {
         throw new IncorrectDataStructureException(path, "Subtree modification is not allowed.");
     }
+
+    @Override
+    void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value, final Version version) {
+
+        switch (node.getOperation()) {
+            // Delete performs a data dependency check on existence of the node. Performing a merge
+            // on DELETE means we
+            // are really performing a write.
+            case DELETE:
+            case WRITE:
+                node.write(value);
+                break;
+            default:
+                node.updateValue(LogicalOperation.MERGE, value);
+        }
+    }
+
+    @Override
+    void recursivelyVerifyStructure(NormalizedNode<?, ?> value) {
+        verifyStructure(value, false);
+    }
 }

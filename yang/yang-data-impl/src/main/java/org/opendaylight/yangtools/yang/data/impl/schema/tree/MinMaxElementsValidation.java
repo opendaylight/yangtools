@@ -114,17 +114,17 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
         for (final ModifiedNode modChild : modification.getChildren()) {
             switch (modChild.getOperation()) {
                 case WRITE:
-                    if (!modChild.getOriginal().isPresent()) {
+                    if (!checkOriginalPresent(modChild)) {
                         result++;
                     }
                     break;
                 case MERGE:
-                    if (!current.isPresent()) {
+                    if (!checkOriginalPresent(modChild)) {
                         result++;
                     }
                     break;
                 case DELETE:
-                    if (modChild.getOriginal().isPresent()) {
+                    if (checkOriginalPresent(modChild)) {
                         result--;
                     }
                     break;
@@ -137,6 +137,10 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
             }
         }
         return result;
+    }
+
+    private static boolean checkOriginalPresent(ModifiedNode child) {
+        return child.getOriginal().isPresent();
     }
 
     @Override
@@ -190,5 +194,15 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
     @Override
     protected ChildTrackingPolicy getChildPolicy() {
         return delegate.getChildPolicy();
+    }
+
+    @Override
+    void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value, final Version version) {
+        delegate.mergeIntoModifiedNode(node, value, version);
+    }
+
+    @Override
+    void recursivelyVerifyStructure(NormalizedNode<?, ?> value) {
+        delegate.recursivelyVerifyStructure(value);
     }
 }
