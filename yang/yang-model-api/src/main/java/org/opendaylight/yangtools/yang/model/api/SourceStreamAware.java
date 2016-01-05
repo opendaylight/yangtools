@@ -7,12 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-// TODO: merge into Module, makes no sense as standalone interface
+/**
+ * @deprecated This interface is a violation of the effective model contract. To look up the source of a particular
+ *             module use a {@link org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository} or a similar
+ *             lookup table.
+ */
+@Deprecated
 public interface SourceStreamAware {
 
     /**
      * Get descriptive source path (usually file path) from which this module was parsed.
      */
     String getModuleSourcePath();
-
 }
