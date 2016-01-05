@@ -135,4 +135,11 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
         enforceCases(ret);
         return ret;
     }
+
+    @Override
+    protected NormalizedNode<?, ?> createEmptyValue(NormalizedNode<?, ?> original) {
+        checkArgument(original instanceof ChoiceNode);
+        return ImmutableChoiceNodeBuilder.create().withNodeIdentifier(((ChoiceNode) original).getIdentifier()).build();
+    }
 }
+
