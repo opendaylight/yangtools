@@ -29,4 +29,11 @@ final class PresenceContainerModificationStrategy extends
         checkArgument(original instanceof ContainerNode);
         return ImmutableContainerNodeBuilder.create((ContainerNode) original);
     }
+
+    @Override
+    protected NormalizedNode<?, ?> createEmptyValue(NormalizedNode<?, ?> original) {
+        checkArgument(original instanceof ContainerNode);
+        return ImmutableContainerNodeBuilder.create().withNodeIdentifier(((ContainerNode) original).getIdentifier())
+                .build();
+    }
 }
