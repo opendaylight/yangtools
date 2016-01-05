@@ -104,8 +104,18 @@ final class StructuralContainerModificationStrategy extends ModificationApplyOpe
     }
 
     @Override
+    void recursivelyVerifyStructure(NormalizedNode<?, ?> value) {
+        delegate.recursivelyVerifyStructure(value);
+    }
+
+    @Override
     ChildTrackingPolicy getChildPolicy() {
         return delegate.getChildPolicy();
+    }
+
+    @Override
+    void mergeIntoModifiedNode(ModifiedNode modification, NormalizedNode<?, ?> value, Version version) {
+        delegate.mergeIntoModifiedNode(modification, value, version);
     }
 
     @Override

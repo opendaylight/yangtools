@@ -100,8 +100,18 @@ abstract class RootModificationApplyOperation extends ModificationApplyOperation
     }
 
     @Override
+    void recursivelyVerifyStructure(NormalizedNode<?, ?> value) {
+        getDelegate().recursivelyVerifyStructure(value);
+    }
+
+    @Override
     final ChildTrackingPolicy getChildPolicy() {
         return getDelegate().getChildPolicy();
+    }
+
+    @Override
+    final void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value, final Version version) {
+        getDelegate().mergeIntoModifiedNode(node, value, version);
     }
 
     /**

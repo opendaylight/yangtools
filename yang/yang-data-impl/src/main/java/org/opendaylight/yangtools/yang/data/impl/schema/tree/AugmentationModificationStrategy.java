@@ -33,6 +33,13 @@ final class AugmentationModificationStrategy extends AbstractDataNodeContainerMo
         return ImmutableAugmentationNodeBuilder.create((AugmentationNode) original);
     }
 
+    @Override
+    protected NormalizedNode<?, ?> createEmptyValue(NormalizedNode<?, ?> original) {
+        checkArgument(original instanceof AugmentationNode);
+        return ImmutableAugmentationNodeBuilder.create()
+                .withNodeIdentifier(((AugmentationNode) original).getIdentifier()).build();
+    }
+
     private static AugmentationSchema createAugmentProxy(final AugmentationSchema schema, final DataNodeContainer resolved) {
         final Set<DataSchemaNode> realChildSchemas = new HashSet<>();
         for(final DataSchemaNode augChild : schema.getChildNodes()) {
