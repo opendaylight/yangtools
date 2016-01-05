@@ -35,6 +35,12 @@ final class UnorderedMapModificationStrategy extends AbstractNodeContainerModifi
     }
 
     @Override
+    protected NormalizedNode<?, ?> createEmptyValue(final NormalizedNode<?, ?> original) {
+        checkArgument(original instanceof MapNode);
+        return ImmutableMapNodeBuilder.create().withNodeIdentifier(((MapNode) original).getIdentifier()).build();
+    }
+
+    @Override
     public Optional<ModificationApplyOperation> getChild(final YangInstanceIdentifier.PathArgument identifier) {
         if (identifier instanceof YangInstanceIdentifier.NodeIdentifierWithPredicates) {
             return entryStrategy;
