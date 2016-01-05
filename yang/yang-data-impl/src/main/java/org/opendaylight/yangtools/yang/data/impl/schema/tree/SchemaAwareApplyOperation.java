@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.Augmentat
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.IncorrectDataStructureException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
@@ -169,8 +168,16 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
             checkNotConflicting(path, original.get(), current.get());
         } else if(original.isPresent()) {
             throw new ConflictingModificationAppliedException(path,"Node was deleted by other transaction.");
-        } else if(current.isPresent()) {
-            throw new ConflictingModificationAppliedException(path,"Node was created by other transaction.");
+        } else if (current.isPresent()) {
+            LOG.warn("path: {}", path);
+            TreeNode treeNode = current.get();
+            LOG.warn("current tree node indetifier: {}" + treeNode.getIdentifier());
+            LOG.warn("current tree node data: {}", treeNode.getData());
+            LOG.warn("current tree node version: {}", treeNode.getVersion());
+            LOG.warn("modification identifier: {}", modification.getIdentifier());
+            LOG.warn("modification operation: {}", modification.getOperation());
+            LOG.warn("modification original: {}", modification.getOriginal());
+            throw new ConflictingModificationAppliedException(path, "Node was created by other transaction.");
         }
     }
 
@@ -203,7 +210,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
 
             // This is a slight optimization: a merge on a non-existing node equals to a write
             if (currentMeta.isPresent()) {
-                result = applyMerge(modification,currentMeta.get(), version);
+                result = applyMerge(modification, currentMeta.get(), version);
             } else {
                 modification.resolveModificationType(ModificationType.WRITE);
                 result = applyWrite(modification, currentMeta, version);
