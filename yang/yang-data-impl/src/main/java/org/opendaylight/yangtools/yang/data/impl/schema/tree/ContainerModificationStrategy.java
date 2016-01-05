@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
+
+import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
@@ -29,5 +31,12 @@ class ContainerModificationStrategy extends AbstractDataNodeContainerModificatio
     protected final DataContainerNodeBuilder createBuilder(final NormalizedNode<?, ?> original) {
         checkArgument(original instanceof ContainerNode);
         return ImmutableContainerNodeBuilder.create((ContainerNode) original);
+    }
+
+    @Override
+    protected NormalizedNode<?, ?> createEmptyValue(NormalizedNode<?, ?> original) {
+        Preconditions.checkArgument(original instanceof ContainerNode);
+        return ImmutableContainerNodeBuilder.create().withNodeIdentifier(((ContainerNode) original).getIdentifier())
+                .build();
     }
 }

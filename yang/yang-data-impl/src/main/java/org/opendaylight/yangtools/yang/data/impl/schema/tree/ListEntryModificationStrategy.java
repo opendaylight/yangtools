@@ -54,4 +54,11 @@ final class ListEntryModificationStrategy extends AbstractDataNodeContainerModif
         checkArgument(original instanceof MapEntryNode);
         return ImmutableMapEntryNodeBuilder.create((MapEntryNode) original);
     }
+
+    @Override
+    protected NormalizedNode<?, ?> createEmptyValue(NormalizedNode<?, ?> original) {
+        checkArgument(original instanceof MapEntryNode);
+        return ImmutableMapEntryNodeBuilder.create().withNodeIdentifier(((MapEntryNode) original).getIdentifier())
+                .build();
+    }
 }
