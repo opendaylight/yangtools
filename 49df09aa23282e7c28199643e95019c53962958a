@@ -128,6 +128,30 @@
     },
     {
       "key": {
+        "uuid": "1aa4ed85_26e3c106",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/StatementContextBase.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 4561
+      },
+      "writtenOn": "2016-01-07T13:12:05Z",
+      "side": 1,
+      "message": "StatementSourceReference object cannot be null.",
+      "parentUuid": "1aa4ed85_5ef48c86",
+      "range": {
+        "startLine": 171,
+        "startChar": 50,
+        "endLine": 171,
+        "endChar": 79
+      },
+      "revId": "49df09aa23282e7c28199643e95019c53962958a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "1aa4ed85_1d6e1902",
         "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/StatementContextBase.java",
         "patchSetId": 8
