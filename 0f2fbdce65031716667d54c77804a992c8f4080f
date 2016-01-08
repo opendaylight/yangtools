@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da33351e_ea19bb7a",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/ChoiceModificationStrategy.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2016-01-08T15:35:21Z",
+      "side": 1,
+      "message": "\"exclusions\" or \"exclusionsMap\"",
+      "range": {
+        "startLine": 62,
+        "startChar": 58,
+        "endLine": 62,
+        "endChar": 75
+      },
+      "revId": "0f2fbdce65031716667d54c77804a992c8f4080f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
