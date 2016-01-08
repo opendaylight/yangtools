@@ -13,7 +13,8 @@ import org.opendaylight.yangtools.sal.binding.model.api.Constant
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
-import org.opendaylight.yangtools.sal.binding.model.api.MethodSignatureimport org.opendaylight.yangtools.sal.binding.model.api.AnnotationType
+import org.opendaylight.yangtools.sal.binding.model.api.MethodSignature
+import org.opendaylight.yangtools.sal.binding.model.api.AnnotationType
 
 /**
  * Template for generating JAVA interfaces.
@@ -65,6 +66,7 @@ class InterfaceTemplate extends BaseTemplate {
      */
     override body() '''
         «wrapToDocumentation(formatDataForJavaDoc(type))»
+        «type.annotations.generateAnnotations»
         public interface «type.name»
             «superInterfaces»
         {
