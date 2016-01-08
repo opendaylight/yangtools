@@ -18,6 +18,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -58,12 +59,12 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
         childNodes = childBuilder.build();
         caseEnforcers = enforcerBuilder.build();
 
-        final Builder<CaseEnforcer, Collection<CaseEnforcer>> exclusionsBuilder = ImmutableMap.builder();
+        final Map<CaseEnforcer, Collection<CaseEnforcer>> exclusionsBuilder = new HashMap<>();
         for (CaseEnforcer e : caseEnforcers.values()) {
             exclusionsBuilder.put(e, ImmutableList.copyOf(
                 Collections2.filter(caseEnforcers.values(), Predicates.not(Predicates.equalTo(e)))));
         }
-        exclusions = exclusionsBuilder.build();
+        exclusions = ImmutableMap.copyOf(exclusionsBuilder);
     }
 
     @Override
