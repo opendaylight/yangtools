@@ -31,6 +31,10 @@ abstract class ForwardingBindingStreamEventWriter implements BindingStreamEventW
         delegate().startLeafSet(localName, childSizeHint);
     }
 
+    @Override
+    public void startOrderedLeafSet(final String localName, final int childSizeHint) throws IOException, IllegalArgumentException {
+        delegate().startOrderedLeafSet(localName, childSizeHint);
+    }
 
     @Override
     public void leafSetEntryNode(final Object value) throws IOException, IllegalArgumentException {
