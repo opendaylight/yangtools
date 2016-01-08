@@ -81,6 +81,8 @@ public final class DataTreeCandidateNodes {
                 case DELETE:
                     cursor.delete(node.getIdentifier());
                     break;
+                case APPEARED:
+                case DISAPPEARED:
                 case SUBTREE_MODIFIED:
                     final Collection<DataTreeCandidateNode> children = node.getChildNodes();
                     if (!children.isEmpty()) {
