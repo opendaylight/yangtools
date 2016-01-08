@@ -47,6 +47,9 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
 
     @Override
     public TipProducingDataTree create(final TreeType treeType, final YangInstanceIdentifier rootPath) {
+        if (rootPath.isEmpty()) {
+            return create(treeType);
+        }
         final NormalizedNode<?, ?> root;
         final PathArgument arg = rootPath.getLastPathArgument();
         if (arg instanceof NodeIdentifier) {
@@ -56,6 +59,7 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
             b.withNodeIdentifier((NodeIdentifierWithPredicates) arg);
             root = b.build();
         } else {
+
             // FIXME: implement augmentations and leaf-lists
             throw new IllegalArgumentException("Unsupported root node " + arg);
         }
