@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "da33351e_fb47cf49",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/CompositeNodeDataWithSchema.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-01-09T13:47:22Z",
+      "side": 1,
+      "message": "This needs an explanation, I would prefer an explicit return with a comment as to why it is happening.",
+      "range": {
+        "startLine": 99,
+        "startChar": 54,
+        "endLine": 99,
+        "endChar": 105
+      },
+      "revId": "35101817ae8124d22645f8fcc6a6f00da2c1402d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
