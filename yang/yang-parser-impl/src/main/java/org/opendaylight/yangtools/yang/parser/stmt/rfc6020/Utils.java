@@ -13,14 +13,16 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
@@ -33,6 +35,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
+import org.opendaylight.yangtools.yang.model.api.Deviation.Deviate;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -64,6 +67,16 @@ public final class Utils {
     private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings().trimResults();
     private static final Splitter SPACE_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
     private static final Pattern PATH_ABS = Pattern.compile("/[^/].*");
+
+    private static final Map<String,Deviate> KEYWORD_TO_DEVIATE_MAP;
+    static {
+        Map<String,Deviate> keywordToDeviateMapInit = new HashMap<>();
+        Deviate[] deviateValues = Deviation.Deviate.values();
+        for (Deviate deviate : deviateValues) {
+            keywordToDeviateMapInit.put(deviate.getKeyword(), deviate);
+        }
+        KEYWORD_TO_DEVIATE_MAP = ImmutableMap.copyOf(keywordToDeviateMapInit);
+    }
 
     private static final ThreadLocal<XPathFactory> XPATH_FACTORY = new ThreadLocal<XPathFactory>() {
         @Override
@@ -302,20 +315,9 @@ public final class Utils {
                 .isAssignableFrom(UnknownStatementImpl.class);
     }
 
-    public static Deviation.Deviate parseDeviateFromString(final String deviate) {
-
-        // Yang constants should be lowercase so we have throw if value does not
-        // suit this
-        String deviateUpper = deviate.toUpperCase();
-        Preconditions.checkArgument(!Objects.equals(deviate, deviateUpper),
-            "String %s is not valid deviate argument", deviate);
-
-        // but Java enum is uppercase so we cannot use lowercase here
-        try {
-            return Deviation.Deviate.valueOf(deviateUpper);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException(String.format("String %s is not valid deviate argument", deviate), e);
-        }
+    public static Deviation.Deviate parseDeviateFromString(final String deviateKeyword) {
+        return Preconditions.checkNotNull(KEYWORD_TO_DEVIATE_MAP.get(deviateKeyword),
+                "String '%s' is not valid deviate argument", deviateKeyword);
     }
 
     public static Status parseStatus(final String value) {
