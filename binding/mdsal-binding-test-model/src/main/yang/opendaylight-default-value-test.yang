@@ -2,6 +2,11 @@ module opendaylight-default-value-test {
     namespace "urn:opendaylight:params:xml:ns:default:value:test";
     prefix "def-val-test";
 
+    import opendaylight-default-value-test-2 {
+        prefix def-val-test-2;
+        revision-date 2016-01-11;
+    }
+
     typedef tiny-signed-integer {
         type int8 {
             range "-20..-1";
@@ -192,10 +197,10 @@ module opendaylight-default-value-test {
 
     typedef my-derived-decimal2 {
         type my-decimal {
-            fraction-digits 1;
-            range "77.7 .. 111.1";
+            fraction-digits 2;
+            range "77.77 .. 111.11";
         }
-        default "99.9";
+        default "99.99";
     }
 
     typedef my-derived-decimal3 {
@@ -257,13 +262,30 @@ module opendaylight-default-value-test {
     }
 
     identity my-identity {
-        description "identity for testing purposes";
+        description "parent identity for testing purposes";
+    }
+
+    identity my-derived-identity {
+        base my-identity;
+        description "child identity for testing purposes";
+    }
+
+    identity my-derived-identity2 {
+        base my-derived-identity;
+        description "another child identity for testing purposes";
     }
 
     typedef my-identityref {
         type identityref {
             base my-identity;
         }
+    }
+
+    typedef my-identityref2 {
+        type identityref {
+            base my-identity;
+        }
+        default "my-derived-identity";
     }
 
     container tiny-int-container {
@@ -621,6 +643,35 @@ module opendaylight-default-value-test {
 
         leaf identityref-leaf {
             type my-identityref;
+        }
+
+        leaf identityref-leaf2 {
+            type my-identityref;
+            default "my-derived-identity";
+        }
+
+        leaf identityref-leaf3 {
+            type my-identityref2;
+        }
+
+        leaf identityref-leaf4 {
+            type my-identityref;
+            default "my-derived-identity2";
+        }
+
+        leaf identityref-leaf5 {
+            type def-val-test-2:my-imported-identityref;
+            default def-val-test-2:my-derived-imported-identity;
+        }
+
+        leaf identityref-leaf6 {
+            type my-identityref;
+            default "def-val-test:my-derived-identity";
+        }
+
+        leaf identityref-leaf7 {
+            type def-val-test-2:my-imported-identityref;
+            default invalid-prefix:my-derived-imported-identity;
         }
     }
 }

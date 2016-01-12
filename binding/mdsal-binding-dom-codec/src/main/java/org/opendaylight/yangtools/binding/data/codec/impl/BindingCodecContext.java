@@ -272,7 +272,8 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
                     continue; // We do not have schema for leaf, so we will ignore it (eg. getClass, getImplementedInterface).
                 }
                 final Codec<Object, Object> codec = getCodec(valueType, schema);
-                final LeafNodeCodecContext<?> leafNode = new LeafNodeCodecContext<>(schema, codec, method);
+                final LeafNodeCodecContext<?> leafNode = new LeafNodeCodecContext<>(schema, codec, method,
+                        context.getSchemaContext());
                 leaves.put(schema.getQName().getLocalName(), leafNode);
             }
         }

@@ -10,12 +10,11 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCachingCodec;
@@ -23,6 +22,7 @@ import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
@@ -31,9 +31,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
 final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<D> implements NodeContextSupplier {
 
@@ -43,20 +46,25 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
     private final DataSchemaNode schema;
     private final Object defaultObject;
 
-    public LeafNodeCodecContext(final DataSchemaNode schema, final Codec<Object, Object> codec, final Method getter) {
+    public LeafNodeCodecContext(final DataSchemaNode schema, final Codec<Object, Object> codec, final Method getter,
+                                final SchemaContext schemaContext) {
         this.yangIdentifier = new YangInstanceIdentifier.NodeIdentifier(schema.getQName());
         this.valueCodec = Preconditions.checkNotNull(codec);
         this.getter = getter;
         this.schema = Preconditions.checkNotNull(schema);
 
-        this.defaultObject = createDefaultObject(schema, valueCodec);
+        this.defaultObject = createDefaultObject(schema, valueCodec, schemaContext);
     }
 
-    private static Object createDefaultObject(final DataSchemaNode schema, final Codec<Object, Object> codec) {
+    private static Object createDefaultObject(final DataSchemaNode schema, final Codec<Object, Object> codec,
+                                              final SchemaContext schemaContext) {
         if (schema instanceof LeafSchemaNode) {
             Object defaultValue = ((LeafSchemaNode) schema).getDefault();
             TypeDefinition<?> type = ((LeafSchemaNode) schema).getType();
             if (defaultValue != null) {
+                if (type instanceof IdentityrefTypeDefinition) {
+                    return qnameDomValueFromString(codec, schema, (String) defaultValue, schemaContext);
+                }
                 return domValueFromString(codec, type, defaultValue);
             }
             else {
@@ -66,27 +74,45 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
 
                 defaultValue = type.getDefaultValue();
                 if (defaultValue != null) {
-                    if (defaultValue instanceof Boolean) {
-                        return codec.deserialize(defaultValue);
-                    }
-
-                    if (defaultValue instanceof IdentitySchemaNode) {
-                        defaultValue = ((IdentitySchemaNode) defaultValue).getQName();
-                        return codec.deserialize(defaultValue);
-                    }
-
-                    if (defaultValue instanceof ImmutableList) {
-                        return codec.deserialize(ImmutableSet.copyOf((ImmutableList) defaultValue));
-                    }
-
-                    if (defaultValue instanceof List) {
-                        return codec.deserialize(defaultValue);
+                    if (type instanceof IdentityrefTypeDefinition) {
+                        return qnameDomValueFromString(codec, schema, (String) defaultValue, schemaContext);
                     }
                     return domValueFromString(codec, type, defaultValue);
                 }
             }
         }
         return null;
+    }
+
+    private static Object qnameDomValueFromString(final Codec<Object, Object> codec, final DataSchemaNode schema,
+                                                  final String defaultValue, final SchemaContext schemaContext) {
+        int prefixEndIndex = defaultValue.indexOf(':');
+        QName qname;
+        if (prefixEndIndex != -1) {
+            String defaultValuePrefix = defaultValue.substring(0, prefixEndIndex);
+
+            Module module = schemaContext.findModuleByNamespaceAndRevision(schema.getQName().getNamespace(),
+                    schema.getQName().getRevision());
+
+            if (module.getPrefix().equals(defaultValuePrefix)) {
+                qname = QName.create(module.getQNameModule(), defaultValue.substring(prefixEndIndex + 1));
+                return codec.deserialize(qname);
+            } else {
+                Set<ModuleImport> imports = module.getImports();
+                for (ModuleImport moduleImport : imports) {
+                    if (moduleImport.getPrefix().equals(defaultValuePrefix)) {
+                        Module importedModule = schemaContext.findModuleByName(moduleImport.getModuleName(),
+                                moduleImport.getRevision());
+                        qname = QName.create(importedModule.getQNameModule(), defaultValue.substring(prefixEndIndex + 1));
+                        return codec.deserialize(qname);
+                    }
+                }
+                return null;
+            }
+        }
+
+        qname = QName.create(schema.getQName(), defaultValue);
+        return codec.deserialize(qname);
     }
 
     private static Object domValueFromString(final Codec<Object, Object> codec, final TypeDefinition<?> type,

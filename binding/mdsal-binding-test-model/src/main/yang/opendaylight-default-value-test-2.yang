@@ -1,0 +1,23 @@
+module opendaylight-default-value-test-2 {
+    namespace "urn:opendaylight:params:xml:ns:default:value:test:2";
+    prefix "def-val-test-2";
+
+    revision 2016-01-11 {
+        description "current revision";
+    }
+
+    identity my-base-identity {
+        description "parent identity for testing purposes";
+    }
+
+    identity my-derived-imported-identity {
+        base my-base-identity;
+        description "child identity for testing purposes";
+    }
+
+    typedef my-imported-identityref {
+        type identityref {
+            base my-base-identity;
+        }
+    }
+}
