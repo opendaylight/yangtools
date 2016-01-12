@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import com.google.common.base.Preconditions;
 import java.util.List;
 
 /**
@@ -25,7 +26,20 @@ public interface Deviation {
      * definition.
      */
     enum Deviate {
-        NOT_SUPPORTED, ADD, REPLACE, DELETE
+        NOT_SUPPORTED("not-supported"), ADD("add"), REPLACE("replace"), DELETE("delete");
+
+        private final String keyword;
+
+        private Deviate(final String keyword) {
+            this.keyword = Preconditions.checkNotNull(keyword);
+        }
+
+        /**
+         * @return String that corresponds to the yang keyword.
+         */
+        public String getKeyword() {
+            return keyword;
+        }
     }
 
     /**
