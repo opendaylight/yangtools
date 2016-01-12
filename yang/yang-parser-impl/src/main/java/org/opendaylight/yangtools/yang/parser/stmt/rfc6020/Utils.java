@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
-
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
@@ -319,23 +318,17 @@ public final class Utils {
     }
 
     public static Status parseStatus(final String value) {
-
-        Status status = null;
         switch (value) {
         case "current":
-            status = Status.CURRENT;
-            break;
+            return Status.CURRENT;
         case "deprecated":
-            status = Status.DEPRECATED;
-            break;
+            return Status.DEPRECATED;
         case "obsolete":
-            status = Status.OBSOLETE;
-            break;
+            return Status.OBSOLETE;
         default:
-            LOG.warn("Invalid 'status' statement: " + value);
+            LOG.warn("Invalid 'status' statement: {}", value);
+            return null;
         }
-
-        return status;
     }
 
     public static Date getLatestRevision(final Iterable<? extends StmtContext<?, ?, ?>> subStmts) {
