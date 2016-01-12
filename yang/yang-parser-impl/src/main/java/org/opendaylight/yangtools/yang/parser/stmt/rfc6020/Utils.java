@@ -304,6 +304,10 @@ public final class Utils {
 
     public static Deviation.Deviate parseDeviateFromString(final String deviate) {
 
+        if(deviate.equals("not-supported")) {
+            return Deviation.Deviate.NOT_SUPPORTED;
+        }
+
         // Yang constants should be lowercase so we have throw if value does not
         // suit this
         String deviateUpper = deviate.toUpperCase();

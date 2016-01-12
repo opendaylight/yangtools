@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
@@ -317,7 +316,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             public StatementContextBase build() throws SourceException {
                 StatementContextBase<?, ?, ?> potential = null;
 
-                if (getDefinition().getPublicView() != Rfc6020Mapping.AUGMENT) {
+                StatementDefinition stmtDef = getDefinition().getPublicView();
+                if (stmtDef != Rfc6020Mapping.AUGMENT && stmtDef != Rfc6020Mapping.DEVIATION) {
                     potential = substatements.get(createIdentifier());
                 }
                 if (potential == null) {
