@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.common;
 
 import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.getRevisionFormat;
+import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
@@ -91,7 +92,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *            YANG schema identifier
      */
     public QName(final URI namespace, final String localName) {
-        this(QNameModule.create(namespace, null), localName);
+        this(QNameModule.create(namespace, (ModuleRevision)null), localName);
     }
 
     private static String checkLocalName(final String localName) {
@@ -168,9 +169,22 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *
      * @return revision of the YANG module if the module has defined revision,
      *         otherwise returns <code>null</code>
+     *
+     * @deprecated Use {@link #getModuleRevision()} instead.
      */
+    @Deprecated
     public Date getRevision() {
         return module.getRevision();
+    }
+
+    /**
+     * Returns revision of the YANG module.
+     *
+     * @return revision of the YANG module if the module has defined revision,
+     *         otherwise returns {@link Optional#absent()}
+     */
+    public Optional<ModuleRevision> getModuleRevision() {
+        return module.getModuleRevision();
     }
 
     /**
