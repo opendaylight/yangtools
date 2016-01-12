@@ -26,12 +26,12 @@ public final class YangConstants {
     /**
      * Base QNameModule for all YANG statements.
      */
-    public static final QNameModule RFC6020_YANG_MODULE = QNameModule.create(RFC6020_YANG_NAMESPACE, null).intern();
+    public static final QNameModule RFC6020_YANG_MODULE = QNameModule.create(RFC6020_YANG_NAMESPACE, (ModuleRevision) null).intern();
 
     /**
      * Base QNameModule for all YIN statements.
      */
-    public static final QNameModule RFC6020_YIN_MODULE = QNameModule.create(RFC6020_YIN_NAMESPACE, null).intern();
+    public static final QNameModule RFC6020_YIN_MODULE = QNameModule.create(RFC6020_YIN_NAMESPACE, (ModuleRevision) null).intern();
 
     private YangConstants() {
         throw new UnsupportedOperationException("Utility class");
