@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.common;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Optional;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.io.Serializable;
@@ -29,12 +30,9 @@ public final class QNameModule implements Immutable, Serializable {
     private final URI namespace;
 
     //Nullable
-    private final Date revision;
+    private final ModuleRevision revision;
 
-    //Nullable
-    private volatile String formattedRevision;
-
-    private QNameModule(final URI namespace, final Date revision) {
+    private QNameModule(final URI namespace, final ModuleRevision revision) {
         this.namespace = namespace;
         this.revision = revision;
     }
@@ -67,8 +65,29 @@ public final class QNameModule implements Immutable, Serializable {
      * @param namespace Module namespace
      * @param revision Module revision
      * @return A new, potentially shared, QNameModule instance
+     *
+     * @deprecated Use {@link #create(URI, ModuleRevision)} instead.
      */
+    @Deprecated
     public static QNameModule create(final URI namespace, final Date revision) {
+        if (namespace == null && revision == null) {
+            return NULL_INSTANCE;
+        }
+        if (revision == null) {
+            return new QNameModule(namespace, null);
+        }
+
+        return new QNameModule(namespace, ModuleRevision.valueOf(revision));
+    }
+
+    /**
+     * Create a new QName module instance with specified namespace/revision.
+     *
+     * @param namespace Module namespace
+     * @param revision Module revision
+     * @return A new, potentially shared, QNameModule instance
+     */
+    public static QNameModule create(final URI namespace, final ModuleRevision revision) {
         if (namespace == null && revision == null) {
             return NULL_INSTANCE;
         }
@@ -76,18 +95,12 @@ public final class QNameModule implements Immutable, Serializable {
         return new QNameModule(namespace, revision);
     }
 
+    /**
+     * @deprecated Use {@link #getModuleRevision()} and {@link ModuleRevision#toString()} instead.
+     */
+    @Deprecated
     public String getFormattedRevision() {
-        if (revision == null) {
-            return null;
-        }
-
-        String ret = formattedRevision;
-        if (ret == null) {
-            ret = SimpleDateFormatUtil.getRevisionFormat().format(revision);
-            formattedRevision = ret;
-        }
-
-        return ret;
+        return revision == null ? null : revision.toString();
     }
 
     /**
@@ -105,9 +118,21 @@ public final class QNameModule implements Immutable, Serializable {
      *
      * @return date of the module revision which is specified as argument of
      *         YANG Module <b><font color="#339900">revison</font></b> keyword
+     *
+     * @deprecated Use {@link #getModuleRevision()} instead.
      */
+    @Deprecated
     public Date getRevision() {
-        return revision;
+        return revision == null ? null : revision.toDate();
+    }
+
+    /**
+     * Return the module revision, if available.
+     *
+     * @return Module revision, or {@link Optional#absent()}.
+     */
+    public Optional<ModuleRevision> getModuleRevision() {
+        return Optional.fromNullable(revision);
     }
 
     @Override
