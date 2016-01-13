@@ -16,6 +16,24 @@
       "revId": "28cab8175672ca979e50f7c3eace7ae217e1fe43",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "da33351e_3ead9789",
+        "filename": "benchmarks/pom.xml",
+        "patchSetId": 10
+      },
+      "lineNbr": 90,
+      "author": {
+        "id": 2759
+      },
+      "writtenOn": "2016-01-13T16:34:53Z",
+      "side": 1,
+      "message": "Unfortunately yes. We must override these 2 URLs for every single pom file. It\u0027s because Maven Site makes some assumptions on how a project is structured and ODL does not follow that structure so we must override the URLs for every file to ensure it is generated in the right place. The good news is this is scriptable since it\u0027s the same section we need in every pom (except for the root pom which is slightly different).",
+      "parentUuid": "da33351e_988f9b23",
+      "revId": "28cab8175672ca979e50f7c3eace7ae217e1fe43",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
