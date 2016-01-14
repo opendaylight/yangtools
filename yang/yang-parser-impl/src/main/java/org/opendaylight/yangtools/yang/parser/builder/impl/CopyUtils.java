@@ -391,6 +391,7 @@ public final class CopyUtils {
         copy.getRefineNodes().addAll(old.getRefineNodes());
         copy.getRefines().addAll(old.getRefines());
         copy.setAugmenting(old.isAugmenting());
+        copy.setResolved(old.isResolved());
         return copy;
     }
 
