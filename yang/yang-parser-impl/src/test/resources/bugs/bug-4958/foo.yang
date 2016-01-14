@@ -1,0 +1,25 @@
+module foo {
+  namespace "foo";
+  prefix "foo";
+  revision "2015-11-09" {
+  }
+
+  grouping AREA-TABLE {
+      grouping AREA-CONTENT {
+        container interfaces {
+            uses IPV6-OSPFV3-INTFOBJ-CFG-FAST-REROUTE;
+        }
+      }
+  }
+  
+  grouping IPV6-OSPFV3-INTFOBJ-CFG-FAST-REROUTE {
+      container per-link {
+          uses EXCLUDE-INTERFACE-TABLE;
+      }
+  }
+
+  grouping EXCLUDE-INTERFACE-TABLE {
+      container exclude-interfaces {
+      }
+  }
+}
