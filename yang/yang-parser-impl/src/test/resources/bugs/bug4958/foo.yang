@@ -1,0 +1,27 @@
+module foo {
+    namespace "foo";
+    prefix "foo";
+
+    revision "2016-02-11" {
+        description "test";
+    }
+
+    grouping root-grp {
+        grouping sub-grp {
+            container con-in-sub-grp {
+                uses ext-grp-one;
+            }
+        }
+    }
+
+    grouping ext-grp-one {
+        container con-in-ext-grp-one {
+            uses ext-grp-two;
+        }
+    }
+
+    grouping ext-grp-two {
+        container con-in-ext-grp-two {
+        }
+    }
+}
