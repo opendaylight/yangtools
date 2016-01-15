@@ -111,23 +111,6 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
      *
      * @param m Input map, may not be null.
      * @return An isolated, immutable copy of the input map
-     * @deprecated Use {@link #orderedCopyOf(Map)} or {@link #unorderedCopyOf(Map)} instead.
-     */
-    @Deprecated
-    @Nonnull public static <K, V> Map<K, V> copyOf(@Nonnull final Map<K, V> m) {
-        return orderedCopyOf(m);
-    }
-
-    /**
-     * Create an {@link ImmutableOffsetMap} as a copy of an existing map. This is actually not completely true,
-     * as this method returns an {@link ImmutableMap} for empty and singleton inputs, as those are more memory-efficient.
-     * This method also recognizes {@link ImmutableOffsetMap} on input, and returns it back without doing anything else.
-     * It also recognizes {@link MutableOffsetMap} (as returned by {@link #toModifiableMap()}) and makes an efficient
-     * copy of its contents. All other maps are converted to an {@link ImmutableOffsetMap} with the same iteration
-     * order as input.
-     *
-     * @param m Input map, may not be null.
-     * @return An isolated, immutable copy of the input map
      */
     @Nonnull public static <K, V> Map<K, V> orderedCopyOf(@Nonnull final Map<K, V> m) {
         // Prevent a copy. Note that ImmutableMap is not listed here because of its potentially larger keySet overhead.

@@ -143,14 +143,6 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         this.needClone = false;
     }
 
-    /**
-     * @deprecated Use {@link #orderedCopyOf(Map)} or {@link #unorderedCopyOf(Map)} instead.
-     */
-    @Deprecated
-    public static <K, V> MutableOffsetMap<K, V> copyOf(final Map<K, V> m) {
-        return orderedCopyOf(m);
-    }
-
     public static <K, V> MutableOffsetMap<K, V> orderedCopyOf(final Map<K, V> m) {
         if (m instanceof Ordered) {
             return ((Ordered<K, V>) m).clone();
@@ -173,14 +165,6 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         }
 
         return new Unordered<>(m);
-    }
-
-    /**
-     * @deprecated Use {@link #ordered()} or {@link #unordered()} instead.
-     */
-    @Deprecated
-    public static <K, V> MutableOffsetMap<K, V> of() {
-        return ordered();
     }
 
     public static <K, V> MutableOffsetMap<K, V> ordered() {

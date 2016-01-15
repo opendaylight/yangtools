@@ -69,28 +69,12 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
         this.value = Preconditions.checkNotNull(value);
     }
 
-    /**
-     * @deprecated Use {@link #orderedOf(Object, Object)} or {@link #unorderedOf(Object, Object)} instead.
-     */
-    @Deprecated
-    public static <K, V> SharedSingletonMap<K, V> of(final K key, final V value) {
-        return new Ordered<>(key, value);
-    }
-
     public static <K, V> SharedSingletonMap<K, V> orderedOf(final K key, final V value) {
         return new Ordered<>(key, value);
     }
 
     public static <K, V> SharedSingletonMap<K, V> unorderedOf(final K key, final V value) {
         return new Unordered<>(key, value);
-    }
-
-    /**
-     * @deprecated Use {@link #orderedCopyOf(Map)} or {@link #unorderedCopyOf(Map)} instead.
-     */
-    @Deprecated
-    public static <K, V> SharedSingletonMap<K, V> copyOf(final Map<K, V> m) {
-        return orderedCopyOf(m);
     }
 
     public static <K, V> SharedSingletonMap<K, V> orderedCopyOf(final Map<K, V> m) {
