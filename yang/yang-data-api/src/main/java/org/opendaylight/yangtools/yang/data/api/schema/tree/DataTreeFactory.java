@@ -15,16 +15,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 public interface DataTreeFactory {
     /**
      * Create a new data tree.
-     *
-     * @return A data tree instance.
-     *
-     * @deprecated Use {@link #create(TreeType)} instead.
-     */
-    @Deprecated
-    DataTree create();
-
-    /**
-     * Create a new data tree.
      * @param type
      *          Tree type.
      *

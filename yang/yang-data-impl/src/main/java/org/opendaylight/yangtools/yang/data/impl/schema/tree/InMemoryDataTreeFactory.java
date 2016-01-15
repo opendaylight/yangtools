@@ -34,12 +34,6 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
         // Never instantiated externally
     }
 
-    @Deprecated
-    @Override
-    public TipProducingDataTree create() {
-        return create(TreeType.OPERATIONAL);
-    }
-
     @Override
     public TipProducingDataTree create(final TreeType treeType) {
         return new InMemoryDataTree(TreeNodeFactory.createTreeNode(rootContainer, Version.initial()),
