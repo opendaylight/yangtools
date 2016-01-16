@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -695,16 +694,17 @@ public final class SchemaContextUtil {
             nodeType = ((LeafListSchemaNode) schemaNode).getType();
         }
 
-        if (nodeType instanceof ExtendedType) {
-            while (nodeType.getBaseType() instanceof ExtendedType) {
-                nodeType = nodeType.getBaseType();
-            }
-
-            QNameModule typeDefModuleQname = nodeType.getQName().getModule();
-
-            return schemaContext.findModuleByNamespaceAndRevision(typeDefModuleQname.getNamespace(),
-                    typeDefModuleQname.getRevision());
-        }
+        // FIXME: this method does not work now
+//        if (nodeType instanceof ExtendedType) {
+//            while (nodeType.getBaseType() instanceof ExtendedType) {
+//                nodeType = nodeType.getBaseType();
+//            }
+//
+//            QNameModule typeDefModuleQname = nodeType.getQName().getModule();
+//
+//            return schemaContext.findModuleByNamespaceAndRevision(typeDefModuleQname.getNamespace(),
+//                    typeDefModuleQname.getRevision());
+//        }
 
         return SchemaContextUtil.findParentModule(schemaContext, schemaNode);
     }
