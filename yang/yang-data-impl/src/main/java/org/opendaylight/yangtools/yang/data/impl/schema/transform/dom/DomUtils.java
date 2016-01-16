@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
-import org.opendaylight.yangtools.yang.model.util.DerivedType;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -117,25 +116,19 @@ public final class DomUtils {
         return attributes;
     }
 
-    public static Object parseXmlValue(final Element xml, final XmlCodecProvider codecProvider, final DataSchemaNode schema, final TypeDefinition<?> type, final SchemaContext schemaCtx) {
-        TypeDefinition<?> baseType = DerivedType.from(type);
+    public static Object parseXmlValue(final Element xml, final XmlCodecProvider codecProvider,
+            final DataSchemaNode schema, final TypeDefinition<?> type, final SchemaContext schemaCtx) {
 
-        String text = xml.getTextContent();
-        text = text.trim();
-        final Object value;
-
-        if (baseType instanceof LeafrefTypeDefinition) {
-            final LeafrefTypeDefinition leafrefTypeDefinition = (LeafrefTypeDefinition) baseType;
-            baseType = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypeDefinition, schemaCtx, schema);
-            value = parseXmlValue(xml, codecProvider, schema, baseType, schemaCtx);
-        } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
-            value = InstanceIdentifierForXmlCodec.deserialize(xml, schemaCtx);
-        } else if (baseType instanceof IdentityrefTypeDefinition) {
-            value = InstanceIdentifierForXmlCodec.toIdentity(text, xml, schemaCtx);
+        if (type instanceof LeafrefTypeDefinition) {
+            final TypeDefinition<?> base = SchemaContextUtil.getBaseTypeForLeafRef((LeafrefTypeDefinition) type,
+                schemaCtx, schema);
+            return parseXmlValue(xml, codecProvider, schema, base, schemaCtx);
+        } else if (type instanceof InstanceIdentifierTypeDefinition) {
+            return InstanceIdentifierForXmlCodec.deserialize(xml, schemaCtx);
+        } else if (type instanceof IdentityrefTypeDefinition) {
+            return InstanceIdentifierForXmlCodec.toIdentity(xml.getTextContent().trim(), xml, schemaCtx);
         } else {
-            value = parseXmlValue(xml, codecProvider, type);
+            return parseXmlValue(xml, codecProvider, type);
         }
-
-        return value;
     }
 }
