@@ -8,14 +8,13 @@
 
 package org.opendaylight.yangtools.yang.data.impl.test.codecs;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.opendaylight.yangtools.yang.data.impl.test.codecs.TypeDefinitionAwareCodecTestHelper.getCodec;
-import org.opendaylight.yangtools.yang.data.api.codec.BinaryCodec;
-import org.opendaylight.yangtools.yang.model.util.BinaryType;
-
 import com.google.common.io.BaseEncoding;
+import org.junit.Test;
+import org.opendaylight.yangtools.yang.data.api.codec.BinaryCodec;
+import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 
 /**
  * Unit tests for BinaryCodecString.
@@ -27,7 +26,7 @@ public class BinaryCodecStringTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testSerialize() {
-        BinaryCodec<String> codec = getCodec( BinaryType.getInstance(), BinaryCodec.class);
+        BinaryCodec<String> codec = getCodec( BaseTypes.binaryType(), BinaryCodec.class);
 
         assertEquals( "serialize", BaseEncoding.base64().encode( new byte[]{1,2,3,4} ),
                       codec.serialize( new byte[]{1,2,3,4} ) );
@@ -37,7 +36,7 @@ public class BinaryCodecStringTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testDererialize() {
-        BinaryCodec<String> codec = getCodec( BinaryType.getInstance(), BinaryCodec.class);
+        BinaryCodec<String> codec = getCodec( BaseTypes.binaryType(), BinaryCodec.class);
 
         assertArrayEquals( "deserialize", new byte[]{1,2,3,4},
                       codec.deserialize( BaseEncoding.base64().encode( new byte[]{1,2,3,4} ) ) );

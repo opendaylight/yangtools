@@ -8,12 +8,11 @@
 
 package org.opendaylight.yangtools.yang.data.impl.test.codecs;
 
-import static org.junit.Assert.*;
-
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 import static org.opendaylight.yangtools.yang.data.impl.test.codecs.TypeDefinitionAwareCodecTestHelper.getCodec;
+import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.codec.StringCodec;
-import org.opendaylight.yangtools.yang.model.util.StringType;
+import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 
 /**
  * Unit tests for StringCodecString.
@@ -25,7 +24,7 @@ public class StringCodecStringTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testSerialize() {
-        StringCodec<String> codec = getCodec( StringType.getInstance(), StringCodec.class);
+        StringCodec<String> codec = getCodec( BaseTypes.stringType(), StringCodec.class);
 
         assertEquals( "serialize", "foo", codec.serialize( "foo" ) );
         assertEquals( "serialize", "", codec.serialize( "" ) );
@@ -35,7 +34,7 @@ public class StringCodecStringTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testDeserialize() {
-        StringCodec<String> codec = getCodec( StringType.getInstance(), StringCodec.class);
+        StringCodec<String> codec = getCodec( BaseTypes.stringType(), StringCodec.class);
 
         assertEquals( "deserialize", "bar", codec.deserialize( "bar" ) );
         assertEquals( "deserialize", "", codec.deserialize( "" ) );
