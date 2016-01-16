@@ -8,15 +8,13 @@
 
 package org.opendaylight.yangtools.yang.data.impl.test.codecs;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.opendaylight.yangtools.yang.data.impl.test.codecs.TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx;
 import static org.opendaylight.yangtools.yang.data.impl.test.codecs.TypeDefinitionAwareCodecTestHelper.getCodec;
-
 import java.math.BigInteger;
-
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint64Codec;
-import org.opendaylight.yangtools.yang.model.util.Uint64;
+import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 
 /**
  * Unit tests for Uint64CodecString.
@@ -28,7 +26,7 @@ public class Uint64CodecStringTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testSerialize() {
-        Uint64Codec<String> codec = getCodec(Uint64.getInstance(), Uint64Codec.class);
+        Uint64Codec<String> codec = getCodec(BaseTypes.uint64Type(), Uint64Codec.class);
 
         assertEquals("serialize", "123456789", codec.serialize(BigInteger.valueOf( 123456789 )));
         assertEquals("serialize", "", codec.serialize(null));
@@ -41,7 +39,7 @@ public class Uint64CodecStringTest {
         final String octal = "03536670743556272";
         final String integer = "129664115727546";
 
-        Uint64Codec<String> codec = getCodec(Uint64.getInstance(), Uint64Codec.class);
+        Uint64Codec<String> codec = getCodec(BaseTypes.uint64Type(), Uint64Codec.class);
 
         assertEquals("deserialize", codec.deserialize(hexa), new BigInteger("75EDC78edCBA", 16));
         assertEquals("deserialize", codec.deserialize(octal), new BigInteger(octal, 8));

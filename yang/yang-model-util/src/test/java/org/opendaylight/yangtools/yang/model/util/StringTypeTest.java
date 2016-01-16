@@ -12,21 +12,22 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
+import static org.opendaylight.yangtools.yang.model.util.type.BaseTypes.stringType;
 import java.sql.Types;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 
 public class StringTypeTest {
 
-    private StringType string;
+    private StringTypeDefinition string;
     private int hash;
 
     @Before
     public void setup() {
-        string = StringType.getInstance();
+        string = stringType();
         hash = string.hashCode();
     }
 

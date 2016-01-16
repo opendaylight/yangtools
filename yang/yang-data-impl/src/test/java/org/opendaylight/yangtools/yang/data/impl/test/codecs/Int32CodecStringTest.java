@@ -8,13 +8,12 @@
 
 package org.opendaylight.yangtools.yang.data.impl.test.codecs;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.opendaylight.yangtools.yang.data.impl.test.codecs.TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx;
 import static org.opendaylight.yangtools.yang.data.impl.test.codecs.TypeDefinitionAwareCodecTestHelper.getCodec;
-
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.codec.Int32Codec;
-import org.opendaylight.yangtools.yang.model.util.Int32;
+import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 
 /**
  * Unit tests for Int32CodecString.
@@ -26,7 +25,7 @@ public class Int32CodecStringTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testSerialize() {
-        Int32Codec<String> codec = getCodec(Int32.getInstance(), Int32Codec.class);
+        Int32Codec<String> codec = getCodec(BaseTypes.int32Type(), Int32Codec.class);
 
         assertEquals("serialize", "10", codec.serialize(Integer.valueOf( 10 )));
         assertEquals("serialize", "", codec.serialize(null));
@@ -42,7 +41,7 @@ public class Int32CodecStringTest {
         final String integer = "1174404318";
         final String negInteger = "-1174404318";
 
-        Int32Codec<String> codec = getCodec(Int32.getInstance(), Int32Codec.class);
+        Int32Codec<String> codec = getCodec(BaseTypes.int32Type(), Int32Codec.class);
 
         assertEquals("deserialize", codec.deserialize(hexa), Integer.valueOf("+045FFFCDE", 16));
         assertEquals("deserialize", codec.deserialize(negHexa), Integer.valueOf("-045FFFCDE", 16));
