@@ -94,7 +94,10 @@ public final class TreeNodeFactory {
      * @param data data node
      * @param version data node version
      * @return new AbstractTreeNode instance, covering the data tree provided
+     *
+     * @deprecated Use lazy node initialization via {@link #createTreeNode(NormalizedNode, Version)}.
      */
+    @Deprecated
     public static TreeNode createTreeNodeRecursively(final NormalizedNode<?, ?> data, final Version version) {
         if (data instanceof NormalizedNodeContainer<?, ?, ?>) {
             @SuppressWarnings("unchecked")
