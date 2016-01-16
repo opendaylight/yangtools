@@ -7,27 +7,28 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.ArrayList;
-
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
+import static org.opendaylight.yangtools.yang.model.util.type.BaseTypes.int32Type;
+import static org.opendaylight.yangtools.yang.model.util.type.BaseTypes.unionTypeBuilder;
+import java.util.Collections;
+import org.junit.Test;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.util.type.UnionTypeBuilder;
 
 public class UnionTypeTest {
 
     @Test
     public void canCreateUnion() {
-        List<TypeDefinition<?>> listTypes = new ArrayList<>();
-        Int32 int32 = Int32.getInstance();
-        listTypes.add(int32);
-        UnionType unionType = UnionType.create(listTypes);
+        IntegerTypeDefinition int32 = int32Type();
+        UnionTypeBuilder builder = unionTypeBuilder(SchemaPath.ROOT);
+        builder.addType(int32);
+        UnionTypeDefinition unionType = builder.build();
 
         assertEquals("GetUnits should be null", null, unionType.getUnits());
         assertTrue("String should contain int32", unionType.toString().contains("int32"));
