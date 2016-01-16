@@ -7,20 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.Status;
-
-import java.util.Collections;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
+import static org.opendaylight.yangtools.yang.model.util.type.BaseTypes.emptyType;
+import java.util.Collections;
+import org.junit.Test;
+import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 
 public class EmptyTypeTest {
 
     @Test
     public void canCreateEmptyType() {
-        EmptyType emptyType = EmptyType.getInstance();
+        EmptyTypeDefinition emptyType = emptyType();
 
         assertEquals("QName", BaseTypes.EMPTY_QNAME, emptyType.getQName());
         assertEquals("Path", Collections.singletonList(BaseTypes.EMPTY_QNAME),

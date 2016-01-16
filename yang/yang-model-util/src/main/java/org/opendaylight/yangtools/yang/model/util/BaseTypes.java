@@ -7,15 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
-import java.net.URI;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
  * Utility methods and constants to work with built-in YANG types
@@ -25,18 +20,8 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 public final class BaseTypes {
 
     private BaseTypes() {
+        throw new UnsupportedOperationException();
     }
-
-    /**
-     * @deprecated Use {@link YangConstants#RFC6020_YANG_NAMESPACE} instead. To be removed in Boron release.
-     */
-    @Deprecated
-    public static final URI BASE_TYPES_NAMESPACE = YangConstants.RFC6020_YANG_NAMESPACE;
-    /**
-     * @deprecated Use {@link YangConstants#RFC6020_YANG_MODULE} instead. To be removed in Boron release.
-     */
-    @Deprecated
-    public static final QNameModule BASE_TYPES_MODULE = YangConstants.RFC6020_YANG_MODULE;
 
     public static final QName BINARY_QNAME = constructQName("binary");
     public static final QName BITS_QNAME = constructQName("bits");
@@ -104,60 +89,4 @@ public final class BaseTypes {
     public static boolean isYangBuildInType(final String type) {
         return BUILT_IN_TYPES.contains(type);
     }
-
-    /**
-     * Returns default instance of built-in for supplied type
-     *
-     * See package documentation for description of base build-in types
-     * with default instance.
-     *
-     * @param typeName
-     * @return Returns default instance or {@link Optional#absent()} if default
-     *         instance does not exists
-     *
-     * @deprecated Use parser-specific lookup tables.
-     */
-    @Deprecated
-    public static Optional<TypeDefinition<?>> defaultBaseTypeFor(final String typeName) {
-        return Optional.<TypeDefinition<?>> fromNullable(defaultBaseTypeForImpl(typeName));
-    }
-
-    @Deprecated
-    private static TypeDefinition<?> defaultBaseTypeForImpl(final String typeName) {
-        Preconditions.checkNotNull(typeName, "typeName must not be null.");
-
-        if (typeName.startsWith("int")) {
-            if ("int8".equals(typeName)) {
-                return Int8.getInstance();
-            } else if ("int16".equals(typeName)) {
-                return Int16.getInstance();
-            } else if ("int32".equals(typeName)) {
-                return Int32.getInstance();
-            } else if ("int64".equals(typeName)) {
-                return Int64.getInstance();
-            }
-        } else if (typeName.startsWith("uint")) {
-            if ("uint8".equals(typeName)) {
-                return Uint8.getInstance();
-            } else if ("uint16".equals(typeName)) {
-                return Uint16.getInstance();
-            } else if ("uint32".equals(typeName)) {
-                return Uint32.getInstance();
-            } else if ("uint64".equals(typeName)) {
-                return Uint64.getInstance();
-            }
-        } else if ("string".equals(typeName)) {
-            return StringType.getInstance();
-        } else if ("binary".equals(typeName)) {
-            return BinaryType.getInstance();
-        } else if ("boolean".equals(typeName)) {
-            return BooleanType.getInstance();
-        } else if ("empty".equals(typeName)) {
-            return EmptyType.getInstance();
-        } else if ("instance-identifier".equals(typeName)) {
-            return InstanceIdentifierType.getInstance();
-        }
-        return null;
-    }
-
 }
