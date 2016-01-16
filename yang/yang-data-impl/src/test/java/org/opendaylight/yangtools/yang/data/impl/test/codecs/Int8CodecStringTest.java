@@ -8,13 +8,12 @@
 
 package org.opendaylight.yangtools.yang.data.impl.test.codecs;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.opendaylight.yangtools.yang.data.impl.test.codecs.TypeDefinitionAwareCodecTestHelper.deserializeWithExpectedIllegalArgEx;
 import static org.opendaylight.yangtools.yang.data.impl.test.codecs.TypeDefinitionAwareCodecTestHelper.getCodec;
-
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.codec.Int8Codec;
-import org.opendaylight.yangtools.yang.model.util.Int8;
+import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 
 /**
  * Unit tests for Int8CodecString.
@@ -26,7 +25,7 @@ public class Int8CodecStringTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testSerialize() {
-        Int8Codec<String> codec = getCodec(Int8.getInstance(), Int8Codec.class);
+        Int8Codec<String> codec = getCodec(BaseTypes.int8Type(), Int8Codec.class);
 
         assertEquals("serialize", "10", codec.serialize(Byte.valueOf( (byte) 10 )));
         assertEquals("serialize", "", codec.serialize(null));
@@ -42,7 +41,7 @@ public class Int8CodecStringTest {
         final String integer = "64";
         final String negInteger = "-64";
 
-        Int8Codec<String> codec = getCodec(Int8.getInstance(), Int8Codec.class);
+        Int8Codec<String> codec = getCodec(BaseTypes.int8Type(), Int8Codec.class);
 
         assertEquals("deserialize", codec.deserialize(hexa), Byte.valueOf("040", 16));
         assertEquals("deserialize", codec.deserialize(negHexa), Byte.valueOf("-040", 16));
