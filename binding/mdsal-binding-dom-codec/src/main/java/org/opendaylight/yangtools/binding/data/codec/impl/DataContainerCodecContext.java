@@ -146,7 +146,7 @@ abstract class DataContainerCodecContext<D extends DataObject,T> extends NodeCod
     }
 
     BindingStreamEventWriter createWriter(final NormalizedNodeStreamWriter domWriter) {
-        return  new BindingToNormalizedStreamWriter(this, domWriter);
+        return BindingToNormalizedStreamWriter.create(this, domWriter);
     }
 
     @Nonnull

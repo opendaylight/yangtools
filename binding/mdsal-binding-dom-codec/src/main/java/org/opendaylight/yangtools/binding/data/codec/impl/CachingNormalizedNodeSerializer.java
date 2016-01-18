@@ -39,7 +39,7 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
         this.cacheHolder = cacheHolder;
         this.domResult = new NormalizedNodeResult();
         this.domWriter = new NormalizedNodeWriterWithAddChild(domResult);
-        this.delegate = new BindingToNormalizedStreamWriter(subtreeRoot, domWriter);
+        this.delegate = BindingToNormalizedStreamWriter.create(subtreeRoot, domWriter);
     }
 
     @Override
@@ -80,9 +80,7 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
             if (type.equals(currentCtx.getBindingClass())) {
                 return cacheHolder.getCachingSerializer(currentCtx);
             }
-            final DataContainerCodecContext<?, ?> childCtx =
-                    (DataContainerCodecContext<?, ?>) currentCtx.streamChild(type);
-            return cacheHolder.getCachingSerializer(childCtx);
+            return cacheHolder.getCachingSerializer(currentCtx.streamChild(type));
         }
         return null;
     }
