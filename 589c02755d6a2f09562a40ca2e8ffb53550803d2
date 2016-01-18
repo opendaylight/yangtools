@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_ab14c7f5",
+        "filename": "common/artifacts/pom.xml",
+        "patchSetId": 1
+      },
+      "lineNbr": 27,
+      "author": {
+        "id": 2759
+      },
+      "writtenOn": "2016-01-18T18:12:13Z",
+      "side": 1,
+      "message": "Just a question about this version. Every time yangtools is version bumped the last digit has always increased by 1. Do we need to bump it for this activity too?",
+      "revId": "589c02755d6a2f09562a40ca2e8ffb53550803d2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
