@@ -1,0 +1,14 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+    
+    list list1 {
+        key "id";
+        leaf id {
+            type string;
+        }
+        leaf leaf1 {
+            type string;
+        }
+    }
+}

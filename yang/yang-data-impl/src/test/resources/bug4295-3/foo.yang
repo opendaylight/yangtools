@@ -1,0 +1,23 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+    
+    list outer-list {
+        key "o-id";
+        leaf o-id {
+            type string;
+        }
+        list inner-list {
+            key "i-id";
+            leaf i-id {
+                type string;
+            }
+            leaf i {
+                type string;
+            }
+        }
+        leaf o {
+            type string;
+        }
+    }
+}
