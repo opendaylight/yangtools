@@ -67,9 +67,9 @@ abstract class RootModificationApplyOperation extends ModificationApplyOperation
     }
 
     @Override
-    final void checkApplicable(final YangInstanceIdentifier path, final NodeModification modification, final Optional<TreeNode> current)
-            throws DataValidationFailedException {
-        getDelegate().checkApplicable(path, modification, current);
+    final void checkApplicable(final YangInstanceIdentifier path, final NodeModification modification,
+            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
+        getDelegate().checkApplicable(path, modification, current, version);
     }
 
     @Override
