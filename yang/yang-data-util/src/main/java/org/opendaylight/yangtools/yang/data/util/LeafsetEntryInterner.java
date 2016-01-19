@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +70,8 @@ public final class LeafsetEntryInterner {
     @Nullable public static LeafsetEntryInterner forSchema(@Nullable final LeafListSchemaNode schema) {
         if (schema != null) {
             final TypeDefinition<?> type = schema.getType();
-            if (type instanceof BooleanTypeDefinition || type instanceof EnumTypeDefinition) {
+            if (type instanceof BooleanTypeDefinition || type instanceof EnumTypeDefinition ||
+                    type instanceof IdentityrefTypeDefinition) {
                 return INSTANCE;
             }
         }
