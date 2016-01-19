@@ -8,7 +8,6 @@
 
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
@@ -48,53 +47,45 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
 
     }
 
-    private static int findChildrenBefore(final Optional<TreeNode> current) {
-        if (current.isPresent()) {
-            return numOfChildrenFromValue(current.get().getData());
-        } else {
-            return 0;
+    private void validateMinMaxElements(final YangInstanceIdentifier path, final PathArgument id,
+            final NormalizedNode<?, ?> data) throws DataValidationFailedException {
+        final int children = numOfChildrenFromValue(data);
+        if (minElements != null && minElements > children) {
+            throw new DataValidationFailedException(path, String.format(
+                    "%s does not have enough elements (%s), needs at least %s", id,
+                    children, minElements));
         }
-    }
-
-    private static int findChildrenAfter(final ModifiedNode modification) {
-        if (modification.getWrittenValue() != null) {
-            return numOfChildrenFromValue(modification.getWrittenValue());
-        } else {
-            return 0;
+        if (maxElements != null && maxElements < children) {
+            throw new DataValidationFailedException(path, String.format(
+                    "%s has too many elements (%s), can have at most %s", id, children,
+                    maxElements));
         }
     }
 
     private void checkMinMaxElements(final YangInstanceIdentifier path, final NodeModification nodeMod,
-            final Optional<TreeNode> current) throws DataValidationFailedException {
+            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         if (!(nodeMod instanceof ModifiedNode)) {
             LOG.debug("Could not validate {}, does not implement expected class {}", nodeMod, ModifiedNode.class);
             return;
         }
 
         final ModifiedNode modification = (ModifiedNode) nodeMod;
-        final int childrenBefore = (modification.getOperation() == LogicalOperation.WRITE) ? 0 : findChildrenBefore
-                (current);
-        Verify.verify(childrenBefore >= 0, "Child count before is %s (from %s)", childrenBefore, current);
 
-        final int childrenAfter = findChildrenAfter(modification);
-        Verify.verify(childrenAfter >= 0, "Child count after is %s (from %s)", childrenAfter, modification);
+        // We need to actually perform the operation to get deal with merge in a sane manner. We know the modification
+        // is immutable, so the result of validation will probably not change.
+        final Optional<TreeNode> maybeApplied = delegate.apply(modification, current, version);
+        Verify.verify(maybeApplied.isPresent());
 
-        final int childrenModified = numOfChildrenFromChildMods(modification, current);
-        LOG.debug("Modified child count is %s (from %s and %s)", childrenModified, modification, current);
+        final TreeNode applied = maybeApplied.get();
+        validateMinMaxElements(path, modification.getIdentifier(), applied.getData());
 
-        final int childrenTotal = childrenBefore + childrenAfter + childrenModified;
-        Verify.verify(childrenTotal >= 0, "Total child count is %s (from %s and %s)", childrenTotal, modification, current);
-
-        if (minElements != null && minElements > childrenTotal) {
-            throw new DataValidationFailedException(path, String.format(
-                    "%s does not have enough elements (%s), needs at least %s", modification.getIdentifier(),
-                    childrenTotal, minElements));
-        }
-        if (maxElements != null && maxElements < childrenTotal) {
-            throw new DataValidationFailedException(path, String.format(
-                    "%s has too many elements (%s), can have at most %s", modification.getIdentifier(), childrenTotal,
-                    maxElements));
-        }
+        // Everything passed. We now have a snapshot of the result node, it would be too bad if we just threw it out.
+        // We know what the result of an apply operation is going to be *if* the following are kept unchanged:
+        // - the 'current' node
+        // - the schemacontext (therefore, the fact this object is associated with the modification)
+        //
+        // So let's stash the result. We will pick it up during apply operation.
+        modification.setValidatedNode(this, current, applied);
     }
 
     private static int numOfChildrenFromValue(final NormalizedNode<?, ?> value) {
@@ -109,61 +100,30 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
                 value.getClass()));
     }
 
-    private static int numOfChildrenFromChildMods(final ModifiedNode modification, final Optional<TreeNode> current) {
-        int result = 0;
-        for (final ModifiedNode modChild : modification.getChildren()) {
-            switch (modChild.getOperation()) {
-                case WRITE:
-                    if (!checkOriginalPresent(modChild)) {
-                        result++;
-                    }
-                    break;
-                case MERGE:
-                    if (!checkOriginalPresent(modChild)) {
-                        result++;
-                    }
-                    break;
-                case DELETE:
-                    if (checkOriginalPresent(modChild)) {
-                        result--;
-                    }
-                    break;
-                case NONE:
-                case TOUCH:
-                    // NOOP
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unsupported operation type: " + modChild.getOperation());
-            }
-        }
-        return result;
-    }
-
     private static boolean checkOriginalPresent(ModifiedNode child) {
         return child.getOriginal().isPresent();
     }
 
     @Override
     protected void checkTouchApplicable(final YangInstanceIdentifier path, final NodeModification modification,
-            final Optional<TreeNode> current) throws DataValidationFailedException {
-        delegate.checkTouchApplicable(path, modification, current);
-        checkMinMaxElements(path, modification, current);
+            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
+        delegate.checkTouchApplicable(path, modification, current, version);
+        checkMinMaxElements(path, modification, current, version);
     }
 
     @Override
     protected void checkMergeApplicable(final YangInstanceIdentifier path, final NodeModification modification,
-            final Optional<TreeNode> current) throws DataValidationFailedException {
-        delegate.checkMergeApplicable(path, modification, current);
-        checkMinMaxElements(path, modification, current);
+            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
+        delegate.checkMergeApplicable(path, modification, current, version);
+        checkMinMaxElements(path, modification, current, version);
     }
 
     @Override
     protected void checkWriteApplicable(final YangInstanceIdentifier path, final NodeModification modification,
-            final Optional<TreeNode> current) throws DataValidationFailedException {
-        delegate.checkWriteApplicable(path, modification, current);
-        checkMinMaxElements(path, modification, current);
+            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
+        delegate.checkWriteApplicable(path, modification, current, version);
+        checkMinMaxElements(path, modification, current, version);
     }
-
 
     @Override
     public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
@@ -177,17 +137,35 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
 
     @Override
     protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
+        final TreeNode validated = modification.getValidatedNode(this, Optional.of(currentMeta));
+        if (validated != null) {
+            return validated;
+        }
+
+        // FIXME: the result moved, make sure we enforce again
         return delegate.applyMerge(modification, currentMeta, version);
     }
 
     @Override
     protected TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
+        final TreeNode validated = modification.getValidatedNode(this, Optional.of(currentMeta));
+        if (validated != null) {
+            return validated;
+        }
+
+        // FIXME: the result moved, make sure we enforce again
         return delegate.applyTouch(modification, currentMeta, version);
     }
 
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final Optional<TreeNode> currentMeta,
             final Version version) {
+        final TreeNode validated = modification.getValidatedNode(this, currentMeta);
+        if (validated != null) {
+            return validated;
+        }
+
+        // FIXME: the result moved, make sure we enforce again
         return delegate.applyWrite(modification, currentMeta, version);
     }
 

@@ -131,7 +131,7 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
 
     @Override
     protected void checkTouchApplicable(final YangInstanceIdentifier path, final NodeModification modification,
-            final Optional<TreeNode> current) throws IncorrectDataStructureException {
+            final Optional<TreeNode> current, final Version version) throws IncorrectDataStructureException {
         throw new IncorrectDataStructureException(path, "Subtree modification is not allowed.");
     }
 

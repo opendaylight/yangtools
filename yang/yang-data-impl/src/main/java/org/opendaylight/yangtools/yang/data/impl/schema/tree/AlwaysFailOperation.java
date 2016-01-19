@@ -34,8 +34,8 @@ final class AlwaysFailOperation extends ModificationApplyOperation {
     }
 
     @Override
-    void checkApplicable(final YangInstanceIdentifier path,final NodeModification modification,
-            final Optional<TreeNode> storeMetadata) {
+    void checkApplicable(final YangInstanceIdentifier path, final NodeModification modification,
+            final Optional<TreeNode> storeMetadata, final Version version) {
         throw new IllegalStateException("Schema Context is not available.");
     }
 
