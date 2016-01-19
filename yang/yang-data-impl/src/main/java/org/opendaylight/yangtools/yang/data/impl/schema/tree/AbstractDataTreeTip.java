@@ -35,7 +35,7 @@ abstract class AbstractDataTreeTip implements DataTreeTip {
         final InMemoryDataTreeModification m = (InMemoryDataTreeModification)modification;
         Preconditions.checkArgument(m.isSealed(), "Attempted to verify unsealed modification %s", m);
 
-        m.getStrategy().checkApplicable(PUBLIC_ROOT_PATH, m.getRootModification(), Optional.of(getTipRoot()));
+        m.getStrategy().checkApplicable(PUBLIC_ROOT_PATH, m.getRootModification(), Optional.of(getTipRoot()), m.getVersion());
     }
 
     @Override
