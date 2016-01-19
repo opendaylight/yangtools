@@ -31,7 +31,8 @@ abstract class AbstractReadyIterator {
 
     final AbstractReadyIterator process(final Version version) {
         // Walk all child nodes and remove any children which have not
-        // been modified. If a child
+        // been modified. If a child has children, we need to iterate
+        // through it via re-entering this method on the child iterator.
         while (children.hasNext()) {
             final ModifiedNode child = children.next();
             final Optional<ModificationApplyOperation> childOperation = op.getChild(child.getIdentifier());
@@ -41,7 +42,7 @@ abstract class AbstractReadyIterator {
             final ModificationApplyOperation childOp = childOperation.get();
 
             if (grandChildren.isEmpty()) {
-
+                // The child is empty, seal it
                 child.seal(childOp, version);
                 if (child.getOperation() == LogicalOperation.NONE) {
                     children.remove();
@@ -51,12 +52,15 @@ abstract class AbstractReadyIterator {
             }
         }
 
+        // We are done with this node, seal it.
         node.seal(op, version);
 
         // Remove from parent if we have one and this is a no-op
         if (node.getOperation() == LogicalOperation.NONE) {
             removeFromParent();
         }
+
+        // Sub-iteration complete, return back to parent
         return getParent();
     }
 
