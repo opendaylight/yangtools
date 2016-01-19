@@ -57,16 +57,17 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
     abstract Optional<TreeNode> apply(ModifiedNode modification, Optional<TreeNode> storeMeta, Version version);
 
     /**
-    *
-    * Checks if provided node modification could be applied to current metadata node.
-    *
-    * @param modification Modification
-    * @param current Metadata Node to which modification should be applied
-    * @return true if modification is applicable
-    *         false if modification is no applicable
-    * @throws DataValidationFailedException
-    */
-   abstract void checkApplicable(YangInstanceIdentifier path, NodeModification modification, Optional<TreeNode> current) throws DataValidationFailedException;
+     *
+     * Checks if provided node modification could be applied to current metadata node.
+     *
+     * @param modification Modification
+     * @param current Metadata Node to which modification should be applied
+     * @param version
+     * @return true if modification is applicable
+     *         false if modification is no applicable
+     * @throws DataValidationFailedException
+     */
+   abstract void checkApplicable(YangInstanceIdentifier path, NodeModification modification, Optional<TreeNode> current, Version version) throws DataValidationFailedException;
 
     /**
      *
