@@ -116,19 +116,19 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     }
 
     @Override
-    final void checkApplicable(final YangInstanceIdentifier path,final NodeModification modification, final Optional<TreeNode> current) throws DataValidationFailedException {
+    final void checkApplicable(final YangInstanceIdentifier path,final NodeModification modification, final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         switch (modification.getOperation()) {
         case DELETE:
             checkDeleteApplicable(modification, current);
             break;
         case TOUCH:
-            checkTouchApplicable(path, modification, current);
+            checkTouchApplicable(path, modification, current, version);
             break;
         case WRITE:
-            checkWriteApplicable(path, modification, current);
+            checkWriteApplicable(path, modification, current, version);
             break;
         case MERGE:
-            checkMergeApplicable(path, modification, current);
+            checkMergeApplicable(path, modification, current, version);
             break;
         case NONE:
             break;
@@ -137,7 +137,8 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         }
     }
 
-    protected void checkMergeApplicable(final YangInstanceIdentifier path, final NodeModification modification, final Optional<TreeNode> current) throws DataValidationFailedException {
+    protected void checkMergeApplicable(final YangInstanceIdentifier path, final NodeModification modification,
+            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         final Optional<TreeNode> original = modification.getOriginal();
         if (original.isPresent() && current.isPresent()) {
             /*
@@ -163,7 +164,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
      * @throws DataValidationFailedException
      */
     protected void checkWriteApplicable(final YangInstanceIdentifier path, final NodeModification modification,
-        final Optional<TreeNode> current) throws DataValidationFailedException {
+        final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         final Optional<TreeNode> original = modification.getOriginal();
         if (original.isPresent() && current.isPresent()) {
             checkNotConflicting(path, original.get(), current.get());
@@ -257,8 +258,8 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
      * @throws ConflictingModificationAppliedException If subtree was changed in conflicting way
      * @throws IncorrectDataStructureException If subtree modification is not applicable (e.g. leaf node).
      */
-    protected abstract void checkTouchApplicable(YangInstanceIdentifier path, final NodeModification modification,
-            final Optional<TreeNode> current) throws DataValidationFailedException;
+    protected abstract void checkTouchApplicable(YangInstanceIdentifier path, NodeModification modification,
+            Optional<TreeNode> current, Version version) throws DataValidationFailedException;
 
     /**
      * Checks if supplied schema node belong to specified Data Tree type. All nodes belong to the operational tree,
