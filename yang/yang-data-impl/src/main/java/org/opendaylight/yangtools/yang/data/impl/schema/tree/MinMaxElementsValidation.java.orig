@@ -100,10 +100,43 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
                 value.getClass()));
     }
 
+<<<<<<< HEAD
+    private static int numOfChildrenFromChildMods(final ModifiedNode modification, final Optional<TreeNode> current) {
+        int result = 0;
+        for (final ModifiedNode modChild : modification.getChildren()) {
+            switch (modChild.getOperation()) {
+                case WRITE:
+                    if (!checkOriginalPresent(modChild)) {
+                        result++;
+                    }
+                    break;
+                case MERGE:
+                    if (!checkOriginalPresent(modChild)) {
+                        result++;
+                    }
+                    break;
+                case DELETE:
+                    if (checkOriginalPresent(modChild)) {
+                        result--;
+                    }
+                    break;
+                case NONE:
+                case TOUCH:
+                    // NOOP
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unsupported operation type: " + modChild.getOperation());
+            }
+        }
+        return result;
+    }
+
     private static boolean checkOriginalPresent(ModifiedNode child) {
         return child.getOriginal().isPresent();
     }
 
+=======
+>>>>>>> BUG-4684: validate changes against effective state
     @Override
     protected void checkTouchApplicable(final YangInstanceIdentifier path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {

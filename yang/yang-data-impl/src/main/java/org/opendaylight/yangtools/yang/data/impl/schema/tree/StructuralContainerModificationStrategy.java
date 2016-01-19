@@ -89,12 +89,13 @@ final class StructuralContainerModificationStrategy extends ModificationApplyOpe
     }
 
     @Override
-    void checkApplicable(final YangInstanceIdentifier path, final NodeModification modification, final Optional<TreeNode> current) throws DataValidationFailedException {
+    void checkApplicable(final YangInstanceIdentifier path, final NodeModification modification,
+            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         if (modification.getOperation() == LogicalOperation.TOUCH && !current.isPresent()) {
             // Structural containers are created as needed, so we pretend this container is here
-            delegate.checkApplicable(path, modification, fakeMeta(FAKE_VERSION));
+            delegate.checkApplicable(path, modification, fakeMeta(FAKE_VERSION), version);
         } else {
-            delegate.checkApplicable(path, modification, current);
+            delegate.checkApplicable(path, modification, current, version);
         }
     }
 
