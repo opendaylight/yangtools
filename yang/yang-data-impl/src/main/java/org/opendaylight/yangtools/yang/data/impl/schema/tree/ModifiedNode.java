@@ -221,6 +221,11 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             newType = LogicalOperation.DELETE;
             break;
         case MERGE:
+                // In case of merge - delete needs to be recored and must not to be changed into
+                // NONE, because lazy expansion of parent MERGE node would reintroduce it
+                // again.
+                newType = LogicalOperation.DELETE;
+                break;
         case TOUCH:
         case WRITE:
             /*
