@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import static org.junit.Assert.assertFalse;
+
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.io.File;
@@ -22,6 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
@@ -71,8 +75,9 @@ public class Bug4295Test {
         secondModification(1);
         secondModification(2);
         secondModification(3);
+        delete();
+        read();
     }
-
 
     private void firstModification() throws DataValidationFailedException {
         /*  MERGE */
@@ -103,6 +108,7 @@ public class Bug4295Test {
         modification.ready();
         inMemoryDataTree.validate(modification);
         inMemoryDataTree.commit(inMemoryDataTree.prepare(modification));
+        System.out.println("FirstModification: "+inMemoryDataTree);
     }
 
     private void secondModification(int testScenarioNumber) throws DataValidationFailedException {
@@ -136,7 +142,9 @@ public class Bug4295Test {
         } else if (testScenarioNumber == 3) {
             /* WRITE INNER LIST WITH ENTRIES */
             MapNode innerListNode = createInnerListBuilder().withChild(createInnerListEntry("a", "i-a-3"))
-                    .withChild(createInnerListEntry("c", "i-c")).build();
+                    .withChild(createInnerListEntry("c", "i-c"))
+                    .withChild(createInnerListEntry("d", "i-d"))
+                    .withChild(createInnerListEntry("x", "i-x")).build();
             path = YangInstanceIdentifier.of(root).node(subRoot).node(outerList).node(createOuterListEntryPath("2"))
                     .node(innerList);
             modification.write(path, innerListNode);
@@ -146,6 +154,54 @@ public class Bug4295Test {
         modification.ready();
         inMemoryDataTree.validate(modification);
         inMemoryDataTree.commit(inMemoryDataTree.prepare(modification));
+        System.out.println("SecondModification("+testScenarioNumber+"): "+inMemoryDataTree);
+    }
+
+    private void read() throws DataValidationFailedException {
+        /* READ */
+        YangInstanceIdentifier path = YangInstanceIdentifier.of(root).node(subRoot).node(outerList)
+                .node(createOuterListEntryPath("2")).node(innerList).node(createInnerListEntryPath("a"));
+        DataTreeModification modification = inMemoryDataTree.takeSnapshot().newModification();
+        Optional<NormalizedNode<?, ?>> readNode = modification.readNode(path);
+        assertFalse(readNode.isPresent());
+
+        /* READ */
+//        path = YangInstanceIdentifier.of(root).node(subRoot).node(outerList)
+//                .node(createOuterListEntryPath("2")).node(innerList).node(createInnerListEntryPath("x"));
+//        readNode = modification.readNode(path);
+//        assertFalse(readNode.isPresent());
+    }
+
+    private void delete() throws DataValidationFailedException {
+        YangInstanceIdentifier path;
+        DataTreeModification modification = inMemoryDataTree.takeSnapshot().newModification();
+
+        /* MERGE */
+        MapNode innerListNode = createInnerListBuilder()
+                .withChild(createInnerListEntry("a", "i-a-updated"))
+//                .withChild(createInnerListEntry("c", "i-c-2"))
+//                .withChild(createInnerListEntry("e", "i-e"))
+//                .withChild(createInnerListEntry("f", "i-f"))
+                .build();
+        path = YangInstanceIdentifier.of(root).node(subRoot).node(outerList).node(createOuterListEntryPath("2"))
+                .node(innerList);
+        modification.merge(path, innerListNode);
+
+        /* DELETE 1 */
+        path = YangInstanceIdentifier.of(root).node(subRoot).node(outerList)
+                .node(createOuterListEntryPath("2")).node(innerList).node(createInnerListEntryPath("a"));
+        modification.delete(path);
+
+//        /* DELETE 2 */
+//        path = YangInstanceIdentifier.of(root).node(subRoot).node(outerList).node(createOuterListEntryPath("2"))
+//                .node(innerList).node(createInnerListEntryPath("x"));
+//        modification.delete(path);
+
+        /* COMMIT */
+        modification.ready();
+        inMemoryDataTree.validate(modification);
+        inMemoryDataTree.commit(inMemoryDataTree.prepare(modification));
+        System.out.println("DELETE: " + inMemoryDataTree);
     }
 
     private void writeEmptyInnerList(DataTreeModification modification, String outerListEntryKey) {
