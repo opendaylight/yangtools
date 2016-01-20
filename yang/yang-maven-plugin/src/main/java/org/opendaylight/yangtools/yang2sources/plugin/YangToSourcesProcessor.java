@@ -139,13 +139,14 @@ class YangToSourcesProcessor {
                 return null;
             }
 
-            final List<InputStream> yangsInProject = new ArrayList<>();
+            final List<NamedFileInputStream> yangsInProject = new ArrayList<>();
             for (final File f : yangFilesInProject) {
                 // FIXME: This is hack - normal path should be reported.
                 yangsInProject.add(new NamedFileInputStream(f, META_INF_YANG_STRING + File.separator + f.getName()));
             }
 
-            List<InputStream> all = new ArrayList<>(yangsInProject);
+            List<InputStream> all = new ArrayList<>();
+            all.addAll(yangsInProject);
             closeables.addAll(yangsInProject);
 
             /**
@@ -170,8 +171,17 @@ class YangToSourcesProcessor {
                 Set<Module> parsedAllYangModules = resolveSchemaContext.getModules();
                 projectYangModules = new HashSet<>();
                 for (Module module : parsedAllYangModules) {
-                    if(module.getModuleSourcePath()!=null) {
-                        projectYangModules.add(module);
+                    final String path = module.getModuleSourcePath();
+                    if (path != null) {
+                        LOG.debug("Looking for source {}", path);
+                        for (NamedFileInputStream is : yangsInProject) {
+                            LOG.debug("In project destination {}", is.getFileDestination());
+                            if (path.equals(is.getFileDestination())) {
+                                LOG.debug("Module {} belongs to current project", module);
+                                projectYangModules.add(module);
+                                break;
+                            }
+                        }
                     }
                 }
             } finally {
