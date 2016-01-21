@@ -136,10 +136,12 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
     private boolean wasProcessAsSimpleNode(final NormalizedNode<?, ?> node) throws IOException {
         if (node instanceof LeafSetEntryNode) {
             final LeafSetEntryNode<?> nodeAsLeafList = (LeafSetEntryNode<?>)node;
+            final QName name = nodeAsLeafList.getIdentifier().getNodeType();
             if(writer instanceof NormalizedNodeStreamAttributeWriter) {
-                ((NormalizedNodeStreamAttributeWriter) writer).leafSetEntryNode(nodeAsLeafList.getValue(), nodeAsLeafList.getAttributes());
+                ((NormalizedNodeStreamAttributeWriter) writer).leafSetEntryNode(name, nodeAsLeafList.getValue(),
+                        nodeAsLeafList.getAttributes());
             } else {
-                writer.leafSetEntryNode(nodeAsLeafList.getValue());
+                writer.leafSetEntryNode(name, nodeAsLeafList.getValue());
             }
             return true;
         } else if (node instanceof LeafNode) {
