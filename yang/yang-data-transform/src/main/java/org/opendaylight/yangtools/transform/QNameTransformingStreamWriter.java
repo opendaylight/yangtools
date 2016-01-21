@@ -114,8 +114,8 @@ public abstract class QNameTransformingStreamWriter extends ForwardingObject imp
     }
 
     @Override
-    public void leafSetEntryNode(final Object value) throws IOException, IllegalArgumentException {
-        delegate().leafSetEntryNode(value);
+    public void leafSetEntryNode(final QName name, final Object value) throws IOException, IllegalArgumentException {
+        delegate().leafSetEntryNode(transform(name), value);
     }
 
     @Override

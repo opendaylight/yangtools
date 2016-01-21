@@ -24,8 +24,8 @@ public abstract class ForwardingNormalizedNodeStreamAttributeWriter extends Forw
     }
 
     @Override
-    public void leafSetEntryNode(final Object value, final Map<QName, String> attributes) throws IOException {
-        delegate().leafSetEntryNode(value, attributes);
+    public void leafSetEntryNode(final QName name, final Object value, final Map<QName, String> attributes) throws IOException {
+        delegate().leafSetEntryNode(name, value, attributes);
     }
 
     @Override

@@ -19,7 +19,7 @@ public interface NormalizedNodeStreamAttributeWriter extends NormalizedNodeStrea
 
     void leafNode(YangInstanceIdentifier.NodeIdentifier name, Object value, Map<QName, String> attributes) throws IOException;
 
-    void leafSetEntryNode(Object value, Map<QName, String> attributes) throws IOException;
+    void leafSetEntryNode(QName name, Object value, Map<QName, String> attributes) throws IOException;
 
     void startContainerNode(YangInstanceIdentifier.NodeIdentifier name, int childSizeHint, Map<QName, String> attributes) throws IOException;
 
