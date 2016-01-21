@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
 import com.google.common.collect.ForwardingObject;
 import java.io.IOException;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -33,8 +34,8 @@ public abstract class ForwardingNormalizedNodeStreamWriter extends ForwardingObj
     }
 
     @Override
-    public void leafSetEntryNode(final Object value) throws IOException {
-        delegate().leafSetEntryNode(value);
+    public void leafSetEntryNode(final QName name, final Object value) throws IOException {
+        delegate().leafSetEntryNode(name, value);
     }
 
     @Override

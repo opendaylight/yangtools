@@ -19,6 +19,6 @@ class LeafListEntryNodeDataWithSchema extends SimpleNodeDataWithSchema {
     @Override
     public void write(final SchemaAwareNormalizedNodeStreamWriter writer) throws IOException {
         writer.nextDataSchemaNode(getSchema());
-        writer.leafSetEntryNode(getValue());
+        writer.leafSetEntryNode(getSchema().getQName(), getValue());
     }
 }

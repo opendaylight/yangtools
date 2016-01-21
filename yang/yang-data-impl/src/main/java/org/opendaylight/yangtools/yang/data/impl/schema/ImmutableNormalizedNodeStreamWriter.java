@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -170,7 +171,7 @@ public class ImmutableNormalizedNodeStreamWriter implements SchemaAwareNormalize
     }
 
     @Override
-    public void leafSetEntryNode(final Object value) {
+    public void leafSetEntryNode(final QName name, final Object value) {
         if (getCurrent() instanceof ImmutableOrderedLeafSetNodeBuilder) {
             @SuppressWarnings("unchecked")
             ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = ((ImmutableOrderedLeafSetNodeBuilder<Object>) getCurrent());
@@ -187,7 +188,7 @@ public class ImmutableNormalizedNodeStreamWriter implements SchemaAwareNormalize
     }
 
     @Override
-    public void startOrderedLeafSet(final NodeIdentifier name,final int childSizeHint) {
+    public void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
         final ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = Builders.orderedLeafSetBuilder();
         builder.withNodeIdentifier(name);
