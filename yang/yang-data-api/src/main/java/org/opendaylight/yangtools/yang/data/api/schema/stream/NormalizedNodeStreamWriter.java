@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.api.schema.stream;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -49,7 +50,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * <li><code>leaf-list</code> - Leaf list start is emitted using
  * {@link #startLeafSet(NodeIdentifier, int)}. Leaf list end is emitted using
  * {@link #endNode()}. Leaf list entries are emmited using
- * {@link #leafSetEntryNode(Object)}.
+ * {@link #leafSetEntryNode(QName, Object)}.
  *
  * <li><code>anyxml - AN node event is emitted using
  * {@link #leafNode(NodeIdentifier, Object)}. {@link #endNode()} MUST NOT BE emitted
@@ -117,7 +118,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      * Emits a start of leaf set (leaf-list).
      * <p>
      * Emits start of leaf set, during writing leaf set event, only
-     * {@link #leafSetEntryNode(Object)} calls are valid. Leaf set event is
+     * {@link #leafSetEntryNode(QName, Object)} calls are valid. Leaf set event is
      * finished by calling {@link #endNode()}.
      *
      * @param name
@@ -143,7 +144,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      * Emits a start of leaf set (leaf-list).
      * <p>
      * Emits start of leaf set, during writing leaf set event, only
-     * {@link #leafSetEntryNode(Object)} calls are valid. Leaf set event is
+     * {@link #leafSetEntryNode(QName, Object)} calls are valid. Leaf set event is
      * finished by calling {@link #endNode()}.
      *
      * @param name
@@ -167,6 +168,8 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
     /**
      * Emits a leaf set entry node
      *
+     * @param name
+     *            name of the node as defined in the schema.
      * @param value
      *            Value of leaf set entry node. Supplied object MUST BE constant over time.
      * @throws IllegalArgumentException
@@ -175,7 +178,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *             If node was emitted outside <code>leaf set</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void leafSetEntryNode(Object value) throws IOException;
+    void leafSetEntryNode(QName name, Object value) throws IOException;
 
     /**
      *
