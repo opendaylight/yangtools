@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.api.schema.stream;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -167,6 +168,8 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
     /**
      * Emits a leaf set entry node
      *
+     * @param name
+     *            name of the node as defined in the schema.
      * @param value
      *            Value of leaf set entry node. Supplied object MUST BE constant over time.
      * @throws IllegalArgumentException
@@ -175,7 +178,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *             If node was emitted outside <code>leaf set</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void leafSetEntryNode(Object value) throws IOException;
+    void leafSetEntryNode(QName name, Object value) throws IOException;
 
     /**
      *

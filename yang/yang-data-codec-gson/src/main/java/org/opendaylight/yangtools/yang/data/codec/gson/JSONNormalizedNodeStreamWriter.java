@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.net.URI;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -104,7 +105,7 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
     }
 
     @Override
-    public void leafSetEntryNode(final Object value) throws IOException {
+    public void leafSetEntryNode(final QName name, final Object value) throws IOException {
         final LeafListSchemaNode schema = tracker.leafSetEntryNode();
         final JSONCodec<Object> codec = codecs.codecFor(schema);
         context.emittingChild(codecs.getSchemaContext(), writer);
