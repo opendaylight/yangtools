@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
 package org.opendaylight.yangtools.sal.java.api.generator.test;
 
 import static org.junit.Assert.assertTrue;
@@ -7,6 +14,7 @@ import static org.opendaylight.yangtools.sal.java.api.generator.test.Compilation
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.cleanUp;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.getSourceFiles;
 import static org.opendaylight.yangtools.sal.java.api.generator.test.CompilationTestUtils.testCompilation;
+
 import com.google.common.collect.ImmutableSet;
 import java.io.File;
 import java.util.List;
@@ -19,10 +27,10 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  * Test if generated classes from yang file is compilable, generated javadoc comments contains
  * symbols as javadoc comment tag, which caused of compilation problem.
  */
-public class EndodingInJavaDocTest extends BaseCompilationTest {
+public class EncodingInJavaDocTest extends BaseCompilationTest {
 
     @Test
-    public void testAugmentToUsesInAugment() throws Exception {
+    public void testJavadocEncodingCompilation() throws Exception {
         final File sourcesOutputDir = new File(GENERATOR_OUTPUT_PATH + FS + "encoding-javadoc");
         assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
         final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "encoding-javadoc");

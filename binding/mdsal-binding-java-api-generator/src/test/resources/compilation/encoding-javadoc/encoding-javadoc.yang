@@ -10,46 +10,100 @@ module encoding-javadoc {
     namespace "urn:opendaylight:encoding-javadoc";
     prefix "enc";
 
+    description "testing module description <should_be_encoded>";
+
     revision "2014-04-09" {
     }
 
+    extension test-extension {
+        description "testing extension description <should_be_encoded>";
+        argument "name";
+    }
+
+    identity test-identity {
+        description "testing identity description <should_be_ encoded>";
+    }
+
+    typedef port-number {
+         type uint16 {
+            range "0..65535";
+         }
+
+         description "testing typedef description <should_be_encoded>";
+     }
+
+    rpc rock-the-house {
+        input {
+            leaf zip-code {
+                type string;
+            }
+        }
+
+        description "testing rpc description <should_be_encoded>";
+    }
+
+    notification event {
+        leaf event-class {
+            type string;
+        }
+
+        anyxml reporting-entity;
+
+        leaf severity {
+            type string;
+        }
+
+        description "testing notification description <should_be_encoded>";
+    }
+
+    augment "/enc:cont1" {
+        leaf augment-leaf {
+            type string;
+        }
+
+        description "testing augment description <should_be_encoded>";
+    }
+
     container cont1 {
-        description "/e.g. 1/*/*";
+        description "/e.g. 1/*/* testing container description <should_be_encoded>";
         reference "RFC 6020 - http://tools.ietf.org/html/rfc6020";
 
         list list1 {
-            description "/e.g. 1/*/*";
+            description "/e.g. 1/*/* testing list description <should_be_encoded>";
             reference "RFC 6020 - http://tools.ietf.org/html/rfc6020";
 
             key "topology-id";
             leaf topology-id {
-                description "/e.g. 1/*/*";
+                description "/e.g. 1/*/* testing leaf description <should_be_encoded>";
                 reference "RFC 6020 - http://tools.ietf.org/html/rfc6020";
                 type int32;
             }
+
             uses link1;
         }
     }
 
     grouping link1 {
         list link1 {
-            description "/e.g. 1/*/*";
+            description "/e.g. 1/*/* testing list description <should_be_encoded>";
             reference "RFC 6020 - http://tools.ietf.org/html/rfc6020";
             key "link-id";
             uses link-attributes;
         }
+
+        description "testing grouping description <should_be_encoded>";
     }
 
     grouping link-attributes {
         leaf link-id {
-            description "/e.g. 1/*/*";
+            description "/e.g. 1/*/* testing leaf description <should_be_encoded>";
             reference "RFC 6020 - http://tools.ietf.org/html/rfc6020";
             type int8;
         }
     }
 
     leaf inclusion-rulez {
-        description "/e.g. 1/*/*";
+        description "/e.g. 1/*/* testing leaf description <should be encoded>";
         reference "RFC 6020 http://technet.com";
 
         type string;
@@ -62,11 +116,38 @@ module encoding-javadoc {
         type enumeration {
             enum include {
                 description
-                    "/e.g. 1/*/*";
+                    "/e.g. 1/*/* testing enum description <should be encoded>";
             }
             enum exclude {
                 description
                     "/e.g. 1/*/*";
+            }
+        }
+    }
+
+    leaf-list test-leaf-list {
+        type string;
+        description "testing leaf-list description <should be encoded>";
+    }
+
+    choice test-choice {
+        description "testing choice description <should be encoded>";
+
+        case test-case-1 {
+            description "testing case description <should be encoded>";
+
+            leaf case-1-leaf {
+                type string;
+                description "testing leaf in case description <should be encoded>";
+            }
+        }
+
+        case test-case-2 {
+            description "testing case description <should be encoded>";
+
+            leaf case-2-leaf {
+                type string;
+                description "testing leaf in case description <should be encoded>";
             }
         }
     }

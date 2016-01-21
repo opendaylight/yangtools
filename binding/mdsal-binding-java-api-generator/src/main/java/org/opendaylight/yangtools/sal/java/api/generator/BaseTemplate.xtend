@@ -213,20 +213,15 @@ abstract class BaseTemplate {
     }
 
     private static final CharMatcher AMP_MATCHER = CharMatcher.is('&');
-    private static final CharMatcher GT_MATCHER = CharMatcher.is('>');
-    private static final CharMatcher LT_MATCHER = CharMatcher.is('<');
 
     def encodeJavadocSymbols(String description) {
         if (description.nullOrEmpty) {
             return description;
         }
 
-        var ret = description.replace("*/", "&#42;&#47;")
-
-        // FIXME: Use Guava's HtmlEscapers once we have it available
+        var ret = description.replace("*/", "&#42;&#47;");
         ret = AMP_MATCHER.replaceFrom(ret, "&amp;");
-        ret = GT_MATCHER.replaceFrom(ret, "&gt;");
-        ret = LT_MATCHER.replaceFrom(ret, "&lt;");
+
         return ret;
     }
 
@@ -279,7 +274,7 @@ abstract class BaseTemplate {
         var StringBuilder lineBuilder = new StringBuilder();
         var boolean isFirstElementOnNewLineEmptyChar = false;
 
-        formattedText = formattedText.encodeJavadocSymbols
+        formattedText = encodeJavadocSymbols(formattedText)
         formattedText = NL_MATCHER.removeFrom(formattedText)
         formattedText = TAB_MATCHER.removeFrom(formattedText)
         formattedText = SPACES_PATTERN.matcher(formattedText).replaceAll(" ")

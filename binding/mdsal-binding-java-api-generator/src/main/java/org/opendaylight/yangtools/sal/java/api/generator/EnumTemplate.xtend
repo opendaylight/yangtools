@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.sal.java.api.generator
 
+import static org.opendaylight.yangtools.binding.generator.util.BindingGeneratorUtil.encodeAngleBrackets;
+
 import org.opendaylight.yangtools.sal.binding.model.api.Enumeration
 import org.opendaylight.yangtools.sal.binding.model.api.GeneratedType
 
@@ -42,7 +44,7 @@ class EnumTemplate extends BaseTemplate {
     }
 
     def writeEnumItem(String name, int value, String description) '''
-        «asJavadoc(formatToParagraph(description))»
+        «asJavadoc(encodeAngleBrackets(description))»
         «name»(«value»)
     '''
 
