@@ -51,6 +51,10 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
@@ -108,22 +112,17 @@ public class NormalizedNodeXmlTranslationTest {
     }
 
     private static ContainerNode augmentChoiceHell2() {
-        final YangInstanceIdentifier.NodeIdentifier container = getNodeIdentifier("container");
+        final NodeIdentifier container = getNodeIdentifier("container");
         QName augmentChoice1QName = QName.create(container.getNodeType(), "augment-choice1");
         QName augmentChoice2QName = QName.create(augmentChoice1QName, "augment-choice2");
         final QName containerQName = QName.create(augmentChoice1QName, "case11-choice-case-container");
         final QName leafQName = QName.create(augmentChoice1QName, "case11-choice-case-leaf");
 
-        final YangInstanceIdentifier.AugmentationIdentifier aug1Id = new YangInstanceIdentifier.AugmentationIdentifier(
-                Sets.newHashSet(augmentChoice1QName));
-        final YangInstanceIdentifier.AugmentationIdentifier aug2Id = new YangInstanceIdentifier.AugmentationIdentifier(
-                Sets.newHashSet(augmentChoice2QName));
-        final YangInstanceIdentifier.NodeIdentifier augmentChoice1Id = new YangInstanceIdentifier.NodeIdentifier(
-                augmentChoice1QName);
-        final YangInstanceIdentifier.NodeIdentifier augmentChoice2Id = new YangInstanceIdentifier.NodeIdentifier(
-                augmentChoice2QName);
-        final YangInstanceIdentifier.NodeIdentifier containerId = new YangInstanceIdentifier.NodeIdentifier(
-                containerQName);
+        final AugmentationIdentifier aug1Id = new AugmentationIdentifier(Sets.newHashSet(augmentChoice1QName));
+        final AugmentationIdentifier aug2Id = new AugmentationIdentifier(Sets.newHashSet(augmentChoice2QName));
+        final NodeIdentifier augmentChoice1Id = new NodeIdentifier(augmentChoice1QName);
+        final NodeIdentifier augmentChoice2Id = new NodeIdentifier(augmentChoice2QName);
+        final NodeIdentifier containerId = new NodeIdentifier(containerQName);
 
         return containerBuilder().withNodeIdentifier(container)
                 .withChild(augmentationBuilder().withNodeIdentifier(aug1Id)
@@ -140,7 +139,7 @@ public class NormalizedNodeXmlTranslationTest {
     }
 
     private static ContainerNode withAttributes() {
-        final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> b = containerBuilder();
+        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> b = containerBuilder();
         b.withNodeIdentifier(getNodeIdentifier("container"));
 
         final CollectionNodeBuilder<MapEntryNode, MapNode> listBuilder = Builders.mapBuilder().withNodeIdentifier(
@@ -149,19 +148,19 @@ public class NormalizedNodeXmlTranslationTest {
         final Map<QName, Object> predicates = Maps.newHashMap();
         predicates.put(getNodeIdentifier("uint32InList").getNodeType(), 3L);
 
-        final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> list1Builder = Builders
-                .mapEntryBuilder().withNodeIdentifier(
-                        new YangInstanceIdentifier.NodeIdentifierWithPredicates(
+        final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> list1Builder =
+                Builders.mapEntryBuilder().withNodeIdentifier(
+                        new NodeIdentifierWithPredicates(
                                 getNodeIdentifier("list").getNodeType(), predicates));
-        final NormalizedNodeBuilder<YangInstanceIdentifier.NodeIdentifier, Object, LeafNode<Object>> uint32InListBuilder = Builders
-                .leafBuilder().withNodeIdentifier(getNodeIdentifier("uint32InList"));
+        final NormalizedNodeBuilder<NodeIdentifier, Object, LeafNode<Object>> uint32InListBuilder =
+                Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("uint32InList"));
 
         list1Builder.withChild(uint32InListBuilder.withValue(3L).build());
 
         listBuilder.withChild(list1Builder.build());
         b.withChild(listBuilder.build());
 
-        final NormalizedNodeBuilder<YangInstanceIdentifier.NodeIdentifier, Object, LeafNode<Object>> booleanBuilder = Builders
+        final NormalizedNodeBuilder<NodeIdentifier, Object, LeafNode<Object>> booleanBuilder = Builders
                 .leafBuilder().withNodeIdentifier(getNodeIdentifier("boolean"));
         booleanBuilder.withValue(false);
         b.withChild(booleanBuilder.build());
@@ -169,9 +168,9 @@ public class NormalizedNodeXmlTranslationTest {
         final ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafListBuilder = Builders.leafSetBuilder()
                 .withNodeIdentifier(getNodeIdentifier("leafList"));
 
-        final NormalizedNodeBuilder<YangInstanceIdentifier.NodeWithValue, Object, LeafSetEntryNode<Object>> leafList1Builder = Builders
-                .leafSetEntryBuilder().withNodeIdentifier(
-                        new YangInstanceIdentifier.NodeWithValue(getNodeIdentifier("leafList").getNodeType(), "a"));
+        final NormalizedNodeBuilder<NodeWithValue<Object>, Object, LeafSetEntryNode<Object>> leafList1Builder =
+                Builders.leafSetEntryBuilder().withNodeIdentifier(
+                        new NodeWithValue<Object>(getNodeIdentifier("leafList").getNodeType(), "a"));
 
         leafList1Builder.withValue("a");
 
