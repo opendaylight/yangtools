@@ -12,6 +12,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import java.net.URI;
 import java.util.Map.Entry;
 import javax.annotation.Nonnull;
@@ -108,6 +109,7 @@ public class XmlStreamUtils {
         if (schemaContext.isPresent() && baseType instanceof LeafrefTypeDefinition) {
             LeafrefTypeDefinition leafrefTypeDefinition = (LeafrefTypeDefinition) baseType;
             baseType = SchemaContextUtil.getBaseTypeForLeafRef(leafrefTypeDefinition, schemaContext.get(), schemaNode);
+            Verify.verifyNotNull(baseType, "Unable to find base type for leafref node '%s'.", schemaNode.getPath());
         }
 
         writeValue(writer, baseType, value, parent);

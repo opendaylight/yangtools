@@ -1,0 +1,8 @@
+{
+    "foo:root" : {
+        "ref1": "a", 
+        "ref2": "a b",
+        "ref3": "a b c",
+        "ref4": "a b c d"
+    }
+}
