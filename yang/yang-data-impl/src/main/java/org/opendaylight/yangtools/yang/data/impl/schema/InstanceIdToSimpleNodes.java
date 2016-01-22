@@ -71,16 +71,16 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
         }
     }
 
-    static final class LeafListEntryNormalization extends InstanceIdToSimpleNodes<NodeWithValue> {
+    static final class LeafListEntryNormalization extends InstanceIdToSimpleNodes<NodeWithValue<Object>> {
 
         public LeafListEntryNormalization(final LeafListSchemaNode potential) {
             super(new YangInstanceIdentifier.NodeWithValue<>(potential.getQName(), null));
         }
 
         @Override
-        protected NormalizedNodeAttrBuilder<NodeWithValue, Object, LeafSetEntryNode<Object>> getBuilder(final YangInstanceIdentifier.PathArgument node) {
+        protected NormalizedNodeAttrBuilder<NodeWithValue<Object>, Object, LeafSetEntryNode<Object>> getBuilder(final YangInstanceIdentifier.PathArgument node) {
             Preconditions.checkArgument(node instanceof YangInstanceIdentifier.NodeWithValue);
-            return Builders.leafSetEntryBuilder().withNodeIdentifier((YangInstanceIdentifier.NodeWithValue<?>) node).withValue(((YangInstanceIdentifier.NodeWithValue<?>) node).getValue());
+            return Builders.leafSetEntryBuilder().withNodeIdentifier((NodeWithValue<Object>) node).withValue(((NodeWithValue<?>) node).getValue());
         }
 
         @Override
