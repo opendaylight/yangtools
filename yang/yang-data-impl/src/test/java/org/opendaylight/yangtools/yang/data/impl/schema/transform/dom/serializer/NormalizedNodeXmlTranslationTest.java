@@ -52,7 +52,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
@@ -111,22 +114,22 @@ public class NormalizedNodeXmlTranslationTest {
     }
 
     private static ContainerNode augmentChoiceHell2() {
-        final YangInstanceIdentifier.NodeIdentifier container = getNodeIdentifier("container");
+        final NodeIdentifier container = getNodeIdentifier("container");
         QName augmentChoice1QName = QName.create(container.getNodeType(), "augment-choice1");
         QName augmentChoice2QName = QName.create(augmentChoice1QName, "augment-choice2");
         final QName containerQName = QName.create(augmentChoice1QName, "case11-choice-case-container");
         final QName leafQName = QName.create(augmentChoice1QName, "case11-choice-case-leaf");
 
-        final YangInstanceIdentifier.AugmentationIdentifier aug1Id =
-                new YangInstanceIdentifier.AugmentationIdentifier(Sets.newHashSet(augmentChoice1QName));
-        final YangInstanceIdentifier.AugmentationIdentifier aug2Id =
-                new YangInstanceIdentifier.AugmentationIdentifier(Sets.newHashSet(augmentChoice2QName));
-        final YangInstanceIdentifier.NodeIdentifier augmentChoice1Id =
-                new YangInstanceIdentifier.NodeIdentifier(augmentChoice1QName);
-        final YangInstanceIdentifier.NodeIdentifier augmentChoice2Id =
-                new YangInstanceIdentifier.NodeIdentifier(augmentChoice2QName);
-        final YangInstanceIdentifier.NodeIdentifier containerId =
-                new YangInstanceIdentifier.NodeIdentifier(containerQName);
+        final AugmentationIdentifier aug1Id =
+                new AugmentationIdentifier(Sets.newHashSet(augmentChoice1QName));
+        final AugmentationIdentifier aug2Id =
+                new AugmentationIdentifier(Sets.newHashSet(augmentChoice2QName));
+        final NodeIdentifier augmentChoice1Id =
+                new NodeIdentifier(augmentChoice1QName);
+        final NodeIdentifier augmentChoice2Id =
+                new NodeIdentifier(augmentChoice2QName);
+        final NodeIdentifier containerId =
+                new NodeIdentifier(containerQName);
 
 
         return containerBuilder().withNodeIdentifier(container)
@@ -144,7 +147,7 @@ public class NormalizedNodeXmlTranslationTest {
     }
 
     private static ContainerNode withAttributes() {
-        final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> b = containerBuilder();
+        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> b = containerBuilder();
         b.withNodeIdentifier(getNodeIdentifier("container"));
 
         final CollectionNodeBuilder<MapEntryNode, MapNode> listBuilder = Builders.mapBuilder().withNodeIdentifier(
@@ -153,28 +156,28 @@ public class NormalizedNodeXmlTranslationTest {
         final Map<QName, Object> predicates = Maps.newHashMap();
         predicates.put(getNodeIdentifier("uint32InList").getNodeType(), 3L);
 
-        final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifierWithPredicates, MapEntryNode> list1Builder = Builders
+        final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> list1Builder = Builders
                 .mapEntryBuilder().withNodeIdentifier(
-                        new YangInstanceIdentifier.NodeIdentifierWithPredicates(getNodeIdentifier("list").getNodeType(),
-                                predicates));
-        final NormalizedNodeBuilder<YangInstanceIdentifier.NodeIdentifier,Object,LeafNode<Object>> uint32InListBuilder
-        = Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("uint32InList"));
+                        new NodeIdentifierWithPredicates(getNodeIdentifier("list").getNodeType(),predicates));
+        final NormalizedNodeBuilder<NodeIdentifier, Object, LeafNode<Object>> uint32InListBuilder = Builders
+                .leafBuilder().withNodeIdentifier(getNodeIdentifier("uint32InList"));
 
         list1Builder.withChild(uint32InListBuilder.withValue(3L).build());
 
         listBuilder.withChild(list1Builder.build());
         b.withChild(listBuilder.build());
 
-        final NormalizedNodeBuilder<YangInstanceIdentifier.NodeIdentifier, Object, LeafNode<Object>> booleanBuilder
-        = Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("boolean"));
+        final NormalizedNodeBuilder<NodeIdentifier, Object, LeafNode<Object>> booleanBuilder =
+                Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("boolean"));
         booleanBuilder.withValue(false);
         b.withChild(booleanBuilder.build());
 
         final ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafListBuilder
         = Builders.leafSetBuilder().withNodeIdentifier(getNodeIdentifier("leafList"));
 
-        final NormalizedNodeBuilder<YangInstanceIdentifier.NodeWithValue, Object, LeafSetEntryNode<Object>> leafList1Builder
-        = Builders.leafSetEntryBuilder().withNodeIdentifier(new YangInstanceIdentifier.NodeWithValue(getNodeIdentifier("leafList").getNodeType(), "a"));
+        final NormalizedNodeBuilder<NodeWithValue<Object>, Object, LeafSetEntryNode<Object>> leafList1Builder =
+                Builders.leafSetEntryBuilder().withNodeIdentifier(
+                    new NodeWithValue<Object>(getNodeIdentifier("leafList").getNodeType(), "a"));
 
         leafList1Builder.withValue("a");
 
@@ -186,7 +189,7 @@ public class NormalizedNodeXmlTranslationTest {
 
     private static ContainerNode augmentChoiceHell() {
 
-        final DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> b = containerBuilder();
+        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> b = containerBuilder();
         b.withNodeIdentifier(getNodeIdentifier("container"));
 
         b.withChild(
@@ -231,18 +234,18 @@ public class NormalizedNodeXmlTranslationTest {
         return b.build();
     }
 
-    private static YangInstanceIdentifier.NodeIdentifier getNodeIdentifier(final String localName) {
-        return new YangInstanceIdentifier.NodeIdentifier(QName.create(URI.create(NAMESPACE), revision, localName));
+    private static NodeIdentifier getNodeIdentifier(final String localName) {
+        return new NodeIdentifier(QName.create(URI.create(NAMESPACE), revision, localName));
     }
 
-    public static YangInstanceIdentifier.AugmentationIdentifier getAugmentIdentifier(final String... childNames) {
+    public static AugmentationIdentifier getAugmentIdentifier(final String... childNames) {
         final Set<QName> qn = Sets.newHashSet();
 
         for (final String childName : childNames) {
             qn.add(getNodeIdentifier(childName).getNodeType());
         }
 
-        return new YangInstanceIdentifier.AugmentationIdentifier(qn);
+        return new AugmentationIdentifier(qn);
     }
 
     public NormalizedNodeXmlTranslationTest(final String yangPath, final String xmlPath, final ContainerNode expectedNode) throws IOException, YangSyntaxErrorException {

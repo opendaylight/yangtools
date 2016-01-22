@@ -522,9 +522,9 @@ public class DataTreeCandidateValidatorTest {
     }
 
     private static LeafSetEntryNode<Object> createLeafSetEntry(final QName qname, final String val) {
-        final NormalizedNodeAttrBuilder<NodeWithValue, Object, LeafSetEntryNode<Object>> leafSetEntryBuilder = Builders
-                .leafSetEntryBuilder();
-        leafSetEntryBuilder.withNodeIdentifier(new NodeWithValue(qname, val));
+        final NormalizedNodeAttrBuilder<NodeWithValue<Object>, Object, LeafSetEntryNode<Object>> leafSetEntryBuilder =
+                Builders.leafSetEntryBuilder();
+        leafSetEntryBuilder.withNodeIdentifier(new NodeWithValue<Object>(qname, val));
         leafSetEntryBuilder.withValue(val);
         return leafSetEntryBuilder.build();
     }
