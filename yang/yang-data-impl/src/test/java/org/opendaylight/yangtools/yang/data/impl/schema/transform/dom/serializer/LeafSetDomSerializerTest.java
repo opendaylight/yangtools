@@ -39,8 +39,8 @@ public class LeafSetDomSerializerTest {
         currentLeafList = (LeafListSchemaNode) currentContainer.getDataChildByName(DomSerializerTestUtils
                 .generateQname("first-leaf-list"));
 
-        final NodeWithValue<?> barPath = new NodeWithValue<>(DomSerializerTestUtils.generateQname("first-leaf-list"), "bar");
-        tempLeafList = ImmutableLeafSetEntryNodeBuilder.create()
+        final NodeWithValue<String> barPath = new NodeWithValue<>(DomSerializerTestUtils.generateQname("first-leaf-list"), "bar");
+        tempLeafList = ImmutableLeafSetEntryNodeBuilder.<String>create()
                 .withNodeIdentifier(barPath)
                 .withValue("bar")
                 .build();
