@@ -14,27 +14,25 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
 public final class ImmutableLeafSetEntryNodeSchemaAwareBuilder<T> extends ImmutableLeafSetEntryNodeBuilder<T> {
-
     private final LeafListSchemaNode schema;
 
     private ImmutableLeafSetEntryNodeSchemaAwareBuilder(final LeafListSchemaNode schema) {
         this.schema = Preconditions.checkNotNull(schema);
     }
 
-    public static <T> NormalizedNodeAttrBuilder<NodeWithValue, T, LeafSetEntryNode<T>> create(final LeafListSchemaNode schema) {
+    public static <T> NormalizedNodeAttrBuilder<NodeWithValue<T>, T, LeafSetEntryNode<T>> create(final LeafListSchemaNode schema) {
         return new ImmutableLeafSetEntryNodeSchemaAwareBuilder<>(schema);
     }
 
     @Override
-    public NormalizedNodeAttrBuilder<NodeWithValue, T, LeafSetEntryNode<T>> withValue(final T value) {
+    public NormalizedNodeAttrBuilder<NodeWithValue<T>, T, LeafSetEntryNode<T>> withValue(final T value) {
         super.withNodeIdentifier(new NodeWithValue<>(schema.getQName(), value));
         // TODO check value type using TypeProvider ?
         return super.withValue(value);
     }
 
     @Override
-    public NormalizedNodeAttrBuilder<NodeWithValue, T, LeafSetEntryNode<T>> withNodeIdentifier(final NodeWithValue nodeIdentifier) {
+    public ImmutableLeafSetEntryNodeSchemaAwareBuilder<T> withNodeIdentifier(final NodeWithValue<T> nodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
-
 }
