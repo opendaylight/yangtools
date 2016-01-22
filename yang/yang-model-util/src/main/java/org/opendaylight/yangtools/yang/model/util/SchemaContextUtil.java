@@ -640,7 +640,7 @@ public final class SchemaContextUtil {
             }
         }
 
-        Module parentModule = findParentModuleByType(schemaContext, baseSchema);
+        Module parentModule = findParentModuleOfReferencingType(schemaContext, baseSchema);
 
         final DataSchemaNode dataSchemaNode;
         if(pathStatement.isAbsolute()) {
@@ -665,7 +665,33 @@ public final class SchemaContextUtil {
         }
     }
 
+    private static Module findParentModuleOfReferencingType(final SchemaContext schemaContext,
+            final SchemaNode schemaNode) {
+        Preconditions.checkArgument(schemaContext != null, "Schema Context reference cannot be NULL!");
+        Preconditions.checkArgument(schemaNode != null, "Schema Node cannot be NULL!");
+        TypeDefinition<?> nodeType = null;
+
+        if (schemaNode instanceof LeafSchemaNode) {
+            nodeType = ((LeafSchemaNode) schemaNode).getType();
+        } else if (schemaNode instanceof LeafListSchemaNode) {
+            nodeType = ((LeafListSchemaNode) schemaNode).getType();
+        }
+
+        if (nodeType.getBaseType() != null) {
+            while (nodeType.getBaseType() != null) {
+                nodeType = nodeType.getBaseType();
+            }
+
+            final QNameModule typeDefModuleQname = nodeType.getQName().getModule();
+            return schemaContext.findModuleByNamespaceAndRevision(typeDefModuleQname.getNamespace(),
+                    typeDefModuleQname.getRevision());
+        }
+
+        return SchemaContextUtil.findParentModule(schemaContext, schemaNode);
+    }
+
     /**
+     * @deprecated due to expensive lookup
      * Returns parent Yang Module for specified Schema Context in which Schema
      * Node is declared. If Schema Node is of type 'ExtendedType' it tries to find parent module
      * in which the type was originally declared (needed for correct leafref path resolution). <br>
@@ -684,6 +710,7 @@ public final class SchemaContextUtil {
      *         Schema Node is NOT present, the method will returns
      *         <code>null</code>
      */
+    @Deprecated
     public static Module findParentModuleByType(final SchemaContext schemaContext, final SchemaNode schemaNode) {
         Preconditions.checkArgument(schemaContext != null, "Schema Context reference cannot be NULL!");
         Preconditions.checkArgument(schemaNode != null, "Schema Node cannot be NULL!");
@@ -695,8 +722,8 @@ public final class SchemaContextUtil {
             nodeType = ((LeafListSchemaNode) schemaNode).getType();
         }
 
-        if (nodeType instanceof ExtendedType) {
-            while (nodeType.getBaseType() instanceof ExtendedType) {
+        if (!BaseTypes.isYangBuildInType(nodeType) && nodeType.getBaseType() != null) {
+            while (nodeType.getBaseType() != null && !BaseTypes.isYangBuildInType(nodeType.getBaseType())) {
                 nodeType = nodeType.getBaseType();
             }
 

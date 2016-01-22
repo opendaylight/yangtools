@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -111,6 +112,7 @@ public final class JSONCodecFactory {
         // FIXME: Verify if this does indeed support leafref of leafref
         final TypeDefinition<?> referencedType =
                 SchemaContextUtil.getBaseTypeForLeafRef(type, getSchemaContext(), schema);
+        Verify.verifyNotNull(referencedType, "Unable to find base type for leafref node '%s'.", schema.getPath());
         return createCodec(schema, referencedType);
     }
 
