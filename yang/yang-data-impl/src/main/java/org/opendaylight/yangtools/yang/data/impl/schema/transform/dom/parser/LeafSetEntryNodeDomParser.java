@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.w3c.dom.Element;
 
-final class LeafSetEntryNodeDomParser extends LeafSetEntryNodeBaseParser<Element> {
+final class LeafSetEntryNodeDomParser<T> extends LeafSetEntryNodeBaseParser<Element, T> {
 
     private final XmlCodecProvider codecProvider;
     private final SchemaContext ctx;
@@ -30,7 +30,7 @@ final class LeafSetEntryNodeDomParser extends LeafSetEntryNodeBaseParser<Element
     }
 
     LeafSetEntryNodeDomParser(final XmlCodecProvider codecProvider, final SchemaContext schema,
-        final  BuildingStrategy<NodeWithValue, LeafSetEntryNode<?>> strategy) {
+        final BuildingStrategy<NodeWithValue<T>, LeafSetEntryNode<T>> strategy) {
         super(strategy);
         this.ctx = schema;
         this.codecProvider = Preconditions.checkNotNull(codecProvider);

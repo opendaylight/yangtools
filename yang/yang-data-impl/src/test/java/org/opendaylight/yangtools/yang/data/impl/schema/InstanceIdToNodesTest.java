@@ -50,7 +50,7 @@ public class InstanceIdToNodesTest {
     private final NodeIdentifier leafFromCase = new NodeIdentifier(QName.create(NS, REVISION, "one"));
 
     private final NodeIdentifier leafList = new NodeIdentifier(QName.create(NS, REVISION, "ordered-leaf-list"));
-    private final NodeWithValue<?> leafListWithValue = new NodeWithValue<>(
+    private final NodeWithValue<String> leafListWithValue = new NodeWithValue<>(
             leafList.getNodeType(), "abcd");
 
     static SchemaContext createTestContext() throws URISyntaxException, FileNotFoundException, ReactorException {
@@ -191,10 +191,10 @@ public class InstanceIdToNodesTest {
                 .containerBuilder()
                 .withNodeIdentifier(rootContainer)
                 .withChild(
-                        Builders.orderedLeafSetBuilder()
+                        Builders.<String>orderedLeafSetBuilder()
                                 .withNodeIdentifier(leafList)
                                 .withChild(
-                                        Builders.leafSetEntryBuilder().withNodeIdentifier(leafListWithValue)
+                                        Builders.<String>leafSetEntryBuilder().withNodeIdentifier(leafListWithValue)
                                                 .withValue(leafListWithValue.getValue()).build()).build()).build();
 
         final NormalizedNode<?, ?> filter = ImmutableNodes.fromInstanceId(ctx,

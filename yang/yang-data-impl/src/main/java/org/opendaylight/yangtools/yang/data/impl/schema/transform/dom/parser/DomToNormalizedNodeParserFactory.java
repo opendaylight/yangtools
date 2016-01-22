@@ -197,8 +197,8 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
             return new LeafNodeBaseParser.SimpleLeafBuildingStrategy();
         }
 
-        protected ExtensibleParser.BuildingStrategy<YangInstanceIdentifier.NodeWithValue,LeafSetEntryNode<?>> forLeafSetEntry() {
-            return new LeafSetEntryNodeBaseParser.SimpleLeafSetEntryBuildingStrategy();
+        protected <T> ExtensibleParser.BuildingStrategy<YangInstanceIdentifier.NodeWithValue<T>, LeafSetEntryNode<T>> forLeafSetEntry() {
+            return new LeafSetEntryNodeBaseParser.SimpleLeafSetEntryBuildingStrategy<>();
         }
 
         protected ExtensibleParser.BuildingStrategy<YangInstanceIdentifier.NodeIdentifier,ContainerNode> forContainer() {

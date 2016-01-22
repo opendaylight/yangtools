@@ -21,8 +21,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
  * @param <T>
  *            Value type
  */
-public interface LeafSetEntryNode<T> extends AttributesContainer, NormalizedNode<NodeWithValue, T>,
-        ValueNode<NodeWithValue, T> {
+public interface LeafSetEntryNode<T> extends AttributesContainer, NormalizedNode<NodeWithValue<T>, T>,
+        ValueNode<NodeWithValue<T>, T> {
 
     /**
      * Returns {@link NodeWithValue} which identifies this leaf set entry.
@@ -33,12 +33,12 @@ public interface LeafSetEntryNode<T> extends AttributesContainer, NormalizedNode
      * {@link NodeWithValue#getValue()} on returned instance of
      * {@link NodeWithValue} must returns
      * same value as invocation of {@link #getValue()}, such as
-     * following condition is allways met:
+     * following condition is always met:
      * <code>true == this.getIdentifier().getValue().equals(this.getValue())</code>
      *
      *
      * @return {@link NodeWithValue} which identifies this leaf set entry.
      */
     @Override
-    NodeWithValue getIdentifier();
+    NodeWithValue<T> getIdentifier();
 }

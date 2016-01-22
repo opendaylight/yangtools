@@ -470,8 +470,7 @@ public class DataTreeCandidateValidatorTest {
 
     private static LeafSetNode<?> createLeafRefLeafListNode() {
 
-        final ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafSetBuilder = Builders
-                .leafSetBuilder();
+        final ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafSetBuilder = Builders.leafSetBuilder();
         leafSetBuilder.withNodeIdentifier(new NodeIdentifier(leafrefLeafList));
 
         leafSetBuilder.addChild(createLeafSetEntry(leafrefLeafList, "k1"));
@@ -483,15 +482,13 @@ public class DataTreeCandidateValidatorTest {
 
     private static ContainerNode createCon3Node() {
 
-        final CollectionNodeBuilder<MapEntryNode, MapNode> mapBuilder = Builders
-                .mapBuilder();
+        final CollectionNodeBuilder<MapEntryNode, MapNode> mapBuilder = Builders.mapBuilder();
         mapBuilder.withNodeIdentifier(new NodeIdentifier(list3InChoice));
 
         mapBuilder.addChild(createList3Entry("k1", "val1", "valA", "valX"));
         mapBuilder.addChild(createList3Entry("k2", "val2", "valB", "valY"));
 
-        final DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> choiceBuilder = Builders
-                .choiceBuilder();
+        final DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> choiceBuilder = Builders.choiceBuilder();
         choiceBuilder.withNodeIdentifier(new NodeIdentifier(choiceInCon3));
 
         choiceBuilder.addChild(mapBuilder.build());
@@ -509,11 +506,9 @@ public class DataTreeCandidateValidatorTest {
             final String l3Val1, final String l3Val2, final String l3Val3) {
         final DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder = Builders
                 .mapEntryBuilder();
-        mapEntryBuilder.withNodeIdentifier(new NodeIdentifierWithPredicates(
-                list3InChoice, k, kVal));
+        mapEntryBuilder.withNodeIdentifier(new NodeIdentifierWithPredicates(list3InChoice, k, kVal));
 
-        final ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafSetBuilder = Builders
-                .leafSetBuilder();
+        final ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafSetBuilder = Builders.leafSetBuilder();
         leafSetBuilder.withNodeIdentifier(new NodeIdentifier(l3));
 
         leafSetBuilder.addChild(createLeafSetEntry(l3, l3Val1));
@@ -528,8 +523,8 @@ public class DataTreeCandidateValidatorTest {
 
     private static LeafSetEntryNode<Object> createLeafSetEntry(
             final QName qname, final String val) {
-        final NormalizedNodeAttrBuilder<NodeWithValue, Object, LeafSetEntryNode<Object>> leafSetEntryBuilder = Builders
-                .leafSetEntryBuilder();
+        final NormalizedNodeAttrBuilder<NodeWithValue<Object>, Object, LeafSetEntryNode<Object>> leafSetEntryBuilder =
+                Builders.leafSetEntryBuilder();
         leafSetEntryBuilder.withNodeIdentifier(new NodeWithValue<>(qname, val));
         leafSetEntryBuilder.withValue(val);
         return leafSetEntryBuilder.build();
@@ -537,26 +532,19 @@ public class DataTreeCandidateValidatorTest {
 
     private static ChoiceNode createChoiceNode() {
 
-        final CollectionNodeBuilder<MapEntryNode, MapNode> listInChoiceBuilder = Builders
-                .mapBuilder();
-        listInChoiceBuilder
-                .withNodeIdentifier(new NodeIdentifier(listInChoice));
+        final CollectionNodeBuilder<MapEntryNode, MapNode> listInChoiceBuilder = Builders.mapBuilder();
+        listInChoiceBuilder.withNodeIdentifier(new NodeIdentifier(listInChoice));
 
-        listInChoiceBuilder.addChild(createListInChoiceEntry("key1",
-                "leafref-in-choice value", "val1"));
-        listInChoiceBuilder.addChild(createListInChoiceEntry("key2",
-                "l1 value", "val2"));
-        listInChoiceBuilder.addChild(createListInChoiceEntry("key3",
-                "l1 value", "val3"));
+        listInChoiceBuilder.addChild(createListInChoiceEntry("key1", "leafref-in-choice value", "val1"));
+        listInChoiceBuilder.addChild(createListInChoiceEntry("key2", "l1 value", "val2"));
+        listInChoiceBuilder.addChild(createListInChoiceEntry("key3",  "l1 value", "val3"));
 
-        final DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> choice2Builder = Builders
-                .choiceBuilder();
+        final DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> choice2Builder = Builders.choiceBuilder();
         choice2Builder.withNodeIdentifier(new NodeIdentifier(ch2));
 
         choice2Builder.addChild(listInChoiceBuilder.build());
 
-        final DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> choiceBuilder = Builders
-                .choiceBuilder();
+        final DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> choiceBuilder = Builders.choiceBuilder();
         choiceBuilder.withNodeIdentifier(new NodeIdentifier(ch1));
         choiceBuilder.addChild(choice2Builder.build());
 
@@ -570,15 +558,11 @@ public class DataTreeCandidateValidatorTest {
         final DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder = Builders
                 .mapEntryBuilder();
 
-        mapEntryBuilder.withNodeIdentifier(new NodeIdentifierWithPredicates(
-                listInChoice, listInChoiceKey, keyVal));
+        mapEntryBuilder.withNodeIdentifier(new NodeIdentifierWithPredicates(listInChoice, listInChoiceKey, keyVal));
 
-        mapEntryBuilder.addChild(ImmutableNodes.leafNode(listInChoiceKey,
-                keyVal));
-        mapEntryBuilder.addChild(ImmutableNodes.leafNode(leafrefInChoice,
-                leafrefInChoiceVal));
-        mapEntryBuilder.addChild(ImmutableNodes.leafNode(
-                leafrefInChoiceToChoice, leafrefInChoiceToChoiceVal));
+        mapEntryBuilder.addChild(ImmutableNodes.leafNode(listInChoiceKey, keyVal));
+        mapEntryBuilder.addChild(ImmutableNodes.leafNode(leafrefInChoice, leafrefInChoiceVal));
+        mapEntryBuilder.addChild(ImmutableNodes.leafNode(leafrefInChoiceToChoice, leafrefInChoiceToChoiceVal));
 
         return mapEntryBuilder.build();
     }
