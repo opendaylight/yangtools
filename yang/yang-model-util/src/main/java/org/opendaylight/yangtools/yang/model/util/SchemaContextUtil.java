@@ -695,8 +695,8 @@ public final class SchemaContextUtil {
             nodeType = ((LeafListSchemaNode) schemaNode).getType();
         }
 
-        if (nodeType instanceof ExtendedType) {
-            while (nodeType.getBaseType() instanceof ExtendedType) {
+        if (!BaseTypes.isYangBuildInType(nodeType) && nodeType.getBaseType() != null) {
+            while (nodeType.getBaseType() != null && !BaseTypes.isYangBuildInType(nodeType.getBaseType())) {
                 nodeType = nodeType.getBaseType();
             }
 

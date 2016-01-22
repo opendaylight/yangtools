@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.Set;
@@ -58,26 +59,26 @@ public final class BaseTypes {
     public static final QName UINT64_QNAME = constructQName("uint64");
     public static final QName UNION_QNAME = constructQName("union");
 
-    private static final Set<String> BUILT_IN_TYPES = ImmutableSet.<String>builder()
-            .add(BINARY_QNAME.getLocalName())
-            .add(BITS_QNAME.getLocalName())
-            .add(BOOLEAN_QNAME.getLocalName())
-            .add(DECIMAL64_QNAME.getLocalName())
-            .add(EMPTY_QNAME.getLocalName())
-            .add(ENUMERATION_QNAME.getLocalName())
-            .add(IDENTITYREF_QNAME.getLocalName())
-            .add(INSTANCE_IDENTIFIER_QNAME.getLocalName())
-            .add(INT8_QNAME.getLocalName())
-            .add(INT16_QNAME.getLocalName())
-            .add(INT32_QNAME.getLocalName())
-            .add(INT64_QNAME.getLocalName())
-            .add(LEAFREF_QNAME.getLocalName())
-            .add(STRING_QNAME.getLocalName())
-            .add(UINT8_QNAME.getLocalName())
-            .add(UINT16_QNAME.getLocalName())
-            .add(UINT32_QNAME.getLocalName())
-            .add(UINT64_QNAME.getLocalName())
-            .add(UNION_QNAME.getLocalName())
+    private static final Set<QName> BUILT_IN_TYPES = ImmutableSet.<QName>builder()
+            .add(BINARY_QNAME)
+            .add(BITS_QNAME)
+            .add(BOOLEAN_QNAME)
+            .add(DECIMAL64_QNAME)
+            .add(EMPTY_QNAME)
+            .add(ENUMERATION_QNAME)
+            .add(IDENTITYREF_QNAME)
+            .add(INSTANCE_IDENTIFIER_QNAME)
+            .add(INT8_QNAME)
+            .add(INT16_QNAME)
+            .add(INT32_QNAME)
+            .add(INT64_QNAME)
+            .add(LEAFREF_QNAME)
+            .add(STRING_QNAME)
+            .add(UINT8_QNAME)
+            .add(UINT16_QNAME)
+            .add(UINT32_QNAME)
+            .add(UINT64_QNAME)
+            .add(UNION_QNAME)
             .build();
 
     /**
@@ -102,7 +103,26 @@ public final class BaseTypes {
      * @return true if type is built-in YANG Types.
      */
     public static boolean isYangBuildInType(final String type) {
-        return BUILT_IN_TYPES.contains(type);
+        if(Strings.isNullOrEmpty(type)) {
+            return false;
+        }
+        return BUILT_IN_TYPES.contains(constructQName(type));
+    }
+
+    /**
+     * Returns true if supplied type is representation of built-in YANG type as
+     * per RFC 6020.
+     *
+     * See package documentation for description of base types.
+     *
+     * @param type
+     * @return true if type is built-in YANG Types.
+     */
+    public static boolean isYangBuildInType(final TypeDefinition<?> type) {
+        if(type == null) {
+            return false;
+        }
+        return BUILT_IN_TYPES.contains(type.getQName());
     }
 
     /**
