@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_8d861fb8",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/BaseTypes.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-01-23T08:08:48Z",
+      "side": 1,
+      "message": "missing space (and below)",
+      "range": {
+        "startLine": 106,
+        "startChar": 9,
+        "endLine": 106,
+        "endChar": 11
+      },
+      "revId": "d50e24f9a372789cd703f02d7db5faa1bbf4e74b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_ed936bf8",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/BaseTypes.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-01-23T08:08:48Z",
+      "side": 1,
+      "message": "use QName.create(), because constructQName() uses QName.intern(), which is not what we want to do here.",
+      "range": {
+        "startLine": 109,
+        "startChar": 38,
+        "endLine": 109,
+        "endChar": 59
+      },
+      "revId": "d50e24f9a372789cd703f02d7db5faa1bbf4e74b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_cd9027ef",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaContextUtil.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 699,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-01-23T08:08:48Z",
+      "side": 1,
+      "message": "base types is guaranteed to have .getBaseType() \u003d\u003d null, no need for the additional check in loop.",
+      "revId": "d50e24f9a372789cd703f02d7db5faa1bbf4e74b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
