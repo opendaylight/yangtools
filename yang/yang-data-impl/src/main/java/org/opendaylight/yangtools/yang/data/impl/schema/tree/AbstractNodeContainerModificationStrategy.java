@@ -160,7 +160,7 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
         final Collection<NormalizedNode<?, ?>> children = ((NormalizedNodeContainer) value).getValue();
         for (NormalizedNode<?, ?> c : children) {
             final PathArgument id = c.getIdentifier();
-            modification.modifyChild(id, resolveChildOperation(id).getChildPolicy(), version);
+            modification.modifyChild(id, resolveChildOperation(id), version);
         }
         return applyTouch(modification, currentMeta, version);
     }
@@ -169,7 +169,7 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
             final Collection<NormalizedNode<?, ?>> children, final Version version) {
         for (NormalizedNode<?, ?> c : children) {
             final ModificationApplyOperation childOp = resolveChildOperation(c.getIdentifier());
-            final ModifiedNode childNode = modification.modifyChild(c.getIdentifier(), childOp.getChildPolicy(), version);
+            final ModifiedNode childNode = modification.modifyChild(c.getIdentifier(), childOp, version);
             childOp.mergeIntoModifiedNode(childNode, c, version);
         }
     }
@@ -229,16 +229,6 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
         }
 
         throw new IllegalArgumentException("Unsupported operation " + modification.getOperation());
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private NormalizedNode<?, ?> createEmptyValue(NormalizedNode<?, ?> value,
-            Collection<NormalizedNode<?, ?>> children) {
-        NormalizedNodeContainerBuilder builder = createBuilder(value);
-        for (NormalizedNode<?, ?> child : children) {
-            builder.removeChild(child.getIdentifier());
-        }
-        return builder.build();
     }
 
     @Override

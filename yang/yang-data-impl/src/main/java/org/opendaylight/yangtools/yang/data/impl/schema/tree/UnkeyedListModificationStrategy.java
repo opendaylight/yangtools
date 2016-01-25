@@ -38,8 +38,8 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
 
     @Override
     protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
-        // A merge operation is promoted into a write
-        return applyWrite(modification, Optional.of(currentMeta), version);
+        throw new IllegalStateException(String.format("Merge of modification %s on unkeyed list should never be called",
+            modification));
     }
 
     @Override
