@@ -172,7 +172,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * @return {@link ModifiedNode} for specified child, with {@link #getOriginal()}
      *         containing child metadata if child was present in original data.
      */
-    ModifiedNode modifyChild(@Nonnull final PathArgument child, @Nonnull final ChildTrackingPolicy childPolicy,
+    ModifiedNode modifyChild(@Nonnull final PathArgument child, @Nonnull final ModificationApplyOperation childOper,
             @Nonnull final Version modVersion) {
         clearSnapshot();
         if (operation == LogicalOperation.NONE) {
@@ -186,7 +186,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         final Optional<TreeNode> currentMetadata = findOriginalMetadata(child, modVersion);
 
 
-        final ModifiedNode newlyCreated = new ModifiedNode(child, currentMetadata, childPolicy);
+        final ModifiedNode newlyCreated = new ModifiedNode(child, currentMetadata, childOper.getChildPolicy());
         if (operation == LogicalOperation.MERGE && value != null) {
             /*
              * We are attempting to modify a previously-unmodified part of a MERGE node. If the
@@ -195,7 +195,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             @SuppressWarnings({ "rawtypes", "unchecked" })
             final Optional<NormalizedNode<?, ?>> childData = ((NormalizedNodeContainer)value).getChild(child);
             if (childData.isPresent()) {
-                newlyCreated.updateValue(LogicalOperation.MERGE, childData.get());
+                childOper.mergeIntoModifiedNode(newlyCreated, childData.get(), modVersion);
             }
         }
 

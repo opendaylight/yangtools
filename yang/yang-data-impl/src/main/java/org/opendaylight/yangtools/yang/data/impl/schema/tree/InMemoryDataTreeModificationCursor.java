@@ -34,7 +34,7 @@ final class InMemoryDataTreeModificationCursor extends AbstractCursor<InMemoryDa
         final Optional<ModificationApplyOperation> potential = op.getApplyOperation().getChild(child);
         if (potential.isPresent()) {
             final ModificationApplyOperation operation = potential.get();
-            final ModifiedNode modification = op.getModification().modifyChild(child, operation.getChildPolicy(),
+            final ModifiedNode modification = op.getModification().modifyChild(child, operation,
                 getParent().getVersion());
 
             return OperationWithModification.from(operation, modification);
