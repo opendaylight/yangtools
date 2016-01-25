@@ -14,6 +14,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import java.util.concurrent.ExecutionException;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -36,7 +37,7 @@ abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeC
     private final LoadingCache<PathArgument, ModificationApplyOperation> childCache = CacheBuilder.newBuilder()
             .build(new CacheLoader<PathArgument, ModificationApplyOperation>() {
                 @Override
-                public ModificationApplyOperation load(final PathArgument key) {
+                public ModificationApplyOperation load(@Nonnull final PathArgument key) {
                     if (key instanceof AugmentationIdentifier && schema instanceof AugmentationTarget) {
                         return SchemaAwareApplyOperation.from(schema, (AugmentationTarget) schema, (AugmentationIdentifier) key, treeType);
                     }
@@ -62,7 +63,7 @@ abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeC
     @Override
     public final Optional<ModificationApplyOperation> getChild(final PathArgument identifier) {
         try {
-            return Optional.<ModificationApplyOperation> fromNullable(childCache.get(identifier));
+            return Optional.fromNullable(childCache.get(identifier));
         } catch (ExecutionException | UncheckedExecutionException e) {
             LOG.trace("Child {} not present in container schema {} children {}", identifier, this, schema.getChildNodes(), e.getCause());
             return Optional.absent();

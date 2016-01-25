@@ -12,6 +12,7 @@ import com.google.common.base.Preconditions;
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -242,7 +243,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     @Override
-    public void applyToCursor(final DataTreeModificationCursor cursor) {
+    public void applyToCursor(@Nonnull final DataTreeModificationCursor cursor) {
         for (final ModifiedNode child : rootNode.getChildren()) {
             applyNode(cursor, child);
         }
@@ -265,7 +266,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     @Override
-    public DataTreeModificationCursor createCursor(final YangInstanceIdentifier path) {
+    public DataTreeModificationCursor createCursor(@Nonnull final YangInstanceIdentifier path) {
         final OperationWithModification op = resolveModificationFor(path);
         return openCursor(new InMemoryDataTreeModificationCursor(this, path, op));
     }

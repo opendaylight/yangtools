@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 
@@ -16,6 +17,7 @@ abstract class AbstractWriteCandidate extends AbstractAvailableLeafCandidateNode
     }
 
     @Override
+    @Nonnull
     public final ModificationType getModificationType() {
         return ModificationType.WRITE;
     }

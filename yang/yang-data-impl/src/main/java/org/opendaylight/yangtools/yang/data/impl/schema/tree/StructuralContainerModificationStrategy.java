@@ -32,7 +32,8 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
  */
 final class StructuralContainerModificationStrategy extends ModificationApplyOperation {
     /**
-     * Fake TreeNode version used in {@link #checkApplicable(YangInstanceIdentifier, NodeModification, Optional)}.
+     * Fake TreeNode version used in
+     * {@link #checkApplicable(YangInstanceIdentifier, NodeModification, Optional, Version)}.
      * It is okay to use a global constant, as the delegate will ignore it anyway. For
      * {@link #apply(ModifiedNode, Optional, Version)} we will use the appropriate version as provided to us.
      */

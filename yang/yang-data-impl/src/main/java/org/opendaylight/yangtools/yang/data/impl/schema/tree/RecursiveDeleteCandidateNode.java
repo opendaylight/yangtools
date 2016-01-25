@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import javax.annotation.Nonnull;
 import com.google.common.base.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -20,6 +21,7 @@ final class RecursiveDeleteCandidateNode extends AbstractRecursiveCandidateNode 
     }
 
     @Override
+    @Nonnull
     public ModificationType getModificationType() {
         return ModificationType.DELETE;
     }
@@ -31,6 +33,7 @@ final class RecursiveDeleteCandidateNode extends AbstractRecursiveCandidateNode 
     }
 
     @Override
+    @Nonnull
     public Optional<NormalizedNode<?, ?>> getDataAfter() {
         return Optional.absent();
     }
