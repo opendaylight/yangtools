@@ -38,7 +38,8 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
 
     @Override
     protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
-        throw new IllegalStateException("Invalid merge into unkeyed list");
+        // A merge operation is promoted into a write
+        return applyWrite(modification, currentMeta, version);
     }
 
     @Override
