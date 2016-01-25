@@ -159,7 +159,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             operation = potential.get();
             ++i;
 
-            modification = modification.modifyChild(pathArg, operation.getChildPolicy(), version);
+            modification = modification.modifyChild(pathArg, operation, version);
         }
 
         return OperationWithModification.from(operation, modification);
