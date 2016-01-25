@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import javax.annotation.Nonnull;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -49,7 +50,7 @@ final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements Curs
     }
 
     @Override
-    public DataTreeSnapshotCursor createCursor(final YangInstanceIdentifier path) {
+    public DataTreeSnapshotCursor createCursor(@Nonnull final YangInstanceIdentifier path) {
         final Optional<NormalizedNode<?, ?>> maybeRoot = NormalizedNodes.findNode(rootNode.getData(), path);
         if (!maybeRoot.isPresent()) {
             return null;

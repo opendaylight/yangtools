@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import com.google.common.base.Preconditions;
 import java.util.Arrays;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeSnapshotCursor;
@@ -20,6 +21,7 @@ abstract class AbstractCursor<T extends AbstractCursorAware> implements DataTree
             AtomicIntegerFieldUpdater.newUpdater(AbstractCursor.class, "closed");
     private final YangInstanceIdentifier rootPath;
     private final T parent;
+    @SuppressWarnings("unused")
     private volatile int closed;
 
     AbstractCursor(final T parent, final YangInstanceIdentifier rootPath) {
@@ -41,7 +43,7 @@ abstract class AbstractCursor<T extends AbstractCursorAware> implements DataTree
     }
 
     @Override
-    public final void enter(final PathArgument... path) {
+    public final void enter(@Nonnull final PathArgument... path) {
         enter(Arrays.asList(path));
     }
 

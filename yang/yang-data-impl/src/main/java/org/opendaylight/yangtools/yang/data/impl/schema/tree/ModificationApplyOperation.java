@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
  * Implementations MUST expose all nested suboperations which operates on child
  * nodes expose via {@link #getChild(PathArgument)} method.
  * <li>Same suboperations SHOULD be used when invoked via
- * {@link #apply(ModifiedNode, Optional)} if applicable.
+ * {@link #apply(ModifiedNode, Optional, Version)} if applicable.
  *
  *
  * Hierarchical composite operation which is responsible for applying
@@ -50,22 +50,19 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
      * @throws IllegalArgumentException
      *             If it is not possible to apply Operation on provided Metadata
      *             node
-     * @return new {@link StoreMetadataNode} if operation resulted in updating
+     * @return new {@link TreeNode} if operation resulted in updating
      *         node, {@link Optional#absent()} if {@link ModifiedNode}
      *         resulted in deletion of this node.
      */
     abstract Optional<TreeNode> apply(ModifiedNode modification, Optional<TreeNode> storeMeta, Version version);
 
     /**
-     *
      * Checks if provided node modification could be applied to current metadata node.
      *
      * @param modification Modification
      * @param current Metadata Node to which modification should be applied
      * @param version
-     * @return true if modification is applicable
-     *         false if modification is no applicable
-     * @throws DataValidationFailedException
+     * @throws DataValidationFailedException if the modification is not applicable
      */
    abstract void checkApplicable(YangInstanceIdentifier path, NodeModification modification, Optional<TreeNode> current, Version version) throws DataValidationFailedException;
 

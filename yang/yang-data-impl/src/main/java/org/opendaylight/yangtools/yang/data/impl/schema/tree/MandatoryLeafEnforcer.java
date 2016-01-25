@@ -38,7 +38,8 @@ abstract class MandatoryLeafEnforcer implements Immutable {
         protected void enforceOnTreeNode(final NormalizedNode<?, ?> normalizedNode) {
             // Intentional no-op
         }
-    };
+    }
+
     private static final class Strict extends MandatoryLeafEnforcer {
         private final Collection<YangInstanceIdentifier> mandatoryNodes;
 
@@ -59,7 +60,7 @@ abstract class MandatoryLeafEnforcer implements Immutable {
                         data.getIdentifier(), id);
             }
         }
-    };
+    }
 
     private static final Logger LOG = LoggerFactory.getLogger(MandatoryLeafEnforcer.class);
     private static final MandatoryLeafEnforcer NOOP_ENFORCER = new NoOp();

@@ -11,6 +11,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.util.Collection;
 import java.util.Collections;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -26,6 +27,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 final class NoopDataTreeCandidate extends AbstractDataTreeCandidate {
     private static final DataTreeCandidateNode ROOT = new DataTreeCandidateNode() {
         @Override
+        @Nonnull
         public ModificationType getModificationType() {
             return ModificationType.UNMODIFIED;
         }
@@ -36,16 +38,19 @@ final class NoopDataTreeCandidate extends AbstractDataTreeCandidate {
         }
 
         @Override
+        @Nonnull
         public PathArgument getIdentifier() {
             throw new IllegalStateException("Attempted to read identifier of the no-operation change");
         }
 
         @Override
+        @Nonnull
         public Optional<NormalizedNode<?, ?>> getDataAfter() {
             return Optional.absent();
         }
 
         @Override
+        @Nonnull
         public Optional<NormalizedNode<?, ?>> getDataBefore() {
             return Optional.absent();
         }
@@ -69,6 +74,7 @@ final class NoopDataTreeCandidate extends AbstractDataTreeCandidate {
     }
 
     @Override
+    @Nonnull
     protected TreeNode getTipRoot() {
         return afterRoot;
     }

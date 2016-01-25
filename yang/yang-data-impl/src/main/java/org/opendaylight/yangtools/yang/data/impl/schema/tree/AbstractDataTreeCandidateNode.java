@@ -13,6 +13,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -65,6 +67,9 @@ abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
 
     static Collection<DataTreeCandidateNode> deltaChildren(@Nullable final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> oldData,
             @Nullable final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> newData) {
+        if (newData == null && oldData == null) {
+            return Collections.emptySet();
+        }
         if (newData == null) {
             return Collections2.transform(oldData.getValue(), TO_DELETED_NODE);
         }
@@ -117,6 +122,7 @@ abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
     }
 
     @Override
+    @Nonnull
     public final PathArgument getIdentifier() {
         return data.getIdentifier();
     }
