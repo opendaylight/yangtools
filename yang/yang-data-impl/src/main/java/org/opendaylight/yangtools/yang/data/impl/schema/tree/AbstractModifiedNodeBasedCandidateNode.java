@@ -13,6 +13,7 @@ import com.google.common.base.Verify;
 import com.google.common.collect.Collections2;
 import java.util.Collection;
 import java.util.Collections;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -82,6 +83,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     }
 
     @Override
+    @Nonnull
     public Collection<DataTreeCandidateNode> getChildNodes() {
         switch (mod.getModificationType()) {
         case APPEARED:
@@ -116,6 +118,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     }
 
     @Override
+    @Nonnull
     public ModificationType getModificationType() {
         return Verify.verifyNotNull(mod.getModificationType(), "Node %s does not have resolved modification type", mod);
     }
@@ -129,11 +132,13 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     }
 
     @Override
+    @Nonnull
     public final Optional<NormalizedNode<?, ?>> getDataAfter() {
         return optionalData(newMeta);
     }
 
     @Override
+    @Nonnull
     public final Optional<NormalizedNode<?, ?>> getDataBefore() {
         return optionalData(oldMeta);
     }
@@ -178,6 +183,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
         }
 
         @Override
+        @Nonnull
         public PathArgument getIdentifier() {
             return getMod().getIdentifier();
         }

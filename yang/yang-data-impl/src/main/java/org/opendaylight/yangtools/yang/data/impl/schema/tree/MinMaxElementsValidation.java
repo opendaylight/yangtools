@@ -100,10 +100,6 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
                 value.getClass()));
     }
 
-    private static boolean checkOriginalPresent(ModifiedNode child) {
-        return child.getOriginal().isPresent();
-    }
-
     @Override
     protected void checkTouchApplicable(final YangInstanceIdentifier path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {

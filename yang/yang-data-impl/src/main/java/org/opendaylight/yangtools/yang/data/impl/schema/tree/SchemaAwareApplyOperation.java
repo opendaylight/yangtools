@@ -71,11 +71,11 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         return null;
     }
 
-    public static boolean checkConflicting(final YangInstanceIdentifier path, final boolean condition, final String message) throws ConflictingModificationAppliedException {
-        if(!condition) {
+    public static void checkConflicting(final YangInstanceIdentifier path, final boolean condition,
+                                        final String message) throws ConflictingModificationAppliedException {
+        if (!condition) {
             throw new ConflictingModificationAppliedException(path, message);
         }
-        return condition;
     }
 
     private static SchemaAwareApplyOperation fromListSchemaNode(final ListSchemaNode schemaNode, final TreeType treeType) {
@@ -101,7 +101,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         return MinMaxElementsValidation.from(op, schemaNode);
     }
 
-    protected static final void checkNotConflicting(final YangInstanceIdentifier path, final TreeNode original, final TreeNode current) throws ConflictingModificationAppliedException {
+    protected static void checkNotConflicting(final YangInstanceIdentifier path, final TreeNode original, final TreeNode current) throws ConflictingModificationAppliedException {
         checkConflicting(path, original.getVersion().equals(current.getVersion()),
                 "Node was replaced by other transaction.");
         checkConflicting(path, original.getSubtreeVersion().equals(current.getSubtreeVersion()),
@@ -255,7 +255,8 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
      * @param modification Node modification which should be applied.
      * @param current Current state of data tree
      * @throws ConflictingModificationAppliedException If subtree was changed in conflicting way
-     * @throws IncorrectDataStructureException If subtree modification is not applicable (e.g. leaf node).
+     * @throws org.opendaylight.yangtools.yang.data.api.schema.tree.IncorrectDataStructureException If subtree
+     * modification is not applicable (e.g. leaf node).
      */
     protected abstract void checkTouchApplicable(YangInstanceIdentifier path, NodeModification modification,
             Optional<TreeNode> current, Version version) throws DataValidationFailedException;
@@ -266,7 +267,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
      *
      * @param treeType Tree Type
      * @param node Schema node
-     * @return
+     * @return {@code true} if the node matches the tree type, {@code false} otherwise.
      */
     static boolean belongsToTree(final TreeType treeType, final DataSchemaNode node) {
         return treeType == TreeType.OPERATIONAL || node.isConfiguration();

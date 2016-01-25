@@ -13,6 +13,7 @@ import com.google.common.base.Predicate;
 import java.util.Collection;
 import java.util.Map;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -27,8 +28,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
  * Node Modification Node and Tree
  *
  * Tree which structurally resembles data tree and captures client modifications to the data store tree. This tree is
- * lazily created and populated via {@link #modifyChild(PathArgument)} and {@link TreeNode} which represents original
- * state as tracked by {@link #getOriginal()}.
+ * lazily created and populated via {@link #modifyChild(PathArgument, ModificationApplyOperation, Version)} and
+ * {@link TreeNode} which represents original state as tracked by {@link #getOriginal()}.
  *
  * The contract is that the state information exposed here preserves the temporal ordering of whatever modifications
  * were executed. A child's effects pertain to data node as modified by its ancestors. This means that in order to
@@ -39,7 +40,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 final class ModifiedNode extends NodeModification implements StoreTreeNode<ModifiedNode> {
     static final Predicate<ModifiedNode> IS_TERMINAL_PREDICATE = new Predicate<ModifiedNode>() {
         @Override
-        public boolean apply(@Nonnull final ModifiedNode input) {
+        public boolean apply(@Nullable final ModifiedNode input) {
             Preconditions.checkNotNull(input);
             switch (input.getOperation()) {
             case DELETE:
@@ -114,7 +115,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      */
     @Override
     public Optional<ModifiedNode> getChild(final PathArgument child) {
-        return Optional.<ModifiedNode> fromNullable(children.get(child));
+        return Optional.fromNullable(children.get(child));
     }
 
     private Optional<TreeNode> metadataFromSnapshot(@Nonnull final PathArgument child) {
