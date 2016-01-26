@@ -28,8 +28,12 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class GroupingUtils {
+
+    private static final Logger LOG = LoggerFactory.getLogger(GroupingUtils.class);
 
     private GroupingUtils() {
         throw new UnsupportedOperationException();
@@ -159,6 +163,13 @@ public final class GroupingUtils {
         StatementContextBase<?, ?, ?> refineTargetNodeCtx = Utils.findNode(usesParentCtx, refineTargetNodeIdentifier);
         Preconditions.checkArgument(refineTargetNodeCtx != null, "Refine target node %s not found. At %s",
                 refineTargetNodeIdentifier, refineCtx.getStatementSourceReference());
+        if (StmtContextUtils.isUnknownStatement(refineTargetNodeCtx)) {
+            LOG.warn("Refine node '{}' in uses '{}' has target node unknown statement '{}'. Refine has been skipped. At line: {}",
+                    refineCtx.getStatementArgument(), refineCtx.getParentContext().getStatementArgument(), refineTargetNodeCtx.getStatementArgument(),
+                    refineCtx.getStatementSourceReference());
+            refineCtx.addAsEffectOfStatement(refineTargetNodeCtx);
+            return;
+        }
 
         addOrReplaceNodes(refineCtx, refineTargetNodeCtx);
         refineCtx.addAsEffectOfStatement(refineTargetNodeCtx);
@@ -177,7 +188,6 @@ public final class GroupingUtils {
             final StatementContextBase<?, ?, ?> refineTargetNodeCtx) {
 
         StatementDefinition refineSubstatementDef = refineSubstatementCtx.getPublicDefinition();
-        StatementDefinition refineTargetNodeDef = refineTargetNodeCtx.getPublicDefinition();
 
         SourceException.throwIf(!isSupportedRefineTarget(refineSubstatementCtx, refineTargetNodeCtx),
             refineSubstatementCtx.getStatementSourceReference(),

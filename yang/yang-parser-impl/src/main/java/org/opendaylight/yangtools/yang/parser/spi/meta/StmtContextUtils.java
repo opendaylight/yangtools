@@ -83,14 +83,34 @@ public final class StmtContextUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <AT,DT extends DeclaredStatement<AT>> Collection<StmtContext<AT, DT, ?>> findAllDeclaredSubstatement(
+    public static <AT, DT extends DeclaredStatement<AT>> Collection<StmtContext<AT, DT, ?>> findAllDeclaredSubstatements(
             final StmtContext<?, ?, ?> stmtContext, final Class<DT> declaredType) {
         ImmutableList.Builder<StmtContext<AT, DT, ?>> listBuilder = ImmutableList.builder();
         for (StmtContext<?, ?, ?> subStmtContext : stmtContext.declaredSubstatements()) {
-            if (producesDeclared(subStmtContext,declaredType)) {
+            if (producesDeclared(subStmtContext, declaredType)) {
                 listBuilder.add((StmtContext<AT, DT, ?>) subStmtContext);
             }
         }
+        return listBuilder.build();
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <AT, DT extends DeclaredStatement<AT>> Collection<StmtContext<AT, DT, ?>> findAllEffectiveSubstatements(
+            final StmtContext<?, ?, ?> stmtContext, final Class<DT> type) {
+        ImmutableList.Builder<StmtContext<AT, DT, ?>> listBuilder = ImmutableList.builder();
+        for (StmtContext<?, ?, ?> subStmtContext : stmtContext.effectiveSubstatements()) {
+            if (producesDeclared(subStmtContext, type)) {
+                listBuilder.add((StmtContext<AT, DT, ?>) subStmtContext);
+            }
+        }
+        return listBuilder.build();
+    }
+
+    public static <AT, DT extends DeclaredStatement<AT>> Collection<StmtContext<AT, DT, ?>> findAllSubstatements(
+            final StmtContext<?, ?, ?> stmtContext, final Class<DT> type) {
+        ImmutableList.Builder<StmtContext<AT, DT, ?>> listBuilder = ImmutableList.builder();
+        listBuilder.addAll(findAllDeclaredSubstatements(stmtContext, type));
+        listBuilder.addAll(findAllEffectiveSubstatements(stmtContext, type));
         return listBuilder.build();
     }
 
