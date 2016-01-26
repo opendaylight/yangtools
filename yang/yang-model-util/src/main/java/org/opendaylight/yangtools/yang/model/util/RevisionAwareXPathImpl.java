@@ -33,11 +33,12 @@ public class RevisionAwareXPathImpl implements RevisionAwareXPath {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(xpath);
-        result = prime * result + Boolean.hashCode(absolute);
-        return result;
+        if(absolute){
+            return xpath.hashCode()+1;
+        }else{
+            return xpath.hashCode();
+        }
+
     }
 
     @Override
