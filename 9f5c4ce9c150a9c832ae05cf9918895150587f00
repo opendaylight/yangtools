@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_d9062020",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/SchemaContextUtil.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 699,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-01-26T15:50:23Z",
+      "side": 1,
+      "message": "We need to find the last type before we encounter yang built-in type or null, because we need to get QNameModule of module which contains starting type or typedef in the chain.\nFor example, for String we cannot stop when nodeType.getBaseType() \u003d\u003d null, because we get BaseStringType, which QName is BaseTypes.STRING_QNAME \nand QNameModule is YangConstants.RFC6020_YANG_MODULE and so we need to stop one loop before when BaseTypes.isYangBuildInType(nodeType.getBaseType())\n\nAnother example, for Leafref we can stop when nodeType.getBaseType() \u003d\u003d null, because we get BaseLeafrefType, \nwhich QName is the last component of SchemaPath and so we are able to get QNameModule of the module.   \n\nTherefore both conditions are necessary.\n\nAnyway, we can change the condition in the loop to \"while(nodeType.getBaseType().getBaseType() !\u003d null)\", but I am not sure it is safe for all cases.",
+      "range": {
+        "startLine": 699,
+        "startChar": 11,
+        "endLine": 699,
+        "endChar": 106
+      },
+      "revId": "9f5c4ce9c150a9c832ae05cf9918895150587f00",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
