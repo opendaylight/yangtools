@@ -16,6 +16,24 @@
       "revId": "cc7b8eb3cc447d6fba42e22aa38ae52bb3af1599",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_59b5f0ec",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/AbstractCursor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 4540
+      },
+      "writtenOn": "2016-01-26T12:22:31Z",
+      "side": 1,
+      "message": "IntelliJ reports it because there are no visible writes :-/\n\nI reckoned it was safer to flag it explicitly, in case someone doesn\u0027t spot the write and spends time trying to remove it.",
+      "parentUuid": "9a3d3df0_f9d84455",
+      "revId": "cc7b8eb3cc447d6fba42e22aa38ae52bb3af1599",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
