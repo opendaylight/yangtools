@@ -34,6 +34,75 @@
       "revId": "cc7b8eb3cc447d6fba42e22aa38ae52bb3af1599",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_8a96f892",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/AbstractCursor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-01-26T23:35:27Z",
+      "side": 1,
+      "message": "I see... can we fool IntelliJ by explicitly initializing it? Baring that, can you also add a comment why it is suppressed?",
+      "parentUuid": "9a3d3df0_59b5f0ec",
+      "revId": "cc7b8eb3cc447d6fba42e22aa38ae52bb3af1599",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_6a93b4a3",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/AbstractDataTreeCandidateNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-01-26T23:35:27Z",
+      "side": 1,
+      "message": "I think this should be a Verify.verify(). If both are null, then the modification type should be NONE, and this method should not be called at all.",
+      "revId": "cc7b8eb3cc447d6fba42e22aa38ae52bb3af1599",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_ca900098",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/AbstractModifiedNodeBasedCandidateNode.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 86,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-01-26T23:35:27Z",
+      "side": 1,
+      "message": "@Override makes me think whether these @Nonnulls should be propagated to the interface/superclass.",
+      "revId": "cc7b8eb3cc447d6fba42e22aa38ae52bb3af1599",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_0aeae80e",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/SchemaAwareApplyOperation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-01-26T23:35:27Z",
+      "side": 1,
+      "message": "please keep the initial arguments (up to 120 chars) on the same line",
+      "revId": "cc7b8eb3cc447d6fba42e22aa38ae52bb3af1599",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
