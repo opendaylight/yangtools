@@ -1,0 +1,33 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+
+    revision 2016-01-25 {
+        description "test";
+    }
+
+    grouping my-grouping {
+        container my-container {
+            foo:e2 "e2";
+        }
+        foo:e1 "e1";
+    }
+
+    container root {
+        uses my-grouping {
+            refine e1 {
+                description "new description for e1";
+            }
+            refine my-container/e2 {
+                description "new description for e2";
+            }
+        }
+    }
+
+    extension e1 {
+        argument name;
+    }
+    extension e2 {
+        argument name;
+    }
+}
