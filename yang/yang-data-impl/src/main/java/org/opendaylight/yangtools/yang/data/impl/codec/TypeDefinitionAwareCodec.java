@@ -43,7 +43,7 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     public static final TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> from(final TypeDefinition typeDefinition) {
-        return fromType(typeDefinition);
+        return (TypeDefinitionAwareCodec)fromType(typeDefinition);
     }
 
     @SuppressWarnings("unchecked")
