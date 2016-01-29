@@ -766,7 +766,7 @@ public final class SchemaContextUtil {
         }
     }
 
-    private static final Pattern STRIP_PATTERN = Pattern.compile("\\[.*\\]");
+    private static final Pattern STRIP_PATTERN = Pattern.compile("\\[[^\\[\\]]*\\]");
 
     /**
      * Removes conditions from xPath pointed to target node.
