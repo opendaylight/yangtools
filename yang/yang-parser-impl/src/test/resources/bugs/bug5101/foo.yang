@@ -1,0 +1,21 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+
+    revision 2016-01-29 {
+        description "test";
+    }
+
+    grouping my-grouping {
+        status deprecated;
+        container my-container {
+            status deprecated;
+        }
+    }
+
+    container root {
+        uses my-grouping;
+    }
+
+    uses my-grouping;
+}

@@ -117,14 +117,14 @@ public final class GroupingUtils {
         return true;
     }
 
-    private static final Set<Rfc6020Mapping> NOCOPY_DEF_SET = ImmutableSet.of(
-        Rfc6020Mapping.USES, Rfc6020Mapping.TYPEDEF, Rfc6020Mapping.TYPE);
-    private static final Set<Rfc6020Mapping> NOCOPY_FROM_GROUPING_SET = ImmutableSet.of(
-        Rfc6020Mapping.DESCRIPTION, Rfc6020Mapping.REFERENCE);
-    private static final Set<Rfc6020Mapping> REUSED_DEF_SET = ImmutableSet.of(
-        Rfc6020Mapping.TYPEDEF, Rfc6020Mapping.TYPE, Rfc6020Mapping.USES);
-    private static final Set<Rfc6020Mapping> TOP_REUSED_DEF_SET = ImmutableSet.of(
-        Rfc6020Mapping.TYPEDEF, Rfc6020Mapping.TYPE);
+    private static final Set<Rfc6020Mapping> NOCOPY_DEF_SET = ImmutableSet.of(Rfc6020Mapping.USES,
+            Rfc6020Mapping.TYPEDEF, Rfc6020Mapping.TYPE);
+    private static final Set<Rfc6020Mapping> NOCOPY_FROM_GROUPING_SET = ImmutableSet.of(Rfc6020Mapping.DESCRIPTION,
+            Rfc6020Mapping.REFERENCE, Rfc6020Mapping.STATUS);
+    private static final Set<Rfc6020Mapping> REUSED_DEF_SET = ImmutableSet.of(Rfc6020Mapping.TYPEDEF,
+            Rfc6020Mapping.TYPE, Rfc6020Mapping.USES);
+    private static final Set<Rfc6020Mapping> TOP_REUSED_DEF_SET = ImmutableSet.of(Rfc6020Mapping.TYPEDEF,
+            Rfc6020Mapping.TYPE);
 
     public static boolean needToCopyByUses(final StmtContext<?, ?, ?> stmtContext) {
         final StatementDefinition def = stmtContext.getPublicDefinition();
