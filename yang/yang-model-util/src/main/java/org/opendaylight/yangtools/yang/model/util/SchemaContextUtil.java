@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import com.google.common.annotations.Beta;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -766,7 +767,7 @@ public final class SchemaContextUtil {
         }
     }
 
-    private static final Pattern STRIP_PATTERN = Pattern.compile("\\[.*\\]");
+    private static final Pattern STRIP_PATTERN = Pattern.compile("\\[[^\\[\\]]*\\]");
 
     /**
      * Removes conditions from xPath pointed to target node.
@@ -776,7 +777,8 @@ public final class SchemaContextUtil {
      * @return string representation of xPath without conditions
      *
      */
-    private static String stripConditionsFromXPathString(final RevisionAwareXPath pathStatement) {
+    @VisibleForTesting
+    static String stripConditionsFromXPathString(final RevisionAwareXPath pathStatement) {
         return STRIP_PATTERN.matcher(pathStatement.toString()).replaceAll("");
     }
 
