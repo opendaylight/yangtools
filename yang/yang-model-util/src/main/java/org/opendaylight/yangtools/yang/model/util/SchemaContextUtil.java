@@ -678,7 +678,15 @@ public final class SchemaContextUtil {
             nodeType = ((LeafListSchemaNode) schemaNode).getType();
         }
 
-        if (nodeType.getBaseType() != null) {
+        if (nodeType instanceof ExtendedType) {
+            while (nodeType.getBaseType() instanceof ExtendedType) {
+                nodeType = nodeType.getBaseType();
+            }
+
+            QNameModule typeDefModuleQname = nodeType.getQName().getModule();
+            return schemaContext.findModuleByNamespaceAndRevision(typeDefModuleQname.getNamespace(),
+                    typeDefModuleQname.getRevision());
+        } else if (nodeType.getBaseType() != null) {
             while (nodeType.getBaseType() != null) {
                 nodeType = nodeType.getBaseType();
             }

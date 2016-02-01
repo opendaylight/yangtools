@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -30,17 +31,31 @@ import org.opendaylight.yangtools.yang.data.codec.gson.JsonParserStream;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.parser.impl.YangParserImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class Bug4969Test {
 
     @Test
-    public void test() throws SourceException, ReactorException, URISyntaxException, IOException {
+    public void newParserLeafRefTest() throws SourceException, ReactorException, URISyntaxException, IOException {
         File sourceDir = new File(Bug4969Test.class.getResource("/bug-4969/yang").toURI());
         SchemaContext context = RetestUtils.parseYangSources(sourceDir.listFiles());
         assertNotNull(context);
 
+        verifyNormalizedNodeResult(context);
+    }
+
+    @Test
+    public void oldParserLeafRefTest() throws SourceException, ReactorException, URISyntaxException, IOException {
+        File sourceDir = new File(Bug4969Test.class.getResource("/bug-4969/yang").toURI());
+        SchemaContext context = YangParserImpl.getInstance().parseFiles(Arrays.asList(sourceDir.listFiles()));
+        assertNotNull(context);
+
+        verifyNormalizedNodeResult(context);
+    }
+
+    private void verifyNormalizedNodeResult(SchemaContext context) throws IOException, URISyntaxException {
         final String inputJson = TestUtils.loadTextFile("/bug-4969/json/foo.json");
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
@@ -88,5 +103,33 @@ public class Bug4969Test {
         assertTrue(set2.contains("a") && set2.contains("b"));
         assertTrue(set3.contains("a") && set3.contains("b") && set3.contains("c"));
         assertTrue(set4.contains("a") && set4.contains("b") && set4.contains("c") && set4.contains("d"));
+    }
+
+    @Test
+    public void newParserLeafRefTest2() throws SourceException, ReactorException, URISyntaxException, IOException {
+        File sourceDir = new File(Bug4969Test.class.getResource("/leafref/yang").toURI());
+        SchemaContext context = RetestUtils.parseYangSources(sourceDir.listFiles());
+        assertNotNull(context);
+
+        parseJsonToNormalizedNodes(context);
+    }
+
+    @Test
+    public void oldParserLeafRefTest2() throws SourceException, ReactorException, URISyntaxException, IOException {
+        File sourceDir = new File(Bug4969Test.class.getResource("/leafref/yang").toURI());
+        SchemaContext context = YangParserImpl.getInstance().parseFiles(Arrays.asList(sourceDir.listFiles()));
+        assertNotNull(context);
+
+        parseJsonToNormalizedNodes(context);
+    }
+
+    private void parseJsonToNormalizedNodes(SchemaContext context) throws IOException, URISyntaxException {
+        final String inputJson = TestUtils.loadTextFile("/leafref/json/data.json");
+        final NormalizedNodeResult result = new NormalizedNodeResult();
+        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, context);
+        jsonParser.parse(new JsonReader(new StringReader(inputJson)));
+        final NormalizedNode<?, ?> transformedInput = result.getResult();
+        assertNotNull(transformedInput);
     }
 }
