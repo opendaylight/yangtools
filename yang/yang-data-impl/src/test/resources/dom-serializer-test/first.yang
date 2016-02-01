@@ -1,0 +1,16 @@
+module first {
+    yang-version 1;
+    namespace "dom-serializer-test";
+    prefix "dst";
+
+    revision "2016-01-01" {
+        description "Initial revision.";
+    }
+
+    container root {
+        presence "Ultra testing presence";
+        leaf first-leaf {
+           type string;
+        }
+    }
+}
