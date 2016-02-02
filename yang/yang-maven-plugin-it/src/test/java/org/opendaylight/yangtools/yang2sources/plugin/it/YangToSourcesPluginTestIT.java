@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang2sources.plugin.it;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
+
 import com.google.common.base.Joiner;
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,7 +18,6 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Properties;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
@@ -71,7 +71,7 @@ public class YangToSourcesPluginTestIT {
             assertVerificationException(
                     e,
                     "org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException: Imported module " +
-                    "[ModuleIdentifierImpl{name='unknownDep', namespace=null, revision=2013-02-27}");
+                    "[unknownDep] was not found.");
             return;
         }
 
