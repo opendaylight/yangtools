@@ -9,8 +9,10 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.ArgumentContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.KeywordContext;
@@ -39,6 +41,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
     private final String sourceName;
     private QNameToStatementDefinition stmtDef;
     private PrefixToModule prefixes;
+    private Map<String, URI> namespaces;
     private StatementWriter writer;
 
     public YangStatementParserListenerImpl(final String sourceName) {
@@ -48,6 +51,12 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
     public void setAttributes(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
         this.writer = writer;
         this.stmtDef = stmtDef;
+    }
+
+    public void setAttributes(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final Map<String, URI> namespaces) {
+        this.writer = writer;
+        this.stmtDef = stmtDef;
+        this.namespaces = namespaces;
     }
 
     public void setAttributes(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes) {

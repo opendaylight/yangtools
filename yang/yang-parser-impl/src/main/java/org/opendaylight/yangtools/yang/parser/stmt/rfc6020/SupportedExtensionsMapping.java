@@ -16,12 +16,16 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AnyxmlSchemaLocationEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.SemanticVersionEffectiveStatementImpl;
 
 @Beta
 public enum SupportedExtensionsMapping implements StatementDefinition {
     ANYXML_SCHEMA_LOCATION("urn:opendaylight:yang:extension:yang-ext", "2013-07-09",
         AnyxmlSchemaLocationStatementImpl.class, AnyxmlSchemaLocationEffectiveStatementImpl.class,
-        "anyxml-schema-location", "target-node");
+        "anyxml-schema-location", "target-node"),
+    SEMANTIC_VERSION("urn:opendaylight:yang:extension:semantic-version", "2016-02-02",
+            SemanticVersionStatementImpl.class, SemanticVersionEffectiveStatementImpl.class,
+            "module-version", "semantic-version");
 
     private final Class<? extends DeclaredStatement<?>> type;
     private final Class<? extends EffectiveStatement<?, ?>> effectiveType;
@@ -36,6 +40,21 @@ public enum SupportedExtensionsMapping implements StatementDefinition {
         effectiveType = Preconditions.checkNotNull(effective);
         name = createQName(namespace, revision, nameStr);
         argument = createQName(namespace, revision, argumentStr);
+    }
+
+    private SupportedExtensionsMapping(final String namespace,
+            final Class<? extends DeclaredStatement<?>> declared,
+                    final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr,
+                            final String argumentStr) {
+        type = Preconditions.checkNotNull(declared);
+        effectiveType = Preconditions.checkNotNull(effective);
+        name = createQName(namespace, nameStr);
+        argument = createQName(namespace, argumentStr);
+    }
+
+    @Nonnull
+    private static QName createQName(final String namespace, final String localName) {
+        return QName.create(namespace, localName).intern();
     }
 
     @Nonnull
