@@ -8,15 +8,11 @@
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
-
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 /**
- *
- * Source-specific mapping of prefixes to namespaces
- *
+ * Map of statement order.
  */
 public interface StmtOrderingNamespace extends
         IdentifierNamespace<Rfc6020Mapping, Integer> {
-
 }
