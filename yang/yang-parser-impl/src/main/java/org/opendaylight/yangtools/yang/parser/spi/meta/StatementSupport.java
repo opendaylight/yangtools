@@ -61,6 +61,8 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      */
      void onStatementAdded(StmtContext.Mutable<A, D, E> stmt);
 
+     void onPreLinkageDeclared(StmtContext.Mutable<A, D, E> stmt) throws SourceException;
+
     /**
      *
      * Invoked when statement is closed during

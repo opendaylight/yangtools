@@ -18,21 +18,25 @@ import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
+import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedIdentitiesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.AnyxmlSchemaLocationNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
@@ -48,7 +52,7 @@ public final class YangInferencePipeline {
             .builder().addSupport(global(ValidationBundlesNamespace.class))
             .build();
 
-    public static final StatementSupportBundle LINKAGE_BUNDLE = StatementSupportBundle
+    public static final StatementSupportBundle PRE_LINKAGE_BUNDLE = StatementSupportBundle
             .derivedFrom(INIT_BUNDLE)
             .addSupport(new ModuleStatementSupport())
             .addSupport(new SubmoduleStatementImpl.Definition())
@@ -57,6 +61,23 @@ public final class YangInferencePipeline {
             .addSupport(new IncludeStatementImpl.Definition())
             .addSupport(new PrefixStatementImpl.Definition())
             .addSupport(new YangVersionStatementImpl.Definition())
+//            .addSupport(new ExtensionStatementImpl.Definition())
+            .addSupport(global(ModuleNameToNamespace.class))
+            .addSupport(global(PreLinkageModuleNamespace.class))
+            .addSupport(sourceLocal(ImpPrefixToNamespace.class))
+//            .addSupport(global(ExtensionNamespace.class))
+            .build();
+
+
+    public static final StatementSupportBundle LINKAGE_BUNDLE = StatementSupportBundle
+            .derivedFrom(PRE_LINKAGE_BUNDLE)
+//            .addSupport(new ModuleStatementSupport())
+//            .addSupport(new SubmoduleStatementImpl.Definition())
+//            .addSupport(new NamespaceStatementImpl.Definition())
+//            .addSupport(new ImportStatementDefinition())
+//            .addSupport(new IncludeStatementImpl.Definition())
+//            .addSupport(new PrefixStatementImpl.Definition())
+//            .addSupport(new YangVersionStatementImpl.Definition())
             .addSupport(new DescriptionStatementImpl.Definition())
             .addSupport(new RevisionStatementImpl.Definition())
             .addSupport(new RevisionDateStatementImpl.Definition())
@@ -82,7 +103,10 @@ public final class YangInferencePipeline {
             .addSupport(sourceLocal(URIStringToImpPrefix.class))
             .addSupport(sourceLocal(BelongsToModuleContext.class))
             .addSupport(sourceLocal(QNameToStatementDefinition.class))
-            .addSupport(sourceLocal(BelongsToPrefixToModuleName.class)).build();
+            .addSupport(sourceLocal(BelongsToPrefixToModuleName.class))
+            .addSupport(new SemanticVersionStatementImpl.SemanticVersionSupport())
+            .addSupport(global(SemanticVersionNamespace.class))
+            .build();
 
 
     private static final StatementSupportBundle STMT_DEF_BUNDLE = StatementSupportBundle
@@ -156,6 +180,7 @@ public final class YangInferencePipeline {
 
     public static final Map<ModelProcessingPhase, StatementSupportBundle> RFC6020_BUNDLES = ImmutableMap
             .<ModelProcessingPhase, StatementSupportBundle> builder()
+            .put(ModelProcessingPhase.SOURCE_PRE_LINKAGE, PRE_LINKAGE_BUNDLE)
             .put(ModelProcessingPhase.SOURCE_LINKAGE, LINKAGE_BUNDLE)
             .put(ModelProcessingPhase.STATEMENT_DEFINITION, STMT_DEF_BUNDLE)
             .put(ModelProcessingPhase.FULL_DECLARATION, FULL_DECL_BUNDLE)
@@ -165,6 +190,7 @@ public final class YangInferencePipeline {
     public static final CrossSourceStatementReactor RFC6020_REACTOR = CrossSourceStatementReactor
             .builder()
             .setBundle(ModelProcessingPhase.INIT, INIT_BUNDLE)
+            .setBundle(ModelProcessingPhase.SOURCE_PRE_LINKAGE, PRE_LINKAGE_BUNDLE)
             .setBundle(ModelProcessingPhase.SOURCE_LINKAGE, LINKAGE_BUNDLE)
             .setBundle(ModelProcessingPhase.STATEMENT_DEFINITION,
                     STMT_DEF_BUNDLE)
