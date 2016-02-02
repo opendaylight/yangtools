@@ -151,6 +151,7 @@ public final class YangInferencePipeline {
             .addSupport(new ValueStatementImpl.Definition())
             .addSupport(new AnyxmlSchemaLocationStatementImpl.AnyxmlSchemaLocationSupport())
             .addSupport(treeScoped(AnyxmlSchemaLocationNamespace.class))
+            //.addSupport(new SemanticVersionStatementImpl.SemanticVersionSupport())
             .addSupport(global(StmtOrderingNamespace.class))
             .build();
 
