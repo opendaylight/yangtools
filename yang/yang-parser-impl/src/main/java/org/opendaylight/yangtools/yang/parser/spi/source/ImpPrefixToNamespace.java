@@ -7,9 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
+import java.net.URI;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
-public interface StmtOrderingNamespace extends
-        IdentifierNamespace<Rfc6020Mapping, Integer> {
+/**
+ *
+ * Source-specific mapping of prefixes to namespaces
+ *
+ */
+public interface ImpPrefixToNamespace extends IdentifierNamespace<String, URI> {
+
 }

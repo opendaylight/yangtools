@@ -71,6 +71,11 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
         // NOOP for most implementations
     }
 
+    @Override
+    public void onPreLinkageDeclared(StmtContext.Mutable<A, D, E> stmt) throws SourceException {
+        // NOOP for most implementations
+    }
+
     /**
      *
      * {@inheritDoc}

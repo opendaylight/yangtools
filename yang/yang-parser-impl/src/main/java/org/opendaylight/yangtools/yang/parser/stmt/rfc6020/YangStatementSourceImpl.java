@@ -14,8 +14,6 @@ import java.net.URISyntaxException;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementLexer;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
@@ -25,9 +23,12 @@ import org.opendaylight.yangtools.yang.parser.impl.YangErrorListener;
 import org.opendaylight.yangtools.yang.parser.impl.YangStatementParserListenerImpl;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -77,19 +78,25 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
     }
 
     @Override
-    public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
+    public void writePreLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef) throws SourceException {
         yangStatementModelParser.setAttributes(writer, stmtDef);
         walker.walk(yangStatementModelParser, statementContext);
     }
 
     @Override
-    public void writeLinkageAndStatementDefinitions(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes) {
+    public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule preLinkagePrefixes) throws SourceException {
+        yangStatementModelParser.setAttributes(writer, stmtDef, preLinkagePrefixes);
+        walker.walk(yangStatementModelParser, statementContext);
+    }
+
+    @Override
+    public void writeLinkageAndStatementDefinitions(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes) throws SourceException {
         yangStatementModelParser.setAttributes(writer, stmtDef, prefixes);
         walker.walk(yangStatementModelParser, statementContext);
     }
 
     @Override
-    public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes) {
+    public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes) throws SourceException {
         yangStatementModelParser.setAttributes(writer, stmtDef, prefixes);
         walker.walk(yangStatementModelParser, statementContext);
     }
