@@ -118,4 +118,8 @@ public final class SemVer implements Comparable<SemVer>, Serializable {
     public String toString() {
         return major + "." + minor + "." + patch;
     }
+
+    public boolean isCompatibleWith(SemVer semVer) {
+        return major == semVer.major;
+    }
 }
