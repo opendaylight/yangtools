@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 public class QNameToStatementDefinitionMap implements QNameToStatementDefinition {
 
@@ -27,5 +28,16 @@ public class QNameToStatementDefinitionMap implements QNameToStatementDefinition
     @Override
     public StatementDefinition get(@Nonnull QName identifier) {
         return qNameToStmtDefMap.get(identifier);
+    }
+
+    @Override
+    public StatementDefinition getByNamespaceAndLocalName(URI namespace, String localName) {
+        for (Entry<QName, StatementDefinition> entry : qNameToStmtDefMap.entrySet()) {
+            QName qName = entry.getKey();
+            if (qName.getNamespace().equals(namespace) && qName.getLocalName().equals(localName)) {
+                return entry.getValue();
+            }
+        }
+        return null;
     }
 }

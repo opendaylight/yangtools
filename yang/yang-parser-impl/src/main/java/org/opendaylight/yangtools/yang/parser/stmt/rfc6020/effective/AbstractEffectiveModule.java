@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
@@ -74,6 +75,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
     private final Set<UsesNode> uses;
     private final Set<TypeDefinition<?>> typeDefinitions;
     private final Set<DataSchemaNode> publicChildNodes;
+    private final SemVer semanticVersion;
 
     AbstractEffectiveModule(final StmtContext<String, D, ? extends EffectiveStatement<String, ?>> ctx) {
         super(ctx);
@@ -85,6 +87,9 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
 
         YangVersionEffectiveStatementImpl yangVersionStmt = firstEffective(YangVersionEffectiveStatementImpl.class);
         this.yangVersion = (yangVersionStmt == null) ? "1" : yangVersionStmt.argument();
+
+        SemanticVersionEffectiveStatementImpl semanticVersionStmt = firstEffective(SemanticVersionEffectiveStatementImpl.class);
+        this.semanticVersion = (semanticVersionStmt == null) ? SemVer.valueOf("1.0.0") : semanticVersionStmt.argument();
 
         OrganizationEffectiveStatementImpl organizationStmt = firstEffective(OrganizationEffectiveStatementImpl.class);
         this.organization = (organizationStmt == null) ? null : organizationStmt.argument();
@@ -379,6 +384,11 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
     @Override
     public Set<UsesNode> getUses() {
         return uses;
+    }
+
+    @Override
+    public SemVer getSemanticVersion() {
+        return semanticVersion;
     }
 
     @Override

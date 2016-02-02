@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
+
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
@@ -41,6 +42,7 @@ import org.opendaylight.yangtools.yang.model.api.Deviation.Deviate;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
@@ -391,9 +393,15 @@ public final class Utils {
             if (namesParts.length == 2) {
                 String prefix = namesParts[0];
                 String localName = namesParts[1];
-                if (prefixes != null && prefixes.get(prefix) != null
-                        && stmtDef.get(QName.create(prefixes.get(prefix), localName)) != null) {
-                    return QName.create(prefixes.get(prefix), localName);
+                QNameModule qNameModule = null;
+                if(prefixes != null) {
+                    qNameModule = prefixes.get(prefix);
+                }
+                if(prefixes != null && prefixes.isPreLinkageMap() && qNameModule != null) {
+                    StatementDefinition foundStmtDef = stmtDef.getByNamespaceAndLocalName(qNameModule.getNamespace(), localName);
+                    return foundStmtDef != null ?  foundStmtDef.getStatementName() : null;
+                } else if (qNameModule != null && stmtDef.get(QName.create(qNameModule, localName)) != null) {
+                    return QName.create(qNameModule, localName);
                 }
             }
         }
