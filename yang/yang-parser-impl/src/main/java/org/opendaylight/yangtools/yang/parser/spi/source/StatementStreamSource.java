@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+
 /**
  *
  * Statement stream source, which is used for inference of effective model.
@@ -44,6 +45,8 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
  */
 public interface StatementStreamSource {
 
+    void writePreLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef) throws SourceException;
+
     /**
      *
      * Emits only linkage-related statements to supplied {@code writer}.
@@ -60,7 +63,7 @@ public interface StatementStreamSource {
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
-    void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef) throws SourceException;
+    void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef, PrefixToModule preLinkagePrefixes) throws SourceException;
 
     /**
      *

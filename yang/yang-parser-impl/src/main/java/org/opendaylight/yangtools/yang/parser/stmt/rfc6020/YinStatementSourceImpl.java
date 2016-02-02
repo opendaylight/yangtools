@@ -55,9 +55,17 @@ public class YinStatementSourceImpl implements StatementStreamSource {
     }
 
     @Override
-    public void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef) throws SourceException {
+    public void writePreLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef) throws SourceException {
         initializeReader();
         yinStatementModelParser.setAttributes(writer, stmtDef);
+        yinStatementModelParser.walk(streamReader);
+    }
+
+    @Override
+    public void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef, final PrefixToModule preLinkagePrefixes) throws SourceException {
+        initializeReader();
+        //:FIXME add namespaces
+        yinStatementModelParser.setAttributes(writer, stmtDef, preLinkagePrefixes);
         yinStatementModelParser.walk(streamReader);
     }
 

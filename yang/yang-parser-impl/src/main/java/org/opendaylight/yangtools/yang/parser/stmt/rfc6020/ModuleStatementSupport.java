@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator.MAX;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
+
 import com.google.common.base.Optional;
 import java.net.URI;
 import java.util.Date;
@@ -23,14 +24,17 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
+import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
@@ -67,6 +71,7 @@ public class ModuleStatementSupport extends
             .add(Rfc6020Mapping.TYPEDEF, 0, MAX)
             .add(Rfc6020Mapping.USES, 0, MAX)
             .add(Rfc6020Mapping.YANG_VERSION, 0, 1)
+            .add(SupportedExtensionsMapping.SEMANTIC_VERSION, 0, 1)
             .build();
 
     public ModuleStatementSupport() {
@@ -88,6 +93,24 @@ public class ModuleStatementSupport extends
             final StmtContext<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> ctx) {
         return new ModuleEffectiveStatementImpl(ctx);
     }
+
+    @Override
+    public void onPreLinkageDeclared(Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt) {
+        final String moduleName = stmt.getStatementArgument();
+
+        Optional<URI> moduleNs = Optional.fromNullable(firstAttributeOf(stmt.declaredSubstatements(),
+                NamespaceStatement.class));
+        SourceException.throwIf(!moduleNs.isPresent(), stmt.getStatementSourceReference(),
+            "Namespace of the module [%s] is missing", stmt.getStatementArgument());
+        stmt.addToNs(ModuleNameToNamespace.class, moduleName, moduleNs.get());
+
+        final String modulePrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
+        SourceException.throwIfNull(modulePrefix, stmt.getStatementSourceReference(),
+            "Prefix of the module [%s] is missing", stmt.getStatementArgument());
+        stmt.addToNs(ImpPrefixToNamespace.class, modulePrefix, moduleNs.get());
+
+        stmt.addContext(PreLinkageModuleNamespace.class, moduleName, stmt);
+    };
 
     @Override
     public void onLinkageDeclared(final Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt) {
