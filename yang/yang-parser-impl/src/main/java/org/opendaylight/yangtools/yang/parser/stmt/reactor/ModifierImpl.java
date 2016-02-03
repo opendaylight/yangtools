@@ -174,7 +174,7 @@ class ModifierImpl implements ModelActionBuilder {
 
     @Override
     public <D extends DeclaredStatement<?>> Prerequisite<D> requiresDeclared(final StmtContext<?, ? extends D, ?> context) {
-        return requiresCtxImpl(context, FULL_DECLARATION).transform(StmtContextUtils.buildDeclared());
+        return (Prerequisite<D>) requiresCtxImpl(context, FULL_DECLARATION).transform(StmtContextUtils.<D>buildDeclared());
     }
 
     @Override
@@ -187,12 +187,12 @@ class ModifierImpl implements ModelActionBuilder {
     public <K, D extends DeclaredStatement<?>, N extends StatementNamespace<K, ? extends D, ?>> Prerequisite<D> requiresDeclared(
             final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {
         final AbstractPrerequisite<StmtContext<?,D,?>> rawContext = requiresCtxImpl(context, namespace, key, FULL_DECLARATION);
-        return rawContext.transform(StmtContextUtils.buildDeclared());
+        return (Prerequisite<D>) rawContext.transform(StmtContextUtils.<D>buildDeclared());
     }
 
     @Override
     public <E extends EffectiveStatement<?, ?>> Prerequisite<E> requiresEffective(final StmtContext<?, ?, ? extends E> stmt) {
-        return requiresCtxImpl(stmt, EFFECTIVE_MODEL).transform(StmtContextUtils.buildEffective());
+        return (Prerequisite<E>) requiresCtxImpl(stmt, EFFECTIVE_MODEL).transform(StmtContextUtils.<E>buildEffective());
     }
 
     @Override
@@ -205,7 +205,7 @@ class ModifierImpl implements ModelActionBuilder {
     public <K, E extends EffectiveStatement<?, ?>, N extends StatementNamespace<K, ?, ? extends E>> Prerequisite<E> requiresEffective(
             final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {
         final AbstractPrerequisite<StmtContext<?,?,E>> rawContext = requiresCtxImpl(context, namespace, key, EFFECTIVE_MODEL);
-        return rawContext.transform(StmtContextUtils.buildEffective());
+        return (Prerequisite<E>) rawContext.transform(StmtContextUtils.<E>buildEffective());
     }
 
 
