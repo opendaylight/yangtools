@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.UnknownStatementImpl;
 public final class StmtContextUtils {
     public static final Splitter LIST_KEY_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
 
-    private static final Function<StmtContext<?, ?,?>, DeclaredStatement<?>> BUILD_DECLARED =
+    private static final Function<StmtContext<?, ?, ?>, DeclaredStatement<?>> BUILD_DECLARED =
             new Function<StmtContext<?,?,?>, DeclaredStatement<?>>() {
         @Override
         public DeclaredStatement<?> apply(final StmtContext<?, ?, ?> input) {
@@ -32,7 +32,7 @@ public final class StmtContextUtils {
         }
     };
 
-    private static final Function<StmtContext<?, ?,?>, EffectiveStatement<?,?>> BUILD_EFFECTIVE =
+    private static final Function<StmtContext<?,?,?>, EffectiveStatement<?,?>> BUILD_EFFECTIVE =
             new Function<StmtContext<?,?,?>, EffectiveStatement<?,?>>() {
         @Override
         public EffectiveStatement<?, ?> apply(final StmtContext<?, ?, ?> input) {
@@ -45,12 +45,12 @@ public final class StmtContextUtils {
     }
 
     @SuppressWarnings("unchecked")
-    public static <D extends DeclaredStatement<?>> Function<StmtContext<?, ? extends D, ?>, D> buildDeclared() {
+    public static Function<StmtContext<?, ?, ?>, DeclaredStatement<?>> buildDeclared() {
         return Function.class.cast(BUILD_DECLARED);
     }
 
     @SuppressWarnings("unchecked")
-    public static <E extends EffectiveStatement<?, ?>> Function<StmtContext<?, ?, ? extends E>, E> buildEffective() {
+    public static Function<StmtContext<?, ?, ?>, EffectiveStatement<?,?>> buildEffective() {
         return Function.class.cast(BUILD_EFFECTIVE);
     }
 
