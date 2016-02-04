@@ -15,7 +15,7 @@ import org.junit.Test;
 /**
  * Test for testing of extensions and their arguments.
  *
- * @author Lukas Sedlak <lsedlak@cisco.com>
+ * @author Lukas Sedlak &lt;lsedlak@cisco.com&gt;
  */
 public class ParsingExtensionValueTest {
 

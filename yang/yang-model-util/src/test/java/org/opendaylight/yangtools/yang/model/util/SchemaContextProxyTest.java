@@ -64,7 +64,7 @@ public class SchemaContextProxyTest {
      * CFG(R)
      *  | \
      *  |  \
-     * M2 <- M3
+     * M2 &lt;- M3
      * </pre>
      */
     @Test
@@ -87,7 +87,7 @@ public class SchemaContextProxyTest {
      * No root or additional modules
      *  | \
      *  |  \
-     * M2 <- M3
+     * M2 &lt;- M3
      * </pre>
      */
     @Test
@@ -110,7 +110,7 @@ public class SchemaContextProxyTest {
      *  Config
      *  | \ (NR)
      *  |  \
-     * M2 <- M3
+     * M2 &lt;- M3
      * </pre>
      */
     @Test
@@ -135,7 +135,7 @@ public class SchemaContextProxyTest {
      *     CFG(R)
      *    |      \
      *   |         \
-     * M2<-(NullRev)M3
+     * M2&lt;-(NullRev)M3
      * </pre>
      */
     @Test
@@ -187,7 +187,7 @@ public class SchemaContextProxyTest {
      * CFG(R)
      *  |
      *  |
-     * M2 <- M3
+     * M2 &lt;- M3
      * </pre>
      */
     @Test
@@ -210,7 +210,7 @@ public class SchemaContextProxyTest {
      * CFG(R)
      *  |
      *  |
-     * M2 -> M3 -> M4 -> M5
+     * M2 -&gt; M3 -&gt; M4 -&gt; M5
      * </pre>
      */
     @Test
@@ -236,7 +236,7 @@ public class SchemaContextProxyTest {
      * CFG(R)
      *  |
      *  |
-     * M2 -> M3 <- M4
+     * M2 -&gt; M3 &lt;- M4
      * </pre>
      */
     @Test
@@ -287,7 +287,7 @@ public class SchemaContextProxyTest {
      * CFG(R)
      *  | \
      *  |  \
-     * M2 <- M3 M4=M3(Different revision)
+     * M2 &lt;- M3 M4=M3(Different revision)
      * </pre>
      */
     @Test
@@ -312,7 +312,7 @@ public class SchemaContextProxyTest {
      * <pre>
      * CFG(R)
      * |
-     * M2 -(no revision)-> M3(R2) ... M3(R1)
+     * M2 -(no revision)-&gt; M3(R2) ... M3(R1)
      * </pre>
      */
     @Test
@@ -337,9 +337,9 @@ public class SchemaContextProxyTest {
      * CFG(R)
      * |   \
      * |    \
-     * |    M2 -> M3
+     * |    M2 -&gt; M3
      * |
-     * M41(S) => M4
+     * M41(S) =&gt; M4
      * </pre>
      */
     @Test
@@ -363,7 +363,7 @@ public class SchemaContextProxyTest {
     /**
      * <pre>
      *
-     * M2 -> M3 -> M4 -> M5
+     * M2 -&gt; M3 -&gt; M4 -&gt; M5
      *
      * </pre>
      */
@@ -392,7 +392,7 @@ public class SchemaContextProxyTest {
      *  |       M5
      * M2
      *
-     * M3 -> M4
+     * M3 -&gt; M4
      *
      * </pre>
      */

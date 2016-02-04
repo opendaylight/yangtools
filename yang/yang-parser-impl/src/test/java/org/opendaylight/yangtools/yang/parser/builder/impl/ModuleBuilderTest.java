@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.parser.util.YangParseException;
  *
  * @see org.opendaylight.yangtools.yang.parser.builder.impl.ModuleBuilder
  *
- * @author Lukas Sedlak <lsedlak@cisco.com>
+ * @author Lukas Sedlak &lt;lsedlak@cisco.com&gt;
  *
  * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */

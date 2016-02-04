@@ -111,6 +111,8 @@ public class UsesAugmentTest {
      * |-- |-- leaf ignore (U)
      *
      * U = added by uses A = added by augment
+     *
+     * @throws Exception if exception occurs
      */
     @Test
     public void testAugmentInUses() throws Exception {

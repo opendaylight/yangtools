@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.parser.builder.api.UnknownSchemaNodeBuild
  *
  * @see org.opendaylight.yangtools.yang.parser.builder.impl.RpcDefinitionBuilder
  *
- * @author Lukas Sedlak <lsedlak@cisco.com>
+ * @author Lukas Sedlak &lt;lsedlak@cisco.com&gt;
  *
  * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
