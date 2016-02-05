@@ -5,10 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-module rpc-test {
+module xml-doc-test {
     yang-version 1;
-    namespace "urn:opendaylight:controller:rpc:test";
-    prefix "rpct";
+    namespace "urn:opendaylight:controller:xml:doc:test";
+    prefix "xmldt";
 
     revision 2014-07-28 {
        description "Initial test";
