@@ -164,7 +164,7 @@ public final class GroupingUtils {
         Preconditions.checkArgument(refineTargetNodeCtx != null, "Refine target node %s not found. At %s",
                 refineTargetNodeIdentifier, refineCtx.getStatementSourceReference());
         if (StmtContextUtils.isUnknownStatement(refineTargetNodeCtx)) {
-            LOG.warn("Refine node '{}' in uses '{}' has target node unknown statement '{}'. Refine has been skipped. At line: {}",
+            LOG.debug("Refine node '{}' in uses '{}' has target node unknown statement '{}'. Refine has been skipped. At line: {}",
                     refineCtx.getStatementArgument(), refineCtx.getParentContext().getStatementArgument(), refineTargetNodeCtx.getStatementArgument(),
                     refineCtx.getStatementSourceReference());
             refineCtx.addAsEffectOfStatement(refineTargetNodeCtx);
