@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.binding.data.codec.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 import static org.opendaylight.mdsal.binding.test.model.util.ListsBindingUtils.top;
 import static org.opendaylight.mdsal.binding.test.model.util.ListsBindingUtils.topLevelList;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.augmentationBuilder;
@@ -50,6 +52,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedListBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedListKey;
+import org.opendaylight.yang.gen.v1.urn.test.foo4798.rev160101.Root;
 import org.opendaylight.yangtools.binding.data.codec.gen.impl.StreamWriterGenerator;
 import org.opendaylight.yangtools.binding.data.codec.impl.BindingNormalizedNodeCodecRegistry;
 import org.opendaylight.yangtools.sal.binding.generator.util.JavassistUtils;
@@ -67,6 +70,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableCo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
 
@@ -272,6 +276,82 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingRunti
                                 .withChild(leafNode(CHOICE_IDENTIFIER_ID_QNAME, "identifier_value")).build()).build())
                 .build();
         assertEquals(choiceContainer, entry.getValue());
+    }
+
+    @Test
+    public void test4798() {
+        final QName containerIdentifierQname4798 = Root.QNAME;
+        final QName choiceIdentifierQname4798 = QName.create(containerIdentifierQname4798, "bug4798-choice");
+        final QName nestedListQname4798 = QName.create(containerIdentifierQname4798, "list-in-case");
+        final QName nestedListKeyQname4798 = QName.create(containerIdentifierQname4798, "test-leaf");
+        final QName nestedContainerValidQname = QName.create(containerIdentifierQname4798, "case-b-container");
+        final QName nestedContainerOuterQname = QName.create(containerIdentifierQname4798, "outer-container");
+        final QName nestedContainerLeafOuterQname = QName.create(containerIdentifierQname4798,
+                "leaf-in-outer-container");
+
+        final YangInstanceIdentifier yangInstanceIdentifierOuter = YangInstanceIdentifier.of(containerIdentifierQname4798);
+        final ContainerNode containerNodeOuter = ImmutableContainerNodeBuilder.create()
+                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(containerIdentifierQname4798))
+                .withChild(ImmutableContainerNodeBuilder.create()
+                        .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(nestedContainerOuterQname))
+                        .withChild((leafNode(nestedContainerLeafOuterQname, "bar")))
+                        .build())
+                .build();
+        final Map.Entry<InstanceIdentifier<?>, DataObject> entryContainer = registry.fromNormalizedNode
+                 (yangInstanceIdentifierOuter, containerNodeOuter);
+        assertNotNull(entryContainer.getValue());
+        assertNotNull(entryContainer.getKey());
+
+        final YangInstanceIdentifier.NodeIdentifierWithPredicates nodeIdentifierWithPredicates4798 = new YangInstanceIdentifier
+                .NodeIdentifierWithPredicates( nestedListQname4798, nestedListKeyQname4798, "foo" );
+        final YangInstanceIdentifier yangInstanceIdentifier4798 = YangInstanceIdentifier.of(containerIdentifierQname4798)
+                .node(choiceIdentifierQname4798)
+                .node(nestedListQname4798)
+                .node(nodeIdentifierWithPredicates4798);
+
+        final YangInstanceIdentifier yangInstanceIdentifierValid = YangInstanceIdentifier.of(containerIdentifierQname4798)
+                .node(choiceIdentifierQname4798)
+                .node(nestedContainerValidQname)
+                .node(nestedListQname4798)
+                .node(nodeIdentifierWithPredicates4798);
+        final ContainerNode containerNodeValid = ImmutableContainerNodeBuilder.create()
+                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(containerIdentifierQname4798))
+                .withChild(ImmutableChoiceNodeBuilder.create()
+                        .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(choiceIdentifierQname4798))
+                        .withChild(ImmutableContainerNodeBuilder.create()
+                                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(nestedContainerValidQname))
+                                .withChild(ImmutableMapNodeBuilder.create().withNodeIdentifier(new YangInstanceIdentifier
+                                        .NodeIdentifier(nestedListQname4798))
+                                        .withChild(mapEntry(nestedListQname4798, nestedListKeyQname4798, "foo"))
+                                        .withChild(mapEntry(nestedListQname4798, nestedListKeyQname4798, "bar"))
+                                        .build())
+                                .build())
+                        .build())
+                .build();
+        try {
+            final Map.Entry<InstanceIdentifier<?>, DataObject> entryChoiceContainer = registry.fromNormalizedNode
+                    (yangInstanceIdentifierValid, containerNodeValid);
+            fail("Incorect YangInstanceIdentifier should fail");
+        } catch (IllegalStateException e) {
+        }
+
+        final ContainerNode containerNode4798 = ImmutableContainerNodeBuilder.create()
+                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(containerIdentifierQname4798))
+                .withChild(ImmutableChoiceNodeBuilder.create()
+                        .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(choiceIdentifierQname4798))
+                        .withChild(ImmutableMapNodeBuilder.create().withNodeIdentifier(new YangInstanceIdentifier
+                                .NodeIdentifier(nestedListQname4798))
+                                .withChild(mapEntry(nestedListQname4798, nestedListKeyQname4798, "foo"))
+                                .withChild(mapEntry(nestedListQname4798, nestedListKeyQname4798, "bar"))
+                                .build())
+                        .build())
+                .build();
+        try {
+            final Map.Entry<InstanceIdentifier<?>, DataObject> entry4798 = registry.fromNormalizedNode
+                    (yangInstanceIdentifier4798, containerNode4798);
+            fail("Incorect YangInstanceIdentifier should fail");
+        } catch (IllegalStateException e) {
+        }
     }
 
     @Test

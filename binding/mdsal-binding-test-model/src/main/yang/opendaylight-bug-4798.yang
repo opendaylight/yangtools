@@ -1,0 +1,38 @@
+module opendaylight-bug-4798.yang {
+    namespace "urn:test:foo4798";
+    prefix foo;
+
+    revision 2016-01-01 {
+    }
+
+    container root {
+        choice bug4798-choice {
+            case case-a {
+                list list-in-case {
+                    key "test-leaf";
+                    leaf test-leaf {
+                        type string;
+                        config true;
+                    }
+                }
+            }
+            case case-b {
+                container case-b-container {
+                    list list-in-case {
+                        key "test-leaf";
+                        leaf test-leaf {
+                            type string;
+                            config true;
+                        }
+                    }
+                }
+            }
+        }
+        container outer-container {
+            leaf leaf-in-outer-container {
+                type string;
+                config true;
+            }
+        }
+    }
+}
