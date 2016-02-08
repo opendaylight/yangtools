@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_5ccc95bc",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/serializer/AbstractDomSerializerTest.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-02-08T07:47:38Z",
+      "side": 1,
+      "message": "by looking at use of this class, it looks more like util class than abstract class, please reconsider it",
+      "revId": "8d3c0f07a4c8f10d578bd6d744064b0e2f0b5173",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
