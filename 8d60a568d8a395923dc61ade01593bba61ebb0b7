@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_9fed6af2",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/schema/test/BuilderTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-02-09T15:10:24Z",
+      "side": 1,
+      "message": "missing header?",
+      "revId": "8d60a568d8a395923dc61ade01593bba61ebb0b7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_ffbbd6e2",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/serializer/LeafNodeDomSerializerTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-02-09T15:10:24Z",
+      "side": 1,
+      "message": "please reconsider wrapping up code up to 100 chars size per line",
+      "revId": "8d60a568d8a395923dc61ade01593bba61ebb0b7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
