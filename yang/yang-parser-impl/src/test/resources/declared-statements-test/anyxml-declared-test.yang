@@ -1,0 +1,23 @@
+module anyxml-declared-test {
+    namespace "anyxml-declared-test";
+    prefix "axdt";
+
+    anyxml foobar {
+        when "foo = 'bar'" {
+            description "when description";
+            reference "when reference";
+        }
+        if-feature foobar-feature;
+        must "bar != 'foo'" {
+            description "must description";
+            reference "must reference";
+            error-app-tag "error";
+            error-message "error";
+        }
+        config false;
+        status current;
+        description "anyxml description";
+        reference "anyxml reference";
+        mandatory "false";
+    }
+}
