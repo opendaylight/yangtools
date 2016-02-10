@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_50e911b7",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/parser/impl/Bug4079Test.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 26,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-02-10T07:28:09Z",
+      "side": 1,
+      "message": "It is necessary to be a field of the class ?",
+      "range": {
+        "startLine": 26,
+        "startChar": 4,
+        "endLine": 26,
+        "endChar": 32
+      },
+      "revId": "33a2aa6f702ca223ed4f0567f5665d0155b8c8cd",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
