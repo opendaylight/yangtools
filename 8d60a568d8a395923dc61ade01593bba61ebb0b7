@@ -33,6 +33,24 @@
       "revId": "8d60a568d8a395923dc61ade01593bba61ebb0b7",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_ab19107b",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/serializer/LeafNodeDomSerializerTest.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-02-10T09:23:27Z",
+      "side": 1,
+      "message": "this comment is not valid, please ignore it.",
+      "parentUuid": "9a3d3df0_ffbbd6e2",
+      "revId": "8d60a568d8a395923dc61ade01593bba61ebb0b7",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
