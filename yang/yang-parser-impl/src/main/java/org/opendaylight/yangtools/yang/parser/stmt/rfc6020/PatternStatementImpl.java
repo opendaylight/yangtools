@@ -52,7 +52,7 @@ public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConst
 
         @Override
         public PatternConstraint parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-            final String pattern = "^" + value + '$';
+            final String pattern = "^" + Utils.fixUnicodeScriptPattern(value) + '$';
 
             try {
                 Pattern.compile(pattern);
