@@ -10,9 +10,8 @@ package org.opendaylight.yangtools.yang.model.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import org.junit.Test;
-
 import com.google.common.base.Optional;
+import org.junit.Test;
 
 public class MustDefinitionImplTest {
 
@@ -64,6 +63,10 @@ public class MustDefinitionImplTest {
         mdiB = MustDefinitionImpl.create("mustStr", description, Optional.of("referenceB"), errorAppTag, errorMessage);
         assertFalse("mdiA shouldn't equal to mdiB", mdiA.equals(mdiB));
 
+        assertEquals(description.get(), mdiA.getDescription());
+        assertEquals(errorAppTag.get(), mdiA.getErrorAppTag());
+        assertEquals(errorMessage.get(), mdiA.getErrorMessage());
+        assertEquals("referenceA", mdiA.getReference());
+        assertEquals(null, mdiA.getXpath());
     }
-
 }
