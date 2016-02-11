@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_6e69d1bd",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/serializer/LeafNodeDomSerializerTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 29,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-02-11T12:14:54Z",
+      "side": 1,
+      "message": "please rename according to java naming conventions for methods",
+      "range": {
+        "startLine": 29,
+        "startChar": 16,
+        "endLine": 29,
+        "endChar": 41
+      },
+      "revId": "fd25036849b97ed10351d6c62fe982feef96ddee",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
