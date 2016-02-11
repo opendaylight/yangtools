@@ -18,12 +18,14 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+
 import com.google.common.base.Charsets;
 import com.google.common.base.Function;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.collect.Collections2;
 import com.google.common.io.Files;
+import com.google.common.util.concurrent.CheckedFuture;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -31,10 +33,13 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
@@ -53,14 +58,14 @@ public class FilesystemSchemaSourceCacheTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        storageDir = Files.createTempDir();
-        doReturn(registration).when(registry).registerSchemaSource(any(SchemaSourceProvider.class), any(PotentialSchemaSource.class));
+        this.storageDir = Files.createTempDir();
+        doReturn(this.registration).when(this.registry).registerSchemaSource(any(SchemaSourceProvider.class), any(PotentialSchemaSource.class));
     }
 
     @Test
     public void testCacheAndRestore() throws Exception {
         final FilesystemSchemaSourceCache<YangTextSchemaSource> cache
-                = new FilesystemSchemaSourceCache<>(registry, YangTextSchemaSource.class, storageDir);
+                = new FilesystemSchemaSourceCache<>(this.registry, YangTextSchemaSource.class, this.storageDir);
 
         final String content = "content1";
         final YangTextSchemaSource source = new TestingYangSource("test", "2012-12-12", content);
@@ -79,12 +84,12 @@ public class FilesystemSchemaSourceCacheTest {
         assertThat(Files.toString(storedFiles.get(0), Charsets.UTF_8), either(containsString(content)).or(containsString(content2)));
         assertThat(Files.toString(storedFiles.get(1), Charsets.UTF_8), either(containsString(content)).or(containsString(content2)));
 
-        verify(registry, times(2)).registerSchemaSource(any(SchemaSourceProvider.class), any(PotentialSchemaSource.class));
+        verify(this.registry, times(2)).registerSchemaSource(any(SchemaSourceProvider.class), any(PotentialSchemaSource.class));
 
         // Create new cache from stored sources
-        new FilesystemSchemaSourceCache<>(registry, YangTextSchemaSource.class, storageDir);
+        new FilesystemSchemaSourceCache<>(this.registry, YangTextSchemaSource.class, this.storageDir);
 
-        verify(registry, times(4)).registerSchemaSource(any(SchemaSourceProvider.class), any(PotentialSchemaSource.class));
+        verify(this.registry, times(4)).registerSchemaSource(any(SchemaSourceProvider.class), any(PotentialSchemaSource.class));
 
         final List<File> storedFilesAfterNewCache = getFilesFromCache();
         assertEquals(2, storedFilesAfterNewCache.size());
@@ -102,7 +107,7 @@ public class FilesystemSchemaSourceCacheTest {
     @Test
     public void testCacheDuplicate() throws Exception {
         final FilesystemSchemaSourceCache<YangTextSchemaSource> cache
-                = new FilesystemSchemaSourceCache<>(registry, YangTextSchemaSource.class, storageDir);
+                = new FilesystemSchemaSourceCache<>(this.registry, YangTextSchemaSource.class, this.storageDir);
 
         final String content = "content1";
         final YangTextSchemaSource source = new TestingYangSource("test", null, content);
@@ -112,13 +117,13 @@ public class FilesystemSchemaSourceCacheTest {
 
         final List<File> storedFiles = getFilesFromCache();
         assertEquals(1, storedFiles.size());
-        verify(registry).registerSchemaSource(any(SchemaSourceProvider.class), any(PotentialSchemaSource.class));
+        verify(this.registry).registerSchemaSource(any(SchemaSourceProvider.class), any(PotentialSchemaSource.class));
     }
 
     @Test
     public void testCacheMultipleRevisions() throws Exception {
         final FilesystemSchemaSourceCache<YangTextSchemaSource> cache
-                = new FilesystemSchemaSourceCache<>(registry, YangTextSchemaSource.class, storageDir);
+                = new FilesystemSchemaSourceCache<>(this.registry, YangTextSchemaSource.class, this.storageDir);
 
         final String content = "content1";
         final YangTextSchemaSource source = new TestingYangSource("test", null, content);
@@ -134,11 +139,87 @@ public class FilesystemSchemaSourceCacheTest {
 
         assertThat(filesToFilenamesWithoutRevision(storedFiles), both(hasItem("test@0000-00-00")).and(hasItem("test@2012-12-12")).and(hasItem("test@2013-12-12")));
 
-        verify(registry, times(3)).registerSchemaSource(any(SchemaSourceProvider.class), any(PotentialSchemaSource.class));
+        verify(this.registry, times(3)).registerSchemaSource(any(SchemaSourceProvider.class), any(PotentialSchemaSource.class));
+    }
+
+    @Test
+    public void sourceIdToFileEmptyRevWithEmptyDir() {
+        final SourceIdentifier sourceIdentifier = new SourceIdentifier("test", "");
+        final File sourceIdToFile = FilesystemSchemaSourceCache.sourceIdToFile(sourceIdentifier, this.storageDir);
+        final FilesystemSchemaSourceCache<YangTextSchemaSource> cache = new FilesystemSchemaSourceCache<>(this.registry,
+                YangTextSchemaSource.class, sourceIdToFile);
+        Assert.assertNotNull(cache);
+        final List<File> storedFiles = Arrays.asList(sourceIdToFile.listFiles());
+        assertEquals(0, storedFiles.size());
+    }
+
+    @Test
+    public void sourceIdToFileEmptyRevWithOneItemInDir() {
+        final FilesystemSchemaSourceCache<YangTextSchemaSource> cache = new FilesystemSchemaSourceCache<>(this.registry,
+                YangTextSchemaSource.class, this.storageDir);
+        final String content = "content1";
+        final YangTextSchemaSource source = new TestingYangSource("test", "2013-12-12", content);
+        cache.offer(source);
+
+        final SourceIdentifier sourceIdentifier = new SourceIdentifier("test", "");
+        final File sourceIdToFile = FilesystemSchemaSourceCache.sourceIdToFile(sourceIdentifier,
+                this.storageDir);
+        Assert.assertNotNull(sourceIdToFile);
+        final List<File> storedFiles = Arrays.asList(this.storageDir.listFiles());
+        assertEquals(1, storedFiles.size());
+    }
+
+    @Test
+    public void sourceIdToFileEmptyRevWithMoreItemsInDir() {
+        final FilesystemSchemaSourceCache<YangTextSchemaSource> cache = new FilesystemSchemaSourceCache<>(this.registry,
+                YangTextSchemaSource.class, this.storageDir);
+        final String content = "content1";
+        final YangTextSchemaSource source = new TestingYangSource("test", "2012-12-12", content);
+        final YangTextSchemaSource source2 = new TestingYangSource("test", "2013-12-12", content);
+        cache.offer(source);
+        cache.offer(source2);
+
+        final SourceIdentifier sourceIdentifier = new SourceIdentifier("test", "");
+        final File sourceIdToFile = FilesystemSchemaSourceCache.sourceIdToFile(sourceIdentifier, this.storageDir);
+        Assert.assertNotNull(sourceIdToFile);
+        final List<File> storedFiles = Arrays.asList(this.storageDir.listFiles());
+        assertEquals(2, storedFiles.size());
+    }
+
+    @Test
+    public void test() throws Exception {
+
+        final FilesystemSchemaSourceCache<YangTextSchemaSource> cache = new FilesystemSchemaSourceCache<>(this.registry,
+                YangTextSchemaSource.class, this.storageDir);
+        final String content = "content1";
+        final YangTextSchemaSource source = new TestingYangSource("test", "2013-12-12", content);
+        cache.offer(source);
+        final SourceIdentifier sourceIdentifier = new SourceIdentifier("test", "2013-12-12");
+        final CheckedFuture<? extends YangTextSchemaSource, SchemaSourceException> checked = cache
+                .getSource(sourceIdentifier);
+        Assert.assertNotNull(checked);
+        final YangTextSchemaSource checkedGet = checked.checkedGet();
+        Assert.assertEquals(sourceIdentifier, checkedGet.getIdentifier());
+        Assert.assertTrue(checked.isDone());
+    }
+
+    @Test(expected = ExecutionException.class)
+    public void test1() throws Exception {
+
+        final FilesystemSchemaSourceCache<YangTextSchemaSource> cache = new FilesystemSchemaSourceCache<>(this.registry,
+                YangTextSchemaSource.class, this.storageDir);
+        final String content = "content1";
+        final YangTextSchemaSource source = new TestingYangSource("test", "2013-12-12", content);
+        cache.offer(source);
+        final SourceIdentifier sourceIdentifier = new SourceIdentifier("test1", "2012-12-12");
+        final CheckedFuture<? extends YangTextSchemaSource, SchemaSourceException> checked = cache
+                .getSource(sourceIdentifier);
+        Assert.assertNotNull(checked);
+        checked.get();
     }
 
     private List<File> getFilesFromCache() {
-        return Arrays.asList(storageDir.listFiles());
+        return Arrays.asList(this.storageDir.listFiles());
     }
 
     private class TestingYangSource extends YangTextSchemaSource {
@@ -157,7 +238,7 @@ public class FilesystemSchemaSourceCacheTest {
 
         @Override
         public InputStream openStream() throws IOException {
-            return new ByteArrayInputStream(content.getBytes(Charsets.UTF_8));
+            return new ByteArrayInputStream(this.content.getBytes(Charsets.UTF_8));
         }
     }
 }
