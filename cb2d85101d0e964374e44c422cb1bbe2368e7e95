@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_cb08cf93",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/schema/transform/dom/serializer/LeafSetDomSerializerTest.java",
+        "patchSetId": 14
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-02-11T10:43:41Z",
+      "side": 1,
+      "message": "should not be static",
+      "range": {
+        "startLine": 24,
+        "startChar": 12,
+        "endLine": 24,
+        "endChar": 18
+      },
+      "revId": "cb2d85101d0e964374e44c422cb1bbe2368e7e95",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
