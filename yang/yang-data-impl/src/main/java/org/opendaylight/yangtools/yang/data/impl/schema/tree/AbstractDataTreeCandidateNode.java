@@ -13,7 +13,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.Collections2;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;

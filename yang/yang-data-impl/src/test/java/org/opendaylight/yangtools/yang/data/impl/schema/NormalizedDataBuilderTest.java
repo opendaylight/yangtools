@@ -21,7 +21,10 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -77,7 +80,7 @@ public class NormalizedDataBuilderTest {
     @Test
     public void testSchemaUnaware() throws Exception {
         // Container
-        DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> builder = Builders
+        DataContainerNodeBuilder<NodeIdentifier, ContainerNode> builder = Builders
                 .containerBuilder().withNodeIdentifier(getNodeIdentifier("container"));
 
         // leaf
@@ -104,7 +107,7 @@ public class NormalizedDataBuilderTest {
                         .withValue(1).build())
                         .withChild(Builders.containerBuilder().withNodeIdentifier(getNodeIdentifier("containerInList")).build())
                         .withNodeIdentifier(
-                                new YangInstanceIdentifier.NodeIdentifierWithPredicates(getNodeIdentifier("list").getNodeType(),
+                                new NodeIdentifierWithPredicates(getNodeIdentifier("list").getNodeType(),
                                         Collections.singletonMap(getNodeIdentifier("uint32InList").getNodeType(), (Object) 1)))
                                         .build();
 
@@ -115,7 +118,7 @@ public class NormalizedDataBuilderTest {
         AugmentationNode augmentation = Builders
                 .augmentationBuilder()
                 .withNodeIdentifier(
-                        new YangInstanceIdentifier.AugmentationIdentifier(Sets.newHashSet(getQName("augmentUint32"))))
+                        new AugmentationIdentifier(Sets.newHashSet(getQName("augmentUint32"))))
                         .withChild(
                                 Builders.<Integer> leafBuilder().withNodeIdentifier(getNodeIdentifier("augmentUint32"))
                                 .withValue(11).build()).build();
@@ -130,7 +133,7 @@ public class NormalizedDataBuilderTest {
 
     @Test
     public void testSchemaAware() throws Exception {
-        DataContainerNodeBuilder<YangInstanceIdentifier.NodeIdentifier, ContainerNode> builder = Builders
+        DataContainerNodeBuilder<NodeIdentifier, ContainerNode> builder = Builders
                 .containerBuilder(containerNode);
 
         LeafSchemaNode schemaNode = (LeafSchemaNode) getSchemaNode(schema, "test", "uint32");
@@ -195,8 +198,8 @@ public class NormalizedDataBuilderTest {
         throw new IllegalStateException("Unable to find child augmentation in " + containerNode);
     }
 
-    private static YangInstanceIdentifier.NodeWithValue getNodeWithValueIdentifier(final String localName, final Object value) {
-        return new YangInstanceIdentifier.NodeWithValue(getQName(localName), value);
+    private static <T> NodeWithValue<T> getNodeWithValueIdentifier(final String localName, final T value) {
+        return new NodeWithValue<>(getQName(localName), value);
     }
 
     private static QName getQName(final String localName) {
@@ -204,8 +207,8 @@ public class NormalizedDataBuilderTest {
         return new QName(URI.create(namespace), localName);
     }
 
-    private static YangInstanceIdentifier.NodeIdentifier getNodeIdentifier(final String localName) {
-        return new YangInstanceIdentifier.NodeIdentifier(getQName(localName));
+    private static NodeIdentifier getNodeIdentifier(final String localName) {
+        return new NodeIdentifier(getQName(localName));
     }
 
     public static DataSchemaNode getSchemaNode(final SchemaContext context, final String moduleName, final String childNodeName) {

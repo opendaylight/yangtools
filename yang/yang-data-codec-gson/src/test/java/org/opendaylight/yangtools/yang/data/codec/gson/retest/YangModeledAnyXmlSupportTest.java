@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.codec.gson.retest;
 import static org.junit.Assert.assertEquals;
 import static org.opendaylight.yangtools.yang.data.codec.gson.retest.TestUtils.loadModules;
 import static org.opendaylight.yangtools.yang.data.codec.gson.retest.TestUtils.loadTextFile;
-
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
@@ -106,7 +105,7 @@ public class YangModeledAnyXmlSupportTest {
         assertEquals(expextedJson, serializedJson);
     }
 
-    private String normalizedNodeToJsonStreamTransformation(final Writer writer,
+    private static String normalizedNodeToJsonStreamTransformation(final Writer writer,
             final NormalizedNode<?, ?> inputStructure) throws IOException {
 
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(

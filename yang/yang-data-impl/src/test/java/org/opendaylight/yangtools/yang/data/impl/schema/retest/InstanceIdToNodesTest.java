@@ -16,6 +16,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
@@ -34,27 +38,21 @@ public class InstanceIdToNodesTest {
     private static final QName ID = QName.create(NS, REVISION, "id");
     private static SchemaContext ctx;
 
-    private final YangInstanceIdentifier.NodeIdentifier rootContainer = new YangInstanceIdentifier.NodeIdentifier(
-            QName.create(NS, REVISION, "test"));
-    private final YangInstanceIdentifier.NodeIdentifier outerContainer = new YangInstanceIdentifier.NodeIdentifier(
-            QName.create(NS, REVISION, "outer-container"));
-    private final YangInstanceIdentifier.NodeIdentifier augmentedLeaf = new YangInstanceIdentifier.NodeIdentifier(
-            QName.create(NS, REVISION, "augmented-leaf"));
-    private final YangInstanceIdentifier.AugmentationIdentifier augmentation = new YangInstanceIdentifier.AugmentationIdentifier(
+    private final NodeIdentifier rootContainer = new NodeIdentifier(QName.create(NS, REVISION, "test"));
+    private final NodeIdentifier outerContainer = new NodeIdentifier(QName.create(NS, REVISION, "outer-container"));
+    private final NodeIdentifier augmentedLeaf = new NodeIdentifier(QName.create(NS, REVISION, "augmented-leaf"));
+    private final AugmentationIdentifier augmentation = new AugmentationIdentifier(
             Collections.singleton(augmentedLeaf.getNodeType()));
 
-    private final YangInstanceIdentifier.NodeIdentifier outerList = new YangInstanceIdentifier.NodeIdentifier(
+    private final NodeIdentifier outerList = new NodeIdentifier(
             QName.create(NS, REVISION, "outer-list"));
-    private final YangInstanceIdentifier.NodeIdentifierWithPredicates outerListWithKey = new YangInstanceIdentifier.NodeIdentifierWithPredicates(
+    private final NodeIdentifierWithPredicates outerListWithKey = new NodeIdentifierWithPredicates(
             QName.create(NS, REVISION, "outer-list"), ID, 1);
-    private final YangInstanceIdentifier.NodeIdentifier choice = new YangInstanceIdentifier.NodeIdentifier(
-            QName.create(NS, REVISION, "outer-choice"));
-    private final YangInstanceIdentifier.NodeIdentifier leafFromCase = new YangInstanceIdentifier.NodeIdentifier(
-            QName.create(NS, REVISION, "one"));
+    private final NodeIdentifier choice = new NodeIdentifier(QName.create(NS, REVISION, "outer-choice"));
+    private final NodeIdentifier leafFromCase = new NodeIdentifier(QName.create(NS, REVISION, "one"));
 
-    private final YangInstanceIdentifier.NodeIdentifier leafList = new YangInstanceIdentifier.NodeIdentifier(
-            QName.create(NS, REVISION, "ordered-leaf-list"));
-    private final YangInstanceIdentifier.NodeWithValue leafListWithValue = new YangInstanceIdentifier.NodeWithValue(
+    private final NodeIdentifier leafList = new NodeIdentifier(QName.create(NS, REVISION, "ordered-leaf-list"));
+    private final NodeWithValue<?> leafListWithValue = new NodeWithValue<>(
             leafList.getNodeType(), "abcd");
 
     static SchemaContext createTestContext() throws URISyntaxException, FileNotFoundException, ReactorException {
@@ -122,7 +120,7 @@ public class InstanceIdToNodesTest {
                                                 .withChild(
                                                         Builders.leafBuilder()
                                                                 .withNodeIdentifier(
-                                                                        new YangInstanceIdentifier.NodeIdentifier(ID))
+                                                                        new NodeIdentifier(ID))
                                                                 .withValue(1).build())
                                                 .withChild(
                                                         Builders.choiceBuilder()
@@ -152,7 +150,7 @@ public class InstanceIdToNodesTest {
                                                 .withChild(
                                                         Builders.leafBuilder()
                                                                 .withNodeIdentifier(
-                                                                        new YangInstanceIdentifier.NodeIdentifier(ID))
+                                                                        new NodeIdentifier(ID))
                                                                 .withValue(1).build())
                                                 .withChild(
                                                         Builders.choiceBuilder()
@@ -174,7 +172,7 @@ public class InstanceIdToNodesTest {
                 .mapEntryBuilder()
                 .withNodeIdentifier(outerListWithKey)
                 .withChild(
-                        Builders.leafBuilder().withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(ID))
+                        Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(ID))
                                 .withValue(1).build()).build();
         final MapNode lastChild = Builders.mapBuilder().withNodeIdentifier(this.outerList).withChild(outerListEntry)
                 .build();

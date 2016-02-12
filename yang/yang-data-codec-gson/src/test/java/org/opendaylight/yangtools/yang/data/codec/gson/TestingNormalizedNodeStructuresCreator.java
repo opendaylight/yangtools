@@ -37,8 +37,9 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuil
 
 public class TestingNormalizedNodeStructuresCreator {
 
+    @SafeVarargs
     static NormalizedNode<?, ?> cont1Node(
-            DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?>... children) {
+            final DataContainerChild<? extends PathArgument, ?>... children) {
         DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> cont1 = Builders.containerBuilder();
         cont1.withNodeIdentifier(new NodeIdentifier(QName.create("ns:complex:json", "2014-08-11", "cont1")));
 
@@ -105,8 +106,9 @@ public class TestingNormalizedNodeStructuresCreator {
                 .withValue("lf15_11 value from augmentation").build();
     }
 
+    @SafeVarargs
     private static DataContainerChild<? extends PathArgument, ?> choc11Node(
-            DataContainerChild<? extends PathArgument, ?>... children) {
+            final DataContainerChild<? extends PathArgument, ?>... children) {
         DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> choc11Builder = Builders.choiceBuilder()
                 .withNodeIdentifier(new NodeIdentifier(QName.create("ns:complex:json", "2014-08-11", "choc11")));
         choc11Builder.withValue(Lists.newArrayList(children));
@@ -206,7 +208,7 @@ public class TestingNormalizedNodeStructuresCreator {
         return YangInstanceIdentifier.create(
                 new NodeIdentifier(QName.create("ns:complex:json", "2014-08-11", "cont1")),
                 new NodeIdentifier(QName.create("ns:complex:json", "2014-08-11", "lflst11")),
-                new NodeWithValue(QName.create("ns:complex:json", "2014-08-11", "lflst11"),"foo")
+                new NodeWithValue<>(QName.create("ns:complex:json", "2014-08-11", "lflst11"),"foo")
         );
     }
 
@@ -216,12 +218,12 @@ public class TestingNormalizedNodeStructuresCreator {
         lflst11.withChild(Builders
                 .leafSetEntryBuilder()
                 .withNodeIdentifier(
-                        new NodeWithValue(QName.create("ns:complex:json", "2014-08-11", "lflst11"), "lflst11 value1"))
+                        new NodeWithValue<>(QName.create("ns:complex:json", "2014-08-11", "lflst11"), "lflst11 value1"))
                 .withValue("lflst11 value1").build());
         lflst11.withChild(Builders
                 .leafSetEntryBuilder()
                 .withNodeIdentifier(
-                        new NodeWithValue(QName.create("ns:complex:json", "2014-08-11", "lflst11"), "lflst11 value2"))
+                        new NodeWithValue<>(QName.create("ns:complex:json", "2014-08-11", "lflst11"), "lflst11 value2"))
                 .withValue("lflst11 value2").build());
         return lflst11.build();
     }
@@ -232,12 +234,12 @@ public class TestingNormalizedNodeStructuresCreator {
         lflst11.withChild(Builders
                 .leafSetEntryBuilder()
                 .withNodeIdentifier(
-                        new NodeWithValue(QName.create("ns:complex:json", "2014-08-11", "lflst11"), "lflst11 value1\nanother line 1"))
+                        new NodeWithValue<>(QName.create("ns:complex:json", "2014-08-11", "lflst11"), "lflst11 value1\nanother line 1"))
                 .withValue("lflst11 value1\nanother line 1").build());
         lflst11.withChild(Builders
                 .leafSetEntryBuilder()
                 .withNodeIdentifier(
-                        new NodeWithValue(QName.create("ns:complex:json", "2014-08-11", "lflst11"), "lflst11 value2\r\nanother line 2"))
+                        new NodeWithValue<>(QName.create("ns:complex:json", "2014-08-11", "lflst11"), "lflst11 value2\r\nanother line 2"))
                 .withValue("lflst11 value2\r\nanother line 2").build());
         return lflst11.build();
     }
