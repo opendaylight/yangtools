@@ -17,14 +17,12 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.Lists;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
 import org.junit.Before;
@@ -52,28 +50,27 @@ public class GenerateSourcesTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        yang = new File(getClass().getResource("/yang/mock.yang").toURI()).getParent();
-        outDir = new File("/outputDir");
-        YangProvider mock = mock(YangProvider.class);
+        this.yang = new File(getClass().getResource("/yang/mock.yang").toURI()).getParent();
+        this.outDir = new File("/outputDir");
+        final YangProvider mock = mock(YangProvider.class);
         doNothing().when(mock).addYangsToMetaInf(any(MavenProject.class), any(File.class),
                 any(File[].class));
 
-        YangToSourcesProcessor processor = new YangToSourcesProcessor(new File(yang), new File[] {},
-                Lists.newArrayList(new CodeGeneratorArg(GeneratorMock.class.getName(), "outputDir")), project, false,
+        final YangToSourcesProcessor processor = new YangToSourcesProcessor(new File(this.yang), new File[] {},
+                Lists.newArrayList(new CodeGeneratorArg(GeneratorMock.class.getName(), "outputDir")), this.project, false,
                 mock);
-        mojo = new YangToSourcesMojo(processor);
-        doReturn(new File("")).when(project).getBasedir();
-        doReturn(Collections.emptyList()).when(plugin).getDependencies();
-        doReturn(plugin).when(project).getPlugin(YangToSourcesMojo.PLUGIN_NAME);
-        mojo.setProject(project);
+        this.mojo = new YangToSourcesMojo(processor);
+        doReturn(new File("")).when(this.project).getBasedir();
+        doReturn(Collections.emptyList()).when(this.plugin).getDependencies();
+        doReturn(this.plugin).when(this.project).getPlugin(YangToSourcesMojo.PLUGIN_NAME);
+        this.mojo.setProject(this.project);
     }
 
     @Test
     public void test() throws Exception {
-        mojo.execute();
-        assertEquals(1, GeneratorMock.called);
-        assertEquals(outDir, GeneratorMock.outputDir);
-        assertEquals(project, GeneratorMock.project);
+        this.mojo.execute();
+        assertEquals(this.outDir, GeneratorMock.outputDir);
+        assertEquals(this.project, GeneratorMock.project);
         assertTrue(GeneratorMock.additionalCfg.isEmpty());
         assertThat(GeneratorMock.resourceBaseDir.toString(), containsString("target" + File.separator
                 + "generated-sources" + File.separator + "spi"));
