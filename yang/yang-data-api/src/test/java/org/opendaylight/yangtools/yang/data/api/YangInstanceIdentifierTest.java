@@ -273,29 +273,29 @@ public class YangInstanceIdentifierTest {
     @Test
     public void testNodeWithValue() {
 
-        NodeWithValue node1 = new NodeWithValue( NODENAME1, "foo" );
+        NodeWithValue<?> node1 = new NodeWithValue<>( NODENAME1, "foo" );
         assertEquals( "getNodeType", NODENAME1, node1.getNodeType() );
         assertEquals( "getValue", "foo", node1.getValue() );
 
-        NodeWithValue node2 = new NodeWithValue( NODENAME1, "foo" );
+        NodeWithValue<?> node2 = new NodeWithValue<>( NODENAME1, "foo" );
 
         assertEquals( "hashCode", node1.hashCode(), node2.hashCode() );
         assertEquals( "equals", true, node1.equals( node2 ) );
 
-        assertEquals( "equals", false, node1.equals( new NodeWithValue( NODENAME1, "bar" ) ) );
-        assertEquals( "equals", false, node1.equals( new NodeWithValue( NODENAME2, "foo" ) ) );
+        assertEquals( "equals", false, node1.equals( new NodeWithValue<>( NODENAME1, "bar" ) ) );
+        assertEquals( "equals", false, node1.equals( new NodeWithValue<>( NODENAME2, "foo" ) ) );
         assertEquals( "equals", false, node1.equals( new Object() ) );
 
         assertNotNull( node1.toString() ); // for code coverage
         assertNotNull( node1.toRelativeString(node2) );
 
-        NodeWithValue node3 = new NodeWithValue( NODENAME1, new byte[]{1,2} );
-        NodeWithValue node4 = new NodeWithValue( NODENAME1, new byte[]{1,2} );
+        NodeWithValue<?> node3 = new NodeWithValue<>( NODENAME1, new byte[]{1,2} );
+        NodeWithValue<?> node4 = new NodeWithValue<>( NODENAME1, new byte[]{1,2} );
 
         assertEquals( "hashCode", node3.hashCode(), node4.hashCode() );
         assertEquals( "equals", true, node3.equals( node4 ) );
 
-        assertEquals( "equals", false, node3.equals( new NodeWithValue( NODENAME1, new byte[]{1,3} ) ) );
+        assertEquals( "equals", false, node3.equals( new NodeWithValue<>( NODENAME1, new byte[]{1,3} ) ) );
         assertEquals( "equals", false, node3.equals( node1 ) );
     }
 

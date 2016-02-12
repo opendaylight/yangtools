@@ -100,7 +100,7 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
     @Override
     public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(final T value, final Map<QName, String> attributes) {
         final ImmutableLeafSetEntryNodeBuilder<T> b = ImmutableLeafSetEntryNodeBuilder.create();
-        b.withNodeIdentifier(new NodeWithValue(nodeIdentifier.getNodeType(), value));
+        b.withNodeIdentifier(new NodeWithValue<>(nodeIdentifier.getNodeType(), value));
         b.withValue(value);
         b.withAttributes(attributes);
         return withChild(b.build());

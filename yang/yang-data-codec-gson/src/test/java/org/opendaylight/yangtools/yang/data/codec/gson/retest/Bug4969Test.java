@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.codec.gson.retest;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
 import com.google.common.base.Optional;
 import com.google.gson.stream.JsonReader;
 import java.io.File;
@@ -55,7 +54,7 @@ public class Bug4969Test {
         verifyNormalizedNodeResult(context);
     }
 
-    private void verifyNormalizedNodeResult(SchemaContext context) throws IOException, URISyntaxException {
+    private static void verifyNormalizedNodeResult(final SchemaContext context) throws IOException, URISyntaxException {
         final String inputJson = TestUtils.loadTextFile("/bug-4969/json/foo.json");
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
@@ -123,7 +122,7 @@ public class Bug4969Test {
         parseJsonToNormalizedNodes(context);
     }
 
-    private void parseJsonToNormalizedNodes(SchemaContext context) throws IOException, URISyntaxException {
+    private static void parseJsonToNormalizedNodes(final SchemaContext context) throws IOException, URISyntaxException {
         final String inputJson = TestUtils.loadTextFile("/leafref/json/data.json");
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);

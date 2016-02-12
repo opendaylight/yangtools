@@ -530,7 +530,7 @@ public class DataTreeCandidateValidatorTest {
             final QName qname, final String val) {
         final NormalizedNodeAttrBuilder<NodeWithValue, Object, LeafSetEntryNode<Object>> leafSetEntryBuilder = Builders
                 .leafSetEntryBuilder();
-        leafSetEntryBuilder.withNodeIdentifier(new NodeWithValue(qname, val));
+        leafSetEntryBuilder.withNodeIdentifier(new NodeWithValue<>(qname, val));
         leafSetEntryBuilder.withValue(val);
         return leafSetEntryBuilder.build();
     }

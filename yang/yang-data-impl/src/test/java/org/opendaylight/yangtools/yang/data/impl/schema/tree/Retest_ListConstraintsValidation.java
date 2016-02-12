@@ -18,6 +18,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
@@ -106,10 +108,10 @@ public class Retest_ListConstraintsValidation {
         final MapEntryNode fooEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "foo");
         final MapEntryNode barEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "bar");
         final MapNode mapNode1 = ImmutableNodes.mapNodeBuilder()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(MIN_MAX_LIST_QNAME))
+                .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
                 .withChild(fooEntryNode).build();
         final MapNode mapNode2 = ImmutableNodes.mapNodeBuilder()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(MIN_MAX_LIST_QNAME))
+                .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
                 .withChild(barEntryNode).build();
 
         final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
@@ -136,7 +138,7 @@ public class Retest_ListConstraintsValidation {
         final MapEntryNode barEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "bar");
         final MapEntryNode gooEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "goo");
         final MapNode mapNode = ImmutableNodes.mapNodeBuilder()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(MIN_MAX_LIST_QNAME))
+                .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
                 .withChild(fooEntryNode).build();
 
         final YangInstanceIdentifier fooPath = MIN_MAX_LIST_PATH.node(fooEntryNode.getIdentifier());
@@ -184,8 +186,8 @@ public class Retest_ListConstraintsValidation {
     public void minMaxLeafListPass() throws DataValidationFailedException {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
-        final YangInstanceIdentifier.NodeWithValue barPath = new YangInstanceIdentifier.NodeWithValue(MIN_MAX_LIST_QNAME, "bar");
-        final YangInstanceIdentifier.NodeWithValue gooPath = new YangInstanceIdentifier.NodeWithValue(MIN_MAX_LIST_QNAME, "goo");
+        final NodeWithValue<Object> barPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "bar");
+        final NodeWithValue<Object> gooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "goo");
 
         final LeafSetEntryNode<Object> barLeafSetEntry = ImmutableLeafSetEntryNodeBuilder.create()
                 .withNodeIdentifier(barPath)
@@ -195,7 +197,7 @@ public class Retest_ListConstraintsValidation {
                 .withValue("goo").build();
 
         final LeafSetNode<Object> fooLeafSetNode = ImmutableLeafSetNodeBuilder.create()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME))
+                .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME))
                 .withChildValue("foo").build();
 
         modificationTree.write(MIN_MAX_LEAF_LIST_PATH, fooLeafSetNode);
@@ -212,7 +214,7 @@ public class Retest_ListConstraintsValidation {
         final Optional<NormalizedNode<?, ?>> masterContainer = snapshotAfterCommit.readNode(MASTER_CONTAINER_PATH);
         assertTrue(masterContainer.isPresent());
         final Optional<NormalizedNodeContainer<?, ?, ?>> leafList = ((NormalizedNodeContainer) masterContainer.get()).getChild(
-                new YangInstanceIdentifier.NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME));
+                new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME));
         assertTrue(leafList.isPresent());
         assertTrue(leafList.get().getValue().size() == 2);
     }
@@ -221,10 +223,10 @@ public class Retest_ListConstraintsValidation {
     public void minMaxLeafListFail() throws DataValidationFailedException {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
-        final YangInstanceIdentifier.NodeWithValue fooPath = new YangInstanceIdentifier.NodeWithValue(MIN_MAX_LIST_QNAME, "foo");
-        final YangInstanceIdentifier.NodeWithValue barPath = new YangInstanceIdentifier.NodeWithValue(MIN_MAX_LIST_QNAME, "bar");
-        final YangInstanceIdentifier.NodeWithValue gooPath = new YangInstanceIdentifier.NodeWithValue(MIN_MAX_LIST_QNAME, "goo");
-        final YangInstanceIdentifier.NodeWithValue fuuPath = new YangInstanceIdentifier.NodeWithValue(MIN_MAX_LIST_QNAME, "fuu");
+        final NodeWithValue<Object> fooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "foo");
+        final NodeWithValue<Object> barPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "bar");
+        final NodeWithValue<Object> gooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "goo");
+        final NodeWithValue<Object> fuuPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "fuu");
 
         final LeafSetEntryNode<Object> barLeafSetEntry = ImmutableLeafSetEntryNodeBuilder.create()
                 .withNodeIdentifier(barPath)
@@ -237,7 +239,7 @@ public class Retest_ListConstraintsValidation {
                 .withValue("fuu").build();
 
         final LeafSetNode<Object> fooLeafSetNode = ImmutableLeafSetNodeBuilder.create()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME))
+                .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME))
                 .withChildValue("foo").build();
 
         modificationTree.write(MIN_MAX_LEAF_LIST_PATH, fooLeafSetNode);
@@ -254,12 +256,12 @@ public class Retest_ListConstraintsValidation {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         final UnkeyedListEntryNode foo = ImmutableUnkeyedListEntryNodeBuilder.create()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(UNKEYED_LEAF_QNAME))
+                .withNodeIdentifier(new NodeIdentifier(UNKEYED_LEAF_QNAME))
                 .withChild(ImmutableNodes.leafNode(UNKEYED_LEAF_QNAME, "foo")).build();
         final List<UnkeyedListEntryNode> unkeyedEntries = new ArrayList<>();
         unkeyedEntries.add(foo);
         final UnkeyedListNode unkeyedListNode = ImmutableUnkeyedListNodeBuilder.create()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(UNKEYED_LIST_QNAME))
+                .withNodeIdentifier(new NodeIdentifier(UNKEYED_LIST_QNAME))
                 .withValue(unkeyedEntries).build();
 
         modificationTree.write(MASTER_CONTAINER_PATH, ImmutableNodes.containerNode(MASTER_CONTAINER_QNAME));
@@ -281,16 +283,16 @@ public class Retest_ListConstraintsValidation {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         final UnkeyedListEntryNode foo = ImmutableUnkeyedListEntryNodeBuilder.create()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(UNKEYED_LEAF_QNAME))
+                .withNodeIdentifier(new NodeIdentifier(UNKEYED_LEAF_QNAME))
                 .withChild(ImmutableNodes.leafNode(UNKEYED_LEAF_QNAME, "foo")).build();
         final UnkeyedListEntryNode bar = ImmutableUnkeyedListEntryNodeBuilder.create()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(UNKEYED_LEAF_QNAME))
+                .withNodeIdentifier(new NodeIdentifier(UNKEYED_LEAF_QNAME))
                 .withChild(ImmutableNodes.leafNode(UNKEYED_LEAF_QNAME, "bar")).build();
         final List<UnkeyedListEntryNode> unkeyedEntries = new ArrayList<>();
         unkeyedEntries.add(foo);
         unkeyedEntries.add(bar);
         final UnkeyedListNode unkeyedListNode = ImmutableUnkeyedListNodeBuilder.create()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(UNKEYED_LIST_QNAME))
+                .withNodeIdentifier(new NodeIdentifier(UNKEYED_LIST_QNAME))
                 .withValue(unkeyedEntries).build();
 
         modificationTree.write(UNKEYED_LIST_PATH, unkeyedListNode);
