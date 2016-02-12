@@ -19,6 +19,9 @@ import org.junit.Test;
 import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
@@ -76,10 +79,10 @@ public class Bug4454Test {
     }
 
     private final MapEntryNode fooEntryNodeWithValue = ImmutableMapEntryNodeBuilder.create().withNodeIdentifier(new
-            YangInstanceIdentifier.NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME, fooPredicates)).
+            NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME, fooPredicates)).
             withChild(ImmutableNodes.leafNode(MIN_MAX_VALUE_LEAF_QNAME, "footest")).build();
     private final MapEntryNode BazEntryNodeWithValue = ImmutableMapEntryNodeBuilder.create().withNodeIdentifier(new
-            YangInstanceIdentifier.NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME, bazPredicates)).
+            NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME, bazPredicates)).
             withChild(ImmutableNodes.leafNode(MIN_MAX_VALUE_LEAF_QNAME, "baztest")).build();
     private final MapEntryNode fooEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME,
             "foo");
@@ -88,18 +91,18 @@ public class Bug4454Test {
     private final MapEntryNode bazEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME,
             "baz");
     private final MapNode mapNodeBazFuzWithNodes = ImmutableNodes.mapNodeBuilder()
-            .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(MIN_MAX_LIST_QNAME))
+            .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
             .withChild(bazEntryNode).withChild(BazEntryNodeWithValue).withChild(fooEntryNode)
             .build();
     private final MapNode mapNodeFooWithNodes = ImmutableNodes.mapNodeBuilder()
-            .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(MIN_MAX_LIST_QNAME))
+            .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
             .withChild(fooEntryNode).withChild(fooEntryNodeWithValue).withChild(barEntryNode).withChild(bazEntryNode)
             .build();
     private final MapNode mapNodeBar = ImmutableNodes.mapNodeBuilder()
-            .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(MIN_MAX_LIST_QNAME))
+            .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
             .withChild(barEntryNode).build();
     private final MapNode mapNodeBaz = ImmutableNodes.mapNodeBuilder()
-            .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(MIN_MAX_LIST_QNAME))
+            .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
             .withChild(bazEntryNode).build();
 
     private InMemoryDataTree inMemoryDataTree;
@@ -132,8 +135,7 @@ public class Bug4454Test {
         Map<QName, Object> key = new HashMap<>();
         key.put(MIN_MAX_KEY_LEAF_QNAME, "foo");
 
-        YangInstanceIdentifier.NodeIdentifierWithPredicates mapEntryPath2 = new YangInstanceIdentifier
-                .NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME , key);
+        NodeIdentifierWithPredicates mapEntryPath2 = new NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME , key);
 
         YangInstanceIdentifier MIN_MAX_LEAF_FOO = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH)
                 .node(MIN_MAX_LIST_QNAME).node(mapEntryPath2).build();
@@ -141,7 +143,7 @@ public class Bug4454Test {
         key.clear();
         key.put(MIN_MAX_KEY_LEAF_QNAME, "NON-EXISTING-LEAF");
 
-        mapEntryPath2 = new YangInstanceIdentifier.NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME, key);
+        mapEntryPath2 = new NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME, key);
 
         YangInstanceIdentifier MIN_MAX_LEAF_NEL = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH).node
                 (MIN_MAX_LIST_QNAME).node(mapEntryPath2).build();
@@ -149,8 +151,7 @@ public class Bug4454Test {
         final Map<QName, Object> keyTemp = new HashMap<>();
         keyTemp.put(MIN_MAX_KEY_LEAF_QNAME, "baz");
 
-        YangInstanceIdentifier.NodeIdentifierWithPredicates mapEntryPathTest = new YangInstanceIdentifier
-                .NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME , keyTemp);
+        NodeIdentifierWithPredicates mapEntryPathTest = new NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME , keyTemp);
 
         final YangInstanceIdentifier pathToBaz = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH)
                 .node(MIN_MAX_LIST_QNAME).node(mapEntryPathTest).node(MIN_MAX_VALUE_LEAF_QNAME).build();
@@ -158,7 +159,7 @@ public class Bug4454Test {
         keyTemp.clear();
         keyTemp.put(MIN_MAX_KEY_LEAF_QNAME, "bar");
 
-        mapEntryPathTest = new YangInstanceIdentifier.NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME , keyTemp);
+        mapEntryPathTest = new NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME , keyTemp);
 
         final YangInstanceIdentifier pathToBar = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH)
                 .node(MIN_MAX_LIST_QNAME).node(mapEntryPathTest).node(MIN_MAX_VALUE_LEAF_QNAME).build();
@@ -166,8 +167,7 @@ public class Bug4454Test {
         keyTemp.clear();
         keyTemp.put(MIN_MAX_KEY_LEAF_QNAME, "foo");
 
-        final YangInstanceIdentifier.NodeIdentifierWithPredicates mapEntryPathTestKey = new YangInstanceIdentifier
-                .NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME , keyTemp);
+        final NodeIdentifierWithPredicates mapEntryPathTestKey = new NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME , keyTemp);
 
         final YangInstanceIdentifier pathToKeyFoo = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH)
                 .node(MIN_MAX_LIST_QNAME).node(mapEntryPathTestKey).node(MIN_MAX_KEY_LEAF_QNAME).build();
@@ -262,8 +262,8 @@ public class Bug4454Test {
     public void minMaxLeafListPass() throws DataValidationFailedException {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
-        final YangInstanceIdentifier.NodeWithValue barPath = new YangInstanceIdentifier.NodeWithValue(MIN_MAX_LIST_QNAME, "bar");
-        final YangInstanceIdentifier.NodeWithValue gooPath = new YangInstanceIdentifier.NodeWithValue(MIN_MAX_LIST_QNAME, "goo");
+        final NodeWithValue<?> barPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "bar");
+        final NodeWithValue<?> gooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "goo");
 
         final LeafSetEntryNode<Object> barLeafSetEntry = ImmutableLeafSetEntryNodeBuilder.create()
                 .withNodeIdentifier(barPath)
@@ -273,7 +273,7 @@ public class Bug4454Test {
                 .withValue("goo").build();
 
         final LeafSetNode<Object> fooLeafSetNode = ImmutableLeafSetNodeBuilder.create()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME))
+                .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME))
                 .withChildValue("foo").build();
 
         modificationTree.write(MIN_MAX_LEAF_LIST_PATH, fooLeafSetNode);
@@ -299,7 +299,7 @@ public class Bug4454Test {
         final Optional<NormalizedNode<?, ?>> masterContainer = snapshotAfterCommit.readNode(MASTER_CONTAINER_PATH);
         assertTrue(masterContainer.isPresent());
         final Optional<NormalizedNodeContainer<?, ?, ?>> leafList = ((NormalizedNodeContainer) masterContainer.get()).getChild(
-                new YangInstanceIdentifier.NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME));
+                new NodeIdentifier(MIN_MAX_LEAF_LIST_QNAME));
         assertTrue(leafList.isPresent());
         assertTrue(leafList.get().getValue().size() == 3);
     }
@@ -312,8 +312,7 @@ public class Bug4454Test {
         Map<QName, Object> key = new HashMap<>();
         key.put(MIN_MAX_KEY_LEAF_QNAME, "foo");
 
-        YangInstanceIdentifier.NodeIdentifierWithPredicates mapEntryPath2 = new YangInstanceIdentifier
-                .NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME , key);
+        NodeIdentifierWithPredicates mapEntryPath2 = new NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME , key);
 
         YangInstanceIdentifier MIN_MAX_LEAF_FOO = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH)
                 .node(MIN_MAX_LIST_QNAME).node(mapEntryPath2).build();
@@ -321,7 +320,7 @@ public class Bug4454Test {
         key.clear();
         key.put(MIN_MAX_KEY_LEAF_QNAME, "bar");
 
-        mapEntryPath2 = new YangInstanceIdentifier.NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME, key);
+        mapEntryPath2 = new NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME, key);
 
         YangInstanceIdentifier MIN_MAX_LEAF_BAR = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH).node
                 (MIN_MAX_LIST_QNAME)
@@ -330,7 +329,7 @@ public class Bug4454Test {
         key.clear();
         key.put(MIN_MAX_KEY_LEAF_QNAME, "baz");
 
-        mapEntryPath2 = new YangInstanceIdentifier.NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME, key);
+        mapEntryPath2 = new NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME, key);
 
         YangInstanceIdentifier MIN_MAX_LEAF_BAZ = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH).node
                 (MIN_MAX_LIST_QNAME)
@@ -355,7 +354,7 @@ public class Bug4454Test {
         final MapEntryNode fooEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME_NO_MINMAX, MIN_MAX_KEY_LEAF_QNAME
                 , "foo");
         final MapNode mapNode1 = ImmutableNodes.mapNodeBuilder()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(MIN_MAX_LIST_QNAME_NO_MINMAX))
+                .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME_NO_MINMAX))
                 .withChild(fooEntryNode).build();
 
         final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
@@ -363,8 +362,7 @@ public class Bug4454Test {
         Map<QName, Object> key = new HashMap<>();
         key.put(MIN_MAX_KEY_LEAF_QNAME, "foo");
 
-        YangInstanceIdentifier.NodeIdentifierWithPredicates mapEntryPath2 = new YangInstanceIdentifier
-                .NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME_NO_MINMAX , key);
+        NodeIdentifierWithPredicates mapEntryPath2 = new NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME_NO_MINMAX , key);
 
         YangInstanceIdentifier MIN_MAX_LEAF_FOO = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH).node
                 (MIN_MAX_LIST_QNAME_NO_MINMAX).node(mapEntryPath2).build();
@@ -372,7 +370,7 @@ public class Bug4454Test {
         key.clear();
         key.put(MIN_MAX_KEY_LEAF_QNAME, "non-existing-leaf");
 
-        mapEntryPath2 = new YangInstanceIdentifier.NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME_NO_MINMAX, key);
+        mapEntryPath2 = new NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME_NO_MINMAX, key);
 
         YangInstanceIdentifier MIN_MAX_LEAF_NEL = YangInstanceIdentifier.builder(MASTER_CONTAINER_PATH).node
                 (MIN_MAX_LIST_QNAME_NO_MINMAX)

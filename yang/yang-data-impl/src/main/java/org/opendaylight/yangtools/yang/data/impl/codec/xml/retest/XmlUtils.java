@@ -73,7 +73,7 @@ public final class XmlUtils {
                 }
             } else if (pathArgument instanceof NodeWithValue) {
                 textContent.append("[.='");
-                textContent.append(((NodeWithValue) pathArgument).getValue());
+                textContent.append(((NodeWithValue<?>) pathArgument).getValue());
                 textContent.append("']");
             }
         }
