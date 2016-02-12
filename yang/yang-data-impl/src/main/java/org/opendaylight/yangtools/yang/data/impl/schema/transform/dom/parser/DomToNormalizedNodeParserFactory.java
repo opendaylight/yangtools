@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
@@ -59,7 +60,7 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
 
     private DomToNormalizedNodeParserFactory(final XmlCodecProvider codecProvider, final SchemaContext schema, final boolean strictParsing) {
         leafNodeParser = new LeafNodeDomParser(codecProvider, schema);
-        leafSetEntryNodeParser = new LeafSetEntryNodeDomParser(codecProvider, schema);
+        leafSetEntryNodeParser = new LeafSetEntryNodeDomParser<>(codecProvider, schema);
         leafSetNodeParser = new LeafSetNodeDomParser(leafSetEntryNodeParser);
         anyXmlNodeParser = new AnyXmlDomParser();
 
@@ -81,7 +82,7 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
     private DomToNormalizedNodeParserFactory(final XmlCodecProvider codecProvider, final SchemaContext schema,
                                              final BuildingStrategyProvider buildingStratProvider, final boolean strictParsing) {
         leafNodeParser = new LeafNodeDomParser(codecProvider, schema, buildingStratProvider.forLeaf());
-        leafSetEntryNodeParser = new LeafSetEntryNodeDomParser(codecProvider, schema, buildingStratProvider.forLeafSetEntry());
+        leafSetEntryNodeParser = new LeafSetEntryNodeDomParser<>(codecProvider, schema, buildingStratProvider.forLeafSetEntry());
 
         // no buildingStrategy for Augment (no use case for now)
         leafSetNodeParser = new LeafSetNodeDomParser(leafSetEntryNodeParser);
@@ -197,8 +198,8 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
             return new LeafNodeBaseParser.SimpleLeafBuildingStrategy();
         }
 
-        protected ExtensibleParser.BuildingStrategy<YangInstanceIdentifier.NodeWithValue,LeafSetEntryNode<?>> forLeafSetEntry() {
-            return new LeafSetEntryNodeBaseParser.SimpleLeafSetEntryBuildingStrategy();
+        protected <T> ExtensibleParser.BuildingStrategy<NodeWithValue<T>, LeafSetEntryNode<T>> forLeafSetEntry() {
+            return new LeafSetEntryNodeBaseParser.SimpleLeafSetEntryBuildingStrategy<>();
         }
 
         protected ExtensibleParser.BuildingStrategy<YangInstanceIdentifier.NodeIdentifier,ContainerNode> forContainer() {

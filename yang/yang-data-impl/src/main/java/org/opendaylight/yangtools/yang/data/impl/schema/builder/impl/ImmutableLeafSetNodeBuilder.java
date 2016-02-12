@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableN
 
 public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSetEntryNode<T>> {
     private static final int DEFAULT_CAPACITY = 4;
-    private final Map<NodeWithValue, LeafSetEntryNode<T>> value;
+    private final Map<NodeWithValue<T>, LeafSetEntryNode<T>> value;
     private NodeIdentifier nodeIdentifier;
 
     protected ImmutableLeafSetNodeBuilder() {
@@ -115,15 +115,15 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
             AbstractImmutableNormalizedValueNode<NodeIdentifier, Collection<LeafSetEntryNode<T>>> implements
             Immutable, LeafSetNode<T> {
 
-        private final Map<NodeWithValue, LeafSetEntryNode<T>> children;
+        private final Map<NodeWithValue<T>, LeafSetEntryNode<T>> children;
 
-        ImmutableLeafSetNode(final NodeIdentifier nodeIdentifier, final Map<NodeWithValue, LeafSetEntryNode<T>> children) {
+        ImmutableLeafSetNode(final NodeIdentifier nodeIdentifier, final Map<NodeWithValue<T>, LeafSetEntryNode<T>> children) {
             super(nodeIdentifier, UnmodifiableCollection.create(children.values()));
             this.children = children;
         }
 
         @Override
-        public Optional<LeafSetEntryNode<T>> getChild(final NodeWithValue child) {
+        public Optional<LeafSetEntryNode<T>> getChild(final NodeWithValue<T> child) {
             return Optional.fromNullable(children.get(child));
         }
 

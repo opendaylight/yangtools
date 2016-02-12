@@ -79,11 +79,11 @@ public final class Builders {
         return ImmutableLeafNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static <T> NormalizedNodeAttrBuilder<NodeWithValue, T, LeafSetEntryNode<T>> leafSetEntryBuilder() {
+    public static <T> NormalizedNodeAttrBuilder<NodeWithValue<T>, T, LeafSetEntryNode<T>> leafSetEntryBuilder() {
         return ImmutableLeafSetEntryNodeBuilder.create();
     }
 
-    public static <T> NormalizedNodeAttrBuilder<NodeWithValue, T, LeafSetEntryNode<T>> leafSetEntryBuilder(
+    public static <T> NormalizedNodeAttrBuilder<NodeWithValue<T>, T, LeafSetEntryNode<T>> leafSetEntryBuilder(
             final LeafListSchemaNode schema) {
         return ImmutableLeafSetEntryNodeSchemaAwareBuilder.create(schema);
     }
