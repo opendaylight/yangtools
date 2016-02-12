@@ -8,15 +8,14 @@
 package org.opendaylight.yangtools.util;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.google.common.base.Joiner;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Splitter;
 import com.google.common.base.Supplier;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
 import org.slf4j.Logger;
@@ -24,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 public final class ClassLoaderUtils {
     private static final Logger LOG = LoggerFactory.getLogger(ClassLoaderUtils.class);
+    private static final Splitter DOT_SPLITTER = Splitter.on('.');
 
     private ClassLoaderUtils() {
         throw new UnsupportedOperationException("Utility class");
@@ -109,12 +109,12 @@ public final class ClassLoaderUtils {
         try {
             return cls.loadClass(name);
         } catch (final ClassNotFoundException e) {
-            final String[] components = name.split("\\.");
+            final List<String> components = DOT_SPLITTER.splitToList(name);
 
             if (isInnerClass(components)) {
-                final int length = components.length;
-                final String outerName = Joiner.on(".").join(Arrays.asList(components).subList(0, length - 1));
-                final String innerName = outerName + "$" + components[length-1];
+                final int length = components.size() - 1;
+                final String outerName = Joiner.on(".").join(components.subList(0, length));
+                final String innerName = outerName + "$" + components.get(length);
                 return cls.loadClass(innerName);
             } else {
                 throw e;
@@ -122,13 +122,14 @@ public final class ClassLoaderUtils {
         }
     }
 
-    private static boolean isInnerClass(final String[] components) {
-        final int length = components.length;
-        if(length < 2) {
+    private static boolean isInnerClass(final List<String> components) {
+        final int length = components.size();
+        if (length < 2) {
             return false;
         }
-        final String potentialOuter = components[length - 2];
-        if(potentialOuter == null) {
+
+        final String potentialOuter = components.get(length - 2);
+        if (potentialOuter == null) {
             return false;
         }
         return Character.isUpperCase(potentialOuter.charAt(0));
