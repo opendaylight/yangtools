@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableN
 
 public class ImmutableOrderedLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSetEntryNode<T>> {
 
-    private Map<NodeWithValue, LeafSetEntryNode<T>> value;
+    private Map<NodeWithValue<T>, LeafSetEntryNode<T>> value;
     private NodeIdentifier nodeIdentifier;
     private boolean dirty;
 
@@ -115,16 +115,16 @@ public class ImmutableOrderedLeafSetNodeBuilder<T> implements ListNodeBuilder<T,
             AbstractImmutableNormalizedNode<NodeIdentifier, Collection<LeafSetEntryNode<T>>> implements
             Immutable, OrderedLeafSetNode<T> {
 
-        private final Map<NodeWithValue, LeafSetEntryNode<T>> children;
+        private final Map<NodeWithValue<T>, LeafSetEntryNode<T>> children;
 
         ImmutableOrderedLeafSetNode(final NodeIdentifier nodeIdentifier,
-                final Map<NodeWithValue, LeafSetEntryNode<T>> children) {
+                final Map<NodeWithValue<T>, LeafSetEntryNode<T>> children) {
             super(nodeIdentifier);
             this.children = children;
         }
 
         @Override
-        public Optional<LeafSetEntryNode<T>> getChild(final NodeWithValue child) {
+        public Optional<LeafSetEntryNode<T>> getChild(final NodeWithValue<T> child) {
             return Optional.fromNullable(children.get(child));
         }
 
@@ -133,7 +133,7 @@ public class ImmutableOrderedLeafSetNodeBuilder<T> implements ListNodeBuilder<T,
             return children.hashCode();
         }
 
-        private Map<NodeWithValue, LeafSetEntryNode<T>> getChildren() {
+        private Map<NodeWithValue<T>, LeafSetEntryNode<T>> getChildren() {
             return Collections.unmodifiableMap(children);
         }
 

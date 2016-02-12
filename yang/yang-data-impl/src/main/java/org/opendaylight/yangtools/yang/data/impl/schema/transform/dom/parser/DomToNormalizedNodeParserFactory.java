@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.parser;
 
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
@@ -197,7 +198,7 @@ public final class DomToNormalizedNodeParserFactory implements ToNormalizedNodeP
             return new LeafNodeBaseParser.SimpleLeafBuildingStrategy();
         }
 
-        protected ExtensibleParser.BuildingStrategy<YangInstanceIdentifier.NodeWithValue,LeafSetEntryNode<?>> forLeafSetEntry() {
+        protected <T> ExtensibleParser.BuildingStrategy<NodeWithValue<T>, LeafSetEntryNode<T>> forLeafSetEntry() {
             return new LeafSetEntryNodeBaseParser.SimpleLeafSetEntryBuildingStrategy();
         }
 

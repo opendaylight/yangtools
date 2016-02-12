@@ -184,8 +184,8 @@ public class ListConstraintsValidationTest {
     public void minMaxLeafListPass() throws DataValidationFailedException {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
-        final NodeWithValue<?> barPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "bar");
-        final NodeWithValue<?> gooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "goo");
+        final NodeWithValue<Object> barPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "bar");
+        final NodeWithValue<Object> gooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "goo");
 
         final LeafSetEntryNode<Object> barLeafSetEntry = ImmutableLeafSetEntryNodeBuilder.create()
                 .withNodeIdentifier(barPath)
@@ -221,10 +221,10 @@ public class ListConstraintsValidationTest {
     public void minMaxLeafListFail() throws DataValidationFailedException {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
-        final NodeWithValue<?> fooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "foo");
-        final NodeWithValue<?> barPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "bar");
-        final NodeWithValue<?> gooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "goo");
-        final NodeWithValue<?> fuuPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "fuu");
+        final NodeWithValue<Object> fooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "foo");
+        final NodeWithValue<Object> barPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "bar");
+        final NodeWithValue<Object> gooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "goo");
+        final NodeWithValue<Object> fuuPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "fuu");
 
         final LeafSetEntryNode<Object> barLeafSetEntry = ImmutableLeafSetEntryNodeBuilder.create()
                 .withNodeIdentifier(barPath)
