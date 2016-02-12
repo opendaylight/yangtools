@@ -155,24 +155,24 @@ public class NormalizedNodeXmlTranslationTest {
                 .mapEntryBuilder().withNodeIdentifier(
                         new NodeIdentifierWithPredicates(getNodeIdentifier("list").getNodeType(),
                                 predicates));
-        final NormalizedNodeBuilder<NodeIdentifier,Object,LeafNode<Object>> uint32InListBuilder
-        = Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("uint32InList"));
+        final NormalizedNodeBuilder<NodeIdentifier,Object,LeafNode<Object>> uint32InListBuilder =
+                Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("uint32InList"));
 
         list1Builder.withChild(uint32InListBuilder.withValue(3L).build());
 
         listBuilder.withChild(list1Builder.build());
         b.withChild(listBuilder.build());
 
-        final NormalizedNodeBuilder<NodeIdentifier, Object, LeafNode<Object>> booleanBuilder
-        = Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("boolean"));
+        final NormalizedNodeBuilder<NodeIdentifier, Object, LeafNode<Object>> booleanBuilder =
+                Builders.leafBuilder().withNodeIdentifier(getNodeIdentifier("boolean"));
         booleanBuilder.withValue(false);
         b.withChild(booleanBuilder.build());
 
-        final ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafListBuilder
-        = Builders.leafSetBuilder().withNodeIdentifier(getNodeIdentifier("leafList"));
+        final ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafListBuilder =
+                Builders.leafSetBuilder().withNodeIdentifier(getNodeIdentifier("leafList"));
 
-        final NormalizedNodeBuilder<NodeWithValue, Object, LeafSetEntryNode<Object>> leafList1Builder
-        = Builders.leafSetEntryBuilder().withNodeIdentifier(new NodeWithValue<>(getNodeIdentifier("leafList").getNodeType(), "a"));
+        final NormalizedNodeBuilder<NodeWithValue<Object>, Object, LeafSetEntryNode<Object>> leafList1Builder =
+                Builders.leafSetEntryBuilder().withNodeIdentifier(new NodeWithValue<>(getNodeIdentifier("leafList").getNodeType(), "a"));
 
         leafList1Builder.withValue("a");
 

@@ -262,8 +262,8 @@ public class Bug4454Test {
     public void minMaxLeafListPass() throws DataValidationFailedException {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
-        final NodeWithValue<?> barPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "bar");
-        final NodeWithValue<?> gooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "goo");
+        final NodeWithValue<Object> barPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "bar");
+        final NodeWithValue<Object> gooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "goo");
 
         final LeafSetEntryNode<Object> barLeafSetEntry = ImmutableLeafSetEntryNodeBuilder.create()
                 .withNodeIdentifier(barPath)

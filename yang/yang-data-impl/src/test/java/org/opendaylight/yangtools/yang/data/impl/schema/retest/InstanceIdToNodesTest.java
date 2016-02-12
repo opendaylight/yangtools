@@ -52,8 +52,7 @@ public class InstanceIdToNodesTest {
     private final NodeIdentifier leafFromCase = new NodeIdentifier(QName.create(NS, REVISION, "one"));
 
     private final NodeIdentifier leafList = new NodeIdentifier(QName.create(NS, REVISION, "ordered-leaf-list"));
-    private final NodeWithValue<?> leafListWithValue = new NodeWithValue<>(
-            leafList.getNodeType(), "abcd");
+    private final NodeWithValue<Object> leafListWithValue = new NodeWithValue<>(leafList.getNodeType(), "abcd");
 
     static SchemaContext createTestContext() throws URISyntaxException, FileNotFoundException, ReactorException {
         final File resourceFile = new File(InstanceIdToNodesTest.class.getResource("/filter-test.yang").toURI());

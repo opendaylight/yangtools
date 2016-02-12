@@ -49,7 +49,7 @@ public class InstanceIdToNodesTest {
     private final NodeIdentifier leafFromCase = new NodeIdentifier(QName.create(NS, REVISION, "one"));
 
     private final NodeIdentifier leafList = new NodeIdentifier(QName.create(NS, REVISION, "ordered-leaf-list"));
-    private final NodeWithValue<?> leafListWithValue = new NodeWithValue<>(leafList.getNodeType(), "abcd");
+    private final NodeWithValue<Object> leafListWithValue = new NodeWithValue<>(leafList.getNodeType(), "abcd");
 
     static SchemaContext createTestContext() throws IOException, YangSyntaxErrorException {
         final YangParserImpl parser = new YangParserImpl();
