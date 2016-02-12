@@ -1,22 +1,98 @@
 = Developer Guide
+:rfc6020: https://tools.ietf.org/html/rfc6020
+:lhotka-yang-json: https://tools.ietf.org/html/draft-lhotka-netmod-yang-json-01
 
 == Overview
+YANG Tools is set of libraries and tooling providing support for use {rfc6020}[YANG] for Java (or other JVM-based language) projects and applications.
+
+YANG Tools provides following features in OpenDaylight:
+
+- parsing of YANG sources and
+semantic inference of relationship across YANG models as defined in
+{rfc6020}[RFC6020]
+- representation of YANG-modeled data in Java
+** *Normalized Node* representation - DOM-like tree model, which uses conceptual
+  meta-model more tailored to YANG and OpenDaylight use-cases than a standard XML
+  DOM model allows for.
+- serialization / deserialization of YANG-modeled data driven by YANG
+models
+** XML - as defined in {rfc6020}[RFC6020]
+** JSON - as defined in {rfc6020}[draft-lhotka-netmod-yang-json-01]
+** support for third-party generators processing YANG models.
 
 === Architecture
+YANG Tools project consists of following logical subsystems:
+
+- *Commons* - Set of general purpose code, which is not specific to YANG, but
+  is also useful outside YANG Tools implementation.
+- *YANG Model and Parser* - YANG semantic model and lexical and semantic parser
+  of YANG models, which creates in-memory cross-referenced represenation of
+  YANG models, which is used by other components to determine their behaviour
+  based on the model.
+- *YANG Data* - Definition of Normalized Node APIs and Data Tree APIs, reference
+  implementation of these APIs and implementation of XML and JSON codecs for
+  Normalized Nodes.
+- *YANG Maven Plugin* - Maven plugin which integrates YANG parser into Maven
+  build lifecycle and provides code-generation framework for components, which
+  wants to generate code or other artefacts based on YANG model.
 
 === Concepts
+Project defines base concepts and helper classes which are project-agnostic and could be used outside of YANG Tools project scope. 
 
 === Components
 
+- yang-common
+- yang-data-api
+- yang-data-codec-gson
+- yang-data-impl
+- yang-data-jaxen
+- yang-data-transform
+- yang-data-util
+- yang-maven-plugin
+- yang-maven-plugin-it
+- yang-maven-plugin-spi
+- yang-model-api
+- yang-model-export
+- yang-model-util
+- yang-parser-api
+- yang-parser-impl
+
 ==== YANG Model API
+Class diagram of yang model API
+
+image:models/yang-model-api.png[]
 
 ==== YANG Parser
 
+Yang Statement Parser works on the idea of statement concepts as defined in RFC6020, section 6.3. We come up here with basic ModelStatement and StatementDefinition, following RFC6020 idea of having sequence of statements, where
+every statement contains keyword and zero or one argument. ModelStatement is extended by DeclaredStatement (as it comes from source, e.g. YANG source)
+and EffectiveStatement, which contains other substatements and tends to represent result of semantic processing of other statements (uses, augment for YANG). 
+IdentifierNamespace represents common superclass for YANG model namespaces.
+
+Input of the Yang Statement Parser is a collection of StatementStreamSource objects.
+StatementStreamSource interface is used for inference of effective model
+and is required to emit its statements using supplied StatementWriter.
+Each source (e.g. YANG source) has to be processed in three steps
+in order to emit different statements for each step. 
+This package provides support for various namespaces used across statement parser
+in order to map relations during declaration phase process.
+
+Currently, there are two implementations of StatementStreamSource in Yangtools:
+
+ - YangStatementSourceImpl - intended for yang sources
+ - YinStatementSourceImpl - intended for yin sources
+
 ==== YANG Data API
+Class diagram of yang data API
+
+image:models/yang-data-api.png[]
 
 ==== YANG Data Codecs
 
 ==== YANG Maven Plugin
+Maven plugin which integrates YANG parser into Maven
+  build lifecycle and provides code-generation framework for components, which
+  wants to generate code or other artefacts based on YANG model.
 
 == How to / Tutorials
 
