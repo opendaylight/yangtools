@@ -61,7 +61,7 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
         }
 
         @Override
-        protected NormalizedNodeAttrBuilder<YangInstanceIdentifier.NodeIdentifier, Object, LeafNode<Object>> getBuilder(final PathArgument node) {
+        protected NormalizedNodeAttrBuilder<NodeIdentifier, Object, LeafNode<Object>> getBuilder(final PathArgument node) {
             return Builders.leafBuilder().withNodeIdentifier(getIdentifier());
         }
 
@@ -71,16 +71,19 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
         }
     }
 
-    static final class LeafListEntryNormalization extends InstanceIdToSimpleNodes<NodeWithValue> {
+    static final class LeafListEntryNormalization extends InstanceIdToSimpleNodes<NodeWithValue<Object>> {
 
         public LeafListEntryNormalization(final LeafListSchemaNode potential) {
             super(new YangInstanceIdentifier.NodeWithValue<>(potential.getQName(), null));
         }
 
         @Override
-        protected NormalizedNodeAttrBuilder<NodeWithValue, Object, LeafSetEntryNode<Object>> getBuilder(final YangInstanceIdentifier.PathArgument node) {
+        protected NormalizedNodeAttrBuilder<NodeWithValue<Object>, Object, LeafSetEntryNode<Object>> getBuilder(final PathArgument node) {
             Preconditions.checkArgument(node instanceof YangInstanceIdentifier.NodeWithValue);
-            return Builders.leafSetEntryBuilder().withNodeIdentifier((YangInstanceIdentifier.NodeWithValue<?>) node).withValue(((YangInstanceIdentifier.NodeWithValue<?>) node).getValue());
+            @SuppressWarnings("unchecked")
+            final NodeWithValue<Object> id = (NodeWithValue<Object>) node;
+
+            return Builders.leafSetEntryBuilder().withNodeIdentifier(id).withValue(id.getValue());
         }
 
         @Override
