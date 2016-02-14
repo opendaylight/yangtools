@@ -145,9 +145,6 @@ final class ConstantArrayCollection<E> implements Collection<E>, Serializable {
         if (obj == this) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
         if (!(obj instanceof ConstantArrayCollection)) {
             return false;
         }
@@ -161,7 +158,7 @@ final class ConstantArrayCollection<E> implements Collection<E>, Serializable {
             return "[]";
         }
 
-        StringBuilder sb = new StringBuilder("[");
+        final StringBuilder sb = new StringBuilder("[");
         int i = 0;
         while (i < array.length - 1) {
             sb.append(String.valueOf(array[i++])).append(", ");
