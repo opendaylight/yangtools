@@ -8,11 +8,12 @@
 package org.opendaylight.yangtools.yang.common;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
-
+import java.util.Date;
 import org.junit.Test;
 
 public class QNameTest {
@@ -110,13 +111,31 @@ public class QNameTest {
         assertTrue(b.compareTo(a) == 0);
     }
 
+    @Test
+    public void testQName() {
+        final QName qName = QName.create(namespace, revision, localName);
+        final QName qName1 = QName.create(namespace, localName);
+        final QName qName2 = QName.create(qName1, localName);
+        assertEquals(qName1, qName.withoutRevision());
+        assertEquals(qName1, qName2);
+        assertTrue(qName.isEqualWithoutRevision(qName1));
+        assertNotNull(QName.formattedRevision(new Date()));
+        assertNotNull(qName.hashCode());
+        assertEquals(qName, qName.intern());
+    }
+
+    @Test
+    public void testQNameModule() {
+        final QNameModule qNameModule = QNameModule.create(ns, new Date());
+        assertNotNull(qNameModule.toString());
+        assertNotNull(qNameModule.getRevisionNamespace());
+    }
+
     private void assertLocalNameFails(final String localName) {
         try {
             new QName((URI)null, localName);
             fail("Local name should fail:" + localName);
         } catch (IllegalArgumentException e) {
-
         }
     }
-
 }
