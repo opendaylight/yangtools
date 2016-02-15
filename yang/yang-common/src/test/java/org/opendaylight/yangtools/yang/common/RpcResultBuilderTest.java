@@ -8,15 +8,17 @@
 
 package org.opendaylight.yangtools.yang.common;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.RpcError.ErrorSeverity;
 import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
@@ -109,6 +111,31 @@ public class RpcResultBuilderTest {
                         "message", "my-app-tag", "my-info", cause );
         verifyRpcError( result2, 1, ErrorSeverity.ERROR, ErrorType.PROTOCOL, "operation-failed",
                         "error message", null, null, null );
+    }
+
+    @Test
+    public void testErrors() {
+        final RpcResultBuilder<Object> rpcResultBuilder = RpcResultBuilder.status(true);
+        final RpcError rpcErrorShort = RpcResultBuilder.newError(RpcError.ErrorType.RPC, "tag", "msg");
+        final RpcError rpcErrorLong = RpcResultBuilder.newError(RpcError.ErrorType.RPC, "tag", "msg", "applicationTag",
+                "info", null);
+        final RpcError rpcErrorShortWarn = RpcResultBuilder.newWarning(RpcError.ErrorType.RPC, "tag", "msg");
+        final RpcError rpcErrorLongWarn = RpcResultBuilder.newWarning(RpcError.ErrorType.RPC, "tag", "msg",
+                "applicationTag",
+                "info", null);
+        rpcResultBuilder.withRpcError(rpcErrorShort);
+        final RpcResult<Object> rpcResult = rpcResultBuilder.build();
+        final RpcResultBuilder<RpcResult<Object>> rpcResultRpcResultBuilder1 = RpcResultBuilder.success
+                (rpcResultBuilder);
+        final RpcResultBuilder<RpcResult<Object>> rpcResultRpcResultBuilder2 = rpcResultRpcResultBuilder1.withResult
+                (rpcResultBuilder);
+
+        assertEquals(rpcErrorShort.getErrorType(), rpcErrorShortWarn.getErrorType());
+        assertEquals(rpcErrorLong.getErrorType(), rpcErrorLongWarn.getErrorType());
+        assertEquals(rpcResultRpcResultBuilder1, rpcResultRpcResultBuilder2);
+        assertTrue(rpcResultBuilder.buildFuture() instanceof ListenableFuture);
+        assertEquals("RpcResult [successful=true, result=null, errors=[RpcError [message=msg, severity=ERROR, " +
+                "errorType=RPC, tag=tag, applicationTag=null, info=null, cause=null]]]", rpcResult.toString());
     }
 
     @SuppressWarnings("unchecked")
