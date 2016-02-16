@@ -1,0 +1,31 @@
+module container-declared-test {
+    namespace "container-declared-test";
+    prefix "cdt";
+
+    container test-container {
+        when "foo = 'bar'";
+        if-feature foo-feature;
+        must "bar != 'foo'";
+        presence "container presence";
+        config false;
+        status current;
+        description "container description";
+        reference "container reference";
+
+        typedef tiny-integer {
+            type int8 {
+                range "1..10";
+            }
+        }
+
+        grouping grpng {
+            leaf-list lflst {
+                type string;
+            }
+        }
+
+        leaf lf {
+            type string;
+        }
+    }
+}

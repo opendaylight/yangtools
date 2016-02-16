@@ -1,0 +1,7 @@
+submodule child-module-declared-test {
+    belongs-to "parent-module-declared-test" {
+        prefix "prnt";
+    }
+
+    yang-version "1";
+}

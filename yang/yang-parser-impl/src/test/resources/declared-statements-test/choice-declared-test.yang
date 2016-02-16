@@ -1,0 +1,39 @@
+module choice-declared-test {
+    namespace "choice-declared-test";
+    prefix "chdt";
+
+    choice test-choice {
+        default case-two;
+        config false;
+        mandatory false;
+        when "bar = 'baz'";
+        if-feature foo-feature;
+        status current;
+        description "choice description";
+        reference "choice reference";
+
+        case case-one {
+            when "foo = 'bar'";
+            if-feature foobar-feature;
+            status current;
+            description "case description";
+            reference "case reference";
+
+            leaf case-one-leaf {
+                type string;
+            }
+        }
+
+        case case-two {
+            leaf case-two-leaf {
+                type string;
+            }
+        }
+
+        case case-three {
+            leaf case-three-leaf {
+                type string;
+            }
+        }
+    }
+}
