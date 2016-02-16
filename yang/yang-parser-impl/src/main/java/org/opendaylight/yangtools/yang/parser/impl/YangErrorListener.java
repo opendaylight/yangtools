@@ -38,9 +38,9 @@ public final class YangErrorListener extends BaseErrorListener {
         final Parser parser = (Parser) recognizer;
         try {
             String model = parser.getInputStream().getTokenSource().getInputStream().toString();
-            model = model.substring(0, model.indexOf("\n"));
+            model = model.substring(0, model.indexOf('\n'));
             model = model.substring(model.indexOf("module") + 6);
-            model = model.substring(0, model.indexOf("{"));
+            model = model.substring(0, model.indexOf('{'));
             model = model.trim();
             return model;
         } catch (Exception e) {
