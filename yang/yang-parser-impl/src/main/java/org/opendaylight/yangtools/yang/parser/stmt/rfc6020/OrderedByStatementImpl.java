@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.OrderedByEffectiveStatementImpl;
 
 public class OrderedByStatementImpl extends AbstractDeclaredStatement<String>
@@ -42,8 +41,7 @@ public class OrderedByStatementImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
-        public OrderedByStatement createDeclared(
-                StmtContext<String, OrderedByStatement, ?> ctx) {
+        public OrderedByStatement createDeclared(StmtContext<String, OrderedByStatement, ?> ctx) {
             return new OrderedByStatementImpl(ctx);
         }
 
@@ -55,7 +53,7 @@ public class OrderedByStatementImpl extends AbstractDeclaredStatement<String>
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<String, OrderedByStatement,
-                EffectiveStatement<String, OrderedByStatement>> stmt) throws SourceException {
+                EffectiveStatement<String, OrderedByStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

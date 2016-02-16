@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ConfigEffectiveStatementImpl;
 
 public class ConfigStatementImpl extends AbstractDeclaredStatement<Boolean> implements ConfigStatement {
@@ -34,7 +33,7 @@ public class ConfigStatementImpl extends AbstractDeclaredStatement<Boolean> impl
         }
 
         @Override
-        public Boolean parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) throws SourceException {
+        public Boolean parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return Boolean.valueOf(value);
         }
 
@@ -51,7 +50,7 @@ public class ConfigStatementImpl extends AbstractDeclaredStatement<Boolean> impl
 
         @Override
         public void onFullDefinitionDeclared(final StmtContext.Mutable<Boolean, ConfigStatement,
-                EffectiveStatement<Boolean, ConfigStatement>> stmt) throws SourceException {
+                EffectiveStatement<Boolean, ConfigStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

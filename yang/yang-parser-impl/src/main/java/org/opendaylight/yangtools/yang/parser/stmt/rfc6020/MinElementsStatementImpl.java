@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.MinElementsEffectiveStatementImpl;
 
 public class MinElementsStatementImpl extends
@@ -55,7 +54,7 @@ public class MinElementsStatementImpl extends
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<Integer, MinElementsStatement,
-                EffectiveStatement<Integer, MinElementsStatement>> stmt) throws SourceException {
+                EffectiveStatement<Integer, MinElementsStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

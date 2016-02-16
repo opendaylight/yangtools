@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IncludeEffectiveStatementImpl;
 
 public class IncludeStatementImpl extends AbstractDeclaredStatement<String> implements IncludeStatement {
@@ -109,7 +108,7 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
 
         @Override
         public void onFullDefinitionDeclared(final Mutable<String, IncludeStatement,
-                EffectiveStatement<String, IncludeStatement>> stmt) throws SourceException {
+                EffectiveStatement<String, IncludeStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

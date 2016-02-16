@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.RangeEffectiveStatementImpl;
 
 public class RangeStatementImpl extends AbstractDeclaredStatement<List<RangeConstraint>> implements RangeStatement {
@@ -68,7 +67,7 @@ public class RangeStatementImpl extends AbstractDeclaredStatement<List<RangeCons
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<List<RangeConstraint>, RangeStatement,
-                EffectiveStatement<List<RangeConstraint>, RangeStatement>> stmt) throws SourceException {
+                EffectiveStatement<List<RangeConstraint>, RangeStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

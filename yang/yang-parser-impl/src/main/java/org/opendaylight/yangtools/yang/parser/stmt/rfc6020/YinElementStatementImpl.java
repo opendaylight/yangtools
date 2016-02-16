@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.YinElementEffectiveStatementImpl;
 
 public class YinElementStatementImpl extends AbstractDeclaredStatement<Boolean>
@@ -51,7 +50,7 @@ public class YinElementStatementImpl extends AbstractDeclaredStatement<Boolean>
 
         @Override
         public void onFullDefinitionDeclared(final StmtContext.Mutable<Boolean, YinElementStatement,
-                EffectiveStatement<Boolean, YinElementStatement>> stmt) throws SourceException {
+                EffectiveStatement<Boolean, YinElementStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

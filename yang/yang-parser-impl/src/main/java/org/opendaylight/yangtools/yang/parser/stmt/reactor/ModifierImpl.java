@@ -86,13 +86,13 @@ class ModifierImpl implements ModelActionBuilder {
         return actionApplied;
     }
 
-    void failModifier() throws InferenceException {
+    void failModifier() {
         removeSatisfied();
         action.prerequisiteFailed(unsatisfied);
         action = null;
     }
 
-    private void applyAction() throws InferenceException {
+    private void applyAction() {
         Preconditions.checkState(!actionApplied);
         action.apply();
         actionApplied = true;
@@ -234,7 +234,7 @@ class ModifierImpl implements ModelActionBuilder {
 
 
     @Override
-    public void apply(final InferenceAction action) throws InferenceException {
+    public void apply(final InferenceAction action) {
         this.action = Preconditions.checkNotNull(action);
     }
 
@@ -254,7 +254,7 @@ class ModifierImpl implements ModelActionBuilder {
             return done;
         }
 
-        protected boolean resolvePrereq(final T value) throws InferenceException {
+        protected boolean resolvePrereq(final T value) {
             this.value = value;
             this.done = true;
             return isApplied();
@@ -282,7 +282,7 @@ class ModifierImpl implements ModelActionBuilder {
     private class PhaseMutation<C> extends AbstractPrerequisite<C> implements ContextMutation {
 
         @SuppressWarnings("unchecked")
-        public PhaseMutation(final StatementContextBase<?, ?, ?> context, final ModelProcessingPhase phase) throws InferenceException {
+        public PhaseMutation(final StatementContextBase<?, ?, ?> context, final ModelProcessingPhase phase) {
             context.addMutation(phase, this);
             resolvePrereq((C) context);
         }
@@ -298,14 +298,14 @@ class ModifierImpl implements ModelActionBuilder {
 
         @SuppressWarnings("unchecked")
         @Override
-        public boolean phaseFinished(final StatementContextBase<?, ?, ?> context, final ModelProcessingPhase phase) throws SourceException {
+        public boolean phaseFinished(final StatementContextBase<?, ?, ?> context, final ModelProcessingPhase phase) {
             return resolvePrereq((C) (context));
         }
     }
 
     private class NamespaceMutation<N extends IdentifierNamespace<?,?>> extends  AbstractPrerequisite<StmtContext.Mutable<?, ?, ?>>  {
 
-        public NamespaceMutation(final StatementContextBase<?, ?, ?> ctx, final Class<N> namespace) throws InferenceException {
+        public NamespaceMutation(final StatementContextBase<?, ?, ?> ctx, final Class<N> namespace) {
             resolvePrereq(ctx);
         }
 
@@ -321,14 +321,14 @@ class ModifierImpl implements ModelActionBuilder {
 
         @Override
         public void namespaceItemAdded(final StatementContextBase<?, ?, ?> context, final Class<?> namespace, final Object key,
-                final Object value) throws SourceException {
+                final Object value) {
             StatementContextBase<?, ?, ?> targetContext = (StatementContextBase<?, ?, ?>) value;
             targetContext.addPhaseCompletedListener(phase, this);
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public boolean phaseFinished(final StatementContextBase<?, ?, ?> context, final ModelProcessingPhase phase) throws SourceException {
+        public boolean phaseFinished(final StatementContextBase<?, ?, ?> context, final ModelProcessingPhase phase) {
             return resolvePrereq((C) context);
         }
 
@@ -338,7 +338,7 @@ class ModifierImpl implements ModelActionBuilder {
 
         private final ModelProcessingPhase modPhase;
 
-        public <K, N extends StatementNamespace<K, ?, ?>> PhaseModificationInNamespace(final ModelProcessingPhase phase) throws SourceException {
+        public <K, N extends StatementNamespace<K, ?, ?>> PhaseModificationInNamespace(final ModelProcessingPhase phase) {
             Preconditions.checkArgument(phase != null, "Model processing phase must not be null");
             this.modPhase = phase;
         }
@@ -346,7 +346,7 @@ class ModifierImpl implements ModelActionBuilder {
         @SuppressWarnings("unchecked")
         @Override
         public void namespaceItemAdded(final StatementContextBase<?, ?, ?> context, final Class<?> namespace, final Object key,
-                final Object value) throws SourceException {
+                final Object value) {
             StatementContextBase<?, ?, ?> targetCtx = contextImpl(value);
             targetCtx.addMutation(modPhase,this);
             resolvePrereq((C) targetCtx);

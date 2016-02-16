@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.NamespaceEffectiveStatementImpl;
 
 public class NamespaceStatementImpl extends AbstractDeclaredStatement<URI> implements NamespaceStatement {
@@ -46,7 +45,7 @@ public class NamespaceStatementImpl extends AbstractDeclaredStatement<URI> imple
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<URI, NamespaceStatement,
-                EffectiveStatement<URI, NamespaceStatement>> stmt) throws SourceException {
+                EffectiveStatement<URI, NamespaceStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

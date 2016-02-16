@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PathEffectiveStatementImpl;
 
 public class PathStatementImpl extends AbstractDeclaredStatement<RevisionAwareXPath> implements PathStatement {
@@ -53,7 +52,7 @@ public class PathStatementImpl extends AbstractDeclaredStatement<RevisionAwareXP
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<RevisionAwareXPath, PathStatement,
-                EffectiveStatement<RevisionAwareXPath, PathStatement>> stmt) throws SourceException {
+                EffectiveStatement<RevisionAwareXPath, PathStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

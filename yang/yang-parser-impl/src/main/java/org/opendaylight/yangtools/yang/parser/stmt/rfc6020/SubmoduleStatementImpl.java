@@ -92,8 +92,7 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
 
         @Override
         public void onLinkageDeclared(
-                final Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> stmt)
-                throws SourceException {
+                final Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> stmt) {
 
             final Optional<Date> revisionDate = Optional.fromNullable(
                 Utils.getLatestRevision(stmt.declaredSubstatements())).or(DEFAULT_REVISION);
@@ -117,7 +116,7 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
 
         @Override
         public void onFullDefinitionDeclared(final Mutable<String, SubmoduleStatement,
-                EffectiveStatement<String, SubmoduleStatement>> stmt) throws SourceException {
+                EffectiveStatement<String, SubmoduleStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

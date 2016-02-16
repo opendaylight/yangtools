@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.parser.impl.YangErrorListener;
 import org.opendaylight.yangtools.yang.parser.impl.YangStatementParserListenerImpl;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
@@ -78,19 +77,19 @@ public final class YangStatementSourceImpl implements StatementStreamSource {
     }
 
     @Override
-    public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef) throws SourceException {
+    public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
         yangStatementModelParser.setAttributes(writer, stmtDef);
         walker.walk(yangStatementModelParser, statementContext);
     }
 
     @Override
-    public void writeLinkageAndStatementDefinitions(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes) throws SourceException {
+    public void writeLinkageAndStatementDefinitions(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes) {
         yangStatementModelParser.setAttributes(writer, stmtDef, prefixes);
         walker.walk(yangStatementModelParser, statementContext);
     }
 
     @Override
-    public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes) throws SourceException {
+    public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes) {
         yangStatementModelParser.setAttributes(writer, stmtDef, prefixes);
         walker.walk(yangStatementModelParser, statementContext);
     }

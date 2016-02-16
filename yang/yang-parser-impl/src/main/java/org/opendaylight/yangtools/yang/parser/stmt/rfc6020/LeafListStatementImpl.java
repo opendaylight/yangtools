@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.LeafListEffectiveStatementImpl;
 
 public class LeafListStatementImpl extends AbstractDeclaredStatement<QName>
@@ -75,7 +74,7 @@ public class LeafListStatementImpl extends AbstractDeclaredStatement<QName>
 
         @Override
         public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value)
-                throws SourceException {
+                {
             return Utils.qNameFromArgument(ctx, value);
         }
 
@@ -93,7 +92,7 @@ public class LeafListStatementImpl extends AbstractDeclaredStatement<QName>
 
         @Override
         public void onFullDefinitionDeclared(Mutable<QName, LeafListStatement,
-                EffectiveStatement<QName, LeafListStatement>> stmt) throws SourceException {
+                EffectiveStatement<QName, LeafListStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

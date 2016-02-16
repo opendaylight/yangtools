@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RefineEffectiveStatementImpl;
 
 public class RefineStatementImpl extends AbstractDeclaredStatement<SchemaNodeIdentifier> implements RefineStatement {
@@ -65,7 +64,7 @@ public class RefineStatementImpl extends AbstractDeclaredStatement<SchemaNodeIde
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<SchemaNodeIdentifier, RefineStatement,
-                EffectiveStatement<SchemaNodeIdentifier, RefineStatement>> stmt) throws SourceException {
+                EffectiveStatement<SchemaNodeIdentifier, RefineStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

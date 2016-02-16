@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeviationEffectiveStatementImpl;
 
 public class DeviationStatementImpl extends AbstractDeclaredStatement<SchemaNodeIdentifier> implements DeviationStatement {
@@ -57,7 +56,7 @@ public class DeviationStatementImpl extends AbstractDeclaredStatement<SchemaNode
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<SchemaNodeIdentifier, DeviationStatement,
-                EffectiveStatement<SchemaNodeIdentifier, DeviationStatement>> stmt) throws SourceException {
+                EffectiveStatement<SchemaNodeIdentifier, DeviationStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

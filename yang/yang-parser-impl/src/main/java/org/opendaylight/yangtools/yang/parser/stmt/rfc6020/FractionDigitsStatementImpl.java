@@ -68,7 +68,7 @@ public class FractionDigitsStatementImpl extends AbstractDeclaredStatement<Integ
 
         @Override
         public void onFullDefinitionDeclared(final StmtContext.Mutable<Integer, FractionDigitsStatement,
-                EffectiveStatement<Integer, FractionDigitsStatement>> stmt) throws SourceException {
+                EffectiveStatement<Integer, FractionDigitsStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeviateEffectiveStatementImpl;
 
 public class DeviateStatementImpl extends AbstractDeclaredStatement<Deviation.Deviate> implements DeviateStatement {
@@ -48,7 +47,7 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<Deviation.De
         }
 
         @Override public Deviation.Deviate parseArgumentValue(
-                StmtContext<?, ?, ?> ctx, String value) throws SourceException {
+                StmtContext<?, ?, ?> ctx, String value) {
             return Utils.parseDeviateFromString(ctx, value);
         }
 
@@ -65,7 +64,7 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<Deviation.De
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<Deviation.Deviate, DeviateStatement,
-                EffectiveStatement<Deviation.Deviate, DeviateStatement>> stmt) throws SourceException {
+                EffectiveStatement<Deviation.Deviate, DeviateStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

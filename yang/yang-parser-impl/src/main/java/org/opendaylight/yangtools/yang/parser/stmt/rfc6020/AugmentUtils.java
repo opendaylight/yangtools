@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.TypeOfCopy;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
@@ -32,14 +31,14 @@ public final class AugmentUtils {
     }
 
     public static void copyFromSourceToTarget(final StatementContextBase<?, ?, ?> sourceCtx,
-            final StatementContextBase<?, ?, ?> targetCtx) throws SourceException {
+            final StatementContextBase<?, ?, ?> targetCtx) {
         copyDeclaredStmts(sourceCtx, targetCtx);
         copyEffectiveStmts(sourceCtx, targetCtx);
     }
 
     // FIXME: Declared statements should not be copied.
     private static void copyDeclaredStmts(final StatementContextBase<?, ?, ?> sourceCtx,
-            final StatementContextBase<?, ?, ?> targetCtx) throws SourceException {
+            final StatementContextBase<?, ?, ?> targetCtx) {
 
         final List<StatementContextBase<?, ?, ?>> subStatements = new Builder<StatementContextBase<?, ?, ?>>()
                 .addAll(targetCtx.declaredSubstatements()).addAll(targetCtx.effectiveSubstatements()).build();
@@ -62,7 +61,7 @@ public final class AugmentUtils {
     }
 
     private static void copyEffectiveStmts(final StatementContextBase<?, ?, ?> sourceCtx,
-            final StatementContextBase<?, ?, ?> targetCtx) throws SourceException {
+            final StatementContextBase<?, ?, ?> targetCtx) {
 
         final List<StatementContextBase<?, ?, ?>> subStatements = new Builder<StatementContextBase<?, ?, ?>>()
                 .addAll(targetCtx.declaredSubstatements()).addAll(targetCtx.effectiveSubstatements()).build();
