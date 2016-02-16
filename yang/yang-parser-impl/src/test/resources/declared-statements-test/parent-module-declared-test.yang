@@ -1,0 +1,7 @@
+module parent-module-declared-test {
+    namespace "parent-module-declared-test";
+    prefix "pmdt";
+    yang-version 1;
+
+    include child-module-declared-test;
+}

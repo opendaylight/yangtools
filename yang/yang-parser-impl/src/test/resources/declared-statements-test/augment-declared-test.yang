@@ -1,0 +1,20 @@
+module augment-declared-test {
+    namespace "augment-declared-test";
+    prefix "adt";
+
+    augment "/cont/sub-cont" {
+        list lst {
+            key key-leaf;
+
+            leaf key-leaf {
+                type string;
+            }
+        }
+    }
+
+    container cont {
+        container sub-cont {
+
+        }
+    }
+}
