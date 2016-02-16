@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.KeyEffectiveStatementImpl;
 
 public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<SchemaNodeIdentifier>> implements
@@ -73,7 +72,7 @@ public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<Schem
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<Collection<SchemaNodeIdentifier>, KeyStatement,
-                EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement>> stmt) throws SourceException {
+                EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

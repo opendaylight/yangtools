@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UniqueEffectiveStatementImpl;
 
 public class UniqueStatementImpl extends AbstractDeclaredStatement<Collection<SchemaNodeIdentifier.Relative>> implements UniqueStatement {
@@ -41,8 +40,7 @@ public class UniqueStatementImpl extends AbstractDeclaredStatement<Collection<Sc
         }
 
         @Override
-        public Collection<SchemaNodeIdentifier.Relative> parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) throws
-                SourceException {
+        public Collection<SchemaNodeIdentifier.Relative> parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
             return Utils.transformKeysStringToKeyNodes(ctx, value);
         }
 
@@ -60,7 +58,7 @@ public class UniqueStatementImpl extends AbstractDeclaredStatement<Collection<Sc
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<Collection<Relative>, UniqueStatement,
-                EffectiveStatement<Collection<Relative>, UniqueStatement>> stmt) throws SourceException {
+                EffectiveStatement<Collection<Relative>, UniqueStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

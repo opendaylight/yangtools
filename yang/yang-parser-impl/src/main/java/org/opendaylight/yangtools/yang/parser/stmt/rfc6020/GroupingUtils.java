@@ -47,8 +47,7 @@ public final class GroupingUtils {
      */
     public static void copyFromSourceToTarget(final StatementContextBase<?, ?, ?> sourceGrpStmtCtx,
             final StatementContextBase<?, ?, ?> targetCtx,
-            final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode)
-            throws SourceException {
+            final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode) {
 
         QNameModule newQNameModule = getNewQNameModule(targetCtx,
                 sourceGrpStmtCtx);
@@ -60,7 +59,7 @@ public final class GroupingUtils {
     public static void copyDeclaredStmts(final StatementContextBase<?, ?, ?> sourceGrpStmtCtx,
             final StatementContextBase<?, ?, ?> targetCtx,
             final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode,
-            final QNameModule newQNameModule) throws SourceException {
+            final QNameModule newQNameModule) {
         for (StatementContextBase<?, ?, ?> originalStmtCtx : sourceGrpStmtCtx.declaredSubstatements()) {
             if (needToCopyByUses(originalStmtCtx)) {
                 StatementContextBase<?, ?, ?> copy = originalStmtCtx.createCopy(newQNameModule, targetCtx,
@@ -77,7 +76,7 @@ public final class GroupingUtils {
     public static void copyEffectiveStmts(final StatementContextBase<?, ?, ?> sourceGrpStmtCtx,
             final StatementContextBase<?, ?, ?> targetCtx,
             final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode,
-            final QNameModule newQNameModule) throws SourceException {
+            final QNameModule newQNameModule) {
         for (StatementContextBase<?, ?, ?> originalStmtCtx : sourceGrpStmtCtx.effectiveSubstatements()) {
             if (needToCopyByUses(originalStmtCtx)) {
                 StatementContextBase<?, ?, ?> copy = originalStmtCtx.createCopy(newQNameModule, targetCtx,
@@ -143,7 +142,7 @@ public final class GroupingUtils {
 
     public static void resolveUsesNode(
             final Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode,
-            final StatementContextBase<?, ?, ?> targetNodeStmtCtx) throws SourceException {
+            final StatementContextBase<?, ?, ?> targetNodeStmtCtx) {
         for (StatementContextBase<?, ?, ?> subStmtCtx : usesNode.declaredSubstatements()) {
             if (StmtContextUtils.producesDeclared(subStmtCtx, RefineStatement.class)) {
                 performRefine(subStmtCtx, targetNodeStmtCtx);

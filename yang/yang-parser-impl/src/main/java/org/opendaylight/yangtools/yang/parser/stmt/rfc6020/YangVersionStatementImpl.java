@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.YangVersionEffectiveStatementImpl;
 
 public class YangVersionStatementImpl extends AbstractDeclaredStatement<String> implements YangVersionStatement {
@@ -35,7 +34,7 @@ public class YangVersionStatementImpl extends AbstractDeclaredStatement<String> 
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) throws SourceException {
+        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
             return value;
         }
 
@@ -52,7 +51,7 @@ public class YangVersionStatementImpl extends AbstractDeclaredStatement<String> 
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<String, YangVersionStatement,
-                EffectiveStatement<String, YangVersionStatement>> stmt) throws SourceException {
+                EffectiveStatement<String, YangVersionStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

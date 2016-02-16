@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Decimal64SpecificationEffectiveStatementImpl;
 
 public class Decimal64SpecificationImpl extends AbstractDeclaredStatement<String> implements Decimal64Specification {
@@ -38,7 +37,7 @@ public class Decimal64SpecificationImpl extends AbstractDeclaredStatement<String
         }
 
         @Override
-        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) throws SourceException {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 
@@ -55,7 +54,7 @@ public class Decimal64SpecificationImpl extends AbstractDeclaredStatement<String
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<String, Decimal64Specification,
-                EffectiveStatement<String, Decimal64Specification>> stmt) throws SourceException {
+                EffectiveStatement<String, Decimal64Specification>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

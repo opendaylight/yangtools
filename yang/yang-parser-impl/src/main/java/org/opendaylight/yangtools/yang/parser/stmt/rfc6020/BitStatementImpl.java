@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BitEffectiveStatementImpl;
 
 public class BitStatementImpl extends AbstractDeclaredStatement<QName> implements BitStatement {
@@ -60,7 +59,7 @@ public class BitStatementImpl extends AbstractDeclaredStatement<QName> implement
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<QName, BitStatement,
-                EffectiveStatement<QName, BitStatement>> stmt) throws SourceException {
+                EffectiveStatement<QName, BitStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

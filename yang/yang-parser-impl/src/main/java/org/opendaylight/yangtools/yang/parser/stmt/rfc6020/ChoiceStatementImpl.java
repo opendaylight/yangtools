@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ChoiceEffectiveStatementImpl;
 
 public class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
@@ -66,8 +65,7 @@ public class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value)
-                throws SourceException {
+        public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
             return Utils.qNameFromArgument(ctx, value);
         }
 
@@ -90,7 +88,7 @@ public class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
 
         @Override
         public void onFullDefinitionDeclared(Mutable<QName, ChoiceStatement,
-                EffectiveStatement<QName, ChoiceStatement>> stmt) throws SourceException {
+                EffectiveStatement<QName, ChoiceStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

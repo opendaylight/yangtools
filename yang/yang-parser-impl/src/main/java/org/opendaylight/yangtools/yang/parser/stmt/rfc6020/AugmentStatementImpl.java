@@ -89,8 +89,7 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
 
         @Override
         public void onFullDefinitionDeclared(
-                final StmtContext.Mutable<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> augmentNode)
-                throws SourceException {
+                final StmtContext.Mutable<SchemaNodeIdentifier, AugmentStatement, EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> augmentNode) {
             SUBSTATEMENT_VALIDATOR.validate(augmentNode);
 
             if (StmtContextUtils.isInExtensionBody(augmentNode)) {

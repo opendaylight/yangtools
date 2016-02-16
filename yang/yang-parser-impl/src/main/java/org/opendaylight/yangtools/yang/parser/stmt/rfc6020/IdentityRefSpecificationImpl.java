@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.IdentityRefSpecificationEffectiveStatementImpl;
 
 public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<String> implements TypeStatement.IdentityRefSpecification {
@@ -44,8 +43,7 @@ public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<Stri
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value)
-                throws SourceException {
+        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
             return value;
         }
 
@@ -64,7 +62,7 @@ public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<Stri
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<String, IdentityRefSpecification,
-                EffectiveStatement<String, IdentityRefSpecification>> stmt) throws SourceException {
+                EffectiveStatement<String, IdentityRefSpecification>> stmt) {
             final StmtContext<QName, ?, ?> baseStmt = StmtContextUtils.findFirstDeclaredSubstatement(stmt,
                     BaseStatement.class);
             Preconditions.checkArgument(baseStmt != null, "The \"base\" statement, which is a substatement to the " +
@@ -80,7 +78,7 @@ public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<Stri
 
         @Override
         public void onStatementDefinitionDeclared(StmtContext.Mutable<String, IdentityRefSpecification,
-                EffectiveStatement<String, IdentityRefSpecification>> stmt) throws SourceException {
+                EffectiveStatement<String, IdentityRefSpecification>> stmt) {
             super.onStatementDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

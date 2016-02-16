@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ContactEffectiveStatementImpl;
 
 public class ContactStatementImpl extends AbstractDeclaredStatement<String> implements ContactStatement{
@@ -34,7 +33,7 @@ public class ContactStatementImpl extends AbstractDeclaredStatement<String> impl
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) throws SourceException {
+        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
             return value;
         }
 
@@ -50,7 +49,7 @@ public class ContactStatementImpl extends AbstractDeclaredStatement<String> impl
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<String, ContactStatement,
-                EffectiveStatement<String, ContactStatement>> stmt) throws SourceException {
+                EffectiveStatement<String, ContactStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

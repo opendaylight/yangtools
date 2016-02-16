@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.GroupingEffectiveStatementImpl;
 
 public class GroupingStatementImpl extends AbstractDeclaredStatement<QName>
@@ -78,7 +77,7 @@ public class GroupingStatementImpl extends AbstractDeclaredStatement<QName>
 
         @Override
         public void onFullDefinitionDeclared(Mutable<QName, GroupingStatement,
-                EffectiveStatement<QName, GroupingStatement>> stmt) throws SourceException {
+                EffectiveStatement<QName, GroupingStatement>> stmt) {
             SUBSTATEMENT_VALIDATOR.validate(stmt);
 
             if (stmt != null && stmt.getParentContext() != null) {

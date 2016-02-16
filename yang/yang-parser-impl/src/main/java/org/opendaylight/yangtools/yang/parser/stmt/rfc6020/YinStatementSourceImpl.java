@@ -19,7 +19,6 @@ import javax.xml.stream.XMLStreamReader;
 import org.opendaylight.yangtools.yang.parser.impl.YinStatementParserImpl;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
@@ -55,7 +54,7 @@ public class YinStatementSourceImpl implements StatementStreamSource {
     }
 
     @Override
-    public void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef) throws SourceException {
+    public void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef) {
         initializeReader();
         yinStatementModelParser.setAttributes(writer, stmtDef);
         yinStatementModelParser.walk(streamReader);
@@ -63,15 +62,14 @@ public class YinStatementSourceImpl implements StatementStreamSource {
 
     @Override
     public void writeLinkageAndStatementDefinitions(StatementWriter writer, QNameToStatementDefinition stmtDef,
-            PrefixToModule prefixes) throws SourceException {
+            PrefixToModule prefixes) {
         initializeReader();
         yinStatementModelParser.setAttributes(writer, stmtDef, prefixes);
         yinStatementModelParser.walk(streamReader);
     }
 
     @Override
-    public void writeFull(StatementWriter writer, QNameToStatementDefinition stmtDef, PrefixToModule prefixes) throws
-            SourceException {
+    public void writeFull(StatementWriter writer, QNameToStatementDefinition stmtDef, PrefixToModule prefixes) {
         initializeReader();
         yinStatementModelParser.setAttributes(writer, stmtDef, prefixes);
         yinStatementModelParser.walk(streamReader);

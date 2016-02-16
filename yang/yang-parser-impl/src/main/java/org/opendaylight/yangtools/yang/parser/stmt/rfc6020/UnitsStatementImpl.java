@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnitsEffectiveStatementImpl;
 
 public class UnitsStatementImpl extends AbstractDeclaredStatement<String>
@@ -54,7 +53,7 @@ public class UnitsStatementImpl extends AbstractDeclaredStatement<String>
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<String, UnitsStatement,
-                EffectiveStatement<String, UnitsStatement>> stmt) throws SourceException {
+                EffectiveStatement<String, UnitsStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

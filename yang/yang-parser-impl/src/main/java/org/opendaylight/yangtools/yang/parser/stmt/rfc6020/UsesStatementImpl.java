@@ -70,8 +70,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
 
         @Override
         public void onFullDefinitionDeclared(
-                final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode)
-                throws SourceException {
+                final StmtContext.Mutable<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> usesNode) {
             SUBSTATEMENT_VALIDATOR.validate(usesNode);
 
             if (StmtContextUtils.isInExtensionBody(usesNode)) {

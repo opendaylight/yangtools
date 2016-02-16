@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EnumEffectiveStatementImpl;
 
 public class EnumStatementImpl extends AbstractDeclaredStatement<String> implements EnumStatement {
@@ -60,7 +59,7 @@ public class EnumStatementImpl extends AbstractDeclaredStatement<String> impleme
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<String, EnumStatement,
-                EffectiveStatement<String, EnumStatement>> stmt) throws SourceException {
+                EffectiveStatement<String, EnumStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

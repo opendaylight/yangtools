@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.InputEffectiveStatementImpl;
 
 public class InputStatementImpl extends AbstractDeclaredStatement<QName>
@@ -53,8 +52,7 @@ public class InputStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value)
-                throws SourceException {
+        public QName parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
             return Utils.qNameFromArgument(ctx, "input");
         }
 
@@ -77,7 +75,7 @@ public class InputStatementImpl extends AbstractDeclaredStatement<QName>
 
         @Override
         public void onFullDefinitionDeclared(Mutable<QName, InputStatement,
-                EffectiveStatement<QName, InputStatement>> stmt) throws SourceException {
+                EffectiveStatement<QName, InputStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

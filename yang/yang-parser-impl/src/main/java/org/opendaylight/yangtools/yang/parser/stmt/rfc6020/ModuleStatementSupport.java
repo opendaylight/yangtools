@@ -124,7 +124,7 @@ public class ModuleStatementSupport extends
 
     @Override
     public void onFullDefinitionDeclared(final Mutable<String, ModuleStatement,
-            EffectiveStatement<String, ModuleStatement>> stmt) throws SourceException {
+            EffectiveStatement<String, ModuleStatement>> stmt) {
         super.onFullDefinitionDeclared(stmt);
         SUBSTATEMENT_VALIDATOR.validate(stmt);
     }

@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.PatternConstraintEffectiveImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.PatternEffectiveStatementImpl;
 import org.slf4j.Logger;
@@ -77,7 +76,7 @@ public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConst
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<PatternConstraint, PatternStatement,
-                EffectiveStatement<PatternConstraint, PatternStatement>> stmt) throws SourceException {
+                EffectiveStatement<PatternConstraint, PatternStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

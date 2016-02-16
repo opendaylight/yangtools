@@ -37,7 +37,7 @@ public class RevisionDateStatementImpl extends AbstractDeclaredStatement<Date> i
         }
 
         @Override
-        public Date parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) throws SourceException {
+        public Date parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             try {
                 return SimpleDateFormatUtil.getRevisionFormat().parse(value);
             } catch (ParseException e) {

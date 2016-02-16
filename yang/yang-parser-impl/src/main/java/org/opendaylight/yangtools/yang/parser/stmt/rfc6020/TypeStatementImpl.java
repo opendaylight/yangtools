@@ -89,8 +89,7 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
-        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value)
-                throws SourceException {
+        public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             return value;
         }
 

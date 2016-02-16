@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.WhenEffectiveStatementImpl;
 
 public class WhenStatementImpl extends AbstractDeclaredStatement<RevisionAwareXPath> implements WhenStatement {
@@ -58,7 +57,7 @@ public class WhenStatementImpl extends AbstractDeclaredStatement<RevisionAwareXP
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<RevisionAwareXPath, WhenStatement,
-                EffectiveStatement<RevisionAwareXPath, WhenStatement>> stmt) throws SourceException {
+                EffectiveStatement<RevisionAwareXPath, WhenStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LeafrefSpecificationEffectiveStatementImpl;
 
 public class LeafrefSpecificationImpl extends AbstractDeclaredStatement<String>
@@ -40,8 +39,7 @@ public class LeafrefSpecificationImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
-        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value)
-                throws SourceException {
+        public String parseArgumentValue(StmtContext<?, ?, ?> ctx, String value) {
             return value;
         }
 
@@ -59,7 +57,7 @@ public class LeafrefSpecificationImpl extends AbstractDeclaredStatement<String>
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<String, LeafrefSpecification,
-                EffectiveStatement<String, LeafrefSpecification>> stmt) throws SourceException {
+                EffectiveStatement<String, LeafrefSpecification>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.AnyxmlSchemaLocationNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AnyXmlEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.YangModeledAnyXmlEffectiveStatementImpl;
@@ -97,7 +96,7 @@ public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implem
 
         @Override
         public void onFullDefinitionDeclared(Mutable<QName, AnyxmlStatement,
-                EffectiveStatement<QName, AnyxmlStatement>> stmt) throws SourceException {
+                EffectiveStatement<QName, AnyxmlStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

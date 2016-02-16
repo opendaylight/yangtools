@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.StatusEffectiveStatementImpl;
 
 public class StatusStatementImpl extends AbstractDeclaredStatement<Status>
@@ -56,7 +55,7 @@ public class StatusStatementImpl extends AbstractDeclaredStatement<Status>
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<Status, StatusStatement,
-                EffectiveStatement<Status, StatusStatement>> stmt) throws SourceException {
+                EffectiveStatement<Status, StatusStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

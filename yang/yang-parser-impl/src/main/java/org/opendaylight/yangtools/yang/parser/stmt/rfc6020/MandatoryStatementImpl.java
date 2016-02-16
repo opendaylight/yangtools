@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.MandatoryEffectiveStatementImpl;
 
 public class MandatoryStatementImpl extends AbstractDeclaredStatement<Boolean> implements MandatoryStatement {
@@ -64,7 +63,7 @@ public class MandatoryStatementImpl extends AbstractDeclaredStatement<Boolean> i
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<Boolean, MandatoryStatement,
-                EffectiveStatement<Boolean, MandatoryStatement>> stmt) throws SourceException {
+                EffectiveStatement<Boolean, MandatoryStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

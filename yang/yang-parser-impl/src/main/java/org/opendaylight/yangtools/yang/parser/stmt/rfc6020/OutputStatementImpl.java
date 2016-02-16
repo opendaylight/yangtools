@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.OutputEffectiveStatementImpl;
 
 public class OutputStatementImpl extends AbstractDeclaredStatement<QName> implements OutputStatement {
@@ -73,7 +72,7 @@ public class OutputStatementImpl extends AbstractDeclaredStatement<QName> implem
 
         @Override
         public void onFullDefinitionDeclared(Mutable<QName, OutputStatement,
-                EffectiveStatement<QName, OutputStatement>> stmt) throws SourceException {
+                EffectiveStatement<QName, OutputStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

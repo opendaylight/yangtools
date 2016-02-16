@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IdentityEffectiveStatementImpl;
 
 public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
@@ -62,13 +61,13 @@ public class IdentityStatementImpl extends AbstractDeclaredStatement<QName>
         }
 
         @Override
-        public void onStatementDefinitionDeclared(final StmtContext.Mutable<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> stmt) throws SourceException {
+        public void onStatementDefinitionDeclared(final StmtContext.Mutable<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> stmt) {
             stmt.addToNs(IdentityNamespace.class, stmt.getStatementArgument(), stmt);
         }
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<QName, IdentityStatement,
-                EffectiveStatement<QName, IdentityStatement>> stmt) throws SourceException {
+                EffectiveStatement<QName, IdentityStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

@@ -79,7 +79,7 @@ public class TypedefStatementImpl extends AbstractDeclaredStatement<QName> imple
 
         @Override
         public void onFullDefinitionDeclared(final StmtContext.Mutable<QName, TypedefStatement,
-                EffectiveStatement<QName, TypedefStatement>> stmt) throws SourceException {
+                EffectiveStatement<QName, TypedefStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

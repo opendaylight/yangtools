@@ -14,17 +14,14 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PresenceEffectiveStatementImpl;
 
-public class PresenceStatementImpl extends AbstractDeclaredStatement<String>
-        implements PresenceStatement {
+public class PresenceStatementImpl extends AbstractDeclaredStatement<String> implements PresenceStatement {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(Rfc6020Mapping
             .PRESENCE)
             .build();
 
-    protected PresenceStatementImpl(
-            StmtContext<String, PresenceStatement, ?> context) {
+    protected PresenceStatementImpl(StmtContext<String, PresenceStatement, ?> context) {
         super(context);
     }
 
@@ -42,8 +39,7 @@ public class PresenceStatementImpl extends AbstractDeclaredStatement<String>
         }
 
         @Override
-        public PresenceStatement createDeclared(
-                StmtContext<String, PresenceStatement, ?> ctx) {
+        public PresenceStatement createDeclared(StmtContext<String, PresenceStatement, ?> ctx) {
             return new PresenceStatementImpl(ctx);
         }
 
@@ -55,7 +51,7 @@ public class PresenceStatementImpl extends AbstractDeclaredStatement<String>
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<String, PresenceStatement,
-                EffectiveStatement<String, PresenceStatement>> stmt) throws SourceException {
+                EffectiveStatement<String, PresenceStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.NumericalRestrictionsEffectiveStatementImpl;
 
 public class NumericalRestrictionsImpl extends AbstractDeclaredStatement<String> implements
@@ -55,7 +54,7 @@ public class NumericalRestrictionsImpl extends AbstractDeclaredStatement<String>
 
         @Override
         public void onFullDefinitionDeclared(StmtContext.Mutable<String, NumericalRestrictions,
-                EffectiveStatement<String, NumericalRestrictions>> stmt) throws SourceException {
+                EffectiveStatement<String, NumericalRestrictions>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }

@@ -26,7 +26,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.NotificationEffectiveStatementImpl;
 
 public class NotificationStatementImpl extends AbstractDeclaredStatement<QName>
@@ -86,7 +85,7 @@ public class NotificationStatementImpl extends AbstractDeclaredStatement<QName>
 
         @Override
         public void onFullDefinitionDeclared(Mutable<QName, NotificationStatement,
-                EffectiveStatement<QName, NotificationStatement>> stmt) throws SourceException {
+                EffectiveStatement<QName, NotificationStatement>> stmt) {
             super.onFullDefinitionDeclared(stmt);
             SUBSTATEMENT_VALIDATOR.validate(stmt);
         }
