@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_f1292b38",
+        "filename": "yang/yang-common/src/test/java/org/opendaylight/yangtools/yang/common/QNameTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 137,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-02-17T13:08:49Z",
+      "side": 1,
+      "message": "please take this out of QNameTest.class to new test class, same applies to RpcResultBuilder and RpcError. For clarity, I assume it\u0027s better to couple it with actual implementation classes.",
+      "range": {
+        "startLine": 137,
+        "startChar": 4,
+        "endLine": 137,
+        "endChar": 37
+      },
+      "revId": "ab03b3344a1f80f7a6dbcdac515d5967a1ad0d75",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
