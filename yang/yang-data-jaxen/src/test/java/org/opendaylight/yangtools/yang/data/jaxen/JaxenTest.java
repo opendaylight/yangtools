@@ -11,6 +11,8 @@ package org.opendaylight.yangtools.yang.data.jaxen;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 
 import com.google.common.base.Converter;
 import com.google.common.base.Optional;
@@ -22,9 +24,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.xpath.XPathExpressionException;
+import org.jaxen.Context;
+import org.jaxen.Function;
+import org.jaxen.FunctionCallException;
 import org.jaxen.UnresolvableException;
 import org.jaxen.UnsupportedAxisException;
 import org.junit.Before;
@@ -143,10 +149,20 @@ public class JaxenTest {
     }
 
     @Test(expected = UnresolvableException.class)
-    public void testYangFunctionContext() throws UnresolvableException {
-        YangFunctionContext yangFun = YangFunctionContext.getInstance();
+    public void testYangFunctionContext() throws UnresolvableException, FunctionCallException {
+        final YangFunctionContext yangFun = YangFunctionContext.getInstance();
         assertNotNull(yangFun);
-        assertNotNull(yangFun.getFunction("urn:opendaylight.test2", null, "current"));
+        final Function function = yangFun.getFunction("urn:opendaylight.test2", null, "current");
+        assertNotNull(function);
+
+        try {
+            final Context context = mock(Context.class);
+            final ArrayList<Object> list = new ArrayList<>();
+            function.call(context, list);
+            fail();
+        } catch (VerifyException e) {
+        }
+
         yangFun.getFunction("urn:opendaylight.test2", "test2", "root");
     }
 
