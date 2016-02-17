@@ -22,6 +22,29 @@
       "revId": "ab03b3344a1f80f7a6dbcdac515d5967a1ad0d75",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_91189f1f",
+        "filename": "yang/yang-data-api/src/test/java/org/opendaylight/yangtools/yang/data/api/PathArgumentListTest.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-02-17T13:11:16Z",
+      "side": 1,
+      "message": "please take this out of QNameTest.class to new test class. For clarity, I assume it\u0027s better to couple it with actual implementation classes.",
+      "range": {
+        "startLine": 140,
+        "startChar": 3,
+        "endLine": 140,
+        "endChar": 36
+      },
+      "revId": "ab03b3344a1f80f7a6dbcdac515d5967a1ad0d75",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
