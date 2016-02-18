@@ -55,53 +55,9 @@ public final class SchemaTracker {
     private final DataNodeContainer root;
 
     private SchemaTracker(final SchemaContext context, final SchemaPath path) {
-        SchemaNode current = Preconditions.checkNotNull(context);
-        for (final QName qname : path.getPathFromRoot()) {
-            SchemaNode child;
-            if(current instanceof DataNodeContainer) {
-                child = ((DataNodeContainer) current).getDataChildByName(qname);
-
-                if (child == null && current instanceof SchemaContext) {
-                    child = tryFindGroupings((SchemaContext) current, qname).orNull();
-                }
-
-                if(child == null && current instanceof SchemaContext) {
-                    child = tryFindNotification((SchemaContext) current, qname)
-                            .or(tryFindRpc(((SchemaContext) current), qname)).orNull();
-                }
-            } else if (current instanceof ChoiceSchemaNode) {
-                child = ((ChoiceSchemaNode) current).getCaseNodeByName(qname);
-            } else if (current instanceof RpcDefinition) {
-                switch (qname.getLocalName()) {
-                    case "input":
-                        child = ((RpcDefinition) current).getInput();
-                        break;
-                    case "output":
-                        child = ((RpcDefinition) current).getOutput();
-                        break;
-                    default:
-                        child = null;
-                        break;
-                }
-            } else {
-                throw new IllegalArgumentException(String.format("Schema node %s does not allow children.", current));
-            }
-            current = child;
-        }
+        SchemaNode current = SchemaUtils.findParentSchemaOnPath(context, path);
         Preconditions.checkArgument(current instanceof DataNodeContainer,"Schema path must point to container or list or an rpc input/output. Supplied path %s pointed to: %s",path,current);
         root = (DataNodeContainer) current;
-    }
-
-    private static Optional<SchemaNode> tryFindGroupings(final SchemaContext ctx, final QName qname) {
-        return Optional.<SchemaNode> fromNullable(Iterables.find(ctx.getGroupings(), new SchemaNodePredicate(qname), null));
-    }
-
-    private static Optional<SchemaNode> tryFindRpc(final SchemaContext ctx, final QName qname) {
-        return Optional.<SchemaNode>fromNullable(Iterables.find(ctx.getOperations(), new SchemaNodePredicate(qname), null));
-    }
-
-    private static Optional<SchemaNode> tryFindNotification(final SchemaContext ctx, final QName qname) {
-        return Optional.<SchemaNode>fromNullable(Iterables.find(ctx.getNotifications(), new SchemaNodePredicate(qname), null));
     }
 
     /**
@@ -279,16 +235,4 @@ public final class SchemaTracker {
         return schemaStack.pop();
     }
 
-    private static final class SchemaNodePredicate implements Predicate<SchemaNode> {
-        private final QName qname;
-
-        public SchemaNodePredicate(final QName qname) {
-            this.qname = qname;
-        }
-
-        @Override
-        public boolean apply(final SchemaNode input) {
-            return input.getQName().equals(qname);
-        }
-    }
 }

@@ -10,8 +10,10 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import java.util.Collection;
@@ -31,6 +33,10 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public final class SchemaUtils {
 
@@ -395,6 +401,74 @@ public final class SchemaUtils {
     public static AugmentationIdentifier getNodeIdentifierForAugmentation(final AugmentationSchema schema) {
         final Collection<QName> qnames = Collections2.transform(schema.getChildNodes(), QNAME_FUNCTION);
         return new AugmentationIdentifier(ImmutableSet.copyOf(qnames));
+    }
+
+    /**
+     * Finds schema node for given path in schema context.
+     * @param schemaContext schema context
+     * @param path path
+     * @return schema node on path
+     */
+    public static SchemaNode findParentSchemaOnPath(final SchemaContext schemaContext, final SchemaPath path) {
+        SchemaNode current = Preconditions.checkNotNull(schemaContext);
+        for (final QName qname : path.getPathFromRoot()) {
+            SchemaNode child;
+            if(current instanceof DataNodeContainer) {
+                child = ((DataNodeContainer) current).getDataChildByName(qname);
+
+                if (child == null && current instanceof SchemaContext) {
+                    child = tryFindGroupings((SchemaContext) current, qname).orNull();
+                }
+
+                if(child == null && current instanceof SchemaContext) {
+                    child = tryFindNotification((SchemaContext) current, qname)
+                            .or(tryFindRpc(((SchemaContext) current), qname)).orNull();
+                }
+            } else if (current instanceof ChoiceSchemaNode) {
+                child = ((ChoiceSchemaNode) current).getCaseNodeByName(qname);
+            } else if (current instanceof RpcDefinition) {
+                switch (qname.getLocalName()) {
+                    case "input":
+                        child = ((RpcDefinition) current).getInput();
+                        break;
+                    case "output":
+                        child = ((RpcDefinition) current).getOutput();
+                        break;
+                    default:
+                        child = null;
+                        break;
+                }
+            } else {
+                throw new IllegalArgumentException(String.format("Schema node %s does not allow children.", current));
+            }
+            current = child;
+        }
+        return current;
+    }
+
+    private static Optional<SchemaNode> tryFindGroupings(final SchemaContext ctx, final QName qname) {
+        return Optional.<SchemaNode> fromNullable(Iterables.find(ctx.getGroupings(), new SchemaNodePredicate(qname), null));
+    }
+
+    private static Optional<SchemaNode> tryFindRpc(final SchemaContext ctx, final QName qname) {
+        return Optional.<SchemaNode>fromNullable(Iterables.find(ctx.getOperations(), new SchemaNodePredicate(qname), null));
+    }
+
+    private static Optional<SchemaNode> tryFindNotification(final SchemaContext ctx, final QName qname) {
+        return Optional.<SchemaNode>fromNullable(Iterables.find(ctx.getNotifications(), new SchemaNodePredicate(qname), null));
+    }
+
+    private static final class SchemaNodePredicate implements Predicate<SchemaNode> {
+        private final QName qname;
+
+        public SchemaNodePredicate(final QName qname) {
+            this.qname = qname;
+        }
+
+        @Override
+        public boolean apply(final SchemaNode input) {
+            return input.getQName().equals(qname);
+        }
     }
 
 }
