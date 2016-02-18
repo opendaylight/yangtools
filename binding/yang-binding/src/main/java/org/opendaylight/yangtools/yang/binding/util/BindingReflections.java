@@ -566,15 +566,15 @@ public class BindingReflections {
             } catch (Exception e) {
                 throw new IllegalStateException("Unable to get QName for " + key + ". YangModuleInfo was not found.", e);
             }
-            final QName module = QName.cachedReference(getModuleQName(moduleInfo));
+            final QName module = getModuleQName(moduleInfo).intern();
             if (Augmentation.class.isAssignableFrom(key)) {
                 return module;
             } else if (isRpcType(key)) {
                 final String className = key.getSimpleName();
                 if (className.endsWith(BindingMapping.RPC_OUTPUT_SUFFIX)) {
-                    return QName.cachedReference(QName.create(module, "output"));
+                    return QName.create(module, "output").intern();
                 } else {
-                    return QName.cachedReference(QName.create(module, "input"));
+                    return QName.create(module, "input").intern();
                 }
             }
             /*
