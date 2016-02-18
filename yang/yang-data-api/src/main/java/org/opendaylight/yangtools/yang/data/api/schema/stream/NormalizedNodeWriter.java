@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 public class NormalizedNodeWriter implements Closeable, Flushable {
     private final NormalizedNodeStreamWriter writer;
 
-    private NormalizedNodeWriter(final NormalizedNodeStreamWriter writer) {
+    protected NormalizedNodeWriter(final NormalizedNodeStreamWriter writer) {
         this.writer = Preconditions.checkNotNull(writer);
     }
 
@@ -98,7 +98,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
      * @return NormalizedNodeWriter this
      * @throws IOException when thrown from the backing writer.
      */
-    public final NormalizedNodeWriter write(final NormalizedNode<?, ?> node) throws IOException {
+    public NormalizedNodeWriter write(final NormalizedNode<?, ?> node) throws IOException {
         if (wasProcessedAsCompositeNode(node)) {
             return this;
         }
@@ -129,11 +129,11 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
      * @param children Child nodes
      * @return Best estimate of the collection size required to hold all the children.
      */
-    static final int childSizeHint(final Iterable<?> children) {
+    protected static final int childSizeHint(final Iterable<?> children) {
         return (children instanceof Collection) ? ((Collection<?>) children).size() : UNKNOWN_SIZE;
     }
 
-    private boolean wasProcessAsSimpleNode(final NormalizedNode<?, ?> node) throws IOException {
+    protected boolean wasProcessAsSimpleNode(final NormalizedNode<?, ?> node) throws IOException {
         if (node instanceof LeafSetEntryNode) {
             final LeafSetEntryNode<?> nodeAsLeafList = (LeafSetEntryNode<?>)node;
             final QName name = nodeAsLeafList.getIdentifier().getNodeType();
@@ -168,7 +168,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
      * @return True
      * @throws IOException when the writer reports it
      */
-    protected final boolean writeChildren(final Iterable<? extends NormalizedNode<?, ?>> children) throws IOException {
+    protected boolean writeChildren(final Iterable<? extends NormalizedNode<?, ?>> children) throws IOException {
         for (final NormalizedNode<?, ?> child : children) {
             write(child);
         }
@@ -187,7 +187,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         return writeChildren(node.getValue());
     }
 
-    private boolean wasProcessedAsCompositeNode(final NormalizedNode<?, ?> node) throws IOException {
+    protected boolean wasProcessedAsCompositeNode(final NormalizedNode<?, ?> node) throws IOException {
         if (node instanceof ContainerNode) {
             final ContainerNode n = (ContainerNode) node;
             if(writer instanceof NormalizedNodeStreamAttributeWriter) {
