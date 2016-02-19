@@ -38,7 +38,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
- * A {@link Navigator} implementation for {@link YangXPath}s instantiated
+ * A {@link org.jaxen.Navigator} implementation for {@link YangXPath}s instantiated
  * on a particular root {@link NormalizedNode}.
  */
 final class NormalizedNodeNavigator extends DefaultNavigator implements NamedAccessNavigator {
