@@ -47,17 +47,6 @@
         </modules>
       </profile>
 
-      <!-- Turn off doclint on aggregated API javadoc build -->
-      <profile>
-        <id>jdk8</id>
-        <activation>
-          <jdk>[1.8,)</jdk>
-        </activation>
-        <properties>
-          <javadoc.args>-Xdoclint:none</javadoc.args>
-        </properties>
-      </profile>
-
       <profile>
         <!--
             This profile is to ensure we only build javadocs reports

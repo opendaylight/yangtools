@@ -38,8 +38,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
- * A {@link Navigator} implementation for {@link YangXPath}s instantiated
- * on a particular root {@link NormalizedNode}.
+ * A {@link Navigator} implementation for YANG XPaths instantiated on a particular root {@link NormalizedNode}.
  */
 final class NormalizedNodeNavigator extends DefaultNavigator implements NamedAccessNavigator {
     private static final long serialVersionUID = 1L;
