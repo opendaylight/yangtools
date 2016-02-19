@@ -72,7 +72,7 @@ public class ListsBindingUtils {
     }
 
     public static TreeComplexUsesAugment complexUsesAugment(final ListViaUsesKey... keys) {
-        final ImmutableList.Builder<ListViaUses> listViaUses = ImmutableList.<ListViaUses> builder();
+        final ImmutableList.Builder<ListViaUses> listViaUses = ImmutableList.builder();
         for (final ListViaUsesKey key : keys) {
             listViaUses.add(new ListViaUsesBuilder().setKey(key).build());
         }
