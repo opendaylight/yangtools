@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_a098e1c0",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/SchemaUtils.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 406,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-02-19T14:51:27Z",
+      "side": 1,
+      "message": "Please add javadoc",
+      "revId": "5d5afdb4f7daf1e773482187b7c5cffa332b557a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_c0b40537",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/YangOrderedNormalizedNodeWriter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 30,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-02-19T14:51:27Z",
+      "side": 1,
+      "message": "missing class documentation",
+      "revId": "5d5afdb4f7daf1e773482187b7c5cffa332b557a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_4080f545",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/YangOrderedNormalizedNodeWriter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-02-19T14:51:27Z",
+      "side": 1,
+      "message": "Missing @Override?",
+      "revId": "5d5afdb4f7daf1e773482187b7c5cffa332b557a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
