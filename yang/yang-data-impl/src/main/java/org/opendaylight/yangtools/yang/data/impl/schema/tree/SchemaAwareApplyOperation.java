@@ -44,12 +44,17 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
             if (containerSchema.isPresenceContainer()) {
                 return new PresenceContainerModificationStrategy(containerSchema, treeType);
             } else {
-                return new StructuralContainerModificationStrategy(containerSchema, treeType);
+                return new StructuralModificationStrategyWrapper(
+                    new ContainerModificationStrategy(containerSchema, treeType),
+                    new StructuralModificationStrategyWrapper.EmptyNodeSupplier(containerSchema));
             }
         } else if (schemaNode instanceof ListSchemaNode) {
             return fromListSchemaNode((ListSchemaNode) schemaNode, treeType);
         } else if (schemaNode instanceof ChoiceSchemaNode) {
-            return new ChoiceModificationStrategy((ChoiceSchemaNode) schemaNode, treeType);
+            return new StructuralModificationStrategyWrapper(
+                new ChoiceModificationStrategy((ChoiceSchemaNode) schemaNode, treeType),
+                new StructuralModificationStrategyWrapper.EmptyNodeSupplier(schemaNode)
+            );
         } else if (schemaNode instanceof LeafListSchemaNode) {
             return fromLeafListSchemaNode((LeafListSchemaNode) schemaNode, treeType);
         } else if (schemaNode instanceof LeafSchemaNode) {
@@ -78,20 +83,30 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         return condition;
     }
 
-    private static SchemaAwareApplyOperation fromListSchemaNode(final ListSchemaNode schemaNode, final TreeType treeType) {
+    private static ModificationApplyOperation fromListSchemaNode(final ListSchemaNode schemaNode, final TreeType treeType) {
         final List<QName> keyDefinition = schemaNode.getKeyDefinition();
-        final SchemaAwareApplyOperation op;
+        final ModificationApplyOperation op;
+        // Structural strategy wrapper is used to enable "structural" behaviour for auto create/delete mixin, parent
+        // list-like nodes
         if (keyDefinition == null || keyDefinition.isEmpty()) {
+            // Unkeyed lists are not wrapped since they are not addressable (yet) and it's not allowed to modify
+            // unkeyed list entries. That's why auto create/delete is not needed
             op = new UnkeyedListModificationStrategy(schemaNode, treeType);
         } else if (schemaNode.isUserOrdered()) {
-            op =  new OrderedMapModificationStrategy(schemaNode, treeType);
+            op = new StructuralModificationStrategyWrapper(
+                new OrderedMapModificationStrategy(schemaNode, treeType),
+                new StructuralModificationStrategyWrapper.EmptyNodeSupplier(schemaNode)
+            );
         } else {
-            op = new UnorderedMapModificationStrategy(schemaNode, treeType);
+            op = new StructuralModificationStrategyWrapper(
+                new UnorderedMapModificationStrategy(schemaNode, treeType),
+                new StructuralModificationStrategyWrapper.EmptyNodeSupplier(schemaNode)
+            );
         }
         return MinMaxElementsValidation.from(op, schemaNode);
     }
 
-    private static SchemaAwareApplyOperation fromLeafListSchemaNode(final LeafListSchemaNode schemaNode, final TreeType treeType) {
+    private static ModificationApplyOperation fromLeafListSchemaNode(final LeafListSchemaNode schemaNode, final TreeType treeType) {
         final SchemaAwareApplyOperation op;
         if(schemaNode.isUserOrdered()) {
             op =  new OrderedLeafSetModificationStrategy(schemaNode, treeType);
@@ -101,7 +116,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         return MinMaxElementsValidation.from(op, schemaNode);
     }
 
-    protected static final void checkNotConflicting(final YangInstanceIdentifier path, final TreeNode original, final TreeNode current) throws ConflictingModificationAppliedException {
+    protected static void checkNotConflicting(final YangInstanceIdentifier path, final TreeNode original, final TreeNode current) throws ConflictingModificationAppliedException {
         checkConflicting(path, original.getVersion().equals(current.getVersion()),
                 "Node was replaced by other transaction.");
         checkConflicting(path, original.getSubtreeVersion().equals(current.getSubtreeVersion()),
@@ -271,4 +286,5 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     static boolean belongsToTree(final TreeType treeType, final DataSchemaNode node) {
         return treeType == TreeType.OPERATIONAL || node.isConfiguration();
     }
+
 }

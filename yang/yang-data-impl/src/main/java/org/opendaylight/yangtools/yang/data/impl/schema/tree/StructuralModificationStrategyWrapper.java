@@ -8,54 +8,48 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Supplier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 
-/**
- * Structural containers are special in that they appear when implied by child nodes and disappear whenever they are
- * empty. We could implement this as a subclass of {@link SchemaAwareApplyOperation}, but the automatic semantic
- * is quite different from all the other strategies. We create a {@link ContainerModificationStrategy} to tap into that
- * logic, but wrap it so we only call out into it. We do not use {@link PresenceContainerModificationStrategy} because
- * it enforces presence of mandatory leaves, which is not something we want here, as structural containers are not
- * root anchors for that validation.
- */
-final class StructuralContainerModificationStrategy extends ModificationApplyOperation {
-    /**
-     * Fake TreeNode version used in {@link #checkApplicable(YangInstanceIdentifier, NodeModification, Optional)}.
-     * It is okay to use a global constant, as the delegate will ignore it anyway. For
-     * {@link #apply(ModifiedNode, Optional, Version)} we will use the appropriate version as provided to us.
-     */
+final class StructuralModificationStrategyWrapper extends ModificationApplyOperation {
+
     private static final Version FAKE_VERSION = Version.initial();
-    private final ContainerModificationStrategy delegate;
+    private final AbstractNodeContainerModificationStrategy delegate;
+    private Supplier<NormalizedNode<?, ?>> emptyNodeSupplier;
 
-    StructuralContainerModificationStrategy(final ContainerSchemaNode schemaNode, final TreeType treeType) {
-        this.delegate = new ContainerModificationStrategy(schemaNode, treeType);
+    StructuralModificationStrategyWrapper(final AbstractNodeContainerModificationStrategy delegate,
+                                          final Supplier<NormalizedNode<?, ?>> emptyNodeSupplier) {
+        this.emptyNodeSupplier = emptyNodeSupplier;
+        this.delegate = delegate;
     }
 
     private Optional<TreeNode> fakeMeta(final Version version) {
-        final ContainerNode container = ImmutableNodes.containerNode(delegate.getSchema().getQName());
-        return Optional.of(TreeNodeFactory.createTreeNode(container, version));
+        final NormalizedNode<?, ?> data = emptyNodeSupplier.get();
+        return Optional.of(TreeNodeFactory.createTreeNode(data, version));
     }
 
     @Override
     Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta, final Version version) {
         final Optional<TreeNode> ret;
         if (modification.getOperation() == LogicalOperation.TOUCH && !storeMeta.isPresent()) {
-            // Container is not present, let's take care of the 'magically appear' part of our job
+            // Node container is not present, let's take care of the 'magically appear' part of our job
             ret = delegate.apply(modification, fakeMeta(version), version);
 
-            // Fake container got removed: that is a no-op
+            // Fake node container got removed: that is a no-op
             if (!ret.isPresent()) {
                 modification.resolveModificationType(ModificationType.UNMODIFIED);
                 return ret;
@@ -66,10 +60,10 @@ final class StructuralContainerModificationStrategy extends ModificationApplyOpe
                 modification.resolveModificationType(ModificationType.APPEARED);
             }
         } else {
-            // Container is present, run normal apply operation
+            // Node container is present, run normal apply operation
             ret = delegate.apply(modification, storeMeta, version);
 
-            // Container was explicitly deleted, no magic required
+            // Node container was explicitly deleted, no magic required
             if (!ret.isPresent()) {
                 return ret;
             }
@@ -122,5 +116,38 @@ final class StructuralContainerModificationStrategy extends ModificationApplyOpe
     @Override
     public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
         return delegate.getChild(child);
+    }
+
+    /**
+     * Supports MapNode, ContainerNode and ChoiceNode
+     */
+    // TODO do we need this supplier ? what if SchemaAwareApplyOperation gives built empty constant node to this wrapper ?
+    static final class EmptyNodeSupplier implements Supplier<NormalizedNode<?, ?>> {
+        private final SchemaNode schemaNode;
+
+        public EmptyNodeSupplier(final SchemaNode schemaNode) {
+            this.schemaNode = schemaNode;
+        }
+
+        @Override
+        public NormalizedNode<?, ?> get() {
+            if(schemaNode instanceof ListSchemaNode) {
+                if(((ListSchemaNode) schemaNode).isUserOrdered()) {
+                    return Builders.orderedMapBuilder().withNodeIdentifier(getNodeIdentifier()).build();
+                } else {
+                    return Builders.mapBuilder().withNodeIdentifier(getNodeIdentifier()).build();
+                }
+            } else if(schemaNode instanceof ContainerSchemaNode) {
+                return ImmutableNodes.containerNode(schemaNode.getQName());
+            } else if (schemaNode instanceof ChoiceSchemaNode) {
+                return ImmutableNodes.choiceNode(schemaNode.getQName());
+            }
+
+            throw new IllegalArgumentException("Unsupported schema node type " + schemaNode);
+        }
+
+        private YangInstanceIdentifier.NodeIdentifier getNodeIdentifier() {
+            return YangInstanceIdentifier.NodeIdentifier.create(schemaNode.getQName());
+        }
     }
 }

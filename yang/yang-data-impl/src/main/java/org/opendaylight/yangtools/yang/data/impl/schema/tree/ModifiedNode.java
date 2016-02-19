@@ -67,7 +67,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     private TreeNode writtenOriginal;
 
     // Internal cache for TreeNodes created as part of validation
-    private SchemaAwareApplyOperation validatedOp;
+    private ModificationApplyOperation validatedOp;
     private Optional<TreeNode> validatedCurrent;
     private TreeNode validatedNode;
 
@@ -352,13 +352,13 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         return new ModifiedNode(metadataTree.getIdentifier(), Optional.of(metadataTree), childPolicy);
     }
 
-    void setValidatedNode(final SchemaAwareApplyOperation op, final Optional<TreeNode> current, final TreeNode node) {
+    void setValidatedNode(final ModificationApplyOperation op, final Optional<TreeNode> current, final TreeNode node) {
         this.validatedOp = Preconditions.checkNotNull(op);
         this.validatedCurrent = Preconditions.checkNotNull(current);
         this.validatedNode = Preconditions.checkNotNull(node);
     }
 
-    TreeNode getValidatedNode(final SchemaAwareApplyOperation op, final Optional<TreeNode> current) {
+    TreeNode getValidatedNode(final ModificationApplyOperation op, final Optional<TreeNode> current) {
         return op.equals(validatedOp) && current.equals(validatedCurrent) ? validatedNode : null;
     }
 }

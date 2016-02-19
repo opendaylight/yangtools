@@ -195,10 +195,11 @@ public class Retest_ModificationMetadataTreeTest {
         modificationTree.write(TestModel.OUTER_LIST_PATH, ImmutableNodes.mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
 
         /**
-         * Reads list node from /test/outer-list
+         * Reads list node from /test/outer-list. Should not be present since parent list nodes are managed in
+         * org.opendaylight.yangtools.yang.data.impl.schema.tree.StructuralModificationStrategyWrapper
          */
         final Optional<NormalizedNode<?, ?>> potentialOuterList = modificationTree.readNode(TestModel.OUTER_LIST_PATH);
-        assertTrue(potentialOuterList.isPresent());
+        assertFalse(potentialOuterList.isPresent());
 
         /**
          * Reads container node from /test and verifies that it contains test
