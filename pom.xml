@@ -11,14 +11,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <parent>
-      <groupId>org.opendaylight.yangtools</groupId>
-      <artifactId>yangtools-parent</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-      <relativePath>common/parent</relativePath>
+      <groupId>org.opendaylight.odlparent</groupId>
+      <artifactId>odlparent-lite</artifactId>
+      <version>1.7.0-SNAPSHOT</version>
+      <relativePath/>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
+    <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yangtools-aggregator</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
     <name>yangtools</name> <!-- Used by Sonar to set project name -->
     <packaging>pom</packaging>
 
@@ -88,32 +90,16 @@
         <pluginManagement>
             <plugins>
                 <plugin>
-                 <groupId>org.apache.maven.plugins</groupId>
-                 <artifactId>maven-checkstyle-plugin</artifactId>
-                 <configuration>
-                   <failOnViolation>false</failOnViolation>
-                   <configLocation>checkstyle-logging.xml</configLocation>
-                   <consoleOutput>true</consoleOutput>
-                   <includeTestSourceDirectory>true</includeTestSourceDirectory>
-                   <sourceDirectory>${project.basedir}</sourceDirectory>
-                   <includes>**\/*.java,**\/*.xml,**\/*.ini,**\/*.sh,**\/*.bat,**\/*.yang</includes>
-                   <excludes>**\/target\/,**\/bin\/,**\/target-ide\/,**\/src/main/yang-gen-config\/,**\/src/main/yang-gen-sal\/,**\/src/main/xtend-gen\/</excludes>
-                 </configuration>
-                 <dependencies>
-                   <dependency>
-                     <groupId>org.opendaylight.yangtools</groupId>
-                     <artifactId>checkstyle-logging</artifactId>
-                     <version>${project.version}</version>
-                   </dependency>
-                 </dependencies>
-                 <executions>
-                   <execution>
-                     <goals>
-                       <goal>check</goal>
-                     </goals>
-                   </execution>
-                 </executions>
-               </plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.opendaylight.yangtools</groupId>
+                            <artifactId>checkstyle-logging</artifactId>
+                            <version>${project.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
