@@ -187,22 +187,16 @@ public class OrderedListTest {
 
         treeModification.merge(path2, childOrderedListNode);
 
-        try {
-            treeModification.ready();
-            fail("Exception should have been thrown.");
-            inMemoryDataTree.validate(treeModification);
-            inMemoryDataTree.commit(inMemoryDataTree.prepare(treeModification));
-        } catch (final IllegalArgumentException ex) {
-            LOG.debug("IllegalArgumentException was thrown as expected: {}", ex);
-            assertTrue(ex.getMessage().contains("Metadata not available for modification NodeModification"));
-        }
+        treeModification.ready();
+        inMemoryDataTree.validate(treeModification);
+        inMemoryDataTree.commit(inMemoryDataTree.prepare(treeModification));
 
         DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         Optional<NormalizedNode<?, ?>> readNode = snapshotAfterCommits.readNode(path1);
         assertTrue(readNode.isPresent());
 
         readNode = snapshotAfterCommits.readNode(path2);
-        assertFalse(readNode.isPresent());
+        assertTrue(readNode.isPresent());
     }
 
     public void modification4() throws DataValidationFailedException {

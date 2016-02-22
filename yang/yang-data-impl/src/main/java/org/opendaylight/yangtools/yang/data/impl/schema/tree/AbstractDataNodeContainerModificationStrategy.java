@@ -62,7 +62,7 @@ abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeC
     @Override
     public final Optional<ModificationApplyOperation> getChild(final PathArgument identifier) {
         try {
-            return Optional.<ModificationApplyOperation> fromNullable(childCache.get(identifier));
+            return Optional.fromNullable(childCache.get(identifier));
         } catch (ExecutionException | UncheckedExecutionException e) {
             LOG.trace("Child {} not present in container schema {} children {}", identifier, this, schema.getChildNodes(), e.getCause());
             return Optional.absent();

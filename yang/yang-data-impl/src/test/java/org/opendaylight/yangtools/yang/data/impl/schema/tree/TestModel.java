@@ -22,10 +22,18 @@ public final class TestModel {
     public static final QName TEST_QNAME = QName.create("urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test", "2014-03-13",
         "test");
     public static final QName OUTER_LIST_QNAME = QName.create(TEST_QNAME, "outer-list");
+    public static final QName NON_PRESENCE_QNAME = QName.create(TEST_QNAME, "non-presence");
+    public static final QName TOP_LIST_QNAME = QName.create(TEST_QNAME, "top-list");
+    public static final QName MIDDLE_LIST_QNAME = QName.create(TEST_QNAME, "middle-list");
+    public static final QName MIDDLE_NON_PRESENCE_QNAME = QName.create(TEST_QNAME, "middle-non-presence");
+    public static final QName BOTTOM_NON_PRESENCE_QNAME = QName.create(TEST_QNAME, "bottom-non-presence");
     public static final QName INNER_LIST_QNAME = QName.create(TEST_QNAME, "inner-list");
     public static final QName OUTER_CHOICE_QNAME = QName.create(TEST_QNAME, "outer-choice");
     public static final QName ID_QNAME = QName.create(TEST_QNAME, "id");
     public static final QName NAME_QNAME = QName.create(TEST_QNAME, "name");
+    public static final QName DEEP_CHOICE_QNAME = QName.create(TEST_QNAME, "deep-choice");
+    public static final QName A_NAME_QNAME = QName.create(TEST_QNAME, "a-name");
+    public static final QName A_CONTAINER_QNAME = QName.create(TEST_QNAME, "a-container");
     public static final QName VALUE_QNAME = QName.create(TEST_QNAME, "value");
     private static final String DATASTORE_TEST_YANG = "/odl-datastore-test.yang";
 
