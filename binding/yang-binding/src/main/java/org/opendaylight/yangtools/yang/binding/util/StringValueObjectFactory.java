@@ -91,7 +91,7 @@ public final class StringValueObjectFactory<T> {
         // is far from perfect, but better than nothing.
         final Throwable t = new Throwable("Invocation stack");
         t.fillInStackTrace();
-        if (matchesPackage(clazz.getPackage(), t.getStackTrace())) {
+        if (matchesPackage(clazz.getPackage().getName(), t.getStackTrace())) {
             LOG.info("Instantiated factory for {}", clazz);
         } else {
             LOG.warn("Instantiated factory for {} outside its package", clazz, t);
@@ -100,9 +100,10 @@ public final class StringValueObjectFactory<T> {
         return ret;
     }
 
-    private static boolean matchesPackage(final Package pkg, final StackTraceElement[] stackTrace) {
+    private static boolean matchesPackage(final String pkg, final StackTraceElement[] stackTrace) {
         for (StackTraceElement e : stackTrace) {
-            if (pkg.equals(e.getClass().getPackage())) {
+            final String sp = e.getClassName();
+            if (sp.startsWith(pkg) && sp.lastIndexOf('.') == pkg.length()) {
                 return true;
             }
         }
