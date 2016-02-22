@@ -176,6 +176,8 @@ public class ListConstraintsValidationTest {
         modificationTree.ready();
 
         inMemoryDataTree.validate(modificationTree);
+        prepare1 = inMemoryDataTree.prepare(modificationTree);
+        inMemoryDataTree.commit(prepare1);
     }
 
     @Test

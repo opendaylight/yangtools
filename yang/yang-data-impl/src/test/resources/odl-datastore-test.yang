@@ -7,6 +7,48 @@ module odl-datastore-test {
         description "Initial revision.";
     }
 
+    container non-presence {
+        description "Deep structure of (structural) nodes to test structural ";
+
+        leaf name {
+            type string;
+        }
+
+        list top-list {
+            key "id";
+
+            leaf id {
+                type string;
+            }
+
+            container middle-non-presence {
+                list middle-list {
+                    key "id";
+
+                    leaf id {
+                        type string;
+                    }
+
+                    container bottom-non-presence {
+                        choice deep-choice {
+                            container a-container {
+                                leaf a-name {
+                                    type string;
+                                }
+                            }
+
+                            container b-container {
+                                leaf b-name {
+                                    type string;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     container test {
         presence true;
         choice choice1 {
@@ -69,6 +111,6 @@ module odl-datastore-test {
                  }
              }
          }
-        
+
     }
 }

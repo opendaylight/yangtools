@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -43,7 +44,13 @@ final class UnorderedMapModificationStrategy extends AbstractNodeContainerModifi
     @Override
     public Optional<ModificationApplyOperation> getChild(final YangInstanceIdentifier.PathArgument identifier) {
         if (identifier instanceof YangInstanceIdentifier.NodeIdentifierWithPredicates) {
-            return entryStrategy;
+            return entryStrategy.isPresent()
+                // TODO do we want to auto create/remove map nodes same as containers ?
+                ? Optional.<ModificationApplyOperation>of(new StructuralModificationStrategyWrapper(entryStrategy.get(),
+                    Builders.mapEntryBuilder()
+                        .withNodeIdentifier(((YangInstanceIdentifier.NodeIdentifierWithPredicates) identifier))
+                        .build()))
+                : entryStrategy;
         }
         return Optional.absent();
     }
