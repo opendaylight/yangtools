@@ -7,6 +7,12 @@ module odl-datastore-test {
         description "Initial revision.";
     }
 
+    container non-presence {
+        leaf name {
+            type string;
+        }
+    }
+
     container test {
         presence true;
         choice choice1 {
@@ -69,6 +75,6 @@ module odl-datastore-test {
                  }
              }
          }
-        
+
     }
 }

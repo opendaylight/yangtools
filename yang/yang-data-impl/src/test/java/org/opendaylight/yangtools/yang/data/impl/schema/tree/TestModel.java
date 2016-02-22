@@ -22,6 +22,7 @@ public final class TestModel {
     public static final QName TEST_QNAME = QName.create("urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test", "2014-03-13",
         "test");
     public static final QName OUTER_LIST_QNAME = QName.create(TEST_QNAME, "outer-list");
+    public static final QName NON_PRESENCE_QNAME = QName.create(TEST_QNAME, "non-presence");
     public static final QName INNER_LIST_QNAME = QName.create(TEST_QNAME, "inner-list");
     public static final QName OUTER_CHOICE_QNAME = QName.create(TEST_QNAME, "outer-choice");
     public static final QName ID_QNAME = QName.create(TEST_QNAME, "id");

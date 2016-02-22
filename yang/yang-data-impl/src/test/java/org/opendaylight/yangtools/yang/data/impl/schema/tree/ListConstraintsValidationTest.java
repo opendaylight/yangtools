@@ -176,6 +176,12 @@ public class ListConstraintsValidationTest {
         modificationTree.ready();
 
         inMemoryDataTree.validate(modificationTree);
+        prepare1 = inMemoryDataTree.prepare(modificationTree);
+        inMemoryDataTree.commit(prepare1);
+
+        snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
+        minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
+        System.err.println(minMaxListRead);
     }
 
     @Test
