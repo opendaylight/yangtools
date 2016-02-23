@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntry;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
+
 import com.google.common.base.Optional;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +23,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
@@ -192,29 +192,22 @@ public class ModificationMetadataTreeTest {
         /**
          * Writes empty list node to /test/outer-list
          */
-        modificationTree.write(TestModel.OUTER_LIST_PATH, ImmutableNodes.mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
+        modificationTree
+            .write(TestModel.OUTER_LIST_PATH, ImmutableNodes.mapNodeBuilder(TestModel.OUTER_LIST_QNAME).build());
 
         /**
-         * Reads list node from /test/outer-list
+         * Reads list node from /test/outer-list. Should not be present since parent list nodes are managed in
+         * org.opendaylight.yangtools.yang.data.impl.schema.tree.StructuralModificationStrategyWrapper
          */
         final Optional<NormalizedNode<?, ?>> potentialOuterList = modificationTree.readNode(TestModel.OUTER_LIST_PATH);
-        assertTrue(potentialOuterList.isPresent());
+        assertFalse(potentialOuterList.isPresent());
 
         /**
          * Reads container node from /test and verifies that it contains test
          * node
          */
         final Optional<NormalizedNode<?, ?>> potentialTest = modificationTree.readNode(TestModel.TEST_PATH);
-        final ContainerNode containerTest = assertPresentAndType(potentialTest, ContainerNode.class);
-
-        /**
-         *
-         * Gets list from returned snapshot of /test and verifies it contains
-         * outer-list
-         *
-         */
-        assertPresentAndType(containerTest.getChild(new NodeIdentifier(TestModel.OUTER_LIST_QNAME)), MapNode.class);
-
+        assertPresentAndType(potentialTest, ContainerNode.class);
     }
 
     @Test
