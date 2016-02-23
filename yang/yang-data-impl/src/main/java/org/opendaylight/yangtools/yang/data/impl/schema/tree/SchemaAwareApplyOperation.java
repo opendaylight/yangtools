@@ -44,7 +44,9 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         if (schemaNode instanceof ContainerSchemaNode) {
             final ContainerSchemaNode containerSchema = (ContainerSchemaNode) schemaNode;
             if (containerSchema.isPresenceContainer()) {
-                return new PresenceContainerModificationStrategy(containerSchema, treeType);
+                return new StructuralModificationStrategyWrapper(
+                    new PresenceContainerModificationStrategy(containerSchema, treeType),
+                    ImmutableNodes.containerNode(containerSchema.getQName()));
             } else {
                 return new StructuralModificationStrategyWrapper(
                     new ContainerModificationStrategy(containerSchema, treeType),
