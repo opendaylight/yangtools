@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_08c60268",
+        "filename": "yang/yang-data-impl/src/test/resources/bug1848/foo.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-02-24T08:10:30Z",
+      "side": 1,
+      "message": "please format this properly",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 1
+      },
+      "revId": "20e57b12eb60d76627a7e33766f3ced28a8962eb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_e8c2be51",
+        "filename": "yang/yang-data-impl/src/test/resources/bug1848/order.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 16,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-02-24T08:10:30Z",
+      "side": 1,
+      "message": "please format this properly",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 16,
+        "endChar": 1
+      },
+      "revId": "20e57b12eb60d76627a7e33766f3ced28a8962eb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
