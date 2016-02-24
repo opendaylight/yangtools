@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_6386d1dc",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/schema/SchemaOrderedNormalizedNodeWriterTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 158,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-02-24T12:35:38Z",
+      "side": 1,
+      "message": "regression from Lithium, please use new yang statement parser",
+      "range": {
+        "startLine": 158,
+        "startChar": 15,
+        "endLine": 158,
+        "endChar": 88
+      },
+      "revId": "7d9f5c903bb81416248055a2bae0a9480d1c51f3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
