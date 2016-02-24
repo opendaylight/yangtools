@@ -64,6 +64,12 @@ public class SchemaOrderedNormalizedNodeWriterTest {
             "    </cont>\n" +
             "</root>";
 
+    private static final String FOO_NAMESPACE = "foo";
+    private static final String RULE_NODE = "rule";
+    private static final String NAME_NODE = "name";
+    private static final String POLICY_NODE = "policy";
+    private static final String ORDER_NAMESPACE = "order";
+
 
     @Before
     public void setUp() throws Exception {
@@ -75,24 +81,24 @@ public class SchemaOrderedNormalizedNodeWriterTest {
         final StringWriter stringWriter = new StringWriter();
         final XMLStreamWriter xmlStreamWriter = XMLOutputFactory.newFactory().createXMLStreamWriter(stringWriter);
 
-        SchemaContext schemaContext = getSchemaContext("/bug-1848.yang");
+        SchemaContext schemaContext = getSchemaContext("/bug1848/foo.yang");
         NormalizedNodeStreamWriter writer = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter, schemaContext);
         SchemaOrderedNormalizedNodeWriter nnw = new SchemaOrderedNormalizedNodeWriter(writer, schemaContext, SchemaPath.ROOT);
 
         List<MapEntryNode> rule1Names = new ArrayList<>();
-        rule1Names.add(ImmutableNodes.mapEntry(createQName("foo", "rule"), createQName("foo", "name"), "rule1"));
-        rule1Names.add(ImmutableNodes.mapEntry(createQName("foo", "rule"), createQName("foo", "name"), "rule2"));
+        rule1Names.add(ImmutableNodes.mapEntry(createQName(FOO_NAMESPACE, RULE_NODE), createQName(FOO_NAMESPACE, NAME_NODE), "rule1"));
+        rule1Names.add(ImmutableNodes.mapEntry(createQName(FOO_NAMESPACE, RULE_NODE), createQName(FOO_NAMESPACE, NAME_NODE), "rule2"));
 
         List<MapEntryNode> rule2Names = new ArrayList<>();
-        rule1Names.add(ImmutableNodes.mapEntry(createQName("foo", "rule"), createQName("foo", "name"), "rule3"));
-        rule1Names.add(ImmutableNodes.mapEntry(createQName("foo", "rule"), createQName("foo", "name"), "rule4"));
+        rule1Names.add(ImmutableNodes.mapEntry(createQName(FOO_NAMESPACE, RULE_NODE), createQName(FOO_NAMESPACE, NAME_NODE), "rule3"));
+        rule1Names.add(ImmutableNodes.mapEntry(createQName(FOO_NAMESPACE, RULE_NODE), createQName(FOO_NAMESPACE, NAME_NODE), "rule4"));
 
         DataContainerChild<?, ?> rules1 = Builders.orderedMapBuilder()
-                .withNodeIdentifier(getNodeIdentifier("foo", "rule"))
+                .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, RULE_NODE))
                 .withValue(rule1Names)
                 .build();
         DataContainerChild<?, ?> rules2 = Builders.orderedMapBuilder()
-                .withNodeIdentifier(getNodeIdentifier("foo", "rule"))
+                .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, RULE_NODE))
                 .withValue(rule2Names)
                 .build();
 
@@ -100,24 +106,22 @@ public class SchemaOrderedNormalizedNodeWriterTest {
 
 
         final MapEntryNode pn1 = ImmutableNodes
-                .mapEntryBuilder(createQName("foo", "policy"), createQName("foo", "name"), "policy1")
+                .mapEntryBuilder(createQName(FOO_NAMESPACE, POLICY_NODE), createQName(FOO_NAMESPACE, NAME_NODE), "policy1")
                 .withChild(rules1)
                 .build();
         final MapEntryNode pn2 = ImmutableNodes
-                .mapEntryBuilder(createQName("foo", "policy"), createQName("foo", "name"), "policy2")
+                .mapEntryBuilder(createQName(FOO_NAMESPACE, POLICY_NODE), createQName(FOO_NAMESPACE, NAME_NODE), "policy2")
                 .withChild(rules2)
                 .build();
         policyNodes.add(pn1);
         policyNodes.add(pn2);
 
-
-
         DataContainerChild<?, ?> policy = Builders.orderedMapBuilder()
-                .withNodeIdentifier(getNodeIdentifier("foo", "policy"))
+                .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, POLICY_NODE))
                 .withValue(policyNodes)
                 .build();
         NormalizedNode<?, ?> root = Builders.containerBuilder()
-                .withNodeIdentifier(getNodeIdentifier("foo", "root"))
+                .withNodeIdentifier(getNodeIdentifier(FOO_NAMESPACE, "root"))
                 .withChild(policy).build();
         nnw.write(root);
 
@@ -128,25 +132,23 @@ public class SchemaOrderedNormalizedNodeWriterTest {
     public void testWriteOrder() throws Exception {
         final StringWriter stringWriter = new StringWriter();
         final XMLStreamWriter xmlStreamWriter = XMLOutputFactory.newFactory().createXMLStreamWriter(stringWriter);
-        SchemaContext schemaContext = getSchemaContext("/bug-1848-2.yang");
+        SchemaContext schemaContext = getSchemaContext("/bug1848/order.yang");
         NormalizedNodeStreamWriter writer = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter, schemaContext);
 
         NormalizedNodeWriter nnw = new SchemaOrderedNormalizedNodeWriter(writer, schemaContext, SchemaPath.ROOT);
 
         DataContainerChild<?, ?> cont = Builders.containerBuilder()
-                .withNodeIdentifier(getNodeIdentifier("order", "cont"))
-                .withChild(ImmutableNodes.leafNode(createQName("order", "content"), "content1"))
+                .withNodeIdentifier(getNodeIdentifier(ORDER_NAMESPACE, "cont"))
+                .withChild(ImmutableNodes.leafNode(createQName(ORDER_NAMESPACE, "content"), "content1"))
                 .build();
 
         NormalizedNode<?, ?> root = Builders.containerBuilder()
-                .withNodeIdentifier(getNodeIdentifier("order", "root"))
+                .withNodeIdentifier(getNodeIdentifier(ORDER_NAMESPACE, "root"))
                 .withChild(cont)
-                .withChild(ImmutableNodes.leafNode(createQName("order", "id"), "id1"))
+                .withChild(ImmutableNodes.leafNode(createQName(ORDER_NAMESPACE, "id"), "id1"))
                 .build();
 
         nnw.write(root);
-        System.out.println(stringWriter.toString());
-        System.out.println(EXPECTED_2);
 
         XMLAssert.assertXMLIdentical(new Diff(EXPECTED_2, stringWriter.toString()), true);
     }
