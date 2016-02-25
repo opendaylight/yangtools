@@ -150,6 +150,8 @@ public final class ParserListenerUtils {
     private static final CharMatcher DOUBLE_QUOTE_MATCHER = CharMatcher.is('"');
     private static final CharMatcher SINGLE_QUOTE_MATCHER = CharMatcher.is('\'');
     private static final Pattern BETWEEN_CURLY_BRACES_PATTERN = Pattern.compile("\\{(.+?)\\}");
+    private static final Pattern UNESCAPED_DOLLAR_PATTERN = Pattern.compile("(?<!\\\\)\\$");
+    private static final Pattern STARTING_ANCHOR_PATTERN = Pattern.compile("(?<![\\[\\\\])\\^");
     private static final Set<String> JAVA_UNICODE_BLOCKS = ImmutableSet.<String>builder()
             .add("AegeanNumbers")
             .add("AlchemicalSymbols")
@@ -973,13 +975,34 @@ public final class ParserListenerUtils {
                 reference = Optional.of(stringFromNode(child));
             }
         }
-        final String rawPattern = parsePatternString(ctx);
+        String rawPattern = parsePatternString(ctx);
+        rawPattern = escapeRegexStartingAnchors(rawPattern);
+        rawPattern = escapeUnescapedDollarSigns(rawPattern);
+
         final String fixedRawPattern = fixUnicodeScriptPattern(rawPattern);
         final String pattern = wrapPattern(fixedRawPattern);
         if (isValidPattern(pattern, ctx, moduleName)) {
             return BaseConstraints.newPatternConstraint(pattern, description, reference);
         }
         return null;
+    }
+
+    private static String escapeRegexStartingAnchors(String regExPattern) {
+        Matcher matcher = STARTING_ANCHOR_PATTERN.matcher(regExPattern);
+        if (matcher.find()) {
+            return matcher.replaceAll("\\\\\\^");
+        }
+
+        return regExPattern;
+    }
+
+    public static String escapeUnescapedDollarSigns(String regExPattern) {
+        Matcher matcher = UNESCAPED_DOLLAR_PATTERN.matcher(regExPattern);
+        if (matcher.find()) {
+            return matcher.replaceAll("\\\\\\$");
+        }
+
+        return regExPattern;
     }
 
     private static String fixUnicodeScriptPattern(String rawPattern) {

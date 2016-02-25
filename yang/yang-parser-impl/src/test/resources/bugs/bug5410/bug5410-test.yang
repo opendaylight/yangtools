@@ -1,0 +1,22 @@
+module bug5410-test {
+    namespace "bug5410-test";
+    prefix "b5410t";
+
+    leaf test-leaf {
+        type string {
+            pattern "^^^[^a-z]?\$\$[^A-Z]?$$$";
+        }
+    }
+
+    leaf test-leaf2 {
+        type string {
+            pattern "\^^^[^\$]?\d{3}[^$]?\$$\$";
+        }
+    }
+
+    leaf test-leaf3 {
+        type string {
+            pattern "\^^\^[^\^]?\d{3}[^^]?";
+        }
+    }
+}
