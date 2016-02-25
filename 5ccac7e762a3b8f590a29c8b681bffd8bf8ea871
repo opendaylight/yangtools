@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_c0386e3f",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/stmt/test/UnknownStatementsTest.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 17,
+      "author": {
+        "id": 2682
+      },
+      "writtenOn": "2016-02-25T09:48:26Z",
+      "side": 1,
+      "message": "we might need some Javadoc here to describe meaning of this short test. In my opinion, essence of this test is revealed in yang sources.",
+      "revId": "5ccac7e762a3b8f590a29c8b681bffd8bf8ea871",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
