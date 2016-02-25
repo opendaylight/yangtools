@@ -50,7 +50,14 @@ public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConst
         }
 
         @Override
-        public PatternConstraint parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        public PatternConstraint parseArgumentValue(final StmtContext<?, ?, ?> ctx, String value) {
+            if (value.startsWith("^") || value.endsWith("$")) {
+                LOG.warn("Regex anchors in pattern \"{}\" at {} not allowed! Ignoring them.", value,
+                        ctx.getStatementSourceReference());
+                value = Utils.trimRegexAnchors(value);
+            }
+
+            value = value.replaceAll("\\$", "\\\\\\$");
             final String pattern = "^" + Utils.fixUnicodeScriptPattern(value) + '$';
 
             try {
