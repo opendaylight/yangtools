@@ -624,4 +624,17 @@ public final class Utils {
         }
         return result.toString();
     }
+
+    public static String escapeRegexStartingAnchors(String regExPattern) {
+        String result = "";
+        int idx = 0;
+        while (regExPattern.charAt(idx) == '^') {
+            idx++;
+            result += "\\^";
+        }
+
+        result += regExPattern.substring(idx);
+
+        return result;
+    }
 }
