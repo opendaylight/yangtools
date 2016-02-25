@@ -41,9 +41,11 @@ public final class StringValueObjectFactory<T> {
 
     private final MethodHandle constructor;
     private final MethodHandle setter;
+    private final T template;
 
-    private StringValueObjectFactory(final MethodHandle constructor, final MethodHandle setter) {
-        this.constructor = Preconditions.checkNotNull(constructor);
+    private StringValueObjectFactory(final T template, final MethodHandle constructor, final MethodHandle setter) {
+        this.template = Preconditions.checkNotNull(template);
+        this.constructor = constructor.bindTo(template);
         this.setter = Preconditions.checkNotNull(setter);
     }
 
@@ -80,8 +82,8 @@ public final class StringValueObjectFactory<T> {
 
         final StringValueObjectFactory<T> ret;
         try {
-            ret = new StringValueObjectFactory<>(
-                    LOOKUP.unreflectConstructor(copyConstructor).asType(CONSTRUCTOR_METHOD_TYPE).bindTo(template),
+            ret = new StringValueObjectFactory<>(template,
+                    LOOKUP.unreflectConstructor(copyConstructor).asType(CONSTRUCTOR_METHOD_TYPE),
                     LOOKUP.unreflectSetter(f).asType(SETTER_METHOD_TYPE));
         } catch (IllegalAccessException e) {
             throw new IllegalStateException("Failed to instantiate method handles", e);
@@ -122,5 +124,9 @@ public final class StringValueObjectFactory<T> {
         } catch (Throwable e) {
             throw Throwables.propagate(e);
         }
+    }
+
+    public T getTemplate() {
+        return template;
     }
 }
