@@ -624,4 +624,23 @@ public final class Utils {
         }
         return result.toString();
     }
+
+    public static String trimRegexAnchors(String regExPattern) {
+        String result;
+        int idx = 0;
+        while (regExPattern.charAt(idx) == '^') {
+            idx++;
+        }
+
+        result = regExPattern.substring(idx);
+
+        idx = result.length() - 1;
+        while (result.charAt(idx) == '$') {
+            idx--;
+        }
+
+        result = result.substring(0, idx + 1);
+
+        return result;
+    }
 }
