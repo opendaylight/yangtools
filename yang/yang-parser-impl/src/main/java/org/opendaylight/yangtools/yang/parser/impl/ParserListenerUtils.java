@@ -150,6 +150,8 @@ public final class ParserListenerUtils {
     private static final CharMatcher DOUBLE_QUOTE_MATCHER = CharMatcher.is('"');
     private static final CharMatcher SINGLE_QUOTE_MATCHER = CharMatcher.is('\'');
     private static final Pattern BETWEEN_CURLY_BRACES_PATTERN = Pattern.compile("\\{(.+?)\\}");
+    private static final Pattern UNESCAPED_DOLLAR_PATTERN = Pattern.compile("(?<!\\\\)\\$");
+    private static final Pattern UNESCAPED_CARET_PATTERN = Pattern.compile("(?<![\\[\\\\])\\^");
     private static final Set<String> JAVA_UNICODE_BLOCKS = ImmutableSet.<String>builder()
             .add("AegeanNumbers")
             .add("AlchemicalSymbols")
@@ -973,13 +975,59 @@ public final class ParserListenerUtils {
                 reference = Optional.of(stringFromNode(child));
             }
         }
-        final String rawPattern = parsePatternString(ctx);
+        String rawPattern = parsePatternString(ctx);
+        rawPattern = escapeUnescapedCarets(rawPattern);
+        rawPattern = escapeUnescapedDollarSigns(rawPattern);
+
         final String fixedRawPattern = fixUnicodeScriptPattern(rawPattern);
         final String pattern = wrapPattern(fixedRawPattern);
         if (isValidPattern(pattern, ctx, moduleName)) {
             return BaseConstraints.newPatternConstraint(pattern, description, reference);
         }
         return null;
+    }
+
+    private static String escapeUnescapedCarets(String regExPattern) {
+        Matcher matcher = UNESCAPED_CARET_PATTERN.matcher(regExPattern);
+        if (matcher.find()) {
+            regExPattern = matcher.replaceAll("\\\\\\^");
+        }
+
+        regExPattern = fixEvenNumberOfBackslashes(regExPattern, "^");
+        return regExPattern;
+    }
+
+    private static String escapeUnescapedDollarSigns(String regExPattern) {
+        Matcher matcher = UNESCAPED_DOLLAR_PATTERN.matcher(regExPattern);
+        if (matcher.find()) {
+            regExPattern = matcher.replaceAll("\\\\\\$");
+        }
+
+        regExPattern = fixEvenNumberOfBackslashes(regExPattern, "$");
+        return regExPattern;
+    }
+
+    private static String fixEvenNumberOfBackslashes(String pattern, String charAfterBackslashes) {
+        StringBuilder builder = new StringBuilder(pattern);
+
+        int startIdx = pattern.indexOf(charAfterBackslashes);
+        while (startIdx != -1) {
+            int idx = startIdx - 1;
+            int counter = 0;
+            while (idx >= 0 && builder.charAt(idx) == '\\') {
+                counter += 1;
+                idx -= 1;
+            }
+
+            if (counter != 0 && counter % 2 == 0) {
+                builder.insert(startIdx, '\\');
+                startIdx = builder.indexOf(charAfterBackslashes, startIdx + 2);
+            } else {
+                startIdx = builder.indexOf(charAfterBackslashes, startIdx + 1);
+            }
+        }
+
+        return builder.toString();
     }
 
     private static String fixUnicodeScriptPattern(String rawPattern) {
