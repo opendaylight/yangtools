@@ -50,7 +50,10 @@ public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConst
         }
 
         @Override
-        public PatternConstraint parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        public PatternConstraint parseArgumentValue(final StmtContext<?, ?, ?> ctx, String value) {
+            value = Utils.escapeRegexStartingAnchors(value);
+            value = Utils.escapeUnescapedDollarSigns(value);
+
             final String pattern = "^" + Utils.fixUnicodeScriptPattern(value) + '$';
 
             try {
