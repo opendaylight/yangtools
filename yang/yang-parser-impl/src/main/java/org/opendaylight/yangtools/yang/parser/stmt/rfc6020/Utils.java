@@ -77,6 +77,8 @@ public final class Utils {
     private static final Splitter SPACE_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
     private static final Pattern PATH_ABS = Pattern.compile("/[^/].*");
     private static final Pattern BETWEEN_CURLY_BRACES_PATTERN = Pattern.compile("\\{(.+?)\\}");
+    private static final Pattern UNESCAPED_DOLLAR_PATTERN = Pattern.compile("(?<!\\\\)\\$");
+    private static final Pattern STARTING_ANCHOR_PATTERN = Pattern.compile("(?<![\\[\\\\])\\^");
     private static final Set<String> JAVA_UNICODE_BLOCKS = ImmutableSet.<String>builder()
             .add("AegeanNumbers")
             .add("AlchemicalSymbols")
@@ -624,5 +626,23 @@ public final class Utils {
             }
         }
         return result.toString();
+    }
+
+    public static String escapeRegexStartingAnchors(String regExPattern) {
+        Matcher matcher = STARTING_ANCHOR_PATTERN.matcher(regExPattern);
+        if (matcher.find()) {
+            return matcher.replaceAll("\\\\\\^");
+        }
+
+        return regExPattern;
+    }
+
+    public static String escapeUnescapedDollarSigns(String regExPattern) {
+        Matcher matcher = UNESCAPED_DOLLAR_PATTERN.matcher(regExPattern);
+        if (matcher.find()) {
+            return matcher.replaceAll("\\\\\\$");
+        }
+
+        return regExPattern;
     }
 }
