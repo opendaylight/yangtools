@@ -973,13 +973,31 @@ public final class ParserListenerUtils {
                 reference = Optional.of(stringFromNode(child));
             }
         }
-        final String rawPattern = parsePatternString(ctx);
+        String rawPattern = parsePatternString(ctx);
+        if (rawPattern.startsWith("^")) {
+            rawPattern = escapeRegexStartingAnchors(rawPattern);
+        }
+
+        rawPattern = rawPattern.replaceAll("\\$", "\\\\\\$");
         final String fixedRawPattern = fixUnicodeScriptPattern(rawPattern);
         final String pattern = wrapPattern(fixedRawPattern);
         if (isValidPattern(pattern, ctx, moduleName)) {
             return BaseConstraints.newPatternConstraint(pattern, description, reference);
         }
         return null;
+    }
+
+    private static String escapeRegexStartingAnchors(String regExPattern) {
+        String result = "";
+        int idx = 0;
+        while (regExPattern.charAt(idx) == '^') {
+            idx++;
+            result += "\\^";
+        }
+
+        result += regExPattern.substring(idx);
+
+        return result;
     }
 
     private static String fixUnicodeScriptPattern(String rawPattern) {

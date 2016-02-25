@@ -1,0 +1,10 @@
+module bug5410-test {
+    namespace "bug5410-test";
+    prefix "b5410t";
+
+    leaf test-leaf {
+        type string {
+            pattern "^^^[^a-z]?$$[^A-Z]?$$$";
+        }
+    }
+}
