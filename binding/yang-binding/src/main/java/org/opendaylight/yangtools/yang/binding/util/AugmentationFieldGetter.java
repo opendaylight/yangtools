@@ -54,7 +54,7 @@ abstract class AugmentationFieldGetter {
     protected abstract Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object input);
 
     private static final LoadingCache<Class<?>, AugmentationFieldGetter> AUGMENTATION_GETTERS = CacheBuilder
-            .newBuilder().weakKeys().softValues().build(new AugmentationGetterLoader());
+            .newBuilder().weakKeys().build(new AugmentationGetterLoader());
 
     public static AugmentationFieldGetter getGetter(final Class<? extends Object> clz) {
         if(AugmentationHolder.class.isAssignableFrom(clz)) {
