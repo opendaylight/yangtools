@@ -78,6 +78,11 @@ abstract class AugmentationFieldGetter {
                     BindingMapping.AUGMENTATION_FIELD, key, e);
                 return DUMMY;
             }
+            if (!Map.class.isAssignableFrom(field.getType())) {
+                LOG.warn("Class {} field {} is not a Map, ignoring augmentations", key,
+                    BindingMapping.AUGMENTATION_FIELD);
+                return DUMMY;
+            }
 
             return new ReflectionAugmentationFieldGetter(LOOKUP.unreflectGetter(field).asType(GETTER_TYPE));
         }
