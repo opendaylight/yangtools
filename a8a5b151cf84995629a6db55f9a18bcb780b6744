@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_372a3a90",
+        "filename": "yang/yang-parser-impl/src/test/resources/bugs/bug5410/bug5410-test.yang",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-02-26T10:45:28Z",
+      "side": 1,
+      "message": "also add a \"[^ ]\" pattern to check correct non-escaping of that construct",
+      "revId": "a8a5b151cf84995629a6db55f9a18bcb780b6744",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
