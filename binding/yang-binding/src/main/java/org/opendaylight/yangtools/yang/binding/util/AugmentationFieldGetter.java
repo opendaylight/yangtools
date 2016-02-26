@@ -7,16 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.binding.util;
 
-import org.opendaylight.yangtools.yang.binding.AugmentationHolder;
-
 import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodHandles.Lookup;
+import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
+import org.opendaylight.yangtools.yang.binding.AugmentationHolder;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,38 +64,39 @@ abstract class AugmentationFieldGetter {
     }
 
     private static final class AugmentationGetterLoader extends CacheLoader<Class<?>, AugmentationFieldGetter> {
+        private static final MethodType GETTER_TYPE = MethodType.methodType(Map.class, Object.class);
+        private static final Lookup LOOKUP = MethodHandles.lookup();
 
         @Override
-        public AugmentationFieldGetter load(final Class<?> key) throws Exception {
-            Field field;
+        public AugmentationFieldGetter load(final Class<?> key) throws IllegalAccessException {
+            final Field field;
             try {
                 field = key.getDeclaredField(BindingMapping.AUGMENTATION_FIELD);
+                field.setAccessible(true);
             } catch (NoSuchFieldException | SecurityException e) {
-                LOG.debug("Failed to acquire augmentation field", e);
+                LOG.warn("Failed to acquire augmentation field {}, ignoring augmentations in class {}",
+                    BindingMapping.AUGMENTATION_FIELD, key, e);
                 return DUMMY;
             }
-            field.setAccessible(true);
 
-            return new ReflectionAugmentationFieldGetter(field);
+            return new ReflectionAugmentationFieldGetter(LOOKUP.unreflectGetter(field).asType(GETTER_TYPE));
         }
     }
 
     private static final class ReflectionAugmentationFieldGetter extends AugmentationFieldGetter {
-        private final Field augmentationField;
+        private final MethodHandle fieldGetter;
 
-        ReflectionAugmentationFieldGetter(final Field augmentationField) {
-            this.augmentationField = Preconditions.checkNotNull(augmentationField);
+        ReflectionAugmentationFieldGetter(final MethodHandle mh) {
+            this.fieldGetter = Preconditions.checkNotNull(mh);
         }
 
         @Override
-        @SuppressWarnings("unchecked")
         protected Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object input) {
             try {
-                return (Map<Class<? extends Augmentation<?>>, Augmentation<?>>) augmentationField.get(input);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                throw new IllegalStateException("Failed to access augmentation field", e);
+                return (Map<Class<? extends Augmentation<?>>, Augmentation<?>>) fieldGetter.invokeExact(input);
+            } catch (Throwable e) {
+                throw new IllegalStateException("Failed to access augmentation field on " + input, e);
             }
         }
     }
-
 }
