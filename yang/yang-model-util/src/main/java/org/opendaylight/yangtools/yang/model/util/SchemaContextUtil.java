@@ -630,23 +630,25 @@ public final class SchemaContextUtil {
         RevisionAwareXPath pathStatement = typeDefinition.getPathStatement();
         pathStatement = new RevisionAwareXPathImpl(stripConditionsFromXPathString(pathStatement), pathStatement.isAbsolute());
 
-        SchemaNode baseSchema = schema;
-        while (baseSchema instanceof DerivableSchemaNode) {
-            final Optional<? extends SchemaNode> basePotential = ((DerivableSchemaNode) baseSchema).getOriginal();
-            if (basePotential.isPresent()) {
-                baseSchema = basePotential.get();
-            } else {
-                break;
-            }
-        }
-
-        Module parentModule = findParentModuleOfReferencingType(schemaContext, baseSchema);
-
         final DataSchemaNode dataSchemaNode;
-        if(pathStatement.isAbsolute()) {
-            dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNode(schemaContext, parentModule, pathStatement);
+        if (pathStatement.isAbsolute()) {
+            SchemaNode baseSchema = schema;
+            while (baseSchema instanceof DerivableSchemaNode) {
+                final Optional<? extends SchemaNode> basePotential = ((DerivableSchemaNode) baseSchema).getOriginal();
+                if (basePotential.isPresent()) {
+                    baseSchema = basePotential.get();
+                } else {
+                    break;
+                }
+            }
+
+            Module parentModule = findParentModuleOfReferencingType(schemaContext, baseSchema);
+            dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNode(schemaContext, parentModule,
+                    pathStatement);
         } else {
-            dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNodeForRelativeXPath(schemaContext, parentModule, baseSchema, pathStatement);
+            Module parentModule = findParentModule(schemaContext, schema);
+            dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNodeForRelativeXPath(schemaContext,
+                    parentModule, schema, pathStatement);
         }
 
         // FIXME this is just to preserve backwards compatibility since yangtools do not mind wrong leafref xpaths
