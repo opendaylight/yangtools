@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_30e51b38",
+        "filename": "yang/yang-parser-impl/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/rfc6020/PatternStatementImpl.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-03-01T14:47:39Z",
+      "side": 1,
+      "message": "you replace all $ by \\$ and therefore you escape also already escaped $. For example \"\\$\" -\u003e \"\\\\$\". \nPlease use a pre-compiled pattern.",
+      "range": {
+        "startLine": 58,
+        "startChar": 12,
+        "endLine": 58,
+        "endChar": 55
+      },
+      "revId": "662624c3908f416b07731d563cf3b80bb2c6d2e2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_70d2035d",
+        "filename": "yang/yang-parser-impl/src/test/resources/bugs/bug5410/bug5410-test.yang",
+        "patchSetId": 4
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 2745
+      },
+      "writtenOn": "2016-03-01T14:47:39Z",
+      "side": 1,
+      "message": "Please add more tests for various expressions",
+      "range": {
+        "startLine": 7,
+        "startChar": 12,
+        "endLine": 7,
+        "endChar": 45
+      },
+      "revId": "662624c3908f416b07731d563cf3b80bb2c6d2e2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
