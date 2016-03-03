@@ -1,0 +1,14 @@
+submodule sub-bar {
+    belongs-to bar {
+        prefix bar;
+    }
+
+    import foo { prefix foo; revision-date 2016-03-04; }
+
+    augment "/foo:root/bar:presence-container" {
+        leaf mandatory-leaf {
+            type string;
+            mandatory true;
+        }
+    }
+}
