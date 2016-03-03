@@ -1,0 +1,12 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+    yang-version 1;
+
+    revision "2016-03-04" {
+        description "test";
+    }
+
+    container root {
+    }
+}
