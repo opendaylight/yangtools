@@ -8,10 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
+
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
@@ -41,6 +43,7 @@ import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.Deviation.Deviate;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
@@ -624,5 +627,28 @@ public final class Utils {
             }
         }
         return result.toString();
+    }
+
+    public static boolean belongsToTheSameModule(QName targetStmtQName, QName sourceStmtQName) {
+        if (targetStmtQName.getModule().equals(sourceStmtQName.getModule())) {
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean isPresenceContainer(StatementContextBase<?, ?, ?> targetCtx) {
+        if (!targetCtx.getPublicDefinition().equals(Rfc6020Mapping.CONTAINER)) {
+            return false;
+        }
+
+        final List<StatementContextBase<?, ?, ?>> targetSubStatements = new ImmutableList.Builder<StatementContextBase<?, ?, ?>>()
+                .addAll(targetCtx.declaredSubstatements()).addAll(targetCtx.effectiveSubstatements()).build();
+        for (final StatementContextBase<?, ?, ?> subStatement : targetSubStatements) {
+            if (subStatement.getPublicDefinition().equals(Rfc6020Mapping.PRESENCE)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
