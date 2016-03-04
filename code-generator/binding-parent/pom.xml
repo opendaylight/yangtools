@@ -12,18 +12,18 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>bundle-parent</artifactId>
-        <version>1.5.4-Lithium-SR4</version>
+        <version>1.5.5-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>binding-parent</artifactId>
-    <version>0.7.4-Lithium-SR4</version>
+    <version>0.7.5-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <properties>
-        <yangtools.version>0.7.4-Lithium-SR4</yangtools.version>
+        <yangtools.version>0.7.5-SNAPSHOT</yangtools.version>
         <salGeneratorPath>src/main/yang-gen-sal</salGeneratorPath>
     </properties>
 

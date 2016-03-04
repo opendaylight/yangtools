@@ -13,7 +13,7 @@
     <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>yangtools-aggregator</artifactId>
-        <version>0.7.4-Lithium-SR4</version>
+        <version>0.7.5-SNAPSHOT</version>
     </parent>
     <artifactId>yang-validation-tool</artifactId>
 
