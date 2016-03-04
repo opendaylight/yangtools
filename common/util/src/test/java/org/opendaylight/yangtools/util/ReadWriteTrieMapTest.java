@@ -12,10 +12,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
 import com.romix.scala.collection.concurrent.TrieMap;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -47,10 +46,10 @@ public class ReadWriteTrieMapTest {
         assertEquals("Removed value from readOnlyTrieMap should be 'one'.", "one", rwMap.remove("1"));
 
         final Set<String> trieMapKeySet = readWriteTrieMap.keySet();
-        assertEquals("Size of keySet should be '3'.", 3, Iterables.size(trieMapKeySet));
+        assertEquals("Size of keySet should be '3'.", 3, trieMapKeySet.size());
 
         final Collection<String> trieMapValues = readWriteTrieMap.values();
-        assertEquals("Size of values should be '3'.", 3, Iterables.size(trieMapValues));
+        assertEquals("Size of values should be '3'.", 3, trieMapValues.size());
 
         assertTrue("Entry set of readWriteTrieMap and trieMap should by equals.", convertSetEntryToMap(readWriteTrieMap.entrySet()).equals(trieMap));
 
@@ -61,13 +60,13 @@ public class ReadWriteTrieMapTest {
         assertFalse("Hash codes of object readWriteTrieMap and readOnelyTrieMap2 should be different.", readWriteTrieMap.hashCode() == readWriteTrieMap2.hashCode());
 
         final Map<String, String> readOnlyTrieMap = readWriteTrieMap.toReadOnly();
-
         readWriteTrieMap.clear();
-        assertEquals("Size of readOnlyTrieMap should be '0'.", 0, readWriteTrieMap.size());
+        assertEquals("Size of readWriteTrieMap should be '0'.", 0, readWriteTrieMap.size());
+        assertEquals("Size of readOnlyTrieMap should be '6'.", 6, readOnlyTrieMap.size());
     }
 
     public Map<String, String> convertSetEntryToMap(Set<Entry<String, String>> input) {
-        Map<String, String> resultMap = Maps.newHashMap();
+        Map<String, String> resultMap = new HashMap<>();
         for (Entry<String, String> entry : input) {
             resultMap.put(entry.getKey(), entry.getValue());
         }
