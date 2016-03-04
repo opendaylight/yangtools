@@ -15,7 +15,7 @@
    <parent>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>restconf-parent</artifactId>
-        <version>0.7.4-SNAPSHOT</version>
+        <version>0.7.4-Lithium-SR4</version>
     </parent>
     <dependencies>
         <dependency>
