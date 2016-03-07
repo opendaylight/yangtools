@@ -231,7 +231,7 @@ final class Util {
     private static final String JAR_SUFFIX = ".jar";
 
     private static boolean isJar(File element) {
-        return (element.isFile() && element.getName().endsWith(JAR_SUFFIX)) ? true : false;
+        return (element.isFile() && element.getName().endsWith(JAR_SUFFIX));
     }
 
     static <T> T checkNotNull(T obj, String paramName) {
