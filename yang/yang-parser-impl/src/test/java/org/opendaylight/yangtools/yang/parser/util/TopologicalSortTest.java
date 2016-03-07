@@ -35,11 +35,8 @@ public class TopologicalSortTest {
         node2.addEdge(node3);
         node3.addEdge(node1);
 
-        try {
-            TopologicalSort.sort(nodes);
-        } catch (IllegalStateException e) {
-            throw e;
-        }
+        // We expect an IllegalStateException here
+        TopologicalSort.sort(nodes);
     }
 
     @Test
