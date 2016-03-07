@@ -37,6 +37,8 @@ public class GuavaObjectCacheTest {
 	}
 
 	@Test
+	// This test is based on using different references
+	@SuppressWarnings("RedundantStringConstructorCall")
 	public void testMultipleReferences() {
 		final String s1 = "abcd";
 		final String s2 = new String(s1);
