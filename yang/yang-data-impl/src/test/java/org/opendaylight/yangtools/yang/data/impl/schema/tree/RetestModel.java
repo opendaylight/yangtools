@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collections;
+
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.RetestUtils;
@@ -43,6 +45,6 @@ public class RetestModel {
 
     public static SchemaContext createTestContext(String resourcePath) throws ReactorException {
         InputStream yangStream = RetestModel.class.getResourceAsStream(resourcePath);
-        return RetestUtils.parseYangStreams(Arrays.asList(yangStream));
+        return RetestUtils.parseYangStreams(Collections.singletonList(yangStream));
     }
 }

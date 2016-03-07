@@ -14,7 +14,7 @@ import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -835,7 +835,7 @@ public final class SchemaContextUtil {
         } else if (node instanceof LeafSchemaNode) {
             return typeDefinition((LeafSchemaNode) node);
         } else {
-            throw new IllegalArgumentException("Unhandled parameter types: " + Arrays.<Object> asList(node).toString());
+            throw new IllegalArgumentException("Unhandled parameter types: " + Collections.<Object>singletonList(node).toString());
         }
     }
 }

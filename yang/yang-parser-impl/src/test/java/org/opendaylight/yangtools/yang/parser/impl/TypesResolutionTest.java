@@ -17,6 +17,7 @@ import java.io.File;
 import java.math.BigInteger;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.junit.Before;
@@ -344,13 +345,13 @@ public class TypesResolutionTest {
     public void testUnionWithBits() throws Exception {
         File unionbits = new File(getClass().getResource("/types/union-with-bits/union-bits-model.yang").toURI());
         YangContextParser parser = new YangParserImpl();
-        parser.parseFiles(Arrays.asList(unionbits));
+        parser.parseFiles(Collections.singletonList(unionbits));
     }
 
     @Test(expected = YangParseException.class)
     public void testUnionInList() throws Exception {
        File unioninlist = new File(getClass().getResource("/types/union-in-list/unioninlisttest.yang").toURI());
        YangContextParser parser = new YangParserImpl();
-       parser.parseFiles(Arrays.asList(unioninlist));
+       parser.parseFiles(Collections.singletonList(unioninlist));
     }
 }
