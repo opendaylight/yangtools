@@ -20,7 +20,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.AbstractMap;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -58,7 +58,7 @@ public class XmlStreamUtilsTest {
     public static void initialize() throws URISyntaxException {
         final YangParserImpl yangParser = new YangParserImpl();
         final File file = new File(XmlStreamUtils.class.getResource("/leafref-test.yang").toURI());
-        schemaContext = yangParser.parseFiles(Arrays.asList(file));
+        schemaContext = yangParser.parseFiles(Collections.singletonList(file));
         assertNotNull(schemaContext);
         assertEquals(1,schemaContext.getModules().size());
         leafRefModule = schemaContext.getModules().iterator().next();

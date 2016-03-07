@@ -9,7 +9,7 @@
 package org.opendaylight.yangtools.util.concurrent;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -105,7 +105,7 @@ public class QueuedNotificationManager<L,N> implements NotificationManager<L,N> 
             return;
         }
 
-        submitNotifications( listener, Arrays.asList( notification ) );
+        submitNotifications( listener, Collections.singletonList(notification));
     }
 
     /* (non-Javadoc)

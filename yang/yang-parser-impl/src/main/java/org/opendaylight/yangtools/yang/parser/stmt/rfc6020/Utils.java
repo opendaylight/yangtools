@@ -19,6 +19,7 @@ import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -420,7 +421,7 @@ public final class Utils {
         StringBuilder sb = new StringBuilder();
         List<TerminalNode> strings = context.STRING();
         if (strings.isEmpty()) {
-            strings = Arrays.asList(context.IDENTIFIER());
+            strings = Collections.singletonList(context.IDENTIFIER());
         }
         for (TerminalNode stringNode : strings) {
             final String str = stringNode.getText();
