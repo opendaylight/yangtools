@@ -123,21 +123,6 @@
 
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>object-cache-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>object-cache-guava</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>object-cache-noop</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
                 <artifactId>util</artifactId>
                 <version>${project.version}</version>
             </dependency>
