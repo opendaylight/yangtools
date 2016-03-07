@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Namesp
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * root statement class for a Yang source
@@ -28,14 +27,14 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     private final SourceSpecificContext sourceContext;
     private final A argument;
 
-    RootStatementContext(final ContextBuilder<A, D, E> builder, final SourceSpecificContext sourceContext) throws SourceException {
+    RootStatementContext(final ContextBuilder<A, D, E> builder, final SourceSpecificContext sourceContext) {
         super(builder);
         this.sourceContext = sourceContext;
         this.argument = builder.getDefinition().parseArgumentValue(this, builder.getRawArgument());
     }
 
-    RootStatementContext(final RootStatementContext<A, D, E> original, final QNameModule newQNameModule, final TypeOfCopy typeOfCopy)
-            throws SourceException {
+    RootStatementContext(final RootStatementContext<A, D, E> original, final QNameModule newQNameModule,
+        final TypeOfCopy typeOfCopy) {
         super(original);
 
         sourceContext = original.sourceContext;
@@ -52,10 +51,10 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
      *
      * @param typeOfCopy
      *            determines whether copy is used by augmentation or uses
-     * @throws SourceException
+     * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException
      */
     private void copyDeclaredStmts(final RootStatementContext<A, D, E> original, final QNameModule newQNameModule,
-            final TypeOfCopy typeOfCopy) throws SourceException {
+            final TypeOfCopy typeOfCopy) {
         Collection<? extends StmtContext<?, ?, ?>> originalDeclaredSubstatements = original.declaredSubstatements();
         for (StmtContext<?, ?, ?> stmtContext : originalDeclaredSubstatements) {
             this.addEffectiveSubstatement(stmtContext.createCopy(newQNameModule, this, typeOfCopy));
@@ -67,10 +66,10 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
      *
      * @param typeOfCopy
      *            determines whether copy is used by augmentation or uses
-     * @throws SourceException
+     * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException
      */
     private void copyEffectiveStmts(final RootStatementContext<A, D, E> original, final QNameModule newQNameModule,
-            final TypeOfCopy typeOfCopy) throws SourceException {
+            final TypeOfCopy typeOfCopy) {
         Collection<? extends StmtContext<?, ?, ?>> originalEffectiveSubstatements = original.effectiveSubstatements();
         for (StmtContext<?, ?, ?> stmtContext : originalEffectiveSubstatements) {
             this.addEffectiveSubstatement(stmtContext.createCopy(newQNameModule, this, typeOfCopy));
@@ -125,22 +124,22 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     /**
      * @return copy of this considering {@link TypeOfCopy} (augment, uses)
      *
-     * @throws SourceException instance of SourceException
+     * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException instance of SourceException
      */
     @Override
-    public StatementContextBase<?, ?, ?> createCopy(final StatementContextBase<?, ?, ?> newParent, final TypeOfCopy typeOfCopy)
-            throws SourceException {
+    public StatementContextBase<?, ?, ?> createCopy(final StatementContextBase<?, ?, ?> newParent,
+            final TypeOfCopy typeOfCopy) {
         return createCopy(null, newParent, typeOfCopy);
     }
 
     /**
      * @return copy of this considering {@link TypeOfCopy} (augment, uses)
      *
-     * @throws SourceException instance of SourceException
+     * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException instance of SourceException
      */
     @Override
     public StatementContextBase<A, D, E> createCopy(final QNameModule newQNameModule,
-            final StatementContextBase<?, ?, ?> newParent, final TypeOfCopy typeOfCopy) throws SourceException {
+            final StatementContextBase<?, ?, ?> newParent, final TypeOfCopy typeOfCopy) {
         RootStatementContext<A, D, E> copy = new RootStatementContext<>(this, newQNameModule, typeOfCopy);
 
         copy.addAllToCopyHistory(this.getCopyHistory());

@@ -45,19 +45,20 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * event listener when an item is added to model namespace
      */
     interface OnNamespaceItemAdded extends EventListener {
-
-        void namespaceItemAdded(StatementContextBase<?, ?, ?> context, Class<?> namespace, Object key, Object value)
-                throws SourceException;
-
+        /**
+         * @throws SourceException
+         */
+        void namespaceItemAdded(StatementContextBase<?, ?, ?> context, Class<?> namespace, Object key, Object value);
     }
 
     /**
      * event listener when a parsing {@link ModelProcessingPhase} is completed
      */
     interface OnPhaseFinished extends EventListener {
-
-        boolean phaseFinished(StatementContextBase<?, ?, ?> context, ModelProcessingPhase phase) throws SourceException;
-
+        /**
+         * @throws SourceException
+         */
+        boolean phaseFinished(StatementContextBase<?, ?, ?> context, ModelProcessingPhase phase);
     }
 
     /**
@@ -66,7 +67,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     interface ContextMutation {
 
         boolean isFinished();
-
     }
 
     private final StatementDefinitionContext<A, D, E> definition;
@@ -158,7 +158,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.completedPhase = completedPhase;
     }
 
-    StatementContextBase(@Nonnull final ContextBuilder<A, D, E> builder) throws SourceException {
+    StatementContextBase(@Nonnull final ContextBuilder<A, D, E> builder) {
         this.definition = builder.getDefinition();
         this.identifier = builder.createIdentifier();
         this.statementDeclSource = builder.getStamementSource();
@@ -397,7 +397,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @throws SourceException
      *             when an error occured in source parsing
      */
-    boolean tryToCompletePhase(final ModelProcessingPhase phase) throws SourceException {
+    boolean tryToCompletePhase(final ModelProcessingPhase phase) {
         Iterator<ContextMutation> openMutations = phaseMutation.get(phase).iterator();
         boolean finished = true;
         while (openMutations.hasNext()) {
@@ -430,7 +430,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @throws SourceException
      *             when an error occured in source parsing
      */
-    private void onPhaseCompleted(final ModelProcessingPhase phase) throws SourceException {
+    private void onPhaseCompleted(final ModelProcessingPhase phase) {
         completedPhase = phase;
         Iterator<OnPhaseFinished> listener = phaseListeners.get(completedPhase).iterator();
         while (listener.hasNext()) {
@@ -447,7 +447,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @param ref
      * @throws SourceException
      */
-    void endDeclared(final StatementSourceReference ref, final ModelProcessingPhase phase) throws SourceException {
+    void endDeclared(final StatementSourceReference ref, final ModelProcessingPhase phase) {
         definition().onDeclarationFinished(this, phase);
     }
 
@@ -517,7 +517,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *
      * @throws SourceException
      */
-    void addPhaseCompletedListener(final ModelProcessingPhase phase, final OnPhaseFinished listener) throws SourceException {
+    void addPhaseCompletedListener(final ModelProcessingPhase phase, final OnPhaseFinished listener) {
 
         Preconditions.checkNotNull(phase, "Statement context processing phase cannot be null at: %s",
                 getStatementSourceReference());

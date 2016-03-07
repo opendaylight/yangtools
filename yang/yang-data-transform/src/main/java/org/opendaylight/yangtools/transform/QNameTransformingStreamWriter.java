@@ -99,79 +99,77 @@ public abstract class QNameTransformingStreamWriter extends ForwardingObject imp
     protected abstract @Nonnull QName transform(@Nonnull QName key);
 
     @Override
-    public void leafNode(final NodeIdentifier name, final Object value) throws IOException, IllegalArgumentException {
+    public void leafNode(final NodeIdentifier name, final Object value) throws IOException {
         delegate().leafNode(transform(name), value);
     }
 
     @Override
-    public void startLeafSet(final NodeIdentifier name, final int childSizeHint) throws IOException, IllegalArgumentException {
+    public void startLeafSet(final NodeIdentifier name, final int childSizeHint) throws IOException {
         delegate().startLeafSet(transform(name), childSizeHint);
     }
 
     @Override
-    public void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint) throws IOException, IllegalArgumentException {
+    public void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint) throws IOException {
         delegate().startOrderedLeafSet(transform(name), childSizeHint);
     }
 
     @Override
-    public void leafSetEntryNode(final QName name, final Object value) throws IOException, IllegalArgumentException {
+    public void leafSetEntryNode(final QName name, final Object value) throws IOException {
         delegate().leafSetEntryNode(transform(name), value);
     }
 
     @Override
-    public void startContainerNode(final NodeIdentifier name, final int childSizeHint) throws IOException, IllegalArgumentException {
+    public void startContainerNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
         delegate().startContainerNode(transform(name), childSizeHint);
     }
 
     @Override
-    public void startUnkeyedList(final NodeIdentifier name, final int childSizeHint) throws IOException, IllegalArgumentException {
+    public void startUnkeyedList(final NodeIdentifier name, final int childSizeHint) throws IOException {
         delegate().startUnkeyedList(transform(name), childSizeHint);
     }
 
     @Override
-    public void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) throws IOException, IllegalStateException {
+    public void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) throws IOException {
         delegate().startUnkeyedListItem(transform(name), childSizeHint);
     }
 
     @Override
-    public void startMapNode(final NodeIdentifier name, final int childSizeHint) throws IOException, IllegalArgumentException {
+    public void startMapNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
         delegate().startMapNode(transform(name), childSizeHint);
     }
 
     @Override
-    public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint) throws IOException,
-            IllegalArgumentException {
+    public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint) throws IOException {
         delegate().startMapEntryNode(transform(identifier), childSizeHint);
     }
 
     @Override
-    public void startOrderedMapNode(final NodeIdentifier name, final int childSizeHint) throws IOException,
-            IllegalArgumentException {
+    public void startOrderedMapNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
         delegate().startOrderedMapNode(transform(name), childSizeHint);
     }
 
     @Override
-    public void startChoiceNode(final NodeIdentifier name, final int childSizeHint) throws IOException, IllegalArgumentException {
+    public void startChoiceNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
         delegate().startChoiceNode(transform(name), childSizeHint);
     }
 
     @Override
-    public void startAugmentationNode(final AugmentationIdentifier identifier) throws IOException, IllegalArgumentException {
+    public void startAugmentationNode(final AugmentationIdentifier identifier) throws IOException {
         delegate().startAugmentationNode(transform(identifier));
     }
 
     @Override
-    public void anyxmlNode(final NodeIdentifier name, final Object value) throws IOException, IllegalArgumentException {
+    public void anyxmlNode(final NodeIdentifier name, final Object value) throws IOException {
         delegate().anyxmlNode(transform(name), value);
     }
 
     @Override
-    public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) throws IOException, IllegalArgumentException {
+    public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
         delegate().startYangModeledAnyXmlNode(transform(name), childSizeHint);
     }
 
     @Override
-    public void endNode() throws IOException, IllegalStateException {
+    public void endNode() throws IOException {
         delegate().endNode();
     }
 

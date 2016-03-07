@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
@@ -94,15 +93,19 @@ public class CrossSourceStatementReactor {
             }
         }
 
-        public EffectiveModelContext build() throws SourceException, ReactorException {
+        /**
+         * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException
+         * @throws ReactorException
+         */
+        public EffectiveModelContext build() throws ReactorException {
             return context.build();
         }
 
-        public EffectiveSchemaContext buildEffective() throws SourceException, ReactorException {
+        public EffectiveSchemaContext buildEffective() throws ReactorException {
             return context.buildEffective();
         }
 
-        public SchemaContext buildEffective(final Collection<ByteSource> yangByteSources) throws SourceException,
+        public SchemaContext buildEffective(final Collection<ByteSource> yangByteSources) throws
                 ReactorException, IOException {
             for (ByteSource yangByteSource : yangByteSources) {
                 addSource(new YangStatementSourceImpl(yangByteSource.openStream()));
@@ -111,7 +114,7 @@ public class CrossSourceStatementReactor {
             return buildEffective();
         }
 
-        public SchemaContext buildEffective(final List<InputStream> yangInputStreams) throws SourceException,
+        public SchemaContext buildEffective(final List<InputStream> yangInputStreams) throws
                 ReactorException {
             for (InputStream yangInputStream : yangInputStreams) {
                 addSource(new YangStatementSourceImpl(yangInputStream));
@@ -124,7 +127,7 @@ public class CrossSourceStatementReactor {
          * @deprecated This method was never used and relies on deprecated module methods.
          */
         @Deprecated
-        public Map<File, Module> buildEffectiveMappedToSource(final List<File> yangFiles) throws SourceException,
+        public Map<File, Module> buildEffectiveMappedToSource(final List<File> yangFiles) throws
                 ReactorException, FileNotFoundException {
             if (yangFiles == null || yangFiles.isEmpty()) {
                 return Collections.emptyMap();
