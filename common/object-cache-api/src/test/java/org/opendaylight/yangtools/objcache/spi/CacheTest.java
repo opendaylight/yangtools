@@ -46,6 +46,8 @@ public class CacheTest {
     }
 
     @Test
+    // This test is based on using different references
+    @SuppressWarnings("RedundantStringConstructorCall")
     public void testPresentKey() {
         final String key1 = new String("abcd");
         final String key2 = new String("abcd");

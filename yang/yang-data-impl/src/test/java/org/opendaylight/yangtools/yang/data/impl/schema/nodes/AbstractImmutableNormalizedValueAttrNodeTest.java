@@ -20,15 +20,14 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
             "my-other-leaf");
 
     @Test
+    // This test is based on using different references; we're testing equals()
+    @SuppressWarnings({"RedundantStringConstructorCall", "EqualsWithItself"})
     public void equalsByteTest() {
 
-        byte[] valueNull = null;
-        byte[] equalValueNull = null;
-
         LeafNode<byte[]> leafNodeNull = ImmutableNodes.leafNode(LEAF_QNAME,
-                valueNull);
+                null);
         LeafNode<byte[]> equalLeafNodeNull = ImmutableNodes.leafNode(
-                SAME_LEAF_QNAME, equalValueNull);
+                SAME_LEAF_QNAME, null);
 
         assertTrue(leafNodeNull.equals(leafNodeNull));
         assertTrue(leafNodeNull.equals(equalLeafNodeNull));
@@ -97,7 +96,7 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         assertTrue(leafNode6.equals(equalLeafNode6));
         assertTrue(equalLeafNode6.equals(leafNode6));
 
-        String value5 = new String("test");
+        String value5 = "test";
         String equalValue5 = new String("test");
 
         LeafNode<String> leafNode5 = ImmutableNodes
@@ -112,6 +111,8 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
     }
 
     @Test
+    // We're testing equals()
+    @SuppressWarnings({"ObjectEqualsNull", "EqualsBetweenInconvertibleTypes"})
     public void notEqualByteTest() {
 
         byte[] value = "test".getBytes();
@@ -185,8 +186,8 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         assertFalse(leafNode6.equals(otherLeafNode6));
         assertFalse(otherLeafNode6.equals(leafNode6));
 
-        String value5 = new String("test");
-        String otherValue5 = new String("test2");
+        String value5 = "test";
+        String otherValue5 = "test2";
 
         LeafNode<String> leafNode5 = ImmutableNodes
                 .leafNode(LEAF_QNAME, value5);
@@ -208,15 +209,13 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         assertFalse(leafNode4.equals(leafNode5));
         assertFalse(leafNode6.equals(leafNode5));
 
-        byte[] valueNull = null;
-
         LeafNode<byte[]> leafNodeNull = ImmutableNodes.leafNode(
-                SAME_LEAF_QNAME, valueNull);
+                SAME_LEAF_QNAME, null);
         assertFalse(leafNodeNull.equals(leafNode));
         assertFalse(leafNode.equals(leafNodeNull));
 
-        byte[] byteValue = new byte[] { new Byte("1").byteValue(),
-                new Byte("1").byteValue() };
+        byte[] byteValue = new byte[] {Byte.parseByte("1"),
+                Byte.parseByte("1")};
 
         LeafNode<byte[]> byteLeafNode = ImmutableNodes.leafNode(
                 SAME_LEAF_QNAME, byteValue);
@@ -226,6 +225,8 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
     }
 
     @Test
+    // We're testing equals()
+    @SuppressWarnings({"EqualsWithItself", "EqualsBetweenInconvertibleTypes"})
     public void equalsOtherTypesTest() {
 
         char[] valueChar = "test".toCharArray();

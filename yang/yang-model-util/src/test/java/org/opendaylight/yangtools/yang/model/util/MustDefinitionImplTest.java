@@ -16,6 +16,8 @@ import org.junit.Test;
 public class MustDefinitionImplTest {
 
     @Test
+    // We're testing equals()
+    @SuppressWarnings({"ObjectEqualsNull", "EqualsBetweenInconvertibleTypes"})
     public void test() {
         MustDefinitionImpl mdiA;
         MustDefinitionImpl mdiB;
@@ -23,7 +25,7 @@ public class MustDefinitionImplTest {
 
         assertEquals("mdiA should equals to itsefl", mdiA, mdiA);
         assertFalse("mdiA shouldn't equal to null", mdiA.equals(null));
-        assertFalse("mdiA shouldn't equal to object of other type", mdiA.equals(new String("str")));
+        assertFalse("mdiA shouldn't equal to object of other type", mdiA.equals("str"));
 
         // test of equals method
 
