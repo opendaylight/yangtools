@@ -94,12 +94,10 @@ public final class JsonParserStream implements Closeable, Flushable {
             }
             // The stream ended prematurely so it is likely a syntax error.
             throw new JsonSyntaxException(e);
-        } catch (final MalformedJsonException e) {
+        } catch (final MalformedJsonException | NumberFormatException e) {
             throw new JsonSyntaxException(e);
         } catch (final IOException e) {
             throw new JsonIOException(e);
-        } catch (final NumberFormatException e) {
-            throw new JsonSyntaxException(e);
         } catch (StackOverflowError | OutOfMemoryError e) {
             throw new JsonParseException("Failed parsing JSON source: " + reader + " to Json", e);
         } finally {

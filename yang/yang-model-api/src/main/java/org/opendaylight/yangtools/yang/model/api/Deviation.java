@@ -30,7 +30,7 @@ public interface Deviation {
 
         private final String keyword;
 
-        private Deviate(final String keyword) {
+        Deviate(final String keyword) {
             this.keyword = Preconditions.checkNotNull(keyword);
         }
 

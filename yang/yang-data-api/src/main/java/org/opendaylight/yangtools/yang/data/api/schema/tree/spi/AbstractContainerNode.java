@@ -31,7 +31,7 @@ abstract class AbstractContainerNode extends AbstractTreeNode {
         return Optional.fromNullable(getChildFromData(castData(), childId, getVersion()));
     }
 
-    static final TreeNode getChildFromData(final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> data,
+    static TreeNode getChildFromData(final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> data,
             final PathArgument childId, final Version version) {
         final Optional<NormalizedNode<?, ?>> child = data.getChild(childId);
         return child.isPresent() ? TreeNodeFactory.createTreeNode(child.get(), version) : null;

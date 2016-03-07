@@ -44,7 +44,7 @@ public class Retest_Bug2690Fix {
         inMemoryDataTree.setSchemaContext(schemaContext);
     }
 
-    public static final InputStream getDatastoreTestInputStream() {
+    public static InputStream getDatastoreTestInputStream() {
         return getInputStream(ODL_DATASTORE_TEST_YANG);
     }
 

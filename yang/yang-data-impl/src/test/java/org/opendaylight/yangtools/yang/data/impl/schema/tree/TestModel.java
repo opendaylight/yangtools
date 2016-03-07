@@ -38,7 +38,7 @@ public final class TestModel {
         throw new UnsupportedOperationException();
     }
 
-    public static final InputStream getDatastoreTestInputStream() {
+    public static InputStream getDatastoreTestInputStream() {
         return TestModel.class.getResourceAsStream(DATASTORE_TEST_YANG);
     }
 

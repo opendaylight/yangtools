@@ -42,12 +42,12 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    public static final TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> from(final TypeDefinition typeDefinition) {
+    public static TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> from(final TypeDefinition typeDefinition) {
         return (TypeDefinitionAwareCodec)fromType(typeDefinition);
     }
 
     @SuppressWarnings("unchecked")
-    public static final <T extends TypeDefinition<T>> TypeDefinitionAwareCodec<?, T> fromType(final T typeDefinition) {
+    public static <T extends TypeDefinition<T>> TypeDefinitionAwareCodec<?, T> fromType(final T typeDefinition) {
         // FIXME: this is not necessary with yang.model.util.type
         final T normalizedType = (T) DerivedType.from(typeDefinition);
         @SuppressWarnings("rawtypes")

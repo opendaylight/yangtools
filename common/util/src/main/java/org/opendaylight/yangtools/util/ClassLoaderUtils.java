@@ -79,7 +79,7 @@ public final class ClassLoaderUtils {
         }
     }
 
-    public static Object construct(final Constructor<? extends Object> constructor, final List<Object> objects)
+    public static Object construct(final Constructor<?> constructor, final List<Object> objects)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         final Object[] initargs = objects.toArray();
         return constructor.newInstance(initargs);

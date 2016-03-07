@@ -51,15 +51,15 @@ public abstract class DeclarationInTextSource implements StatementSourceReferenc
     @Override
     public abstract String toString();
 
-    public static final DeclarationInTextSource inSource(String sourceName) {
+    public static DeclarationInTextSource inSource(String sourceName) {
         return new InSource(sourceName);
     }
 
-    public static final DeclarationInTextSource atLine(String sourceName, int line) {
+    public static DeclarationInTextSource atLine(String sourceName, int line) {
         return new AtLine(sourceName, line);
     }
 
-    public static final DeclarationInTextSource atPosition(String sourceName, int line, int position) {
+    public static DeclarationInTextSource atPosition(String sourceName, int line, int position) {
         return new AtPosition(sourceName, line,position);
     }
 

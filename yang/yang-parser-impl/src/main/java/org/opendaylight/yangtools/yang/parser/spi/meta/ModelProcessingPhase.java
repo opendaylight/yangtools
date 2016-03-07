@@ -31,7 +31,7 @@ public enum ModelProcessingPhase {
 
     private final ModelProcessingPhase previousPhase;
 
-    private ModelProcessingPhase(@Nullable ModelProcessingPhase previous) {
+    ModelProcessingPhase(@Nullable ModelProcessingPhase previous) {
         this.previousPhase = previous;
     }
 

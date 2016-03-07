@@ -23,7 +23,7 @@ public class SchemaNodeUtils {
         throw new UnsupportedOperationException("Utility class");
     }
 
-    public static final Optional<SchemaNode> getOriginalIfPossible(final SchemaNode node) {
+    public static Optional<SchemaNode> getOriginalIfPossible(final SchemaNode node) {
         if(node instanceof DerivableSchemaNode) {
             @SuppressWarnings("unchecked")
             final Optional<SchemaNode> ret  = (Optional<SchemaNode>) (((DerivableSchemaNode) node).getOriginal());
@@ -32,7 +32,7 @@ public class SchemaNodeUtils {
         return Optional.absent();
     }
 
-    public static final  SchemaNode getRootOriginalIfPossible(final SchemaNode data) {
+    public static SchemaNode getRootOriginalIfPossible(final SchemaNode data) {
         Optional<SchemaNode> previous = Optional.absent();
         Optional<SchemaNode> next = getOriginalIfPossible(data);
         while(next.isPresent()) {

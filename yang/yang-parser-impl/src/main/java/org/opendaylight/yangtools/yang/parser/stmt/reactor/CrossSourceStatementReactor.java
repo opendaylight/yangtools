@@ -47,7 +47,7 @@ public class CrossSourceStatementReactor {
         this.supportedValidation = ImmutableMap.copyOf(supportedValidation);
     }
 
-    public static final Builder builder() {
+    public static Builder builder() {
         return new Builder();
     }
 

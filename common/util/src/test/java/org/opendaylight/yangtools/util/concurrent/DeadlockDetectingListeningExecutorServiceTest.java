@@ -42,7 +42,7 @@ public class DeadlockDetectingListeningExecutorServiceTest {
 
     interface InitialInvoker {
         void invokeExecutor( ListeningExecutorService executor, Runnable task );
-    };
+    }
 
     static final InitialInvoker SUBMIT = new InitialInvoker() {
         @Override

@@ -129,7 +129,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
      * @param children Child nodes
      * @return Best estimate of the collection size required to hold all the children.
      */
-    protected static final int childSizeHint(final Iterable<?> children) {
+    protected static int childSizeHint(final Iterable<?> children) {
         return (children instanceof Collection) ? ((Collection<?>) children).size() : UNKNOWN_SIZE;
     }
 
