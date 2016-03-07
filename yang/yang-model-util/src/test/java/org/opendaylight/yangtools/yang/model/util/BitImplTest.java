@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -26,6 +26,8 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 public class BitImplTest {
 
     @Test
+    // We're testing equals()
+    @SuppressWarnings({"ObjectEqualsNull", "EqualsBetweenInconvertibleTypes"})
     public void test() {
 
         // hashCode method test
@@ -35,7 +37,6 @@ public class BitImplTest {
         URI uriB = null;
         URI uriB1 = null;
         URI uriB2 = null;
-        boolean urisInitiallized = false;
         try {
             uriA = new URI("some:uriA");
             uriA1 = new URI("some:uriA1");
@@ -43,12 +44,9 @@ public class BitImplTest {
             uriB = new URI("some:uriB");
             uriB1 = new URI("some:uriB1");
             uriB2 = new URI("some:uriB2");
-            urisInitiallized = true;
-
         } catch (URISyntaxException e) {
             e.printStackTrace();
-            assertTrue("Not all required uri variables were instantiated.", urisInitiallized);
-
+            fail("Not all required uri variables were instantiated.");
         }
         QName qnameA = QName.create(uriA, new Date(5000000), "some name");
 
@@ -68,12 +66,12 @@ public class BitImplTest {
         qnamesB.add(qnameB2);
         SchemaPath schemaPathB = SchemaPath.create(qnamesB, true);
 
-        BitImpl biB = null;
+        BitImpl biB;
         BitImpl biA = new BitImpl(55L, qnameA, schemaPathA, "description", "reference", Status.CURRENT, null);
 
         assertEquals("biA should equals to itsefl", biA, biA);
         assertFalse("biA shouldn't equal to null", biA.equals(null));
-        assertFalse("biA shouldn't equal to object of other type", biA.equals(new String("str")));
+        assertFalse("biA shouldn't equal to object of other type", biA.equals("str"));
 
         biA = new BitImpl(55L, qnameB, schemaPathA, "description", "reference", Status.CURRENT, null);
         biB = new BitImpl(55L, qnameB, schemaPathA, "description", "reference", Status.CURRENT, null);
