@@ -84,7 +84,7 @@ public final class MustDefinitionImpl implements MustDefinition {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Objects.hashCode(mustStr);
+        result = prime * result + mustStr.hashCode();
         result = prime * result + Objects.hashCode(description);
         result = prime * result + Objects.hashCode(reference);
         return result;
@@ -95,28 +95,16 @@ public final class MustDefinitionImpl implements MustDefinition {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof MustDefinitionImpl)) {
             return false;
         }
         final MustDefinitionImpl other = (MustDefinitionImpl) obj;
-        if (!Objects.equals(mustStr, other.mustStr)) {
-            return false;
-        }
-        if (!Objects.equals(description, other.description)) {
-            return false;
-        }
-        if (!Objects.equals(reference, other.reference)) {
-            return false;
-        }
-        return true;
+        return mustStr.equals(other.mustStr) && Objects.equals(description, other.description)
+                && Objects.equals(reference, other.reference);
     }
 
     @Override
     public String toString() {
         return mustStr;
     }
-
 }

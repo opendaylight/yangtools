@@ -67,25 +67,12 @@ public final class UnknownEffectiveStatementImpl extends UnknownEffectiveStateme
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof UnknownEffectiveStatementImpl)) {
             return false;
         }
         UnknownEffectiveStatementImpl other = (UnknownEffectiveStatementImpl) obj;
-        if (!Objects.equals(maybeQNameArgument, other.maybeQNameArgument)) {
-            return false;
-        }
-        if (!Objects.equals(path, other.path)) {
-            return false;
-        }
-        if (!Objects.equals(getNodeType(), other.getNodeType())) {
-            return false;
-        }
-        if (!Objects.equals(getNodeParameter(), other.getNodeParameter())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(maybeQNameArgument, other.maybeQNameArgument) && Objects.equals(path, other.path)
+                && Objects.equals(getNodeType(), other.getNodeType())
+                && Objects.equals(getNodeParameter(), other.getNodeParameter());
     }
 }

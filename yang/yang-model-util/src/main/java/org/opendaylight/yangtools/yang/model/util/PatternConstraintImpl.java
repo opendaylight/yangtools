@@ -89,29 +89,13 @@ final class PatternConstraintImpl implements PatternConstraint, Immutable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof PatternConstraintImpl)) {
             return false;
         }
         final PatternConstraintImpl other = (PatternConstraintImpl) obj;
-        if (!Objects.equals(description, other.description)) {
-            return false;
-        }
-        if (!Objects.equals(errorAppTag, other.errorAppTag)) {
-            return false;
-        }
-        if (!Objects.equals(errorMessage, other.errorMessage)) {
-            return false;
-        }
-        if (!Objects.equals(reference, other.reference)) {
-            return false;
-        }
-        if (!Objects.equals(regex, other.regex)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(description, other.description) && Objects.equals(errorAppTag, other.errorAppTag)
+                && Objects.equals(errorMessage, other.errorMessage) && Objects.equals(reference, other.reference)
+                && Objects.equals(regex, other.regex);
     }
 
     @Override

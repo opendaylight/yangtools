@@ -96,26 +96,12 @@ final class RangeConstraintImpl implements RangeConstraint, Immutable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof RangeConstraintImpl)) {
             return false;
         }
         final RangeConstraintImpl other = (RangeConstraintImpl) obj;
-        if (!Objects.equals(description, other.description)) {
-            return false;
-        }
-        if (!Objects.equals(max, other.max)) {
-            return false;
-        }
-        if (!Objects.equals(min, other.min)) {
-            return false;
-        }
-        if (!Objects.equals(reference, other.reference)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(description, other.description) && Objects.equals(max, other.max)
+                && Objects.equals(min, other.min) && Objects.equals(reference, other.reference);
     }
 
     @Override
