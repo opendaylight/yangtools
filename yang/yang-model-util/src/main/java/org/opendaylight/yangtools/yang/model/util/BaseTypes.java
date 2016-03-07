@@ -103,10 +103,8 @@ public final class BaseTypes {
      * @return true if type is built-in YANG Types.
      */
     public static boolean isYangBuildInType(final String type) {
-        if (Strings.isNullOrEmpty(type)) {
-            return false;
-        }
-        return BUILT_IN_TYPES.contains(QName.create(YangConstants.RFC6020_YANG_MODULE, type));
+        return !Strings.isNullOrEmpty(type) && BUILT_IN_TYPES.contains(
+                QName.create(YangConstants.RFC6020_YANG_MODULE, type));
     }
 
     /**
@@ -119,10 +117,7 @@ public final class BaseTypes {
      * @return true if type is built-in YANG Types.
      */
     public static boolean isYangBuildInType(final TypeDefinition<?> type) {
-        if(type == null) {
-            return false;
-        }
-        return BUILT_IN_TYPES.contains(type.getQName());
+        return type != null && BUILT_IN_TYPES.contains(type.getQName());
     }
 
     /**

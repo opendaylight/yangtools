@@ -169,7 +169,7 @@ public class ControllerStmtParserTest {
     private static int getChildNodeSizeWithoutUses(final DataNodeContainer csn) {
         int result = 0;
         for (DataSchemaNode dsn : csn.getChildNodes()) {
-            if (dsn.isAddedByUses() == false) {
+            if (!dsn.isAddedByUses()) {
                 result++;
             }
         }

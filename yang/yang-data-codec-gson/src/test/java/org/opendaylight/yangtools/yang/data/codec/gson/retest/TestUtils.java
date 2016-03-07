@@ -40,7 +40,7 @@ public class TestUtils {
             throw new FileNotFoundException(resourceDirectory);
         }
         for (String fileName : fileList) {
-            if (new File(testDir, fileName).isDirectory() == false) {
+            if (!new File(testDir, fileName).isDirectory()) {
                 testFiles.add(new File(testDir, fileName));
             }
         }

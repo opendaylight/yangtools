@@ -1,6 +1,7 @@
 package org.opendaylight.yangtools.yang.stmt.effective.build.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -113,7 +114,7 @@ public class EffectiveUsesRefineAndConstraintsTest {
 
         ConstraintDefinition choiceConstraints = choiceSchemaNode
                 .getConstraints();
-        assertTrue(choiceConstraints.isMandatory() == false);
+        assertFalse(choiceConstraints.isMandatory());
         assertTrue(choiceConstraints.getMustConstraints().isEmpty());
     }
 
