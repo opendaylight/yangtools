@@ -60,7 +60,7 @@ public class ExtendedType implements TypeDefinition<TypeDefinition<?>> {
      * @param reference Reference of Type
      * @param path Schema path to type definition.
      */
-    public static final Builder builder(final QName typeName, final TypeDefinition<?> baseType,
+    public static Builder builder(final QName typeName, final TypeDefinition<?> baseType,
             final Optional<String> description, final Optional<String> reference, final SchemaPath path) {
         return new Builder(typeName, baseType, description.or(""), reference.or(""), path);
     }

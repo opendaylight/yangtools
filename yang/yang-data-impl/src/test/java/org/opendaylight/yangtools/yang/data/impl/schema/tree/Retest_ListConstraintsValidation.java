@@ -90,7 +90,7 @@ public class Retest_ListConstraintsValidation {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(modificationTree));
     }
 
-    public static final InputStream getDatastoreTestInputStream() {
+    public static InputStream getDatastoreTestInputStream() {
         return getInputStream(CONSTRAINTS_VALIDATION_TEST_YANG);
     }
 

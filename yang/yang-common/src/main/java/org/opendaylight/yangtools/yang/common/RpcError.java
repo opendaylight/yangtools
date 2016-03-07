@@ -13,12 +13,12 @@ package org.opendaylight.yangtools.yang.common;
  */
 public interface RpcError {
 
-    public enum ErrorSeverity {
+    enum ErrorSeverity {
         ERROR,
         WARNING
     }
 
-    public enum ErrorType {
+    enum ErrorType {
         /**
          * Indicates an error occurred during transport of data, eg over the network.
          */

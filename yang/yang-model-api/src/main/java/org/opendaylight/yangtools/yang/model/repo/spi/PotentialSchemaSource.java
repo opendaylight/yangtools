@@ -50,7 +50,7 @@ public final class PotentialSchemaSource<T extends SchemaSourceRepresentation> {
 
         private final int value;
 
-        private Costs(final int value) {
+        Costs(final int value) {
             this.value = value;
         }
 

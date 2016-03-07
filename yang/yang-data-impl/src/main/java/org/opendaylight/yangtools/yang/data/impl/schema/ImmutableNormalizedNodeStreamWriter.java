@@ -90,7 +90,7 @@ public class ImmutableNormalizedNodeStreamWriter implements SchemaAwareNormalize
      * @param builder Builder to which data will be written.
      * @return {@link NormalizedNodeStreamWriter} which writes data
      */
-    public static final NormalizedNodeStreamWriter from(final NormalizedNodeContainerBuilder<?, ?, ?, ?> builder) {
+    public static NormalizedNodeStreamWriter from(final NormalizedNodeContainerBuilder<?, ?, ?, ?> builder) {
         return new ImmutableNormalizedNodeStreamWriter(builder);
     }
 
@@ -112,7 +112,7 @@ public class ImmutableNormalizedNodeStreamWriter implements SchemaAwareNormalize
      * @param result {@link NormalizedNodeResult} object which will hold result value.
      * @return {@link NormalizedNodeStreamWriter} which will write item to supplied result holder.
      */
-    public static final NormalizedNodeStreamWriter from(final NormalizedNodeResult result) {
+    public static NormalizedNodeStreamWriter from(final NormalizedNodeResult result) {
         return new ImmutableNormalizedNodeStreamWriter(result);
     }
 

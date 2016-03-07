@@ -86,7 +86,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
         return dataSchemaNode;
     }
 
-    static final DataSchemaNode findChildSchemaNode(final DataNodeContainer parent, final QName child) {
+    static DataSchemaNode findChildSchemaNode(final DataNodeContainer parent, final QName child) {
         DataSchemaNode potential = parent.getDataChildByName(child);
         if (potential == null) {
             Iterable<ChoiceSchemaNode> choices = FluentIterable.from(

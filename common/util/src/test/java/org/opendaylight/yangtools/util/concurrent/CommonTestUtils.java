@@ -24,7 +24,7 @@ public class CommonTestUtils {
     public interface Invoker {
         ListenableFuture<?> invokeExecutor( ListeningExecutorService executor,
                 CountDownLatch blockingLatch );
-    };
+    }
 
     public static final Invoker SUBMIT_CALLABLE = new Invoker() {
         @Override

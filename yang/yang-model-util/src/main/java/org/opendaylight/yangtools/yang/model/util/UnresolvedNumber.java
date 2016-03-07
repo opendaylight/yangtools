@@ -90,7 +90,7 @@ public abstract class UnresolvedNumber extends Number implements Immutable {
         throw new UnsupportedOperationException();
     }
 
-    private final static Number resolve(final Number number) {
+    private static Number resolve(final Number number) {
         Preconditions.checkArgument(!(number instanceof UnresolvedNumber));
         return number;
     }

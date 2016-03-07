@@ -28,7 +28,7 @@ public enum SupportedExtensionsMapping implements StatementDefinition {
     private final QName name;
     private final QName argument;
 
-    private SupportedExtensionsMapping(final String namespace, final String revision,
+    SupportedExtensionsMapping(final String namespace, final String revision,
             final Class<? extends DeclaredStatement<?>> declared,
                     final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr,
                             final String argumentStr) {

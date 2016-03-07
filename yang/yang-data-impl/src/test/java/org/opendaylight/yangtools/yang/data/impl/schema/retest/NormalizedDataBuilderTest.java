@@ -163,7 +163,6 @@ public class NormalizedDataBuilderTest {
                 // .build())
                 .build();
 
-        ;
         builder.withChild(choice);
 
         // This should fail, child from case

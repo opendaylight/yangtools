@@ -799,7 +799,7 @@ public final class SchemaContextUtil {
      *            a node representing LeafSchemaNode
      * @return concrete type definition of node value
      */
-    private static TypeDefinition<? extends Object> typeDefinition(final LeafSchemaNode node) {
+    private static TypeDefinition<?> typeDefinition(final LeafSchemaNode node) {
         TypeDefinition<?> baseType = node.getType();
         while (baseType.getBaseType() != null) {
             baseType = baseType.getBaseType();
@@ -814,7 +814,7 @@ public final class SchemaContextUtil {
      *            a node representing LeafListSchemaNode
      * @return concrete type definition of node value
      */
-    private static TypeDefinition<? extends Object> typeDefinition(final LeafListSchemaNode node) {
+    private static TypeDefinition<?> typeDefinition(final LeafListSchemaNode node) {
         TypeDefinition<?> baseType = node.getType();
         while (baseType.getBaseType() != null) {
             baseType = baseType.getBaseType();
@@ -829,7 +829,7 @@ public final class SchemaContextUtil {
      *            a node representing DataSchemaNode
      * @return concrete type definition of node value
      */
-    private static TypeDefinition<? extends Object> typeDefinition(final DataSchemaNode node) {
+    private static TypeDefinition<?> typeDefinition(final DataSchemaNode node) {
         if (node instanceof LeafListSchemaNode) {
             return typeDefinition((LeafListSchemaNode) node);
         } else if (node instanceof LeafSchemaNode) {

@@ -33,7 +33,7 @@ public class RetestModel {
     public static final QName TWO_QNAME = QName.create(TEST_QNAME, "two");
     public static final QName THREE_QNAME = QName.create(TEST_QNAME, "three");
 
-    public static final InputStream getDatastoreTestInputStream() {
+    public static InputStream getDatastoreTestInputStream() {
         return RetestModel.class.getResourceAsStream(DATASTORE_TEST_YANG);
     }
 

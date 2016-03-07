@@ -57,7 +57,7 @@ public class YangParserWithContextTest {
     private final DateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private final YangParserImpl parser = new YangParserImpl();
 
-    private final SchemaContext createContext(final String... resources) throws IOException, YangSyntaxErrorException {
+    private SchemaContext createContext(final String... resources) throws IOException, YangSyntaxErrorException {
         final List<ByteSource> srcs = new ArrayList<>(resources.length);
         for (String resource : resources) {
             srcs.add(Resources.asByteSource(getClass().getResource(resource)));
