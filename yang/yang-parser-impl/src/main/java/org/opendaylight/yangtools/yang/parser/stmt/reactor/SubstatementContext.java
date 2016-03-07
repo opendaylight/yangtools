@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Regist
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.GroupingUtils;
@@ -42,8 +41,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     private final A argument;
     private volatile SchemaPath schemaPath;
 
-    SubstatementContext(final StatementContextBase<?, ?, ?> parent,
-            final ContextBuilder<A, D, E> builder) throws SourceException {
+    SubstatementContext(final StatementContextBase<?, ?, ?> parent, final ContextBuilder<A, D, E> builder) {
         super(builder);
         this.parent = Preconditions.checkNotNull(parent, "Parent must not be null");
         this.argument = builder.getDefinition().parseArgumentValue(this, builder.getRawArgument());
@@ -76,8 +74,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
 
 
     private void copyDeclaredStmts(final SubstatementContext<A, D, E> original,
-            final QNameModule newQNameModule, final TypeOfCopy typeOfCopy)
-            throws SourceException {
+            final QNameModule newQNameModule, final TypeOfCopy typeOfCopy) {
         Collection<? extends StatementContextBase<?, ?, ?>> originalDeclaredSubstatements = original
                 .declaredSubstatements();
         for (StatementContextBase<?, ?, ?> stmtContext : originalDeclaredSubstatements) {
@@ -92,8 +89,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     }
 
     private void copyEffectiveStmts(final SubstatementContext<A, D, E> original,
-            final QNameModule newQNameModule, final TypeOfCopy typeOfCopy)
-            throws SourceException {
+            final QNameModule newQNameModule, final TypeOfCopy typeOfCopy) {
         Collection<? extends StatementContextBase<?, ?, ?>> originalEffectiveSubstatements = original
                 .effectiveSubstatements();
         for (StatementContextBase<?, ?, ?> stmtContext : originalEffectiveSubstatements) {
@@ -134,15 +130,13 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
 
     @Override
     public StatementContextBase<?, ?, ?> createCopy(
-            final StatementContextBase<?, ?, ?> newParent, final TypeOfCopy typeOfCopy)
-            throws SourceException {
+            final StatementContextBase<?, ?, ?> newParent, final TypeOfCopy typeOfCopy) {
         return createCopy(null, newParent, typeOfCopy);
     }
 
     @Override
     public StatementContextBase<A, D, E> createCopy(final QNameModule newQNameModule,
-            final StatementContextBase<?, ?, ?> newParent, final TypeOfCopy typeOfCopy)
-            throws SourceException {
+            final StatementContextBase<?, ?, ?> newParent, final TypeOfCopy typeOfCopy) {
         SubstatementContext<A, D, E> copy = new SubstatementContext<>(this, newQNameModule, newParent, typeOfCopy);
 
         copy.addAllToCopyHistory(this.getCopyHistory());
