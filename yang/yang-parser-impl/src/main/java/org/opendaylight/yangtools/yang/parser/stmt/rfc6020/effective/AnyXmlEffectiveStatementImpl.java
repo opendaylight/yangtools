@@ -59,11 +59,9 @@ public class AnyXmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNod
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(AnyXmlEffectiveStatementImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append("qname=").append(getQName());
-        sb.append(", path=").append(getPath());
-        sb.append("]");
-        return sb.toString();
+        return AnyXmlEffectiveStatementImpl.class.getSimpleName() + "[" +
+                "qname=" + getQName() +
+                ", path=" + getPath() +
+                "]";
     }
 }

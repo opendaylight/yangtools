@@ -136,9 +136,7 @@ public final class FeatureBuilder extends AbstractSchemaNodeBuilder {
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder(FeatureDefinitionImpl.class.getSimpleName());
-            sb.append("[name=").append(qname).append("]");
-            return sb.toString();
+            return FeatureDefinitionImpl.class.getSimpleName() + "[name=" + qname + "]";
         }
     }
 

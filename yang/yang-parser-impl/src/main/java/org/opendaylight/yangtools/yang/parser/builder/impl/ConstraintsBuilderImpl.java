@@ -318,15 +318,13 @@ public final class ConstraintsBuilderImpl implements ConstraintsBuilder {
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder(ConstraintDefinitionImpl.class.getSimpleName());
-            sb.append("[");
-            sb.append("whenCondition=").append(whenCondition);
-            sb.append(", mustConstraints=").append(mustConstraints);
-            sb.append(", mandatory=").append(mandatory);
-            sb.append(", minElements=").append(minElements);
-            sb.append(", maxElements=").append(maxElements);
-            sb.append("]");
-            return sb.toString();
+            return ConstraintDefinitionImpl.class.getSimpleName() + "[" +
+                    "whenCondition=" + whenCondition +
+                    ", mustConstraints=" + mustConstraints +
+                    ", mandatory=" + mandatory +
+                    ", minElements=" + minElements +
+                    ", maxElements=" + maxElements +
+                    "]";
         }
     }
 

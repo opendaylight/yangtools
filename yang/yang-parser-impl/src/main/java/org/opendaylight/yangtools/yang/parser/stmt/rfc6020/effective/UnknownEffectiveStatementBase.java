@@ -99,13 +99,11 @@ public abstract class UnknownEffectiveStatementBase<A> extends AbstractEffective
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(nodeType.getNamespace());
-        sb.append(":");
-        sb.append(nodeType.getLocalName());
-        sb.append(" ");
-        sb.append(nodeParameter);
-        return sb.toString();
+        return String.valueOf(nodeType.getNamespace()) +
+                ":" +
+                nodeType.getLocalName() +
+                " " +
+                nodeParameter;
     }
 
 }

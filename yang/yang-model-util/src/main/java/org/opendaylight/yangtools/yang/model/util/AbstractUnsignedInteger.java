@@ -153,20 +153,18 @@ abstract class AbstractUnsignedInteger implements UnsignedIntegerTypeDefinition 
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("AbstractInteger [name=");
-        builder.append(name);
-        builder.append(", path=");
-        builder.append(path);
-        builder.append(", description=");
-        builder.append(description);
-        builder.append(", reference=");
-        builder.append(REFERENCE);
-        builder.append(", units=");
-        builder.append(units);
-        builder.append(", rangeStatements=");
-        builder.append(rangeStatements);
-        builder.append("]");
-        return builder.toString();
+        return "AbstractInteger [name=" +
+                name +
+                ", path=" +
+                path +
+                ", description=" +
+                description +
+                ", reference=" +
+                REFERENCE +
+                ", units=" +
+                units +
+                ", rangeStatements=" +
+                rangeStatements +
+                "]";
     }
 }

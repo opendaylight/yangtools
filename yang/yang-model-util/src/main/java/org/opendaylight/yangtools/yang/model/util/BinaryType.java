@@ -176,20 +176,18 @@ public final class BinaryType implements BinaryTypeDefinition {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("BinaryType [name=");
-        builder.append(QNAME);
-        builder.append(", description=");
-        builder.append(DESCRIPTION);
-        builder.append(", reference=");
-        builder.append(REFERENCE);
-        builder.append(", bytes=");
-        builder.append(bytes);
-        builder.append(", lengthConstraints=");
-        builder.append(lengthConstraints);
-        builder.append(", units=");
-        builder.append(UNITS);
-        builder.append("]");
-        return builder.toString();
+        return "BinaryType [name=" +
+                QNAME +
+                ", description=" +
+                DESCRIPTION +
+                ", reference=" +
+                REFERENCE +
+                ", bytes=" +
+                bytes +
+                ", lengthConstraints=" +
+                lengthConstraints +
+                ", units=" +
+                UNITS +
+                "]";
     }
 }

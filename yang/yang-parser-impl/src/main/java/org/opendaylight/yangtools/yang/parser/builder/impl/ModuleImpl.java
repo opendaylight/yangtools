@@ -240,15 +240,13 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(ModuleImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append("name=").append(name);
-        sb.append(", namespace=").append(getNamespace());
-        sb.append(", revision=").append(getRevision());
-        sb.append(", prefix=").append(prefix);
-        sb.append(", yangVersion=").append(yangVersion);
-        sb.append("]");
-        return sb.toString();
+        return ModuleImpl.class.getSimpleName() + "[" +
+                "name=" + name +
+                ", namespace=" + getNamespace() +
+                ", revision=" + getRevision() +
+                ", prefix=" + prefix +
+                ", yangVersion=" + yangVersion +
+                "]";
     }
 
     @Override

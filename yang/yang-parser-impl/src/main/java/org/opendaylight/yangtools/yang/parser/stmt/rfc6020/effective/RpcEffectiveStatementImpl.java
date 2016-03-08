@@ -96,17 +96,15 @@ public class RpcEffectiveStatementImpl extends AbstractEffectiveSchemaNode<RpcSt
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(RpcEffectiveStatementImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append("qname=");
-        sb.append(getQName());
-        sb.append(", path=");
-        sb.append(getPath());
-        sb.append(", input=");
-        sb.append(input);
-        sb.append(", output=");
-        sb.append(output);
-        sb.append("]");
-        return sb.toString();
+        return RpcEffectiveStatementImpl.class.getSimpleName() + "[" +
+                "qname=" +
+                getQName() +
+                ", path=" +
+                getPath() +
+                ", input=" +
+                input +
+                ", output=" +
+                output +
+                "]";
     }
 }

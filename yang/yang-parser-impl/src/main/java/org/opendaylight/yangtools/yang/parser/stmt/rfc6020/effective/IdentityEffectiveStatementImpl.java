@@ -86,12 +86,9 @@ public final class IdentityEffectiveStatementImpl extends AbstractEffectiveSchem
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(
-                IdentityEffectiveStatementImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append("base=").append(baseIdentity);
-        sb.append(", qname=").append(getQName());
-        sb.append("]");
-        return sb.toString();
+        return IdentityEffectiveStatementImpl.class.getSimpleName() + "[" +
+                "base=" + baseIdentity +
+                ", qname=" + getQName() +
+                "]";
     }
 }

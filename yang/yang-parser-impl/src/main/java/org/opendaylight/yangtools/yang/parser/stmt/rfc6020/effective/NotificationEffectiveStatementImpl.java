@@ -101,8 +101,6 @@ public class NotificationEffectiveStatementImpl extends
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(NotificationEffectiveStatementImpl.class.getSimpleName());
-        sb.append("[qname=").append(qname).append(", path=").append(path).append("]");
-        return sb.toString();
+        return NotificationEffectiveStatementImpl.class.getSimpleName() + "[qname=" + qname + ", path=" + path + "]";
     }
 }

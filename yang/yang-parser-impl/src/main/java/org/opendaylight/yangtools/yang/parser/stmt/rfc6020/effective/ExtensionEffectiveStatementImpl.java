@@ -122,14 +122,12 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(ExtensionEffectiveStatementImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append("argument=").append(argument);
-        sb.append(", qname=").append(qname);
-        sb.append(", schemaPath=").append(schemaPath);
-        sb.append(", extensionSchemaNodes=").append(unknownNodes);
-        sb.append(", yin=").append(yin);
-        sb.append("]");
-        return sb.toString();
+        return ExtensionEffectiveStatementImpl.class.getSimpleName() + "[" +
+                "argument=" + argument +
+                ", qname=" + qname +
+                ", schemaPath=" + schemaPath +
+                ", extensionSchemaNodes=" + unknownNodes +
+                ", yin=" + yin +
+                "]";
     }
 }

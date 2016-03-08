@@ -136,10 +136,8 @@ public final class UsesEffectiveStatementImpl extends DeclaredEffectiveStatement
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(UsesEffectiveStatementImpl.class.getSimpleName());
-        sb.append("[groupingPath=");
-        sb.append(groupingPath);
-        sb.append("]");
-        return sb.toString();
+        return UsesEffectiveStatementImpl.class.getSimpleName() + "[groupingPath=" +
+                groupingPath +
+                "]";
     }
 }

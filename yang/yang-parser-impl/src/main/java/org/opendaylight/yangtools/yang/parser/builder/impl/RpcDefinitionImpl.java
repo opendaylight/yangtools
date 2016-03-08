@@ -140,17 +140,15 @@ final class RpcDefinitionImpl implements RpcDefinition {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(RpcDefinitionImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append("qname=");
-        sb.append(qname);
-        sb.append(", path=");
-        sb.append(path);
-        sb.append(", input=");
-        sb.append(input);
-        sb.append(", output=");
-        sb.append(output);
-        sb.append("]");
-        return sb.toString();
+        return RpcDefinitionImpl.class.getSimpleName() + "[" +
+                "qname=" +
+                qname +
+                ", path=" +
+                path +
+                ", input=" +
+                input +
+                ", output=" +
+                output +
+                "]";
     }
 }

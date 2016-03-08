@@ -1018,11 +1018,7 @@ public final class ParserListenerUtils {
     }
 
     private static String wrapPattern(final String rawPattern) {
-        final StringBuilder wrapPatternBuilder = new StringBuilder(rawPattern.length() + 2);
-        wrapPatternBuilder.append('^');
-        wrapPatternBuilder.append(rawPattern);
-        wrapPatternBuilder.append('$');
-        return wrapPatternBuilder.toString();
+        return "^" + rawPattern + '$';
     }
 
     private static boolean isValidPattern(final String pattern, final Pattern_stmtContext ctx, final String moduleName) {

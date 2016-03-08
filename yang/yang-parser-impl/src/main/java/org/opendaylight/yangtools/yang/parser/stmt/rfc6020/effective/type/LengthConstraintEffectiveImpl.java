@@ -115,21 +115,19 @@ public class LengthConstraintEffectiveImpl implements LengthConstraint {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(LengthConstraintEffectiveImpl.class.getSimpleName());
-        builder.append(" [min=");
-        builder.append(min);
-        builder.append(", max=");
-        builder.append(max);
-        builder.append(", description=");
-        builder.append(description);
-        builder.append(", errorAppTag=");
-        builder.append(errorAppTag);
-        builder.append(", reference=");
-        builder.append(reference);
-        builder.append(", errorMessage=");
-        builder.append(errorMessage);
-        builder.append("]");
-        return builder.toString();
+        return LengthConstraintEffectiveImpl.class.getSimpleName() +
+                " [min=" +
+                min +
+                ", max=" +
+                max +
+                ", description=" +
+                description +
+                ", errorAppTag=" +
+                errorAppTag +
+                ", reference=" +
+                reference +
+                ", errorMessage=" +
+                errorMessage +
+                "]";
     }
 }

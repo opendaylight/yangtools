@@ -186,11 +186,9 @@ final class ChoiceSchemaNodeImpl implements ChoiceSchemaNode, DerivableSchemaNod
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(ChoiceSchemaNodeImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append("qname=").append(qname);
-        sb.append("]");
-        return sb.toString();
+        return ChoiceSchemaNodeImpl.class.getSimpleName() + "[" +
+                "qname=" + qname +
+                "]";
     }
 
 }

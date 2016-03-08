@@ -110,21 +110,19 @@ public class RangeConstraintEffectiveImpl implements RangeConstraint {
 
     @Override
     public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        builder.append(RangeConstraintEffectiveImpl.class.getSimpleName());
-        builder.append(" [min=");
-        builder.append(min);
-        builder.append(", max=");
-        builder.append(max);
-        builder.append(", description=");
-        builder.append(description);
-        builder.append(", reference=");
-        builder.append(reference);
-        builder.append(", errorAppTag=");
-        builder.append(errorAppTag);
-        builder.append(", errorMessage=");
-        builder.append(errorMessage);
-        builder.append("]");
-        return builder.toString();
+        return RangeConstraintEffectiveImpl.class.getSimpleName() +
+                " [min=" +
+                min +
+                ", max=" +
+                max +
+                ", description=" +
+                description +
+                ", reference=" +
+                reference +
+                ", errorAppTag=" +
+                errorAppTag +
+                ", errorMessage=" +
+                errorMessage +
+                "]";
     }
 }

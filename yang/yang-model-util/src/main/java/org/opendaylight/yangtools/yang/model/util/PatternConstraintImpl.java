@@ -100,18 +100,16 @@ final class PatternConstraintImpl implements PatternConstraint, Immutable {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("PatternConstraintImpl [regex=");
-        builder.append(regex);
-        builder.append(", description=");
-        builder.append(description);
-        builder.append(", reference=");
-        builder.append(reference);
-        builder.append(", errorAppTag=");
-        builder.append(errorAppTag);
-        builder.append(", errorMessage=");
-        builder.append(errorMessage);
-        builder.append("]");
-        return builder.toString();
+        return "PatternConstraintImpl [regex=" +
+                regex +
+                ", description=" +
+                description +
+                ", reference=" +
+                reference +
+                ", errorAppTag=" +
+                errorAppTag +
+                ", errorMessage=" +
+                errorMessage +
+                "]";
     }
 }

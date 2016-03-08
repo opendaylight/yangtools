@@ -174,20 +174,18 @@ public final class BitsType implements BitsTypeDefinition {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("BitsType [name=");
-        builder.append(NAME);
-        builder.append(", path=");
-        builder.append(path);
-        builder.append(", description=");
-        builder.append(DESCRIPTION);
-        builder.append(", reference=");
-        builder.append(REFERENCE);
-        builder.append(", bits=");
-        builder.append(bits);
-        builder.append(", units=");
-        builder.append(UNITS);
-        builder.append("]");
-        return builder.toString();
+        return "BitsType [name=" +
+                NAME +
+                ", path=" +
+                path +
+                ", description=" +
+                DESCRIPTION +
+                ", reference=" +
+                REFERENCE +
+                ", bits=" +
+                bits +
+                ", units=" +
+                UNITS +
+                "]";
     }
 }

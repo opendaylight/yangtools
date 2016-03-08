@@ -170,10 +170,8 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(ChoiceEffectiveStatementImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append("qname=").append(getQName());
-        sb.append("]");
-        return sb.toString();
+        return ChoiceEffectiveStatementImpl.class.getSimpleName() + "[" +
+                "qname=" + getQName() +
+                "]";
     }
 }

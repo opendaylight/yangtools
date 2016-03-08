@@ -104,11 +104,9 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(LeafEffectiveStatementImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append("qname=").append(getQName());
-        sb.append(", path=").append(getPath());
-        sb.append("]");
-        return sb.toString();
+        return LeafEffectiveStatementImpl.class.getSimpleName() + "[" +
+                "qname=" + getQName() +
+                ", path=" + getPath() +
+                "]";
     }
 }

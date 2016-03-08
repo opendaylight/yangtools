@@ -261,27 +261,25 @@ public class ExtendedType implements TypeDefinition<TypeDefinition<?>> {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("ExtendedType [typeName=");
-        builder.append(typeName);
-        builder.append(", baseType=");
-        builder.append(baseType);
-        builder.append(", path=");
-        builder.append(path);
-        builder.append(", description=");
-        builder.append(description);
-        builder.append(", reference=");
-        builder.append(reference);
-        builder.append(", unknownSchemaNodes=");
-        builder.append(unknownSchemaNodes);
-        builder.append(", status=");
-        builder.append(status);
-        builder.append(", units=");
-        builder.append(units);
-        builder.append(", defaultValue=");
-        builder.append(defaultValue);
-        builder.append("]");
-        return builder.toString();
+        return "ExtendedType [typeName=" +
+                typeName +
+                ", baseType=" +
+                baseType +
+                ", path=" +
+                path +
+                ", description=" +
+                description +
+                ", reference=" +
+                reference +
+                ", unknownSchemaNodes=" +
+                unknownSchemaNodes +
+                ", status=" +
+                status +
+                ", units=" +
+                units +
+                ", defaultValue=" +
+                defaultValue +
+                "]";
     }
 
     public List<RangeConstraint> getRangeConstraints() {
