@@ -136,8 +136,6 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("UnmodifiableCollection{");
-        sb.append(delegate);
-        return sb.toString();
+        return "UnmodifiableCollection{" + delegate + "}";
     }
 }

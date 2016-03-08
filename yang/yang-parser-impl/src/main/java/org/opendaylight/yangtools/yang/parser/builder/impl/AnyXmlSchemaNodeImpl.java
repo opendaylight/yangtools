@@ -137,12 +137,10 @@ final class AnyXmlSchemaNodeImpl implements AnyXmlSchemaNode, DerivableSchemaNod
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(AnyXmlSchemaNodeImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append("qname=").append(qname);
-        sb.append(", path=").append(path);
-        sb.append("]");
-        return sb.toString();
+        return AnyXmlSchemaNodeImpl.class.getSimpleName() + "[" +
+                "qname=" + qname +
+                ", path=" + path +
+                "]";
     }
 
 }

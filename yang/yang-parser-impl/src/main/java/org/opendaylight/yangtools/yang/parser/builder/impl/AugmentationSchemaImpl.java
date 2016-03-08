@@ -121,12 +121,10 @@ final class AugmentationSchemaImpl extends AbstractDocumentedDataNodeContainer i
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(AugmentationSchemaImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append("targetPath=").append(targetPath);
-        sb.append(", when=").append(whenCondition);
-        sb.append("]");
-        return sb.toString();
+        return AugmentationSchemaImpl.class.getSimpleName() + "[" +
+                "targetPath=" + targetPath +
+                ", when=" + whenCondition +
+                "]";
     }
 
     @Override

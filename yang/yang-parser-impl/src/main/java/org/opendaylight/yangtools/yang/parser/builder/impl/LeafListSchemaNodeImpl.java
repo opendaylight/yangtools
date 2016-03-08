@@ -149,10 +149,8 @@ final class LeafListSchemaNodeImpl implements LeafListSchemaNode, DerivableSchem
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(LeafListSchemaNodeImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append(qname);
-        sb.append("]");
-        return sb.toString();
+        return LeafListSchemaNodeImpl.class.getSimpleName() + "[" +
+                qname +
+                "]";
     }
 }

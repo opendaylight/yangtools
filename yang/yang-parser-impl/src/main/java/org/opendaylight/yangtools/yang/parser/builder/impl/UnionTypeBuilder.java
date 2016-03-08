@@ -226,14 +226,12 @@ public final class UnionTypeBuilder extends AbstractTypeAwareBuilder implements 
 
     @Override
     public String toString() {
-        final StringBuilder result = new StringBuilder(UnionTypeBuilder.class.getSimpleName());
-        result.append("[");
-        result.append("types=");
-        result.append(types);
-        result.append(", typedefs=");
-        result.append(typedefs);
-        result.append("]");
-        return result.toString();
+        return UnionTypeBuilder.class.getSimpleName() + "[" +
+                "types=" +
+                types +
+                ", typedefs=" +
+                typedefs +
+                "]";
     }
 
 }

@@ -46,8 +46,6 @@ public final class FeatureEffectiveStatementImpl extends AbstractEffectiveSchema
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(FeatureEffectiveStatementImpl.class.getSimpleName());
-        sb.append("[name=").append(getQName()).append("]");
-        return sb.toString();
+        return FeatureEffectiveStatementImpl.class.getSimpleName() + "[name=" + getQName() + "]";
     }
 }

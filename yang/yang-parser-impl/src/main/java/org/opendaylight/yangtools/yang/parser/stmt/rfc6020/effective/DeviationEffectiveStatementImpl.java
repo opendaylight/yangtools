@@ -102,12 +102,10 @@ public class DeviationEffectiveStatementImpl extends DeclaredEffectiveStatementB
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(DeviationEffectiveStatementImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append("targetPath=").append(targetPath);
-        sb.append(", deviate=").append(deviate);
-        sb.append(", reference=").append(reference);
-        sb.append("]");
-        return sb.toString();
+        return DeviationEffectiveStatementImpl.class.getSimpleName() + "[" +
+                "targetPath=" + targetPath +
+                ", deviate=" + deviate +
+                ", reference=" + reference +
+                "]";
     }
 }

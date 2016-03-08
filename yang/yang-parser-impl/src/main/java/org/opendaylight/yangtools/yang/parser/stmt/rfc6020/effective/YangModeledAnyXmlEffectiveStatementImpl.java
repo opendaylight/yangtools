@@ -59,11 +59,9 @@ public final class YangModeledAnyXmlEffectiveStatementImpl extends AnyXmlEffecti
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(YangModeledAnyXmlEffectiveStatementImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append("qname=").append(getQName());
-        sb.append(", path=").append(getPath());
-        sb.append("]");
-        return sb.toString();
+        return YangModeledAnyXmlEffectiveStatementImpl.class.getSimpleName() + "[" +
+                "qname=" + getQName() +
+                ", path=" + getPath() +
+                "]";
     }
 }

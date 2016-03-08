@@ -100,10 +100,8 @@ public class GroupingEffectiveStatementImpl extends
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(GroupingEffectiveStatementImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append("qname=").append(qname);
-        sb.append("]");
-        return sb.toString();
+        return GroupingEffectiveStatementImpl.class.getSimpleName() + "[" +
+                "qname=" + qname +
+                "]";
     }
 }

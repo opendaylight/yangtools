@@ -169,12 +169,10 @@ final class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(CaseShorthandImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append("qname=");
-        sb.append(getQName());
-        sb.append("]");
-        return sb.toString();
+        return CaseShorthandImpl.class.getSimpleName() + "[" +
+                "qname=" +
+                getQName() +
+                "]";
     }
 
     private static ChoiceCaseNode getOriginalIfPresent(final SchemaNode caseShorthandNode) {

@@ -160,13 +160,11 @@ public final class DeviationBuilder extends AbstractBuilder {
 
         @Override
         public String toString() {
-            StringBuilder sb = new StringBuilder(DeviationImpl.class.getSimpleName());
-            sb.append("[");
-            sb.append("targetPath=").append(targetPath);
-            sb.append(", deviate=").append(deviate);
-            sb.append(", reference=").append(reference);
-            sb.append("]");
-            return sb.toString();
+            return DeviationImpl.class.getSimpleName() + "[" +
+                    "targetPath=" + targetPath +
+                    ", deviate=" + deviate +
+                    ", reference=" + reference +
+                    "]";
         }
     }
 

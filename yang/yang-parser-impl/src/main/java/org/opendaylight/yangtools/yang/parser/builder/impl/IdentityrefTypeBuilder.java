@@ -209,14 +209,12 @@ public final class IdentityrefTypeBuilder extends AbstractTypeAwareBuilder imple
 
     @Override
     public String toString() {
-        final StringBuilder result = new StringBuilder(IdentityrefTypeBuilder.class.getSimpleName());
-        result.append("[qName=");
-        result.append(qname);
-        result.append("[");
-        result.append(", base=");
-        result.append(baseIdentity);
-        result.append("]");
-        return result.toString();
+        return IdentityrefTypeBuilder.class.getSimpleName() + "[qName=" +
+                qname +
+                "[" +
+                ", base=" +
+                baseIdentity +
+                "]";
     }
 
 }

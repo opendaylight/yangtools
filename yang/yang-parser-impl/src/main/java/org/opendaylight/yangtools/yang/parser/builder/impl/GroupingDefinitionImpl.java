@@ -94,10 +94,8 @@ final class GroupingDefinitionImpl extends AbstractDocumentedDataNodeContainer i
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(GroupingDefinitionImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append("qname=").append(qname);
-        sb.append("]");
-        return sb.toString();
+        return GroupingDefinitionImpl.class.getSimpleName() + "[" +
+                "qname=" + qname +
+                "]";
     }
 }

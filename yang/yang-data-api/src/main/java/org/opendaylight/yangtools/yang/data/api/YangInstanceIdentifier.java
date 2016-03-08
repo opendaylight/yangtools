@@ -664,9 +664,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
         @Override
         public String toString() {
-            final StringBuilder sb = new StringBuilder("AugmentationIdentifier{");
-            sb.append("childNames=").append(childNames).append('}');
-            return sb.toString();
+            return "AugmentationIdentifier{" + "childNames=" + childNames + '}';
         }
 
         @Override

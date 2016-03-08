@@ -134,12 +134,10 @@ public final class AugmentEffectiveStatementImpl extends
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(AugmentEffectiveStatementImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append("targetPath=").append(targetPath);
-        sb.append(", when=").append(whenCondition);
-        sb.append("]");
-        return sb.toString();
+        return AugmentEffectiveStatementImpl.class.getSimpleName() + "[" +
+                "targetPath=" + targetPath +
+                ", when=" + whenCondition +
+                "]";
     }
 
     @Override

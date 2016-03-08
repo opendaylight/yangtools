@@ -108,10 +108,8 @@ final class UsesNodeImpl implements UsesNode {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(UsesNodeImpl.class.getSimpleName());
-        sb.append("[groupingPath=");
-        sb.append(groupingPath);
-        sb.append("]");
-        return sb.toString();
+        return UsesNodeImpl.class.getSimpleName() + "[groupingPath=" +
+                groupingPath +
+                "]";
     }
 }

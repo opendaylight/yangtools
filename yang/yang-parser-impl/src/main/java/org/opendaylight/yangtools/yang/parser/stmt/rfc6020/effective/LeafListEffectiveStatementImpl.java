@@ -105,10 +105,8 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(LeafListEffectiveStatementImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append(getQName());
-        sb.append("]");
-        return sb.toString();
+        return LeafListEffectiveStatementImpl.class.getSimpleName() + "[" +
+                getQName() +
+                "]";
     }
 }

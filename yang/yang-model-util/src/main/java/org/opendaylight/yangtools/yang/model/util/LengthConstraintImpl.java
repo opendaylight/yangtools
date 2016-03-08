@@ -126,20 +126,18 @@ final class LengthConstraintImpl implements LengthConstraint, Immutable {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("LengthConstraintImpl [min=");
-        builder.append(min);
-        builder.append(", max=");
-        builder.append(max);
-        builder.append(", description=");
-        builder.append(description);
-        builder.append(", errorAppTag=");
-        builder.append(errorAppTag);
-        builder.append(", reference=");
-        builder.append(reference);
-        builder.append(", errorMessage=");
-        builder.append(errorMessage);
-        builder.append("]");
-        return builder.toString();
+        return "LengthConstraintImpl [min=" +
+                min +
+                ", max=" +
+                max +
+                ", description=" +
+                description +
+                ", errorAppTag=" +
+                errorAppTag +
+                ", reference=" +
+                reference +
+                ", errorMessage=" +
+                errorMessage +
+                "]";
     }
 }

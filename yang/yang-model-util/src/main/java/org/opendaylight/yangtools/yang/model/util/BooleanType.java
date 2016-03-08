@@ -134,12 +134,10 @@ public final class BooleanType implements BooleanTypeDefinition {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("BooleanType [name=");
-        builder.append(BaseTypes.BOOLEAN_QNAME);
-        builder.append(", path=");
-        builder.append(PATH);
-        builder.append("]");
-        return builder.toString();
+        return "BooleanType [name=" +
+                BaseTypes.BOOLEAN_QNAME +
+                ", path=" +
+                PATH +
+                "]";
     }
 }

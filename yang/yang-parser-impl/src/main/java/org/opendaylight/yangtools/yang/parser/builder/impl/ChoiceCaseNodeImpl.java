@@ -128,12 +128,10 @@ final class ChoiceCaseNodeImpl extends AbstractDocumentedDataNodeContainer imple
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(ChoiceCaseNodeImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append("qname=");
-        sb.append(qname);
-        sb.append("]");
-        return sb.toString();
+        return ChoiceCaseNodeImpl.class.getSimpleName() + "[" +
+                "qname=" +
+                qname +
+                "]";
     }
 
 }

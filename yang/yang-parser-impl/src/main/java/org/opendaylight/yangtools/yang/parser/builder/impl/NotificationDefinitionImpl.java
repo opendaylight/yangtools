@@ -97,8 +97,6 @@ final class NotificationDefinitionImpl extends AbstractDocumentedDataNodeContain
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(NotificationDefinitionImpl.class.getSimpleName());
-        sb.append("[qname=").append(qname).append(", path=").append(path).append("]");
-        return sb.toString();
+        return NotificationDefinitionImpl.class.getSimpleName() + "[qname=" + qname + ", path=" + path + "]";
     }
 }

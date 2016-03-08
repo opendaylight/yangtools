@@ -308,10 +308,10 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         if (getNamespace() != null) {
-            sb.append(QNAME_LEFT_PARENTHESIS + getNamespace());
+            sb.append(QNAME_LEFT_PARENTHESIS).append(getNamespace());
 
             if (getFormattedRevision() != null) {
-                sb.append(QNAME_REVISION_DELIMITER + getFormattedRevision());
+                sb.append(QNAME_REVISION_DELIMITER).append(getFormattedRevision());
             }
             sb.append(QNAME_RIGHT_PARENTHESIS);
         }

@@ -383,15 +383,13 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(this.getClass().getSimpleName());
-        sb.append("[");
-        sb.append("name=").append(name);
-        sb.append(", namespace=").append(getNamespace());
-        sb.append(", revision=").append(getRevision());
-        sb.append(", prefix=").append(prefix);
-        sb.append(", yangVersion=").append(yangVersion);
-        sb.append("]");
-        return sb.toString();
+        return this.getClass().getSimpleName() + "[" +
+                "name=" + name +
+                ", namespace=" + getNamespace() +
+                ", revision=" + getRevision() +
+                ", prefix=" + prefix +
+                ", yangVersion=" + yangVersion +
+                "]";
     }
 
 }

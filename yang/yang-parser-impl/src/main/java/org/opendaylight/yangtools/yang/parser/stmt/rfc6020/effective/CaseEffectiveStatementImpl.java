@@ -82,11 +82,9 @@ public final class CaseEffectiveStatementImpl extends AbstractEffectiveSimpleDat
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(CaseEffectiveStatementImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append("qname=");
-        sb.append(getQName());
-        sb.append("]");
-        return sb.toString();
+        return CaseEffectiveStatementImpl.class.getSimpleName() + "[" +
+                "qname=" +
+                getQName() +
+                "]";
     }
 }

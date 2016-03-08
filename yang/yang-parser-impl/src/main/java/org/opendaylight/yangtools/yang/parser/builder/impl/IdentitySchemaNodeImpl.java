@@ -120,11 +120,9 @@ final class IdentitySchemaNodeImpl implements IdentitySchemaNode {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(IdentitySchemaNodeImpl.class.getSimpleName());
-        sb.append("[");
-        sb.append("base=").append(baseIdentity);
-        sb.append(", qname=").append(qname);
-        sb.append("]");
-        return sb.toString();
+        return IdentitySchemaNodeImpl.class.getSimpleName() + "[" +
+                "base=" + baseIdentity +
+                ", qname=" + qname +
+                "]";
     }
 }

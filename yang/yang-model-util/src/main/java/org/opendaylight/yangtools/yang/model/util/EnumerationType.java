@@ -195,22 +195,20 @@ public final class EnumerationType implements EnumTypeDefinition {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("EnumerationType [name=");
-        builder.append(BaseTypes.ENUMERATION_QNAME);
-        builder.append(", path=");
-        builder.append(path);
-        builder.append(", description=");
-        builder.append(DESCRIPTION);
-        builder.append(", reference=");
-        builder.append(REFERENCE);
-        builder.append(", defaultEnum=");
-        builder.append(defaultEnum);
-        builder.append(", enums=");
-        builder.append(enums);
-        builder.append(", units=");
-        builder.append(UNITS);
-        builder.append("]");
-        return builder.toString();
+        return "EnumerationType [name=" +
+                BaseTypes.ENUMERATION_QNAME +
+                ", path=" +
+                path +
+                ", description=" +
+                DESCRIPTION +
+                ", reference=" +
+                REFERENCE +
+                ", defaultEnum=" +
+                defaultEnum +
+                ", enums=" +
+                enums +
+                ", units=" +
+                UNITS +
+                "]";
     }
 }

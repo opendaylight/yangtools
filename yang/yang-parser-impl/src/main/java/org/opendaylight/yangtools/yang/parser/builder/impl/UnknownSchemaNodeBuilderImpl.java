@@ -248,13 +248,11 @@ public final class UnknownSchemaNodeBuilderImpl extends AbstractBuilder implemen
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(nodeType.getNamespace());
-        sb.append(":");
-        sb.append(nodeType.getLocalName());
-        sb.append(" ");
-        sb.append(nodeParameter);
-        return sb.toString();
+        return String.valueOf(nodeType.getNamespace()) +
+                ":" +
+                nodeType.getLocalName() +
+                " " +
+                nodeParameter;
     }
 
 }

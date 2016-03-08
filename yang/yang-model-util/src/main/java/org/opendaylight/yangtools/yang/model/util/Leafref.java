@@ -124,12 +124,10 @@ public final class Leafref implements LeafrefTypeDefinition {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("type ");
-        builder.append(NAME);
-        builder.append(" [xpath=");
-        builder.append(xpath);
-        builder.append("]");
-        return builder.toString();
+        return "type " +
+                NAME +
+                " [xpath=" +
+                xpath +
+                "]";
     }
 }

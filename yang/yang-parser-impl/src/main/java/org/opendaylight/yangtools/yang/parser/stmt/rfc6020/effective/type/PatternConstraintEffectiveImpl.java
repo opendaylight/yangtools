@@ -103,19 +103,17 @@ public class PatternConstraintEffectiveImpl implements PatternConstraint {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append(PatternConstraintEffectiveImpl.class.getSimpleName());
-        builder.append(" [regex=");
-        builder.append(regEx);
-        builder.append(", description=");
-        builder.append(description);
-        builder.append(", reference=");
-        builder.append(reference);
-        builder.append(", errorAppTag=");
-        builder.append(errorAppTag);
-        builder.append(", errorMessage=");
-        builder.append(errorMessage);
-        builder.append("]");
-        return builder.toString();
+        return PatternConstraintEffectiveImpl.class.getSimpleName() +
+                " [regex=" +
+                regEx +
+                ", description=" +
+                description +
+                ", reference=" +
+                reference +
+                ", errorAppTag=" +
+                errorAppTag +
+                ", errorMessage=" +
+                errorMessage +
+                "]";
     }
 }

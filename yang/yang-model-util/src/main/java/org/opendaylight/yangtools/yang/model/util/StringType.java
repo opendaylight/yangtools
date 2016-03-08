@@ -191,24 +191,22 @@ public final class StringType implements StringTypeDefinition, Immutable {
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("StringType [name=");
-        builder.append(NAME);
-        builder.append(", path=");
-        builder.append(PATH);
-        builder.append(", defaultValue=");
-        builder.append(DEFAULT_VALUE);
-        builder.append(", description=");
-        builder.append(DESCRIPTION);
-        builder.append(", reference=");
-        builder.append(REFERENCE);
-        builder.append(", lengthStatements=");
-        builder.append(lengthStatements);
-        builder.append(", patterns=");
-        builder.append(patterns);
-        builder.append(", units=");
-        builder.append(UNITS);
-        builder.append("]");
-        return builder.toString();
+        return "StringType [name=" +
+                NAME +
+                ", path=" +
+                PATH +
+                ", defaultValue=" +
+                DEFAULT_VALUE +
+                ", description=" +
+                DESCRIPTION +
+                ", reference=" +
+                REFERENCE +
+                ", lengthStatements=" +
+                lengthStatements +
+                ", patterns=" +
+                patterns +
+                ", units=" +
+                UNITS +
+                "]";
     }
 }
