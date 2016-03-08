@@ -29,9 +29,9 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         LeafNode<byte[]> equalLeafNodeNull = ImmutableNodes.leafNode(
                 SAME_LEAF_QNAME, null);
 
-        assertTrue(leafNodeNull.equals(leafNodeNull));
-        assertTrue(leafNodeNull.equals(equalLeafNodeNull));
-        assertTrue(equalLeafNodeNull.equals(leafNodeNull));
+        assertEquals(leafNodeNull, leafNodeNull);
+        assertEquals(leafNodeNull, equalLeafNodeNull);
+        assertEquals(equalLeafNodeNull, leafNodeNull);
 
         byte[] value = "test".getBytes();
         byte[] equalValue = "test".getBytes();
@@ -40,9 +40,9 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         LeafNode<byte[]> equalLeafNode = ImmutableNodes.leafNode(
                 SAME_LEAF_QNAME, equalValue);
 
-        assertTrue(leafNode.equals(leafNode));
-        assertTrue(leafNode.equals(equalLeafNode));
-        assertTrue(equalLeafNode.equals(leafNode));
+        assertEquals(leafNode, leafNode);
+        assertEquals(leafNode, equalLeafNode);
+        assertEquals(equalLeafNode, leafNode);
 
         Byte[] value2 = new Byte[] { new Byte("1"), new Byte("2") };
         Byte[] equalValue2 = new Byte[] { new Byte("1"), new Byte("2") };
@@ -52,9 +52,9 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         LeafNode<Byte[]> equalLeafNode2 = ImmutableNodes.leafNode(
                 SAME_LEAF_QNAME, equalValue2);
 
-        assertTrue(leafNode2.equals(leafNode2));
-        assertTrue(leafNode2.equals(equalLeafNode2));
-        assertTrue(equalLeafNode2.equals(leafNode2));
+        assertEquals(leafNode2, leafNode2);
+        assertEquals(leafNode2, equalLeafNode2);
+        assertEquals(equalLeafNode2, leafNode2);
 
         byte[][] value3 = new byte[][] { "test".getBytes(), "test2".getBytes() };
         byte[][] equalValue3 = new byte[][] { "test".getBytes(),
@@ -65,9 +65,9 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         LeafNode<byte[][]> equalLeafNode3 = ImmutableNodes.leafNode(
                 SAME_LEAF_QNAME, equalValue3);
 
-        assertTrue(leafNode3.equals(leafNode3));
-        assertTrue(leafNode3.equals(equalLeafNode3));
-        assertTrue(equalLeafNode3.equals(leafNode3));
+        assertEquals(leafNode3, leafNode3);
+        assertEquals(leafNode3, equalLeafNode3);
+        assertEquals(equalLeafNode3, leafNode3);
 
         Byte[][] value4 = new Byte[][] {
                 new Byte[] { new Byte("1"), new Byte("2") },
@@ -81,9 +81,9 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         LeafNode<Byte[][]> equalLeafNode4 = ImmutableNodes.leafNode(
                 SAME_LEAF_QNAME, equalValue4);
 
-        assertTrue(leafNode4.equals(leafNode4));
-        assertTrue(leafNode4.equals(equalLeafNode4));
-        assertTrue(equalLeafNode4.equals(leafNode4));
+        assertEquals(leafNode4, leafNode4);
+        assertEquals(leafNode4, equalLeafNode4);
+        assertEquals(equalLeafNode4, leafNode4);
 
         Byte value6 = new Byte("1");
         Byte equalValue6 = new Byte("1");
@@ -92,9 +92,9 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         LeafNode<Byte> equalLeafNode6 = ImmutableNodes.leafNode(
                 SAME_LEAF_QNAME, equalValue6);
 
-        assertTrue(leafNode6.equals(leafNode6));
-        assertTrue(leafNode6.equals(equalLeafNode6));
-        assertTrue(equalLeafNode6.equals(leafNode6));
+        assertEquals(leafNode6, leafNode6);
+        assertEquals(leafNode6, equalLeafNode6);
+        assertEquals(equalLeafNode6, leafNode6);
 
         String value5 = "test";
         String equalValue5 = new String("test");
@@ -104,9 +104,9 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         LeafNode<String> equalLeafNode5 = ImmutableNodes.leafNode(
                 SAME_LEAF_QNAME, equalValue5);
 
-        assertTrue(leafNode5.equals(leafNode5));
-        assertTrue(leafNode5.equals(equalLeafNode5));
-        assertTrue(equalLeafNode5.equals(leafNode5));
+        assertEquals(leafNode5, leafNode5);
+        assertEquals(leafNode5, equalLeafNode5);
+        assertEquals(equalLeafNode5, leafNode5);
 
     }
 
@@ -122,10 +122,10 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         LeafNode<byte[]> otherLeafNode = ImmutableNodes.leafNode(
                 OTHER_LEAF_QNAME, equalValue);
 
-        assertFalse(leafNode.equals(null));
-        assertFalse(leafNode.equals(new Object()));
-        assertFalse(leafNode.equals(otherLeafNode));
-        assertFalse(otherLeafNode.equals(leafNode));
+        assertNotEquals(leafNode, null);
+        assertNotEquals(leafNode, new Object());
+        assertNotEquals(leafNode, otherLeafNode);
+        assertNotEquals(otherLeafNode, leafNode);
 
         byte[] value1 = "test".getBytes();
         byte[] otherValue1 = "test1".getBytes();
@@ -135,8 +135,8 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         LeafNode<byte[]> otherLeafNode1 = ImmutableNodes.leafNode(
                 SAME_LEAF_QNAME, otherValue1);
 
-        assertFalse(leafNode1.equals(otherLeafNode1));
-        assertFalse(otherLeafNode1.equals(leafNode1));
+        assertNotEquals(leafNode1, otherLeafNode1);
+        assertNotEquals(otherLeafNode1, leafNode1);
 
         Byte[] value2 = new Byte[] { new Byte("1"), new Byte("1") };
         Byte[] otherValue2 = new Byte[] { new Byte("1"), new Byte("2") };
@@ -146,8 +146,8 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         LeafNode<Byte[]> otherLeafNode2 = ImmutableNodes.leafNode(
                 SAME_LEAF_QNAME, otherValue2);
 
-        assertFalse(leafNode2.equals(otherLeafNode2));
-        assertFalse(otherLeafNode2.equals(leafNode2));
+        assertNotEquals(leafNode2, otherLeafNode2);
+        assertNotEquals(otherLeafNode2, leafNode2);
 
         byte[][] value3 = new byte[][] { "test".getBytes(), "test2".getBytes() };
         byte[][] otherValue3 = new byte[][] { "test".getBytes(),
@@ -158,8 +158,8 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         LeafNode<byte[][]> otherLeafNode3 = ImmutableNodes.leafNode(
                 SAME_LEAF_QNAME, otherValue3);
 
-        assertFalse(leafNode3.equals(otherLeafNode3));
-        assertFalse(otherLeafNode3.equals(leafNode3));
+        assertNotEquals(leafNode3, otherLeafNode3);
+        assertNotEquals(otherLeafNode3, leafNode3);
 
         Byte[][] value4 = new Byte[][] {
                 new Byte[] { new Byte("1"), new Byte("2") },
@@ -173,8 +173,8 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         LeafNode<Byte[][]> otherLeafNode4 = ImmutableNodes.leafNode(
                 SAME_LEAF_QNAME, otherValue4);
 
-        assertFalse(leafNode4.equals(otherLeafNode4));
-        assertFalse(otherLeafNode4.equals(leafNode4));
+        assertNotEquals(leafNode4, otherLeafNode4);
+        assertNotEquals(otherLeafNode4, leafNode4);
 
         Byte value6 = new Byte("1");
         Byte otherValue6 = new Byte("2");
@@ -183,8 +183,8 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         LeafNode<Byte> otherLeafNode6 = ImmutableNodes.leafNode(
                 SAME_LEAF_QNAME, otherValue6);
 
-        assertFalse(leafNode6.equals(otherLeafNode6));
-        assertFalse(otherLeafNode6.equals(leafNode6));
+        assertNotEquals(leafNode6, otherLeafNode6);
+        assertNotEquals(otherLeafNode6, leafNode6);
 
         String value5 = "test";
         String otherValue5 = "test2";
@@ -194,32 +194,32 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         LeafNode<String> otherLeafNode5 = ImmutableNodes.leafNode(
                 SAME_LEAF_QNAME, otherValue5);
 
-        assertFalse(leafNode5.equals(otherLeafNode5));
-        assertFalse(otherLeafNode5.equals(leafNode5));
-        assertFalse(leafNode5.equals(leafNode));
-        assertFalse(leafNode5.equals(leafNode1));
-        assertFalse(leafNode5.equals(leafNode2));
-        assertFalse(leafNode5.equals(leafNode3));
-        assertFalse(leafNode5.equals(leafNode4));
-        assertFalse(leafNode5.equals(leafNode6));
-        assertFalse(leafNode.equals(leafNode5));
-        assertFalse(leafNode1.equals(leafNode5));
-        assertFalse(leafNode2.equals(leafNode5));
-        assertFalse(leafNode3.equals(leafNode5));
-        assertFalse(leafNode4.equals(leafNode5));
-        assertFalse(leafNode6.equals(leafNode5));
+        assertNotEquals(leafNode5, otherLeafNode5);
+        assertNotEquals(otherLeafNode5, leafNode5);
+        assertNotEquals(leafNode5, leafNode);
+        assertNotEquals(leafNode5, leafNode1);
+        assertNotEquals(leafNode5, leafNode2);
+        assertNotEquals(leafNode5, leafNode3);
+        assertNotEquals(leafNode5, leafNode4);
+        assertNotEquals(leafNode5, leafNode6);
+        assertNotEquals(leafNode, leafNode5);
+        assertNotEquals(leafNode1, leafNode5);
+        assertNotEquals(leafNode2, leafNode5);
+        assertNotEquals(leafNode3, leafNode5);
+        assertNotEquals(leafNode4, leafNode5);
+        assertNotEquals(leafNode6, leafNode5);
 
         LeafNode<byte[]> leafNodeNull = ImmutableNodes.leafNode(
                 SAME_LEAF_QNAME, null);
-        assertFalse(leafNodeNull.equals(leafNode));
-        assertFalse(leafNode.equals(leafNodeNull));
+        assertNotEquals(leafNodeNull, leafNode);
+        assertNotEquals(leafNode, leafNodeNull);
 
         byte[] byteValue = new byte[] { 1, 1 };
 
         LeafNode<byte[]> byteLeafNode = ImmutableNodes.leafNode(
                 SAME_LEAF_QNAME, byteValue);
-        assertFalse(byteLeafNode.equals(leafNode2));
-        assertFalse(leafNode2.equals(byteLeafNode));
+        assertNotEquals(byteLeafNode, leafNode2);
+        assertNotEquals(leafNode2, byteLeafNode);
 
     }
 
@@ -236,9 +236,9 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         LeafNode<char[]> equalLeafNodeChar = ImmutableNodes.leafNode(
                 SAME_LEAF_QNAME, equalValueChar);
 
-        assertTrue(leafNodeChar.equals(leafNodeChar));
-        assertTrue(leafNodeChar.equals(equalLeafNodeChar));
-        assertTrue(equalLeafNodeChar.equals(leafNodeChar));
+        assertEquals(leafNodeChar, leafNodeChar);
+        assertEquals(leafNodeChar, equalLeafNodeChar);
+        assertEquals(equalLeafNodeChar, leafNodeChar);
 
         boolean[] value = new boolean[] { true, false };
         boolean[] equalValue = new boolean[] { true, false };
@@ -248,9 +248,9 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         LeafNode<boolean[]> equalLeafNode = ImmutableNodes.leafNode(
                 SAME_LEAF_QNAME, equalValue);
 
-        assertTrue(leafNode.equals(leafNode));
-        assertTrue(leafNode.equals(equalLeafNode));
-        assertTrue(equalLeafNode.equals(leafNode));
+        assertEquals(leafNode, leafNode);
+        assertEquals(leafNode, equalLeafNode);
+        assertEquals(equalLeafNode, leafNode);
 
         int[] value2 = new int[] { 1, 2 };
         int[] equalValue2 = new int[] { 1, 2 };
@@ -259,9 +259,9 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         LeafNode<int[]> equalLeafNode2 = ImmutableNodes.leafNode(
                 SAME_LEAF_QNAME, equalValue2);
 
-        assertTrue(leafNode2.equals(leafNode2));
-        assertTrue(leafNode2.equals(equalLeafNode2));
-        assertTrue(equalLeafNode2.equals(leafNode2));
+        assertEquals(leafNode2, leafNode2);
+        assertEquals(leafNode2, equalLeafNode2);
+        assertEquals(equalLeafNode2, leafNode2);
 
         short[] value3 = new short[] { 1, 2 };
         short[] equalValue3 = new short[] { 1, 2 };
@@ -271,9 +271,9 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         LeafNode<short[]> equalLeafNode3 = ImmutableNodes.leafNode(
                 SAME_LEAF_QNAME, equalValue3);
 
-        assertTrue(leafNode3.equals(leafNode3));
-        assertTrue(leafNode3.equals(equalLeafNode3));
-        assertTrue(equalLeafNode3.equals(leafNode3));
+        assertEquals(leafNode3, leafNode3);
+        assertEquals(leafNode3, equalLeafNode3);
+        assertEquals(equalLeafNode3, leafNode3);
 
         long[] value4 = new long[] { 1, 2 };
         long[] equalValue4 = new long[] { 1, 2 };
@@ -283,9 +283,9 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         LeafNode<long[]> equalLeafNode4 = ImmutableNodes.leafNode(
                 SAME_LEAF_QNAME, equalValue4);
 
-        assertTrue(leafNode4.equals(leafNode4));
-        assertTrue(leafNode4.equals(equalLeafNode4));
-        assertTrue(equalLeafNode4.equals(leafNode4));
+        assertEquals(leafNode4, leafNode4);
+        assertEquals(leafNode4, equalLeafNode4);
+        assertEquals(equalLeafNode4, leafNode4);
 
         double[] value6 = new double[] { 1, 2 };
         double[] equalValue6 = new double[] { 1, 2 };
@@ -295,9 +295,9 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         LeafNode<double[]> equalLeafNode6 = ImmutableNodes.leafNode(
                 SAME_LEAF_QNAME, equalValue6);
 
-        assertTrue(leafNode6.equals(leafNode6));
-        assertTrue(leafNode6.equals(equalLeafNode6));
-        assertTrue(equalLeafNode6.equals(leafNode6));
+        assertEquals(leafNode6, leafNode6);
+        assertEquals(leafNode6, equalLeafNode6);
+        assertEquals(equalLeafNode6, leafNode6);
 
         float[] value5 = new float[] { 1, 2 };
         float[] equalValue5 = new float[] { 1, 2 };
@@ -307,23 +307,23 @@ public class AbstractImmutableNormalizedValueAttrNodeTest {
         LeafNode<float[]> equalLeafNode5 = ImmutableNodes.leafNode(
                 SAME_LEAF_QNAME, equalValue5);
 
-        assertTrue(leafNode5.equals(leafNode5));
-        assertTrue(leafNode5.equals(equalLeafNode5));
-        assertTrue(equalLeafNode5.equals(leafNode5));
+        assertEquals(leafNode5, leafNode5);
+        assertEquals(leafNode5, equalLeafNode5);
+        assertEquals(equalLeafNode5, leafNode5);
 
-        assertFalse(leafNode.equals(leafNode5));
-        assertFalse(leafNode2.equals(leafNode5));
-        assertFalse(leafNode3.equals(leafNode5));
-        assertFalse(leafNode4.equals(leafNode5));
-        assertFalse(leafNodeChar.equals(leafNode5));
-        assertFalse(leafNode6.equals(leafNode5));
+        assertNotEquals(leafNode, leafNode5);
+        assertNotEquals(leafNode2, leafNode5);
+        assertNotEquals(leafNode3, leafNode5);
+        assertNotEquals(leafNode4, leafNode5);
+        assertNotEquals(leafNodeChar, leafNode5);
+        assertNotEquals(leafNode6, leafNode5);
 
-        assertFalse(leafNode5.equals(leafNode));
-        assertFalse(leafNode5.equals(leafNode2));
-        assertFalse(leafNode5.equals(leafNode3));
-        assertFalse(leafNode5.equals(leafNode4));
-        assertFalse(leafNode5.equals(leafNodeChar));
-        assertFalse(leafNode5.equals(leafNode6));
+        assertNotEquals(leafNode5, leafNode);
+        assertNotEquals(leafNode5, leafNode2);
+        assertNotEquals(leafNode5, leafNode3);
+        assertNotEquals(leafNode5, leafNode4);
+        assertNotEquals(leafNode5, leafNodeChar);
+        assertNotEquals(leafNode5, leafNode6);
     }
 
 }

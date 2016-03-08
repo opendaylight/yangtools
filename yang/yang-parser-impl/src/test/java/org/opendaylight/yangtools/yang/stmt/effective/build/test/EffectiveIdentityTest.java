@@ -2,6 +2,7 @@ package org.opendaylight.yangtools.yang.stmt.effective.build.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -103,7 +104,7 @@ public class EffectiveIdentityTest {
         assertTrue(rootDerivedIdentities.contains(child1));
         assertTrue(rootDerivedIdentities.contains(child2));
         assertFalse(rootDerivedIdentities.contains(child12));
-        assertFalse(child1.equals(child2));
+        assertNotEquals(child1, child2);
 
         assertTrue(root == child1.getBaseIdentity());
         assertTrue(root == child2.getBaseIdentity());

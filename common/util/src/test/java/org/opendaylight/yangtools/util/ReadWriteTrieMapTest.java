@@ -51,7 +51,7 @@ public class ReadWriteTrieMapTest {
         final Collection<String> trieMapValues = readWriteTrieMap.values();
         assertEquals("Size of values should be '3'.", 3, trieMapValues.size());
 
-        assertTrue("Entry set of readWriteTrieMap and trieMap should by equals.", convertSetEntryToMap(readWriteTrieMap.entrySet()).equals(trieMap));
+        assertEquals("Entry set of readWriteTrieMap and trieMap should by equals.", convertSetEntryToMap(readWriteTrieMap.entrySet()), trieMap);
 
         trieMap.put("2", "two");
         final ReadWriteTrieMap<String, String> readWriteTrieMap2 = new ReadWriteTrieMap<String, String>(trieMap, 4);

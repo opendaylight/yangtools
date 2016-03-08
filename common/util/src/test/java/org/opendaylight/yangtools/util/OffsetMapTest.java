@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -103,9 +104,9 @@ public class OffsetMapTest {
     public void testImmutableSimpleEquals() {
         final Map<String, String> map = createMap();
 
-        assertTrue(map.equals(map));
-        assertFalse(map.equals(null));
-        assertFalse(map.equals("string"));
+        assertEquals(map, map);
+        assertNotEquals(map, null);
+        assertNotEquals(map, "string");
     }
 
     @Test
@@ -264,9 +265,9 @@ public class OffsetMapTest {
     public void testImmutableEquals() {
         final Map<String, String> map = createMap();
 
-        assertFalse(map.equals(threeEntryMap));
-        assertFalse(map.equals(ImmutableMap.of("k1", "v1", "k3", "v3")));
-        assertFalse(map.equals(ImmutableMap.of("k1", "v1", "k2", "different-value")));
+        assertNotEquals(map, threeEntryMap);
+        assertNotEquals(map, ImmutableMap.of("k1", "v1", "k3", "v3"));
+        assertNotEquals(map, ImmutableMap.of("k1", "v1", "k2", "different-value"));
     }
 
     @Test
@@ -296,8 +297,8 @@ public class OffsetMapTest {
         assertEquals(Collections.emptyMap(), result);
 
         // The two maps should differ now
-        assertFalse(source.equals(result));
-        assertFalse(result.equals(source));
+        assertNotEquals(source, result);
+        assertNotEquals(result, source);
 
         // The source map should still equal the template
         assertEquals(twoEntryMap, source);
@@ -331,8 +332,8 @@ public class OffsetMapTest {
         mutable.put("k1", "v1");
 
         final ImmutableOffsetMap<String, String> result = (ImmutableOffsetMap<String, String>) mutable.toUnmodifiableMap();
-        assertTrue(source.equals(result));
-        assertTrue(result.equals(source));
+        assertEquals(source, result);
+        assertEquals(result, source);
 
         // Iterator order must not be preserved
         assertFalse(Iterators.elementsEqual(source.entrySet().iterator(), result.entrySet().iterator()));
@@ -470,6 +471,8 @@ public class OffsetMapTest {
     }
 
     @Test
+    // In this particular case they are convertible
+    @SuppressWarnings("AssertEqualsBetweenInconvertibleTypes")
     public void testCloneableFlipping() throws CloneNotSupportedException {
         final MutableOffsetMap<String, String> source = createMap().toModifiableMap();
 
@@ -498,8 +501,8 @@ public class OffsetMapTest {
         // Forced copy, no cloning needed, but maps are equal
         final ImmutableOffsetMap<String, String> immutable = (ImmutableOffsetMap<String, String>) source.toUnmodifiableMap();
         assertFalse(source.needClone());
-        assertTrue(source.equals(immutable));
-        assertTrue(immutable.equals(source));
+        assertEquals(source, immutable);
+        assertEquals(immutable, source);
         assertTrue(Iterables.elementsEqual(source.entrySet(), immutable.entrySet()));
     }
 
@@ -581,10 +584,10 @@ public class OffsetMapTest {
         final ImmutableOffsetMap<String, String> source = createMap();
         final Map<String, String> map = source.toModifiableMap();
 
-        assertTrue(map.equals(map));
-        assertFalse(map.equals(null));
-        assertFalse(map.equals("string"));
-        assertTrue(map.equals(source));
+        assertEquals(map, map);
+        assertNotEquals(map, null);
+        assertNotEquals(map, "string");
+        assertEquals(map, source);
     }
 
     @Test

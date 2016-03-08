@@ -53,8 +53,8 @@ public class Decimal64Test {
         assertTrue("Hash code of decimal64 and decimal641 should be equal",
                     decimal64.hashCode() == decimal641.hashCode());
 
-        assertFalse("Decimal64 shouldn't equal to null", decimal64.equals(null));
+        assertNotEquals("Decimal64 shouldn't equal to null", decimal64, null);
         assertEquals("Decimal64 should equals to itself", decimal64, decimal64);
-        assertFalse("Decimal64 shouldn't equal to object of other type", decimal64.equals("str"));
+        assertNotEquals("Decimal64 shouldn't equal to object of other type", decimal64, "str");
     }
 }

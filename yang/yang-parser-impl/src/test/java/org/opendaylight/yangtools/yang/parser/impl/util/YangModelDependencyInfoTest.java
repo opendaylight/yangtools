@@ -8,11 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.impl.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import java.io.InputStream;
 import org.junit.Test;
 
@@ -27,7 +25,7 @@ public class YangModelDependencyInfoTest {
         assertEquals("2010-09-24", info.getFormattedRevision());
         assertNotNull(info.getDependencies());
 
-        assertTrue(info.equals(info));
+        assertEquals(info, info);
     }
 
     @Test
@@ -57,10 +55,10 @@ public class YangModelDependencyInfoTest {
         InputStream stream2 = getClass().getResourceAsStream("/no-revision/module-without-revision.yang");
         YangModelDependencyInfo info2 = YangModelDependencyInfo.fromInputStream(stream2);
 
-    	assertTrue(info1.equals(info1));
-    	assertFalse(info1.equals(null));
-        assertFalse(info1.equals(stream1));
-        assertFalse(info1.equals(info2));
+    	assertEquals(info1, info1);
+    	assertNotEquals(info1, null);
+        assertNotEquals(info1, stream1);
+        assertNotEquals(info1, info2);
     }
 
     @Test

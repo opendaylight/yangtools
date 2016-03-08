@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.yang.stmt.effective.build.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import org.junit.Before;
@@ -106,9 +106,9 @@ public class EffectiveStatementTypeTest {
         assertNull(bitsEff.getUnits());
         assertNotNull(bitsEff.toString());
         assertNotNull(bitsEff.hashCode());
-        assertFalse(bitsEff.equals(null));
-        assertFalse(bitsEff.equals("test"));
-        assertTrue(bitsEff.equals(bitsEff));
+        assertNotEquals(bitsEff, null);
+        assertNotEquals(bitsEff, "test");
+        assertEquals(bitsEff, bitsEff);
         assertEquals(3, bitsEff.getBits().size());
         assertNull(bitsEff.getDefaultValue());
 
@@ -118,9 +118,9 @@ public class EffectiveStatementTypeTest {
         assertEquals("test bit ref", bitEff.getReference());
         assertEquals("CURRENT", bitEff.getStatus().toString());
         assertNotNull(bitEff.hashCode());
-        assertFalse(bitEff.equals(null));
-        assertFalse(bitEff.equals("test"));
-        assertFalse(bitEff.equals(bitEffSecond));
+        assertNotEquals(bitEff, null);
+        assertNotEquals(bitEff, "test");
+        assertNotEquals(bitEff, bitEffSecond);
         assertNotNull(bitEff.toString());
         assertEquals("one", bitEff.getName());
         assertNotNull(bitEff.getQName());
@@ -170,10 +170,10 @@ public class EffectiveStatementTypeTest {
         assertEquals(3, decimal64Eff.getRangeConstraints().size());
         assertNotNull(decimal64Eff.toString());
         assertNotNull(decimal64Eff.hashCode());
-        assertTrue(decimal64Eff.getFractionDigits().equals(2));
-        assertFalse(decimal64Eff.equals(null));
-        assertFalse(decimal64Eff.equals("test"));
-        assertTrue(decimal64Eff.equals(decimal64Eff));
+        assertEquals((long) decimal64Eff.getFractionDigits(), 2);
+        assertNotEquals(decimal64Eff, null);
+        assertNotEquals(decimal64Eff, "test");
+        assertEquals(decimal64Eff, decimal64Eff);
         assertEquals("decimal64", decimal64Eff.getPath().getLastComponent().getLocalName());
     }
 
@@ -220,9 +220,9 @@ public class EffectiveStatementTypeTest {
         assertNull(enumSpecEff.getUnits());
         assertNotNull(enumSpecEff.toString());
         assertNotNull(enumSpecEff.hashCode());
-        assertFalse(enumSpecEff.equals(null));
-        assertFalse(enumSpecEff.equals("test"));
-        assertTrue(enumSpecEff.equals(enumSpecEff));
+        assertNotEquals(enumSpecEff, null);
+        assertNotEquals(enumSpecEff, "test");
+        assertEquals(enumSpecEff, enumSpecEff);
 
         assertEquals("zero", enumEff.getQName().getLocalName());
         assertEquals("zero", enumEff.getName());
@@ -278,9 +278,9 @@ public class EffectiveStatementTypeTest {
         assertNull(instanceIdentEff.getUnits());
         assertEquals("CURRENT", instanceIdentEff.getStatus().toString());
         assertNotNull(instanceIdentEff.hashCode());
-        assertFalse(instanceIdentEff.equals(null));
-        assertFalse(instanceIdentEff.equals("test"));
-        assertTrue(instanceIdentEff.equals(instanceIdentEff));
+        assertNotEquals(instanceIdentEff, null);
+        assertNotEquals(instanceIdentEff, "test");
+        assertEquals(instanceIdentEff, instanceIdentEff);
     }
 
     @Test
@@ -304,9 +304,9 @@ public class EffectiveStatementTypeTest {
         assertNull(leafrefEff.getDescription());
         assertNull(leafrefEff.getReference());
         assertNotNull(leafrefEff.hashCode());
-        assertFalse(leafrefEff.equals(null));
-        assertFalse(leafrefEff.equals("test"));
-        assertTrue(leafrefEff.equals(leafrefEff));
+        assertNotEquals(leafrefEff, null);
+        assertNotEquals(leafrefEff, "test");
+        assertEquals(leafrefEff, leafrefEff);
     }
 
     @Test
@@ -390,9 +390,9 @@ public class EffectiveStatementTypeTest {
         assertNull(unionEff.getReference());
         assertNotNull(unionEff.toString());
         assertNotNull(unionEff.hashCode());
-        assertFalse(unionEff.equals(null));
-        assertFalse(unionEff.equals("test"));
-        assertTrue(unionEff.equals(unionEff));
+        assertNotEquals(unionEff, null);
+        assertNotEquals(unionEff, "test");
+        assertEquals(unionEff, unionEff);
         assertEquals("union", unionEff.getPath().getLastComponent().getLocalName());
     }
 
@@ -416,10 +416,10 @@ public class EffectiveStatementTypeTest {
         assertEquals("length-out-of-specified-bounds", lengthConstraint.getErrorAppTag());
         assertNotNull(lengthConstraint.toString());
         assertNotNull(lengthConstraint.hashCode());
-        assertFalse(lengthConstraint.equals(null));
-        assertFalse(lengthConstraint.equals("test"));
-        assertFalse(lengthConstraint.equals(lengthConstraintSecond));
-        assertTrue(lengthConstraint.equals(lengthConstraintThird));
+        assertNotEquals(lengthConstraint, null);
+        assertNotEquals(lengthConstraint, "test");
+        assertNotEquals(lengthConstraint, lengthConstraintSecond);
+        assertEquals(lengthConstraint, lengthConstraintThird);
     }
 
     @Test
@@ -444,10 +444,10 @@ public class EffectiveStatementTypeTest {
         assertEquals("invalid-regular-expression", lengthConstraint.getErrorAppTag());
         assertNotNull(lengthConstraint.toString());
         assertNotNull(lengthConstraint.hashCode());
-        assertFalse(lengthConstraint.equals(null));
-        assertFalse(lengthConstraint.equals("test"));
-        assertFalse(lengthConstraint.equals(lengthConstraintSecond));
-        assertTrue(lengthConstraint.equals(lengthConstraintThird));
+        assertNotEquals(lengthConstraint, null);
+        assertNotEquals(lengthConstraint, "test");
+        assertNotEquals(lengthConstraint, lengthConstraintSecond);
+        assertEquals(lengthConstraint, lengthConstraintThird);
     }
 
     @Test
@@ -468,9 +468,9 @@ public class EffectiveStatementTypeTest {
         assertNull(stringEff.getReference());
         assertNotNull(stringEff.toString());
         assertNotNull(stringEff.hashCode());
-        assertFalse(stringEff.equals(null));
-        assertFalse(stringEff.equals("test"));
-        assertTrue(stringEff.equals(stringEff));
+        assertNotEquals(stringEff, null);
+        assertNotEquals(stringEff, "test");
+        assertEquals(stringEff, stringEff);
         assertEquals("string", stringEff.getPath().getLastComponent().getLocalName());
         assertEquals(0, stringEff.getLengthConstraints().size());
         assertNotNull(stringEff.getPatternConstraints());
