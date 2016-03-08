@@ -91,6 +91,8 @@ public class SchemaContextProxyTest {
      * </pre>
      */
     @Test
+    // We're testing null assignments
+    @SuppressWarnings("NullArgumentToVariableArgMethod")
     public void testNull() {
         Module moduleConfig = mockModule(CONFIG_NAME);
         Module module2 = mockModule(MODULE2_NAME);
@@ -380,7 +382,7 @@ public class SchemaContextProxyTest {
 
         SchemaContext schemaContext = mockSchema(module2, module3, module4, module5);
 
-        FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext, Sets.newHashSet(module2), null);
+        FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext, Sets.newHashSet(module2));
         assertProxyContext(filteringSchemaContextProxy, module2, module3, module4, module5);
     }
 

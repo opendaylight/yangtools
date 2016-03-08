@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -33,11 +34,11 @@ public class SingletonSetTest {
         assertTrue(s.contains(null));
         assertNull(s.getElement());
         assertEquals(0, s.hashCode());
-        assertTrue(s.equals(Collections.singleton(null)));
-        assertFalse(s.equals(Collections.singleton("")));
-        assertFalse(s.equals(""));
-        assertTrue(s.equals(s));
-        assertFalse(s.equals(null));
+        assertEquals(s, Collections.singleton(null));
+        assertNotEquals(s, Collections.singleton(""));
+        assertNotEquals(s, "");
+        assertEquals(s, s);
+        assertNotEquals(s, null);
         assertEquals(Collections.singleton(null).toString(), s.toString());
     }
 
@@ -53,12 +54,12 @@ public class SingletonSetTest {
 
         assertSame(ELEMENT, s.getElement());
         assertEquals(ELEMENT.hashCode(), s.hashCode());
-        assertTrue(s.equals(Collections.singleton(ELEMENT)));
-        assertFalse(s.equals(Collections.singleton("")));
-        assertFalse(s.equals(Collections.singleton(null)));
-        assertFalse(s.equals(""));
-        assertTrue(s.equals(s));
-        assertFalse(s.equals(null));
+        assertEquals(s, Collections.singleton(ELEMENT));
+        assertNotEquals(s, Collections.singleton(""));
+        assertNotEquals(s, Collections.singleton(null));
+        assertNotEquals(s, "");
+        assertEquals(s, s);
+        assertNotEquals(s, null);
         assertEquals(Collections.singleton(ELEMENT).toString(), s.toString());
     }
 

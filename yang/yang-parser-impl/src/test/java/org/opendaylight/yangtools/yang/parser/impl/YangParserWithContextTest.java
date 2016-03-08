@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import com.google.common.collect.Lists;
@@ -133,7 +134,7 @@ public class YangParserWithContextTest {
         AnyXmlSchemaNode data_g = (AnyXmlSchemaNode) grouping.getDataChildByName("data");
         assertNotNull(data_g);
         assertFalse(data_g.isAddedByUses());
-        assertFalse(data_u.equals(data_g));
+        assertNotEquals(data_u, data_g);
 
         ChoiceSchemaNode how_u = (ChoiceSchemaNode) destination.getDataChildByName("how");
         assertNotNull(how_u);
@@ -142,7 +143,7 @@ public class YangParserWithContextTest {
         ChoiceSchemaNode how_g = (ChoiceSchemaNode) grouping.getDataChildByName("how");
         assertNotNull(how_g);
         assertFalse(how_g.isAddedByUses());
-        assertFalse(how_u.equals(how_g));
+        assertNotEquals(how_u, how_g);
 
         LeafSchemaNode address_u = (LeafSchemaNode) destination.getDataChildByName("address");
         assertNotNull(address_u);
@@ -151,7 +152,7 @@ public class YangParserWithContextTest {
         LeafSchemaNode address_g = (LeafSchemaNode) grouping.getDataChildByName("address");
         assertNotNull(address_g);
         assertFalse(address_g.isAddedByUses());
-        assertFalse(address_u.equals(address_g));
+        assertNotEquals(address_u, address_g);
 
         ContainerSchemaNode port_u = (ContainerSchemaNode) destination.getDataChildByName("port");
         assertNotNull(port_u);
@@ -160,7 +161,7 @@ public class YangParserWithContextTest {
         ContainerSchemaNode port_g = (ContainerSchemaNode) grouping.getDataChildByName("port");
         assertNotNull(port_g);
         assertFalse(port_g.isAddedByUses());
-        assertFalse(port_u.equals(port_g));
+        assertNotEquals(port_u, port_g);
 
         ListSchemaNode addresses_u = (ListSchemaNode) destination.getDataChildByName("addresses");
         assertNotNull(addresses_u);
@@ -169,7 +170,7 @@ public class YangParserWithContextTest {
         ListSchemaNode addresses_g = (ListSchemaNode) grouping.getDataChildByName("addresses");
         assertNotNull(addresses_g);
         assertFalse(addresses_g.isAddedByUses());
-        assertFalse(addresses_u.equals(addresses_g));
+        assertNotEquals(addresses_u, addresses_g);
 
         // grouping defined by 'uses'
         Set<GroupingDefinition> groupings_u = destination.getGroupings();
@@ -182,7 +183,7 @@ public class YangParserWithContextTest {
         assertEquals(1, groupings_g.size());
         GroupingDefinition grouping_g = groupings_g.iterator().next();
         assertFalse(grouping_g.isAddedByUses());
-        assertFalse(grouping_u.equals(grouping_g));
+        assertNotEquals(grouping_u, grouping_g);
 
         List<UnknownSchemaNode> nodes_u = destination.getUnknownSchemaNodes();
         assertEquals(1, nodes_u.size());
@@ -193,7 +194,7 @@ public class YangParserWithContextTest {
         assertEquals(1, nodes_g.size());
         UnknownSchemaNode node_g = nodes_g.get(0);
         assertFalse(node_g.isAddedByUses());
-        assertFalse(node_u.equals(node_g));
+        assertNotEquals(node_u, node_g);
     }
 
     @Test

@@ -1,7 +1,7 @@
 package org.opendaylight.yangtools.yang.stmt.effective.build.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -207,7 +207,7 @@ public class EffectiveModulesAndSubmodulesTest {
         assertEquals(imported, foundImported2);
         assertEquals(imported, foundImported3);
 
-        assertFalse(root.equals(imported));
+        assertNotEquals(root, imported);
     }
 
 }

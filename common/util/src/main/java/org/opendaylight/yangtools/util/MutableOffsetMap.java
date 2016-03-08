@@ -224,6 +224,8 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         return newKeys.get(key);
     }
 
+    // We don't want to clone strictly identical empty arrays
+    @SuppressWarnings("ArrayEquals")
     private void cloneArray() {
         if (needClone) {
             needClone = false;

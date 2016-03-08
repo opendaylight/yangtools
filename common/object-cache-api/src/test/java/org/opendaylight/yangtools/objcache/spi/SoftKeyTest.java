@@ -8,10 +8,9 @@
 package org.opendaylight.yangtools.objcache.spi;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -47,10 +46,10 @@ public class SoftKeyTest {
 
         assertSame(str, key.get());
         assertEquals(str.hashCode(), key.hashCode());
-        assertTrue(key.equals(str));
+        assertEquals(key, str);
         key.clear();
         assertNull(key.get());
         assertEquals(str.hashCode(), key.hashCode());
-        assertFalse(key.equals(str));
+        assertNotEquals(key, str);
     }
 }

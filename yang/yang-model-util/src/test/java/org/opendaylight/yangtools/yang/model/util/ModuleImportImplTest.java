@@ -36,10 +36,10 @@ public class ModuleImportImplTest {
     @Test
     public void testModule() {
         assertNotNull(module1);
-        assertTrue(module1.getModuleName().equals("myModule"));
-        assertTrue(module1.getPrefix().equals("myPrefix"));
-        assertTrue(module1.getRevision().equals(now));
-        assertFalse(module1.equals(module2));
+        assertEquals(module1.getModuleName(), "myModule");
+        assertEquals(module1.getPrefix(), "myPrefix");
+        assertEquals(module1.getRevision(), now);
+        assertNotEquals(module1, module2);
     }
 
     @Test
@@ -50,21 +50,21 @@ public class ModuleImportImplTest {
 
     @Test
     public void testHashCode() {
-        assertTrue(!(hash1 == hash2));
+        assertFalse(hash1 == hash2);
     }
 
     @Test
     public void testEquals() {
-        assertTrue(module1.equals(module1));
-        assertFalse(module1.equals(module2));
-        assertFalse(module1.equals(""));
-        assertFalse(module2.equals(module1));
-        assertFalse(module1.equals(null));
-        assertFalse(module1.equals(module3));
-        assertFalse(module3.equals(module1));
-        assertFalse(module1.equals(module4));
-        assertFalse(module4.equals(module1));
-        assertTrue(module1.equals(module5));
+        assertEquals(module1, module1);
+        assertNotEquals(module1, module2);
+        assertNotEquals(module1, "");
+        assertNotEquals(module2, module1);
+        assertNotEquals(module1, null);
+        assertNotEquals(module1, module3);
+        assertNotEquals(module3, module1);
+        assertNotEquals(module1, module4);
+        assertNotEquals(module4, module1);
+        assertEquals(module1, module5);
     }
 
 }

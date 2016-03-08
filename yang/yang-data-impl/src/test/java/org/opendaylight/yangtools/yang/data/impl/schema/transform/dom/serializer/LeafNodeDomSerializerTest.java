@@ -8,8 +8,8 @@
 
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.serializer;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -45,8 +45,8 @@ public class LeafNodeDomSerializerTest {
         final Iterable<Element> elementsFromAbstractClass = temp.serialize(currentLeaf, tempLeafNode);
         final Element singleElementFromAbstractClass = elementsFromAbstractClass.iterator().next();
 
-        assertTrue(element.getLocalName().equals(singleElementFromAbstractClass.getLocalName()));
-        assertTrue(element.getNamespaceURI().equals(singleElementFromAbstractClass.getNamespaceURI()));
+        assertEquals(element.getLocalName(), singleElementFromAbstractClass.getLocalName());
+        assertEquals(element.getNamespaceURI(), singleElementFromAbstractClass.getNamespaceURI());
 
         DomSerializerTestUtils.testResults("<first-leaf xmlns=\"dom-serializer-test\">testing DATA</first-leaf>",
                 element);

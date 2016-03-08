@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -47,8 +47,8 @@ public class BinaryTypeTest {
         assertTrue("Hash code of binType and binType1 should be equal",
                 binType.hashCode() == binType1.hashCode());
         assertEquals("binType should equals to itself", binType, binType);
-        assertFalse("binType shouldn't equal to null", binType.equals(null));
-        assertFalse("binType shouldn't equal to object of other type", binType.equals("str"));
+        assertNotEquals("binType shouldn't equal to null", binType, null);
+        assertNotEquals("binType shouldn't equal to object of other type", binType, "str");
     }
 
 }

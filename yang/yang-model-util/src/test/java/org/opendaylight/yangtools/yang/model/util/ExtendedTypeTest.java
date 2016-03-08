@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
 
@@ -67,8 +68,8 @@ public class ExtendedTypeTest {
         assertEquals("Length Constraints", Collections.singletonList(lengthCons), extendedType.getLengthConstraints());
         assertTrue("Should contain name of type", extendedType.getQName().toString().contains(localName));
 
-        assertEquals("extendedType should equals to itself",extendedType, extendedType);
-        assertFalse("extendedType shouldn't equal to null", extendedType.equals(null));
+        assertEquals("extendedType should equals to itself", extendedType, extendedType);
+        assertNotEquals("extendedType shouldn't equal to null", extendedType, null);
         assertTrue("Hash code of unionType should be equal to itself",
                 extendedType.hashCode() == extendedType.hashCode());
 

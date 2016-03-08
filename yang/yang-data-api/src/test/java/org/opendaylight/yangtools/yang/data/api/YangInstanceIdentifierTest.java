@@ -74,12 +74,12 @@ public class YangInstanceIdentifierTest {
         YangInstanceIdentifier id3 = YangInstanceIdentifier.create(new NodeIdentifier(NODENAME2), new NodeIdentifier(NODENAME1));
         YangInstanceIdentifier id4 = YangInstanceIdentifier.create(new NodeIdentifier(NODENAME1));
 
-        assertEquals( "equals", false, id1.equals( null ) );
-        assertEquals( "equals", true, id1.equals( id1 ) );
-        assertEquals( "equals", true, id1.equals( id2 ) );
-        assertEquals( "equals", false, id1.equals( id3 ) );
-        assertEquals( "equals", false, id1.equals( id4 ) );
-        assertEquals( "equals", false, id1.equals( new Object() ) );
+        assertNotEquals("equals", id1, null);
+        assertEquals("equals", id1, id1);
+        assertEquals("equals", id1, id2);
+        assertNotEquals("equals", id1, id3);
+        assertNotEquals("equals", id1, id4);
+        assertNotEquals("equals", id1, new Object());
     }
 
     @Test
@@ -231,13 +231,10 @@ public class YangInstanceIdentifierTest {
         assertEquals( "hashCode", node1.hashCode(), node2.hashCode() );
         assertEquals( "equals", true, node1.equals( node2 ) );
 
-        assertEquals( "equals", false,
-                node1.equals( new NodeIdentifierWithPredicates( NODENAME2, KEY1, "foo" ) ) );
-        assertEquals( "equals", false,
-                node1.equals( new NodeIdentifierWithPredicates( NODENAME1, KEY2, "foo" ) ) );
-        assertEquals( "equals", false,
-                node1.equals( new NodeIdentifierWithPredicates( NODENAME1, KEY1, "bar" ) ) );
-        assertEquals( "equals", false, node1.equals( new Object() ) );
+        assertNotEquals("equals", node1, new NodeIdentifierWithPredicates(NODENAME2, KEY1, "foo"));
+        assertNotEquals("equals", node1, new NodeIdentifierWithPredicates(NODENAME1, KEY2, "foo"));
+        assertNotEquals("equals", node1, new NodeIdentifierWithPredicates(NODENAME1, KEY1, "bar"));
+        assertNotEquals("equals", node1, new Object());
 
         assertNotNull( node1.toString() ); // for code coverage
         assertNotNull( node1.toRelativeString(node2) );
@@ -251,23 +248,19 @@ public class YangInstanceIdentifierTest {
         assertEquals( "hashCode", node3.hashCode(), node4.hashCode() );
         assertEquals( "equals", true, node3.equals( node4 ) );
 
-        assertEquals( "equals", false, node3.equals( node1 ) );
-        assertEquals( "equals", false,
-                node1.equals( new NodeIdentifierWithPredicates( NODENAME1,
-                        ImmutableMap.<QName, Object>builder().put( KEY1, 10 ).put( KEY3, 20 ).build() ) ) );
+        assertNotEquals("equals", node3, node1);
+        assertNotEquals("equals", node1, new NodeIdentifierWithPredicates(NODENAME1,
+                ImmutableMap.<QName, Object>builder().put(KEY1, 10).put(KEY3, 20).build()));
 
         node1 = new NodeIdentifierWithPredicates( NODENAME1, KEY1, new byte[]{1,2} );
         node2 = new NodeIdentifierWithPredicates( NODENAME1, KEY1, new byte[]{1,2} );
 
         assertEquals( "hashCode", node1.hashCode(), node2.hashCode() );
-        assertEquals( "equals", true, node1.equals( node2 ) );
+        assertEquals("equals", node1, node2);
 
-        assertEquals( "equals", false,
-                node1.equals( new NodeIdentifierWithPredicates( NODENAME1, KEY1, new byte[]{1,3} ) ) );
-        assertEquals( "equals", false,
-                node1.equals( new NodeIdentifierWithPredicates( NODENAME1, KEY1, new byte[]{1} ) ) );
-        assertEquals( "equals", false,
-                node1.equals( new NodeIdentifierWithPredicates( NODENAME1, KEY1, new byte[]{1,2,3} ) ) );
+        assertNotEquals("equals", node1, new NodeIdentifierWithPredicates(NODENAME1, KEY1, new byte[] {1, 3}));
+        assertNotEquals("equals", node1, new NodeIdentifierWithPredicates(NODENAME1, KEY1, new byte[] {1}));
+        assertNotEquals("equals", node1, new NodeIdentifierWithPredicates(NODENAME1, KEY1, new byte[] {1, 2, 3}));
     }
 
     @Test
@@ -280,11 +273,11 @@ public class YangInstanceIdentifierTest {
         NodeWithValue<?> node2 = new NodeWithValue<>( NODENAME1, "foo" );
 
         assertEquals( "hashCode", node1.hashCode(), node2.hashCode() );
-        assertEquals( "equals", true, node1.equals( node2 ) );
+        assertEquals("equals", node1, node2);
 
-        assertEquals( "equals", false, node1.equals( new NodeWithValue<>( NODENAME1, "bar" ) ) );
-        assertEquals( "equals", false, node1.equals( new NodeWithValue<>( NODENAME2, "foo" ) ) );
-        assertEquals( "equals", false, node1.equals( new Object() ) );
+        assertNotEquals("equals", node1, new NodeWithValue<>(NODENAME1, "bar"));
+        assertNotEquals("equals", node1, new NodeWithValue<>(NODENAME2, "foo"));
+        assertNotEquals("equals", node1, new Object());
 
         assertNotNull( node1.toString() ); // for code coverage
         assertNotNull( node1.toRelativeString(node2) );
@@ -293,10 +286,10 @@ public class YangInstanceIdentifierTest {
         NodeWithValue<?> node4 = new NodeWithValue<>( NODENAME1, new byte[]{1,2} );
 
         assertEquals( "hashCode", node3.hashCode(), node4.hashCode() );
-        assertEquals( "equals", true, node3.equals( node4 ) );
+        assertEquals("equals", node3, node4);
 
-        assertEquals( "equals", false, node3.equals( new NodeWithValue<>( NODENAME1, new byte[]{1,3} ) ) );
-        assertEquals( "equals", false, node3.equals( node1 ) );
+        assertNotEquals("equals", node3, new NodeWithValue<>(NODENAME1, new byte[] {1, 3}));
+        assertNotEquals("equals", node3, node1);
     }
 
     @Test
@@ -311,12 +304,12 @@ public class YangInstanceIdentifierTest {
         assertEquals( "compareTo", 0, node1.compareTo( node2 ) );
         assertEquals( "compareTo", true, node1.compareTo( new NodeIdentifier( NODENAME3 ) ) != 0 );
 
-        assertEquals( "equals", false, node1.equals( null ) );
-        assertEquals( "equals", false, node1.equals( node3 ) );
-        assertEquals( "equals", true, node1.equals( node1 ) );
-        assertEquals( "equals", true, node1.equals( node2 ) );
-        assertEquals( "equals", false, node1.equals( new NodeIdentifier( NODENAME3 ) ) );
-        assertEquals( "equals", false, node1.equals( new Object() ) );
+        assertNotEquals("equals", node1, null);
+        assertNotEquals("equals", node1, node3);
+        assertEquals("equals", node1, node1);
+        assertEquals("equals", node1, node2);
+        assertNotEquals("equals", node1, new NodeIdentifier(NODENAME3));
+        assertNotEquals("equals", node1, new Object());
 
         assertNotNull( node1.toString() ); // for code coverage
     }
@@ -339,11 +332,11 @@ public class YangInstanceIdentifierTest {
 
         assertEquals( "hashCode", node1.hashCode(), node2.hashCode() );
 
-        assertEquals( "equals", true, node1.equals( node1 ) );
-        assertEquals( "equals", true, node1.equals( node2 ) );
-        assertEquals( "equals", false, node1.equals( node3 ) );
-        assertEquals( "equals", false, node1.equals( new AugmentationIdentifier( Sets.newHashSet( NODENAME1 ) ) ) );
-        assertEquals( "equals", false, node1.equals( new Object() ) );
+        assertEquals("equals", node1, node1);
+        assertEquals("equals", node1, node2);
+        assertNotEquals("equals", node1, node3);
+        assertNotEquals("equals", node1, new AugmentationIdentifier(Sets.newHashSet(NODENAME1)));
+        assertNotEquals("equals", node1, new Object());
 
         assertEquals( "compareTo", -1, node1.compareTo( node5 ) );
         assertNotEquals( "compareTo", -1, node1.compareTo( node2 ) );

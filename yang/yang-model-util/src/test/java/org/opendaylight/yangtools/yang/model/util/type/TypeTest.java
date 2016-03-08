@@ -493,7 +493,7 @@ public class TypeTest {
     private static void hashCodeEqualsToStringTest(final TypeDefinition type1, final TypeDefinition type2) {
         assertEquals(type1.hashCode(), type2.hashCode());
         assertEquals(type1.toString(), type2.toString());
-        assertTrue(type1.equals(type2));
+        assertEquals(type1, type2);
     }
 
     private static <T> void testInstance(final T type1, final T type2) {

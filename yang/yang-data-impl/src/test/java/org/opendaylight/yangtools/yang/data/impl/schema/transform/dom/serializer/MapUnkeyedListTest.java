@@ -8,7 +8,7 @@
 
 package org.opendaylight.yangtools.yang.data.impl.schema.transform.dom.serializer;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
@@ -24,7 +24,7 @@ public class MapUnkeyedListTest {
         final UnkeyedListNodeDomSerializer unkeyedListNodeDomSerializer = new UnkeyedListNodeDomSerializer
                 (unkeyedListEntryNodeDomSerializer);
 
-        assertTrue(mapEntryNodeDomSerializer.equals(mapNodeDomSerializer.getListEntryNodeSerializer()));
-        assertTrue(unkeyedListEntryNodeDomSerializer.equals(unkeyedListNodeDomSerializer.getListEntryNodeSerializer()));
+        assertEquals(mapEntryNodeDomSerializer, mapNodeDomSerializer.getListEntryNodeSerializer());
+        assertEquals(unkeyedListEntryNodeDomSerializer, unkeyedListNodeDomSerializer.getListEntryNodeSerializer());
     }
 }

@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
@@ -72,8 +72,8 @@ public class BitImplTest {
         BitImpl biA = new BitImpl(55L, qnameA, schemaPathA, "description", "reference", Status.CURRENT, null);
 
         assertEquals("biA should equals to itsefl", biA, biA);
-        assertFalse("biA shouldn't equal to null", biA.equals(null));
-        assertFalse("biA shouldn't equal to object of other type", biA.equals(new String("str")));
+        assertNotEquals("biA shouldn't equal to null", biA, null);
+        assertNotEquals("biA shouldn't equal to object of other type", biA, "str");
 
         biA = new BitImpl(55L, qnameB, schemaPathA, "description", "reference", Status.CURRENT, null);
         biB = new BitImpl(55L, qnameB, schemaPathA, "description", "reference", Status.CURRENT, null);
@@ -81,12 +81,12 @@ public class BitImplTest {
 
         biA = new BitImpl(55L, qnameA, schemaPathA, "description", "reference", Status.CURRENT, null);
         biB = new BitImpl(55L, qnameB, schemaPathA, "description", "reference", Status.CURRENT, null);
-        assertFalse("biA shouldn't equal to biB", biA.equals(biB));
+        assertNotEquals("biA shouldn't equal to biB", biA, biB);
 
         // // test schemaPath
         biA = new BitImpl(55L, qnameA, schemaPathA, "description", "reference", Status.CURRENT, null);
         biB = new BitImpl(55L, qnameA, schemaPathB, "description", "reference", Status.CURRENT, null);
-        assertFalse("biA shouldn't equal to biB", biA.equals(biB));
+        assertNotEquals("biA shouldn't equal to biB", biA, biB);
 
         biA = new BitImpl(55L, qnameA, schemaPathB, "description", "reference", Status.CURRENT, null);
         biB = new BitImpl(55L, qnameA, schemaPathB, "description", "reference", Status.CURRENT, null);
@@ -94,7 +94,7 @@ public class BitImplTest {
 
         biA = new BitImpl(55L, qnameA, schemaPathA, "description", "reference", Status.CURRENT, null);
         biB = new BitImpl(55L, qnameA, schemaPathB, "description", "reference", Status.CURRENT, null);
-        assertFalse("biA shouldn't equal to biB", biA.equals(biB));
+        assertNotEquals("biA shouldn't equal to biB", biA, biB);
 
         biA = new BitImpl(55L, qnameA, schemaPathA, "description", "reference", Status.CURRENT, null);
         biB = new BitImpl(55L, qnameA, schemaPathA, "description", "reference", Status.CURRENT, null);
