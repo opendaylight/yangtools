@@ -47,10 +47,10 @@ public class LeafrefTest {
         assertEquals("Revision aware XPath of 'leafref' should be '/test:Cont1/test:List1'.", revision, leafref.getPathStatement());
         assertNotNull("String representation of 'leafref' shouldn't be null.", leafref.toString());
         assertNotEquals("Hash codes of two different object of type Leafref shouldn't be equal.", leafref.hashCode(), leafref2.hashCode());
-        assertTrue("Objects of type Leafref should be equal.", leafref.equals(leafref3));
-        assertTrue("Objects of type Leafref should be equal.", leafref.equals(leafref4));
-        assertFalse("Objects of type Leafref shouldn't be equal.", leafref.equals(leafref2));
-        assertFalse("Objects shouldn't be equal.", leafref.equals(null));
-        assertFalse("Objects shouldn't be equal.", leafref.equals("test"));
+        assertEquals("Objects of type Leafref should be equal.", leafref, leafref3);
+        assertEquals("Objects of type Leafref should be equal.", leafref, leafref4);
+        assertNotEquals("Objects of type Leafref shouldn't be equal.", leafref, leafref2);
+        assertNotEquals("Objects shouldn't be equal.", leafref, null);
+        assertNotEquals("Objects shouldn't be equal.", leafref, "test");
     }
 }

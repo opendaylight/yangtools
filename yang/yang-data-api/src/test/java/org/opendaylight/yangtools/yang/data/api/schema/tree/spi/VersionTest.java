@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+
 import org.junit.Test;
 
 public class VersionTest {
@@ -17,8 +18,8 @@ public class VersionTest {
         final Version v1 = Version.initial();
         final Version v2 = Version.initial();
 
-        assertFalse(v1.equals(v2));
-        assertFalse(v2.equals(v1));
+        assertNotEquals(v1, v2);
+        assertNotEquals(v2, v1);
      }
 
     @Test
@@ -28,7 +29,7 @@ public class VersionTest {
         final Version v3 = v2.next();
         final Version v4 = v1.next();
 
-        assertFalse(v3.equals(v4));
-        assertFalse(v4.equals(v3));
+        assertNotEquals(v3, v4);
+        assertNotEquals(v4, v3);
     }
 }

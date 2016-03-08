@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 
 public class UnionTypeTest {
 
@@ -43,7 +42,7 @@ public class UnionTypeTest {
         assertEquals("Should be BaseTypes", BaseTypes.UNION_QNAME, unionType.getQName());
 
         assertEquals("unionType should equals to itself", unionType, unionType);
-        assertFalse("unionType shouldn't equal to null", unionType.equals(null));
+        assertNotEquals("unionType shouldn't equal to null", unionType, null);
         assertTrue("Hash code of unionType should be equal to itself",
                 unionType.hashCode() == unionType.hashCode());
     }

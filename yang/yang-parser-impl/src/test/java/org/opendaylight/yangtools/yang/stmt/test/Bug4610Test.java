@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.stmt.test;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
@@ -48,9 +49,9 @@ public class Bug4610Test {
 
         // check arguments
         QName originalStatementArgument = effectiveContainerStatementG1.argument();
-        assertTrue(originalStatementArgument.equals(effectiveContainerStatementG2.argument()));
-        assertFalse(originalStatementArgument.equals(effectiveContainerStatementG3.argument()));
-        assertFalse(originalStatementArgument.equals(effectiveContainerStatementRoot.argument()));
+        assertEquals(originalStatementArgument, effectiveContainerStatementG2.argument());
+        assertNotEquals(originalStatementArgument, effectiveContainerStatementG3.argument());
+        assertNotEquals(originalStatementArgument, effectiveContainerStatementRoot.argument());
 
         ContainerStatement originalContainerStatement = effectiveContainerStatementG1.getDeclared();
         ContainerStatement inGrouping2ContainerStatement = effectiveContainerStatementG2.getDeclared();

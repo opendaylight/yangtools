@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import com.google.common.collect.ImmutableMap;
@@ -41,14 +42,14 @@ public class SharedSingletonMapTest {
         assertNull(m.get(null));
         assertNull(m.get("v1"));
 
-        assertFalse(m.equals(null));
-        assertTrue(m.equals(m));
-        assertFalse(m.equals(""));
+        assertNotEquals(m, null);
+        assertEquals(m, m);
+        assertNotEquals(m, "");
 
         final Map<String, String> same = Collections.singletonMap("k1", "v1");
         assertEquals(same.toString(), m.toString());
-        assertTrue(same.equals(m));
-        assertTrue(m.equals(same));
+        assertEquals(same, m);
+        assertEquals(m, same);
         assertEquals(same.entrySet(), m.entrySet());
         assertEquals(same.values(), m.values());
 
@@ -56,11 +57,11 @@ public class SharedSingletonMapTest {
         assertEquals(same.hashCode(), m.hashCode());
         assertEquals(same.hashCode(), m.hashCode());
 
-        assertFalse(m.equals(Collections.singletonMap(null, null)));
-        assertFalse(m.equals(Collections.singletonMap("k1", null)));
-        assertFalse(m.equals(Collections.singletonMap(null, "v1")));
-        assertFalse(m.equals(Collections.singletonMap("k1", "v2")));
-        assertFalse(m.equals(ImmutableMap.of("k1", "v1", "k2", "v2")));
+        assertNotEquals(m, Collections.singletonMap(null, null));
+        assertNotEquals(m, Collections.singletonMap("k1", null));
+        assertNotEquals(m, Collections.singletonMap(null, "v1"));
+        assertNotEquals(m, Collections.singletonMap("k1", "v2"));
+        assertNotEquals(m, ImmutableMap.of("k1", "v1", "k2", "v2"));
 
         final Set<String> set = m.keySet();
         assertTrue(set instanceof SingletonSet);
@@ -71,16 +72,16 @@ public class SharedSingletonMapTest {
     public void testOrderedCopyOf() {
         final Map<String, String> t = Collections.singletonMap("k1", "v1");
         final Map<String, String> m = SharedSingletonMap.orderedCopyOf(t);
-        assertTrue(t.equals(m));
-        assertTrue(m.equals(t));
+        assertEquals(t, m);
+        assertEquals(m, t);
     }
 
     @Test
     public void testUnorderedCopyOf() {
         final Map<String, String> t = Collections.singletonMap("k1", "v1");
         final Map<String, String> m = SharedSingletonMap.unorderedCopyOf(t);
-        assertTrue(t.equals(m));
-        assertTrue(m.equals(t));
+        assertEquals(t, m);
+        assertEquals(m, t);
     }
 
     @Test(expected=IllegalArgumentException.class)

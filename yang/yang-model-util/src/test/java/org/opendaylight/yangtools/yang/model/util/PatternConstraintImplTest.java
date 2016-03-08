@@ -41,11 +41,11 @@ public class PatternConstraintImplTest {
         assertNotEquals("Hash codes shouldn't be equals.", patternConstraint.hashCode(), patternConstraint2.hashCode());
         assertFalse("String representation shouldn't be empty.", patternConstraint.toString().isEmpty());
 
-        assertTrue("Objects should be equals.", patternConstraint.equals(patternConstraint3));
-        assertFalse("Objects shouldn't be equals.", patternConstraint.equals(patternConstraint2));
-        assertFalse("Objects shouldn't be equals.", patternConstraint4.equals(patternConstraint));
-        assertFalse("Objects shouldn't be equals.", patternConstraint5.equals(patternConstraint));
-        assertFalse("Objects shouldn't be equals.", patternConstraint.equals("test"));
-        assertFalse("Objects shouldn't be equals.", patternConstraint.equals(null));
+        assertEquals("Objects should be equals.", patternConstraint, patternConstraint3);
+        assertNotEquals("Objects shouldn't be equals.", patternConstraint, patternConstraint2);
+        assertNotEquals("Objects shouldn't be equals.", patternConstraint4, patternConstraint);
+        assertNotEquals("Objects shouldn't be equals.", patternConstraint5, patternConstraint);
+        assertNotEquals("Objects shouldn't be equals.", patternConstraint, "test");
+        assertNotEquals("Objects shouldn't be equals.", patternConstraint, null);
     }
 }

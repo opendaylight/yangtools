@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.stmt.retest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.base.Optional;
@@ -72,11 +73,11 @@ public class ModuleIdentifierTest {
 
     @Test
     public void testEquals() {
-        assertTrue(moduleIdentifier.equals(moduleIdentifier3));
-        assertFalse(moduleIdentifier.equals(null));
-        assertFalse(moduleIdentifier.equals("test"));
-        assertFalse(moduleIdentifier.equals(moduleIdentifier2));
-        assertFalse(moduleIdentifier.equals(moduleIdentifier4));
-        assertTrue(moduleIdentifier.equals(moduleIdentifier5));
+        assertEquals(moduleIdentifier, moduleIdentifier3);
+        assertNotEquals(moduleIdentifier, null);
+        assertNotEquals(moduleIdentifier, "test");
+        assertNotEquals(moduleIdentifier, moduleIdentifier2);
+        assertNotEquals(moduleIdentifier, moduleIdentifier4);
+        assertEquals(moduleIdentifier, moduleIdentifier5);
     }
 }

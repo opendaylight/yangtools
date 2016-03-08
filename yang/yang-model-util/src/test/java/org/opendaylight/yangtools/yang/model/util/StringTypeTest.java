@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -60,8 +60,8 @@ public class StringTypeTest {
 
     @Test
     public void testEquals() {
-        assertTrue(string.equals(string));
-        assertFalse(string.equals(null));
-        assertFalse(string.equals(Types.DOUBLE));
+        assertEquals(string, string);
+        assertNotEquals(string, null);
+        assertNotEquals(string, Types.DOUBLE);
     }
 }

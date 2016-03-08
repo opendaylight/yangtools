@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
@@ -45,11 +47,11 @@ public class AugmentationSchemaBuilderImplTest {
 
     @Test
     public void testEquals() {
-        assertFalse(augmentSchemaBuilderImpl.equals("test"));
-        assertFalse(augmentSchemaBuilderImpl.equals(null));
-        assertTrue(augmentSchemaBuilderImpl.equals(augmentSchemaBuilderImpl3));
-        assertFalse(augmentSchemaBuilderImpl4.equals(augmentSchemaBuilderImpl));
-        assertFalse(augmentSchemaBuilderImpl.equals(augmentSchemaBuilderImpl2));
+        assertNotEquals(augmentSchemaBuilderImpl, "test");
+        assertNotEquals(augmentSchemaBuilderImpl, null);
+        assertEquals(augmentSchemaBuilderImpl, augmentSchemaBuilderImpl3);
+        assertNotEquals(augmentSchemaBuilderImpl4, augmentSchemaBuilderImpl);
+        assertNotEquals(augmentSchemaBuilderImpl, augmentSchemaBuilderImpl2);
     }
 
     @Test

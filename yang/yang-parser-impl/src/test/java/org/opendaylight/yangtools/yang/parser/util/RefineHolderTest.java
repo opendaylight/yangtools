@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import com.google.common.base.Optional;
@@ -46,15 +46,15 @@ public class RefineHolderTest {
     public void testRefineEquality() {
         // hashCode method test
         assertEquals("rh should equals to itsefl", rh, rh);
-        assertFalse("rh shouldn't equal to null", rh.equals(null));
-        assertFalse("rh shouldn't equal to object of other type", rh.equals(new String("str")));
+        assertNotEquals("rh shouldn't equal to null", rh, null);
+        assertNotEquals("rh shouldn't equal to object of other type", rh, new String("str"));
 
         assertEquals("rh1 should equals to rh", rh, rh1);
 
         RefineBuilder rh2 = new RefineHolderImpl("module", 2104, null);
-        assertFalse("rh shouldn't equal to rh2", rh2.equals(rh1));
+        assertNotEquals("rh shouldn't equal to rh2", rh2, rh1);
         rh2 = new RefineHolderImpl("module", 2104, "name2");
-        assertFalse("rh shouldn't equal to rh2", rh.equals(rh2));
+        assertNotEquals("rh shouldn't equal to rh2", rh, rh2);
 
         assertEquals("Wrong hash code", 1557537141, rh.hashCode());
     }
@@ -63,11 +63,11 @@ public class RefineHolderTest {
     public void testConfigurationEqualsBranch() {
         assertEquals("rh should equal to rh1", rh, rh1);
         rh1.setConfiguration(false);
-        assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
+        assertNotEquals("rh shouldn't equal to rh1", rh, rh1);
         rh.setConfiguration(false);
         assertEquals("rh should equal to rh1", rh, rh1);
         rh.setConfiguration(true);
-        assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
+        assertNotEquals("rh shouldn't equal to rh1", rh, rh1);
         rh1.setConfiguration(true);
     }
 
@@ -75,11 +75,11 @@ public class RefineHolderTest {
     public void testDefaultStrEqualsBranch() {
         assertEquals("rh should equal to rh1", rh, rh1);
         rh1.setDefaultStr("default string1");
-        assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
+        assertNotEquals("rh shouldn't equal to rh1", rh, rh1);
         rh.setDefaultStr("default string1");
         assertEquals("rh should equal to rh1", rh, rh1);
         rh.setDefaultStr("default string");
-        assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
+        assertNotEquals("rh shouldn't equal to rh1", rh, rh1);
         rh1.setDefaultStr("default string");
     }
 
@@ -87,11 +87,11 @@ public class RefineHolderTest {
     public void testDescriptionEqualsBranch() {
         assertEquals("rh should equal to rh1", rh, rh1);
         rh1.setDescription("description1");
-        assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
+        assertNotEquals("rh shouldn't equal to rh1", rh, rh1);
         rh.setDescription("description1");
         assertEquals("rh should equal to rh1", rh, rh1);
         rh.setDescription("description");
-        assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
+        assertNotEquals("rh shouldn't equal to rh1", rh, rh1);
         rh1.setDescription("description");
     }
 
@@ -99,11 +99,11 @@ public class RefineHolderTest {
     public void testMandatoryEqualsBranch() {
         assertEquals("rh should equal to rh1", rh, rh1);
         rh1.setMandatory(false);
-        assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
+        assertNotEquals("rh shouldn't equal to rh1", rh, rh1);
         rh.setMandatory(false);
         assertEquals("rh should equal to rh1", rh, rh1);
         rh.setMandatory(true);
-        assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
+        assertNotEquals("rh shouldn't equal to rh1", rh, rh1);
         rh1.setMandatory(true);
     }
 
@@ -111,11 +111,11 @@ public class RefineHolderTest {
     public void testMaxElementsEqualsBranch() {
         assertEquals("rh should equal to rh1", rh, rh1);
         rh1.setMaxElements(5400);
-        assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
+        assertNotEquals("rh shouldn't equal to rh1", rh, rh1);
         rh.setMaxElements(5400);
         assertEquals("rh should equal to rh1", rh, rh1);
         rh.setMaxElements(5435);
-        assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
+        assertNotEquals("rh shouldn't equal to rh1", rh, rh1);
         rh1.setMaxElements(5435);
     }
 
@@ -123,11 +123,11 @@ public class RefineHolderTest {
     public void testMinElementsEqualsBranch() {
         assertEquals("rh should equal to rh1", rh, rh1);
         rh1.setMinElements(16);
-        assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
+        assertNotEquals("rh shouldn't equal to rh1", rh, rh1);
         rh.setMinElements(16);
         assertEquals("rh should equal to rh1", rh, rh1);
         rh.setMinElements(159);
-        assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
+        assertNotEquals("rh shouldn't equal to rh1", rh, rh1);
         rh1.setMinElements(159);
     }
 
@@ -136,13 +136,13 @@ public class RefineHolderTest {
         assertEquals("rh should equal to rh1", rh, rh1);
         rh1.setMust(MustDefinitionImpl.create("mustStr1", Optional.of("description1"), Optional.of("reference1"),
                 Optional.of("errorAppTag1"), Optional.of("errorMessage1")));
-        assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
+        assertNotEquals("rh shouldn't equal to rh1", rh, rh1);
         rh.setMust(MustDefinitionImpl.create("mustStr1", Optional.of("description1"), Optional.of("reference1"),
                 Optional.of("errorAppTag1"), Optional.of("errorMessage1")));
         assertEquals("rh should equal to rh1", rh, rh1);
         rh.setMust(MustDefinitionImpl.create("mustStr", Optional.of("description"), Optional.of("reference"),
                 Optional.of("errorAppTag"), Optional.of("errorMessage")));
-        assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
+        assertNotEquals("rh shouldn't equal to rh1", rh, rh1);
         rh1.setMust(MustDefinitionImpl.create("mustStr", Optional.of("description"), Optional.of("reference"),
                 Optional.of("errorAppTag"), Optional.of("errorMessage")));
     }
@@ -151,11 +151,11 @@ public class RefineHolderTest {
     public void testPresenceEqualsBranch() {
         assertEquals("rh should equal to rh1", rh, rh1);
         rh1.setPresence(false);
-        assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
+        assertNotEquals("rh shouldn't equal to rh1", rh, rh1);
         rh.setPresence(false);
         assertEquals("rh should equal to rh1", rh, rh1);
         rh.setPresence(true);
-        assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
+        assertNotEquals("rh shouldn't equal to rh1", rh, rh1);
         rh1.setPresence(true);
     }
 
@@ -163,11 +163,11 @@ public class RefineHolderTest {
     public void testReferenceEqualsBranch() {
         assertEquals("rh should equal to rh1", rh, rh1);
         rh1.setReference("reference1");
-        assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
+        assertNotEquals("rh shouldn't equal to rh1", rh, rh1);
         rh.setReference("reference1");
         assertEquals("rh should equal to rh1", rh, rh1);
         rh.setReference("reference");
-        assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
+        assertNotEquals("rh shouldn't equal to rh1", rh, rh1);
         rh1.setReference("reference");
     }
 
@@ -205,7 +205,7 @@ public class RefineHolderTest {
 
         assertEquals("rh should equal to rh1", rh, rh1);
         rh1.addUnknownNodeBuilder(usnb);
-        assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
+        assertNotEquals("rh shouldn't equal to rh1", rh, rh1);
         rh.addUnknownNodeBuilder(usnb1);
         assertEquals("rh should equal to rh1", rh, rh1);
     }
@@ -225,11 +225,11 @@ public class RefineHolderTest {
 
         assertEquals("rh should equal to rh1", rh, rh1);
         rh1.setParent(usnbB);
-        assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
+        assertNotEquals("rh shouldn't equal to rh1", rh, rh1);
         rh.setParent(usnbB);
         assertEquals("rh should equal to rh1", rh, rh1);
         rh.setParent(usnbA);
-        assertFalse("rh shouldn't equal to rh1", rh.equals(rh1));
+        assertNotEquals("rh shouldn't equal to rh1", rh, rh1);
         rh1.setParent(usnbA);
 
         assertEquals("rh should equal to rh1", rh, rh1);

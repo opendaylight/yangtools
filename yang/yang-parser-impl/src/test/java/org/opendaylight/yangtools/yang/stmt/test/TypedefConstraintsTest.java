@@ -63,8 +63,8 @@ public class TypedefConstraintsTest {
         assertEquals(new BigDecimal(1.5), range.getMin());
         assertEquals(new BigDecimal(5.5), range.getMax());
 
-        assertTrue(decType.getQName().getModule().equals(leafDecimal.getQName().getModule()));
-        assertTrue(decType.getQName().getLocalName().equals(TypeUtils.DECIMAL64));
+        assertEquals(decType.getQName().getModule(), leafDecimal.getQName().getModule());
+        assertEquals(decType.getQName().getLocalName(), TypeUtils.DECIMAL64);
         assertNull(decType.getBaseType());
     }
 
