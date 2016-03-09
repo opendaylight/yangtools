@@ -1,0 +1,18 @@
+module module1 {
+    yang-version 1;
+
+    namespace "http://example.com/module1";
+    prefix "module1";
+
+    description "Module 1";
+
+    revision "2016-03-09" {
+        description "Initial version.";
+    }
+
+    container top {
+        leaf top-leaf {
+            type string;
+        }
+    }
+}
