@@ -1,0 +1,28 @@
+module module2 {
+    yang-version 1;
+
+    namespace "http://example.com/module2";
+    prefix "module2";
+
+    import module1 { prefix "module1"; }
+
+    description "Module 2";
+
+    revision "2016-03-09" {
+        description "Initial version.";
+    }
+
+    augment "module1:top" {
+        when "module1:top = 'extended'";
+        description "text";
+        status deprecated;
+        reference "ref";
+        leaf extended-leaf {
+            when "module1:top = 'extended'";
+            description "text";
+            status deprecated;
+            reference "ref";
+            type string;
+        }
+    }
+}

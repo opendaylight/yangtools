@@ -154,10 +154,11 @@ public final class AugmentUtils {
         return false;
     }
 
-    private static final Set<Rfc6020Mapping> NOCOPY_DEV_SET = ImmutableSet.of(Rfc6020Mapping.USES);
+    private static final Set<Rfc6020Mapping> NOCOPY_DEF_SET = ImmutableSet.of(Rfc6020Mapping.USES, Rfc6020Mapping.WHEN,
+            Rfc6020Mapping.DESCRIPTION, Rfc6020Mapping.REFERENCE, Rfc6020Mapping.STATUS);
 
     public static boolean needToCopyByAugment(final StmtContext<?, ?, ?> stmtContext) {
-        return !NOCOPY_DEV_SET.contains(stmtContext.getPublicDefinition());
+        return !NOCOPY_DEF_SET.contains(stmtContext.getPublicDefinition());
     }
 
     private static final Set<Rfc6020Mapping> REUSED_DEF_SET = ImmutableSet.of(Rfc6020Mapping.TYPEDEF);
