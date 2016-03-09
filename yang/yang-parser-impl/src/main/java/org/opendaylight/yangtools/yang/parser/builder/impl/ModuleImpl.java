@@ -91,7 +91,8 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
         this.extensionNodes = ImmutableList.copyOf(builder.getExtensions());
         this.identities = ImmutableSet.copyOf(builder.getIdentities());
         this.unknownNodes = ImmutableList.copyOf(builder.getExtensionInstances());
-        this.source = checkNotNull(builder.getSource(), "Missing source");
+        //no check for Beryllium code
+        this.source = builder.getSource();
 
     }
 
