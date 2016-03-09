@@ -790,7 +790,15 @@ public final class BuilderUtils {
         for (TypeDefinition<?> node : nodes) {
             QName qname = QName.create(parentQName, node.getQName().getLocalName());
             SchemaPath schemaPath = parentPath.createChild(qname);
-            result.add(new TypeDefinitionBuilderImpl(moduleName, line, qname, schemaPath, (ExtendedType) node));
+            //Beryllium fix only, using deprecated structures
+            if (node instanceof ExtendedType) {
+                result.add(new TypeDefinitionBuilderImpl(moduleName, line, qname, schemaPath, (ExtendedType) node));
+            } else {
+                ExtendedType.Builder typeBuilder = ExtendedType.builder(node.getQName(), node.getBaseType(),
+                        Optional.fromNullable(node.getDescription()), Optional.fromNullable(node.getReference()),
+                        node.getPath());
+                result.add(new TypeDefinitionBuilderImpl(moduleName, line, qname, schemaPath, typeBuilder.build()));
+            }
         }
         return result;
     }
