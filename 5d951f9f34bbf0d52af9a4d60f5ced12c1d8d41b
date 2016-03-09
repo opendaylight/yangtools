@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a3d3df0_93c21ae7",
+        "filename": "common/util/src/test/java/org/opendaylight/yangtools/util/OffsetMapTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 107,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-03-09T16:23:55Z",
+      "side": 1,
+      "message": "we want to retain the explicitness of assertTrue/False, as we are not comparing objects, but testing the equals() method",
+      "revId": "5d951f9f34bbf0d52af9a4d60f5ced12c1d8d41b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_d3b82277",
+        "filename": "common/util/src/test/java/org/opendaylight/yangtools/util/ReadWriteTrieMapTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-03-09T16:23:55Z",
+      "side": 1,
+      "message": "I am not sure whether this reflects which of the two is \u0027expected\u0027 and \u0027actual\u0027",
+      "revId": "5d951f9f34bbf0d52af9a4d60f5ced12c1d8d41b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_33b34e99",
+        "filename": "common/util/src/test/java/org/opendaylight/yangtools/util/SharedSingletonMapTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-03-09T16:23:55Z",
+      "side": 1,
+      "message": "same as before: we want to retain the explicit invocation of equals()",
+      "revId": "5d951f9f34bbf0d52af9a4d60f5ced12c1d8d41b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
