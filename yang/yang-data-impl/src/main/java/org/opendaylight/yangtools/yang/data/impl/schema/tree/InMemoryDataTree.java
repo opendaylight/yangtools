@@ -113,7 +113,7 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements TipProducing
             LOG.debug("Updating datastore from {} to {}", currentRoot, newRoot);
 
             final TreeNode oldRoot = c.getBeforeRoot();
-            Preconditions.checkState(oldRoot == currentRoot, "Store tree %s and candidate base %s differ.", currentRoot, oldRoot);
+            Preconditions.checkState(oldRoot == currentRoot, "Stored tree and candidate base differ.");
 
             newState = currentState.withRoot(newRoot);
             LOG.trace("Updated state from {} to {}", currentState, newState);
