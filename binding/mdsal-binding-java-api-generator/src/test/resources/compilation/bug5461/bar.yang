@@ -1,0 +1,15 @@
+module bar {
+    namespace "urn:test:bar";
+    prefix bar;
+
+    revision 2016-01-01 {
+    }
+
+    grouping bar-grouping {
+        choice bar-choice {
+            leaf bar-leaf {
+              type string;
+            }
+        }
+    }
+}

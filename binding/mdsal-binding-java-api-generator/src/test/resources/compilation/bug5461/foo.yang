@@ -1,0 +1,22 @@
+module foo {
+    namespace "urn:test:foo";
+    prefix foo;
+
+    revision 2016-01-01 {
+    }
+
+    import bar {
+        prefix bar;
+        revision-date 2016-01-01;
+    }
+
+    grouping foo-grouping {
+        uses bar:bar-grouping {
+            augment "bar-choice" {
+                leaf foo-leaf {
+                  type string;
+                }
+            }
+        }
+    }
+}
