@@ -37,6 +37,6 @@ final class SimpleContainerNode extends AbstractContainerNode {
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return helper.add("data", getData());
+        return helper;
     }
 }
