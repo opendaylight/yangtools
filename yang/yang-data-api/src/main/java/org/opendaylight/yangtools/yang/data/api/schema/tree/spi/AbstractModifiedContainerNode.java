@@ -43,6 +43,6 @@ abstract class AbstractModifiedContainerNode extends AbstractContainerNode {
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return helper.add("subtreeVersion", subtreeVersion).add("# children", children.size());
+        return helper.add("subtreeVersion", subtreeVersion).add("children", children);
     }
 }
