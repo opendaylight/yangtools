@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9a3d3df0_4c3742ff",
+        "filename": "yang/yang-data-impl/src/test/java/org/opendaylight/yangtools/yang/data/impl/schema/nodes/AbstractImmutableNormalizedValueAttrNodeTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 218,
+      "author": {
+        "id": 4540
+      },
+      "writtenOn": "2016-03-16T13:11:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a3d3df0_6c2fa63f",
+      "range": {
+        "startLine": 217,
+        "startChar": 39,
+        "endLine": 218,
+        "endChar": 37
+      },
+      "revId": "1392056495e49594e3f48789d381951e9214a568",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a3d3df0_2c02beb3",
         "filename": "yang/yang-model-util/src/test/java/org/opendaylight/yangtools/yang/model/util/BitImplTest.java",
         "patchSetId": 2
@@ -36,6 +60,30 @@
       "writtenOn": "2016-03-16T10:49:29Z",
       "side": 1,
       "message": "also remove this, please",
+      "range": {
+        "startLine": 48,
+        "startChar": 11,
+        "endLine": 48,
+        "endChar": 32
+      },
+      "revId": "1392056495e49594e3f48789d381951e9214a568",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a3d3df0_ac3a4ee4",
+        "filename": "yang/yang-model-util/src/test/java/org/opendaylight/yangtools/yang/model/util/BitImplTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 4540
+      },
+      "writtenOn": "2016-03-16T13:11:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a3d3df0_2c02beb3",
       "range": {
         "startLine": 48,
         "startChar": 11,
