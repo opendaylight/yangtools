@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a42497e_9ed95d86",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/stmt/retest/AugmentationSchemaBuilderImplTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-03-16T18:55:04Z",
+      "side": 1,
+      "message": "again, explicit equals() tests",
+      "revId": "d54c682d5938a131a974c0fcea7cf328d4e5bf52",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a42497e_bedc1976",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/stmt/retest/ModuleIdentifierTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 75,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-03-16T18:55:04Z",
+      "side": 1,
+      "message": "this is an explicit test for equals: I think we want to keep the explicit invocations",
+      "revId": "d54c682d5938a131a974c0fcea7cf328d4e5bf52",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a42497e_3ee9291b",
+        "filename": "yang/yang-parser-impl/src/test/java/org/opendaylight/yangtools/yang/stmt/test/TypedefConstraintsTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 66,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-03-16T18:55:04Z",
+      "side": 1,
+      "message": "here the expected and tested values are inversed",
+      "revId": "d54c682d5938a131a974c0fcea7cf328d4e5bf52",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
