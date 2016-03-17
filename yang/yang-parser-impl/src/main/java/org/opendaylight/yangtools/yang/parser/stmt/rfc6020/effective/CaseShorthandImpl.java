@@ -29,14 +29,14 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
-final class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
+public final class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
 
     private final DataSchemaNode caseShorthandNode;
     private final ChoiceCaseNode original;
     private final SchemaPath path;
     private final boolean augmenting;
 
-    CaseShorthandImpl(final DataSchemaNode caseShorthandNode) {
+    public CaseShorthandImpl(final DataSchemaNode caseShorthandNode) {
         this.caseShorthandNode = Preconditions.checkNotNull(caseShorthandNode);
         this.path = Preconditions.checkNotNull(caseShorthandNode.getPath().getParent());
         this.original = getOriginalIfPresent(caseShorthandNode);
