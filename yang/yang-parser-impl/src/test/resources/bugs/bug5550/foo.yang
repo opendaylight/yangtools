@@ -1,0 +1,28 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+    yang-version 1;
+
+    revision "2016-03-18" {
+        description "test";
+    }
+
+    grouping grouping-1 {
+        container container-in-grouping {
+        }
+    }
+
+    container root {
+    }
+
+    augment "/root" {
+        uses grouping-1 {
+            augment "container-in-grouping" {
+                leaf leaf-1 {
+                    type string;
+                    mandatory true;
+                }
+            }
+        }
+    }
+}

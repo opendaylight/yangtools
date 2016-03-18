@@ -43,12 +43,12 @@ public final class AugmentUtils {
     private static void copyDeclaredStmts(final StatementContextBase<?, ?, ?> sourceCtx,
             final StatementContextBase<?, ?, ?> targetCtx) {
 
-        TypeOfCopy typeOfCopy = sourceCtx.getParentContext().getPublicDefinition().getDeclaredRepresentationClass()
+        final TypeOfCopy typeOfCopy = sourceCtx.getParentContext().getPublicDefinition().getDeclaredRepresentationClass()
                 .equals(UsesStatement.class) ? TypeOfCopy.ADDED_BY_USES_AUGMENTATION : TypeOfCopy.ADDED_BY_AUGMENTATION;
 
         for (StatementContextBase<?, ?, ?> originalStmtCtx : sourceCtx.declaredSubstatements()) {
             if (needToCopyByAugment(originalStmtCtx)) {
-                validateNodeCanBeCopiedByAugment(originalStmtCtx, targetCtx);
+                validateNodeCanBeCopiedByAugment(originalStmtCtx, targetCtx, typeOfCopy);
 
                 StatementContextBase<?, ?, ?> copy = originalStmtCtx.createCopy(targetCtx, typeOfCopy);
                 targetCtx.addEffectiveSubstatement(copy);
@@ -60,12 +60,12 @@ public final class AugmentUtils {
 
     private static void copyEffectiveStmts(final StatementContextBase<?, ?, ?> sourceCtx,
             final StatementContextBase<?, ?, ?> targetCtx) {
-        TypeOfCopy typeOfCopy = sourceCtx.getParentContext().getPublicDefinition().getDeclaredRepresentationClass()
+        final TypeOfCopy typeOfCopy = sourceCtx.getParentContext().getPublicDefinition().getDeclaredRepresentationClass()
                 .equals(UsesStatement.class) ? TypeOfCopy.ADDED_BY_USES_AUGMENTATION : TypeOfCopy.ADDED_BY_AUGMENTATION;
 
         for (StatementContextBase<?, ?, ?> originalStmtCtx : sourceCtx.effectiveSubstatements()) {
             if (needToCopyByAugment(originalStmtCtx)) {
-                validateNodeCanBeCopiedByAugment(originalStmtCtx, targetCtx);
+                validateNodeCanBeCopiedByAugment(originalStmtCtx, targetCtx, typeOfCopy);
 
                 StatementContextBase<?, ?, ?> copy = originalStmtCtx.createCopy(targetCtx, typeOfCopy);
                 targetCtx.addEffectiveSubstatement(copy);
@@ -76,22 +76,21 @@ public final class AugmentUtils {
     }
 
     private static void validateNodeCanBeCopiedByAugment(final StatementContextBase<?, ?, ?> sourceCtx,
-            final StatementContextBase<?, ?, ?> targetCtx) {
+            final StatementContextBase<?, ?, ?> targetCtx, final TypeOfCopy typeOfCopy) {
 
         if (sourceCtx.getPublicDefinition().getDeclaredRepresentationClass().equals(WhenStatement.class)) {
             return;
         }
 
-        if (reguiredCheckOfMandatoryNodes(sourceCtx, targetCtx)) {
+        if (typeOfCopy == TypeOfCopy.ADDED_BY_AUGMENTATION && reguiredCheckOfMandatoryNodes(sourceCtx, targetCtx)) {
             final List<StatementContextBase<?, ?, ?>> sourceSubStatements = new Builder<StatementContextBase<?, ?, ?>>()
                     .addAll(sourceCtx.declaredSubstatements()).addAll(sourceCtx.effectiveSubstatements()).build();
 
             for (final StatementContextBase<?, ?, ?> sourceSubStatement : sourceSubStatements) {
-                InferenceException.throwIf(MandatoryStatement.class.equals(
-                    sourceSubStatement.getPublicDefinition().getDeclaredRepresentationClass()),
-                    sourceCtx.getStatementSourceReference(),
-                    "An augment cannot add node '%s' because it is mandatory and in module different from target",
-                    sourceCtx.rawStatementArgument());
+                InferenceException.throwIf(MandatoryStatement.class.equals(sourceSubStatement.getPublicDefinition()
+                        .getDeclaredRepresentationClass()), sourceCtx.getStatementSourceReference(),
+                        "An augment cannot add node '%s' because it is mandatory and in module different from target",
+                        sourceCtx.rawStatementArgument());
             }
         }
 
@@ -113,7 +112,7 @@ public final class AugmentUtils {
         }
     }
 
-    private static boolean reguiredCheckOfMandatoryNodes(StatementContextBase<?, ?, ?> sourceCtx,
+    private static boolean reguiredCheckOfMandatoryNodes(final StatementContextBase<?, ?, ?> sourceCtx,
             StatementContextBase<?, ?, ?> targetCtx) {
         /*
          * If the statement argument is not QName, it cannot be mandatory statement,
