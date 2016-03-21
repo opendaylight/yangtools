@@ -79,7 +79,7 @@ class SchemaNodeIdentifierBuildNamespace extends
         Collection<StmtContext<?, ?, ?>> unknownSubstatements = StmtContextUtils.findAllSubstatements(current,
                 UnknownStatement.class);
         for (StmtContext<?, ?, ?> unknownSubstatement : unknownSubstatements) {
-            if(unknownSubstatement.rawStatementArgument().equals(localName)) {
+            if (localName.equals(unknownSubstatement.rawStatementArgument())) {
                 return (Mutable<?, ?, EffectiveStatement<?, ?>>) unknownSubstatement;
             }
         }
