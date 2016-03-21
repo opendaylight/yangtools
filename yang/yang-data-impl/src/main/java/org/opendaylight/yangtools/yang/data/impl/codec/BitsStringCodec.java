@@ -13,6 +13,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import java.util.TreeSet;
 import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.data.api.codec.BitsCodec;
@@ -48,7 +49,11 @@ final class BitsStringCodec extends TypeDefinitionAwareCodec<Set<String>, BitsTy
 
     @Override
     public String serialize(final Set<String> data) {
-        return data == null ? "" : JOINER.join(data);
+        if (data == null) {
+            return "";
+        }
+        final TreeSet<String> sortedData = new TreeSet<String>(data);
+        return JOINER.join(sortedData);
     }
 
     @Override
