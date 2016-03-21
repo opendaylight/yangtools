@@ -73,13 +73,13 @@ class SchemaNodeIdentifierBuildNamespace extends
         return current;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({"unchecked"})
     private Mutable<?, ?, EffectiveStatement<?, ?>> tryToFindUnknownStatement(final String localName,
             final Mutable<?, ?, EffectiveStatement<?, ?>> current) {
-        Collection<StmtContext<?, ?, ?>> unknownSubstatements = (Collection)StmtContextUtils.findAllSubstatements(current,
+        Collection<StmtContext<?, ?, ?>> unknownSubstatements = StmtContextUtils.findAllSubstatements(current,
                 UnknownStatement.class);
         for (StmtContext<?, ?, ?> unknownSubstatement : unknownSubstatements) {
-            if(unknownSubstatement.rawStatementArgument().equals(localName)) {
+            if (localName.equals(unknownSubstatement.rawStatementArgument())) {
                 return (Mutable<?, ?, EffectiveStatement<?, ?>>) unknownSubstatement;
             }
         }
