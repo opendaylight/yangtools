@@ -1,0 +1,90 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "3a4c51b2_7c445974",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/ModifiedNode.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 292,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-03-28T19:39:36Z",
+      "side": 1,
+      "message": "missing space.\nalso, what does a null value with WRITE mean?",
+      "range": {
+        "startLine": 292,
+        "startChar": 17,
+        "endLine": 292,
+        "endChar": 19
+      },
+      "revId": "b7b4d10a644ba1ad009e495fc4b50b94192f637c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_dc7dadb3",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/StructuralModificationStrategyWrapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 51,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-03-28T19:39:36Z",
+      "side": 1,
+      "message": "Preconditions.checkNotNull()",
+      "revId": "b7b4d10a644ba1ad009e495fc4b50b94192f637c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_3c4ad183",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/StructuralModificationStrategyWrapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 110,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-03-28T19:39:36Z",
+      "side": 1,
+      "message": "missing space (and below)",
+      "range": {
+        "startLine": 110,
+        "startChar": 13,
+        "endLine": 110,
+        "endChar": 15
+      },
+      "revId": "b7b4d10a644ba1ad009e495fc4b50b94192f637c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "3a4c51b2_1c4f1594",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/tree/StructuralModificationStrategyWrapper.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2016-03-28T19:39:36Z",
+      "side": 1,
+      "message": "merge the above ifs into an inverse else-if containing this statement. Retain the comment about skipping validation.",
+      "range": {
+        "startLine": 117,
+        "startChar": 12,
+        "endLine": 117,
+        "endChar": 36
+      },
+      "revId": "b7b4d10a644ba1ad009e495fc4b50b94192f637c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
