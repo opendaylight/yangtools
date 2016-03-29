@@ -73,6 +73,7 @@ public final class YinExportUtils {
         final XMLOutputFactory factory = XMLOutputFactory.newFactory();
         final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(str);
         writeModuleToOutputStream(ctx,module, xmlStreamWriter);
+        xmlStreamWriter.flush();
     }
 
     private static void writeModuleToOutputStream(final SchemaContext ctx, final Module module, final XMLStreamWriter xmlStreamWriter) {
