@@ -90,6 +90,15 @@ class SingleModuleYinStatementWriter implements StatementTextWriter {
     }
 
     @Override
+    public void flush() {
+        try {
+            flushWriter();
+        } catch (final XMLStreamException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    @Override
     public void writeArgument(final String strRep) {
         checkArgumentApplicable();
         writeArgument0(strRep);
@@ -216,5 +225,9 @@ class SingleModuleYinStatementWriter implements StatementTextWriter {
 
     private void writeStartXmlElement(final QName name) throws XMLStreamException {
         writer.writeStartElement(name.getNamespace().toString(), name.getLocalName());
+    }
+
+    private void flushWriter() throws XMLStreamException {
+        writer.flush();
     }
 }

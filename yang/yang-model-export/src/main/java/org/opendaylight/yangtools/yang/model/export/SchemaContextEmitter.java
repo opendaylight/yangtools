@@ -99,7 +99,10 @@ class SchemaContextEmitter {
     static void writeToStatementWriter(final Module module, final SchemaContext ctx, final StatementTextWriter statementWriter) {
         final Rfc6020ModuleWriter yangSchemaWriter = SchemaToStatementWriterAdaptor.from(statementWriter);
         final Map<QName, StatementDefinition> extensions = ExtensionStatement.mapFrom(ctx.getExtensions());
-        new SchemaContextEmitter(yangSchemaWriter,extensions).emitModule(module);
+
+        SchemaContextEmitter emitter = new SchemaContextEmitter(yangSchemaWriter,extensions);
+        emitter.emitModule(module);
+        emitter.flush();
     }
 
     void emitModule(final Module input) {
@@ -110,6 +113,10 @@ class SchemaContextEmitter {
         emitRevisionNodes(input);
         emitBodyNodes(input);
         writer.endNode();
+    }
+
+    void flush () {
+        writer.flush();
     }
 
     private void emitModuleHeader(final Module input) {

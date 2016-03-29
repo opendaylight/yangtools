@@ -43,6 +43,11 @@ final class SchemaToStatementWriterAdaptor implements Rfc6020ModuleWriter {
     }
 
     @Override
+    public void flush() {
+        writer.flush();
+    }
+
+    @Override
     public void startModuleNode(final String identifier) {
         writer.startStatement(Rfc6020Mapping.MODULE);
         writer.writeArgument(identifier);

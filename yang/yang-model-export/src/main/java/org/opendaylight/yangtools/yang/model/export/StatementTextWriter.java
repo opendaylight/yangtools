@@ -28,4 +28,6 @@ interface StatementTextWriter {
 
     void endStatement();
 
+    void flush();
+
 }

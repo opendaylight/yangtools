@@ -141,4 +141,5 @@ interface Rfc6020ModuleWriter {
 
     void startWhenNode(RevisionAwareXPath revisionAwareXPath);
 
+    void flush();
 }
