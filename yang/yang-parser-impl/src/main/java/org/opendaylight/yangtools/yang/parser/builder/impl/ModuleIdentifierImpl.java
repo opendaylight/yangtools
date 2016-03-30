@@ -8,10 +8,14 @@
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.base.Optional;
 import java.net.URI;
 import java.util.Date;
+import java.util.Objects;
+import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 
 /**
@@ -19,16 +23,23 @@ import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
  * Name is only non-null attribute.
  * Equality check on namespace and revision is only triggered if they are non-null
  *
- * @deprecated Pre-Beryllium implementation, scheduled for removal.
  */
-@Deprecated
+
+// FIXME: This class is used widely by yang statement parser. This class should be moved to one of yang statement
+// parser packages after removal of deprecated pre-beryllium implementation.
 public class ModuleIdentifierImpl implements ModuleIdentifier {
     private final QNameModule qnameModule;
     private final String name;
+    private final SemVer semVer;
 
     public ModuleIdentifierImpl(final String name, final Optional<URI> namespace, final Optional<Date> revision) {
+        this(name, namespace, revision, Module.DEFAULT_SEMANTIC_VERSION);
+    }
+
+    public ModuleIdentifierImpl(final String name, final Optional<URI> namespace, final Optional<Date> revision, final SemVer semVer) {
         this.name = checkNotNull(name);
         this.qnameModule = QNameModule.create(namespace.orNull(), revision.orNull());
+        this.semVer = (semVer == null ? Module.DEFAULT_SEMANTIC_VERSION : semVer);
     }
 
     @Override
@@ -39,6 +50,11 @@ public class ModuleIdentifierImpl implements ModuleIdentifier {
     @Override
     public Date getRevision() {
         return qnameModule.getRevision();
+    }
+
+    @Override
+    public SemVer getSemanticVersion() {
+        return semVer;
     }
 
     @Override
@@ -57,6 +73,7 @@ public class ModuleIdentifierImpl implements ModuleIdentifier {
                 "name='" + name + '\'' +
                 ", namespace=" + getNamespace() +
                 ", revision=" + qnameModule.getFormattedRevision() +
+                ", semantic version=" + semVer +
                 '}';
     }
 
@@ -69,18 +86,22 @@ public class ModuleIdentifierImpl implements ModuleIdentifier {
             return false;
         }
 
-        ModuleIdentifier that = (ModuleIdentifier) o;
+        ModuleIdentifier other = (ModuleIdentifier) o;
 
-        if (!name.equals(that.getName())) {
+        if (!name.equals(other.getName())) {
             return false;
         }
 
         // only fail if this namespace is non-null
-        if (getNamespace() != null && !getNamespace().equals(that.getNamespace())) {
+        if (getNamespace() != null && !getNamespace().equals(other.getNamespace())) {
             return false;
         }
         // only fail if this revision is non-null
-        if (getRevision() != null && !getRevision().equals(that.getRevision())) {
+        if (getRevision() != null && !getRevision().equals(other.getRevision())) {
+            return false;
+        }
+
+        if (!Objects.equals(getSemanticVersion(), other.getSemanticVersion())) {
             return false;
         }
 
