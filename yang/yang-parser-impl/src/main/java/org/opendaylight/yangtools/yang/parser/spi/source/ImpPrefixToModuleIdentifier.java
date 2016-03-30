@@ -8,15 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
-
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 /**
  *
- * Source-specific mapping of prefixes to namespaces
+ * Source-specific mapping of prefixes to module identifiers
  *
  */
 public interface ImpPrefixToModuleIdentifier extends IdentifierNamespace<String, ModuleIdentifier> {
-
-
 }
