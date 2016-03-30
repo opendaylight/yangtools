@@ -51,7 +51,11 @@ public class CrossSourceStatementReactor {
     }
 
     public final BuildAction newBuild() {
-        return new BuildAction();
+        return newBuild(false);
+    }
+
+    public final BuildAction newBuild(boolean enabledSemanticVersions) {
+        return new BuildAction(enabledSemanticVersions);
     }
 
     public static class Builder implements org.opendaylight.yangtools.concepts.Builder<CrossSourceStatementReactor>{
@@ -80,7 +84,11 @@ public class CrossSourceStatementReactor {
         private final BuildGlobalContext context;
 
         public BuildAction() {
-            this.context = new BuildGlobalContext(supportedTerminology, supportedValidation);
+            this(false);
+        }
+
+        public BuildAction(boolean enabledSemanticVersions) {
+            this.context = new BuildGlobalContext(supportedTerminology, supportedValidation, enabledSemanticVersions);
         }
 
         public void addSource(final StatementStreamSource source) {
