@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
+import org.opendaylight.yangtools.concepts.SemVer;
 
 /**
  * This interface contains the methods for getting the data from the YANG
@@ -58,6 +59,11 @@ import javax.annotation.concurrent.Immutable;
  */
 @Immutable
 public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIdentifier {
+    /**
+     * Default semantic version of Module.
+     */
+    SemVer DEFAULT_SEMANTIC_VERSION = SemVer.create(0, 0, 0);
+
     /**
      * Returns the prefix of the module
      *

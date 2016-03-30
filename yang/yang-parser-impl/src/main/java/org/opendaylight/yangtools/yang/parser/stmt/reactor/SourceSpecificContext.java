@@ -88,6 +88,10 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         this.currentContext = currentContext;
     }
 
+    public boolean isEnabledSemanticVersioning(){
+        return currentContext.isEnabledSemanticVersioning();
+    }
+
     ModelProcessingPhase getInProgressPhase() {
         return inProgressPhase;
     }
@@ -382,7 +386,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     private QNameToStatementDefinition stmtDef() {
-        // regular YANG statements added
+        // regular YANG statements and extension supports added
         ImmutableMap<QName, StatementSupport<?, ?, ?>> definitions = currentContext.getSupportsForPhase(
                 inProgressPhase).getDefinitions();
         for (Entry<QName, StatementSupport<?, ?, ?>> entry : definitions.entrySet()) {
@@ -396,12 +400,15 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             if (extensions != null) {
                 for (Entry<QName, StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>>> extension :
                     extensions.entrySet()) {
-                    qNameToStmtDefMap.put((extension.getKey()),
+                    if(qNameToStmtDefMap.get(extension.getKey()) == null) {
+                        qNameToStmtDefMap.put((extension.getKey()),
                         (StatementDefinition) ((StatementContextBase<?, ?, ?>) extension.getValue()).definition()
                         .getFactory());
+                    }
                 }
             }
         }
+
         return qNameToStmtDefMap;
     }
 }

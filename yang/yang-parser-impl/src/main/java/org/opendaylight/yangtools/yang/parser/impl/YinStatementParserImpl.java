@@ -53,7 +53,7 @@ public class YinStatementParserImpl {
 
     /**
      *
-     * This method is supposed to be called in linkage phase, when YinStatementParserImpl instance has already been
+     * This method is supposed to be called in pre-linkage phase, when YinStatementParserImpl instance has already been
      * created.
      * When done, start walking through YIN source
      *
@@ -67,7 +67,7 @@ public class YinStatementParserImpl {
     }
 
     /**
-     * This method is supposed to be called in any phase but linkage, when YinStatementParserImpl instance has already
+     * This method is supposed to be called in any phase but pre-linkage, when YinStatementParserImpl instance has already
      * been created.
      * When done, start walking through YIN source
      *
@@ -226,28 +226,34 @@ public class YinStatementParserImpl {
         }
     }
 
-    private static boolean isStatementWithArgument(final QName identifier, final QNameToStatementDefinition stmtDef) {
-        if (stmtDef != null && stmtDef.get(Utils.trimPrefix(identifier)) == null) {
+    private boolean isStatementWithArgument(final QName identifier, final QNameToStatementDefinition stmtDef) {
+        StatementDefinition statementDefinition = getStatementDefinition(identifier, stmtDef);
+        if (statementDefinition == null) {
             return false;
-        } else if (((StatementSupport<?, ?, ?>) stmtDef.get(Utils.trimPrefix(identifier))).getPublicView().getArgumentName() == null) {
+        } else if (((StatementSupport<?, ?, ?>) statementDefinition).getPublicView().getArgumentName() == null) {
             return false;
         }
         return true;
     }
 
-    private static boolean isStatementWithYinElement(final QName identifier, final QNameToStatementDefinition stmtDef) {
-        final StatementDefinition statementDefinition = stmtDef.get(Utils.trimPrefix(identifier));
+    private boolean isStatementWithYinElement(final QName identifier, final QNameToStatementDefinition stmtDef) {
+        StatementDefinition statementDefinition = getStatementDefinition(identifier, stmtDef);
         if (statementDefinition == null) {
             return false;
         }
-
-        return ((Rfc6020Mapping) ((StatementSupport<?, ?, ?>) statementDefinition).getPublicView()).isArgumentYinElement();
+        return statementDefinition.isArgumentYinElement();
     }
 
-    private static String getAttributeValue(final XMLStreamReader inputReader, final QName identifier, final QNameToStatementDefinition
+    private String getAttributeValue(final XMLStreamReader inputReader, final QName identifier, final QNameToStatementDefinition
             stmtDef) {
         String namespace = null;
-        return inputReader.getAttributeValue(namespace, (((StatementSupport<?, ?, ?>) stmtDef.get(Utils.trimPrefix(identifier)))
+        return inputReader.getAttributeValue(namespace, (((StatementSupport<?, ?, ?>) getStatementDefinition(identifier, stmtDef))
                 .getPublicView()).getArgumentName().getLocalName());
+    }
+
+    private StatementDefinition getStatementDefinition(final QName identifier, final QNameToStatementDefinition stmtDef) {
+        final QName trimPrefixIdentifier = Utils.trimPrefix(identifier);
+        return stmtDef.getByNamespaceAndLocalName(trimPrefixIdentifier.getNamespace(),
+                trimPrefixIdentifier.getLocalName());
     }
 }
