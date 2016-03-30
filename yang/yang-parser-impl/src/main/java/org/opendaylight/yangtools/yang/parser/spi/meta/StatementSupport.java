@@ -61,13 +61,25 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      */
      void onStatementAdded(StmtContext.Mutable<A, D, E> stmt);
 
+     /**
+     *
+     * Invoked when statement is closed during
+     * {@link ModelProcessingPhase#SOURCE_PRE_LINKAGE} phase, only substatements from
+     * this and previous phase are available.
+     *
+     * Implementation may use method to perform actions on this event or
+     * register modification action using
+     * {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
+     *
+     * @param stmt
+     *            Context of added statement.
+     */
+     void onPreLinkageDeclared(StmtContext.Mutable<A, D, E> stmt);
+
     /**
      *
      * Invoked when statement is closed during
-     * {@link ModelProcessingPhase#STATEMENT_DEFINITION} phase.
-     *
-     * Invoked when statement is closed during
-     * {@link ModelProcessingPhase#STATEMENT_DEFINITION} phase, only substatements from
+     * {@link ModelProcessingPhase#SOURCE_LINKAGE} phase, only substatements from
      * this and previous phase are available.
      *
      * Implementation may use method to perform actions on this event or
