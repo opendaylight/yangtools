@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.net.URI;
 import java.util.Date;
-
+import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
 
@@ -50,4 +50,16 @@ public interface ModuleIdentifier {
      *         keyword
      */
     Date getRevision();
+
+    /**
+     * Returns the semantic version of yang module.
+     *
+     * If the semantic version is not specified, default semantic version of module is returned.
+     *
+     * @return SemVer semantic version of yang module which is specified as
+     *         argument of
+     *         (urn:opendaylight:yang:extension:semantic-version?revision
+     *         =2016-02-02)semantic-version statement
+     */
+    SemVer getSemanticVersion();
 }

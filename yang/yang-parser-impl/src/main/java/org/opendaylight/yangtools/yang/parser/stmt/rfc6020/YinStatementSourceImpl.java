@@ -42,6 +42,7 @@ public class YinStatementSourceImpl implements StatementStreamSource {
     private String fileName;
     private boolean isAbsolute;
 
+    // FIXME IO exception: input stream closed when called from StmtTestUtils parserseYinSources method
     public YinStatementSourceImpl(final InputStream inputStream) {
         yinStatementModelParser = new YinStatementParserImpl(inputStream.toString());
         this.inputStream = inputStream;
