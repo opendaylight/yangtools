@@ -8,8 +8,11 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
+import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_PRE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
+
 import com.google.common.base.Optional;
+import com.google.common.base.Verify;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Date;
@@ -26,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.parser.builder.impl.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -35,6 +39,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToNamespace;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ImportEffectiveStatementImpl;
 
 public class ImportStatementDefinition
@@ -68,6 +74,36 @@ public class ImportStatementDefinition
             final Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt) {
         super.onFullDefinitionDeclared(stmt);
         SUBSTATEMENT_VALIDATOR.validate(stmt);
+    }
+
+    @Override
+    public void onPreLinkageDeclared(Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt) {
+        final String moduleName = stmt.getStatementArgument();
+        final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_PRE_LINKAGE);
+        final Prerequisite<StmtContext<?, ?, ?>> imported = importAction.requiresCtx(stmt,
+                PreLinkageModuleNamespace.class, moduleName, SOURCE_PRE_LINKAGE);
+        final Prerequisite<Mutable<?, ?, ?>> linkageTarget = importAction
+                .mutatesCtx(stmt.getRoot(), SOURCE_PRE_LINKAGE);
+
+        importAction.apply(new InferenceAction() {
+            @Override
+            public void apply() {
+                StmtContext<?, ?, ?> importedModuleContext = imported.get();
+                Verify.verify(moduleName.equals(importedModuleContext.getStatementArgument()));
+                final URI importedModuleNamespace = importedModuleContext.getFromNamespace(ModuleNameToNamespace.class,
+                        moduleName);
+                Verify.verifyNotNull(importedModuleNamespace);
+                final String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
+                Verify.verifyNotNull(impPrefix);
+                stmt.addToNs(ImpPrefixToNamespace.class, impPrefix, importedModuleNamespace);
+            }
+
+            @Override
+            public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
+                InferenceException.throwIf(failed.contains(imported), stmt.getStatementSourceReference(),
+                        "Imported module [%s] was not found.", moduleName);
+            }
+        });
     }
 
     @Override
