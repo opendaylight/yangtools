@@ -66,18 +66,26 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     private ModelProcessingPhase currentPhase = ModelProcessingPhase.INIT;
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
 
-    public BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports) {
+    private final boolean enabledSemanticVersions;
+
+    public BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports, boolean enabledSemanticVersions) {
         super();
         this.supports = Preconditions.checkNotNull(supports, "BuildGlobalContext#supports cannot be null");
+        this.enabledSemanticVersions = enabledSemanticVersions;
     }
 
-    public BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports, final Map<ValidationBundleType,Collection<?>> supportedValidation) {
+    public BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports, final Map<ValidationBundleType,Collection<?>> supportedValidation, boolean enabledSemanticVersions) {
         super();
         this.supports = Preconditions.checkNotNull(supports, "BuildGlobalContext#supports cannot be null");
+        this.enabledSemanticVersions = enabledSemanticVersions;
 
         for (Entry<ValidationBundleType, Collection<?>> validationBundle : supportedValidation.entrySet()) {
             addToNs(ValidationBundlesNamespace.class, validationBundle.getKey(), validationBundle.getValue());
         }
+    }
+
+    public boolean isEnabledSemanticVersioning(){
+        return enabledSemanticVersions;
     }
 
     public StatementSupportBundle getSupportsForPhase(final ModelProcessingPhase currentPhase) {
