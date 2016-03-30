@@ -127,4 +127,8 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
         // NOOP for most implementations
     }
 
+    @Override
+    public boolean isArgumentYinElement() {
+        return getPublicView().isArgumentYinElement();
+    }
 }

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Date;
+import org.opendaylight.yangtools.concepts.SemVer;
 
 /**
  * Interface describing YANG 'import' statement.
@@ -27,6 +28,11 @@ public interface ModuleImport {
      * @return Revision of module to import
      */
     Date getRevision();
+
+    /**
+     * @return Semantic version of module to import
+     */
+    SemVer getSemanticVersion();
 
     /**
      * @return Prefix used to point to imported module
