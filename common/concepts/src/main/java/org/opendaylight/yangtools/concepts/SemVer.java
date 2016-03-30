@@ -89,7 +89,7 @@ public final class SemVer implements Comparable<SemVer>, Serializable {
         if (i == 0) {
             i = Integer.compare(minor, o.minor);
             if (i == 0) {
-                return Integer.compare(patch, patch);
+                return Integer.compare(patch, o.patch);
             }
         }
 
