@@ -144,11 +144,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
     private File sourceIdToFile(final T source) {
         return sourceIdToFile(source.getIdentifier(), storageDirectory);
     }
-    /*
-     *  FIXME: Move of code from deprecated FilesystemSchemaCachingProvider
-     *  to reduce cycle. Decrease visibility once FilesystemSchemaCachingProvider
-     *  is removed.
-     */
+
     @Beta
     public static File sourceIdToFile(final SourceIdentifier identifier, final File storageDirectory) {
         final String rev = identifier.getRevision();
