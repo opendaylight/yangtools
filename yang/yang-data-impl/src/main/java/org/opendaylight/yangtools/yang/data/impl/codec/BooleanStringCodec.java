@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.data.api.codec.BooleanCodec;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 
@@ -21,7 +22,7 @@ final class BooleanStringCodec extends TypeDefinitionAwareCodec<Boolean, Boolean
 
     @Override
     public String serialize(final Boolean data) {
-        return data == null ? "" : data.toString();
+        return Objects.toString(data, "");
     }
 
     @Override

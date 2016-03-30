@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import com.google.common.base.Optional;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.data.api.codec.StringCodec;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 
@@ -39,7 +40,7 @@ class StringStringCodec extends TypeDefinitionAwareCodec<String, StringTypeDefin
 
     @Override
     public final String serialize(final String data) {
-        return data == null ? "" : data;
+        return Objects.toString(data, "");
     }
 
     protected void validate(final String s) {
