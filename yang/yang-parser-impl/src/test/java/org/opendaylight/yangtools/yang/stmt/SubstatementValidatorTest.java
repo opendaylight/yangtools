@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import com.google.common.base.VerifyException;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
@@ -22,7 +24,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
@@ -69,7 +70,7 @@ public class SubstatementValidatorTest {
 
     @Test
     public void missingElementException() throws URISyntaxException, ReactorException {
-        expectedEx.expect(MissingSubstatementException.class);
+        expectedEx.expect(VerifyException.class);
 
         Set<Module> modules = TestUtils.loadModules(getClass().getResource
                 ("/substatement-validator/missing-element").toURI());

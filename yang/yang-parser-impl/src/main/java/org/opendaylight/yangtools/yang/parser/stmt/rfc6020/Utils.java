@@ -19,7 +19,6 @@ import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -45,6 +44,7 @@ import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
@@ -384,8 +384,8 @@ public final class Utils {
      * @return valid QName for declared statement to be written
      *
      */
-    public static QName getValidStatementDefinition(final PrefixToModule prefixes, final QNameToStatementDefinition
-            stmtDef, final QName identifier) {
+    public static QName getValidStatementDefinition(final PrefixToModule prefixes,
+            final QNameToStatementDefinition stmtDef, final QName identifier) {
         if (stmtDef.get(identifier) != null) {
             return stmtDef.get(identifier).getStatementName();
         } else {
@@ -395,9 +395,23 @@ public final class Utils {
             if (namesParts.length == 2) {
                 String prefix = namesParts[0];
                 String localName = namesParts[1];
-                if (prefixes != null && prefixes.get(prefix) != null
-                        && stmtDef.get(QName.create(prefixes.get(prefix), localName)) != null) {
-                    return QName.create(prefixes.get(prefix), localName);
+
+                if (prefixes == null) {
+                    return null;
+                }
+
+                QNameModule qNameModule = prefixes.get(prefix);
+                if (qNameModule == null) {
+                    return null;
+                }
+
+                if (prefixes.isPreLinkageMap()) {
+                    StatementDefinition foundStmtDef = stmtDef.getByNamespaceAndLocalName(qNameModule.getNamespace(),
+                            localName);
+                    return foundStmtDef != null ? foundStmtDef.getStatementName() : null;
+                } else {
+                    QName qName = QName.create(qNameModule, localName);
+                    return stmtDef.get(qName) != null ? qName : null;
                 }
             }
         }
