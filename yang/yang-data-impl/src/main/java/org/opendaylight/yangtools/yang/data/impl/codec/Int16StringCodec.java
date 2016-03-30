@@ -9,6 +9,7 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import com.google.common.base.Optional;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.data.api.codec.Int16Codec;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 
@@ -24,7 +25,7 @@ final class Int16StringCodec extends AbstractIntegerStringCodec<Short, IntegerTy
 
     @Override
     public String serialize(final Short data) {
-        return data == null ? "" : data.toString();
+        return Objects.toString(data, "");
     }
 
     @Override

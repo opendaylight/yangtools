@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import java.math.BigDecimal;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.data.api.codec.DecimalCodec;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 
@@ -26,7 +27,7 @@ final class DecimalStringCodec extends TypeDefinitionAwareCodec<BigDecimal, Deci
 
     @Override
     public String serialize(final BigDecimal data) {
-        return data == null ? "" : data.toString();
+        return Objects.toString(data, "");
     }
 
     @Override

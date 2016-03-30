@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import com.google.common.base.Optional;
 import java.math.BigInteger;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint64Codec;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
@@ -27,7 +28,7 @@ final class Uint64StringCodec extends AbstractIntegerStringCodec<BigInteger, Uns
 
     @Override
     public String serialize(final BigInteger data) {
-        return data == null ? "" : data.toString();
+        return Objects.toString(data, "");
     }
 
     @Override

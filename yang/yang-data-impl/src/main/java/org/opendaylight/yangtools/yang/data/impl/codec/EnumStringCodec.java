@@ -12,6 +12,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Map;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.data.api.codec.EnumCodec;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
@@ -54,6 +55,6 @@ final class EnumStringCodec extends TypeDefinitionAwareCodec<String, EnumTypeDef
 
     @Override
     public String serialize(final String data) {
-        return data == null ? "" : data;
+        return Objects.toString(data, "");
     }
 }

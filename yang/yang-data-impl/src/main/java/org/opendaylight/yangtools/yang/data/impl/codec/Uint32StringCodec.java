@@ -9,6 +9,7 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import com.google.common.base.Optional;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint32Codec;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
@@ -26,7 +27,7 @@ final class Uint32StringCodec extends AbstractIntegerStringCodec<Long, UnsignedI
 
     @Override
     public String serialize(final Long data) {
-        return data == null ? "" : data.toString();
+        return Objects.toString(data, "");
     }
 
     @Override
