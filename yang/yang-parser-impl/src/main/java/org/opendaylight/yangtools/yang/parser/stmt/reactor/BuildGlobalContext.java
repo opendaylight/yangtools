@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
@@ -49,35 +50,41 @@ import org.slf4j.LoggerFactory;
 class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBehaviour.Registry {
     private static final Logger LOG = LoggerFactory.getLogger(BuildGlobalContext.class);
 
-    private static final List<ModelProcessingPhase> PHASE_EXECUTION_ORDER = ImmutableList.<ModelProcessingPhase>builder()
-            .add(ModelProcessingPhase.SOURCE_PRE_LINKAGE)
-            .add(ModelProcessingPhase.SOURCE_LINKAGE)
-            .add(ModelProcessingPhase.STATEMENT_DEFINITION)
-            .add(ModelProcessingPhase.FULL_DECLARATION)
-            .add(ModelProcessingPhase.EFFECTIVE_MODEL)
-            .build();
+    private static final List<ModelProcessingPhase> PHASE_EXECUTION_ORDER = ImmutableList
+            .<ModelProcessingPhase> builder().add(ModelProcessingPhase.SOURCE_PRE_LINKAGE)
+            .add(ModelProcessingPhase.SOURCE_LINKAGE).add(ModelProcessingPhase.STATEMENT_DEFINITION)
+            .add(ModelProcessingPhase.FULL_DECLARATION).add(ModelProcessingPhase.EFFECTIVE_MODEL).build();
 
-    private final Map<QName,StatementDefinitionContext<?,?,?>> definitions = new HashMap<>();
-    private final Map<Class<?>,NamespaceBehaviourWithListeners<?, ?, ?>> supportedNamespaces = new HashMap<>();
+    private final Map<QName, StatementDefinitionContext<?, ?, ?>> definitions = new HashMap<>();
+    private final Map<Class<?>, NamespaceBehaviourWithListeners<?, ?, ?>> supportedNamespaces = new HashMap<>();
 
-    private final Map<ModelProcessingPhase,StatementSupportBundle> supports;
+    private final Map<ModelProcessingPhase, StatementSupportBundle> supports;
     private final Set<SourceSpecificContext> sources = new HashSet<>();
 
     private ModelProcessingPhase currentPhase = ModelProcessingPhase.INIT;
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
 
-    public BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports) {
+    private final boolean enabledSemanticVersions;
+
+    public BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports, StatementParserMode statementParserMode) {
         super();
         this.supports = Preconditions.checkNotNull(supports, "BuildGlobalContext#supports cannot be null");
+        this.enabledSemanticVersions = statementParserMode == StatementParserMode.SEMVER_MODE;
     }
 
-    public BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports, final Map<ValidationBundleType,Collection<?>> supportedValidation) {
+    public BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports,
+            final Map<ValidationBundleType, Collection<?>> supportedValidation, StatementParserMode statementParserMode) {
         super();
         this.supports = Preconditions.checkNotNull(supports, "BuildGlobalContext#supports cannot be null");
+        this.enabledSemanticVersions = statementParserMode == StatementParserMode.SEMVER_MODE;
 
         for (Entry<ValidationBundleType, Collection<?>> validationBundle : supportedValidation.entrySet()) {
             addToNs(ValidationBundlesNamespace.class, validationBundle.getKey(), validationBundle.getValue());
         }
+    }
+
+    public boolean isEnabledSemanticVersioning() {
+        return enabledSemanticVersions;
     }
 
     public StatementSupportBundle getSupportsForPhase(final ModelProcessingPhase currentPhase) {
@@ -85,7 +92,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     }
 
     public void addSource(@Nonnull final StatementStreamSource source) {
-        sources.add(new SourceSpecificContext(this,source));
+        sources.add(new SourceSpecificContext(this, source));
     }
 
     @Override
@@ -104,7 +111,8 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     }
 
     @Override
-    public <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> getNamespaceBehaviour(final Class<N> type) {
+    public <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> getNamespaceBehaviour(
+            final Class<N> type) {
         NamespaceBehaviourWithListeners<?, ?, ?> potential = supportedNamespaces.get(type);
         if (potential == null) {
             NamespaceBehaviour<K, V, N> potentialRaw = supports.get(currentPhase).getNamespaceBehaviour(type);
@@ -112,27 +120,27 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
                 potential = createNamespaceContext(potentialRaw);
                 supportedNamespaces.put(type, potential);
             } else {
-                throw new NamespaceNotAvailableException(
-                        "Namespace " + type + " is not available in phase " + currentPhase);
+                throw new NamespaceNotAvailableException("Namespace " + type + " is not available in phase "
+                        + currentPhase);
             }
         }
 
         Verify.verify(type.equals(potential.getIdentifier()));
         /*
-         * Safe cast, previous checkState checks equivalence of key from which type argument are
-         * derived
+         * Safe cast, previous checkState checks equivalence of key from which
+         * type argument are derived
          */
         return (NamespaceBehaviourWithListeners<K, V, N>) potential;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> createNamespaceContext(
             final NamespaceBehaviour<K, V, N> potentialRaw) {
         if (potentialRaw instanceof DerivedNamespaceBehaviour) {
-            VirtualNamespaceContext derivedContext =
-                    new VirtualNamespaceContext((DerivedNamespaceBehaviour) potentialRaw);
-            getNamespaceBehaviour(((DerivedNamespaceBehaviour) potentialRaw).getDerivedFrom())
-                    .addDerivedNamespace(derivedContext);
+            VirtualNamespaceContext derivedContext = new VirtualNamespaceContext(
+                    (DerivedNamespaceBehaviour) potentialRaw);
+            getNamespaceBehaviour(((DerivedNamespaceBehaviour) potentialRaw).getDerivedFrom()).addDerivedNamespace(
+                    derivedContext);
             return derivedContext;
         }
         return new SimpleNamespaceContext<>(potentialRaw);
@@ -182,7 +190,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     private EffectiveSchemaContext transformEffective() {
         Preconditions.checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         List<DeclaredStatement<?>> rootStatements = new ArrayList<>(sources.size());
-        List<EffectiveStatement<?,?>> rootEffectiveStatements = new ArrayList<>(sources.size());
+        List<EffectiveStatement<?, ?>> rootEffectiveStatements = new ArrayList<>(sources.size());
 
         for (SourceSpecificContext source : sources) {
             final RootStatementContext<?, ?, ?> root = source.getRoot();
@@ -201,7 +209,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         currentPhase = phase;
     }
 
-    private  void loadPhaseStatements() throws SourceException {
+    private void loadPhaseStatements() throws SourceException {
         Preconditions.checkState(currentPhase != null);
         for (SourceSpecificContext source : sources) {
             source.loadStatements();
@@ -214,7 +222,8 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         for (SourceSpecificContext failedSource : sourcesToProgress) {
             final SourceException sourceEx = failedSource.failModifiers(currentPhase);
 
-            // Workaround for broken logging implementations which ignore suppressed exceptions
+            // Workaround for broken logging implementations which ignore
+            // suppressed exceptions
             Throwable cause = sourceEx.getCause() != null ? sourceEx.getCause() : sourceEx;
             if (LOG.isDebugEnabled()) {
                 LOG.error("Failed to parse YANG from source {}", failedSource, sourceEx);
@@ -249,7 +258,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         return buildFailure;
     }
 
-    private  void completePhaseActions() throws ReactorException {
+    private void completePhaseActions() throws ReactorException {
         Preconditions.checkState(currentPhase != null);
         List<SourceSpecificContext> sourcesToProgress = Lists.newArrayList(sources);
         try {
@@ -258,21 +267,22 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
                 // We reset progressing to false.
                 progressing = false;
                 Iterator<SourceSpecificContext> currentSource = sourcesToProgress.iterator();
-                while(currentSource.hasNext()) {
+                while (currentSource.hasNext()) {
                     SourceSpecificContext nextSourceCtx = currentSource.next();
                     PhaseCompletionProgress sourceProgress = nextSourceCtx.tryToCompletePhase(currentPhase);
                     switch (sourceProgress) {
-                        case FINISHED:
-                            currentSource.remove();
-                            // Fallback to progress, since we were able to make progress in computation
-                        case PROGRESS:
-                            progressing = true;
-                            break;
-                        case NO_PROGRESS:
-                            // Noop
-                            break;
-                        default:
-                           throw new IllegalStateException("Unsupported phase progress " + sourceProgress);
+                    case FINISHED:
+                        currentSource.remove();
+                        // Fallback to progress, since we were able to make
+                        // progress in computation
+                    case PROGRESS:
+                        progressing = true;
+                        break;
+                    case NO_PROGRESS:
+                        // Noop
+                        break;
+                    default:
+                        throw new IllegalStateException("Unsupported phase progress " + sourceProgress);
                     }
                 }
             }
@@ -286,7 +296,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
         }
     }
 
-    private  void endPhase(final ModelProcessingPhase phase) {
+    private void endPhase(final ModelProcessingPhase phase) {
         Preconditions.checkState(currentPhase == phase);
         finishedPhase = currentPhase;
     }

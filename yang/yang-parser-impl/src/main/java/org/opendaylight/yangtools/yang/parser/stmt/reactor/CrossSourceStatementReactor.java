@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
@@ -33,15 +34,16 @@ import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
 
 public class CrossSourceStatementReactor {
 
-    private final Map<ModelProcessingPhase,StatementSupportBundle> supportedTerminology;
-    private final Map<ValidationBundleType,Collection<?>> supportedValidation;
+    private final Map<ModelProcessingPhase, StatementSupportBundle> supportedTerminology;
+    private final Map<ValidationBundleType, Collection<?>> supportedValidation;
 
     CrossSourceStatementReactor(final Map<ModelProcessingPhase, StatementSupportBundle> supportedTerminology) {
         this.supportedTerminology = ImmutableMap.copyOf(supportedTerminology);
         this.supportedValidation = ImmutableMap.of();
     }
 
-    CrossSourceStatementReactor(final Map<ModelProcessingPhase, StatementSupportBundle> supportedTerminology, final Map<ValidationBundleType,Collection<?>> supportedValidation) {
+    CrossSourceStatementReactor(final Map<ModelProcessingPhase, StatementSupportBundle> supportedTerminology,
+            final Map<ValidationBundleType, Collection<?>> supportedValidation) {
         this.supportedTerminology = ImmutableMap.copyOf(supportedTerminology);
         this.supportedValidation = ImmutableMap.copyOf(supportedValidation);
     }
@@ -51,22 +53,25 @@ public class CrossSourceStatementReactor {
     }
 
     public final BuildAction newBuild() {
-        return new BuildAction();
+        return newBuild(StatementParserMode.DEFAULT_MODE);
     }
 
-    public static class Builder implements org.opendaylight.yangtools.concepts.Builder<CrossSourceStatementReactor>{
+    public final BuildAction newBuild(StatementParserMode statementParserMode) {
+        return new BuildAction(statementParserMode);
+    }
 
-        final Map<ModelProcessingPhase,StatementSupportBundle> bundles = new EnumMap<>(ModelProcessingPhase.class);
-        final Map<ValidationBundleType,Collection<?>> validationBundles = new EnumMap<>(ValidationBundleType.class);
+    public static class Builder implements org.opendaylight.yangtools.concepts.Builder<CrossSourceStatementReactor> {
 
-        public Builder setBundle(final ModelProcessingPhase phase,final StatementSupportBundle bundle) {
+        final Map<ModelProcessingPhase, StatementSupportBundle> bundles = new EnumMap<>(ModelProcessingPhase.class);
+        final Map<ValidationBundleType, Collection<?>> validationBundles = new EnumMap<>(ValidationBundleType.class);
+
+        public Builder setBundle(final ModelProcessingPhase phase, final StatementSupportBundle bundle) {
             bundles.put(phase, bundle);
             return this;
         }
 
-
         public Builder setValidationBundle(final ValidationBundleType type, final Collection<?> validationBundle) {
-            validationBundles.put(type,validationBundle);
+            validationBundles.put(type, validationBundle);
             return this;
         }
 
@@ -80,7 +85,11 @@ public class CrossSourceStatementReactor {
         private final BuildGlobalContext context;
 
         public BuildAction() {
-            this.context = new BuildGlobalContext(supportedTerminology, supportedValidation);
+            this(StatementParserMode.DEFAULT_MODE);
+        }
+
+        public BuildAction(StatementParserMode statementParserMode) {
+            this.context = new BuildGlobalContext(supportedTerminology, supportedValidation, statementParserMode);
         }
 
         public void addSource(final StatementStreamSource source) {
@@ -105,8 +114,8 @@ public class CrossSourceStatementReactor {
             return context.buildEffective();
         }
 
-        public SchemaContext buildEffective(final Collection<ByteSource> yangByteSources) throws
-                ReactorException, IOException {
+        public SchemaContext buildEffective(final Collection<ByteSource> yangByteSources) throws ReactorException,
+                IOException {
             for (ByteSource yangByteSource : yangByteSources) {
                 addSource(new YangStatementSourceImpl(yangByteSource.openStream()));
             }
@@ -114,8 +123,7 @@ public class CrossSourceStatementReactor {
             return buildEffective();
         }
 
-        public SchemaContext buildEffective(final List<InputStream> yangInputStreams) throws
-                ReactorException {
+        public SchemaContext buildEffective(final List<InputStream> yangInputStreams) throws ReactorException {
             for (InputStream yangInputStream : yangInputStreams) {
                 addSource(new YangStatementSourceImpl(yangInputStream));
             }
@@ -124,11 +132,12 @@ public class CrossSourceStatementReactor {
         }
 
         /**
-         * @deprecated This method was never used and relies on deprecated module methods.
+         * @deprecated This method was never used and relies on deprecated
+         *             module methods.
          */
         @Deprecated
-        public Map<File, Module> buildEffectiveMappedToSource(final List<File> yangFiles) throws
-                ReactorException, FileNotFoundException {
+        public Map<File, Module> buildEffectiveMappedToSource(final List<File> yangFiles) throws ReactorException,
+                FileNotFoundException {
             if (yangFiles == null || yangFiles.isEmpty()) {
                 return Collections.emptyMap();
             }
