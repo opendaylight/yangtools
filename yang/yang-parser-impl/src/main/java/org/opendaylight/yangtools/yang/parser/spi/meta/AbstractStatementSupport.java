@@ -81,6 +81,20 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
      *
      */
     @Override
+    public void onPreLinkageDeclared(StmtContext.Mutable<A, D, E> stmt) {
+        // NOOP for most implementations
+    }
+
+    /**
+     *
+     * {@inheritDoc}
+     *
+     * Subclasses of this class may override this method to perform actions on
+     * this event or register modification action using
+     * {@link StmtContext.Mutable#newInferenceAction(ModelProcessingPhase)}.
+     *
+     */
+    @Override
     public void onLinkageDeclared(StmtContext.Mutable<A, D, E> stmt) throws SourceException {
         // NOOP for most implementations
     }

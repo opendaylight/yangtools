@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+
 /**
  *
  * Statement stream source, which is used for inference of effective model.
@@ -24,7 +25,14 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
  * Steps (in order of invocation) are:
  *
  * <ol>
- * <li>{@link #writeLinkage(StatementWriter, QNameToStatementDefinition)} -
+ * <li>{@link #writePreLinkage(StatementWriter, QNameToStatementDefinition)} -
+ * Source MUST emit only statements related in pre-linkage, which are present in
+ * supplied statement definition map. This step is used as preparatory cross-source
+ * relationship resolution phase which collects available module names and namespaces.
+ * It is necessary in order to correct resolution of unknown statements used by linkage
+ * phase (e.g. semantic version of yang modules).
+ * </li>
+ * <li>{@link #writeLinkage(StatementWriter, QNameToStatementDefinition, PrefixToModule)} -
  * Source MUST emit only statements related in linkage, which are present in
  * supplied statement definition map. This step is used to build cross-source
  * linkage and visibility relationship, and to determine XMl namespaces and
@@ -45,6 +53,24 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 public interface StatementStreamSource {
 
     /**
+    *
+    * Emits only pre-linkage-related statements to supplied {@code writer}.
+    *
+    * @param writer
+    *            {@link StatementWriter} which should be used to emit
+    *            statements.
+    * @param stmtDef
+    *            Map of available statement definitions. Only these statements
+    *            may be written to statement writer, source MUST ignore and MUST NOT
+    *            emit any other statements.
+    *
+    * @throws SourceException
+    *             If source was is not valid, or provided statement writer
+    *             failed to write statements.
+    */
+    void writePreLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef) throws SourceException;
+
+    /**
      *
      * Emits only linkage-related statements to supplied {@code writer}.
      *
@@ -55,12 +81,14 @@ public interface StatementStreamSource {
      *            Map of available statement definitions. Only these statements
      *            may be written to statement writer, source MUST ignore and MUST NOT
      *            emit any other statements.
+     * @param preLinkagePrefixes
+     *            Pre-linkage map of source-specific prefixes to namespaces
      *
      * @throws SourceException
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
-    void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef) throws SourceException;
+    void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef, PrefixToModule preLinkagePrefixes) throws SourceException;
 
     /**
      *

@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Multimap;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -41,6 +42,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModuleMap;
@@ -310,8 +312,11 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     void loadStatements() throws SourceException {
         switch (inProgressPhase) {
+            case SOURCE_PRE_LINKAGE:
+                source.writePreLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef());
+                break;
             case SOURCE_LINKAGE:
-                source.writeLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef());
+                source.writeLinkage(new StatementContextWriter(this, inProgressPhase), stmtDef(), preLinkagePrefixes());
                 break;
             case STATEMENT_DEFINITION:
                 source.writeLinkageAndStatementDefinitions(new StatementContextWriter(this, inProgressPhase), stmtDef(), prefixes());
@@ -343,6 +348,20 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             default:
                 return null;
         }
+    }
+
+    private PrefixToModule preLinkagePrefixes() {
+        PrefixToModuleMap preLinkagePrefixes = new PrefixToModuleMap(true);
+        Map<String, URI> prefixToNamespaceMap = getAllFromLocalStorage(ImpPrefixToNamespace.class);
+        if(prefixToNamespaceMap == null) {
+            //:FIXME if it is a submodule without any import, the map is null. Handle also submodules and includes...
+            return null;
+        }
+        for (Entry<String, URI> prefixToNamespace : prefixToNamespaceMap.entrySet()) {
+            preLinkagePrefixes.put(prefixToNamespace.getKey(), QNameModule.create(prefixToNamespace.getValue(), null));
+        }
+
+        return preLinkagePrefixes;
     }
 
     private PrefixToModule prefixes() {
