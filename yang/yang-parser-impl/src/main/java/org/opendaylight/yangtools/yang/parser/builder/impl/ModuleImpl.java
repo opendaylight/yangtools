@@ -9,6 +9,7 @@
 package org.opendaylight.yangtools.yang.parser.builder.impl;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
@@ -20,6 +21,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
@@ -252,5 +254,10 @@ public final class ModuleImpl extends AbstractDocumentedDataNodeContainer implem
     @Override
     public QNameModule getQNameModule() {
         return qnameModule;
+    }
+
+    @Override
+    public SemVer getSemanticVersion() {
+        return DEFAULT_SEMANTIC_VERSION;
     }
 }
