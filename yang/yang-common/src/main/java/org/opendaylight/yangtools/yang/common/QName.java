@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.common;
 
 import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.getRevisionFormat;
+
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
@@ -302,6 +303,21 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      */
     public static QName create(final String namespace, final String localName) {
         return create(parseNamespace(namespace), null, localName);
+    }
+
+    /**
+     * Creates new QName.
+     *
+     * @param namespace
+     *            Namespace of QName, MUST NOT BE Null.
+     * @param localName
+     *            Local name part of QName. MUST NOT BE null.
+     * @return
+     * @throws NullPointerException
+     *             If any of parameters is null.
+     */
+    public static QName create(final URI namespace, final String localName) {
+        return create(namespace, null, localName);
     }
 
     @Override

@@ -50,6 +50,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements NamespaceBeh
     private static final Logger LOG = LoggerFactory.getLogger(BuildGlobalContext.class);
 
     private static final List<ModelProcessingPhase> PHASE_EXECUTION_ORDER = ImmutableList.<ModelProcessingPhase>builder()
+            .add(ModelProcessingPhase.SOURCE_PRE_LINKAGE)
             .add(ModelProcessingPhase.SOURCE_LINKAGE)
             .add(ModelProcessingPhase.STATEMENT_DEFINITION)
             .add(ModelProcessingPhase.FULL_DECLARATION)

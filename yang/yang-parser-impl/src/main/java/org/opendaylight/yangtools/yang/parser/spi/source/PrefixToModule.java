@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import java.net.URISyntaxException;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -39,7 +40,16 @@ public interface PrefixToModule extends IdentifierNamespace<String, QNameModule>
      *            XML Namespace
      * @return QNameModule associated with supplied namespace, or null if prefix
      *         is not defined.
+     * @throws URISyntaxException if the input string is not valid URI
      *
      */
-    @Nullable QNameModule getByNamespace(String namespace);
+    @Nullable QNameModule getByNamespace(String namespace) throws URISyntaxException;
+
+    /**
+     * Pre-linkage map does not consider revision-dates of modules and it contains module namespaces only.
+     *
+     * @return true if it is the pre-linkage map.
+     *
+     */
+    boolean isPreLinkageMap();
 }
