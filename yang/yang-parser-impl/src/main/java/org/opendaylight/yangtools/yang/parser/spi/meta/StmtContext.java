@@ -54,6 +54,8 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     boolean isConfiguration();
 
+    boolean isEnabledSemanticVersioning();
+
     @Nonnull
     <K, V, KT extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(
             Class<N> type, KT key) throws NamespaceNotAvailableException;

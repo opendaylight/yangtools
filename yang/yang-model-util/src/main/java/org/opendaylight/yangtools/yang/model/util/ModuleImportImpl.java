@@ -7,19 +7,28 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import com.google.common.base.Preconditions;
 import java.util.Date;
 import java.util.Objects;
+import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 
 public final class ModuleImportImpl implements ModuleImport {
     private final String moduleName;
     private final Date revision;
+    private final SemVer semVer;
     private final String prefix;
 
     public ModuleImportImpl(final String moduleName, final Date revision, final String prefix) {
-        this.moduleName = moduleName;
+        this(moduleName, revision, prefix, Module.DEFAULT_SEMANTIC_VERSION);
+    }
+
+    public ModuleImportImpl(final String moduleName, final Date revision, final String prefix, final SemVer semVer) {
+        this.moduleName = Preconditions.checkNotNull(moduleName, "Module name must not be null.");
         this.revision = revision;
-        this.prefix = prefix;
+        this.prefix = Preconditions.checkNotNull(prefix, "Import prefix must not be null.");
+        this.semVer = Preconditions.checkNotNull(semVer, "Semantic version of module must not be null.");
     }
 
     @Override
@@ -30,6 +39,11 @@ public final class ModuleImportImpl implements ModuleImport {
     @Override
     public Date getRevision() {
         return revision;
+    }
+
+    @Override
+    public SemVer getSemanticVersion() {
+        return semVer;
     }
 
     @Override
@@ -44,6 +58,7 @@ public final class ModuleImportImpl implements ModuleImport {
         result = prime * result + Objects.hashCode(moduleName);
         result = prime * result + Objects.hashCode(revision);
         result = prime * result + Objects.hashCode(prefix);
+        result = prime * result + Objects.hashCode(semVer);
         return result;
     }
 
@@ -66,6 +81,9 @@ public final class ModuleImportImpl implements ModuleImport {
             return false;
         }
         if (!Objects.equals(getPrefix(), other.getPrefix())) {
+            return false;
+        }
+        if (!Objects.equals(getSemanticVersion(), other.getSemanticVersion())) {
             return false;
         }
         return true;

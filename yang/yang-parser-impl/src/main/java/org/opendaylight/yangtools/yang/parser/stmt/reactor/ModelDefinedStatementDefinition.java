@@ -20,9 +20,15 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffe
 // FIXME: Provide real argument name
 final class ModelDefinedStatementDefinition implements StatementDefinition {
     private final QName qName;
+    private final boolean yinElement;
 
     ModelDefinedStatementDefinition(QName qName) {
+        this(qName, false);
+    }
+
+    ModelDefinedStatementDefinition(QName qName, final boolean yinElement) {
         this.qName = qName;
+        this.yinElement = yinElement;
     }
 
     @Nonnull
@@ -47,5 +53,10 @@ final class ModelDefinedStatementDefinition implements StatementDefinition {
     @Override
     public Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
         return UnknownEffectiveStatementImpl.class;
+    }
+
+    @Override
+    public boolean isArgumentYinElement() {
+        return yinElement;
     }
 }

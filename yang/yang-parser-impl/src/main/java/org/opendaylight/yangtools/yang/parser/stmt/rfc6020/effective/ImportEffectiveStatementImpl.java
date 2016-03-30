@@ -9,33 +9,45 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import java.util.Date;
 import java.util.Objects;
+import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToSemVerModuleIdentifier;
 
 public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, ImportStatement> implements
         ModuleImport {
 
     private final String moduleName;
     private final Date revision;
+    private final SemVer semVer;
     private final String prefix;
 
     public ImportEffectiveStatementImpl(final StmtContext<String, ImportStatement, ?> ctx) {
         super(ctx);
 
         moduleName = ctx.getStatementArgument();
-
-        RevisionDateEffectiveStatementImpl revisionDateStmt = firstEffective(RevisionDateEffectiveStatementImpl.class);
-        this.revision = (revisionDateStmt == null) ? SimpleDateFormatUtil.DEFAULT_DATE_IMP : revisionDateStmt.argument();
-
         PrefixEffectiveStatementImpl prefixStmt = firstEffective(PrefixEffectiveStatementImpl.class);
         if (prefixStmt != null) {
             this.prefix = prefixStmt.argument();
         } else {
             throw new MissingSubstatementException("Prefix is mandatory substatement of import statement",
                     ctx.getStatementSourceReference());
+        }
+
+        if (!ctx.isEnabledSemanticVersioning()) {
+            RevisionDateEffectiveStatementImpl revisionDateStmt = firstEffective(RevisionDateEffectiveStatementImpl.class);
+            this.revision = (revisionDateStmt == null) ? SimpleDateFormatUtil.DEFAULT_DATE_IMP : revisionDateStmt
+                    .argument();
+            this.semVer = Module.DEFAULT_SEMANTIC_VERSION;
+        } else {
+            ModuleIdentifier importedModuleIdentifier = ctx.getFromNamespace(ImpPrefixToSemVerModuleIdentifier.class, prefix);
+            revision = importedModuleIdentifier.getRevision();
+            semVer = importedModuleIdentifier.getSemanticVersion();
         }
     }
 
@@ -50,6 +62,11 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
     }
 
     @Override
+    public SemVer getSemanticVersion() {
+        return semVer;
+    }
+
+    @Override
     public String getPrefix() {
         return prefix;
     }
@@ -61,6 +78,7 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
         result = prime * result + Objects.hashCode(moduleName);
         result = prime * result + Objects.hashCode(revision);
         result = prime * result + Objects.hashCode(prefix);
+        result = prime * result + Objects.hashCode(semVer);
         return result;
     }
 
@@ -85,12 +103,15 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
         if (!Objects.equals(getPrefix(), other.getPrefix())) {
             return false;
         }
+        if (!Objects.equals(getSemanticVersion(), other.getSemanticVersion())) {
+            return false;
+        }
         return true;
     }
 
     @Override
     public String toString() {
         return ImportEffectiveStatementImpl.class.getSimpleName() + "[moduleName=" + moduleName + ", revision="
-                + revision + ", prefix=" + prefix + "]";
+                + revision + ", semantic version=" + semVer + ", prefix=" + prefix + "]";
     }
 }
