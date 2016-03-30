@@ -257,4 +257,9 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
                 "Parent node has config statement set to false, therefore no node underneath it can have config set to true",
                 getStatementSourceReference());
     }
+
+    @Override
+    public boolean isEnabledSemanticVersioning() {
+        return parent.isEnabledSemanticVersioning();
+    }
 }

@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
-
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 
 public class ModuleImportImplTest {
 
@@ -25,9 +26,9 @@ public class ModuleImportImplTest {
     public void setup() {
         now = new Date();
         module1 = new ModuleImportImpl("myModule", now, "myPrefix");
-        module2 = new ModuleImportImpl(null, null, null);
+        module2 = new ModuleImportImpl("foo", null, "prefix-foo");
         module3 = new ModuleImportImpl("myModule", null, "customPrefix");
-        module4 = new ModuleImportImpl("myModule", now, null);
+        module4 = new ModuleImportImpl("myModule", now, "prefix");
         module5 = new ModuleImportImpl("myModule", now, "myPrefix");
         hash1 = module1.hashCode();
         hash2 = module2.hashCode();

@@ -171,4 +171,9 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     public boolean isConfiguration() {
         return true;
     }
+
+    @Override
+    public boolean isEnabledSemanticVersioning() {
+        return sourceContext.isEnabledSemanticVersioning();
+    }
 }

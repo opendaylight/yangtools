@@ -1,0 +1,14 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+    yang-version 1;
+
+    import bar { prefix bar; revision-date 2016-01-31; }
+
+    revision "2016-02-01" {
+        description "Initial version";
+    }
+
+    container root {
+    }
+}

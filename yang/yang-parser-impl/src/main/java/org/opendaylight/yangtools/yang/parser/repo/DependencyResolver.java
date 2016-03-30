@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -205,6 +206,11 @@ final class DependencyResolver {
 
         @Override
         public String getPrefix() {
+            return null;
+        }
+
+        @Override
+        public SemVer getSemanticVersion() {
             return null;
         }
 

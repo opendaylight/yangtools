@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+
 import com.google.common.collect.Sets;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -22,6 +23,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -496,6 +498,11 @@ public class SchemaContextProxyTest {
                 @Override
                 public String getPrefix() {
                     return module.getName();
+                }
+
+                @Override
+                public SemVer getSemanticVersion() {
+                    return module.getSemanticVersion();
                 }
 
                 @Override
