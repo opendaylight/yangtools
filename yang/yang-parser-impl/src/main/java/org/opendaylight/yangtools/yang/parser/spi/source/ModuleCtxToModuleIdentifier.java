@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
-import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  *
- * Global mapping of modules to QNameModules
+ * Global mapping of modules to module identifier
  *
  */
-public interface ModuleCtxToModuleQName extends IdentifierNamespace<StmtContext<?,?,?>, QNameModule> {
+public interface ModuleCtxToModuleIdentifier extends IdentifierNamespace<StmtContext<?,?,?>, ModuleIdentifier> {
 
 }

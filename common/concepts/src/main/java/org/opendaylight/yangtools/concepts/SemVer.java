@@ -19,6 +19,7 @@ import javax.annotation.Nonnull;
 @Beta
 public final class SemVer implements Comparable<SemVer>, Serializable {
     private static final long serialVersionUID = 1L;
+    public static final SemVer DEFAULT = create(0, 0, 0);
     private final int major;
     private final int minor;
     private final int patch;
@@ -117,5 +118,9 @@ public final class SemVer implements Comparable<SemVer>, Serializable {
     @Override
     public String toString() {
         return major + "." + minor + "." + patch;
+    }
+
+    public boolean isCompatibleWith(SemVer semVer) {
+        return major == semVer.major;
     }
 }
