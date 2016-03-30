@@ -16,26 +16,46 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AnyxmlSchemaLocationEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.SemanticVersionEffectiveStatementImpl;
 
 @Beta
 public enum SupportedExtensionsMapping implements StatementDefinition {
     ANYXML_SCHEMA_LOCATION("urn:opendaylight:yang:extension:yang-ext", "2013-07-09",
-        AnyxmlSchemaLocationStatementImpl.class, AnyxmlSchemaLocationEffectiveStatementImpl.class,
-        "anyxml-schema-location", "target-node");
+            AnyxmlSchemaLocationStatementImpl.class, AnyxmlSchemaLocationEffectiveStatementImpl.class,
+            "anyxml-schema-location", "target-node", false), SEMANTIC_VERSION(
+            "urn:opendaylight:yang:extension:semantic-version", "2016-02-02", SemanticVersionStatementImpl.class,
+            SemanticVersionEffectiveStatementImpl.class, "semantic-version", "semantic-version", false);
 
     private final Class<? extends DeclaredStatement<?>> type;
     private final Class<? extends EffectiveStatement<?, ?>> effectiveType;
     private final QName name;
     private final QName argument;
+    private final boolean yinElement;
 
     SupportedExtensionsMapping(final String namespace, final String revision,
             final Class<? extends DeclaredStatement<?>> declared,
-                    final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr,
-                            final String argumentStr) {
+            final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr, final String argumentStr,
+            final boolean yinElement) {
         type = Preconditions.checkNotNull(declared);
         effectiveType = Preconditions.checkNotNull(effective);
         name = createQName(namespace, revision, nameStr);
         argument = createQName(namespace, revision, argumentStr);
+        this.yinElement = yinElement;
+    }
+
+    private SupportedExtensionsMapping(final String namespace, final Class<? extends DeclaredStatement<?>> declared,
+            final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr, final String argumentStr,
+            final boolean yinElement) {
+        type = Preconditions.checkNotNull(declared);
+        effectiveType = Preconditions.checkNotNull(effective);
+        name = createQName(namespace, nameStr);
+        argument = createQName(namespace, argumentStr);
+        this.yinElement = yinElement;
+    }
+
+    @Nonnull
+    private static QName createQName(final String namespace, final String localName) {
+        return QName.create(namespace, localName).intern();
     }
 
     @Nonnull
@@ -63,5 +83,10 @@ public enum SupportedExtensionsMapping implements StatementDefinition {
     @Override
     public Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
         return effectiveType;
+    }
+
+    @Override
+    public boolean isArgumentYinElement() {
+        return yinElement;
     }
 }

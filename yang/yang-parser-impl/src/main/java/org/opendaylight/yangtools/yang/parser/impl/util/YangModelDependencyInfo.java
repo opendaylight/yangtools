@@ -9,21 +9,14 @@ package org.opendaylight.yangtools.yang.parser.impl.util;
 
 import static org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils.getArgumentString;
 
-import org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils;
-
 import com.google.common.base.Optional;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
-import java.util.HashSet;
-import java.util.Set;
-import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
-import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
-import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import com.google.common.collect.ImmutableSet;
 import java.io.InputStream;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Belongs_to_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Import_stmtContext;
@@ -33,9 +26,17 @@ import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Revision_date_stmt
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Revision_stmtContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Revision_stmtsContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangParser.Submodule_stmtContext;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
+import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.Rfc6020Mapping;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.parser.impl.ParserListenerUtils;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
 
 /**
  * Helper transfer object which holds basic and dependency information for YANG
@@ -484,11 +485,17 @@ public abstract class YangModelDependencyInfo {
     private static final class ModuleImportImpl implements ModuleImport {
 
         private final Date revision;
+        private final SemVer semVer;
         private final String name;
 
         public ModuleImportImpl(final String moduleName, final Date revision) {
+            this(moduleName, revision, Module.DEFAULT_SEMANTIC_VERSION);
+        }
+
+        public ModuleImportImpl(final String moduleName, final Date revision, final SemVer semVer) {
             this.name = moduleName;
             this.revision = revision;
+            this.semVer = semVer;
         }
 
         @Override
@@ -502,6 +509,11 @@ public abstract class YangModelDependencyInfo {
         }
 
         @Override
+        public SemVer getSemanticVersion() {
+            return this.semVer;
+        }
+
+        @Override
         public String getPrefix() {
             return null;
         }
@@ -512,6 +524,7 @@ public abstract class YangModelDependencyInfo {
             int result = 1;
             result = prime * result + Objects.hashCode(name);
             result = prime * result + Objects.hashCode(revision);
+            result = prime * result + Objects.hashCode(semVer);
             return result;
         }
 
@@ -539,6 +552,10 @@ public abstract class YangModelDependencyInfo {
                     return false;
                 }
             } else if (!revision.equals(other.revision)) {
+                return false;
+            }
+
+            if (!Objects.equals(getSemanticVersion(), other.getSemanticVersion())) {
                 return false;
             }
             return true;
