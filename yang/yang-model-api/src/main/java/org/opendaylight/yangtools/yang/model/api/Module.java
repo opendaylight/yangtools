@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
+import org.opendaylight.yangtools.concepts.SemVer;
 
 /**
  * This interface contains the methods for getting the data from the YANG
@@ -77,6 +78,18 @@ public interface Module extends DataNodeContainer, SourceStreamAware, ModuleIden
      *         color="#8b4513">yang-version</font></b>} keyword
      */
     String getYangVersion();
+
+    /**
+     * Returns the semantic version of yang module.
+     *
+     * Default value is 0.0.0
+     *
+     * @return SemVer semantic version of yang module which is specified as
+     *         argument of
+     *         (urn:opendaylight:yang:extension:semantic-version?revision
+     *         =2016-02-02)semantic-version statement
+     */
+    SemVer getSemanticVersion();
 
     /**
      * Returns the module description.

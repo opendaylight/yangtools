@@ -13,6 +13,8 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 import com.google.common.base.Optional;
 import java.net.URI;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
@@ -27,6 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
@@ -71,6 +74,7 @@ public class ModuleStatementSupport extends
             .add(Rfc6020Mapping.TYPEDEF, 0, MAX)
             .add(Rfc6020Mapping.USES, 0, MAX)
             .add(Rfc6020Mapping.YANG_VERSION, 0, 1)
+            .add(SupportedExtensionsMapping.SEMANTIC_VERSION, 0, 1)
             .build();
 
     public ModuleStatementSupport() {
@@ -142,6 +146,17 @@ public class ModuleStatementSupport extends
         stmt.addToNs(ModuleQNameToModuleName.class, qNameModule, stmt.getStatementArgument());
         stmt.addToNs(ModuleIdentifierToModuleQName.class, moduleIdentifier, qNameModule);
         stmt.addToNs(ImpPrefixToModuleIdentifier.class, modulePrefix, moduleIdentifier);
+
+        if (stmt.isEnabledSemanticVersioning()) {
+            final String moduleName = stmt.getStatementArgument();
+            Map<ModuleIdentifier, StmtContext<?, ?, ?>> modulesMap = stmt.getFromNamespace(
+                    SemanticVersionModuleNamespace.class, moduleName);
+            if (modulesMap == null) {
+                modulesMap = new HashMap<ModuleIdentifier, StmtContext<?, ?, ?>>();
+            }
+            modulesMap.put(moduleIdentifier, stmt);
+            stmt.addToNs(SemanticVersionModuleNamespace.class, moduleName, modulesMap);
+        }
     }
 
     @Override
