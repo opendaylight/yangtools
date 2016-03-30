@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -68,7 +69,7 @@ public class ImportResolutionBasicTest {
             fail("reactor.process should fail due to missing imported source");
         } catch (ReactorException e) {
             assertTrue(e instanceof SomeModifiersUnresolvedException);
-            assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, e.getPhase());
+            assertEquals(ModelProcessingPhase.SOURCE_PRE_LINKAGE, e.getPhase());
         }
 
     }
@@ -82,7 +83,7 @@ public class ImportResolutionBasicTest {
             fail("reactor.process should fail due to circular import");
         } catch (ReactorException e) {
             assertTrue(e instanceof SomeModifiersUnresolvedException);
-            assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, e.getPhase());
+            assertEquals(ModelProcessingPhase.SOURCE_PRE_LINKAGE, e.getPhase());
         }
     }
 
@@ -95,7 +96,7 @@ public class ImportResolutionBasicTest {
             fail("reactor.process should fail due to self import");
         } catch (ReactorException e) {
             assertTrue(e instanceof SomeModifiersUnresolvedException);
-            assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, e.getPhase());
+            assertEquals(ModelProcessingPhase.SOURCE_PRE_LINKAGE, e.getPhase());
         }
     }
 
