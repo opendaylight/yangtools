@@ -8,29 +8,28 @@
 
 package org.opendaylight.yangtools.yang.stmt.test;
 
+import java.io.File;
 import java.io.FileFilter;
-
-import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
+import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.io.File;
-import java.io.FileNotFoundException;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import java.util.ArrayList;
-import java.util.List;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangStatementSourceImpl;
+import org.opendaylight.yangtools.yang.parser.util.NamedFileInputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StmtTestUtils {
 
@@ -103,15 +102,26 @@ public class StmtTestUtils {
     public static SchemaContext parseYangSources(
             StatementStreamSource... sources) throws SourceException,
             ReactorException {
+        return parseYangSources(false, sources);
+    }
+
+    public static SchemaContext parseYangSources(boolean enabledSemanticVersions,
+            StatementStreamSource... sources) throws SourceException,
+            ReactorException {
 
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-                .newBuild();
+                .newBuild(enabledSemanticVersions);
         reactor.addSources(sources);
 
         return reactor.buildEffective();
     }
 
     public static SchemaContext parseYangSources(File... files)
+            throws SourceException, ReactorException, FileNotFoundException {
+        return parseYangSources(false, files);
+    }
+
+    public static SchemaContext parseYangSources(boolean enabledSemanticVersions, File... files)
             throws SourceException, ReactorException, FileNotFoundException {
 
         StatementStreamSource[] sources = new StatementStreamSource[files.length];
@@ -120,20 +130,30 @@ public class StmtTestUtils {
             sources[i] = new YangStatementSourceImpl(new NamedFileInputStream(files[i], files[i].getPath()));
         }
 
-        return parseYangSources(sources);
+        return parseYangSources(enabledSemanticVersions, sources);
     }
 
     public static SchemaContext parseYangSources(Collection<File> files)
             throws SourceException, ReactorException, FileNotFoundException {
-        return parseYangSources(files.toArray(new File[files.size()]));
+        return parseYangSources(files, false);
+    }
+
+    public static SchemaContext parseYangSources(Collection<File> files, boolean enabledSemanticVersions)
+            throws SourceException, ReactorException, FileNotFoundException {
+        return parseYangSources(enabledSemanticVersions, files.toArray(new File[files.size()]));
     }
 
     public static SchemaContext parseYangSources(String yangSourcesDirectoryPath)
+            throws SourceException, ReactorException, FileNotFoundException, URISyntaxException {
+        return parseYangSources(yangSourcesDirectoryPath, false);
+    }
+
+    public static SchemaContext parseYangSources(String yangSourcesDirectoryPath, boolean enabledSemanticVersions)
             throws SourceException, ReactorException, FileNotFoundException, URISyntaxException {
 
         URL resourceDir = StmtTestUtils.class.getResource(yangSourcesDirectoryPath);
         File testSourcesDir = new File(resourceDir.toURI());
 
-        return parseYangSources(testSourcesDir.listFiles(YANG_FILE_FILTER));
+        return parseYangSources(enabledSemanticVersions, testSourcesDir.listFiles(YANG_FILE_FILTER));
     }
 }
