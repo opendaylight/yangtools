@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.util;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -144,13 +143,8 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
     private File sourceIdToFile(final T source) {
         return sourceIdToFile(source.getIdentifier(), storageDirectory);
     }
-    /*
-     *  FIXME: Move of code from deprecated FilesystemSchemaCachingProvider
-     *  to reduce cycle. Decrease visibility once FilesystemSchemaCachingProvider
-     *  is removed.
-     */
-    @Beta
-    public static File sourceIdToFile(final SourceIdentifier identifier, final File storageDirectory) {
+
+    static File sourceIdToFile(final SourceIdentifier identifier, final File storageDirectory) {
         final String rev = identifier.getRevision();
         final File file;
         if (Strings.isNullOrEmpty(rev)) {
