@@ -88,6 +88,10 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         this.currentContext = currentContext;
     }
 
+    public boolean isEnabledSemanticVersioning(){
+        return currentContext.isEnabledSemanticVersioning();
+    }
+
     ModelProcessingPhase getInProgressPhase() {
         return inProgressPhase;
     }
