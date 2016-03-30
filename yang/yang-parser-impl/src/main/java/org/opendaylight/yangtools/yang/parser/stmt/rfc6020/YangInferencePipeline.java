@@ -24,6 +24,8 @@ import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedIdentitiesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionModuleNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.source.AnyxmlSchemaLocationNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
@@ -32,6 +34,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModule
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
@@ -80,6 +83,7 @@ public final class YangInferencePipeline {
             .addSupport(global(NamespaceToModule.class))
             .addSupport(global(ModuleNameToModuleQName.class))
             .addSupport(global(ModuleCtxToModuleQName.class))
+            .addSupport(global(ModuleCtxToModuleIdentifier.class))
             .addSupport(global(ModuleQNameToModuleName.class))
             .addSupport(global(PrefixToModule.class))
             .addSupport(global(ModuleIdentifierToModuleQName.class))
@@ -93,6 +97,9 @@ public final class YangInferencePipeline {
             .addSupport(sourceLocal(BelongsToModuleContext.class))
             .addSupport(sourceLocal(QNameToStatementDefinition.class))
             .addSupport(sourceLocal(BelongsToPrefixToModuleName.class))
+            .addSupport(new SemanticVersionStatementImpl.SemanticVersionSupport())
+            .addSupport(global(SemanticVersionNamespace.class))
+            .addSupport(global(SemanticVersionModuleNamespace.class))
             .build();
 
     private static final StatementSupportBundle STMT_DEF_BUNDLE = StatementSupportBundle
