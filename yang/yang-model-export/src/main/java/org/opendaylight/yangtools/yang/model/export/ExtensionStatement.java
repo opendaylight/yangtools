@@ -51,6 +51,7 @@ final class ExtensionStatement implements StatementDefinition {
         return statementName;
     }
 
+    @Override
     public boolean isArgumentYinElement() {
         return yinElement;
     }
