@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -210,6 +209,7 @@ public enum Rfc6020Mapping implements StatementDefinition {
         return effectiveType;
     }
 
+    @Override
     public boolean isArgumentYinElement() {
         return yinElement;
     }
