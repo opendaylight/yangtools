@@ -1,0 +1,17 @@
+module foo {
+    sv:semantic-version "0.1.1";
+    import bar { prefix bar; revision-date 2016-01-31; sv:semantic-version "0.1.2";}
+
+    namespace "foo";
+    prefix foo;
+    yang-version 1;
+
+    import semantic-version { prefix sv; revision-date 2016-02-02; sv:semantic-version "0.0.1"; }
+
+    revision "2016-02-01" {
+        description "Initial version";
+    }
+
+    container root {
+    }
+}

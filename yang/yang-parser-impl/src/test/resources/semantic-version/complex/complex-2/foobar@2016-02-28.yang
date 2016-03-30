@@ -1,0 +1,20 @@
+module foobar {
+    namespace "foobar";
+    prefix foobar;
+    yang-version 1;
+
+    import semantic-version { prefix sv; sv:semantic-version "2.5.50"; }
+
+    revision "2016-02-28" {
+        description "Imported version";
+    }
+    sv:semantic-version "7.13.99";
+
+    container root {
+        leaf included-correct-mark {
+            type empty;
+        }
+        container test-container {
+        }
+    }
+}
