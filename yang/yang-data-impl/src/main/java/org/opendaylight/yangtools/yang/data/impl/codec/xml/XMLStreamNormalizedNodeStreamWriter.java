@@ -12,6 +12,8 @@ import com.google.common.base.Strings;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Map;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
@@ -25,20 +27,12 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXResult;
 import javax.xml.transform.stream.StreamResult;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamAttributeWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.w3c.dom.Element;
 
@@ -46,19 +40,15 @@ import org.w3c.dom.Element;
  * A {@link NormalizedNodeStreamWriter} which translates the events into an
  * {@link XMLStreamWriter}, resulting in a RFC 6020 XML encoding.
  */
-public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNodeStreamAttributeWriter {
+public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements NormalizedNodeStreamAttributeWriter {
 
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
 
     private final XMLStreamWriter writer;
-    private final SchemaTracker tracker;
-    private final XmlStreamUtils streamUtils;
     private final RandomPrefix randomPrefix;
 
-    private XMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final SchemaContext context, final SchemaPath path) {
+    protected XMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer) {
         this.writer = Preconditions.checkNotNull(writer);
-        this.tracker = SchemaTracker.create(context, path);
-        this.streamUtils = XmlStreamUtils.create(XmlUtils.DEFAULT_XML_CODEC_PROVIDER, context);
         randomPrefix = new RandomPrefix();
     }
 
@@ -82,9 +72,30 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
      *
      * @return A new {@link NormalizedNodeStreamWriter}
      */
-    public static NormalizedNodeStreamWriter create(final XMLStreamWriter writer, final SchemaContext context, final SchemaPath path) {
-        return new XMLStreamNormalizedNodeStreamWriter(writer, context, path);
+    public static NormalizedNodeStreamWriter create(final XMLStreamWriter writer, final SchemaContext context,
+            final SchemaPath path) {
+        return SchemaAwareXMLStreamNormalizedNodeStreamWriter.newInstance(writer, context, path);
     }
+
+    /**
+     * Create a new schema-less writer.
+     *
+     * @param writer Output {@link XMLStreamWriter}
+     *
+     * @return A new {@link NormalizedNodeStreamWriter}
+     */
+    public static NormalizedNodeStreamWriter createSchemaless(final XMLStreamWriter writer) {
+        return SchemalessXMLStreamNormalizedNodeStreamWriter.newInstance(writer);
+    }
+
+    protected abstract void writeValue(final XMLStreamWriter xmlWriter, final QName qname,
+            @Nonnull final Object value, T context) throws IOException, XMLStreamException;
+
+    protected abstract void startList(final NodeIdentifier name);
+
+    protected abstract void startListItem(final PathArgument name) throws IOException;
+
+    protected abstract void endNode(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException;
 
     private void writeStartElement(final QName qname) throws XMLStreamException {
         String ns = qname.getNamespace().toString();
@@ -97,25 +108,14 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
         }
     }
 
-    private void writeElement(final QName qname, final SchemaNode schemaNode, final Object value) throws IOException {
-        try {
-            writeStartElement(qname);
-            if (value != null) {
-                streamUtils.writeValue(writer, schemaNode, value, qname.getModule());
-            }
-            writer.writeEndElement();
-        } catch (XMLStreamException e) {
-            throw new IOException("Failed to emit element", e);
-        }
-    }
-
-    private void writeElement(final QName qname, final SchemaNode schemaNode, final Object value, final Map<QName, String> attributes) throws IOException {
+    protected void writeElement(final QName qname, final Object value, @Nullable final Map<QName, String> attributes,
+            final T context) throws IOException {
         try {
             writeStartElement(qname);
 
             writeAttributes(attributes);
             if (value != null) {
-                streamUtils.writeValue(writer, schemaNode, value, qname.getModule());
+                writeValue(writer, qname, value, context);
             }
             writer.writeEndElement();
         } catch (XMLStreamException e) {
@@ -123,7 +123,7 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
         }
     }
 
-    private void startElement(final QName qname) throws IOException {
+    protected void startElement(final QName qname) throws IOException {
         try {
             writeStartElement(qname);
         } catch (XMLStreamException e) {
@@ -131,31 +131,23 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
         }
     }
 
-    private void startList(final NodeIdentifier name) {
-        tracker.startList(name);
-    }
-
-    private void startListItem(final PathArgument name) throws IOException {
-        tracker.startListItem(name);
-        startElement(name.getNodeType());
-    }
-
-    @Override
-    public void leafNode(final NodeIdentifier name, final Object value) throws IOException {
-        final LeafSchemaNode schema = tracker.leafNode(name);
-        writeElement(schema.getQName(), schema, value);
-    }
-
-    @Override
-    public void leafNode(final NodeIdentifier name, final Object value, final Map<QName, String> attributes) throws IOException {
-        final LeafSchemaNode schema = tracker.leafNode(name);
-        writeElement(schema.getQName(), schema, value, attributes);
-    }
-
-    @Override
-    public void leafSetEntryNode(final QName name, final Object value, final Map<QName, String> attributes) throws IOException {
-        final LeafListSchemaNode schema = tracker.leafSetEntryNode();
-        writeElement(schema.getQName(), schema, value, attributes);
+    protected void anyxmlNode(final QName qname, final Object value) throws IOException {
+        if (value != null) {
+            Preconditions.checkArgument(value instanceof DOMSource, "AnyXML value must be DOMSource, not %s", value);
+            final DOMSource domSource = (DOMSource) value;
+            Preconditions.checkNotNull(domSource.getNode());
+            Preconditions.checkArgument(domSource.getNode().getNodeName().equals(qname.getLocalName()));
+            Preconditions.checkArgument(domSource.getNode().getNamespaceURI().equals(qname.getNamespace().toString()));
+            try {
+                // TODO can the transformer be a constant ? is it thread safe ?
+                final Transformer transformer = TRANSFORMER_FACTORY.newTransformer();
+                // Writer has to be wrapped in a wrapper that ignores endDocument event
+                // EndDocument event forbids any other modification to the writer so a nested anyXml breaks serialization
+                transformer.transform(domSource, new StAXResult(new DelegateWriterNoEndDoc(writer)));
+            } catch (final TransformerException e) {
+                throw new IOException("Unable to transform anyXml(" + qname + ") value: " + value, e);
+            }
+        }
     }
 
     @Override
@@ -182,7 +174,11 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
         writeAttributes(attributes);
     }
 
-    private void writeAttributes(final Map<QName, String> attributes) throws IOException {
+    private void writeAttributes(@Nullable final Map<QName, String> attributes) throws IOException {
+        if(attributes == null) {
+            return;
+        }
+
         for (final Map.Entry<QName, String> qNameStringEntry : attributes.entrySet()) {
             try {
                 final String namespace = qNameStringEntry.getKey().getNamespace().toString();
@@ -197,28 +193,6 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
                 throw new IOException("Unable to emit attribute " + qNameStringEntry, e);
             }
         }
-    }
-
-    @Override
-    public void startLeafSet(final NodeIdentifier name, final int childSizeHint) {
-        tracker.startLeafSet(name);
-    }
-
-    @Override
-    public void leafSetEntryNode(final QName name, final Object value) throws IOException {
-        final LeafListSchemaNode schema = tracker.leafSetEntryNode();
-        writeElement(schema.getQName(), schema, value);
-    }
-
-    @Override
-    public void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint) {
-        tracker.startLeafSet(name);
-    }
-
-    @Override
-    public void startContainerNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        final SchemaNode schema = tracker.startContainerNode(name);
-        startElement(schema.getQName());
     }
 
     @Override
@@ -246,44 +220,6 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
         startList(name);
     }
 
-    @Override
-    public void startChoiceNode(final NodeIdentifier name, final int childSizeHint) {
-        tracker.startChoiceNode(name);
-    }
-
-    @Override
-    public void startAugmentationNode(final AugmentationIdentifier identifier) {
-        tracker.startAugmentationNode(identifier);
-    }
-
-    @Override
-    public void anyxmlNode(final NodeIdentifier name, final Object value) throws IOException {
-        final AnyXmlSchemaNode schema = tracker.anyxmlNode(name);
-        if (value != null) {
-            Preconditions.checkArgument(value instanceof DOMSource, "AnyXML value must be DOMSource, not %s", value);
-            final QName qname = schema.getQName();
-            final DOMSource domSource = (DOMSource) value;
-            Preconditions.checkNotNull(domSource.getNode());
-            Preconditions.checkArgument(domSource.getNode().getNodeName().equals(qname.getLocalName()));
-            Preconditions.checkArgument(domSource.getNode().getNamespaceURI().equals(qname.getNamespace().toString()));
-            try {
-                // TODO can the transformer be a constant ? is it thread safe ?
-                final Transformer transformer = TRANSFORMER_FACTORY.newTransformer();
-                // Writer has to be wrapped in a wrapper that ignores endDocument event
-                // EndDocument event forbids any other modification to the writer so a nested anyXml breaks serialization
-                transformer.transform(domSource, new StAXResult(new DelegateWriterNoEndDoc(writer)));
-            } catch (final TransformerException e) {
-                throw new IOException("Unable to transform anyXml(" + name + ") value: " + value, e);
-            }
-        }
-    }
-
-    @Override
-    public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        final SchemaNode schema = tracker.startYangModeledAnyXmlNode(name);
-        startElement(schema.getQName());
-    }
-
     public static String toString(final Element xml) {
         try {
             final Transformer transformer = TransformerFactory.newInstance().newTransformer();
@@ -301,19 +237,8 @@ public final class XMLStreamNormalizedNodeStreamWriter implements NormalizedNode
 
     @Override
     public void endNode() throws IOException {
-        final Object schema = tracker.endNode();
-
         try {
-            if (schema instanceof ListSchemaNode) {
-                // For lists, we only emit end element on the inner frame
-                final Object parent = tracker.getParent();
-                if (parent == schema) {
-                    writer.writeEndElement();
-                }
-            } else if (schema instanceof ContainerSchemaNode) {
-                // Emit container end element
-                writer.writeEndElement();
-            }
+            endNode(writer);
         } catch (XMLStreamException e) {
             throw new IOException("Failed to end element", e);
         }
