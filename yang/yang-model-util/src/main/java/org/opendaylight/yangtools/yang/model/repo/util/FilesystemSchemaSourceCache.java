@@ -194,8 +194,8 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
                 try {
                     Date d = df.parse(revStr);
                     map.put(d, sorted);
-                } catch (ParseException e) {
-                    LOG.info("Unable to parse date from yang file name");
+                } catch (final ParseException e) {
+                    LOG.info("Unable to parse date from yang file name {}", fileName);
                     map.put(new Date(0L), sorted);
                 }
 
