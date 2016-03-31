@@ -28,7 +28,7 @@ abstract class AbstractCursorAware {
     final void closeCursor(final AbstractCursor<?> cursor) {
         final boolean success = CURSOR_UPDATER.compareAndSet(this, cursor, null);
         if (!success) {
-            LOG.warn("Attempted to close cursor %s while %s is open", cursor, this.cursor);
+            LOG.warn("Attempted to close cursor {} while {} is open", cursor, this.cursor);
         }
     }
 }

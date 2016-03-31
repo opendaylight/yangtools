@@ -56,7 +56,7 @@ public final class LeafsetEntryInterner {
          */
         @SuppressWarnings("unchecked")
         final T ret = (T) INTERNER.intern(sample);
-        LOG.trace("Interned object %s to %s", sample, ret);
+        LOG.trace("Interned object {} to {}", sample, ret);
         return ret;
     }
 

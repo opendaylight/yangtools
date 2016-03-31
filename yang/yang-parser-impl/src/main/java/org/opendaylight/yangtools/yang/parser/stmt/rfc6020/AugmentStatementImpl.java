@@ -120,8 +120,9 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                         augmentTargetCtx.addEffectiveSubstatement(augmentSourceCtx);
                         updateAugmentOrder(augmentSourceCtx);
                     } catch (SourceException e) {
-                        LOG.debug("Failed to add augmentation %s defined at {}",
-                            augmentSourceCtx.getStatementSourceReference(), e);
+                        LOG.debug("Failed to add augmentation {} defined at {}",
+                            augmentTargetCtx.getStatementSourceReference(),
+                                augmentSourceCtx.getStatementSourceReference(), e);
                     }
                 }
 
