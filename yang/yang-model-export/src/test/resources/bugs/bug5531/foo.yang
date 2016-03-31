@@ -1,0 +1,8 @@
+module foo {
+    namespace "foo";
+    prefix foo;
+
+    revision 2015-01-01 {
+        description "test";
+    }
+}
