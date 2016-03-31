@@ -58,6 +58,11 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
             Collections.<Class<? extends SchemaSourceRepresentation>, StorageAdapter<? extends SchemaSourceRepresentation>> singletonMap(
                     YangTextSchemaSource.class, new YangTextSchemaStorageAdapter());
 
+    private static final Pattern CACHED_FILE_PATTERN =
+            Pattern.compile(
+                    "(?<moduleName>[^@]+)" +
+                    "(@(?<revision>" + SourceIdentifier.REVISION_PATTERN + "))?");
+
     private final Class<T> representation;
     private final File storageDirectory;
 
@@ -90,11 +95,6 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
        throw new IllegalArgumentException(String.format(
                 "This cache does not support representation: %s, supported representations are: %s", representation, STORAGE_ADAPTERS.keySet()));
     }
-
-    private static final Pattern CACHED_FILE_PATTERN =
-            Pattern.compile(
-                    "(?<moduleName>[^@]+)" +
-                    "(@(?<revision>" + SourceIdentifier.REVISION_PATTERN + "))?");
 
     /**
      * Restore cache state
