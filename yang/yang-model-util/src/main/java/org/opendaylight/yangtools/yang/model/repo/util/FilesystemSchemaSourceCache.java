@@ -248,8 +248,8 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
 
         @Override
         protected void storeAsType(final File file, final YangTextSchemaSource cast) {
-            try {
-                Files.copy(cast.openStream(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            try (final InputStream castStream = cast.openStream()) {
+                Files.copy(castStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
             } catch (final IOException e) {
                 throw new IllegalStateException("Cannot store schema source " + cast.getIdentifier() + " to " + file, e);
             }
