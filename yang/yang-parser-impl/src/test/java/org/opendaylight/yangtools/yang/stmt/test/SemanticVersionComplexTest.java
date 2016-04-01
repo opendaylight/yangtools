@@ -1,0 +1,92 @@
+/*
+ * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.yang.stmt.test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+import java.io.FileNotFoundException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.Set;
+import org.junit.Test;
+import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+
+public class SemanticVersionComplexTest {
+
+    @Test
+    public void complexTest1() throws SourceException, FileNotFoundException, ReactorException,
+            URISyntaxException, ParseException {
+        SchemaContext context = StmtTestUtils.parseYangSources("/semantic-version/complex/complex-1", true);
+        assertNotNull(context);
+
+        Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
+        Module semVer = context.findModuleByNamespace(new URI("urn:opendaylight:yang:extension:semantic-version"))
+                .iterator().next();
+
+        // check module versions
+        assertEquals(SemVer.valueOf("1.3.95"), semVer.getSemanticVersion());
+        assertEquals(SemVer.valueOf("1.50.2"), foo.getSemanticVersion());
+
+        Module bar = findImportedModule(context, foo, "bar");
+        assertEquals(SemVer.valueOf("1.20.808"), bar.getSemanticVersion());
+
+        Module foobar = findImportedModule(context, bar, "foobar");
+        assertEquals(SemVer.valueOf("2.26.465"), foobar.getSemanticVersion());
+
+        // check augmentation
+        assertNotNull("Augmented component should be present", SchemaContextUtil.findDataSchemaNode(context, foo, new
+                RevisionAwareXPathImpl("/bar:root/bar:test-container/foo:accepted", true)));
+
+        // check imported components
+        assertNotNull("This component should be present", SchemaContextUtil.findDataSchemaNode(context, foo, new
+                RevisionAwareXPathImpl("/bar:root/bar:test-container/bar:number", true)));
+
+        assertNotNull("This component should not be present", SchemaContextUtil.findDataSchemaNode(context, foo, new
+                RevisionAwareXPathImpl("/bar:should-present", true)));
+
+        // check not imported components
+        assertNull("This component should not be present", SchemaContextUtil.findDataSchemaNode(context, foo, new
+                RevisionAwareXPathImpl("/bar:root/bar:test-container/bar:oldnumber", true)));
+
+        assertNull("This component should not be present", SchemaContextUtil.findDataSchemaNode(context, foo, new
+                RevisionAwareXPathImpl("/bar:should-not-be-present", true)));
+    }
+
+    private static Module findImportedModule(SchemaContext context, Module rootModule, String importedModuleName) {
+        ModuleImport requestedModuleImport = null;
+        Set<ModuleImport> rootImports = rootModule.getImports();
+        for (ModuleImport moduleImport : rootImports) {
+            if (moduleImport.getModuleName().equals(importedModuleName)) {
+                requestedModuleImport = moduleImport;
+                break;
+            }
+        }
+
+        Module importedModule = context.findModuleByName(requestedModuleImport.getModuleName(),
+                requestedModuleImport.getRevision());
+        return importedModule;
+    }
+}
