@@ -1,14 +1,17 @@
 /*
- * Copyright (c) 2014 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2016 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.codec.gson;
+package org.opendaylight.yangtools.yang.data.util;
 
+import com.google.common.base.Function;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,10 +19,13 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map.Entry;
+import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -32,7 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 /**
  * A node which is composed of multiple simpler nodes.
  */
-class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
+public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
 
     /**
      * nodes which were added to schema via augmentation and are present in data input
@@ -71,7 +77,7 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
 
         AugmentationSchema augSchema = null;
         if (choiceCandidate.isAugmenting()) {
-            augSchema = SchemaUtils.findCorrespondingAugment(getSchema(), choiceCandidate);
+            augSchema = findCorrespondingAugment(getSchema(), choiceCandidate);
         }
 
         // looking for existing choice
@@ -108,7 +114,7 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
 
         AugmentationSchema augSchema = null;
         if (schema.isAugmenting()) {
-            augSchema = SchemaUtils.findCorrespondingAugment(getSchema(), schema);
+            augSchema = findCorrespondingAugment(getSchema(), schema);
         }
         if (augSchema != null) {
             augmentationsToChild.put(augSchema, newChild);
@@ -157,7 +163,7 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
     }
 
     void addCompositeChild(final CompositeNodeDataWithSchema newChild) {
-        AugmentationSchema augSchema = SchemaUtils.findCorrespondingAugment(getSchema(), newChild.getSchema());
+        AugmentationSchema augSchema = findCorrespondingAugment(getSchema(), newChild.getSchema());
         if (augSchema != null) {
             augmentationsToChild.put(augSchema, newChild);
         } else {
@@ -191,7 +197,7 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
             final Collection<AbstractNodeDataWithSchema> childsFromAgumentation = augmentationToChild.getValue();
             if (!childsFromAgumentation.isEmpty()) {
                 // FIXME: can we get the augmentation schema?
-                writer.startAugmentationNode(SchemaUtils.getNodeIdentifierForAugmentation(augmentationToChild.getKey()));
+                writer.startAugmentationNode(getNodeIdentifierForAugmentation(augmentationToChild.getKey()));
 
                 for (AbstractNodeDataWithSchema nodeDataWithSchema : childsFromAgumentation) {
                     nodeDataWithSchema.write(writer);
@@ -201,4 +207,36 @@ class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
             }
         }
     }
+
+    /**
+     * Tries to find in {@code parent} which is dealed as augmentation target node with QName as {@code child}. If such
+     * node is found then it is returned, else null.
+     *
+     * @param parent parent node
+     * @param child child node
+     * @return augmentation schema
+     */
+    private AugmentationSchema findCorrespondingAugment(final DataSchemaNode parent, final DataSchemaNode child) {
+        if (parent instanceof AugmentationTarget && !(parent instanceof ChoiceSchemaNode)) {
+            for (AugmentationSchema augmentation : ((AugmentationTarget) parent).getAvailableAugmentations()) {
+                DataSchemaNode childInAugmentation = augmentation.getDataChildByName(child.getQName());
+                if (childInAugmentation != null) {
+                    return augmentation;
+                }
+            }
+        }
+        return null;
+    }
+
+    public static YangInstanceIdentifier.AugmentationIdentifier getNodeIdentifierForAugmentation(final AugmentationSchema schema) {
+        final Collection<QName> qnames = Collections2.transform(schema.getChildNodes(), QNAME_FUNCTION);
+        return new YangInstanceIdentifier.AugmentationIdentifier(ImmutableSet.copyOf(qnames));
+    }
+
+    private static final Function<DataSchemaNode, QName> QNAME_FUNCTION = new Function<DataSchemaNode, QName>() {
+        @Override
+        public QName apply(@Nonnull final DataSchemaNode input) {
+            return input.getQName();
+        }
+    };
 }
