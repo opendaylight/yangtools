@@ -20,16 +20,24 @@ import java.io.Flushable;
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.DataSchemaNodeAwareAdaptor;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.SchemaAwareNormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.LeafListEntryNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.LeafListNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.LeafNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.ListEntryNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.ListNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
+import org.opendaylight.yangtools.yang.data.util.RpcAsContainer;
+import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -168,8 +176,8 @@ public final class JsonParserStream implements Closeable, Flushable {
                 }
                 namesakes.add(jsonElementName);
 
-                final Deque<DataSchemaNode> childDataSchemaNodes = findSchemaNodeByNameAndNamespace(parentSchema,
-                        localName, getCurrentNamespace());
+                final Deque<DataSchemaNode> childDataSchemaNodes =
+                        ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema, localName, getCurrentNamespace());
                 if (childDataSchemaNodes.isEmpty()) {
                     throw new IllegalStateException("Schema for node with name " + localName + " and namespace "
                             + getCurrentNamespace() + " doesn't exist.");
@@ -302,57 +310,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         return namespaces.peek();
     }
 
-    /**
-     * Returns stack of schema nodes via which it was necessary to pass to get schema node with specified
-     * {@code childName} and {@code namespace}
-     *
-     * @param dataSchemaNode
-     * @param childName
-     * @param namespace
-     * @return stack of schema nodes via which it was passed through. If found schema node is direct child then stack
-     *         contains only one node. If it is found under choice and case then stack should contains 2*n+1 element
-     *         (where n is number of choices through it was passed)
-     */
-    private Deque<DataSchemaNode> findSchemaNodeByNameAndNamespace(final DataSchemaNode dataSchemaNode,
-            final String childName, final URI namespace) {
-        final Deque<DataSchemaNode> result = new ArrayDeque<>();
-        final List<ChoiceSchemaNode> childChoices = new ArrayList<>();
-        DataSchemaNode potentialChildNode = null;
-        if (dataSchemaNode instanceof DataNodeContainer) {
-            for (final DataSchemaNode childNode : ((DataNodeContainer) dataSchemaNode).getChildNodes()) {
-                if (childNode instanceof ChoiceSchemaNode) {
-                    childChoices.add((ChoiceSchemaNode) childNode);
-                } else {
-                    final QName childQName = childNode.getQName();
 
-                    if (childQName.getLocalName().equals(childName) && childQName.getNamespace().equals(namespace)) {
-                        if (potentialChildNode == null ||
-                                childQName.getRevision().after(potentialChildNode.getQName().getRevision())) {
-                            potentialChildNode = childNode;
-                        }
-                    }
-                }
-            }
-        }
-        if (potentialChildNode != null) {
-            result.push(potentialChildNode);
-            return result;
-        }
-
-        // try to find data schema node in choice (looking for first match)
-        for (final ChoiceSchemaNode choiceNode : childChoices) {
-            for (final ChoiceCaseNode concreteCase : choiceNode.getCases()) {
-                final Deque<DataSchemaNode> resultFromRecursion = findSchemaNodeByNameAndNamespace(concreteCase, childName,
-                        namespace);
-                if (!resultFromRecursion.isEmpty()) {
-                    resultFromRecursion.push(concreteCase);
-                    resultFromRecursion.push(choiceNode);
-                    return resultFromRecursion;
-                }
-            }
-        }
-        return result;
-    }
 
     private static class NamespaceAndName {
         private final URI uri;
