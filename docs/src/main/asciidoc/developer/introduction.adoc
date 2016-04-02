@@ -37,13 +37,14 @@ YANG Tools project consists of following logical subsystems:
   wants to generate code or other artefacts based on YANG model.
 
 === Concepts
-Project defines base concepts and helper classes which are project-agnostic and could be used outside of YANG Tools project scope. 
+Project defines base concepts and helper classes which are project-agnostic and could be used outside of YANG Tools project scope.
 
 === Components
 
 - yang-common
 - yang-data-api
 - yang-data-codec-gson
+- yang-data-codec-xml
 - yang-data-impl
 - yang-data-jaxen
 - yang-data-transform
@@ -66,7 +67,7 @@ image:models/yang-model-api.png[]
 
 Yang Statement Parser works on the idea of statement concepts as defined in RFC6020, section 6.3. We come up here with basic ModelStatement and StatementDefinition, following RFC6020 idea of having sequence of statements, where
 every statement contains keyword and zero or one argument. ModelStatement is extended by DeclaredStatement (as it comes from source, e.g. YANG source)
-and EffectiveStatement, which contains other substatements and tends to represent result of semantic processing of other statements (uses, augment for YANG). 
+and EffectiveStatement, which contains other substatements and tends to represent result of semantic processing of other statements (uses, augment for YANG).
 IdentifierNamespace represents common superclass for YANG model namespaces.
 
 Input of the Yang Statement Parser is a collection of StatementStreamSource objects.
@@ -88,6 +89,7 @@ Class diagram of yang data API
 image:models/yang-data-api.png[]
 
 ==== YANG Data Codecs
+Codecs which enable serialization of NormalizedNodes into YANG-modeled data in XML or JSON format and deserialization of YANG-modeled data in XML or JSON format into NormalizedNodes.
 
 ==== YANG Maven Plugin
 Maven plugin which integrates YANG parser into Maven
@@ -97,11 +99,11 @@ Maven plugin which integrates YANG parser into Maven
 == How to / Tutorials
 
 === Working with YANG Model
-First thing you need to do if you want to work with YANG models is to instantiate a SchemaContext object. This object type describes one or more parsed YANG modules. 
+First thing you need to do if you want to work with YANG models is to instantiate a SchemaContext object. This object type describes one or more parsed YANG modules.
 
-In order to create it you need to utilize YANG statement parser which takes one or more StatementStreamSource objects as input and then produces the SchemaContext object. 
+In order to create it you need to utilize YANG statement parser which takes one or more StatementStreamSource objects as input and then produces the SchemaContext object.
 
-StatementStreamSource object contains the source file information. It has two implementations, one for YANG sources - YangStatementSourceImpl, and one for YIN sources - YinStatementSourceImpl. 
+StatementStreamSource object contains the source file information. It has two implementations, one for YANG sources - YangStatementSourceImpl, and one for YIN sources - YinStatementSourceImpl.
 
 Here is an example of creating StatementStreamSource objects for YANG files, providing them to the YANG statement parser and building the SchemaContext:
 
@@ -116,9 +118,9 @@ reactor.addSources(yangModuleSource, yangModuleSource2);
 SchemaContext schemaContext = reactor.buildEffective();
 ----
 
-First, StatementStreamSource objects with two constructor arguments should be instantiated: path to the yang source file (which is a regular String object) and a boolean which determines if the path is absolute or relative. 
+First, StatementStreamSource objects with two constructor arguments should be instantiated: path to the yang source file (which is a regular String object) and a boolean which determines if the path is absolute or relative.
 
-Next comes the initiation of new yang parsing cycle - which is represented by  CrossSourceStatementReactor.BuildAction object. You can get it by calling method newBuild() on CrossSourceStatementReactor object (RFC6020_REACTOR) in YangInferencePipeline class. 
+Next comes the initiation of new yang parsing cycle - which is represented by CrossSourceStatementReactor.BuildAction object. You can get it by calling method newBuild() on CrossSourceStatementReactor object (RFC6020_REACTOR) in YangInferencePipeline class.
 
 Then you should feed yang sources to it by calling method addSources() that takes one or more StatementStreamSource objects as arguments.
 
@@ -130,7 +132,7 @@ Let us explain how to work with models contained in the newly created SchemaCont
 Set<Module> modules = schemaContext.getModules();
 Set<DataSchemaNodes> dataSchemaNodes = schemaContext.getDataDefinitions();
 
-Usually you want to access specific modules. Getting a concrete module from SchemaContext is a matter of calling one of these methods: 
+Usually you want to access specific modules. Getting a concrete module from SchemaContext is a matter of calling one of these methods:
 
 * findModuleByName(),
 * findModuleByNamespace(),
@@ -187,7 +189,7 @@ ContainerNode containerNode = Builders.containerBuilder().withNodeIdentifier(new
 \\ example 2
 ContainerNode containerNode2 = Builders.containerBuilder(containerSchemaNode).build();
 ----
-Both examples produce the same result. NodeIdentifier is one of the four types of YangInstanceIdentifier (these types are described in the javadoc of YangInstanceIdentifier). The purpose of YangInstanceIdentifier is to uniquely identify a particular node in the data tree. In the first example, you have to add NodeIdentifier before building the resulting node. In the second example it is also added using the provided ContainerSchemaNode object. 
+Both examples produce the same result. NodeIdentifier is one of the four types of YangInstanceIdentifier (these types are described in the javadoc of YangInstanceIdentifier). The purpose of YangInstanceIdentifier is to uniquely identify a particular node in the data tree. In the first example, you have to add NodeIdentifier before building the resulting node. In the second example it is also added using the provided ContainerSchemaNode object.
 
 ImmutableNodes class offers similar builder methods and also adds an overloaded method called fromInstanceId() which allows you to create a NormalizedNode object based on YangInstanceIdentifier and SchemaContext. Below is an example which shows the use of this method.
 
@@ -307,6 +309,36 @@ Write operation is performed with both normalized nodes mentioned earlier. It co
 Now you can access the written nodes. In order to do this, you have to create a new DataTreeSnapshot instance and call the method readNode() with path argument pointing to a particular node in the tree.
 
 === Serialization / deserialization of YANG Data
+If you want to deserialize YANG-modeled data which have the form of an XML document, you can use the XML parser found in the module yang-data-codec-xml. The parser walks through the XML document containing YANG-modeled data based on the provided SchemaContext and emits node events into a NormalizedNodeStreamWriter. The parser disallows multiple instances of the same element except for leaf-list and list entries. The parser also expects that the YANG-modeled data in the XML source are wrapped in a root element. Otherwise it will not work correctly.
+
+Here is an example of using the XML parser.
+[source, java]
+----
+InputStream resourceAsStream = ExampleClass.class.getResourceAsStream("/example-module.yang");
+
+XMLInputFactory factory = XMLInputFactory.newInstance();
+XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
+
+NormalizedNodeResult result = new NormalizedNodeResult();
+NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+
+XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext);
+xmlParser.parse(reader);
+
+NormalizedNode<?, ?> transformedInput = result.getResult();
+----
+The XML parser utilizes the javax.xml.stream.XMLStreamReader for parsing an XML document. First, you should create an instance of this reader using XMLInputFactory and then load an XML document (in the form of InputStream object) into it.
+
+In order to emit node events while parsing the data you need to instantiate a NormalizedNodeStreamWriter. This writer is actually an interface and therefore you need to use a concrete implementation of it. In this example it is the ImmutableNormalizedNodeStreamWriter, which constructs immutable instances of NormalizedNodes.
+
+There are two ways how to create an instance of this writer using the static overloaded method from(). One version of this method takes a NormalizedNodeResult as argument. This object type is a result holder in which the resulting NormalizedNode will be stored. The other version takes a
+NormalizedNodeContainerBuilder as argument. All created nodes will be written to this builder.
+
+Next step is to create an instance of the XML parser. The parser itself is represented by a class named XmlParserStream. You can use one of two versions of the static overloaded method create() to construct this object. One version accepts a NormalizedNodeStreamWriter and a SchemaContext as arguments, the other version takes the same arguments plus a SchemaNode. Node events are emitted to the writer. The SchemaContext is used to check if the YANG data in the XML source comply with the provided YANG model(s). The last argument, a SchemaNode object, describes the node that is the parent of nodes defined in the XML data. If you do not provide this argument, the parser sets the SchemaContext as the parent node.
+
+The parser is now ready to walk through the XML. Parsing is initiated by calling the method parse() on the XmlParserStream object with XMLStreamReader as its argument.
+
+Finally you can access the result of parsing - a tree of NormalizedNodes containg the data as they are defined in the parsed XML document - by calling the method getResult() on the NormalizedNodeResult object.
 
 === Introducing schema source repositories
 
